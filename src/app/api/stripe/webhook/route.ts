@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { processWebhook } from '@/lib/stripe-webhook-handlers';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil',
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-07-30.basil',
+    })
+  : null;
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 const MAX_WEBHOOK_AGE_SECONDS = 300; // 5 minutes tolerance
 
 // Store processed event IDs to prevent replay attacks
@@ -14,6 +16,13 @@ const processedEvents = new Set<string>();
 
 
 export async function POST(request: NextRequest) {
+  if (!stripe || !webhookSecret) {
+    return NextResponse.json(
+      { error: 'Stripe is not configured' },
+      { status: 500 }
+    );
+  }
+  
   try {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
