@@ -53,7 +53,7 @@ const PlatformLogos = () => {
       transition={{ delay: 0.5 }}
       className="mt-16 text-center"
     >
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Trusted by creators on</p>
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Trusted by creators on</p>
       <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
         {platforms.map((platform, index) => (
           <motion.div

@@ -84,7 +84,7 @@ export default function CreatorTestimonials() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
+            className="bg-white dark:bg-gray-950 border dark:border-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
               {/* Left side - Creator info */}
@@ -98,8 +98,8 @@ export default function CreatorTestimonials() {
                         <span className="text-blue-500 text-sm">✓</span>
                       )}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">{current.role}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-500">{current.platform}</p>
+                    <p className="text-gray-600 dark:text-gray-300">{current.role}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{current.platform}</p>
                   </div>
                 </div>
 
@@ -107,7 +107,7 @@ export default function CreatorTestimonials() {
                   <h4 className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                     Saves {current.savings}
                   </h4>
-                  <p className="text-gray-600 dark:text-gray-400">{current.highlight}</p>
+                  <p className="text-gray-600 dark:text-gray-300">{current.highlight}</p>
                 </div>
 
                 <blockquote className="text-base md:text-lg text-gray-700 dark:text-gray-300 mb-6 italic">
@@ -120,32 +120,32 @@ export default function CreatorTestimonials() {
               </div>
 
               {/* Right side - Stats */}
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 md:p-6 order-1 lg:order-2">
-                <h4 className="text-xs md:text-sm font-semibold text-gray-600 dark:text-gray-400 mb-4 uppercase tracking-wider">
+              <div className="bg-gray-50 dark:bg-gray-950 border dark:border-gray-800 rounded-xl p-4 md:p-6 order-1 lg:order-2">
+                <h4 className="text-xs md:text-sm font-semibold text-gray-600 dark:text-gray-300 mb-4 uppercase tracking-wider">
                   Performance Metrics
                 </h4>
                 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-3">
                       <DollarSign className="w-5 h-5 text-green-600" />
-                      <span className="text-gray-600 dark:text-gray-400">Monthly Revenue</span>
+                      <span className="text-gray-600 dark:text-gray-300">Monthly Revenue</span>
                     </div>
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">{current.revenue}</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-3">
                       <TrendingUp className="w-5 h-5 text-purple-600" />
-                      <span className="text-gray-600 dark:text-gray-400">Revenue Growth</span>
+                      <span className="text-gray-600 dark:text-gray-300">Revenue Growth</span>
                     </div>
                     <span className="text-2xl font-bold text-green-600">{current.growth}</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-3">
                       <Star className="w-5 h-5 text-yellow-500" />
-                      <span className="text-gray-600 dark:text-gray-400">Creator Rating</span>
+                      <span className="text-gray-600 dark:text-gray-300">Creator Rating</span>
                     </div>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((i) => (
@@ -170,14 +170,14 @@ export default function CreatorTestimonials() {
           {/* Navigation - Hidden on mobile, visible on desktop */}
           <button
             onClick={prev}
-            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
+            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
           >
             <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </button>
 
           <button
             onClick={next}
-            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
+            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
           >
             <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </button>
@@ -186,13 +186,13 @@ export default function CreatorTestimonials() {
           <div className="flex md:hidden justify-center gap-4 mt-4">
             <button
               onClick={prev}
-              className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg"
+              className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
             >
               <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </button>
             <button
               onClick={next}
-              className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg"
+              className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
             >
               <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </button>
@@ -207,7 +207,7 @@ export default function CreatorTestimonials() {
                 className={`h-2 rounded-full transition-all ${
                   index === currentIndex
                     ? 'w-8 bg-purple-600'
-                    : 'w-2 bg-gray-300 dark:bg-gray-600'
+                    : 'w-2 bg-gray-300 dark:bg-gray-700'
                 }`}
               />
             ))}

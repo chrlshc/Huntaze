@@ -79,7 +79,7 @@ function StatCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+      className="bg-white dark:bg-gray-950 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border dark:border-gray-800"
     >
       <div className="flex items-center justify-between mb-4">
         <div className={`w-12 h-12 ${bgColor} rounded-lg flex items-center justify-center`}>
@@ -97,7 +97,7 @@ function StatCard({
         <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
           {prefix}{formattedValue}{suffix}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{label}</p>
       </div>
     </motion.div>
   )
