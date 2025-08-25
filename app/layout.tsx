@@ -4,6 +4,8 @@ import "./globals.css";
 import HeaderImproved from "@/components/header-improved";
 import FooterImproved from "@/components/footer-improved";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
+import { ThemeProvider } from "@/components/theme-provider";
+import PageTransition from "@/components/page-transition";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,17 +37,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="/styles/design-system.css" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('theme') || 'system';
+                const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                const resolved = theme === 'system' ? systemTheme : theme;
+                document.documentElement.classList.add(resolved);
+              } catch {}
+            `,
+          }}
+        />
       </head>
-      <body className="antialiased bg-white text-gray-900">
-        <HeaderImproved />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <FooterImproved />
-        <MobileBottomNav />
+      <body className="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+        <ThemeProvider>
+          <HeaderImproved />
+          <PageTransition>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </PageTransition>
+          <FooterImproved />
+          <MobileBottomNav />
+        </ThemeProvider>
       </body>
     </html>
   );

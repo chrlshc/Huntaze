@@ -26,13 +26,13 @@ export function DashboardMockup() {
       </div>
 
       {/* Dashboard Content */}
-      <div className="bg-white border border-gray-200 rounded-b-xl shadow-2xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-b-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gray-50 border-b border-gray-200 p-6">
+        <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Revenue Dashboard</h3>
-              <p className="text-sm text-gray-500">Welcome back, Sarah</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Dashboard</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Welcome back, Sarah</p>
             </div>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full font-medium">
