@@ -1,4 +1,4 @@
-import posthog from 'posthog-js';
+// Simplified analytics without PostHog for now
 
 // Analytics event types
 export type AnalyticsEvent = 
@@ -60,21 +60,8 @@ class Analytics {
       return;
     }
 
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_API_KEY, {
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-      loaded: (posthog) => {
-        // Opt out of tracking in development
-        if (process.env.NODE_ENV === 'development') {
-          posthog.opt_out_capturing();
-        }
-      },
-      autocapture: false, // We'll track specific events
-      capture_pageview: true,
-      capture_pageleave: true,
-      disable_session_recording: false, // Enable session recording for better insights
-      mask_all_text: false, // Don't mask text in recordings
-      mask_all_element_attributes: false,
-    });
+    // PostHog initialization disabled for now
+    console.log('[Analytics] Initialized (mock mode)');
 
     this.initialized = true;
   }
@@ -85,11 +72,8 @@ class Analytics {
     this.userId = userId;
     this.userProperties = { ...this.userProperties, ...properties };
     
-    posthog.identify(userId, {
-      ...properties,
-      // Add user creation date if available
-      created_at: new Date().toISOString(),
-    });
+    // Mock identify
+    console.log('[Analytics] Identify:', userId, properties);
   }
 
   track(event: AnalyticsEvent, properties?: AnalyticsProperties) {
@@ -108,7 +92,8 @@ class Analytics {
       (eventProperties as any)['$revenue'] = properties.amount / 100; // Convert cents to dollars
     }
 
-    posthog.capture(event, eventProperties);
+    // Mock capture
+    console.log('[Analytics] Track:', event, eventProperties);
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
@@ -120,11 +105,8 @@ class Analytics {
   trackPageView(pageName: string, properties?: AnalyticsProperties) {
     if (!this.initialized) return;
     
-    posthog.capture('$pageview', {
-      $current_url: window.location.href,
-      $page_name: pageName,
-      ...properties,
-    });
+    // Mock pageview
+    console.log('[Analytics] Page view:', pageName, properties);
   }
 
   // Track feature discovery/engagement
@@ -191,32 +173,32 @@ class Analytics {
   trackError(error: string, context?: any) {
     if (!this.initialized) return;
     
-    posthog.capture('$exception', {
-      error,
-      context,
-      stack_trace: new Error().stack,
-    });
+    // Mock error tracking
+    console.error('[Analytics] Error:', error, context);
   }
 
   // Group analytics by organization (for B2B)
   setGroup(groupType: string, groupId: string, properties?: any) {
     if (!this.initialized) return;
     
-    posthog.group(groupType, groupId, properties);
+    // Mock group
+    console.log('[Analytics] Group:', groupType, groupId, properties);
   }
 
   // Feature flags
   isFeatureEnabled(flag: string): boolean {
     if (!this.initialized) return false;
     
-    return posthog.isFeatureEnabled(flag) || false;
+    // Mock feature flag - always return false
+    return false;
   }
 
   // Get feature flag payload
   getFeatureFlagPayload(flag: string): any {
     if (!this.initialized) return null;
     
-    return posthog.getFeatureFlagPayload(flag);
+    // Mock feature flag payload
+    return null;
   }
 
   // Reset on logout
@@ -225,7 +207,8 @@ class Analytics {
     
     this.userId = null;
     this.userProperties = {};
-    posthog.reset();
+    // Mock reset
+    console.log('[Analytics] Reset');
   }
 }
 
