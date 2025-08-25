@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.4",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "autoprefixer": "^10.4.16",
     "clsx": "^2.1.0",
     "framer-motion": "^12.23.12",
@@ -25,9 +28,5 @@
     "typescript": "^5",
     "zod": "^3.23.8"
   },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18"
-  }
+  "devDependencies": {}
 }
