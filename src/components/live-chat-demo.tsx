@@ -200,7 +200,7 @@ export default function LiveChatDemo() {
                   <div className={`px-4 py-2 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-purple-600 text-white rounded-br-sm'
-                      : 'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border dark:border-gray-800'
+                      : 'bg-purple-100 dark:bg-purple-950 text-gray-800 dark:text-purple-100 rounded-bl-sm shadow-sm border dark:border-purple-900'
                   }`}>
                     <p className="text-sm">{message.content}</p>
                   </div>
@@ -218,22 +218,22 @@ export default function LiveChatDemo() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-white dark:bg-gray-900 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border dark:border-gray-800">
+              <div className="bg-purple-100 dark:bg-purple-950 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border dark:border-purple-900">
                 <div className="flex gap-1">
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="w-2 h-2 bg-gray-400 rounded-full"
+                    className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full"
                   />
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-                    className="w-2 h-2 bg-gray-400 rounded-full"
+                    className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full"
                   />
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                    className="w-2 h-2 bg-gray-400 rounded-full"
+                    className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full"
                   />
                 </div>
               </div>
