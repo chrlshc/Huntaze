@@ -31,12 +31,12 @@ export default function RevenueGrowthChart() {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+      className="bg-white dark:bg-gray-950 rounded-xl p-6 shadow-lg border dark:border-gray-800"
     >
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Growth</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Real-time performance</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Real-time performance</p>
         </div>
         <span className="text-sm font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
           <TrendingUp className="w-4 h-4" />
@@ -120,7 +120,7 @@ export default function RevenueGrowthChart() {
         </div>
 
         {/* Time labels */}
-        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-300">
           <span>12 AM</span>
           <span>6 AM</span>
           <span>12 PM</span>

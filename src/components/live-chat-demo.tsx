@@ -148,7 +148,7 @@ export default function LiveChatDemo() {
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden"
+        className="bg-white dark:bg-gray-950 border dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
@@ -173,7 +173,7 @@ export default function LiveChatDemo() {
         </div>
 
         {/* Messages */}
-        <div className="h-96 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 space-y-3">
+        <div className="h-96 overflow-y-auto bg-gray-50 dark:bg-black p-4 space-y-3">
           <AnimatePresence>
             {messages.map((message) => (
               <motion.div
@@ -200,7 +200,7 @@ export default function LiveChatDemo() {
                   <div className={`px-4 py-2 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-purple-600 text-white rounded-br-sm'
-                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm shadow-sm'
+                      : 'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border dark:border-gray-800'
                   }`}>
                     <p className="text-sm">{message.content}</p>
                   </div>
@@ -218,7 +218,7 @@ export default function LiveChatDemo() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm">
+              <div className="bg-white dark:bg-gray-900 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border dark:border-gray-800">
                 <div className="flex gap-1">
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
@@ -243,7 +243,7 @@ export default function LiveChatDemo() {
         </div>
 
         {/* Input */}
-        <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -251,7 +251,7 @@ export default function LiveChatDemo() {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type a message..."
-              className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 dark:text-white"
+              className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -263,7 +263,7 @@ export default function LiveChatDemo() {
               <Send className="w-5 h-5" />
             </motion.button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
+          <p className="text-xs text-gray-500 dark:text-gray-300 text-center mt-2">
             Try it! This AI responds just like the real Huntaze assistant
           </p>
         </div>

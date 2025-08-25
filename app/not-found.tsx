@@ -7,7 +7,7 @@ import PremiumButton from '@/components/premium-button'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center px-4">
       <div className="max-w-2xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -25,7 +25,7 @@ export default function NotFound() {
           </h1>
           
           {/* Description */}
-          <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             The page you're looking for doesn't exist yet. It might have been moved or is still being built.
           </p>
 
@@ -40,7 +40,7 @@ export default function NotFound() {
             
             <button
               onClick={() => window.history.back()}
-              className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+              className="px-6 py-3 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors flex items-center justify-center border dark:border-gray-800"
             >
               <ArrowLeft className="mr-2 h-5 w-5" />
               Go Back
@@ -48,8 +48,8 @@ export default function NotFound() {
           </div>
 
           {/* Helpful Links */}
-          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
-            <p className="text-gray-600 dark:text-gray-400 mb-4">Here are some helpful links:</p>
+          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-900">
+            <p className="text-gray-600 dark:text-gray-300 mb-4">Here are some helpful links:</p>
             <div className="flex flex-wrap gap-4 justify-center text-purple-600 dark:text-purple-400">
               <Link href="/pricing" className="hover:underline">Pricing</Link>
               <span className="text-gray-400">•</span>

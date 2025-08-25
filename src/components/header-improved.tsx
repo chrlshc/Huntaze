@@ -89,8 +89,8 @@ export default function HeaderImproved() {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm dark:shadow-gray-900/50 py-3' 
-          : 'bg-white dark:bg-gray-900 py-4'
+          ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm dark:shadow-gray-950/50 py-3' 
+          : 'bg-white dark:bg-black py-4'
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -111,7 +111,7 @@ export default function HeaderImproved() {
               onMouseEnter={() => setActiveDropdown('solutions')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
+              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
                 <span>Solutions</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -122,10 +122,10 @@ export default function HeaderImproved() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
+                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
                   >
                     <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-4">
                         {navigation.solutions.title}
                       </h3>
                       <div className="space-y-3">
@@ -133,14 +133,14 @@ export default function HeaderImproved() {
                           <Link
                             key={item.name}
                             href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                           >
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -157,7 +157,7 @@ export default function HeaderImproved() {
               onMouseEnter={() => setActiveDropdown('resources')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
+              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
                 <span>Resources</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -168,10 +168,10 @@ export default function HeaderImproved() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
+                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
                   >
                     <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-4">
                         {navigation.resources.title}
                       </h3>
                       <div className="space-y-3">
@@ -179,14 +179,14 @@ export default function HeaderImproved() {
                           <Link
                             key={item.name}
                             href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                           >
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
                               <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
                             </div>
                           </Link>
                         ))}

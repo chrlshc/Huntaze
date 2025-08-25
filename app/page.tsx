@@ -15,7 +15,7 @@ import CreatorTestimonials from '@/components/creator-testimonials';
 
 export default function HomePageImproved() {
   return (
-    <div className="bg-white dark:bg-gray-900 pt-20 transition-colors">
+    <div className="bg-white dark:bg-black pt-20 transition-colors">
       {/* Hero Section - Simplified like Shopify */}
       <section className="relative pt-24 pb-16 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto">
@@ -30,7 +30,7 @@ export default function HomePageImproved() {
                   <div className="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-500 border-2 border-white dark:border-gray-800"></div>
                   <div className="w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-400 border-2 border-white dark:border-gray-800"></div>
                 </div>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-300">
                   <strong>500+</strong> creators saving millions in agency fees
                 </span>
               </div>
@@ -65,7 +65,7 @@ export default function HomePageImproved() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-300">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   <span className="dark:text-gray-300">No credit card required</span>
@@ -210,7 +210,7 @@ export default function HomePageImproved() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">2 second response time</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Never miss a message or sale opportunity</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Never miss a message or sale opportunity</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function HomePageImproved() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">Learns your style</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">AI adapts to your personality and tone</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">AI adapts to your personality and tone</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -228,7 +228,7 @@ export default function HomePageImproved() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">Increases sales by 285%</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Smart upselling at the perfect moment</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Smart upselling at the perfect moment</p>
                   </div>
                 </div>
               </motion.div>
@@ -266,7 +266,7 @@ export default function HomePageImproved() {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   AI Chat Assistant
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Responds to every message in your style. Converts fans 24/7 while you sleep.
                 </p>
                 <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
@@ -288,7 +288,7 @@ export default function HomePageImproved() {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   Smart Analytics
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Know exactly what content sells. Track revenue, engagement, and growth.
                 </p>
                 <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
@@ -310,7 +310,7 @@ export default function HomePageImproved() {
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   Content Automation
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Schedule posts, send mass DMs, and optimize pricing automatically.
                 </p>
                 <Link href="/features/automation" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
@@ -323,7 +323,7 @@ export default function HomePageImproved() {
       </section>
 
       {/* Product Showcase Section */}
-      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-800/50">
+      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2 
@@ -375,7 +375,7 @@ export default function HomePageImproved() {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   Real-time Dashboard
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Track revenue, fans, and performance metrics in real-time
                 </p>
                 <Link href="/features/dashboard" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
@@ -398,7 +398,7 @@ export default function HomePageImproved() {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   AI Chat Assistant
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Engage fans 24/7 with personalized AI responses
                 </p>
                 <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
@@ -421,7 +421,7 @@ export default function HomePageImproved() {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   Smart Analytics
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   AI-powered insights to maximize your revenue
                 </p>
                 <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
@@ -442,21 +442,21 @@ export default function HomePageImproved() {
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Proven results from real creators</h3>
             </div>
             <div className="grid md:grid-cols-4 gap-6">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg border dark:border-gray-800">
                 <div className="text-4xl font-bold text-purple-600 mb-2">3X</div>
-                <div className="text-gray-600 dark:text-gray-400">Revenue in 2 months</div>
+                <div className="text-gray-600 dark:text-gray-300">Revenue in 2 months</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg border dark:border-gray-800">
                 <div className="text-4xl font-bold text-purple-600 mb-2">500+</div>
-                <div className="text-gray-600 dark:text-gray-400">Creators onboarded</div>
+                <div className="text-gray-600 dark:text-gray-300">Creators onboarded</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg border dark:border-gray-800">
                 <div className="text-4xl font-bold text-purple-600 mb-2">98%</div>
-                <div className="text-gray-600 dark:text-gray-400">Revenue retained</div>
+                <div className="text-gray-600 dark:text-gray-300">Revenue retained</div>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-6 text-center shadow-lg border dark:border-gray-800">
                 <div className="text-4xl font-bold text-purple-600 mb-2">24/7</div>
-                <div className="text-gray-600 dark:text-gray-400">AI response time</div>
+                <div className="text-gray-600 dark:text-gray-300">AI response time</div>
               </div>
             </div>
           </motion.div>
