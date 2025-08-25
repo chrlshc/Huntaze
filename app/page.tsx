@@ -6,11 +6,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, TrendingUp, Users, DollarSign, MessageSquare, Zap } from 'lucide-react';
 import { DashboardMockup, ChatInterfaceMockup, AnalyticsMockup } from '@/components/product-mockups';
 import UseCasesCarousel from '@/components/use-cases-carousel';
-import { AnimatedStat } from '@/components/animated-counter';
+import AnimatedCounter, { AnimatedStat } from '@/components/animated-counter';
 import LiveChatDemo from '@/components/live-chat-demo';
 import { motion } from 'framer-motion';
 import PremiumButton from '@/components/premium-button';
 import PremiumCard from '@/components/premium-card';
+import CreatorTestimonials from '@/components/creator-testimonials';
 
 export default function HomePageImproved() {
   return (
@@ -94,43 +95,87 @@ export default function HomePageImproved() {
       </section>
 
       {/* Animated Stats Bar */}
-      <section className="py-16 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-16 bg-gray-900 relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 1px)`,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <AnimatedStat
-              value={500}
-              label="Active Creators"
-              suffix="+"
-              icon={<Users className="w-6 h-6 text-purple-600" />}
-              trend={{ value: 23, positive: true }}
-            />
-            <AnimatedStat
-              value={50}
-              label="Revenue Processed"
-              prefix="$"
-              suffix="M+"
-              icon={<DollarSign className="w-6 h-6 text-purple-600" />}
-              trend={{ value: 142, positive: true }}
-            />
-            <AnimatedStat
-              value={4.9}
-              label="Creator Rating"
-              suffix="/5"
-              decimals={1}
-              icon={<MessageSquare className="w-6 h-6 text-purple-600" />}
-            />
-            <AnimatedStat
-              value={24}
-              label="AI Response"
-              suffix="/7"
-              icon={<Zap className="w-6 h-6 text-purple-600" />}
-            />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <Users className="w-8 h-8 text-purple-400" />
+              </div>
+              <div className="text-5xl font-bold text-white mb-2">
+                <AnimatedCounter from={0} to={500} suffix="+" />
+              </div>
+              <div className="text-gray-400">Active Creators</div>
+              <div className="text-green-400 text-sm mt-1">↑ 23%</div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <DollarSign className="w-8 h-8 text-green-400" />
+              </div>
+              <div className="text-5xl font-bold text-white mb-2">
+                <AnimatedCounter from={0} to={50} prefix="$" suffix="M+" />
+              </div>
+              <div className="text-gray-400">Revenue Processed</div>
+              <div className="text-green-400 text-sm mt-1">↑ 142%</div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <MessageSquare className="w-8 h-8 text-yellow-400" />
+              </div>
+              <div className="text-5xl font-bold text-white mb-2">
+                <AnimatedCounter from={0} to={4.9} suffix="/5" decimals={1} />
+              </div>
+              <div className="text-gray-400">Creator Rating</div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <Zap className="w-8 h-8 text-pink-400" />
+              </div>
+              <div className="text-5xl font-bold text-white mb-2">
+                <AnimatedCounter from={0} to={24} suffix="/7" />
+              </div>
+              <div className="text-gray-400">AI Response</div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Use Cases Carousel */}
       <UseCasesCarousel />
+
+      {/* Creator Testimonials */}
+      <CreatorTestimonials />
 
       {/* Live Chat Demo Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
@@ -281,87 +326,117 @@ export default function HomePageImproved() {
       <section className="py-20 px-4 bg-gray-50 dark:bg-gray-800/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+            >
               See Huntaze in action
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+            >
               Our AI platform handles everything while you focus on creating content
-            </p>
+            </motion.p>
           </div>
 
-          {/* Product Mockups Grid */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                AI Chat That Converts
-              </h3>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-                Our AI learns your personality and chat style to engage fans exactly like you would. 
-                Average response time: 2 seconds. Average revenue increase: 285%.
-              </p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">Personalized responses in your style</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">Smart upselling and tip suggestions</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">Works 24/7 across all platforms</span>
-                </li>
-              </ul>
-              <Link 
-                href="/features/ai-chat" 
-                className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium"
-              >
-                Learn more about AI Chat
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </div>
-            <div>
-              <ChatInterfaceMockup />
-            </div>
+          {/* 3 Product Mockups in Grid */}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Dashboard Mockup */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
+                <DashboardMockup />
+              </div>
+              <div className="mt-6 text-center">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  Real-time Dashboard
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Track revenue, fans, and performance metrics in real-time
+                </p>
+                <Link href="/features/dashboard" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
+                  Explore Dashboard →
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Chat Interface Mockup */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
+                <ChatInterfaceMockup />
+              </div>
+              <div className="mt-6 text-center">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  AI Chat Assistant
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Engage fans 24/7 with personalized AI responses
+                </p>
+                <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
+                  Learn About AI Chat →
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Analytics Mockup */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
+                <AnalyticsMockup />
+              </div>
+              <div className="mt-6 text-center">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  Smart Analytics
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  AI-powered insights to maximize your revenue
+                </p>
+                <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
+                  View Analytics →
+                </Link>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Analytics Mockup */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1">
-              <AnalyticsMockup />
+          {/* Key Benefits */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 md:p-12 text-white"
+          >
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              <div>
+                <div className="text-5xl font-bold mb-2">2 sec</div>
+                <div className="text-purple-100">Average response time</div>
+              </div>
+              <div>
+                <div className="text-5xl font-bold mb-2">285%</div>
+                <div className="text-purple-100">Average revenue increase</div>
+              </div>
+              <div>
+                <div className="text-5xl font-bold mb-2">24/7</div>
+                <div className="text-purple-100">Always active engagement</div>
+              </div>
             </div>
-            <div className="order-1 lg:order-2">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Know Your Fans Better
-              </h3>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-                Track spending patterns, engagement rates, and preferences to maximize revenue 
-                from every subscriber. Our AI predicts churn and suggests retention strategies.
-              </p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">Detailed fan insights and spending history</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">Predictive analytics for revenue optimization</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300">Automated VIP fan identification</span>
-                </li>
-              </ul>
-              <Link 
-                href="/features/analytics" 
-                className="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium"
-              >
-                Explore analytics features
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
