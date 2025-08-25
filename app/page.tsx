@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, TrendingUp, Users, DollarSign, MessageSquare, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle, TrendingUp, Users, DollarSign, MessageSquare, Zap, BarChart3, Settings } from 'lucide-react';
 import { DashboardMockup, ChatInterfaceMockup, AnalyticsMockup } from '@/components/product-mockups';
 import UseCasesCarousel from '@/components/use-cases-carousel';
 import AnimatedCounter, { AnimatedStat } from '@/components/animated-counter';
@@ -261,7 +261,7 @@ export default function HomePageImproved() {
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-2xl">💬</span>
+                  <MessageSquare className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </motion.div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   AI Chat Assistant
@@ -283,7 +283,7 @@ export default function HomePageImproved() {
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-2xl">📊</span>
+                  <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </motion.div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   Smart Analytics
@@ -305,7 +305,7 @@ export default function HomePageImproved() {
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-2xl">🚀</span>
+                  <Settings className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </motion.div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                   Content Automation
@@ -331,16 +331,32 @@ export default function HomePageImproved() {
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
             >
-              See Huntaze in action
+              See Huntaze multiply your revenue
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8"
             >
-              Our AI platform handles everything while you focus on creating content
+              Watch how our AI handles everything while you focus on creating content
             </motion.p>
+            
+            {/* Demo Video CTA */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mb-12"
+            >
+              <Link href="/demo" className="inline-flex items-center gap-3 bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all transform hover:scale-105">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Watch 2-minute demo
+              </Link>
+            </motion.div>
           </div>
 
           {/* 3 Product Mockups in Grid */}
@@ -415,25 +431,32 @@ export default function HomePageImproved() {
             </motion.div>
           </div>
 
-          {/* Key Benefits */}
+          {/* Results & Social Proof */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="mt-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 md:p-12 text-white"
+            className="mt-20"
           >
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-5xl font-bold mb-2">2 sec</div>
-                <div className="text-purple-100">Average response time</div>
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Proven results from real creators</h3>
+            </div>
+            <div className="grid md:grid-cols-4 gap-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+                <div className="text-4xl font-bold text-purple-600 mb-2">3X</div>
+                <div className="text-gray-600 dark:text-gray-400">Revenue in 2 months</div>
               </div>
-              <div>
-                <div className="text-5xl font-bold mb-2">285%</div>
-                <div className="text-purple-100">Average revenue increase</div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+                <div className="text-4xl font-bold text-purple-600 mb-2">500+</div>
+                <div className="text-gray-600 dark:text-gray-400">Creators onboarded</div>
               </div>
-              <div>
-                <div className="text-5xl font-bold mb-2">24/7</div>
-                <div className="text-purple-100">Always active engagement</div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+                <div className="text-4xl font-bold text-purple-600 mb-2">98%</div>
+                <div className="text-gray-600 dark:text-gray-400">Revenue retained</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center shadow-lg">
+                <div className="text-4xl font-bold text-purple-600 mb-2">24/7</div>
+                <div className="text-gray-600 dark:text-gray-400">AI response time</div>
               </div>
             </div>
           </motion.div>
