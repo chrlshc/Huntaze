@@ -17,72 +17,72 @@ const getAIResponse = (userMessage: string): string => {
   
   // Greetings
   if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-    return "Hi love! 💕 So happy to see you here! How's your day going?"
+    return "Hi there! So happy to see you here. How's your day going?"
   }
   
   // Questions about favorites
   if (message.includes('favorite color')) {
-    return "I love purple! 💜 It matches my vibe perfectly. What's yours?"
+    return "I love purple! It matches my vibe perfectly. What's yours?"
   }
   if (message.includes('favorite') && message.includes('food')) {
-    return "I'm obsessed with sushi! 🍣 Perfect for date nights. What about you?"
+    return "I'm obsessed with sushi! Perfect for date nights. What about you?"
   }
   if (message.includes('favorite')) {
-    return "Ooh, I love talking about favorites! Mine changes with my mood 😊 What are we talking about - colors, food, movies?"
+    return "Ooh, I love talking about favorites! Mine changes with my mood. What are we talking about - colors, food, movies?"
   }
   
   // How are you
   if (message.includes('how are you') || message.includes('how you doing')) {
-    return "I'm feeling amazing today! 😊 Just finished a hot photoshoot. How about you babe?"
+    return "I'm feeling amazing today! Just finished a hot photoshoot. How about you?"
   }
   
   // Compliments
   if (message.includes('beautiful') || message.includes('pretty') || message.includes('gorgeous')) {
-    return "Aww you're making me blush! 🥰 You're so sweet! Want to see my latest content?"
+    return "Aww you're making me blush! You're so sweet! Want to see my latest content?"
   }
   
   // Content/photo related
   if (message.includes('photo') || message.includes('pic') || message.includes('content')) {
-    return "I have this exclusive set with 20+ HD photos for just $15! My VIP fans are loving it 🔥 Want a preview?"
+    return "I have this exclusive set with 20+ HD photos for just $15! My VIP fans are loving it. Want a preview?"
   }
   
   // Price/cost questions
   if (message.includes('price') || message.includes('cost') || message.includes('how much')) {
-    return "I have different options! Single sets start at $15, or get my special bundle - 3 sets for $35 (save $10!) 💕"
+    return "I have different options! Single sets start at $15, or get my special bundle - 3 sets for $35 (save $10!)"
   }
   
   // What do you do
   if (message.includes('what do you do') || message.includes('about you')) {
-    return "I'm a content creator who loves connecting with amazing people like you! 💖 I create exclusive photos and videos for my special fans"
+    return "I'm a content creator who loves connecting with amazing people like you! I create exclusive photos and videos for my special fans"
   }
   
   // Location
   if (message.includes('where') && (message.includes('from') || message.includes('live'))) {
-    return "I'm from LA but I love traveling! ✈️ Where are you from?"
+    return "I'm from LA but I love traveling! Where are you from?"
   }
   
   // Age
   if (message.includes('how old') || message.includes('age')) {
-    return "A lady never tells her age 😉 But I'm young enough to have fun and old enough to know what I want!"
+    return "A lady never tells her age. But I'm young enough to have fun and old enough to know what I want!"
   }
   
   // Thanks/appreciation
   if (message.includes('thank') || message.includes('thanks')) {
-    return "You're so welcome babe! 💕 I love chatting with you!"
+    return "You're so welcome! I love chatting with you!"
   }
   
   // Love/like
   if (message.includes('love you') || message.includes('like you')) {
-    return "Aww you're the sweetest! 🥰 I appreciate you so much! Want to become one of my VIPs?"
+    return "Aww you're the sweetest! I appreciate you so much! Want to become one of my VIPs?"
   }
   
   // Random/default responses with variety
   const randomResponses = [
-    "That's interesting! Tell me more about yourself 😊",
-    "I love hearing from you! 💕 What else is on your mind?",
-    "You seem really cool! Have you checked out my exclusive content yet? 🔥",
-    "I'm so glad we're chatting! Want to see what I've been working on? 😉",
-    "You're amazing! 💖 I have something special for fans like you"
+    "That's interesting! Tell me more about yourself.",
+    "I love hearing from you! What else is on your mind?",
+    "You seem really cool! Have you checked out my exclusive content yet?",
+    "I'm so glad we're chatting! Want to see what I've been working on?",
+    "You're amazing! I have something special for fans like you"
   ]
   
   return randomResponses[Math.floor(Math.random() * randomResponses.length)]
@@ -93,7 +93,7 @@ export default function LiveChatDemo() {
     {
       id: '1',
       role: 'ai',
-      content: "Hey there! Welcome to my page 💕 I'm so excited you're here! What brings you by today?",
+      content: "Hey there! Welcome to my page. I'm so excited you're here! What brings you by today?",
       timestamp: new Date()
     }
   ])

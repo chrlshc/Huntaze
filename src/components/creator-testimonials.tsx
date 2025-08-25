@@ -5,13 +5,14 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Star, DollarSign, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
 import PlatformLogos from './platform-logos'
+import Avatar from './avatar'
 
 const testimonials = [
   {
     id: 1,
     name: 'Jessica Martinez',
     role: 'Multi-platform Creator',
-    avatar: '👩‍🦰',
+    avatar: 'JM',
     savings: '$15k/month',
     revenue: '$35k/month',
     growth: '+285%',
@@ -24,7 +25,7 @@ const testimonials = [
     id: 2,
     name: 'Sarah Chen',
     role: 'Content Creator',
-    avatar: '👩',
+    avatar: 'SC',
     savings: '$8k/month',
     revenue: '$22k/month',
     growth: '+194%',
@@ -37,7 +38,7 @@ const testimonials = [
     id: 3,
     name: 'Luna Rodriguez',
     role: 'Top 0.5% Creator',
-    avatar: '💃',
+    avatar: 'LR',
     savings: '$25k/month',
     revenue: '$78k/month',
     growth: '+412%',
@@ -76,20 +77,20 @@ export default function CreatorTestimonials() {
           </p>
         </motion.div>
 
-        <div className="relative">
+        <div className="relative max-w-4xl mx-auto">
           {/* Main Testimonial Card */}
           <motion.div
             key={current.id}
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 max-w-4xl mx-auto"
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
           >
             <div className="grid md:grid-cols-2 gap-8 items-center">
               {/* Left side - Creator info */}
               <div>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="text-6xl">{current.avatar}</div>
+                  <Avatar name={current.name} size="lg" />
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                       {current.name}
@@ -166,35 +167,34 @@ export default function CreatorTestimonials() {
             </div>
           </motion.div>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <button
-              onClick={prev}
-              className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-            </button>
+          {/* Navigation - Positioned absolutely */}
+          <button
+            onClick={prev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
+          >
+            <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          </button>
 
-            <div className="flex gap-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentIndex
-                      ? 'w-8 bg-purple-600'
-                      : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
-                />
-              ))}
-            </div>
+          <button
+            onClick={next}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
+          >
+            <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          </button>
 
-            <button
-              onClick={next}
-              className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-            </button>
+          {/* Dots Navigation */}
+          <div className="flex items-center justify-center gap-2 mt-8">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex
+                    ? 'w-8 bg-purple-600'
+                    : 'w-2 bg-gray-300 dark:bg-gray-600'
+                }`}
+              />
+            ))}
           </div>
         </div>
 
