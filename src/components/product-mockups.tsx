@@ -141,10 +141,10 @@ export function DashboardMockup() {
 
 export function ChatInterfaceMockup() {
   const messages = [
-    { role: 'fan', content: 'Hey beautiful! How are you today? 😍' },
-    { role: 'ai', content: 'Hi love! I\'m having an amazing day, thanks for asking! 💕 Just finished a new photoshoot that I think you\'ll absolutely love. Want a sneak peek? 😉' },
+    { role: 'fan', content: 'Hey beautiful! How are you today?' },
+    { role: 'ai', content: 'Hi love! I\'m having an amazing day, thanks for asking! Just finished a new photoshoot that I think you\'ll absolutely love. Want a sneak peek?' },
     { role: 'fan', content: 'Yes please! I\'d love to see!' },
-    { role: 'ai', content: 'I knew you would! 😘 I have this exclusive set just for my special fans. It\'s only $15 for 20+ HD photos. Trust me, you won\'t regret it! 🔥' },
+    { role: 'ai', content: 'I knew you would! I have this exclusive set just for my special fans. It\'s only $15 for 20+ HD photos. Trust me, you won\'t regret it!' },
   ]
 
   return (
