@@ -121,7 +121,9 @@ export default function FooterImproved() {
           {/* Company Info */}
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg"></div>
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">H</span>
+              </div>
               <span className="text-xl font-bold text-white">Huntaze</span>
             </Link>
             <p className="text-sm text-gray-400 mb-4">
