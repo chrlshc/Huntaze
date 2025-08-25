@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Site web Huntaze
+  huntaze-site:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: huntaze-site
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+    ports:
+      - "3003:3000"  # Port différent pour éviter les conflits
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    networks:
+      - huntaze-network
+
+  # Nginx pour Huntaze
+  nginx-huntaze:
+    image: nginx:alpine
+    container_name: nginx-huntaze
+    restart: unless-stopped
+    depends_on:
+      - huntaze-site
+    ports:
+      - "8080:80"  # Port temporaire pour test
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - huntaze-network
+
+networks:
+  huntaze-network:
+    name: huntaze-network
