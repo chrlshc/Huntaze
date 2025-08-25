@@ -62,17 +62,17 @@ export default function CreatorTestimonials() {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <section className="py-16 md:py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Real creators, real results
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
             See how creators are transforming their business with Huntaze
           </p>
         </motion.div>
@@ -86,9 +86,9 @@ export default function CreatorTestimonials() {
             exit={{ opacity: 0, x: -50 }}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
           >
-            <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
               {/* Left side - Creator info */}
-              <div>
+              <div className="order-2 lg:order-1">
                 <div className="flex items-center gap-4 mb-6">
                   <Avatar name={current.name} size="lg" />
                   <div>
@@ -110,7 +110,7 @@ export default function CreatorTestimonials() {
                   <p className="text-gray-600 dark:text-gray-400">{current.highlight}</p>
                 </div>
 
-                <blockquote className="text-lg text-gray-700 dark:text-gray-300 mb-6 italic">
+                <blockquote className="text-base md:text-lg text-gray-700 dark:text-gray-300 mb-6 italic">
                   "{current.quote}"
                 </blockquote>
 
@@ -120,8 +120,8 @@ export default function CreatorTestimonials() {
               </div>
 
               {/* Right side - Stats */}
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6">
-                <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-4 uppercase tracking-wider">
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 md:p-6 order-1 lg:order-2">
+                <h4 className="text-xs md:text-sm font-semibold text-gray-600 dark:text-gray-400 mb-4 uppercase tracking-wider">
                   Performance Metrics
                 </h4>
                 
@@ -167,20 +167,36 @@ export default function CreatorTestimonials() {
             </div>
           </motion.div>
 
-          {/* Navigation - Positioned absolutely */}
+          {/* Navigation - Hidden on mobile, visible on desktop */}
           <button
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
+            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
           >
             <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </button>
 
           <button
             onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
+            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all z-10"
           >
             <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </button>
+
+          {/* Mobile navigation - Swipe hint */}
+          <div className="flex md:hidden justify-center gap-4 mt-4">
+            <button
+              onClick={prev}
+              className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg"
+            >
+              <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </button>
+            <button
+              onClick={next}
+              className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg"
+            >
+              <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </button>
+          </div>
 
           {/* Dots Navigation */}
           <div className="flex items-center justify-center gap-2 mt-8">
