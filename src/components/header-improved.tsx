@@ -9,6 +9,7 @@ import {
   DollarSign, Users, Zap, BookOpen, FileText,
   HeadphonesIcon, GraduationCap, Building
 } from 'lucide-react'
+import { ThemeToggle } from './theme-toggle'
 
 const navigation = {
   solutions: {
@@ -88,8 +89,8 @@ export default function HeaderImproved() {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' 
-          : 'bg-white py-4'
+          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm dark:shadow-gray-900/50 py-3' 
+          : 'bg-white dark:bg-gray-900 py-4'
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,7 +99,7 @@ export default function HeaderImproved() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg"></div>
-              <span className="text-xl font-bold text-gray-900">Huntaze</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">Huntaze</span>
             </Link>
           </div>
 
@@ -110,7 +111,7 @@ export default function HeaderImproved() {
               onMouseEnter={() => setActiveDropdown('solutions')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 font-medium">
+              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
                 <span>Solutions</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -121,10 +122,10 @@ export default function HeaderImproved() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden"
+                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
                   >
                     <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
                         {navigation.solutions.title}
                       </h3>
                       <div className="space-y-3">
@@ -132,14 +133,14 @@ export default function HeaderImproved() {
                           <Link
                             key={item.name}
                             href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                           >
-                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <item.icon className="w-5 h-5 text-purple-600" />
+                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">{item.name}</p>
-                              <p className="text-sm text-gray-600">{item.description}</p>
+                              <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -156,7 +157,7 @@ export default function HeaderImproved() {
               onMouseEnter={() => setActiveDropdown('resources')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-700 hover:text-gray-900 font-medium">
+              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
                 <span>Resources</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -167,10 +168,10 @@ export default function HeaderImproved() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden"
+                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
                   >
                     <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
                         {navigation.resources.title}
                       </h3>
                       <div className="space-y-3">
@@ -178,14 +179,14 @@ export default function HeaderImproved() {
                           <Link
                             key={item.name}
                             href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                           >
-                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <item.icon className="w-5 h-5 text-purple-600" />
+                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">{item.name}</p>
-                              <p className="text-sm text-gray-600">{item.description}</p>
+                              <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -196,20 +197,21 @@ export default function HeaderImproved() {
               </AnimatePresence>
             </div>
 
-            <Link href="/pricing" className="text-gray-700 hover:text-gray-900 font-medium">
+            <Link href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
               Pricing
             </Link>
 
-            <Link href="/about" className="text-gray-700 hover:text-gray-900 font-medium">
+            <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
               About
             </Link>
           </div>
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
+            <ThemeToggle />
             <Link 
               href="/login" 
-              className="text-gray-700 hover:text-gray-900 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
             >
               Log in
             </Link>
@@ -227,9 +229,9 @@ export default function HeaderImproved() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6 text-gray-700" />
+              <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
             ) : (
-              <Menu className="w-6 h-6 text-gray-700" />
+              <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" />
             )}
           </button>
         </div>
@@ -245,57 +247,57 @@ export default function HeaderImproved() {
             >
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider px-2">
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2">
                     Solutions
                   </p>
                   {navigation.solutions.items.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50"
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <item.icon className="w-5 h-5 text-purple-600" />
-                      <span className="text-gray-700">{item.name}</span>
+                      <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                      <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
                     </Link>
                   ))}
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider px-2">
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2">
                     Resources
                   </p>
                   {navigation.resources.items.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50"
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <item.icon className="w-5 h-5 text-purple-600" />
-                      <span className="text-gray-700">{item.name}</span>
+                      <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                      <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
                     </Link>
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 pt-4 space-y-2">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <Link
                     href="/pricing"
-                    className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                    className="block p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Pricing
                   </Link>
                   <Link
                     href="/about"
-                    className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                    className="block p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     About
                   </Link>
                 </div>
 
-                <div className="border-t border-gray-200 pt-4 space-y-2">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <Link
                     href="/login"
                     className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
