@@ -28,7 +28,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-blue-900/20 opacity-70" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
           <div className="text-center">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
+              className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
             >
               Unlike agencies that take 50-60% forever, Huntaze uses smart commission caps. 
               The more you grow, the less you pay.
@@ -85,7 +85,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-gray-900">Keep 85-98% of Revenue</h3>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-700 dark:text-gray-400 mt-2">
               Stop giving away 50-60% to agencies. Our capped commissions mean you keep 85-98% of everything you earn.
             </p>
             <Link href="#breakdown" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
@@ -94,7 +94,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
           </div>
           <div className="text-center">
             <h3 className="text-2xl font-bold text-gray-900">24/7 AI Automation</h3>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-700 dark:text-gray-400 mt-2">
               AI responds in seconds, not hours. Convert more fans while they're hot and ready to spend.
             </p>
             <Link href="#demo" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
@@ -103,7 +103,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
           </div>
           <div className="text-center">
             <h3 className="text-2xl font-bold text-gray-900">Platform Approved</h3>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-700 dark:text-gray-400 mt-2">
               Bank-level security, GDPR compliant, and officially approved by all major platforms.
             </p>
             <Link href="#security" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
@@ -484,7 +484,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               href="/join"
               className="inline-block bg-white text-purple-600 px-10 py-5 rounded-lg text-xl font-bold shadow-2xl hover:scale-105 transform transition-all"
             >
-              Get Early Access
+              Start free trial
             </Link>
             <Link
               href="/demo"

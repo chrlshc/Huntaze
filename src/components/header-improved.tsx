@@ -18,25 +18,25 @@ const navigation = {
       {
         name: 'AI Chat Assistant',
         description: 'Automate fan conversations 24/7',
-        href: '/solutions/ai-chat',
+        href: '/features/ai-chat',
         icon: MessageSquare
       },
       {
         name: 'Analytics & Insights',
         description: 'Track revenue and performance',
-        href: '/solutions/analytics',
+        href: '/features/analytics',
         icon: BarChart3
       },
       {
         name: 'Content Scheduler',
         description: 'Post at optimal times automatically',
-        href: '/solutions/scheduler',
+        href: '/features/automation',
         icon: Calendar
       },
       {
         name: 'Mass Messaging',
         description: 'Reach all fans with personalized DMs',
-        href: '/solutions/mass-dm',
+        href: '/features/automation',
         icon: Users
       }
     ]
@@ -47,25 +47,25 @@ const navigation = {
       {
         name: 'Help Center',
         description: 'Get support and answers',
-        href: '/help',
+        href: '/about',
         icon: HeadphonesIcon
       },
       {
         name: 'Creator Academy',
         description: 'Learn growth strategies',
-        href: '/academy',
+        href: '/learn',
         icon: GraduationCap
       },
       {
         name: 'API Documentation',
         description: 'Build custom integrations',
-        href: '/docs',
+        href: '/about',
         icon: FileText
       },
       {
         name: 'System Status',
         description: '99.9% uptime guaranteed',
-        href: '/status',
+        href: '/about',
         icon: Shield
       }
     ]
@@ -210,7 +210,7 @@ export default function HeaderImproved() {
           <div className="hidden lg:flex items-center space-x-4">
             <ThemeToggle />
             <Link 
-              href="/login" 
+              href="/join" 
               className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
             >
               Log in
@@ -299,7 +299,7 @@ export default function HeaderImproved() {
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <Link
-                    href="/login"
+                    href="/join"
                     className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
