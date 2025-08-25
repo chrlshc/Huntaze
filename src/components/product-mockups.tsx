@@ -173,7 +173,7 @@ export function ChatInterfaceMockup() {
         </div>
 
         {/* Messages */}
-        <div className="p-4 space-y-3 h-96 overflow-y-auto bg-gray-50">
+        <div className="p-4 space-y-3 h-96 overflow-y-auto bg-gray-50 dark:bg-gray-900">
           {messages.map((message, index) => (
             <motion.div
               key={index}
@@ -185,7 +185,7 @@ export function ChatInterfaceMockup() {
               <div className={`max-w-[70%] px-4 py-2 rounded-2xl ${
                 message.role === 'ai' 
                   ? 'bg-purple-600 text-white rounded-tl-sm' 
-                  : 'bg-gray-200 text-gray-800 rounded-tr-sm'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tr-sm'
               }`}>
                 <p className="text-sm">{message.content}</p>
               </div>
@@ -194,18 +194,18 @@ export function ChatInterfaceMockup() {
           
           {/* AI Indicator */}
           <div className="flex items-center justify-center gap-2 py-2">
-            <Zap className="w-4 h-4 text-purple-600" />
-            <span className="text-xs text-gray-500">AI is handling this conversation</span>
+            <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            <span className="text-xs text-gray-500 dark:text-gray-400">AI is handling this conversation</span>
           </div>
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-gray-200 p-4 bg-white">
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
           <div className="flex items-center gap-2">
             <input
               type="text"
               placeholder="AI will respond here..."
-              className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm"
+              className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               disabled
             />
             <button className="p-2 bg-purple-600 text-white rounded-full">
