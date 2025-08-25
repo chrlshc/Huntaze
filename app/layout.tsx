@@ -17,6 +17,13 @@ export const metadata: Metadata = {
   title: "Huntaze - Keep 98% of Your Creator Revenue",
   description: "Stop paying 50% to agencies. Our AI handles everything 24/7 while you keep control and earnings. Join 500+ creators saving millions.",
   keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" }
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Huntaze - Keep 98% of Your Creator Revenue",
     description: "Stop paying 50% to agencies. Our AI handles everything 24/7.",
