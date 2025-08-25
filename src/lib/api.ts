@@ -1,38 +1,67 @@
-import axios from 'axios';
+// Using native fetch instead of axios
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+class ApiClient {
+  private baseURL: string;
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  constructor(baseURL: string) {
+    this.baseURL = baseURL;
   }
-  return config;
-});
 
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+  private async request(path: string, options: RequestInit = {}) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    };
+
+    try {
+      const response = await fetch(`${this.baseURL}${path}`, {
+        ...options,
+        headers,
+      });
+
+      if (response.status === 401) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+          window.location.href = '/login';
+        }
+        throw new Error('Unauthorized');
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
     }
-    return Promise.reject(error);
   }
-);
+
+  get(path: string) {
+    return this.request(path, { method: 'GET' });
+  }
+
+  post(path: string, data?: any, options?: RequestInit) {
+    return this.request(path, {
+      method: 'POST',
+      body: data instanceof FormData ? data : JSON.stringify(data),
+      ...options,
+    });
+  }
+}
+
+export const api = new ApiClient(API_BASE_URL);
 
 export const onlyFansApi = {
   // Import endpoints
   importCSV: (data: FormData) => 
     api.post('/onlyfans/import', data, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': undefined } as any // Let browser set boundary for FormData
     }),
   
   previewCSV: (type: string, csvContent: string) =>
