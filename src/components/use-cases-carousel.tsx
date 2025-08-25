@@ -77,7 +77,7 @@ export default function UseCasesCarousel() {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+    <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-black dark:to-gray-950 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -103,7 +103,7 @@ export default function UseCasesCarousel() {
                     className="absolute inset-0"
                   >
                     <div className={`h-full bg-gradient-to-br ${useCase.color} p-1 rounded-2xl`}>
-                      <div className="h-full bg-white dark:bg-gray-800 rounded-2xl p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8">
+                      <div className="h-full bg-white dark:bg-gray-950 rounded-2xl p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8">
                         {/* Content */}
                         <div className="flex-1 text-center lg:text-left">
                           <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${useCase.color} text-white mb-4`}>
@@ -126,12 +126,12 @@ export default function UseCasesCarousel() {
 
                         {/* Mockup */}
                         <div className="flex-1 relative">
-                          <div className="relative bg-gray-100 dark:bg-gray-800 rounded-xl p-4 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                            <div className="aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-lg flex items-center justify-center overflow-hidden">
+                          <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl p-4 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                            <div className="aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
                               {/* TODO: Add actual screenshot images */}
-                              <div className="w-full h-full bg-white dark:bg-gray-900 p-4">
+                              <div className="w-full h-full bg-white dark:bg-gray-950 p-4">
                                 <div className="h-full flex flex-col gap-3">
-                                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-3/4"></div>
                                   <div className="flex-1 grid grid-cols-3 gap-2">
                                     <div className="bg-purple-100 dark:bg-purple-900/30 rounded p-2">
                                       <div className="h-2 bg-purple-300 dark:bg-purple-700 rounded mb-1"></div>
@@ -185,7 +185,7 @@ export default function UseCasesCarousel() {
                 className={`h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex 
                     ? 'w-8 bg-purple-600' 
-                    : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+                    : 'w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />

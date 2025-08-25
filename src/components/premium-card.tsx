@@ -51,7 +51,7 @@ export default function PremiumCard({
       }}
     >
       <motion.div
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-2xl"
+        className="relative bg-white dark:bg-gray-950 rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-2xl border dark:border-gray-800"
         style={{
           rotateX,
           rotateY,
@@ -64,8 +64,8 @@ export default function PremiumCard({
         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-lg" />
         
         {/* Card content */}
-        <div className="relative z-10 bg-white dark:bg-gray-800 rounded-xl p-1">
-          <div className="bg-white dark:bg-gray-800 rounded-lg">
+        <div className="relative z-10 bg-white dark:bg-gray-950 rounded-xl p-1">
+          <div className="bg-white dark:bg-gray-950 rounded-lg">
             {children}
           </div>
         </div>
