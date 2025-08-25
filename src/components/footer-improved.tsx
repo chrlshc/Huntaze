@@ -20,41 +20,41 @@ const footerLinks: Record<string, FooterSection> = {
   product: {
     title: 'Product',
     links: [
-      { name: 'Features', href: '/features' },
+      { name: 'Features', href: '/features/ai-chat' },
       { name: 'Pricing', href: '/pricing' },
-      { name: 'Security', href: '/security' },
-      { name: 'Roadmap', href: '/roadmap' },
-      { name: 'Changelog', href: '/changelog' }
+      { name: 'Security', href: '/about' },
+      { name: 'Roadmap', href: '/about' },
+      { name: 'Changelog', href: '/about' }
     ]
   },
   solutions: {
     title: 'Solutions',
     links: [
-      { name: 'OnlyFans Creators', href: '/solutions/onlyfans' },
-      { name: 'Fansly Creators', href: '/solutions/fansly' },
-      { name: 'Instagram Creators', href: '/solutions/instagram' },
-      { name: 'Multi-Platform', href: '/solutions/multi-platform' },
-      { name: 'Agencies', href: '/solutions/agencies' }
+      { name: 'OnlyFans Creators', href: '/features/ai-chat' },
+      { name: 'Fansly Creators', href: '/features/ai-chat' },
+      { name: 'Instagram Creators', href: '/features/automation' },
+      { name: 'Multi-Platform', href: '/features/dashboard' },
+      { name: 'Agencies', href: '/pricing' }
     ]
   },
   resources: {
     title: 'Resources',
     links: [
-      { name: 'Blog', href: '/blog' },
-      { name: 'Creator Academy', href: '/academy' },
-      { name: 'Help Center', href: '/help' },
-      { name: 'API Documentation', href: '/docs' },
-      { name: 'System Status', href: '/status' }
+      { name: 'Blog', href: '/about' },
+      { name: 'Creator Academy', href: '/learn' },
+      { name: 'Help Center', href: '/about' },
+      { name: 'API Documentation', href: '/about' },
+      { name: 'System Status', href: '/about' }
     ]
   },
   company: {
     title: 'Company',
     links: [
       { name: 'About', href: '/about' },
-      { name: 'Careers', href: '/careers', badge: 'Hiring' },
-      { name: 'Press', href: '/press' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Partners', href: '/partners' }
+      { name: 'Careers', href: '/about', badge: 'Hiring' },
+      { name: 'Press', href: '/about' },
+      { name: 'Contact', href: '/about' },
+      { name: 'Partners', href: '/about' }
     ]
   },
   legal: {
@@ -62,9 +62,9 @@ const footerLinks: Record<string, FooterSection> = {
     links: [
       { name: 'Terms of Service', href: '/terms' },
       { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Cookie Policy', href: '/cookies' },
-      { name: 'GDPR', href: '/gdpr' },
-      { name: 'DMCA', href: '/dmca' }
+      { name: 'Cookie Policy', href: '/privacy' },
+      { name: 'GDPR', href: '/privacy' },
+      { name: 'DMCA', href: '/terms' }
     ]
   }
 }
@@ -198,7 +198,7 @@ export default function FooterImproved() {
             <div className="flex items-center space-x-4 text-sm text-gray-400">
               <span>© 2024 Huntaze. All rights reserved.</span>
               <span className="hidden md:inline">•</span>
-              <Link href="/sitemap" className="hover:text-white transition-colors hidden md:inline">
+              <Link href="/about" className="hover:text-white transition-colors hidden md:inline">
                 Sitemap
               </Link>
             </div>
