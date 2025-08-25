@@ -21,7 +21,6 @@ const plans = [
       'All core automation features',
       'Email support'
     ],
-    badge: 'MOST POPULAR',
     cta: 'Start Free'
   },
   {
@@ -29,6 +28,7 @@ const plans = [
     price: '$69/mo',
     description: 'For established creators ready to scale',
     color: 'purple',
+    badge: 'MOST POPULAR',
     features: [
       'Commission capped at $699/mo',
       'Perfect for $4k-20k/mo creators',
