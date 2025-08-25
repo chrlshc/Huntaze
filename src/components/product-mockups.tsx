@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { MessageSquare, TrendingUp, Users, DollarSign, BarChart3, Zap } from 'lucide-react'
+import DashboardStats from './dashboard-stats'
+import RevenueGrowthChart from './revenue-growth-chart'
 
 export function DashboardMockup() {
   return (
@@ -46,7 +48,17 @@ export function DashboardMockup() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-6 p-6">
+        <div className="p-6">
+          <DashboardStats />
+        </div>
+
+        {/* Revenue Chart */}
+        <div className="px-6 pb-6">
+          <RevenueGrowthChart />
+        </div>
+
+        {/* Original Stats Grid - Hidden */}
+        <div className="hidden grid-cols-4 gap-6 p-6">
           <motion.div
             whileHover={{ scale: 1.02 }}
             className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4"

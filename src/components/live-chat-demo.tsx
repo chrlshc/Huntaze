@@ -11,13 +11,82 @@ interface Message {
   timestamp: Date
 }
 
-const aiResponses = [
-  "Hi love! Thanks for reaching out 💕 How are you doing today?",
-  "That's so sweet of you! I just finished a new photoshoot that I think you'd absolutely love 😉",
-  "I have this exclusive content set - 20+ HD photos for just $15. My VIP fans are loving it! Want to see? 🔥",
-  "You're amazing! I really appreciate your support 💖 Let me know if you want any custom content!",
-  "Just for you, I can do a special bundle - 3 sets for $35 instead of $45. Interested? 😘",
-]
+// AI response logic based on message content
+const getAIResponse = (userMessage: string): string => {
+  const message = userMessage.toLowerCase()
+  
+  // Greetings
+  if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+    return "Hi love! 💕 So happy to see you here! How's your day going?"
+  }
+  
+  // Questions about favorites
+  if (message.includes('favorite color')) {
+    return "I love purple! 💜 It matches my vibe perfectly. What's yours?"
+  }
+  if (message.includes('favorite') && message.includes('food')) {
+    return "I'm obsessed with sushi! 🍣 Perfect for date nights. What about you?"
+  }
+  if (message.includes('favorite')) {
+    return "Ooh, I love talking about favorites! Mine changes with my mood 😊 What are we talking about - colors, food, movies?"
+  }
+  
+  // How are you
+  if (message.includes('how are you') || message.includes('how you doing')) {
+    return "I'm feeling amazing today! 😊 Just finished a hot photoshoot. How about you babe?"
+  }
+  
+  // Compliments
+  if (message.includes('beautiful') || message.includes('pretty') || message.includes('gorgeous')) {
+    return "Aww you're making me blush! 🥰 You're so sweet! Want to see my latest content?"
+  }
+  
+  // Content/photo related
+  if (message.includes('photo') || message.includes('pic') || message.includes('content')) {
+    return "I have this exclusive set with 20+ HD photos for just $15! My VIP fans are loving it 🔥 Want a preview?"
+  }
+  
+  // Price/cost questions
+  if (message.includes('price') || message.includes('cost') || message.includes('how much')) {
+    return "I have different options! Single sets start at $15, or get my special bundle - 3 sets for $35 (save $10!) 💕"
+  }
+  
+  // What do you do
+  if (message.includes('what do you do') || message.includes('about you')) {
+    return "I'm a content creator who loves connecting with amazing people like you! 💖 I create exclusive photos and videos for my special fans"
+  }
+  
+  // Location
+  if (message.includes('where') && (message.includes('from') || message.includes('live'))) {
+    return "I'm from LA but I love traveling! ✈️ Where are you from?"
+  }
+  
+  // Age
+  if (message.includes('how old') || message.includes('age')) {
+    return "A lady never tells her age 😉 But I'm young enough to have fun and old enough to know what I want!"
+  }
+  
+  // Thanks/appreciation
+  if (message.includes('thank') || message.includes('thanks')) {
+    return "You're so welcome babe! 💕 I love chatting with you!"
+  }
+  
+  // Love/like
+  if (message.includes('love you') || message.includes('like you')) {
+    return "Aww you're the sweetest! 🥰 I appreciate you so much! Want to become one of my VIPs?"
+  }
+  
+  // Random/default responses with variety
+  const randomResponses = [
+    "That's interesting! Tell me more about yourself 😊",
+    "I love hearing from you! 💕 What else is on your mind?",
+    "You seem really cool! Have you checked out my exclusive content yet? 🔥",
+    "I'm so glad we're chatting! Want to see what I've been working on? 😉",
+    "You're amazing! 💖 I have something special for fans like you"
+  ]
+  
+  return randomResponses[Math.floor(Math.random() * randomResponses.length)]
+}
 
 export default function LiveChatDemo() {
   const [messages, setMessages] = useState<Message[]>([
@@ -54,12 +123,12 @@ export default function LiveChatDemo() {
     setInput('')
     setIsTyping(true)
 
-    // Simulate AI response
+    // Simulate AI response with intelligent replies
     setTimeout(() => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'ai',
-        content: aiResponses[Math.floor(Math.random() * aiResponses.length)],
+        content: getAIResponse(input),
         timestamp: new Date()
       }
       setMessages(prev => [...prev, aiMessage])
