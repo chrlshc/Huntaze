@@ -127,15 +127,15 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative rounded-2xl p-8 ${
+                className={`relative rounded-2xl p-8 min-h-[32rem] flex flex-col ${
                   isPro
                     ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-2xl scale-105'
-                    : 'bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-shadow'
+                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow'
                 }`}
               >
                 {plan.badge && (
-                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-purple-500 text-white px-4 py-1 rounded-full text-xs font-semibold shadow-md">
                       {plan.badge}
                     </span>
                   </div>

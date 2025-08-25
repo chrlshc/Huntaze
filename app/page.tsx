@@ -67,16 +67,16 @@ export default function HomePageImproved() {
               {/* Trust Indicators */}
               <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>No credit card required</span>
+                  <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span className="dark:text-gray-300">No credit card required</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>Free if under $1.5k/mo</span>
+                  <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span className="dark:text-gray-300">Free if under $1.5k/mo</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>Cancel anytime</span>
+                  <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span className="dark:text-gray-300">Cancel anytime</span>
                 </div>
               </div>
             </div>
@@ -86,7 +86,7 @@ export default function HomePageImproved() {
               <DashboardMockup />
               
               {/* Floating Badge */}
-              <div className="absolute -top-4 -right-4 bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
+              <div className="absolute top-4 right-4 bg-purple-600/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-md">
                 Save $15k+/month
               </div>
             </div>
@@ -113,13 +113,13 @@ export default function HomePageImproved() {
               className="text-center"
             >
               <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <Users className="w-8 h-8 text-purple-400" />
+                <Users className="w-8 h-8 text-purple-500" />
               </div>
               <div className="text-5xl font-bold text-white mb-2">
                 <AnimatedCounter from={0} to={500} suffix="+" />
               </div>
               <div className="text-gray-400">Active Creators</div>
-              <div className="text-green-400 text-sm mt-1">↑ 23%</div>
+              <div className="text-purple-400 text-sm mt-1">↑ 23%</div>
             </motion.div>
             
             <motion.div
@@ -128,14 +128,14 @@ export default function HomePageImproved() {
               transition={{ delay: 0.2 }}
               className="text-center"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <DollarSign className="w-8 h-8 text-green-400" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <DollarSign className="w-8 h-8 text-purple-500" />
               </div>
               <div className="text-5xl font-bold text-white mb-2">
                 <AnimatedCounter from={0} to={50} prefix="$" suffix="M+" />
               </div>
               <div className="text-gray-400">Revenue Processed</div>
-              <div className="text-green-400 text-sm mt-1">↑ 142%</div>
+              <div className="text-purple-400 text-sm mt-1">↑ 142%</div>
             </motion.div>
             
             <motion.div
@@ -144,8 +144,8 @@ export default function HomePageImproved() {
               transition={{ delay: 0.3 }}
               className="text-center"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <MessageSquare className="w-8 h-8 text-yellow-400" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <MessageSquare className="w-8 h-8 text-purple-500" />
               </div>
               <div className="text-5xl font-bold text-white mb-2">
                 <AnimatedCounter from={0} to={4.9} suffix="/5" decimals={1} />
@@ -159,8 +159,8 @@ export default function HomePageImproved() {
               transition={{ delay: 0.4 }}
               className="text-center"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <Zap className="w-8 h-8 text-pink-400" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
+                <Zap className="w-8 h-8 text-purple-500" />
               </div>
               <div className="text-5xl font-bold text-white mb-2">
                 <AnimatedCounter from={0} to={24} suffix="/7" />
