@@ -21,7 +21,7 @@ const plans = [
       'All core automation features',
       'Email support'
     ],
-    cta: 'Start Free'
+    cta: 'Start free trial'
   },
   {
     name: 'PRO',
@@ -36,7 +36,7 @@ const plans = [
       'Priority support',
       'Custom AI training'
     ],
-    cta: 'Go Pro'
+    cta: 'Start free trial'
   },
   {
     name: 'SCALE',
@@ -50,7 +50,7 @@ const plans = [
       'Dedicated success manager',
       'API access'
     ],
-    cta: 'Scale Up'
+    cta: 'Start free trial'
   },
   {
     name: 'ENTERPRISE',
@@ -65,7 +65,7 @@ const plans = [
       'Custom integrations',
       '24/7 phone support'
     ],
-    cta: 'Contact Sales'
+    cta: 'Start free trial'
   }
 ];
 

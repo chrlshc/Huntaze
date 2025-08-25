@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Star, DollarSign, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
+import PlatformLogos from './platform-logos'
 
 const testimonials = [
   {
@@ -198,20 +199,7 @@ export default function CreatorTestimonials() {
         </div>
 
         {/* Trust badges */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-16 text-center"
-        >
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Trusted by creators on</p>
-          <div className="flex flex-wrap items-center justify-center gap-8">
-            <div className="text-2xl font-bold text-gray-400">OnlyFans</div>
-            <div className="text-2xl font-bold text-gray-400">Fansly</div>
-            <div className="text-2xl font-bold text-gray-400">Instagram</div>
-            <div className="text-2xl font-bold text-gray-400">TikTok</div>
-          </div>
-        </motion.div>
+        <PlatformLogos />
       </div>
     </section>
   )
