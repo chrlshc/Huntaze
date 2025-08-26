@@ -52,13 +52,13 @@ export default function PricingClient({ plans }: PricingClientProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-lg mb-12"
+              className="inline-flex items-center p-1 bg-gray-100 dark:bg-gray-700 rounded-lg mb-12"
             >
               <button
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   billingPeriod === 'monthly'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
@@ -68,7 +68,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 onClick={() => setBillingPeriod('yearly')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   billingPeriod === 'yearly'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
