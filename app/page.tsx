@@ -173,7 +173,7 @@ export default function HomePageImproved() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl text-purple-900 dark:text-gray-300 mb-8 font-medium"
+                className="text-xl text-gray-900 dark:text-gray-100 mb-8 font-medium"
               >
                 Experience how our AI engages with fans in real-time. 
                 Type anything and see instant, personalized responses.
@@ -185,30 +185,30 @@ export default function HomePageImproved() {
                 className="space-y-4 mb-8 lg:mb-0"
               >
                 <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center flex-shrink-0">
                     <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-purple-900 dark:text-white">Instant responses</h3>
-                    <p className="text-sm text-purple-800 dark:text-gray-300">Never miss a message or sale opportunity</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Instant responses</h3>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Never miss a message or sale opportunity</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center flex-shrink-0">
                     <MessageSquare className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-purple-900 dark:text-white">Learns your style</h3>
-                    <p className="text-sm text-purple-800 dark:text-gray-300">AI adapts to your personality and tone</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Learns your style</h3>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">AI adapts to your personality and tone</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center flex-shrink-0">
                     <DollarSign className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-purple-900 dark:text-white">Increases sales by 285%</h3>
-                    <p className="text-sm text-purple-800 dark:text-gray-300">Smart upselling at the perfect moment</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Increases sales by 285%</h3>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Smart upselling at the perfect moment</p>
                   </div>
                 </div>
               </motion.div>
@@ -437,7 +437,7 @@ export default function HomePageImproved() {
           <p className="text-xl text-purple-100 mb-8">
             Join 500+ creators who ditched their agencies and kept millions in revenue.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Link href="/join">
               <PremiumButton 
                 variant="secondary"
@@ -446,15 +446,6 @@ export default function HomePageImproved() {
               >
                 Start free trial
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </PremiumButton>
-            </Link>
-            <Link href="/demo">
-              <PremiumButton 
-                variant="ghost"
-                size="lg" 
-                className="border-2 border-white text-white hover:bg-white/10"
-              >
-                Watch 2-min demo
               </PremiumButton>
             </Link>
           </div>
