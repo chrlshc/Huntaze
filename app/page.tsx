@@ -154,9 +154,6 @@ export default function HomePageImproved() {
       {/* Use Cases Carousel */}
       <UseCasesCarousel />
 
-      {/* Creator Testimonials */}
-      <CreatorTestimonials />
-
       {/* Live Chat Demo Section */}
       <section className="py-20 px-6 md:px-8 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto">
@@ -173,7 +170,7 @@ export default function HomePageImproved() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl text-gray-900 dark:text-gray-100 mb-8 font-medium"
+                className="text-xl text-gray-900 md:text-gray-900 dark:text-gray-100 mb-8 font-medium"
               >
                 Experience how our AI engages with fans in real-time. 
                 Type anything and see instant, personalized responses.
@@ -249,9 +246,9 @@ export default function HomePageImproved() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Responds to every message in your style. Converts fans 24/7 while you sleep.
                 </p>
-                <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
-                </Link>
+                </button>
               </div>
             </PremiumCard>
 
@@ -271,9 +268,9 @@ export default function HomePageImproved() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Know exactly what content sells. Track revenue, engagement, and growth.
                 </p>
-                <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
-                </Link>
+                </button>
               </div>
             </PremiumCard>
 
@@ -293,9 +290,9 @@ export default function HomePageImproved() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Schedule posts, send mass DMs, and optimize pricing automatically.
                 </p>
-                <Link href="/features/automation" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
-                </Link>
+                </button>
               </div>
             </PremiumCard>
           </div>
@@ -427,6 +424,11 @@ export default function HomePageImproved() {
           </motion.div>
         </div>
       </section>
+
+      {/* Creator Testimonials - Hidden on mobile */}
+      <div className="hidden md:block">
+        <CreatorTestimonials />
+      </div>
 
       {/* Final CTA */}
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600">
