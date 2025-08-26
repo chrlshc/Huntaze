@@ -136,14 +136,14 @@ export default function DashboardStats() {
       />
       <StatCard
         icon={<Zap className="w-6 h-6" />}
-        label="Response Time"
-        value={2}
-        suffix=" sec"
-        increment={0.1}
-        maxValue={5}
+        label="Conversion Rate"
+        value={78}
+        suffix="%"
+        increment={0.3}
+        maxValue={95}
         decimals={1}
         color="pink"
-        trend="Avg"
+        trend="+23%"
       />
     </div>
   )
