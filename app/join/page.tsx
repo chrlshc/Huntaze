@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { FaGoogle, FaApple } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
+import Image from 'next/image';
+import { getOAuthUrl } from '../../lib/auth';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -65,11 +67,17 @@ export default function JoinPage() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-black pt-24 pb-12 px-4">
       <div className="w-full max-w-md mx-auto">
         <Card className="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 p-6 sm:p-8 rounded-xl shadow-xl border dark:border-gray-800">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
+              <span className="text-3xl font-bold text-white">H</span>
+            </div>
+          </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-            Get Early Access
+            Get Started
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-center mb-8">
-            Be among the first to experience Huntaze's AI-powered platform
+            Create your account to start automating
           </p>
           
           {/* Email Form */}
@@ -91,59 +99,12 @@ export default function JoinPage() {
                 className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
-            <div>
-              <label
-                htmlFor="socialProfile"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Social profile (optional)
-              </label>
-              <Input
-                id="socialProfile"
-                type="text"
-                value={socialProfile}
-                onChange={(e) => setSocialProfile(e.target.value)}
-                placeholder="@yourprofile or link"
-                className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="contentType"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Content type (optional)
-              </label>
-              <Input
-                id="contentType"
-                type="text"
-                value={contentType}
-                onChange={(e) => setContentType(e.target.value)}
-                placeholder="e.g. travel, fashion, tech"
-                className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div className="flex items-start">
-              <input
-                id="consent"
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                className="h-4 w-4 text-purple-600 dark:text-purple-500 border-gray-300 dark:border-gray-700 rounded focus:ring-purple-500 dark:focus:ring-purple-400 mt-0.5"
-              />
-              <label
-                htmlFor="consent"
-                className="ml-2 text-sm text-gray-700 dark:text-gray-300"
-              >
-                I'd like to receive updates about new features and special offers from Huntaze
-              </label>
-            </div>
             <Button
               type="submit"
               disabled={state === 'loading'}
               className="w-full bg-purple-600 dark:bg-purple-600 hover:bg-purple-700 dark:hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
-              {state === 'loading' ? 'Submitting...' : 'Join waitlist'}
+              {state === 'loading' ? 'Creating account...' : 'Continue with email'}
             </Button>
             <div
               aria-live="polite"
@@ -173,29 +134,31 @@ export default function JoinPage() {
 
           {/* OAuth Options */}
           <div className="space-y-3">
-            <button
-              onClick={() => console.log('Google sign in')}
+            <a
+              href={getOAuthUrl('google')}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
             >
               <FaGoogle className="w-5 h-5 text-red-500" />
               <span className="text-gray-700 dark:text-gray-300 font-medium">Sign up with Google</span>
-            </button>
+            </a>
 
-            <button
-              onClick={() => console.log('Apple sign in')}
+            <a
+              href={getOAuthUrl('apple')}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
             >
               <FaApple className="w-5 h-5 text-black dark:text-white" />
               <span className="text-gray-700 dark:text-gray-300 font-medium">Sign up with Apple</span>
-            </button>
+            </a>
             
-            <button
-              onClick={() => console.log('Sign up with Facebook')}
+            <a
+              href={getOAuthUrl('facebook')}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
             >
-              <span className="w-5 h-5 bg-blue-600 text-white font-bold rounded flex items-center justify-center text-sm">f</span>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
               <span className="text-gray-700 dark:text-gray-300 font-medium">Sign up with Facebook</span>
-            </button>
+            </a>
           </div>
         </Card>
         
