@@ -19,8 +19,26 @@ export default function HomePageImproved() {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    // Forcer le scroll en haut
-    window.scrollTo(0, 0);
+    
+    // Force scroll multiple fois
+    const scrollToTop = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    
+    // Immédiatement
+    scrollToTop();
+    
+    // Après le DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', scrollToTop);
+    } else {
+      scrollToTop();
+    }
+    
+    // Après un petit délai
+    setTimeout(scrollToTop, 100);
   }, []);
   
   return (

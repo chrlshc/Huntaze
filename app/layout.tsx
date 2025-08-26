@@ -47,6 +47,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="/styles/design-system.css" />
+        <script src="/scroll-fix.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -57,11 +58,13 @@ export default function RootLayout({
                 document.documentElement.classList.add(resolved);
               } catch {}
               
-              // Scroll to top on page load
+              // Force scroll to top on page load
               if ('scrollRestoration' in history) {
                 history.scrollRestoration = 'manual';
               }
               window.scrollTo(0, 0);
+              document.documentElement.scrollTop = 0;
+              document.body.scrollTop = 0;
             `,
           }}
         />

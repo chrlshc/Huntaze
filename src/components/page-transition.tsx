@@ -12,8 +12,17 @@ export default function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname()
 
   useEffect(() => {
-    // Ensure we start at the top on mobile
-    window.scrollTo(0, 0)
+    // Force scroll to top immediately
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Double check after a small delay
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 0);
   }, [pathname])
 
   return (
