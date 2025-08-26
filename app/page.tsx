@@ -94,79 +94,37 @@ export default function HomePageImproved() {
         </div>
       </section>
 
-      {/* Animated Stats Bar */}
-      <section className="py-16 bg-gray-900 relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
+      {/* Simple Stats Bar - No animations */}
+      <section className="py-16 bg-gray-50 dark:bg-gray-950">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-center"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <Users className="w-8 h-8 text-purple-500" />
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                500+
               </div>
-              <div className="text-5xl font-bold text-white mb-2">
-                <AnimatedCounter from={0} to={500} suffix="+" />
-              </div>
-              <div className="text-gray-400">Active Creators</div>
-              <div className="text-purple-400 text-sm mt-1">↑ 23%</div>
-            </motion.div>
+              <div className="text-gray-600 dark:text-gray-300">Active Creators</div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-center"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <DollarSign className="w-8 h-8 text-purple-500" />
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                $50M+
               </div>
-              <div className="text-5xl font-bold text-white mb-2">
-                <AnimatedCounter from={0} to={50} prefix="$" suffix="M+" />
-              </div>
-              <div className="text-gray-400">Revenue Processed</div>
-              <div className="text-purple-400 text-sm mt-1">↑ 142%</div>
-            </motion.div>
+              <div className="text-gray-600 dark:text-gray-300">Revenue Processed</div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-center"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <MessageSquare className="w-8 h-8 text-purple-500" />
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                4.9/5
               </div>
-              <div className="text-5xl font-bold text-white mb-2">
-                <AnimatedCounter from={0} to={4.9} suffix="/5" decimals={1} />
-              </div>
-              <div className="text-gray-400">Creator Rating</div>
-            </motion.div>
+              <div className="text-gray-600 dark:text-gray-300">Creator Rating</div>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-center"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600/20 backdrop-blur-sm rounded-2xl mb-4">
-                <Zap className="w-8 h-8 text-purple-500" />
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
+                24/7
               </div>
-              <div className="text-5xl font-bold text-white mb-2">
-                <AnimatedCounter from={0} to={24} suffix="/7" />
-              </div>
-              <div className="text-gray-400">AI Response</div>
-            </motion.div>
+              <div className="text-gray-600 dark:text-gray-300">AI Support</div>
+            </div>
           </div>
         </div>
       </section>
