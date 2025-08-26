@@ -188,13 +188,13 @@ export default function CreatorTestimonials() {
               onClick={prev}
               className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
             >
-              <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <ChevronLeft className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             </button>
             <button
               onClick={next}
               className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
             >
-              <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <ChevronRight className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             </button>
           </div>
 

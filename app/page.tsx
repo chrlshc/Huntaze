@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, TrendingUp, Users, DollarSign, MessageSquare, Zap, BarChart3, Settings } from 'lucide-react';
@@ -14,6 +14,10 @@ import PremiumCard from '@/components/premium-card';
 import CreatorTestimonials from '@/components/creator-testimonials';
 
 export default function HomePageImproved() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
     <div className="bg-white dark:bg-black transition-colors">
       {/* Hero Section - Simplified like Shopify */}
@@ -55,11 +59,6 @@ export default function HomePageImproved() {
                   <PremiumButton size="lg" className="w-full sm:w-auto">
                     Start free trial
                     <ArrowRight className="ml-2 h-5 w-5" />
-                  </PremiumButton>
-                </Link>
-                <Link href="/demo">
-                  <PremiumButton variant="secondary" size="lg" className="w-full sm:w-auto">
-                    Watch demo
                   </PremiumButton>
                 </Link>
               </div>
