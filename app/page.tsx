@@ -173,7 +173,7 @@ export default function HomePageImproved() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl text-gray-700 dark:text-gray-300 mb-8"
+                className="text-xl text-gray-800 dark:text-gray-300 mb-8 font-medium"
               >
                 Experience how our AI engages with fans in real-time. 
                 Type anything and see instant, personalized responses.
