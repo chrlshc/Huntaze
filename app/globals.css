@@ -35,9 +35,9 @@ html {
   scroll-behavior: auto !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent zoom on mobile */
-  touch-action: pan-x pan-y;
-  -ms-touch-action: pan-x pan-y;
+  /* Prevent ALL zoom on mobile */
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
 }
 
 body {
@@ -493,4 +493,35 @@ p {
     right: 0;
     z-index: 50;
   }
+}
+
+/* Prevent zoom on all inputs and buttons */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select,
+button {
+  font-size: 16px !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Prevent double-tap zoom */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in specific areas */
+p, span, h1, h2, h3, h4, h5, h6, li, a {
+  -webkit-user-select: text;
+  user-select: text;
 }
