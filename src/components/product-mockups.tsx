@@ -30,11 +30,11 @@ export function DashboardMockup() {
       {/* Dashboard Content */}
       <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-b-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gray-50 dark:bg-black border-b border-gray-200 dark:border-gray-800 p-6">
+        <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Dashboard</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-300">Welcome back, Sarah</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Welcome back, Sarah</p>
             </div>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full font-medium">
@@ -128,7 +128,7 @@ export function DashboardMockup() {
             <div className="relative z-10">
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Revenue Growth</h4>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-gray-900 dark:text-gray-900">$142,847</span>
+                <span className="text-3xl font-bold text-gray-900">$142,847</span>
                 <span className="text-sm text-green-600 dark:text-green-700">+23% this week</span>
               </div>
             </div>
