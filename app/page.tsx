@@ -52,10 +52,10 @@ export default function HomePageImproved() {
               {/* Social Proof Badge */}
               <div className="inline-flex items-center gap-2 mb-6">
                 <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 border-2 border-white dark:border-gray-800"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-500 border-2 border-white dark:border-gray-800"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-400 border-2 border-white dark:border-gray-800"></div>
+                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 border-2 border-white dark:border-gray-800"></div>
+                  <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-500 border-2 border-white dark:border-gray-800"></div>
+                  <div className="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-400 border-2 border-white dark:border-gray-800"></div>
+                  <div className="w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-300 border-2 border-white dark:border-gray-800"></div>
                 </div>
                 <span className="text-sm text-gray-600 dark:text-gray-300">
                   <strong>500+</strong> creators saving millions in agency fees
@@ -158,7 +158,7 @@ export default function HomePageImproved() {
       <CreatorTestimonials />
 
       {/* Live Chat Demo Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
+      <section className="py-20 px-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-950 dark:to-gray-900">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="w-full lg:w-1/2 order-2 lg:order-1">
@@ -407,21 +407,21 @@ export default function HomePageImproved() {
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4">Proven results from real creators</h3>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-800">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">3X</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-300">Revenue in 2 months</div>
+                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Revenue in 2 months</div>
               </div>
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-800">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">500+</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-300">Creators onboarded</div>
+                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Creators onboarded</div>
               </div>
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-800">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">98%</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-300">Revenue retained</div>
+                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Revenue retained</div>
               </div>
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-800">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">24/7</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-300">AI Support</div>
+                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">AI Support</div>
               </div>
             </div>
           </motion.div>
