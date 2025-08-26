@@ -9,8 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
   { icon: DollarSign, label: 'Pricing', href: '/pricing' },
-  { icon: MessageSquare, label: 'Support', href: '/help' },
-  { icon: User, label: 'Account', href: '/account' },
 ]
 
 export default function MobileBottomNav() {
@@ -48,7 +46,7 @@ export default function MobileBottomNav() {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-2 pb-safe"
           >
-            <div className="grid grid-cols-5 items-center">
+            <div className="grid grid-cols-3 items-center">
               {navItems.map((item) => {
                 const isActive = pathname === item.href
                 return (

@@ -56,6 +56,12 @@ export default function RootLayout({
                 const resolved = theme === 'system' ? systemTheme : theme;
                 document.documentElement.classList.add(resolved);
               } catch {}
+              
+              // Scroll to top on page load
+              if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+              }
+              window.scrollTo(0, 0);
             `,
           }}
         />
