@@ -173,7 +173,7 @@ export default function HomePageImproved() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl text-gray-800 dark:text-gray-300 mb-8 font-medium"
+                className="text-xl text-purple-900 dark:text-gray-300 mb-8 font-medium"
               >
                 Experience how our AI engages with fans in real-time. 
                 Type anything and see instant, personalized responses.
@@ -189,8 +189,8 @@ export default function HomePageImproved() {
                     <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Instant responses</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Never miss a message or sale opportunity</p>
+                    <h3 className="font-semibold text-purple-900 dark:text-white">Instant responses</h3>
+                    <p className="text-sm text-purple-800 dark:text-gray-300">Never miss a message or sale opportunity</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -198,8 +198,8 @@ export default function HomePageImproved() {
                     <MessageSquare className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Learns your style</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">AI adapts to your personality and tone</p>
+                    <h3 className="font-semibold text-purple-900 dark:text-white">Learns your style</h3>
+                    <p className="text-sm text-purple-800 dark:text-gray-300">AI adapts to your personality and tone</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -207,8 +207,8 @@ export default function HomePageImproved() {
                     <DollarSign className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Increases sales by 285%</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Smart upselling at the perfect moment</p>
+                    <h3 className="font-semibold text-purple-900 dark:text-white">Increases sales by 285%</h3>
+                    <p className="text-sm text-purple-800 dark:text-gray-300">Smart upselling at the perfect moment</p>
                   </div>
                 </div>
               </motion.div>
