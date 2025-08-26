@@ -103,13 +103,17 @@ export default function LiveChatDemo() {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      // Only scroll within the chat container, not the entire page
+      const chatContainer = messagesEndRef.current.parentElement
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight
+      }
     }
   }
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, isTyping])
 
   const handleSend = () => {
     if (!input.trim()) return
