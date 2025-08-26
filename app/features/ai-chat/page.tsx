@@ -84,7 +84,7 @@ export default function AIChatPage() {
             {[
               {
                 icon: <Clock className="w-6 h-6" />,
-                title: "2 Second Response Time",
+                title: "Instant Responses",
                 description: "Never miss a sale opportunity. Our AI responds instantly to keep fans engaged."
               },
               {
