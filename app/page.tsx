@@ -44,7 +44,7 @@ export default function HomePageImproved() {
   return (
     <div className="bg-white dark:bg-black transition-colors">
       {/* Hero Section - Simplified like Shopify */}
-      <section className="relative pt-20 md:pt-24 pb-12 md:pb-16 px-4 overflow-hidden">
+      <section className="relative pt-20 md:pt-24 pb-12 md:pb-16 px-6 md:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             {/* Left Content */}
@@ -118,7 +118,7 @@ export default function HomePageImproved() {
 
       {/* Simple Stats Bar - No animations */}
       <section className="py-16 bg-gray-50 dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
@@ -158,7 +158,7 @@ export default function HomePageImproved() {
       <CreatorTestimonials />
 
       {/* Live Chat Demo Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-50 dark:bg-gray-900">
+      <section className="py-20 px-6 md:px-8 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="w-full lg:w-1/2">
@@ -221,7 +221,7 @@ export default function HomePageImproved() {
       </section>
 
       {/* Value Props - 3 Column Clean */}
-      <section className="py-20 px-4">
+      <section className="py-20 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -303,7 +303,7 @@ export default function HomePageImproved() {
       </section>
 
       {/* Product Showcase Section */}
-      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-950">
+      <section className="py-20 px-6 md:px-8 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2 
@@ -430,7 +430,7 @@ export default function HomePageImproved() {
 
       {/* Final CTA */}
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600">
-        <div className="max-w-4xl mx-auto text-center px-4">
+        <div className="max-w-4xl mx-auto text-center px-6 md:px-8">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to 10x your creator business?
           </h2>
