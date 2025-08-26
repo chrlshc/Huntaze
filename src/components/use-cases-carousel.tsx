@@ -160,24 +160,42 @@ export default function UseCasesCarousel() {
             </AnimatePresence>
           </div>
 
-          {/* Navigation Buttons */}
+          {/* Navigation Buttons - Hidden on mobile, smaller on desktop */}
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors"
+            className="hidden md:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:shadow-lg transition-all items-center justify-center"
             aria-label="Previous case study"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
+            <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-colors"
+            className="hidden md:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:shadow-lg transition-all items-center justify-center"
             aria-label="Next case study"
           >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
+            <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
           </button>
 
+          {/* Mobile Navigation */}
+          <div className="flex md:hidden justify-center gap-3 mt-4">
+            <button
+              onClick={goToPrevious}
+              className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full"
+              aria-label="Previous"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </button>
+            <button
+              onClick={goToNext}
+              className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full"
+              aria-label="Next"
+            >
+              <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+            </button>
+          </div>
+
           {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-6">
+          <div className="flex justify-center gap-2 mt-4 md:mt-6">
             {useCases.map((_, index) => (
               <button
                 key={index}
