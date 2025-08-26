@@ -202,7 +202,7 @@ export default function LiveChatDemo() {
                   <div className={`px-4 py-2 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-purple-600 text-white rounded-br-sm'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700'
                   }`}>
                     <p className="text-sm">{message.content}</p>
                   </div>
