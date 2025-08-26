@@ -15,7 +15,7 @@ import CreatorTestimonials from '@/components/creator-testimonials';
 
 export default function HomePageImproved() {
   return (
-    <div className="bg-white dark:bg-black pt-20 transition-colors">
+    <div className="bg-white dark:bg-black transition-colors">
       {/* Hero Section - Simplified like Shopify */}
       <section className="relative pt-24 pb-16 px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto">
