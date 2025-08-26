@@ -66,10 +66,10 @@ export default function JoinPage() {
       <div className="w-full max-w-md mx-auto">
         <Card className="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 p-6 sm:p-8 rounded-xl shadow-xl border dark:border-gray-800">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-            Start your free trial
+            Get Early Access
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-center mb-8">
-            Get 3 days free, then 3 months for €1/month
+            Be among the first to experience Huntaze's AI-powered platform
           </p>
           
           {/* Email Form */}
@@ -79,7 +79,7 @@ export default function JoinPage() {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Email
+                Email<span className="text-red-600 dark:text-red-400">*</span>
               </label>
               <Input
                 id="email"
@@ -91,12 +91,59 @@ export default function JoinPage() {
                 className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
+            <div>
+              <label
+                htmlFor="socialProfile"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Social profile (optional)
+              </label>
+              <Input
+                id="socialProfile"
+                type="text"
+                value={socialProfile}
+                onChange={(e) => setSocialProfile(e.target.value)}
+                placeholder="@yourprofile or link"
+                className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="contentType"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Content type (optional)
+              </label>
+              <Input
+                id="contentType"
+                type="text"
+                value={contentType}
+                onChange={(e) => setContentType(e.target.value)}
+                placeholder="e.g. travel, fashion, tech"
+                className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+              />
+            </div>
+            <div className="flex items-start">
+              <input
+                id="consent"
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="h-4 w-4 text-purple-600 dark:text-purple-500 border-gray-300 dark:border-gray-700 rounded focus:ring-purple-500 dark:focus:ring-purple-400 mt-0.5"
+              />
+              <label
+                htmlFor="consent"
+                className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+              >
+                I'd like to receive updates about new features and special offers from Huntaze
+              </label>
+            </div>
             <Button
               type="submit"
               disabled={state === 'loading'}
               className="w-full bg-purple-600 dark:bg-purple-600 hover:bg-purple-700 dark:hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
-              {state === 'loading' ? 'Submitting...' : 'Continue with email'}
+              {state === 'loading' ? 'Submitting...' : 'Join waitlist'}
             </Button>
             <div
               aria-live="polite"
@@ -152,25 +199,6 @@ export default function JoinPage() {
           </div>
         </Card>
         
-        {/* Already have account */}
-        <p className="text-center mt-6 text-gray-600 dark:text-gray-400">
-          Already have a Huntaze account?{' '}
-          <Link href="/login" className="text-purple-600 hover:underline font-medium">
-            Log in →
-          </Link>
-        </p>
-        
-        {/* Terms */}
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-6">
-          By proceeding, you agree to the{' '}
-          <Link href="/terms" className="text-purple-600 hover:underline">
-            Terms and Conditions
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-purple-600 hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
       </div>
     </div>
   );
