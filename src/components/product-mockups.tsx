@@ -52,10 +52,6 @@ export function DashboardMockup() {
           <DashboardStats />
         </div>
 
-        {/* Revenue Chart */}
-        <div className="px-6 pb-6">
-          <RevenueGrowthChart />
-        </div>
 
         {/* Original Stats Grid - Hidden */}
         <div className="hidden grid-cols-4 gap-6 p-6">

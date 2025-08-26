@@ -103,7 +103,7 @@ export default function LiveChatDemo() {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
   }
 
@@ -146,11 +146,11 @@ export default function LiveChatDemo() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto h-full flex flex-col">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white dark:bg-gray-950 border dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden"
+        className="bg-white dark:bg-gray-950 border dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full max-h-[600px]"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
@@ -175,7 +175,7 @@ export default function LiveChatDemo() {
         </div>
 
         {/* Messages */}
-        <div className="h-96 overflow-y-auto overflow-x-hidden bg-gray-50 dark:bg-gray-900 p-4 space-y-3 scroll-smooth">
+        <div className="h-[400px] md:h-96 overflow-y-auto overflow-x-hidden bg-gray-50 dark:bg-gray-900 p-4 space-y-3 scroll-smooth">
           <AnimatePresence>
             {messages.map((message) => (
               <motion.div
@@ -202,7 +202,7 @@ export default function LiveChatDemo() {
                   <div className={`px-4 py-2 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-purple-600 text-white rounded-br-sm'
-                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700'
                   }`}>
                     <p className="text-sm">{message.content}</p>
                   </div>
@@ -245,7 +245,7 @@ export default function LiveChatDemo() {
         </div>
 
         {/* Input */}
-        <div className="p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-4 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 mt-auto">
           <div className="flex items-center gap-2">
             <input
               type="text"
