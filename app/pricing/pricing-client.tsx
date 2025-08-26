@@ -52,14 +52,14 @@ export default function PricingClient({ plans }: PricingClientProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center p-1 bg-gray-100 rounded-lg mb-12"
+              className="inline-flex items-center p-1 bg-gray-100 dark:bg-gray-800 rounded-lg mb-12"
             >
               <button
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   billingPeriod === 'monthly'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
                 Monthly
@@ -68,8 +68,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 onClick={() => setBillingPeriod('yearly')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   billingPeriod === 'yearly'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
                 Yearly
@@ -84,8 +84,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900">Keep 85-98% of Revenue</h3>
-            <p className="text-gray-700 dark:text-gray-400 mt-2">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Keep 85-98% of Revenue</h3>
+            <p className="text-gray-700 dark:text-gray-300 mt-2">
               Stop giving away 50-60% to agencies. Our capped commissions mean you keep 85-98% of everything you earn.
             </p>
             <Link href="#breakdown" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
@@ -93,8 +93,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
             </Link>
           </div>
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900">24/7 AI Automation</h3>
-            <p className="text-gray-700 dark:text-gray-400 mt-2">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">24/7 AI Automation</h3>
+            <p className="text-gray-700 dark:text-gray-300 mt-2">
               AI responds in seconds, not hours. Convert more fans while they're hot and ready to spend.
             </p>
             <Link href="#demo" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
@@ -102,8 +102,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
             </Link>
           </div>
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900">Platform Approved</h3>
-            <p className="text-gray-700 dark:text-gray-400 mt-2">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Platform Approved</h3>
+            <p className="text-gray-700 dark:text-gray-300 mt-2">
               Bank-level security, GDPR compliant, and officially approved by all major platforms.
             </p>
             <Link href="#security" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
@@ -143,23 +143,23 @@ export default function PricingClient({ plans }: PricingClientProps) {
 
                 <div className="text-center mb-8">
                   <h3 className={`text-2xl font-bold mb-2 ${
-                    isPro ? 'text-white' : 'text-gray-900'
+                    isPro ? 'text-white' : 'text-gray-900 dark:text-white'
                   }`}>
                     {plan.name}
                   </h3>
                   <p className={`text-sm mb-4 ${
-                    isPro ? 'text-purple-100' : 'text-gray-600'
+                    isPro ? 'text-purple-100' : 'text-gray-600 dark:text-gray-300'
                   }`}>
                     {plan.description}
                   </p>
                   <div className="flex items-baseline justify-center">
                     <span className={`text-5xl font-bold ${
-                      isPro ? 'text-white' : 'text-gray-900'
+                      isPro ? 'text-white' : 'text-gray-900 dark:text-white'
                     }`}>
                       ${billingPeriod === 'yearly' ? yearlyPrice : monthlyPrice}
                     </span>
                     <span className={`ml-2 ${
-                      isPro ? 'text-purple-100' : 'text-gray-600'
+                      isPro ? 'text-purple-100' : 'text-gray-600 dark:text-gray-300'
                     }`}>
                       /mo
                     </span>
@@ -180,7 +180,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                         isPro ? 'text-purple-200' : 'text-green-500'
                       }`} />
                       <span className={`text-sm ${
-                        isPro ? 'text-white' : 'text-gray-700'
+                        isPro ? 'text-white' : 'text-gray-700 dark:text-gray-300'
                       }`}>
                         {feature}
                       </span>
