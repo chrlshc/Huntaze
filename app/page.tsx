@@ -158,14 +158,14 @@ export default function HomePageImproved() {
       <CreatorTestimonials />
 
       {/* Live Chat Demo Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:bg-gray-900">
+      <section className="py-20 px-4 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="w-full lg:w-1/2">
               <motion.h2 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6"
+                className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent mb-6"
               >
                 Try our AI live
               </motion.h2>
@@ -173,7 +173,7 @@ export default function HomePageImproved() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl text-gray-600 dark:text-gray-300 mb-8"
+                className="text-xl text-gray-700 dark:text-gray-300 mb-8"
               >
                 Experience how our AI engages with fans in real-time. 
                 Type anything and see instant, personalized responses.
