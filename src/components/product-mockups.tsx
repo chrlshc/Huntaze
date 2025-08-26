@@ -126,10 +126,10 @@ export function DashboardMockup() {
               />
             </svg>
             <div className="relative z-10">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Revenue Growth</h4>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Revenue Growth</h4>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-gray-900 dark:text-white">$142,847</span>
-                <span className="text-sm text-green-600">+23% this week</span>
+                <span className="text-3xl font-bold text-gray-900 dark:text-gray-900">$142,847</span>
+                <span className="text-sm text-green-600 dark:text-green-700">+23% this week</span>
               </div>
             </div>
           </div>

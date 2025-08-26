@@ -200,7 +200,7 @@ export default function LiveChatDemo() {
                   <div className={`px-4 py-2 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-purple-600 text-white rounded-br-sm'
-                      : 'bg-purple-100 dark:bg-purple-950 text-gray-800 dark:text-purple-100 rounded-bl-sm shadow-sm border dark:border-purple-900'
+                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700'
                   }`}>
                     <p className="text-sm">{message.content}</p>
                   </div>
@@ -218,7 +218,7 @@ export default function LiveChatDemo() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-purple-100 dark:bg-purple-950 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border dark:border-purple-900">
+              <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex gap-1">
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
