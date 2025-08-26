@@ -170,16 +170,16 @@ export default function CreatorTestimonials() {
           {/* Navigation - Hidden on mobile, visible on desktop */}
           <button
             onClick={prev}
-            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
+            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-2 md:p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
           >
-            <ChevronLeft className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
           </button>
 
           <button
             onClick={next}
-            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
+            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-2 md:p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
           >
-            <ChevronRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
           </button>
 
           {/* Mobile navigation - Swipe hint */}
@@ -188,13 +188,13 @@ export default function CreatorTestimonials() {
               onClick={prev}
               className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
             >
-              <ChevronLeft className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <ChevronLeft className="w-3 h-3 text-purple-600 dark:text-purple-400" />
             </button>
             <button
               onClick={next}
               className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
             >
-              <ChevronRight className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <ChevronRight className="w-3 h-3 text-purple-600 dark:text-purple-400" />
             </button>
           </div>
 

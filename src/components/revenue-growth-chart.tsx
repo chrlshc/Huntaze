@@ -57,7 +57,7 @@ export default function RevenueGrowthChart() {
         </div>
 
         {/* Chart visualization */}
-        <div className="relative h-48 bg-gradient-to-b from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg overflow-hidden">
+        <div className="relative h-48 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <svg className="absolute inset-0 w-full h-full">
             {/* Grid lines */}
             {[0, 1, 2, 3].map((i) => (
@@ -120,7 +120,7 @@ export default function RevenueGrowthChart() {
         </div>
 
         {/* Time labels */}
-        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-300">
+        <div className="flex justify-between text-xs text-gray-700 dark:text-gray-300 font-medium">
           <span>12 AM</span>
           <span>6 AM</span>
           <span>12 PM</span>
