@@ -102,7 +102,9 @@ export default function LiveChatDemo() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
   }
 
   useEffect(() => {
@@ -173,7 +175,7 @@ export default function LiveChatDemo() {
         </div>
 
         {/* Messages */}
-        <div className="h-96 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 space-y-3">
+        <div className="h-96 overflow-y-auto overflow-x-hidden bg-gray-50 dark:bg-gray-900 p-4 space-y-3 scroll-smooth">
           <AnimatePresence>
             {messages.map((message) => (
               <motion.div
@@ -223,17 +225,17 @@ export default function LiveChatDemo() {
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="w-2 h-2 bg-purple-500 dark:bg-purple-400 rounded-full"
+                    className="w-2 h-2 bg-gray-700 dark:bg-gray-400 rounded-full"
                   />
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-                    className="w-2 h-2 bg-purple-500 dark:bg-purple-400 rounded-full"
+                    className="w-2 h-2 bg-gray-700 dark:bg-gray-400 rounded-full"
                   />
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                    className="w-2 h-2 bg-purple-500 dark:bg-purple-400 rounded-full"
+                    className="w-2 h-2 bg-gray-700 dark:bg-gray-400 rounded-full"
                   />
                 </div>
               </div>

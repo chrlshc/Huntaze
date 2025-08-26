@@ -110,7 +110,7 @@ export function DashboardMockup() {
 
         {/* Chart Area */}
         <div className="px-6 pb-6">
-          <div className="bg-gray-50 rounded-xl p-6 h-64 relative overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 h-64 relative overflow-hidden border border-gray-200 dark:border-gray-700">
             <div className="absolute inset-0 bg-gradient-to-t from-purple-100/50 to-transparent"></div>
             <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
               <defs>
