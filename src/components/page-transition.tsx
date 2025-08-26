@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname } from 'next/navigation'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 interface PageTransitionProps {
   children: ReactNode
@@ -11,15 +11,20 @@ interface PageTransitionProps {
 export default function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname()
 
+  useEffect(() => {
+    // Ensure we start at the top on mobile
+    window.scrollTo(0, 0)
+  }, [pathname])
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={{
-          duration: 0.3,
+          duration: 0.2,
           ease: [0.22, 1, 0.36, 1]
         }}
       >
