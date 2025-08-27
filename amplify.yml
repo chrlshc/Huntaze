@@ -7,7 +7,7 @@ frontend:
     build:
       commands:
         # Ensure public env variables exist; prefer setting them in Amplify Console
-        - echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://api.huntaze.com}" >> .env.production
+        - echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://huntaze.com}" >> .env.production
         - echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://huntaze.com}" >> .env.production
         - npm run build
   artifacts:
