@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateToken, generateRefreshToken, setAuthCookies } from '@/lib/auth/jwt';
+import { generateToken, generateRefreshToken, setAuthCookies } from '../../../../lib/auth/jwt';
+import { ensureGoogleOAuthEnv } from '../../../../lib/env';
 
 export async function GET(request: NextRequest) {
+  ensureGoogleOAuthEnv();
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
   const error = searchParams.get('error');
