@@ -31,7 +31,10 @@ Ajoutez vos variables (basé sur .env.example) :
 
 ```env
 NODE_ENV=production
+# Frontend/App URL
 NEXT_PUBLIC_APP_URL=https://huntaze.com
+# API origin (no trailing slash, no "/api")
+NEXT_PUBLIC_API_URL=https://api.huntaze.com
 # Ajoutez les autres variables nécessaires
 ```
 
