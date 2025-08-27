@@ -2,12 +2,12 @@
 const requiredCommon = [];
 
 const requiredProd = [
-  'NEXT_PUBLIC_API_URL',
-  'NEXT_PUBLIC_APP_URL',
   'JWT_SECRET', // used for jose signing/verification in server runtime
 ];
 
 const warnIfMissing = [
+  'NEXT_PUBLIC_API_URL',
+  'NEXT_PUBLIC_APP_URL',
   'NEXT_PUBLIC_GOOGLE_CLIENT_ID',
   'NEXT_PUBLIC_GOOGLE_REDIRECT_URI',
   'GOOGLE_CLIENT_SECRET',
