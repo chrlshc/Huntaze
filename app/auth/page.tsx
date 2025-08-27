@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+// import { signIn } from 'next-auth/react'; // TODO: Add next-auth
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple, FaFacebook } from 'react-icons/fa';
 import { HiMail } from 'react-icons/hi';
@@ -23,7 +23,9 @@ export default function AuthPage() {
   const handleOAuthSignIn = async (provider: string) => {
     setIsLoading(true);
     try {
-      await signIn(provider, { callbackUrl: '/dashboard' });
+      // TODO: Implement OAuth with next-auth
+      // await signIn(provider, { callbackUrl: '/dashboard' });
+      window.location.href = `/auth/${provider}/callback`;
     } catch (error) {
       console.error('Auth error:', error);
     }
