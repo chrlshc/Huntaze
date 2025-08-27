@@ -1,8 +1,8 @@
 // Using native fetch instead of axios
-// Expect NEXT_PUBLIC_API_URL to be the API origin (e.g., http://localhost:4000 or https://api.huntaze.com)
-// We append '/api' here to target the Express API prefix consistently.
-const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000').replace(/\/$/, '');
-const API_BASE_URL = `${apiOrigin}/api`;
+// NEXT_PUBLIC_API_URL should be the full API base URL including /api if needed
+// For local: http://localhost:4000/api
+// For production: https://api.huntaze.com
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/$/, '');
 
 class ApiClient {
   private baseURL: string;
