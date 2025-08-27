@@ -6,7 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { FaGoogle, FaApple } from 'react-icons/fa';
+import { FaGoogle } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import Image from 'next/image';
 import { getOAuthUrl } from '../../lib/auth';
@@ -142,13 +142,6 @@ export default function JoinPage() {
               <span className="text-gray-700 dark:text-gray-300 font-medium">Sign up with Google</span>
             </a>
 
-            <a
-              href={getOAuthUrl('apple')}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
-            >
-              <FaApple className="w-5 h-5 text-black dark:text-white" />
-              <span className="text-gray-700 dark:text-gray-300 font-medium">Sign up with Apple</span>
-            </a>
             
           </div>
         </Card>
