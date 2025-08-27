@@ -9,6 +9,7 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
+          // Core security
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
@@ -28,6 +29,35 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
+          },
+          // HSTS (enable only on HTTPS and apex handled)
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          // Permissions-Policy
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=()'
+          },
+          // Content Security Policy (adjust if you add third-party scripts)
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "base-uri 'self'",
+              "frame-ancestors 'self'",
+              "object-src 'none'",
+              // Allow Next.js inline styles; prefer to remove 'unsafe-inline' if you adopt nonces
+              "style-src 'self' 'unsafe-inline'",
+              // Allow GA/Tag Manager if used
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
+              // API and analytics endpoints
+              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || ''} https://www.google-analytics.com`,
+              // Images and fonts
+              "img-src 'self' data: blob:",
+              "font-src 'self' data:",
+            ].join('; ')
           }
         ]
       }
@@ -36,7 +66,7 @@ const nextConfig = {
 
   // Environment variables
   env: {
-    NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE || ''
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || ''
   },
 
   // Image optimization

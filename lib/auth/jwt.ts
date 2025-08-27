@@ -1,10 +1,18 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 
-// JWT secret key
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-this-in-production'
-);
+// JWT secret handling
+function getSecret(): Uint8Array {
+  const secretStr = process.env.JWT_SECRET;
+  if (!secretStr) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('JWT_SECRET is not set in production');
+    }
+    // Fallback for local/dev only
+    return new TextEncoder().encode('dev-only-secret');
+  }
+  return new TextEncoder().encode(secretStr);
+}
 
 // Token expiry times
 const ACCESS_TOKEN_EXPIRY = '1h';
@@ -24,7 +32,7 @@ export async function generateToken(payload: Omit<UserPayload, 'iat' | 'exp'>) {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(ACCESS_TOKEN_EXPIRY)
-    .sign(secret);
+    .sign(getSecret());
   
   return token;
 }
@@ -35,7 +43,7 @@ export async function generateRefreshToken(userId: string) {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(REFRESH_TOKEN_EXPIRY)
-    .sign(secret);
+    .sign(getSecret());
   
   return token;
 }
@@ -43,7 +51,7 @@ export async function generateRefreshToken(userId: string) {
 // Verify JWT token
 export async function verifyToken(token: string): Promise<UserPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, getSecret());
     return payload as UserPayload;
   } catch (error) {
     console.error('JWT verification failed:', error);
@@ -98,7 +106,7 @@ export async function refreshAccessToken(): Promise<string | null> {
   }
 
   try {
-    const { payload } = await jwtVerify(refreshToken, secret);
+    const { payload } = await jwtVerify(refreshToken, getSecret());
     
     // TODO: Get full user data from database using userId
     // For now, return null (implement when DB is ready)

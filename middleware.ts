@@ -11,6 +11,26 @@ const authRoutes = ['/login', '/join'];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // If token is present in query (coming from backend OAuth redirect), set cookie and clean URL
+  const token = request.nextUrl.searchParams.get('token');
+  if (token) {
+    const cleanUrl = new URL(request.nextUrl.toString());
+    cleanUrl.searchParams.delete('token');
+    const response = NextResponse.redirect(cleanUrl);
+    // Share cookie across subdomains in production
+    const hostname = request.nextUrl.hostname;
+    const cookieDomain = hostname.endsWith('huntaze.com') ? '.huntaze.com' : undefined;
+    response.cookies.set('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      domain: cookieDomain,
+      maxAge: 60 * 60, // 1 hour
+    });
+    return response;
+  }
+  
   // Get access token from cookie
   const accessToken = request.cookies.get('access_token')?.value;
   

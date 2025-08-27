@@ -6,7 +6,7 @@ export default function DebugPage() {
       <pre>{JSON.stringify({
         NODE_ENV: process.env.NODE_ENV,
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-        NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE,
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
       }, null, 2)}</pre>
       <h2>Build Info:</h2>
       <p>Next.js Version: {process.env.npm_package_dependencies_next}</p>
