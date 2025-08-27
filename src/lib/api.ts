@@ -56,6 +56,21 @@ class ApiClient {
       ...options,
     });
   }
+
+  put(path: string, data?: any, options?: RequestInit) {
+    return this.request(path, {
+      method: 'PUT',
+      body: data !== undefined ? JSON.stringify(data) : undefined,
+      ...options,
+    });
+  }
+
+  delete(path: string, options?: RequestInit) {
+    return this.request(path, {
+      method: 'DELETE',
+      ...options,
+    });
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL);
