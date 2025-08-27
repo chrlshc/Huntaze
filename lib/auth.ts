@@ -1,18 +1,11 @@
-// Authentication configuration for OAuth providers
-export const authConfig = {
-  providers: {
-    google: {
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
-      redirectUri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback'
-    }
-  }
-};
+// Authentication configuration
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-// OAuth URLs
+// OAuth URLs - Now handled by the backend
 export const getOAuthUrl = (provider: 'google') => {
   switch (provider) {
     case 'google':
-      return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${authConfig.providers.google.clientId}&redirect_uri=${authConfig.providers.google.redirectUri}&response_type=code&scope=email%20profile&access_type=offline&prompt=consent`;
+      return `${API_URL}/api/auth/google`;
     
     default:
       throw new Error('Invalid provider');

@@ -121,6 +121,33 @@ class Analytics {
     this.markFeatureAsUsed(feature);
   }
 
+  // Compatibility helpers used by hooks
+  trackOnboardingStep(step: number, stepName: string, completed: boolean = false) {
+    this.track('onboarding_step_completed', {
+      step,
+      stepName,
+      ...(completed ? { completed: true } : {}),
+    } as any);
+  }
+
+  trackConversion(plan: string, billingInterval: 'monthly' | 'yearly', amount: number) {
+    this.track('payment_succeeded', {
+      plan: plan as any,
+      amount,
+      currency: 'usd',
+      // billingInterval not in AnalyticsProperties type; omit
+    });
+  }
+
+  trackError(error: string, context?: any) {
+    console.error('[Analytics] Error:', error, context);
+  }
+
+  isFeatureEnabled(flag: string): boolean {
+    // Simple stub for feature flags; return true by default
+    return true;
+  }
+
   // Helper to check if user has used a feature before
   private hasUsedFeature(feature: string): boolean {
     const usedFeatures = localStorage.getItem('usedFeatures');
@@ -128,19 +155,20 @@ class Analytics {
     
     try {
       const features = JSON.parse(usedFeatures);
-      return features.includes(feature);
+      return Array.isArray(features) && features.includes(feature);
     } catch {
       return false;
     }
   }
 
-  // Mark feature as used
+  // Helper to mark a feature as used
   private markFeatureAsUsed(feature: string) {
     const usedFeatures = localStorage.getItem('usedFeatures');
     let features: string[] = [];
     
     try {
       features = usedFeatures ? JSON.parse(usedFeatures) : [];
+      if (!Array.isArray(features)) features = [];
     } catch {
       features = [];
     }
@@ -150,72 +178,6 @@ class Analytics {
       localStorage.setItem('usedFeatures', JSON.stringify(features));
     }
   }
-
-  // Track onboarding funnel
-  trackOnboardingStep(step: number, stepName: string, completed: boolean = false) {
-    this.track(completed ? 'onboarding_step_completed' : 'onboarding_started', {
-      step,
-      stepName,
-    });
-  }
-
-  // Track conversion funnel
-  trackConversion(plan: string, billingInterval: 'monthly' | 'yearly', amount: number) {
-    this.track('subscription_created', {
-      plan: plan as any,
-      // billingInterval,
-      amount,
-      currency: 'USD',
-    } as any);
-  }
-
-  // Track errors for monitoring
-  trackError(error: string, context?: any) {
-    if (!this.initialized) return;
-    
-    // Mock error tracking
-    console.error('[Analytics] Error:', error, context);
-  }
-
-  // Group analytics by organization (for B2B)
-  setGroup(groupType: string, groupId: string, properties?: any) {
-    if (!this.initialized) return;
-    
-    // Mock group
-    console.log('[Analytics] Group:', groupType, groupId, properties);
-  }
-
-  // Feature flags
-  isFeatureEnabled(flag: string): boolean {
-    if (!this.initialized) return false;
-    
-    // Mock feature flag - always return false
-    return false;
-  }
-
-  // Get feature flag payload
-  getFeatureFlagPayload(flag: string): any {
-    if (!this.initialized) return null;
-    
-    // Mock feature flag payload
-    return null;
-  }
-
-  // Reset on logout
-  reset() {
-    if (!this.initialized) return;
-    
-    this.userId = null;
-    this.userProperties = {};
-    // Mock reset
-    console.log('[Analytics] Reset');
-  }
 }
 
-// Export singleton instance
 export const analytics = new Analytics();
-
-// Initialize on import
-if (typeof window !== 'undefined') {
-  analytics.init();
-}

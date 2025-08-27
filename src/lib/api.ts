@@ -1,6 +1,8 @@
 // Using native fetch instead of axios
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+// Expect NEXT_PUBLIC_API_URL to be the API origin (e.g., http://localhost:4000 or https://api.huntaze.com)
+// We append '/api' here to target the Express API prefix consistently.
+const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000').replace(/\/$/, '');
+const API_BASE_URL = `${apiOrigin}/api`;
 
 class ApiClient {
   private baseURL: string;
@@ -11,17 +13,18 @@ class ApiClient {
 
   private async request(path: string, options: RequestInit = {}) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-    
+
     const headers = {
-      'Content-Type': 'application/json',
+      ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
-    };
+    } as Record<string, string>;
 
     try {
       const response = await fetch(`${this.baseURL}${path}`, {
         ...options,
         headers,
+        credentials: 'include',
       });
 
       if (response.status === 401) {
@@ -49,7 +52,7 @@ class ApiClient {
   post(path: string, data?: any, options?: RequestInit) {
     return this.request(path, {
       method: 'POST',
-      body: data instanceof FormData ? data : JSON.stringify(data),
+      body: data instanceof FormData ? data : data !== undefined ? JSON.stringify(data) : undefined,
       ...options,
     });
   }
@@ -100,4 +103,30 @@ export const pricingApi = {
   
   getPlanAdvice: () =>
     api.get('/pricing/advice'),
+};
+
+// Subscriptions
+export const subscriptionApi = {
+  createCheckout: (priceId: string) =>
+    api.post('/subscriptions/create-checkout', { priceId }),
+};
+
+// Platforms
+export const platformsApi = {
+  list: () => api.get('/platforms'),
+  connectOnlyFans: (data: { username: string; apiKey: string }) =>
+    api.post('/platforms/onlyfans/connect', data),
+};
+
+// AI Config
+export const aiApi = {
+  getConfig: () => api.get('/ai/config'),
+  updateConfig: (
+    data: Partial<{
+      personality: any;
+      responseStyle: string;
+      pricing: any;
+      customResponses: any;
+    }>
+  ) => api.put('/ai/config', data as any),
 };

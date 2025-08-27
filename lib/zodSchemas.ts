@@ -44,3 +44,4 @@ export type OnlyFansConnectionData = z.infer<typeof onlyFansConnectionSchema>;
 export type AIConfigurationData = z.infer<typeof aiConfigurationSchema>;
 export type PaymentSetupData = z.infer<typeof paymentSetupSchema>;
 export type CompleteOnboardingData = z.infer<typeof completeOnboardingSchema>;
+
