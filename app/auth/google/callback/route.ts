@@ -2,8 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, generateRefreshToken, setAuthCookies } from '../../../../lib/auth/jwt';
 import { ensureGoogleOAuthEnv } from '../../../../lib/env';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
-  ensureGoogleOAuthEnv();
+  try {
+    ensureGoogleOAuthEnv();
+  } catch (error) {
+    // Return error page instead of throwing during build
+    return NextResponse.redirect(new URL('/join?error=oauth_not_configured', request.url));
+  }
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
   const error = searchParams.get('error');
