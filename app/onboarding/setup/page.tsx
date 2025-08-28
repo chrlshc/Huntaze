@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Check, Loader2, CreditCard, Bot, User } from 'lucide-react';
 
 type Step = 'profile' | 'ai-config' | 'payment' | 'complete';
 
 export default function OnboardingSetupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<Step>('profile');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,13 +33,61 @@ export default function OnboardingSetupPage() {
     { id: 'payment', title: 'Payment Method', icon: CreditCard },
   ];
 
+  useEffect(() => {
+    // Check if returning from Stripe
+    const sessionId = searchParams.get('session_id');
+    const step = searchParams.get('step');
+    
+    if (sessionId && step === 'complete') {
+      // Payment successful, mark as complete
+      const completeOnboarding = async () => {
+        await fetch('/api/users/onboarding-status', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentStep: 'complete',
+            steps: { profile: true, aiConfig: true, payment: true },
+            completed: true,
+          }),
+        });
+        setCurrentStep('complete');
+      };
+      completeOnboarding();
+    }
+  }, [searchParams]);
+
   const handleNext = async () => {
     setLoading(true);
     
     // Save current step data
     if (currentStep === 'profile') {
-      // TODO: Save profile data
-      setCurrentStep('ai-config');
+      // Save profile data
+      try {
+        const response = await fetch('/api/users/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            displayName: formData.displayName,
+            bio: formData.bio,
+            timezone: formData.timezone,
+          }),
+        });
+
+        if (response.ok) {
+          // Update onboarding status
+          await fetch('/api/users/onboarding-status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              currentStep: 'ai-config',
+              steps: { profile: true, aiConfig: false, payment: false },
+            }),
+          });
+          setCurrentStep('ai-config');
+        }
+      } catch (error) {
+        console.error('Failed to save profile:', error);
+      }
     } else if (currentStep === 'ai-config') {
       // Save AI configuration
       try {
@@ -56,14 +105,37 @@ export default function OnboardingSetupPage() {
         });
         
         if (response.ok) {
+          // Update onboarding status
+          await fetch('/api/users/onboarding-status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              currentStep: 'payment',
+              steps: { profile: true, aiConfig: true, payment: false },
+            }),
+          });
           setCurrentStep('payment');
         }
       } catch (error) {
         console.error('Failed to save AI config:', error);
       }
     } else if (currentStep === 'payment') {
-      // TODO: Set up Stripe payment method
-      setCurrentStep('complete');
+      // Create Stripe checkout session
+      try {
+        const response = await fetch('/api/subscriptions/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: 'starter' }), // Default to starter plan
+        });
+
+        if (response.ok) {
+          const { url } = await response.json();
+          // Redirect to Stripe Checkout
+          window.location.href = url;
+        }
+      } catch (error) {
+        console.error('Failed to create checkout:', error);
+      }
     }
     
     setLoading(false);

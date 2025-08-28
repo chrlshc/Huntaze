@@ -1,71 +1,54 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from './lib/auth/jwt';
-
-// Routes that require authentication
-const protectedRoutes = ['/dashboard', '/profile', '/settings'];
-
-// Routes that should redirect to dashboard if already authenticated
-const authRoutes = ['/login', '/join'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // If token is present in query (coming from backend OAuth redirect), set cookie and clean URL
-  const token = request.nextUrl.searchParams.get('token');
-  if (token) {
-    const cleanUrl = new URL(request.nextUrl.toString());
-    cleanUrl.searchParams.delete('token');
-    const response = NextResponse.redirect(cleanUrl);
-    // Share cookie across subdomains in production
-    const hostname = request.nextUrl.hostname;
-    const cookieDomain = hostname.endsWith('huntaze.com') ? '.huntaze.com' : undefined;
-    response.cookies.set('access_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      domain: cookieDomain,
-      maxAge: 60 * 60, // 1 hour
-    });
-    return response;
-  }
+  // Get auth token
+  const authToken = request.cookies.get('auth_token')?.value;
   
-  // Get access token from cookie
-  const accessToken = request.cookies.get('access_token')?.value;
-  
-  // Verify token
-  const user = accessToken ? await verifyToken(accessToken) : null;
-  
-  // Check if route is protected
+  // Protected routes that require authentication
+  const protectedRoutes = ['/dashboard', '/profile', '/settings', '/configure'];
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   
-  // Check if route is auth route (login/join)
+  // Onboarding route
+  const isOnboardingRoute = pathname.startsWith('/onboarding');
+  
+  // Auth routes
+  const authRoutes = ['/auth', '/join'];
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
   
-  // Redirect to login if accessing protected route without auth
-  if (isProtectedRoute && !user) {
-    const url = new URL('/join', request.url);
-    url.searchParams.set('from', pathname);
-    return NextResponse.redirect(url);
+  // If no auth token and trying to access protected route, redirect to auth
+  if (!authToken && (isProtectedRoute || isOnboardingRoute)) {
+    return NextResponse.redirect(new URL('/auth', request.url));
   }
   
-  // Redirect to dashboard if accessing auth routes while authenticated
-  if (isAuthRoute && user) {
+  // If authenticated and accessing protected routes (not onboarding)
+  if (authToken && isProtectedRoute) {
+    try {
+      // Check onboarding status
+      const response = await fetch(new URL('/api/users/onboarding-status', request.url), {
+        headers: {
+          Cookie: `auth_token=${authToken}`,
+        },
+      });
+      
+      if (response.ok) {
+        const status = await response.json();
+        
+        // If onboarding not completed, redirect to onboarding
+        if (!status.completed) {
+          return NextResponse.redirect(new URL('/onboarding/setup', request.url));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check onboarding status:', error);
+    }
+  }
+  
+  // If authenticated and trying to access auth routes, redirect to dashboard
+  if (authToken && isAuthRoute) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-  
-  // Add user to request headers for use in server components
-  if (user) {
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', user.userId);
-    requestHeaders.set('x-user-email', user.email);
-    
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
   }
   
   return NextResponse.next();
@@ -74,13 +57,11 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Match all request paths except:
+     * - api routes
+     * - static files
      * - public files
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|auth).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|static).*)',
   ],
 };
