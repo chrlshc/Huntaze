@@ -312,13 +312,13 @@ export default function HeaderImproved() {
             ) : (
               <>
                 <Link 
-                  href="/join" 
+                  href="/auth" 
                   className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
                 >
                   Log in
                 </Link>
                 <Link 
-                  href="/join" 
+                  href="/auth" 
                   className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                   Start free trial
@@ -461,14 +461,14 @@ export default function HeaderImproved() {
                   ) : (
                     <>
                       <Link
-                        href="/join"
+                        href="/auth"
                         className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Log in
                       </Link>
                       <Link
-                        href="/join"
+                        href="/auth"
                         className="block bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-center font-medium"
                         onClick={() => setMobileMenuOpen(false)}
                       >
