@@ -8,24 +8,24 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // TODO: Fetch user data from API
-    // For now, parse from cookie
-    const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
+    // Fetch user data from API
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          // Not logged in, redirect to auth
+          window.location.href = '/auth';
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+        window.location.href = '/auth';
+      }
     };
 
-    const accessToken = getCookie('access_token');
-    if (accessToken) {
-      // Decode JWT payload
-      try {
-        const payload = JSON.parse(atob(accessToken.split('.')[1]));
-        setUser(payload);
-      } catch (e) {
-        console.error('Failed to decode token:', e);
-      }
-    }
+    fetchUser();
   }, []);
 
   const handleLogout = async () => {
@@ -121,9 +121,12 @@ export default function DashboardPage() {
         <div className="bg-white dark:bg-gray-950 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors">
+            <Link 
+              href="/configure"
+              className="block p-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors text-center"
+            >
               Configure AI Assistant
-            </button>
+            </Link>
             <button className="p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium transition-colors">
               View Analytics
             </button>
