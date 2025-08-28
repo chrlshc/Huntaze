@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     breakdown.basePrice = tier.basePrice;
 
     // Special handling for STARTER tier
-    if (subscriptionTier === 'starter') {
+    if (subscriptionTier === 'starter' && 'freeMonths' in tier) {
       // Check if eligible for free month
       if (monthlyRevenue < tier.freeMonths.threshold) {
         breakdown.notes.push(`Free month (revenue < $${tier.freeMonths.threshold})`);
@@ -74,29 +74,33 @@ export async function POST(request: NextRequest) {
 
       // Apply grace period if within 90 days
       let adjustedRevenue = monthlyRevenue;
-      if (accountAge <= tier.gracePeriod.days) {
+      if ('gracePeriod' in tier && accountAge <= tier.gracePeriod.days) {
         adjustedRevenue = Math.max(0, monthlyRevenue - tier.gracePeriod.amount);
         breakdown.notes.push(`Grace period: 0% on first $${tier.gracePeriod.amount}`);
       }
 
       // Calculate tiered commission
-      for (let i = tier.commissionRates.length - 1; i >= 0; i--) {
-        const rate = tier.commissionRates[i];
-        if (adjustedRevenue >= rate.threshold) {
-          commission = adjustedRevenue * rate.rate;
-          breakdown.notes.push(`${rate.rate * 100}% commission rate`);
-          break;
+      if ('commissionRates' in tier) {
+        for (let i = tier.commissionRates.length - 1; i >= 0; i--) {
+          const rate = tier.commissionRates[i];
+          if (adjustedRevenue >= rate.threshold) {
+            commission = adjustedRevenue * rate.rate;
+            breakdown.notes.push(`${rate.rate * 100}% commission rate`);
+            break;
+          }
         }
       }
     } else {
       // Fixed commission rate for other tiers
-      commission = monthlyRevenue * tier.commissionRate;
-      breakdown.notes.push(`${tier.commissionRate * 100}% commission rate`);
+      if ('commissionRate' in tier) {
+        commission = monthlyRevenue * tier.commissionRate;
+        breakdown.notes.push(`${tier.commissionRate * 100}% commission rate`);
 
-      // Apply cap if exists
-      if (tier.cap && commission > tier.cap) {
-        commission = tier.cap;
-        breakdown.notes.push(`Commission capped at $${tier.cap}`);
+        // Apply cap if exists
+        if ('cap' in tier && tier.cap && commission > tier.cap) {
+          commission = tier.cap;
+          breakdown.notes.push(`Commission capped at $${tier.cap}`);
+        }
       }
     }
 
