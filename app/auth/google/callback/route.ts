@@ -5,9 +5,19 @@ import { ensureGoogleOAuthEnv } from '../../../../lib/env';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  // Debug: Log environment variables
+  console.log('OAuth Debug:', {
+    hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
+    hasNextPublicGoogleClientId: !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    hasRedirectUri: !!process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
+    nodeEnv: process.env.NODE_ENV,
+  });
+
   try {
     ensureGoogleOAuthEnv();
   } catch (error) {
+    console.error('OAuth env check failed:', error);
     // Return error page instead of throwing during build
     return NextResponse.redirect(new URL('/join?error=oauth_not_configured', 'https://huntaze.com'));
   }
@@ -33,9 +43,9 @@ export async function GET(request: NextRequest) {
       },
       body: new URLSearchParams({
         code,
-        client_id: process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
+        client_id: process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '617004665472-hoaj6lobp0e6rlt1o3sl6kipnna4av35.apps.googleusercontent.com',
+        client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
+        redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || 'https://huntaze.com/auth/google/callback',
         grant_type: 'authorization_code',
       }),
     });
