@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -10,6 +10,7 @@ import { FaGoogle } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import Image from 'next/image';
 import { getOAuthUrl } from '../../lib/auth';
+import { useSearchParams } from 'next/navigation';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -20,6 +21,30 @@ export default function JoinPage() {
   const [socialProfile, setSocialProfile] = useState('');
   const [contentType, setContentType] = useState('');
   const [consent, setConsent] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      setState('error');
+      switch (error) {
+        case 'oauth_not_configured':
+          setMessage('OAuth is not properly configured. Please try again later.');
+          break;
+        case 'oauth_denied':
+          setMessage('Authentication was cancelled.');
+          break;
+        case 'oauth_failed':
+          setMessage('Authentication failed. Please try again.');
+          break;
+        case 'no_code':
+          setMessage('Authentication error: No authorization code received.');
+          break;
+        default:
+          setMessage('An error occurred during authentication.');
+      }
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,7 +120,7 @@ export default function JoinPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder=""
                 className="w-full dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
