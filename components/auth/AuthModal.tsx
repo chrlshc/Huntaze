@@ -62,7 +62,7 @@ export default function AuthModal({ isOpen, onClose, defaultMethod = 'signup' }:
           </h2>
           {authMethod === 'signup' && (
             <p className="text-gray-600">
-              Get 3 days free, then 3 months for €1/month
+              Start your free trial. Cancel anytime.
             </p>
           )}
         </div>

@@ -9,8 +9,8 @@ import PageTransition from "@/components/page-transition";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
-  title: "Huntaze - Keep 98% of Your Creator Revenue",
-  description: "Stop paying 50% to agencies. Our AI handles everything 24/7 while you keep control and earnings. Join 500+ creators saving millions.",
+  title: "Huntaze - Keep More of Your Creator Revenue",
+  description: "Stop paying 50% to agencies. Automate fan conversations with AI while you keep control and earnings.",
   keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative",
   icons: {
     icon: [
@@ -20,15 +20,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Huntaze - Keep 98% of Your Creator Revenue",
-    description: "Stop paying 50% to agencies. Our AI handles everything 24/7.",
+    title: "Huntaze - Keep More of Your Creator Revenue",
+    description: "Stop paying 50% to agencies. Automate fan conversations with AI.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Huntaze - Keep 98% of Your Creator Revenue",
-    description: "Stop paying 50% to agencies. Our AI handles everything 24/7.",
+    title: "Huntaze - Keep More of Your Creator Revenue",
+    description: "Stop paying 50% to agencies. Automate fan conversations with AI.",
     images: ["/twitter-image.png"],
   },
 };

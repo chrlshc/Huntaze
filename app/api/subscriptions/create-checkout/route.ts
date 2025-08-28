@@ -49,9 +49,9 @@ export async function POST(request: NextRequest) {
       metadata: {
         userId,
       },
-      // Enable 30-day free trial
+      // Enable 14-day free trial (aligned with site copy)
       subscription_data: {
-        trial_period_days: 30,
+        trial_period_days: 14,
       },
     }, { idempotencyKey });
 

@@ -35,7 +35,7 @@ export default function AIChatPage() {
               AI Chat Assistant
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Your personal AI that responds to every fan message instantly, 24/7, in your unique voice and style
+              Your personal AI that responds instantly in your unique voice and style
             </p>
           </motion.div>
 
@@ -63,7 +63,7 @@ export default function AIChatPage() {
               </PremiumButton>
             </Link>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
-              No credit card required • Free if under $1.5k/mo
+              Free trial available • Cancel anytime
             </p>
           </motion.div>
         </div>
@@ -94,8 +94,8 @@ export default function AIChatPage() {
               },
               {
                 icon: <Shield className="w-6 h-6" />,
-                title: "Platform Safe",
-                description: "100% compliant with all platform rules. No risk to your account."
+                title: "Platform Aware",
+                description: "Designed to respect platform rules and best practices."
               },
               {
                 icon: <Users className="w-6 h-6" />,
@@ -151,7 +151,7 @@ export default function AIChatPage() {
               {
                 step: "1",
                 title: "Connect Your Accounts",
-                description: "Link your creator platforms in 2 minutes. We support OnlyFans, Fansly, and more."
+                description: "Link your creator platforms in 2 minutes. Supports OnlyFans and Fansly (beta)."
               },
               {
                 step: "2",
@@ -195,7 +195,7 @@ export default function AIChatPage() {
             Ready to 10x your fan engagement?
           </h2>
           <p className="text-xl text-purple-100 mb-8">
-            Join 500+ creators who never miss a message or sale opportunity
+            Join creators who never miss a message or sale opportunity
           </p>
           <Link href="/join">
             <PremiumButton variant="secondary" size="lg" className="bg-white text-purple-600">

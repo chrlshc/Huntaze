@@ -7,5 +7,11 @@
   },
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://api.huntaze.com/api/:path*" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/monthly-billing",
+      "schedule": "0 0 1 * *"
+    }
   ]
 }

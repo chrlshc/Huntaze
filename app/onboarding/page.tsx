@@ -122,8 +122,8 @@ function ChoosePlanStep({ onNext }: { onNext: () => void }) {
       id: 'trial',
       name: 'Free Trial',
       price: '€0',
-      period: '3 days',
-      features: ['100 AI messages/day', 'Basic analytics', 'Email support'],
+      period: 'limited time',
+      features: ['Basic AI messaging', 'Basic analytics', 'Email support'],
     },
     {
       id: 'pro',

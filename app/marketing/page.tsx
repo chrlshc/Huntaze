@@ -106,7 +106,7 @@ export default function MarketingPage() {
             Security and privacy are foundational principles of OFM Social OS. We
             only interact with official platform APIs—there are no shortcuts or
             engagement manipulation strategies here. Our infrastructure is built
-            with data protection in mind and complies with the General Data
+            with data protection in mind and aligns with the General Data
             Protection Regulation (GDPR). Your content and your users' data are
             handled with care.
           </p>

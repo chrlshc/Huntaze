@@ -294,7 +294,7 @@ export default function OnboardingSetupPage() {
 
             <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
               <p className="text-sm text-purple-800 dark:text-purple-200">
-                🎉 <strong>First month FREE</strong> if you earn less than $1.5k/mo
+                🎉 <strong>Free trial</strong> available. Cancel anytime.
               </p>
             </div>
 
