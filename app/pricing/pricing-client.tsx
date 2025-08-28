@@ -43,8 +43,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
               transition={{ delay: 0.1 }}
               className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
             >
-              Unlike agencies that take 50-60% forever, Huntaze uses smart commission caps. 
-              The more you grow, the less you pay.
+              Unlike agencies that take 50-60% forever, Huntaze uses simple, transparent pricing. 
+              Grow without giving away your earnings.
             </motion.p>
             
             {/* Billing Toggle */}
@@ -84,27 +84,27 @@ export default function PricingClient({ plans }: PricingClientProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Keep 85-98% of Revenue</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Keep More of Your Revenue</h3>
             <p className="text-gray-700 dark:text-gray-300 mt-2">
-              Stop giving away 50-60% to agencies. Our capped commissions mean you keep 85-98% of everything you earn.
+              Stop giving away 50-60% to agencies. Our transparent pricing helps you keep more of what you earn.
             </p>
             <Link href="#breakdown" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
               See pricing breakdown →
             </Link>
           </div>
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">24/7 AI Automation</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">AI Automation</h3>
             <p className="text-gray-700 dark:text-gray-300 mt-2">
-              AI responds in seconds, not hours. Convert more fans while they're hot and ready to spend.
+              Respond faster and scale conversations with an AI assistant tuned to your style.
             </p>
             <Link href="#demo" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
               Watch it in action →
             </Link>
           </div>
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Platform Approved</h3>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Security & Privacy</h3>
             <p className="text-gray-700 dark:text-gray-300 mt-2">
-              Bank-level security, GDPR compliant, and officially approved by all major platforms.
+              Strong encryption and GDPR‑aligned practices. We only use official platform APIs.
             </p>
             <Link href="#security" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
               Learn about security →
@@ -114,8 +114,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
       </div>
 
       {/* Pricing Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {plans.map((plan, index) => {
             const isPro = plan.name === 'PRO'
             const monthlyPrice = plan.price.replace('$', '').replace('/mo', '')
@@ -213,7 +213,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
             Revolutionary Pricing That Scales With You
           </h2>
           <p className="text-xl mb-8 text-purple-100">
-            Unlike agencies that take 50-60% forever, we use smart commission caps. The more you grow, the less you pay.
+            Unlike agencies that take 50-60% forever, we use simple, transparent pricing. The more you grow, the more you keep.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -243,7 +243,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="font-semibold mb-2">24/7 AI Automation</h3>
+              <h3 className="font-semibold mb-2">AI Automation</h3>
               <p className="text-sm text-gray-600">
                 Never miss a message or opportunity
               </p>
@@ -263,7 +263,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               </div>
               <h3 className="font-semibold mb-2">Multi-Platform</h3>
               <p className="text-sm text-gray-600">
-                Works with all major platforms
+                Works with supported platforms (OnlyFans, Fansly beta)
               </p>
             </div>
             <div className="text-center">
@@ -274,6 +274,11 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <p className="text-sm text-gray-600">
                 Cancel anytime, no penalties
               </p>
+            </div>
+            <div className="text-center mt-10">
+              <Link href="/roadmap" className="text-purple-600 hover:text-purple-700 font-semibold">
+                Learn about weekly feature voting →
+              </Link>
             </div>
           </div>
         </div>
@@ -325,7 +330,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-500 mr-2">•</span>
-                    24/7 automation never sleeps
+                    Consistent automation at scale
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-500 mr-2">•</span>
@@ -428,7 +433,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 </div>
               </div>
               <p className="text-gray-700">
-                "Switched from my agency and now I keep $8k more per month. The AI handles everything 24/7!"
+                "Switched from my agency and now I keep $8k more per month. The AI handles so much of the workload!"
               </p>
               <div className="mt-4">
                 <span className="text-yellow-500">★★★★★</span>
@@ -477,7 +482,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-5xl font-bold mb-6 text-white">Ready to Keep More of Your Money?</h2>
           <p className="text-2xl text-purple-100 max-w-2xl mx-auto mb-10">
-            Join 500+ creators who switched from agencies and now keep 85-98% more revenue every month.
+            Join creators switching from agencies and keeping more of their revenue every month.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
@@ -494,7 +499,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
             </Link>
           </div>
           <p className="text-purple-100 mt-8 text-lg">
-            ✓ No credit card required ✓ Start free if under $1.5k/month ✓ Cancel anytime
+            ✓ Free trial available ✓ Cancel anytime
           </p>
         </div>
       </div>

@@ -131,8 +131,8 @@ export default function AutomationPage() {
               },
               {
                 icon: <Shield className="w-6 h-6" />,
-                title: "Platform Safe",
-                description: "100% compliant with all platform rules. No shadow bans or penalties."
+                title: "Platform Aware",
+                description: "Designed to respect platform rules and best practices."
               },
               {
                 icon: <Zap className="w-6 h-6" />,

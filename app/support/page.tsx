@@ -25,7 +25,7 @@ export default function SupportPage() {
             Support Center
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-12">
-            We're here to help you succeed. Get answers and assistance 24/7.
+            We're here to help you succeed. Get answers and assistance by email, typically within 24 hours.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -55,12 +55,12 @@ export default function SupportPage() {
             >
               <MessageSquare className="w-8 h-8 text-purple-600 dark:text-purple-400 mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                Live Chat
+                Live Chat (coming soon)
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Chat with our team in real-time for instant help.
+                We're rolling out chat support. In the meantime, email is the fastest way to reach us.
               </p>
-              <PremiumButton size="sm">
+              <PremiumButton size="sm" disabled>
                 Start Chat
               </PremiumButton>
             </motion.div>
@@ -94,7 +94,7 @@ export default function SupportPage() {
                 Priority Support
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                PRO members get priority response within 2 hours.
+                PRO members get priority email routing.
               </p>
               <Link href="/pricing" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium">
                 Upgrade to PRO
@@ -107,7 +107,7 @@ export default function SupportPage() {
               Need immediate assistance?
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Our team is available 24/7 to help you succeed with Huntaze.
+              Our team responds quickly during business hours, with typical replies within 24 hours.
             </p>
             <PremiumButton size="lg">
               Contact Support Team

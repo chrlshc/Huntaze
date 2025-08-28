@@ -36,7 +36,7 @@ export default function LearnPage() {
     {
       title: 'Security & compliance',
       description:
-        'Every interaction uses official APIs, and data handling practices are compliant with GDPR. We never engage in artificial engagement manipulation.',
+        'Every interaction uses official APIs, and data handling practices are aligned with GDPR principles. We never engage in artificial engagement manipulation.',
     },
   ];
 

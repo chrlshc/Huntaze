@@ -58,13 +58,13 @@ export default function HomePageImproved() {
                   <div className="w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-300 border-2 border-white dark:border-gray-800"></div>
                 </div>
                 <span className="text-sm text-gray-600 dark:text-gray-300">
-                  <strong>500+</strong> creators saving millions in agency fees
+                  Trusted by creators switching from agencies
                 </span>
               </div>
 
               {/* Main Headline - Huge & Clear */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-                Keep 98% of your{' '}
+                Keep more of your{' '}
                 <span className="bg-gradient-to-r from-purple-600 to-purple-600 bg-clip-text text-transparent">
                   revenue
                 </span>
@@ -72,8 +72,7 @@ export default function HomePageImproved() {
 
               {/* Subheadline */}
               <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Stop paying 50% to agencies. Our AI handles everything 24/7 
-                while you keep control and earnings.
+                Stop paying 50% to agencies. Automate fan conversations with AI while you keep control and earnings.
               </p>
 
               {/* CTAs */}
@@ -90,11 +89,7 @@ export default function HomePageImproved() {
               <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-300">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  <span className="dark:text-gray-300">No credit card required</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  <span className="dark:text-gray-300">Free if under $1.5k/mo</span>
+                  <span className="dark:text-gray-300">Free trial available</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -109,47 +104,14 @@ export default function HomePageImproved() {
               
               {/* Floating Badge */}
               <div className="absolute top-4 right-4 bg-purple-600/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-md">
-                Save $15k+/month
+                Save on fees
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Simple Stats Bar - No animations */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                500+
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">Active Creators</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                $50M+
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">Revenue Processed</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                4.9/5
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">Creator Rating</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                24/7
-              </div>
-              <div className="text-gray-600 dark:text-gray-300">AI Support</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Stats Bar removed to avoid unsupported claims */}
 
       {/* Use Cases Carousel */}
       <UseCasesCarousel />
@@ -204,8 +166,8 @@ export default function HomePageImproved() {
                     <DollarSign className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Increases sales by 285%</h3>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">Smart upselling at the perfect moment</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Increase sales with smart upsells</h3>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Personalized offers at the right moment</p>
                   </div>
                 </div>
               </motion.div>
@@ -244,7 +206,7 @@ export default function HomePageImproved() {
                   AI Chat Assistant
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Responds to every message in your style. Converts fans 24/7 while you sleep.
+                  Responds to messages in your style. Converts fans while you create.
                 </p>
                 <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
@@ -361,7 +323,7 @@ export default function HomePageImproved() {
                   AI Chat Assistant
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Engage fans 24/7 with personalized AI responses
+                  Engage fans with personalized AI responses
                 </p>
                 <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
                   Learn About AI Chat →
@@ -409,16 +371,16 @@ export default function HomePageImproved() {
                 <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Revenue in 2 months</div>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">500+</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Creators onboarded</div>
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">Creators</div>
+                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Onboarded</div>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">98%</div>
                 <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Revenue retained</div>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">24/7</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">AI Support</div>
+                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">AI</div>
+                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Assistant</div>
               </div>
             </div>
           </motion.div>
@@ -437,7 +399,7 @@ export default function HomePageImproved() {
             Ready to 10x your creator business?
           </h2>
           <p className="text-xl text-purple-100 mb-8">
-            Join 500+ creators who ditched their agencies and kept millions in revenue.
+            Join creators who ditched their agencies and kept more of their revenue.
           </p>
           <div className="flex justify-center">
             <Link href="/join">
@@ -452,7 +414,7 @@ export default function HomePageImproved() {
             </Link>
           </div>
           <p className="text-purple-100 mt-6">
-            ✓ No credit card required ✓ Free if under $1.5k/mo ✓ Cancel anytime
+            ✓ Free trial available ✓ Cancel anytime
           </p>
         </div>
       </section>

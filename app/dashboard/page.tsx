@@ -6,6 +6,7 @@ import { LogOut, User, Settings, BarChart3 } from 'lucide-react';
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
+  const [meter, setMeter] = useState<any>(null);
 
   useEffect(() => {
     // Fetch user data from API
@@ -25,7 +26,17 @@ export default function DashboardPage() {
       }
     };
 
+    const fetchMeter = async () => {
+      try {
+        const resp = await fetch('/api/billing/commission/meter');
+        if (resp.ok) setMeter(await resp.json());
+      } catch (e) {
+        console.warn('Commission meter unavailable');
+      }
+    };
+
     fetchUser();
+    fetchMeter();
   }, []);
 
   const handleLogout = async () => {
@@ -109,11 +120,24 @@ export default function DashboardPage() {
 
           <div className="bg-white dark:bg-gray-950 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Messages</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Commission Cap</h3>
               <BarChart3 className="w-5 h-5 text-purple-600" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">0</p>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">AI handled today</p>
+            {meter ? (
+              <>
+                <div className="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded">
+                  <div className="h-3 bg-purple-600 rounded" style={{ width: `${Math.min(100, Math.round((meter.usedCents / meter.capCents) * 100))}%` }} />
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                  ${((meter.usedCents || 0) / 100).toFixed(2)} used of ${(meter.capCents / 100).toFixed(2)} cap
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">—</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Meter unavailable</p>
+              </>
+            )}
           </div>
         </div>
 

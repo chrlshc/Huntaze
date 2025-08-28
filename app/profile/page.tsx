@@ -118,7 +118,7 @@ export default function ProfilePage() {
               Need help with your account?
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Our support team is here to assist you 24/7
+              Our support team typically responds within 24 hours
             </p>
             <Link href="/support">
               <PremiumButton size="sm">

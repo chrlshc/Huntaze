@@ -177,19 +177,19 @@ export default function FooterImproved() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">GDPR Compliant</span>
+              <span className="text-sm text-gray-400">GDPR‑Aligned</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">SOC 2 Type II</span>
+              <span className="text-sm text-gray-400">Security Best Practices</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">256-bit Encryption</span>
+              <span className="text-sm text-gray-400">AES‑256‑GCM Encryption</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">99.9% Uptime SLA</span>
+              <span className="text-sm text-gray-400">High Availability</span>
             </div>
           </div>
         </div>

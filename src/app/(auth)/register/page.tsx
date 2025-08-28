@@ -104,24 +104,24 @@ export default function RegisterPage() {
         Get Early Access
       </h1>
       <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-        Join 500+ creators earning 6-figures with AI automation
+        Join creators growing with AI automation
       </p>
 
       {/* Success metrics */}
-      <div className="grid grid-cols-3 gap-4 mb-8 text-center">
-        <div>
-          <div className="text-xl font-bold text-purple-600">500+</div>
-          <div className="text-xs text-gray-500">Creators</div>
+        <div className="grid grid-cols-3 gap-4 mb-8 text-center">
+          <div>
+            <div className="text-xl font-bold text-purple-600">Creators</div>
+            <div className="text-xs text-gray-500">Onboarded</div>
+          </div>
+          <div>
+            <div className="text-xl font-bold text-purple-600">Revenue</div>
+            <div className="text-xs text-gray-500">Analytics</div>
+          </div>
+          <div>
+            <div className="text-xl font-bold text-purple-600">Growth</div>
+            <div className="text-xs text-gray-500">Insights</div>
+          </div>
         </div>
-        <div>
-          <div className="text-xl font-bold text-purple-600">$50M+</div>
-          <div className="text-xs text-gray-500">Revenue</div>
-        </div>
-        <div>
-          <div className="text-xl font-bold text-purple-600">+285%</div>
-          <div className="text-xs text-gray-500">Growth</div>
-        </div>
-      </div>
 
       {/* Error message */}
       {error && (
