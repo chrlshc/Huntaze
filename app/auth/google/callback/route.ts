@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     ensureGoogleOAuthEnv();
   } catch (error) {
     // Return error page instead of throwing during build
-    return NextResponse.redirect(new URL('/join?error=oauth_not_configured', request.url));
+    return NextResponse.redirect(new URL('/join?error=oauth_not_configured', 'https://huntaze.com'));
   }
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
@@ -17,11 +17,11 @@ export async function GET(request: NextRequest) {
 
   // Handle errors
   if (error) {
-    return NextResponse.redirect(new URL('/join?error=oauth_denied', request.url));
+    return NextResponse.redirect(new URL('/join?error=oauth_denied', 'https://huntaze.com'));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL('/join?error=no_code', request.url));
+    return NextResponse.redirect(new URL('/join?error=no_code', 'https://huntaze.com'));
   }
 
   try {
@@ -77,11 +77,28 @@ export async function GET(request: NextRequest) {
     // Set auth cookies
     setAuthCookies(accessToken, refreshToken);
 
-    // Redirect to dashboard or home
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    // Create response with redirect
+    const response = NextResponse.redirect(new URL('/dashboard', 'https://huntaze.com'));
+    
+    // Set auth cookies
+    response.cookies.set('auth_token', accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+    
+    response.cookies.set('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+    
+    return response;
 
   } catch (error) {
     console.error('OAuth error:', error);
-    return NextResponse.redirect(new URL('/join?error=oauth_failed', request.url));
+    return NextResponse.redirect(new URL('/join?error=oauth_failed', 'https://huntaze.com'));
   }
 }
