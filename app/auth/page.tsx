@@ -69,7 +69,7 @@ export default function AuthPage() {
             {authMethod === 'signup' ? 'Start your free trial' : 'Log in to Huntaze'}
           </h1>
           <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-            {authMethod === 'signup' ? 'Get 3 days free, then 2 months for €1/month' : 'Welcome back to your account'}
+            {authMethod === 'signup' ? 'First month FREE if you earn <$1.5k/mo' : 'Welcome back to your account'}
           </p>
 
           {!showEmailForm ? (
