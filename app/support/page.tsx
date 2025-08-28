@@ -60,7 +60,7 @@ export default function SupportPage() {
               <p className="text-gray-600 dark:text-gray-300 mb-4">
                 We're rolling out chat support. In the meantime, email is the fastest way to reach us.
               </p>
-              <PremiumButton size="sm" disabled>
+              <PremiumButton size="sm">
                 Start Chat
               </PremiumButton>
             </motion.div>
