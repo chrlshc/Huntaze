@@ -3,7 +3,7 @@ import { jwtVerify } from 'jose';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2023-10-16',
 });
 
 export async function POST(request: NextRequest) {
@@ -32,7 +32,8 @@ export async function POST(request: NextRequest) {
 
     const priceId = priceIds[planId] || priceIds.pro;
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session (idempotent)
+    const idempotencyKey = `checkout_${userId}_${planId}`;
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
       payment_method_types: ['card'],
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       subscription_data: {
         trial_period_days: 30,
       },
-    });
+    }, { idempotencyKey });
 
     return NextResponse.json({ 
       url: session.url,
