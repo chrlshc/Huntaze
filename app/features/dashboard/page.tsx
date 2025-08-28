@@ -56,7 +56,7 @@ export default function DashboardPage() {
             transition={{ delay: 0.3 }}
             className="text-center"
           >
-            <Link href="/join">
+            <Link href="/auth">
               <PremiumButton size="lg" className="mx-auto">
                 Get Your Dashboard
                 <LayoutDashboard className="w-5 h-5 ml-2" />
@@ -262,7 +262,7 @@ export default function DashboardPage() {
           <p className="text-xl text-purple-100 mb-8">
             Everything you need to run your creator business in one beautiful dashboard
           </p>
-          <Link href="/join">
+          <Link href="/auth">
             <PremiumButton variant="secondary" size="lg" className="bg-white text-purple-600">
               Start Your Free Trial
             </PremiumButton>
