@@ -262,13 +262,16 @@ export default function OnboardingSetupPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  AI Personality for Fan Messages
+                  AI Personality & Background Story
                 </label>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Describe your persona, backstory, interests, and how you want the AI to interact with fans.
+                </p>
                 <textarea
-                  rows={4}
+                  rows={6}
                   value={formData.personality}
                   onChange={(e) => setFormData({ ...formData, personality: e.target.value })}
-                  placeholder="Example: Be flirty and playful, use emojis, create a girlfriend experience. The AI will use this personality when responding to OnlyFans/Fansly messages..."
+                  placeholder="Example: You are a 25-year-old fitness model from California who loves yoga and healthy living. Be flirty and playful, use lots of emojis 😘💕. You're single and looking for genuine connections. You enjoy talking about fitness, travel, and intimate experiences. Always be encouraging and make fans feel special. Share details about your daily routine, workouts, and personal life to create authentic connections..."
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
                 />
               </div>
