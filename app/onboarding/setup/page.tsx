@@ -167,6 +167,14 @@ export default function OnboardingSetupPage() {
     setLoading(false);
   };
 
+  const handlePrevious = () => {
+    if (currentStep === 'ai-config') {
+      setCurrentStep('profile');
+    } else if (currentStep === 'payment') {
+      setCurrentStep('ai-config');
+    }
+  };
+
   const handleComplete = () => {
     router.push('/dashboard');
   };
@@ -239,23 +247,28 @@ export default function OnboardingSetupPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Configure your AI assistant
+                Configure your AI assistant for OnlyFans/Fansly
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Customize how your AI interacts with fans
+                Customize how your AI responds to messages on your adult content platforms
               </p>
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  ℹ️ <strong>Note:</strong> You'll connect your OnlyFans/Fansly accounts after completing the setup.
+                </p>
+              </div>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  AI Personality
+                  AI Personality for Fan Messages
                 </label>
                 <textarea
                   rows={4}
                   value={formData.personality}
                   onChange={(e) => setFormData({ ...formData, personality: e.target.value })}
-                  placeholder="Example: Be flirty and playful, use emojis, create a girlfriend experience..."
+                  placeholder="Example: Be flirty and playful, use emojis, create a girlfriend experience. The AI will use this personality when responding to OnlyFans/Fansly messages..."
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
                 />
               </div>
@@ -292,13 +305,13 @@ export default function OnboardingSetupPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Welcome Message
+                  Welcome Message (Auto-sent to new subscribers)
                 </label>
                 <textarea
                   rows={3}
                   value={formData.welcomeMessage}
                   onChange={(e) => setFormData({ ...formData, welcomeMessage: e.target.value })}
-                  placeholder="Hey babe! 💕 Welcome to my exclusive content..."
+                  placeholder="Hey babe! 💕 Welcome to my exclusive content. This message will be automatically sent to new OnlyFans/Fansly subscribers..."
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
                 />
               </div>
@@ -419,11 +432,21 @@ export default function OnboardingSetupPage() {
           
           {/* Navigation */}
           {currentStep !== 'complete' && (
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex justify-between">
+              {currentStep !== 'profile' && (
+                <button
+                  onClick={handlePrevious}
+                  disabled={loading}
+                  className="px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                >
+                  <ArrowRight className="w-5 h-5 rotate-180" />
+                  Previous
+                </button>
+              )}
               <button
                 onClick={handleNext}
                 disabled={loading}
-                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
               >
                 {loading ? (
                   <>
