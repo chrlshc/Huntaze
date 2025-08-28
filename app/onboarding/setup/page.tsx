@@ -52,7 +52,7 @@ export default function OnboardingSetupPage() {
         });
         setCurrentStep('complete');
       };
-      completeOnboarding();
+      completeOnboarding().catch(console.error);
     }
   }, [searchParams]);
 
