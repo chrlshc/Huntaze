@@ -63,14 +63,14 @@ export async function POST(req: NextRequest) {
   if (process.env.WAITLIST_SEND_CONFIRM === 'true' && from) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com';
     const html = `
-      <p>Merci, votre adresse <b>${data.email}</b> a bien été ajoutée à la liste d'attente.</p>
-      <p>Nous vous tiendrons informée dès que votre accès est prêt.</p>
-      <p>— L'équipe Huntaze</p>
+      <p>Thanks! Your address <b>${data.email}</b> has been added to the waitlist.</p>
+      <p>We’ll notify you as soon as your access is ready.</p>
+      <p>— The Huntaze Team</p>
       <p><a href="${appUrl}">${appUrl}</a></p>
     `;
     await sendMail({
       to: data.email,
-      subject: 'Bienvenue sur la liste d’attente Huntaze',
+      subject: 'Welcome to the Huntaze waitlist',
       html,
       from,
     });

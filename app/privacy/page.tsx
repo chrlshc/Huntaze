@@ -35,7 +35,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">Storage</h2>
               <p className="text-neutral-700">
-                Tokens are encrypted at rest (KMS/Secrets Manager); access is restricted.
+                Sensitive tokens are encrypted at rest (AES‑256‑GCM with a dedicated key); access is restricted.
               </p>
             </section>
 

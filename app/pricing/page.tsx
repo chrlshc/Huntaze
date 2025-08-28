@@ -4,22 +4,21 @@ import PricingClient from './pricing-client';
 export const metadata: Metadata = {
   title: 'Pricing - Huntaze',
   description:
-    'Revolutionary pricing for OF creators. Keep 85-98% of your revenue with our transparent commission caps. First month free if you make less than $1.5k/month.',
+    'Simple, transparent pricing for creators. Free trial available. Cancel anytime.',
 };
 
 // Huntaze Pricing Plans
 const plans = [
   {
     name: 'STARTER',
-    price: '$0/mo',
-    description: 'Perfect for creators just starting out',
+    price: 'Free trial',
+    description: 'Perfect to get started and evaluate',
     color: 'green',
     features: [
-      'First month FREE if <$1.5k/mo',
-      '20% → 5% commission (scales down)',
-      '90 days: 0% on first $500/mo',
+      'Try core features with no commitment',
       'All core automation features',
-      'Email support'
+      'Email support within 1 business day',
+      '1 new feature/week (community vote)'
     ],
     cta: 'Start free trial'
   },
@@ -30,11 +29,12 @@ const plans = [
     color: 'purple',
     badge: 'MOST POPULAR',
     features: [
-      'Commission capped at $699/mo',
-      'Perfect for $4k-20k/mo creators',
       'Advanced analytics & insights',
-      'Priority support',
-      'Custom AI training'
+      'Higher limits and throughput',
+      'Advanced analytics & insights',
+      'Priority email support',
+      'Custom AI tuning (beta)',
+      '2 new features/week (priority vote)'
     ],
     cta: 'Start free trial'
   },
@@ -44,11 +44,11 @@ const plans = [
     description: 'Maximum growth with minimal fees',
     color: 'blue',
     features: [
-      'Commission capped at $1,999/mo',
-      'Best for $20k-50k/mo creators',
       'Multi-platform management',
-      'Dedicated success manager',
-      'API access'
+      'Higher API limits',
+      'Dedicated onboarding assistance',
+      'API access (beta)',
+      '3 new features/week + fast track'
     ],
     cta: 'Start free trial'
   },
@@ -59,11 +59,10 @@ const plans = [
     color: 'gold',
     isPremium: true,
     features: [
-      'Only 2% flat commission',
-      'For $50k+/mo creators',
-      'White-label options',
       'Custom integrations',
-      '24/7 phone support'
+      'SLA and security reviews',
+      'Managed onboarding',
+      'Dedicated support channel'
     ],
     cta: 'Start free trial'
   }

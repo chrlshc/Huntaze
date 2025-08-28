@@ -29,7 +29,7 @@ const testimonials = [
     savings: '$8k/month',
     revenue: '$22k/month',
     growth: '+194%',
-    quote: "The AI responds exactly like I would, but 24/7. My fans love the instant replies!",
+    quote: "The AI responds exactly like I would, even off-hours. My fans love the instant replies!",
     highlight: 'Increased fan engagement by 4x',
     platform: 'Fansly',
     verified: true

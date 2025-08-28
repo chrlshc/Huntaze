@@ -40,7 +40,7 @@ const useCases = [
     title: 'Mia doubled her fanbase',
     subtitle: 'Instagram Creator',
     metric: '1.2k → 2.8k fans',
-    description: '24/7 engagement without burnout',
+    description: 'Always-on engagement without burnout',
     icon: MessageSquare,
     color: 'from-pink-500 to-purple-500',
     image: '/mockups/growth-mia.png'

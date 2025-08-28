@@ -18,7 +18,7 @@ const navigation = {
     items: [
       {
         name: 'AI Chat Assistant',
-        description: 'Automate fan conversations 24/7',
+        description: 'Automate fan conversations',
         href: '/features/ai-chat',
         icon: MessageSquare
       },
@@ -52,6 +52,12 @@ const navigation = {
         icon: HeadphonesIcon
       },
       {
+        name: 'Roadmap & Voting',
+        description: 'Vote weekly for new features',
+        href: '/roadmap',
+        icon: GraduationCap
+      },
+      {
         name: 'Creator Academy',
         description: 'Learn growth strategies',
         href: '/learn',
@@ -65,7 +71,7 @@ const navigation = {
       },
       {
         name: 'System Status',
-        description: '99.9% uptime guaranteed',
+        description: 'Service availability updates',
         href: '/about',
         icon: Shield
       }

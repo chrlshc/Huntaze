@@ -32,7 +32,7 @@ export default function DashboardPage() {
               <LayoutDashboard className="w-10 h-10 text-purple-600 dark:text-purple-400" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-              Real-time Dashboard
+              Powerful Creator Dashboard
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Your command center for managing fans, tracking revenue, and growing your business
@@ -85,7 +85,7 @@ export default function DashboardPage() {
               {
                 icon: <DollarSign className="w-6 h-6" />,
                 title: "Live Revenue Tracking",
-                description: "See earnings update in real-time. Track daily, weekly, and monthly revenue at a glance."
+                description: "Track daily, weekly, and monthly revenue at a glance."
               },
               {
                 icon: <Users className="w-6 h-6" />,
@@ -99,8 +99,8 @@ export default function DashboardPage() {
               },
               {
                 icon: <Shield className="w-6 h-6" />,
-                title: "Secure & Private",
-                description: "Bank-level encryption. Your data is yours alone. GDPR compliant."
+                title: "Security & Privacy",
+                description: "Strong encryption and GDPR‑aligned practices. Your data is yours alone."
               },
               {
                 icon: <Smartphone className="w-6 h-6" />,
@@ -174,8 +174,8 @@ export default function DashboardPage() {
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
-                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">$142,847</div>
-                  <div className="text-sm text-green-600">+23% this month</div>
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">$—</div>
+                  <div className="text-sm text-green-600">Analytics coming soon</div>
                   <div className="mt-4 h-32 bg-gradient-to-r from-purple-600 to-pink-600 rounded opacity-20"></div>
                 </div>
               </div>
