@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         results.push({
           userId: user.id,
           status: 'error',
-          error: error.message,
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }

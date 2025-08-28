@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     const connections = platformConnections.get(userId) || [];
     
     // Return safe connection info
-    const safeConnections = connections.map(conn => ({
+    const safeConnections = connections.map((conn: any) => ({
       id: conn.id,
       platform: conn.platform,
       username: conn.username,
