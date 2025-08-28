@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('7d')
+      .setExpirationTime('10y')
       .sign(secret);
 
     // Create response
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
     });
 
     return response;

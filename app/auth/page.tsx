@@ -10,7 +10,7 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [authMethod, setAuthMethod] = useState<'signin' | 'signup'>('signin');
+  const [authMethod, setAuthMethod] = useState<'signin' | 'signup'>('signup');
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,7 +28,8 @@ export default function AuthPage() {
       });
 
       if (response.ok) {
-        router.push('/dashboard');
+        const data = await response.json();
+        router.push(data.redirect || '/dashboard');
       } else {
         const data = await response.json();
         setError(data.error || `Failed to ${authMethod === 'signin' ? 'sign in' : 'sign up'}`);
