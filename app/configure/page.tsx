@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
 export default function ConfigurePage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState({
     personality: '',
     responseStyle: 'friendly',
@@ -17,11 +19,50 @@ export default function ConfigurePage() {
     customResponses: [],
   });
 
+  useEffect(() => {
+    // Load existing config
+    const loadConfig = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/ai/config');
+        if (response.ok) {
+          const data = await response.json();
+          setConfig(data);
+        }
+      } catch (error) {
+        console.error('Failed to load config:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadConfig();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save configuration
-    console.log('Saving config:', config);
-    router.push('/dashboard');
+    setSaving(true);
+    
+    try {
+      const response = await fetch('/api/ai/config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (response.ok) {
+        router.push('/dashboard');
+      } else {
+        alert('Failed to save configuration');
+      }
+    } catch (error) {
+      console.error('Error saving config:', error);
+      alert('Failed to save configuration');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
