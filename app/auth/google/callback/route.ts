@@ -82,22 +82,22 @@ export async function GET(request: NextRequest) {
     // Set auth cookies
     setAuthCookies(accessToken, refreshToken);
 
-    // Create response with redirect
-    const response = NextResponse.redirect(new URL('/dashboard', 'https://huntaze.com'));
+    // Create response with redirect to onboarding for new users
+    const response = NextResponse.redirect(new URL('/onboarding/setup', 'https://huntaze.com'));
     
     // Set auth cookies
     response.cookies.set('auth_token', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
     });
     
     response.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
     });
     
     return response;

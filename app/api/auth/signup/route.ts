@@ -50,12 +50,13 @@ export async function POST(request: NextRequest) {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('7d')
+      .setExpirationTime('10y')
       .sign(secret);
 
-    // Create response with redirect
+    // Create response with redirect URL for onboarding
     const response = NextResponse.json({ 
       success: true,
+      redirect: '/onboarding/setup',
       user: {
         id: user.id,
         email: user.email,
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
     });
 
     return response;
