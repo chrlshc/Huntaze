@@ -77,7 +77,7 @@ export default function HomePageImproved() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link href="/join">
+                <Link href="/auth">
                   <PremiumButton size="lg" className="w-full sm:w-auto">
                     Start free trial
                     <ArrowRight className="ml-2 h-5 w-5" />

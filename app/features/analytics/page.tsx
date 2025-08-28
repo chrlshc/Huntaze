@@ -56,7 +56,7 @@ export default function AnalyticsPage() {
             transition={{ delay: 0.3 }}
             className="text-center"
           >
-            <Link href="/join">
+            <Link href="/auth">
               <PremiumButton size="lg" className="mx-auto">
                 Start Free Trial
                 <TrendingUp className="w-5 h-5 ml-2" />
