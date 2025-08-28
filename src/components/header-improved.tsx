@@ -7,7 +7,8 @@ import {
   Menu, X, ChevronDown, ArrowRight,
   MessageSquare, BarChart3, Calendar, Shield,
   DollarSign, Users, Zap, BookOpen, FileText,
-  HeadphonesIcon, GraduationCap, Building
+  HeadphonesIcon, GraduationCap, Building,
+  User, LogOut, Settings
 } from 'lucide-react'
 import { ThemeToggle } from './theme-toggle'
 
@@ -76,6 +77,44 @@ export default function HeaderImproved() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Check if user is logged in
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (response.ok) {
+          const userData = await response.json()
+          setUser(userData)
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [])
+
+  useEffect(() => {
+    // Close dropdowns when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeDropdown && !(event.target as Element).closest('.relative')) {
+        setActiveDropdown(null)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [activeDropdown])
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    window.location.href = '/'
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -211,18 +250,81 @@ export default function HeaderImproved() {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
             <ThemeToggle />
-            <Link 
-              href="/join" 
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
-            >
-              Log in
-            </Link>
-            <Link 
-              href="/join" 
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              Start free trial
-            </Link>
+            {loading ? (
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+            ) : user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setActiveDropdown(activeDropdown === 'user' ? null : 'user')}
+                  className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                >
+                  {user.picture ? (
+                    <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
+                  ) : (
+                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                
+                <AnimatePresence>
+                  {activeDropdown === 'user' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
+                    >
+                      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+                        <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                      </div>
+                      <div className="p-2">
+                        <Link
+                          href="/dashboard"
+                          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                          onClick={() => setActiveDropdown(null)}
+                        >
+                          <BarChart3 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
+                        </Link>
+                        <Link
+                          href="/configure"
+                          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                          onClick={() => setActiveDropdown(null)}
+                        >
+                          <Settings className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <span className="text-gray-700 dark:text-gray-300">Settings</span>
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+                        >
+                          <LogOut className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <span className="text-gray-700 dark:text-gray-300">Logout</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <>
+                <Link 
+                  href="/join" 
+                  className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
+                >
+                  Log in
+                </Link>
+                <Link 
+                  href="/join" 
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                >
+                  Start free trial
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -300,20 +402,80 @@ export default function HeaderImproved() {
                 </div>
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
-                  <Link
-                    href="/join"
-                    className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/join"
-                    className="block bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-center font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Start free trial
-                  </Link>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-600 dark:text-gray-400">Theme</span>
+                    <ThemeToggle />
+                  </div>
+                  
+                  {loading ? (
+                    <div className="p-4 flex justify-center">
+                      <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+                    </div>
+                  ) : user ? (
+                    <>
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center space-x-3">
+                          {user.picture ? (
+                            <img src={user.picture} alt={user.name} className="w-10 h-10 rounded-full" />
+                          ) : (
+                            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-white" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <BarChart3 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
+                      </Link>
+                      
+                      <Link
+                        href="/configure"
+                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="text-gray-700 dark:text-gray-300">Settings</span>
+                      </Link>
+                      
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setMobileMenuOpen(false);
+                        }}
+                        className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left"
+                      >
+                        <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="text-gray-700 dark:text-gray-300">Logout</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/join"
+                        className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        href="/join"
+                        className="block bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-center font-medium"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Start free trial
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>
