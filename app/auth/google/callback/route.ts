@@ -1,24 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, generateRefreshToken, setAuthCookies } from '../../../../lib/auth/jwt';
-import { ensureGoogleOAuthEnv } from '../../../../lib/env';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  // Debug: Log environment variables
-  console.log('OAuth Debug:', {
-    hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
-    hasNextPublicGoogleClientId: !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
-    hasRedirectUri: !!process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
-    nodeEnv: process.env.NODE_ENV,
-  });
+  // Get OAuth config from environment
+  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+  const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+  const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || 'https://huntaze.com/auth/google/callback';
 
-  try {
-    ensureGoogleOAuthEnv();
-  } catch (error) {
-    console.error('OAuth env check failed:', error);
-    // Return error page instead of throwing during build
+  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+    console.error('Missing OAuth config:', {
+      hasClientId: !!GOOGLE_CLIENT_ID,
+      hasClientSecret: !!GOOGLE_CLIENT_SECRET,
+    });
     return NextResponse.redirect(new URL('/join?error=oauth_not_configured', 'https://huntaze.com'));
   }
   const searchParams = request.nextUrl.searchParams;
@@ -43,9 +38,9 @@ export async function GET(request: NextRequest) {
       },
       body: new URLSearchParams({
         code,
-        client_id: process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '617004665472-hoaj6lobp0e6rlt1o3sl6kipnna4av35.apps.googleusercontent.com',
-        client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
-        redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || 'https://huntaze.com/auth/google/callback',
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        redirect_uri: GOOGLE_REDIRECT_URI,
         grant_type: 'authorization_code',
       }),
     });
