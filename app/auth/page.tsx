@@ -23,13 +23,12 @@ export default function AuthPage() {
   const handleOAuthSignIn = async (provider: string) => {
     setIsLoading(true);
     try {
-      // TODO: Implement OAuth with next-auth
-      // await signIn(provider, { callbackUrl: '/dashboard' });
-      window.location.href = `/auth/${provider}/callback`;
+      // Redirect to OAuth API endpoint
+      window.location.href = `/api/auth/${provider}`;
     } catch (error) {
       console.error('Auth error:', error);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
