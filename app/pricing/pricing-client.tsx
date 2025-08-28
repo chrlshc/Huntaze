@@ -189,7 +189,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 </ul>
 
                 <Link
-                  href="/join"
+                  href="/auth"
                   className={`block w-full py-4 px-6 rounded-lg font-semibold transition-all text-center ${
                     isPro
                       ? 'bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 transform shadow-lg'
@@ -486,7 +486,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
-              href="/join"
+              href="/auth"
               className="inline-block bg-white text-purple-600 px-10 py-5 rounded-lg text-xl font-bold shadow-2xl hover:scale-105 transform transition-all"
             >
               Start free trial
