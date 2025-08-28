@@ -1,72 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 
-// In-memory storage for demo (should use database)
-const userProfiles = new Map();
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function GET(request: NextRequest) {
   try {
     const token = request.cookies.get('auth_token')?.value;
-    
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
-
-    // Get user profile from storage
-    const profile = userProfiles.get(userId) || {
-      displayName: '',
-      bio: '',
-      timezone: '',
-      onboardingCompleted: false,
-      onboardingStep: 'profile',
-    };
-
-    return NextResponse.json(profile);
+    const resp = await fetch(`${API_URL}/users/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include',
+      cache: 'no-store',
+    });
+    const data = await resp.json();
+    return NextResponse.json(data, { status: resp.status });
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const token = request.cookies.get('auth_token')?.value;
-    
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
-
-    const data = await request.json();
-    
-    // Get existing profile or create new one
-    const existingProfile = userProfiles.get(userId) || {};
-    
-    // Update profile
-    const updatedProfile = {
-      ...existingProfile,
-      ...data,
-      userId,
-      updatedAt: new Date().toISOString(),
-    };
-
-    // Save to storage
-    userProfiles.set(userId, updatedProfile);
-
-    return NextResponse.json(updatedProfile);
+    const payload = await request.json();
+    const resp = await fetch(`${API_URL}/users/profile`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+    return NextResponse.json(data, { status: resp.status });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
-  return POST(request);
+  try {
+    const token = request.cookies.get('auth_token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    const payload = await request.json();
+    const resp = await fetch(`${API_URL}/users/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+    return NextResponse.json(data, { status: resp.status });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
+  }
 }
