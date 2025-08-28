@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verify } from 'jose';
+import { jwtVerify } from 'jose';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
     // Verify JWT token
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await verify(token, secret);
+    const { payload } = await jwtVerify(token, secret);
 
     return NextResponse.json({
       userId: payload.userId,
