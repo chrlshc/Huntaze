@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { z } from 'zod';
+import { sendMail } from '@/lib/mailer';
 
 const rateLimiter = new RateLimiterMemory({ points: 30, duration: 60 });
 
@@ -42,11 +43,38 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // For now, just log the data and return success
-  console.log('New waitlist signup:', result.data);
+  const data = result.data;
 
-  return NextResponse.json(
-    { message: 'Successfully joined the waitlist' },
-    { status: 200 }
-  );
+  // Send notification to internal team and optional confirmation to user
+  const notifyList = (process.env.WAITLIST_NOTIFY_EMAILS || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const from = process.env.SES_FROM_EMAIL || process.env.SMTP_FROM || process.env.FROM_EMAIL;
+
+  // Internal notification
+  if (notifyList.length && from) {
+    await sendMail({
+      to: notifyList,
+      subject: `New waitlist signup: ${data.email}`,
+      text: `New signup\nEmail: ${data.email}\nIG: ${data.handle_ig || '-'}\nNiche: ${data.niche || '-'}\nTimezone: ${data.timezone || '-'}\nConsent: ${data.consent ? 'yes' : 'no'}`,
+      from,
+    });
+  }
+
+  // User confirmation (optional)
+  if (process.env.WAITLIST_SEND_CONFIRM === 'true' && from) {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com';
+    const html = `
+      <p>Merci, votre adresse <b>${data.email}</b> a bien été ajoutée à la liste d'attente.</p>
+      <p>Nous vous tiendrons informée dès que votre accès est prêt.</p>
+      <p>— L'équipe Huntaze</p>
+      <p><a href="${appUrl}">${appUrl}</a></p>
+    `;
+    await sendMail({
+      to: data.email,
+      subject: 'Bienvenue sur la liste d’attente Huntaze',
+      html,
+      from,
+    });
+  }
+
+  return NextResponse.json({ message: 'Successfully joined the waitlist' }, { status: 200 });
 }
