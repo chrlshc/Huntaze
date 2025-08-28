@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       },
       body: new URLSearchParams({
         code,
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+        client_id: process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
         redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
         grant_type: 'authorization_code',
