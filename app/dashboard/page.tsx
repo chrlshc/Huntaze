@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useOnboarding } from '@/hooks/useOnboarding';
-import { useContextualNotifications } from '@/components/notifications';
+import { useNotifications } from '@/components/notifications';
 import { 
   RevenueGoalWidget,
   ContentCalendarWidget,
@@ -93,22 +93,6 @@ export default function DashboardPage() {
     loadPersonalization();
   }, []);
 
-  // Contextual notification triggers
-  useContextualNotifications([
-    {
-      condition: () => !aiConfig?.responseStyle && user,
-      context: 'ai_training_reminder',
-      delay: 5000,
-      once: true
-    },
-    {
-      condition: () => parseFloat(stats[0].value.replace(/[$,]/g, '')) >= 30000,
-      context: 'revenue_milestone',
-      data: { amount: stats[0].value },
-      delay: 3000,
-      once: true
-    }
-  ]);
 
   // Simulate real-time events for demo
   useEffect(() => {
@@ -447,7 +431,7 @@ export default function DashboardPage() {
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </button>
                 <button 
-                  onClick={() => notifyNewVIPFan('John Doe')}
+                  onClick={() => showContextualNotification('new_vip_fan', { fanName: 'John Doe' })}
                   className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
                 >
                   <Bell className="w-4 h-4 text-gray-600" />
