@@ -42,11 +42,13 @@ import {
   Globe,
   ChevronDown
 } from 'lucide-react';
+import type { OverviewMetrics } from '@/types/analytics';
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
+  const [overview, setOverview] = useState<OverviewMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const { status: onboarding } = useOnboarding();
@@ -76,12 +78,14 @@ export default function DashboardPage() {
   useEffect(() => {
     const loadPersonalization = async () => {
       try {
-        const [p, a] = await Promise.all([
+        const [p, a, o] = await Promise.all([
           fetch('/api/users/profile', { cache: 'no-store' }),
           fetch('/api/ai/config', { cache: 'no-store' }),
+          fetch('/api/analytics/overview', { cache: 'no-store' }),
         ]);
         if (p.ok) setProfile(await p.json());
         if (a.ok) setAiConfig(await a.json());
+        if (o.ok) setOverview(await o.json());
       } catch (e) {
         console.warn('Personalization fetch failed');
       }
@@ -129,8 +133,8 @@ export default function DashboardPage() {
   const stats = [
     {
       title: 'Monthly Revenue',
-      value: '$24,586',
-      change: '+32.4%',
+      value: overview ? `$${overview.metrics.revenueMonthly.toLocaleString()}` : '$24,586',
+      change: overview ? `${(overview.metrics.change.revenue*100).toFixed(1)}%` : '+32.4%',
       trend: 'up',
       icon: DollarSign,
       sparkline: [4, 6, 7, 9, 12, 15, 18, 20, 24],
@@ -138,8 +142,8 @@ export default function DashboardPage() {
     },
     {
       title: 'Active Subscribers',
-      value: '2,847',
-      change: '+12.3%',
+      value: overview ? overview.metrics.activeSubscribers.toLocaleString() : '2,847',
+      change: overview ? `${(overview.metrics.change.subscribers*100).toFixed(1)}%` : '+12.3%',
       trend: 'up',
       icon: Users,
       sparkline: [20, 22, 24, 26, 28, 30, 28, 29, 31],
@@ -147,8 +151,8 @@ export default function DashboardPage() {
     },
     {
       title: 'Avg. Response Time',
-      value: '1.2min',
-      change: '-25%',
+      value: overview ? `${(overview.metrics.avgResponseSeconds/60).toFixed(1)}min` : '1.2min',
+      change: overview ? `${(overview.metrics.change.response*100).toFixed(0)}%` : '-25%',
       trend: 'up',
       icon: Clock,
       sparkline: [8, 7, 6, 5, 4, 3, 2, 1.5, 1.2],
@@ -156,8 +160,8 @@ export default function DashboardPage() {
     },
     {
       title: 'AI Automation Rate',
-      value: '87%',
-      change: '+5.2%',
+      value: overview ? `${Math.round(overview.metrics.aiAutomationRate*100)}%` : '87%',
+      change: overview ? `${(overview.metrics.change.automation*100).toFixed(1)}%` : '+5.2%',
       trend: 'up',
       icon: Bot,
       sparkline: [65, 68, 72, 75, 78, 82, 84, 86, 87],
@@ -165,7 +169,16 @@ export default function DashboardPage() {
     }
   ];
 
-  const topFans = [
+  const topFans = overview ? overview.topFans.map(tf => ({
+      name: tf.name,
+      username: tf.username,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(tf.name)}&background=gradient`,
+      revenue: `$${tf.revenue.toLocaleString()}`,
+      messages: tf.messages,
+      lastActive: tf.lastActive,
+      badge: tf.badge,
+      trend: `+${Math.round(tf.trend*100)}%`
+    })) : [
     {
       name: 'Alex Thompson',
       username: '@alex_t',
@@ -420,7 +433,12 @@ export default function DashboardPage() {
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name?.split(' ')[0] || 'Creator'}! 👋</h1>
-                <p className="text-gray-600">Here's your performance overview and key insights</p>
+                <p className="text-gray-600">
+                  Here's your performance overview and key insights • 
+                  <Link href="/why-huntaze" className="text-purple-600 hover:text-purple-700 font-medium">
+                    Découvrir pourquoi Huntaze est essentiel →
+                  </Link>
+                </p>
               </div>
               <div className="flex gap-3">
                 <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">

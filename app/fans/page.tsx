@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { GatedContent, GatedBanner } from '@/components/dashboard/GatedContent';
 import { 
   Users, 
   ChevronLeft,
@@ -277,8 +278,13 @@ export default function FansPage() {
       </header>
 
       <main className="px-6 lg:px-8 py-12 max-w-7xl mx-auto">
+        {/* Gated banner if no platform connected */}
+        {!hasConnectedPlatforms && (
+          <GatedBanner type="no-platform" aiConfig={aiConfig} userProfile={profile} />
+        )}
+        
         {/* Empty State */}
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className={!hasConnectedPlatforms ? "mt-6 bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden" : "bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden"}>
           {/* Hero Section */}
           <div className="p-12 text-center border-b border-gray-100">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">

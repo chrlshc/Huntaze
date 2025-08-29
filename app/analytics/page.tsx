@@ -40,33 +40,64 @@ import {
   Music,
   Video
 } from 'lucide-react';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from 'chart.js';
+import { GatedContent, GatedBanner } from '@/components/dashboard/GatedContent';
+import dynamic from 'next/dynamic';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
+// Dynamic imports for charts to reduce bundle size
+const DynamicLine = dynamic(
+  () => import('react-chartjs-2').then(mod => mod.Line),
+  { 
+    ssr: false,
+    loading: () => <div className="animate-pulse bg-gray-200 rounded-lg h-full w-full" />
+  }
 );
+
+const DynamicBar = dynamic(
+  () => import('react-chartjs-2').then(mod => mod.Bar),
+  { 
+    ssr: false,
+    loading: () => <div className="animate-pulse bg-gray-200 rounded-lg h-full w-full" />
+  }
+);
+
+const DynamicDoughnut = dynamic(
+  () => import('react-chartjs-2').then(mod => mod.Doughnut),
+  { 
+    ssr: false,
+    loading: () => <div className="animate-pulse bg-gray-200 rounded-lg h-full w-full" />
+  }
+);
+
+// Chart.js setup - only load when charts are used
+if (typeof window !== 'undefined') {
+  import('chart.js').then(({ 
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    ArcElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+  }) => {
+    ChartJS.register(
+      CategoryScale,
+      LinearScale,
+      PointElement,
+      LineElement,
+      BarElement,
+      ArcElement,
+      Title,
+      Tooltip,
+      Legend,
+      Filler
+    );
+  });
+}
+import type { OverviewMetrics } from '@/types/analytics';
 
 export default function AnalyticsPage() {
   const [dateRange, setDateRange] = useState('last30days');
@@ -75,28 +106,31 @@ export default function AnalyticsPage() {
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
   const { status: onboarding } = useOnboarding();
+  const [overview, setOverview] = useState<OverviewMetrics | null>(null);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
     (async () => {
       try {
-        const [p, a] = await Promise.all([
+        const [p, a, o] = await Promise.all([
           fetch('/api/users/profile', { cache: 'no-store' }),
           fetch('/api/ai/config', { cache: 'no-store' }),
+          fetch('/api/analytics/overview', { cache: 'no-store' }),
         ]);
         if (p.ok) setProfile(await p.json());
         if (a.ok) setAiConfig(await a.json());
+        if (o.ok) setOverview(await o.json());
       } catch {}
     })();
   }, []);
 
   // Revenue Chart Data
   const revenueData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: overview?.revenueSeries.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
       {
         label: 'Revenue',
-        data: [12000, 19000, 15000, 25000, 22000, 30000],
+        data: overview?.revenueSeries.values || [12000, 19000, 15000, 25000, 22000, 30000],
         borderColor: 'rgb(147, 51, 234)',
         backgroundColor: 'rgba(147, 51, 234, 0.1)',
         tension: 0.4,
@@ -107,16 +141,16 @@ export default function AnalyticsPage() {
 
   // Fan Growth Data
   const fanGrowthData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    labels: overview?.fanGrowth.labels || ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
     datasets: [
       {
         label: 'New Fans',
-        data: [120, 150, 180, 240],
+        data: overview?.fanGrowth.newFans || [120, 150, 180, 240],
         backgroundColor: 'rgba(59, 130, 246, 0.8)'
       },
       {
         label: 'Active Fans',
-        data: [80, 120, 140, 190],
+        data: overview?.fanGrowth.activeFans || [80, 120, 140, 190],
         backgroundColor: 'rgba(16, 185, 129, 0.8)'
       }
     ]
@@ -124,10 +158,10 @@ export default function AnalyticsPage() {
 
   // Platform Distribution
   const platformData = {
-    labels: ['OnlyFans', 'Fansly', 'Patreon', 'Others'],
+    labels: (overview?.platformDistribution?.map(p => p.platform) || ['OnlyFans', 'Fansly', 'Patreon', 'Others']).map(p => p[0].toUpperCase() + p.slice(1)),
     datasets: [
       {
-        data: [45, 30, 20, 5],
+        data: overview?.platformDistribution?.map(p => Math.round(p.share*100)) || [45, 30, 20, 5],
         backgroundColor: [
           'rgba(59, 130, 246, 0.8)',
           'rgba(147, 51, 234, 0.8)',
@@ -594,6 +628,11 @@ export default function AnalyticsPage() {
           ))}
         </div>
 
+        {/* Add gated banner if no platform connected */}
+        {!aiConfig?.platforms?.length && (
+          <GatedBanner type="no-platform" aiConfig={aiConfig} userProfile={profile} />
+        )}
+
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {metrics.map((metric, index) => {
@@ -642,9 +681,10 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Revenue Chart */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
+        <GatedContent type="no-platform" aiConfig={aiConfig} userProfile={profile}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Revenue Chart */}
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Revenue Overview</h3>
               <div className="flex items-center gap-2">
@@ -654,7 +694,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="h-80">
-              <Line 
+              <DynamicLine 
                 data={revenueData} 
                 options={{
                   responsive: true,
@@ -679,7 +719,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Revenue by Platform</h3>
             <div className="h-64">
-              <Doughnut 
+              <DynamicDoughnut 
                 data={platformData}
                 options={{
                   responsive: true,
@@ -708,6 +748,7 @@ export default function AnalyticsPage() {
             </div>
           </div>
         </div>
+        </GatedContent>
 
         {/* Bottom Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

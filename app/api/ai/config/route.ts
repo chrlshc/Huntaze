@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
+
+const API_URL = process.env.API_URL || 'http://localhost:3001';
 
 // Simple in-memory store keyed by auth token for demo/dev
 const aiConfigs = new Map<string, any>();
@@ -12,17 +13,32 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-
     // Try in-memory first
     const existing = aiConfigs.get(token);
     if (existing) {
       return NextResponse.json(existing);
     }
 
-    // TODO: Fetch config from database
+    // Try backend API
+    try {
+      const response = await fetch(`${API_URL}/ai/config`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        aiConfigs.set(token, data);
+        return NextResponse.json(data);
+      }
+    } catch (error) {
+      console.error('Backend API error:', error);
+    }
+
+    // Return default config if backend fails
     const defaultConfig = {
       personality: '',
       responseStyle: 'friendly',
@@ -36,7 +52,7 @@ export async function GET(request: NextRequest) {
     aiConfigs.set(token, defaultConfig);
     return NextResponse.json(defaultConfig);
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    return NextResponse.json({ error: 'Failed to fetch AI config' }, { status: 500 });
   }
 }
 
@@ -47,14 +63,30 @@ export async function POST(request: NextRequest) {
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
     
     const config = await request.json();
-    // TODO: Save config to database
-    console.log('Saving AI config for user:', (payload as any)?.userId, config);
+    
+    // Try to save to backend
+    try {
+      const response = await fetch(`${API_URL}/ai/config`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        aiConfigs.set(token, data.config || config);
+        return NextResponse.json({ success: true, config: data.config || config });
+      }
+    } catch (error) {
+      console.error('Backend API error:', error);
+    }
+    
+    // Fallback to in-memory
     aiConfigs.set(token, config);
     return NextResponse.json({ success: true, config });
   } catch (error) {
