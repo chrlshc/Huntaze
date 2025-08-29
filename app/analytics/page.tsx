@@ -70,20 +70,22 @@ const DynamicDoughnut = dynamic(
 
 // Chart.js setup - only load when charts are used
 if (typeof window !== 'undefined') {
-  import('chart.js').then(({ 
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-  }) => {
-    ChartJS.register(
+  import('chart.js').then((chartModule) => {
+    const {
+      Chart,
+      CategoryScale,
+      LinearScale,
+      PointElement,
+      LineElement,
+      BarElement,
+      ArcElement,
+      Title,
+      Tooltip,
+      Legend,
+      Filler
+    } = chartModule;
+    
+    Chart.register(
       CategoryScale,
       LinearScale,
       PointElement,
