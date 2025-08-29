@@ -37,7 +37,7 @@ export function RevenueGoalWidget({ currentRevenue, monthlyGoal, userProfile }: 
       }
 
       if (revenueRatio > 0.8) {
-        suggestionList.push('You're on track! Consider setting a stretch goal');
+        suggestionList.push('You\'re on track! Consider setting a stretch goal');
       }
 
       setSuggestions(suggestionList.slice(0, 2));

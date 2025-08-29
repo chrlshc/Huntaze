@@ -157,7 +157,7 @@ export default function HomePage() {
             <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-12 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full filter blur-3xl opacity-30"></div>
               <div className="relative z-10">
-                <h3 className="text-2xl md:text-3xl font-bold text-center mb-8">Notre Système de <span className="text-gradient">Commission Unique</span></h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-center mb-8">Our <span className="text-gradient">Unique Commission System</span></h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Free Tier */}
                   <div className="relative bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border-2 border-green-300 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -165,18 +165,18 @@ export default function HomePage() {
                       <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">FREE</span>
                     </div>
                     <div className="text-center">
-                      <p className="text-gray-600 text-sm mb-2">Moins de</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-2">2 000€/mois</p>
+                      <p className="text-gray-600 text-sm mb-2">Less than</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-2">€2,000/month</p>
                       <p className="text-5xl font-bold text-green-600">0%</p>
-                      <p className="text-sm text-gray-500 mt-2">GRATUIT</p>
+                      <p className="text-sm text-gray-500 mt-2">FREE</p>
                     </div>
                   </div>
                   
                   {/* 25% Tier */}
                   <div className="relative bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="text-center">
-                      <p className="text-gray-600 text-sm mb-2">Entre</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-2">2k€ - 5k€</p>
+                      <p className="text-gray-600 text-sm mb-2">Between</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-2">€2k - €5k</p>
                       <p className="text-5xl font-bold text-purple-600">25%</p>
                       <p className="text-sm text-gray-500 mt-2">commission</p>
                     </div>
@@ -185,8 +185,8 @@ export default function HomePage() {
                   {/* 20% Tier */}
                   <div className="relative bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="text-center">
-                      <p className="text-gray-600 text-sm mb-2">Entre</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-2">5k€ - 10k€</p>
+                      <p className="text-gray-600 text-sm mb-2">Between</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-2">€5k - €10k</p>
                       <p className="text-5xl font-bold text-purple-600">20%</p>
                       <p className="text-sm text-gray-500 mt-2">commission</p>
                     </div>
@@ -195,8 +195,8 @@ export default function HomePage() {
                   {/* 15% Tier */}
                   <div className="relative bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="text-center">
-                      <p className="text-gray-600 text-sm mb-2">Entre</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-2">10k€ - 20k€</p>
+                      <p className="text-gray-600 text-sm mb-2">Between</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-2">€10k - €20k</p>
                       <p className="text-5xl font-bold text-purple-600">15%</p>
                       <p className="text-sm text-gray-500 mt-2">commission</p>
                     </div>
@@ -205,8 +205,8 @@ export default function HomePage() {
                   {/* 10% Tier */}
                   <div className="relative bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-6 border-2 border-pink-300 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div className="text-center">
-                      <p className="text-gray-600 text-sm mb-2">Entre</p>
-                      <p className="text-3xl font-bold text-gray-900 mb-2">20k€ - 30k€</p>
+                      <p className="text-gray-600 text-sm mb-2">Between</p>
+                      <p className="text-3xl font-bold text-gray-900 mb-2">€20k - €30k</p>
                       <p className="text-5xl font-bold text-pink-600">10%</p>
                       <p className="text-sm text-gray-500 mt-2">commission</p>
                     </div>
@@ -230,7 +230,7 @@ export default function HomePage() {
                 <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
                   <h4 className="font-semibold text-lg mb-3 text-center">💡 Exemple: Si vous gagnez 15 000€/mois</h4>
                   <div className="text-center">
-                    <p className="text-gray-600 mb-2">Vous êtes dans la tranche 10k€ - 20k€</p>
+                    <p className="text-gray-600 mb-2">You are in the €10k – €20k band</p>
                     <p className="text-3xl font-bold text-purple-600">Vous ne payez que 15%</p>
                     <p className="text-lg text-gray-600 mt-2">Commission totale: <span className="font-bold">2 250€</span></p>
                     <p className="text-sm text-gray-500 mt-1">(15% de 15 000€)</p>
@@ -239,7 +239,7 @@ export default function HomePage() {
                     <p className="text-sm text-gray-600 text-center">
                       <span className="font-semibold">Comparaison:</span> Les autres agences prennent 30-50% sur TOUS vos revenus.
                       <br />
-                      Avec eux, vous paieriez <span className="line-through text-red-500">4 500€ à 7 500€</span> !
+                      With them, you would pay <span className="line-through text-red-500">€4,500 to €7,500</span>!
                     </p>
                   </div>
                 </div>
@@ -361,15 +361,9 @@ export default function HomePage() {
                     <p className="text-sm text-gray-500">commission</p>
                   </div>
                   <div className="flex flex-col gap-2 mb-4 text-sm">
-                    <div className="bg-pink-50 text-pink-700 rounded-lg px-3 py-2 text-center font-medium">
-                      Commission par palier
-                    </div>
-                    <div className="text-gray-600 text-center">
-                      30k€+: <span className="font-bold text-gradient">5%</span>
-                    </div>
-                    <div className="text-sm text-gray-500 text-center mt-2">
-                      Le taux le plus bas du marché!
-                    </div>
+                    <div className="bg-pink-50 text-pink-700 rounded-lg px-3 py-2 text-center font-medium">Tiered commission</div>
+                    <div className="text-gray-600 text-center">€30k+: <span className="font-bold text-gradient">5%</span></div>
+                    <div className="text-sm text-gray-500 text-center mt-2">Lowest rate on the market!</div>
                   </div>
                 </div>
                 <ul className="space-y-3 mb-8">
@@ -403,10 +397,10 @@ export default function HomePage() {
             <div className="mt-12 text-center">
               <p className="text-lg text-gray-700 font-medium mb-4">
                 <Star className="inline-block w-5 h-5 text-yellow-500 mr-2" />
-                Commission basée sur vos revenus totaux mensuels
+                Commission based on your total monthly earnings
               </p>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Plus vous gagnez, moins vous payez de commission. C'est simple et transparent!
+                The more you earn, the less commission you pay. Simple and transparent!
               </p>
             </div>
           </div>

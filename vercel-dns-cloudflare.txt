@@ -1,32 +1,32 @@
-# Configuration DNS Cloudflare pour huntaze.com avec Vercel
+# Cloudflare DNS configuration for huntaze.com with Vercel
 
-## 1. Records DNS à ajouter dans Cloudflare :
+## 1. DNS records to add in Cloudflare:
 
-### Record 1 - Domaine principal
+### Record 1 - Root domain
 Type: CNAME
-Name: @ (ou huntaze.com)
+Name: @ (or huntaze.com)
 Target: cname.vercel-dns.com
 Proxy: ON (orange)
 TTL: Auto
 
-### Record 2 - Sous-domaine www
+### Record 2 - Subdomain www
 Type: CNAME
 Name: www
 Target: @
 Proxy: ON (orange)
 TTL: Auto
 
-## 2. Dans Cloudflare SSL/TLS :
+## 2. In Cloudflare SSL/TLS:
 - Mode: Full (strict)
 
-## 3. Après déploiement Vercel :
-1. Allez sur vercel.com/dashboard
-2. Sélectionnez votre projet
+## 3. After deploying on Vercel:
+1. Go to vercel.com/dashboard
+2. Select your project
 3. Settings → Domains
 4. Add → huntaze.com
 5. Add → www.huntaze.com
-6. Vercel vous donnera un TXT de vérification si nécessaire
+6. Vercel may provide a TXT record if needed
 
-## 4. Vérification :
+## 4. Verification:
 dig +short huntaze.com CNAME
 curl -I https://huntaze.com

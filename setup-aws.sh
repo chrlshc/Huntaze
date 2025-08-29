@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Script de configuration initiale pour AWS EC2
-# À exécuter sur votre instance EC2
+# Initial setup script for AWS EC2
+# Run on your EC2 instance
 
 set -e
 
-# Couleurs
+# Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
@@ -18,45 +18,45 @@ warn() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
-log "🚀 Configuration initiale de l'instance EC2 pour Huntaze"
+log "🚀 Initial EC2 setup for Huntaze"
 
-# Mise à jour du système
-log "Mise à jour du système..."
+# System update
+log "Updating system..."
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
-# Installation de Node.js 18
-log "Installation de Node.js 18..."
+# Install Node.js 18
+log "Installing Node.js 18..."
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# Installation de PM2
-log "Installation de PM2..."
+# Install PM2
+log "Installing PM2..."
 sudo npm install -g pm2
 
-# Installation de nginx
-log "Installation de nginx..."
+# Install nginx
+log "Installing nginx..."
 sudo apt-get install -y nginx
 
-# Installation de certbot pour SSL
-log "Installation de certbot..."
+# Install certbot for SSL
+log "Installing certbot..."
 sudo apt-get install -y certbot python3-certbot-nginx
 
-# Configuration du firewall
-log "Configuration du firewall..."
+# Firewall configuration
+log "Configuring firewall..."
 sudo ufw allow 22/tcp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw allow 3000/tcp
 sudo ufw --force enable
 
-# Création du répertoire de l'application
-log "Création du répertoire de l'application..."
+# Create app directory
+log "Creating app directory..."
 mkdir -p ~/huntaze
 mkdir -p ~/logs
 
-# Configuration nginx de base
-log "Configuration nginx..."
+# Basic nginx configuration
+log "Configuring nginx..."
 sudo tee /etc/nginx/sites-available/huntaze << 'EOF'
 server {
     listen 80;
@@ -76,17 +76,17 @@ server {
 }
 EOF
 
-# Activer le site
+# Enable site
 sudo ln -sf /etc/nginx/sites-available/huntaze /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl restart nginx
 
-# Configuration PM2
-log "Configuration PM2 pour démarrage automatique..."
+# PM2 configuration
+log "Configuring PM2 for autostart..."
 pm2 startup systemd -u ubuntu --hp /home/ubuntu
 
-# Création du script de démarrage
+# Create startup script
 cat > ~/huntaze/ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [{
@@ -110,11 +110,11 @@ module.exports = {
 };
 EOF
 
-log "✅ Configuration initiale terminée!"
+log "✅ Initial setup complete!"
 log ""
-log "Prochaines étapes:"
-log "1. Configurez votre domaine pour pointer vers cette IP"
-log "2. Déployez votre application avec: ./deploy-simple.sh <cette-ip>"
-log "3. Obtenez un certificat SSL avec: sudo certbot --nginx -d huntaze.com -d www.huntaze.com"
+log "Next steps:"
+log "1. Point your domain to this server IP"
+log "2. Deploy your app with: ./deploy-simple.sh <this-ip>"
+log "3. Get an SSL certificate: sudo certbot --nginx -d huntaze.com -d www.huntaze.com"
 log ""
-warn "N'oubliez pas de créer un fichier .env avec vos variables d'environnement!"
+warn "Don’t forget to create a .env file with your environment variables!"

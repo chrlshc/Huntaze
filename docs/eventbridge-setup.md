@@ -1,8 +1,8 @@
-# Configuration EventBridge pour Huntaze
+# EventBridge Configuration for Huntaze
 
-## 1. Règle Stripe Events
+## 1. Stripe Events Rule
 
-**Nom** : `huntaze-stripe-events`
+**Name**: `huntaze-stripe-events`
 
 **Event Pattern** :
 ```json
@@ -19,7 +19,7 @@
 }
 ```
 
-**Target** :
+**Target**:
 - Type: API destination
 - Endpoint: `https://huntaze.com/api/eventbridge/stripe`
 - Method: POST
@@ -27,20 +27,20 @@
   - `x-api-key`: `${EVENTBRIDGE_API_KEY}`
   - `Content-Type`: `application/json`
 
-## 2. Règle Monthly Billing (Scheduled)
+## 2. Monthly Billing Rule (Scheduled)
 
-**Nom** : `huntaze-monthly-commission`
+**Name**: `huntaze-monthly-commission`
 
-**Schedule** : `cron(0 2 1 * ? *)` (1er du mois à 2h AM UTC)
+**Schedule**: `cron(0 2 1 * ? *)` (1st of the month at 2:00 AM UTC)
 
-**Target** :
+**Target**:
 - Type: Lambda function
 - Function: `huntaze-calculate-commissions`
-- Ou API destination vers: `https://huntaze.com/api/cron/monthly-billing`
+- Or API destination: `https://huntaze.com/api/cron/monthly-billing`
 
-## 3. Lambda pour Monthly Billing (Optionnel)
+## 3. Lambda for Monthly Billing (Optional)
 
-Si tu utilises Lambda au lieu d'API destination :
+If you use Lambda instead of an API destination:
 
 ```javascript
 exports.handler = async (event) => {
@@ -67,9 +67,9 @@ exports.handler = async (event) => {
 };
 ```
 
-## 4. Variables d'environnement requises
+## 4. Required Environment Variables
 
-Dans AWS Amplify, ajoute :
+In AWS Amplify, add:
 
 ```
 EVENTBRIDGE_API_KEY=<secure-32-char-key>
@@ -77,11 +77,11 @@ DATA_ENCRYPTION_KEY=<base64-32-byte-key>
 CRON_SECRET=<secure-32-char-key>
 ```
 
-## 5. Test de configuration
+## 5. Configuration Tests
 
-Pour tester l'intégration :
+To test the integration:
 
-1. **Test Stripe Event** :
+1. **Test Stripe Event**:
 ```bash
 curl -X POST https://huntaze.com/api/eventbridge/stripe \
   -H "x-api-key: YOUR_API_KEY" \
@@ -98,7 +98,7 @@ curl -X POST https://huntaze.com/api/eventbridge/stripe \
   }'
 ```
 
-2. **Test Commission Calculation** :
+2. **Test Commission Calculation**:
 ```bash
 curl -X POST https://huntaze.com/api/eventbridge/commission \
   -H "x-api-key: YOUR_API_KEY" \

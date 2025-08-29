@@ -61,7 +61,6 @@ export default function OnboardingSetupPage() {
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'fr', name: 'French', flag: '🇫🇷' },
     { code: 'de', name: 'German', flag: '🇩🇪' },
     { code: 'pt', name: 'Portuguese', flag: '🇵🇹' },
     { code: 'it', name: 'Italian', flag: '🇮🇹' }

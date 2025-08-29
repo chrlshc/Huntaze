@@ -25,20 +25,14 @@ export default function SavingsCalculator() {
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">
-            Calculez vos économies avec Huntaze
-          </h2>
-          <p className="text-xl text-gray-600">
-            Découvrez combien vous pourriez économiser par rapport à votre agence actuelle
-          </p>
+          <h2 className="text-3xl font-bold mb-4">Calculate your savings with Huntaze</h2>
+          <p className="text-xl text-gray-600">See how much you can save compared to your current agency</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Revenus mensuels (€)
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Monthly revenue (€)</label>
               <div className="relative">
                 <Calculator className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -51,9 +45,7 @@ export default function SavingsCalculator() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Commission actuelle (%)
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Current commission (%)</label>
               <div className="flex items-center space-x-4">
                 <input
                   type="range"
@@ -93,13 +85,13 @@ export default function SavingsCalculator() {
                   
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Par mois:</span>
+                      <span className="text-sm text-gray-600">Per month:</span>
                       <span className="font-bold text-green-600">
                         +{monthlySavings.toFixed(0)}€
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Par an:</span>
+                      <span className="text-sm text-gray-600">Per year:</span>
                       <span className="font-bold text-green-600 text-lg">
                         +{yearlySavings.toFixed(0)}€
                       </span>
@@ -110,7 +102,7 @@ export default function SavingsCalculator() {
                     <div className="flex items-center">
                       <TrendingUp className="w-4 h-4 text-green-500 mr-2" />
                       <span className="text-sm font-medium text-green-600">
-                        {savingsPercentage.toFixed(0)}% d&apos;économies
+                        {savingsPercentage.toFixed(0)}% savings
                       </span>
                     </div>
                   </div>
@@ -121,8 +113,8 @@ export default function SavingsCalculator() {
 
           <div className="mt-8 p-4 bg-purple-50 rounded-lg">
             <p className="text-center text-sm text-purple-800">
-              💡 <strong>Astuce:</strong> Avec le plan Grow, vous économisez {calculateSavings('grow').yearlySavings.toFixed(0)}€ par an. 
-              C&apos;est comme avoir {Math.floor(calculateSavings('grow').yearlySavings / 66)} mois gratuits !
+              💡 <strong>Tip:</strong> With the Grow plan you save {calculateSavings('grow').yearlySavings.toFixed(0)}€ per year —
+              that’s like getting {Math.floor(calculateSavings('grow').yearlySavings / 66)} months free!
             </p>
           </div>
         </div>

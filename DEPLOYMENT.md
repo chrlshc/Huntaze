@@ -1,33 +1,33 @@
-# Guide de Déploiement AWS pour Huntaze
+# Huntaze AWS Deployment Guide
 
-## 🚀 Déploiement Rapide
+## 🚀 Quick Deployment
 
-### Prérequis
-- Une instance EC2 (Ubuntu 20.04 ou plus récent recommandé)
-- Un nom de domaine pointant vers votre instance EC2
-- Accès SSH à votre instance
+### Prerequisites
+- An EC2 instance (Ubuntu 20.04+ recommended)
+- A domain pointing to your EC2 instance
+- SSH access to your instance
 
-### Étape 1: Configuration initiale de l'instance EC2
+### Step 1: Initial EC2 setup
 
-Connectez-vous à votre instance EC2 et exécutez :
+SSH into your EC2 instance and run:
 
 ```bash
-# Télécharger le script de configuration
+# Download setup script
 wget https://raw.githubusercontent.com/your-repo/huntaze/main/site-web/setup-aws.sh
 chmod +x setup-aws.sh
 ./setup-aws.sh
 ```
 
-### Étape 2: Configuration des variables d'environnement
+### Step 2: Environment variables
 
-Sur votre instance EC2 :
+On your EC2 instance:
 
 ```bash
 cd ~/huntaze
 nano .env
 ```
 
-Ajoutez vos variables (basé sur .env.example) :
+Add your variables (based on .env.example):
 
 ```env
 NODE_ENV=production
@@ -35,111 +35,111 @@ NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://huntaze.com
 # API origin (no trailing slash, no "/api")
 NEXT_PUBLIC_API_URL=https://api.huntaze.com
-# Ajoutez les autres variables nécessaires
+# Add other required variables
 ```
 
-### Étape 3: Déploiement de l'application
+### Step 3: Deploy the app
 
-Depuis votre machine locale :
+From your local machine:
 
 ```bash
 cd site-web
-./deploy-simple.sh <IP-DE-VOTRE-EC2>
+./deploy-simple.sh <YOUR-EC2-IP>
 ```
 
-### Étape 4: Configuration SSL (HTTPS)
+### Step 4: SSL (HTTPS) setup
 
-Sur votre instance EC2 :
+On your EC2 instance:
 
 ```bash
 sudo certbot --nginx -d huntaze.com -d www.huntaze.com
 ```
 
-## 📋 Scripts Disponibles
+## 📋 Available Scripts
 
 ### `deploy-simple.sh`
-Script de déploiement simple sans Docker. Idéal pour les petites instances.
+Simple deployment without Docker. Ideal for small instances.
 
-**Usage :**
+**Usage:**
 ```bash
 ./deploy-simple.sh <IP-EC2>
 ```
 
 ### `deploy-aws.sh`
-Script de déploiement complet avec Docker et ECR. Pour une infrastructure plus robuste.
+Full deployment with Docker and ECR. For a more robust setup.
 
-**Usage :**
+**Usage:**
 ```bash
 ./deploy-aws.sh production
 ```
 
-**Configuration requise :**
-- AWS CLI configuré
-- ECR repository créé
-- Modifier les variables dans le script :
+**Requirements:**
+- AWS CLI configured
+- ECR repository created
+- Update variables in the script:
   - `REGISTRY_URL`
   - `AWS_REGION`
   - `EC2_HOST`
 
 ### `setup-aws.sh`
-Script d'installation initiale sur EC2. Installe Node.js, PM2, Nginx, etc.
+Initial EC2 setup script. Installs Node.js, PM2, Nginx, etc.
 
-## 🔧 Gestion de l'Application
+## 🔧 App Management
 
-### Voir les logs
+### View logs
 ```bash
 pm2 logs huntaze-site
 ```
 
-### Redémarrer l'application
+### Restart the app
 ```bash
 pm2 restart huntaze-site
 ```
 
-### Voir le statut
+### View status
 ```bash
 pm2 status
 ```
 
-### Monitorer l'application
+### Monitor the app
 ```bash
 pm2 monit
 ```
 
-## 🔍 Dépannage
+## 🔍 Troubleshooting
 
-### L'écran noir persiste ?
+### Black screen persists?
 
-1. **Vérifier les logs PM2 :**
+1. **Check PM2 logs:**
    ```bash
    pm2 logs huntaze-site --lines 100
    ```
 
-2. **Vérifier nginx :**
+2. **Check nginx:**
    ```bash
    sudo nginx -t
    sudo systemctl status nginx
    sudo tail -f /var/log/nginx/error.log
    ```
 
-3. **Vérifier que l'app écoute sur le bon port :**
+3. **Verify the app listens on the right port:**
    ```bash
    sudo netstat -tlnp | grep 3000
    ```
 
-4. **Tester en local sur le serveur :**
+4. **Test locally on the server:**
    ```bash
    curl http://localhost:3000
    ```
 
-### Erreur de build ?
+### Build error?
 
-1. **Vérifier la mémoire disponible :**
+1. **Check available memory:**
    ```bash
    free -h
    ```
    
-   Si insuffisant, créer un swap :
+   If insufficient, create swap:
    ```bash
    sudo fallocate -l 2G /swapfile
    sudo chmod 600 /swapfile
@@ -147,43 +147,43 @@ pm2 monit
    sudo swapon /swapfile
    ```
 
-2. **Nettoyer et rebuild :**
+2. **Clean and rebuild:**
    ```bash
    rm -rf .next node_modules
    npm install
    npm run build
    ```
 
-### Problème de certificat SSL ?
+### SSL certificate issues?
 
 ```bash
-# Renouveler manuellement
+# Renew manually
 sudo certbot renew --dry-run
 
-# Si erreur, recréer
+# If error, recreate
 sudo certbot delete --cert-name huntaze.com
 sudo certbot --nginx -d huntaze.com -d www.huntaze.com
 ```
 
-## 🔒 Sécurité
+## 🔒 Security
 
-### Configurer le firewall
+### Configure firewall
 ```bash
 sudo ufw status
-sudo ufw allow from <VOTRE-IP> to any port 22  # SSH seulement depuis votre IP
+sudo ufw allow from <YOUR-IP> to any port 22  # SSH only from your IP
 ```
 
-### Sauvegardes automatiques
-Ajoutez au crontab :
+### Automatic backups
+Add to crontab:
 ```bash
 crontab -e
-# Ajouter :
+# Add:
 0 2 * * * tar -czf ~/backups/huntaze-$(date +\%Y\%m\%d).tar.gz ~/huntaze
 ```
 
 ## 📊 Monitoring
 
-### Avec PM2
+### With PM2
 ```bash
 pm2 install pm2-logrotate
 pm2 set pm2-logrotate:max_size 10M
@@ -191,22 +191,22 @@ pm2 set pm2-logrotate:retain 7
 ```
 
 ### Health Check
-L'endpoint `/api/health` doit retourner un status 200.
+The `/api/health` endpoint should return status 200.
 
-Test :
+Test:
 ```bash
 curl -f https://huntaze.com/api/health
 ```
 
 ## 🚨 Rollback
 
-Si quelque chose ne va pas :
+If something goes wrong:
 
 ```bash
-# Voir les versions déployées
+# See deployed versions
 pm2 list
 
-# Redémarrer avec la version précédente
+# Restart with previous version
 cd ~/huntaze
 git checkout <commit-precedent>
 npm install
@@ -216,7 +216,7 @@ pm2 restart huntaze-site
 
 ## 📞 Support
 
-Pour toute question ou problème :
-1. Vérifiez d'abord les logs
-2. Consultez la documentation Next.js
-3. Ouvrez une issue sur le repository
+For questions or issues:
+1. Check logs first
+2. Consult Next.js documentation
+3. Open an issue on the repository

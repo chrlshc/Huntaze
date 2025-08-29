@@ -20,54 +20,54 @@ export function WidgetExplanation({ widgetName, onClose }: WidgetExplanationProp
     'revenue': {
       title: 'Revenue Goal Widget',
       icon: DollarSign,
-      problem: 'Tu ne sais pas si tu es sur la bonne voie pour atteindre tes objectifs financiers',
-      solution: 'Suivi en temps réel avec prédictions AI et suggestions personnalisées',
+      problem: 'It’s hard to know if you are on track to hit your revenue goals',
+      solution: 'Real-time tracking with AI predictions and tailored suggestions',
       benefits: [
-        'Voir exactement combien gagner par jour pour atteindre ton goal',
-        'Suggestions AI basées sur ta niche (fitness, gaming, etc.)',
-        'Alertes quand tu approches un milestone important',
-        'Comparaison avec les meilleures périodes passées'
+        'See exactly how much to earn per day to hit your goal',
+        'AI suggestions based on your niche (fitness, gaming, etc.)',
+        'Alerts when you approach key milestones',
+        'Compare against your best historical periods'
       ],
-      example: 'Si tu es dans le fitness, l\'AI te suggérera de lancer une offre "Summer Body" en mai car c\'est là que tes fans dépensent le plus.'
+      example: 'If you’re in fitness, AI might suggest a "Summer Body" promo in May when your audience typically spends the most.'
     },
     'calendar': {
       title: 'Content Calendar Widget',
       icon: Calendar,
-      problem: 'Tu postes au mauvais moment et rates 70% de ton audience',
-      solution: 'Planning intelligent qui s\'adapte à ta niche et timezone',
+      problem: 'Posting at the wrong times costs you reach and revenue',
+      solution: 'Smart scheduling that adapts to your niche and timezone',
       benefits: [
-        'Horaires optimaux selon ta niche (ex: fitness = 6h-8h, gaming = 20h-23h)',
-        'Rappels avant les peak hours de tes fans',
-        'Vue d\'ensemble de ton contenu planifié',
-        'Suggestions de contenu basées sur les tendances'
+        'Optimal posting windows by niche (e.g., fitness = 6–8am, gaming = 8–11pm)',
+        'Reminders before your audience’s peak hours',
+        'Clear overview of your scheduled content',
+        'Content suggestions based on trends'
       ],
-      example: 'Pour une gameuse, l\'AI détecte que ses fans sont 3x plus actifs le vendredi soir et suggère un stream à 21h.'
+      example: 'For a gaming creator, AI detects fans are 3x more active Friday night and suggests a 9pm stream.'
     },
     'fans': {
       title: 'Fan Engagement Widget',
       icon: Users,
-      problem: 'Tu traites tous tes fans pareil alors que 5% génèrent 80% des revenus',
-      solution: 'Segmentation AI automatique avec stratégies personnalisées',
+      problem: 'Treating all fans the same misses the top 5% that drive 80% of revenue',
+      solution: 'Automatic AI segmentation with tailored strategies',
       benefits: [
-        'Identifier tes VIP fans instantanément',
-        'Voir qui est sur le point de se désabonner',
-        'Suggestions de messages personnalisés par segment',
-        'Tracker le potentiel de chaque fan'
+        'Instantly identify VIPs',
+        'Spot who is at risk of churn',
+        'Personalized message suggestions by segment',
+        'Track the upsell potential of each fan'
       ],
-      example: 'L\'AI identifie que "John" dépense 300$/mois et te suggère de lui envoyer du contenu exclusif pour le garder engagé.'
+      example: 'AI flags “John” spending $300/mo and suggests exclusive content to retain him.'
     },
     'performance': {
       title: 'AI Performance Widget',
       icon: Brain,
-      problem: 'Tu passes 4h/jour à répondre aux messages répétitifs',
-      solution: 'AI qui répond dans ton style pendant que tu crées du contenu',
+      problem: 'You spend hours responding to repetitive messages',
+      solution: 'AI replies in your style while you create content',
       benefits: [
-        'Réponses 24/7 même quand tu dors',
-        'Apprentissage continu de ton style unique',
-        'Détection automatique des opportunités de vente',
-        'Métriques détaillées sur ce qui convertit'
+        '24/7 responses—even while you sleep',
+        'Continuously learns your unique style',
+        'Automatically detects sales opportunities',
+        'Detailed metrics on what converts'
       ],
-      example: 'Un fan demande "Tu fais des customs?" à 3h du matin. L\'AI répond dans ton style, propose tes tarifs, et tu te réveilles avec une vente!'
+      example: 'A fan asks “Do you do customs?” at 3am. AI answers in your style, proposes pricing—and you wake up to a sale.'
     }
   };
 
@@ -98,7 +98,7 @@ export function WidgetExplanation({ widgetName, onClose }: WidgetExplanationProp
           {/* Problem */}
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <h3 className="font-semibold text-red-900 mb-2 flex items-center gap-2">
-              ❌ Le Problème
+              ❌ The Problem
             </h3>
             <p className="text-red-700">{widget.problem}</p>
           </div>
@@ -106,14 +106,14 @@ export function WidgetExplanation({ widgetName, onClose }: WidgetExplanationProp
           {/* Solution */}
           <div className="bg-green-50 border border-green-200 rounded-xl p-4">
             <h3 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
-              ✅ La Solution Huntaze
+              ✅ The Huntaze Solution
             </h3>
             <p className="text-green-700">{widget.solution}</p>
           </div>
 
           {/* Benefits */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Ce que ça t\'apporte :</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">What you get:</h3>
             <ul className="space-y-2">
               {widget.benefits.map((benefit, index) => (
                 <li key={index} className="flex items-start gap-3">
@@ -127,22 +127,20 @@ export function WidgetExplanation({ widgetName, onClose }: WidgetExplanationProp
           {/* Real Example */}
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4">
             <h3 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
-              💡 Exemple Concret
+              💡 Real Example
             </h3>
             <p className="text-purple-700">{widget.example}</p>
           </div>
 
           {/* CTA */}
           <div className="text-center pt-4">
-            <p className="text-sm text-gray-600 mb-2">
-              C\'est ça la différence entre gagner 5K et 25K par mois
-            </p>
+            <p className="text-sm text-gray-600 mb-2">That’s the difference between making $5K and $25K per month.</p>
             {onClose && (
               <button 
                 onClick={onClose}
                 className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
               >
-                J\'ai compris, montrez-moi mes stats!
+                Got it — show me my stats!
               </button>
             )}
           </div>
