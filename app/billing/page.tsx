@@ -21,7 +21,6 @@ import {
   Rocket,
   Crown,
   Gift,
-  Lightning,
   DollarSign
 } from 'lucide-react';
 
@@ -279,7 +278,7 @@ export default function BillingPage() {
             <span className="text-sm">PCI compliant</span>
           </div>
           <div className="flex items-center gap-2">
-            <Lightning className="w-5 h-5" />
+            <Zap className="w-5 h-5" />
             <span className="text-sm">Instant activation</span>
           </div>
           <div className="flex items-center gap-2">
