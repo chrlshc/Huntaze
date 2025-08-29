@@ -1,52 +1,52 @@
-# Variables d'environnement manquantes dans AWS Amplify
+# Missing Environment Variables in AWS Amplify
 
-## 1. **STRIPE_WEBHOOK_SECRET** (CRITIQUE)
+## 1. **STRIPE_WEBHOOK_SECRET** (CRITICAL)
 ```
 STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 ```
-- Va dans Stripe Dashboard > Developers > Webhooks
-- Crée un webhook endpoint : `https://huntaze.com/api/webhooks/stripe`
-- Copie le Signing secret
+- Go to Stripe Dashboard > Developers > Webhooks
+- Create a webhook endpoint: `https://huntaze.com/api/webhooks/stripe`
+- Copy the Signing secret
 
-## 2. **Stripe Price IDs** (CRITIQUE)
+## 2. **Stripe Price IDs** (CRITICAL)
 ```
 NEXT_PUBLIC_STRIPE_PRICE_ID_PRO=price_xxxxx
 NEXT_PUBLIC_STRIPE_PRICE_ID_SCALE=price_xxxxx
 NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE=price_xxxxx
 ```
-- Va dans Stripe Dashboard > Products
-- Crée les produits et prix pour chaque plan
+- Go to Stripe Dashboard > Products
+- Create products and prices for each plan
 
-## 3. **DATA_ENCRYPTION_KEY** (CRITIQUE)
+## 3. **DATA_ENCRYPTION_KEY** (CRITICAL)
 ```
 DATA_ENCRYPTION_KEY=<32-byte-random-key>
 ```
-Pour générer : `openssl rand -base64 32`
+To generate: `openssl rand -base64 32`
 
-## 4. **AWS Credentials** (Pour SES)
+## 4. **AWS Credentials** (for SES)
 ```
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY_ID=xxxxx
 AWS_SECRET_ACCESS_KEY=xxxxx
 ```
 
-## 5. **Optionnel mais recommandé**
+## 5. **Optional but recommended**
 ```
 SENTRY_DSN=https://xxxxx@sentry.io/xxxxx
 NEXT_PUBLIC_GA_ID=G-xxxxx
 ```
 
-## Actions à faire :
+## Action Items:
 
-1. **Stripe Webhook** :
-   - Crée le webhook dans Stripe Dashboard
-   - Configure l'URL : `https://api.huntaze.com/api/webhooks/stripe`
-   - Sélectionne les événements : `checkout.session.completed`, `customer.subscription.*`
+1. **Stripe Webhook**:
+   - Create the webhook in Stripe Dashboard
+   - Set URL: `https://api.huntaze.com/api/webhooks/stripe`
+   - Select events: `checkout.session.completed`, `customer.subscription.*`
 
-2. **Stripe Products** :
-   - Crée les produits dans Stripe pour chaque plan
-   - Note les price IDs
+2. **Stripe Products**:
+   - Create products in Stripe for each plan
+   - Note the price IDs
 
-3. **Ajoute ces variables dans AWS Amplify** :
+3. **Add these variables in AWS Amplify**:
    - Environment settings > Environment variables
-   - Add variable pour chaque manquante
+   - Add a variable for each missing item

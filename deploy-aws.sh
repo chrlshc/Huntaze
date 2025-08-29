@@ -1,24 +1,24 @@
 #!/bin/bash
 
-# Script de déploiement pour Huntaze sur AWS
+# Huntaze deployment script for AWS
 # Usage: ./deploy-aws.sh [production|staging]
 
-set -e  # Arrêter en cas d'erreur
+set -e  # Exit on error
 
 # Configuration
 ENVIRONMENT=${1:-production}
 PROJECT_NAME="huntaze-site"
-REGISTRY_URL="your-ecr-registry.amazonaws.com"  # À remplacer par votre ECR
-AWS_REGION="us-east-1"  # À adapter selon votre région
-EC2_HOST="your-ec2-instance"  # À remplacer par votre IP ou hostname
+REGISTRY_URL="your-ecr-registry.amazonaws.com"  # Replace with your ECR
+AWS_REGION="us-east-1"  # Adjust to your region
+EC2_HOST="your-ec2-instance"  # Replace with your IP or hostname
 
-# Couleurs pour les logs
+# Log colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Fonction de log
+# Log helpers
 log() {
     echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -32,94 +32,94 @@ warn() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
-# Vérifier les prérequis
+# Check requirements
 check_requirements() {
-    log "Vérification des prérequis..."
+    log "Checking requirements..."
     
-    # Vérifier Docker
+    # Check Docker
     if ! command -v docker &> /dev/null; then
-        error "Docker n'est pas installé"
+        error "Docker is not installed"
     fi
     
-    # Vérifier AWS CLI
+    # Check AWS CLI
     if ! command -v aws &> /dev/null; then
-        error "AWS CLI n'est pas installé"
+        error "AWS CLI is not installed"
     fi
     
-    # Vérifier les credentials AWS
+    # Check AWS credentials
     if ! aws sts get-caller-identity &> /dev/null; then
-        error "AWS CLI n'est pas configuré. Exécutez 'aws configure'"
+        error "AWS CLI is not configured. Run 'aws configure'"
     fi
 }
 
-# Build de l'image Docker
+# Build Docker image
 build_image() {
-    log "Construction de l'image Docker..."
+    log "Building Docker image..."
     
-    # Obtenir le tag de version
+    # Get version tag
     VERSION=$(git rev-parse --short HEAD)
     IMAGE_TAG="${PROJECT_NAME}:${VERSION}"
     IMAGE_TAG_LATEST="${PROJECT_NAME}:latest"
     
-    # Build avec cache
+    # Build with cache
     docker build \
         --cache-from ${REGISTRY_URL}/${IMAGE_TAG_LATEST} \
         -t ${IMAGE_TAG} \
         -t ${IMAGE_TAG_LATEST} \
         .
     
-    log "Image construite: ${IMAGE_TAG}"
+    log "Image built: ${IMAGE_TAG}"
 }
 
-# Push vers ECR
+# Push to ECR
 push_to_ecr() {
-    log "Connexion à ECR..."
+    log "Logging in to ECR..."
     
     # Login ECR
     aws ecr get-login-password --region ${AWS_REGION} | \
         docker login --username AWS --password-stdin ${REGISTRY_URL}
     
-    # Tag pour ECR
+    # Tag for ECR
     docker tag ${IMAGE_TAG} ${REGISTRY_URL}/${IMAGE_TAG}
     docker tag ${IMAGE_TAG_LATEST} ${REGISTRY_URL}/${IMAGE_TAG_LATEST}
     
     # Push
-    log "Push de l'image vers ECR..."
+    log "Pushing image to ECR..."
     docker push ${REGISTRY_URL}/${IMAGE_TAG}
     docker push ${REGISTRY_URL}/${IMAGE_TAG_LATEST}
     
-    log "Images poussées avec succès"
+    log "Images pushed successfully"
 }
 
-# Déploiement sur EC2
+# Deploy to EC2
 deploy_to_ec2() {
-    log "Déploiement sur EC2..."
+    log "Deploying to EC2..."
     
-    # Créer le script de déploiement distant
+    # Create remote deployment script
     cat > deploy-remote.sh << 'EOF'
 #!/bin/bash
 set -e
 
-# Variables passées par SSH
+# Variables passed via SSH
 PROJECT_NAME=$1
 REGISTRY_URL=$2
 VERSION=$3
 ENVIRONMENT=$4
 
-# Arrêter l'ancien container
-echo "Arrêt de l'ancien container..."
+# Stop old container
+echo "Stopping old container..."
 docker stop ${PROJECT_NAME} 2>/dev/null || true
 docker rm ${PROJECT_NAME} 2>/dev/null || true
 
-# Pull la nouvelle image
-echo "Pull de la nouvelle image..."
+# Pull new image
+echo "Pulling new image..."
 docker pull ${REGISTRY_URL}/${PROJECT_NAME}:${VERSION}
 
-# Créer le dossier de logs s'il n'existe pas
+# Create log directory if missing
 mkdir -p /var/log/${PROJECT_NAME}
 
-# Démarrer le nouveau container
-echo "Démarrage du nouveau container..."
+# Start new container
+echo "Starting new container..."
 docker run -d \
     --name ${PROJECT_NAME} \
     --restart unless-stopped \
@@ -130,49 +130,49 @@ docker run -d \
     -v /var/log/${PROJECT_NAME}:/app/logs \
     ${REGISTRY_URL}/${PROJECT_NAME}:${VERSION}
 
-# Attendre que le service soit prêt
-echo "Attente du démarrage du service..."
+# Wait for service
+echo "Waiting for service to be ready..."
 for i in {1..30}; do
     if docker exec ${PROJECT_NAME} curl -f http://localhost:3000/api/health &>/dev/null; then
-        echo "Service démarré avec succès!"
+        echo "Service started successfully!"
         break
     fi
-    echo "Attente... ($i/30)"
+    echo "Waiting... ($i/30)"
     sleep 2
 done
 
-# Vérifier le statut
+# Check status
 if ! docker ps | grep -q ${PROJECT_NAME}; then
-    echo "ERREUR: Le container n'est pas en cours d'exécution"
+    echo "ERROR: Container is not running"
     docker logs ${PROJECT_NAME}
     exit 1
 fi
 
-# Nettoyer les anciennes images
-echo "Nettoyage des anciennes images..."
+# Cleanup old images
+echo "Cleaning up old images..."
 docker image prune -f
 
-echo "Déploiement terminé!"
+echo "Deployment complete!"
 EOF
     
-    # Copier et exécuter le script sur EC2
-    log "Copie du script sur EC2..."
+    # Copy & execute the script on EC2
+    log "Copying remote script to EC2..."
     scp deploy-remote.sh ec2-user@${EC2_HOST}:/tmp/
     
-    log "Exécution du déploiement distant..."
+    log "Executing remote deployment..."
     ssh ec2-user@${EC2_HOST} "chmod +x /tmp/deploy-remote.sh && /tmp/deploy-remote.sh ${PROJECT_NAME} ${REGISTRY_URL} ${VERSION} ${ENVIRONMENT}"
     
     # Nettoyer
     rm deploy-remote.sh
 }
 
-# Mise à jour de la configuration nginx
+# Update nginx configuration
 update_nginx() {
-    log "Mise à jour de la configuration nginx..."
+    log "Updating nginx configuration..."
     
-    # Créer la configuration nginx
+    # Create nginx configuration
     cat > nginx-huntaze.conf << 'EOF'
-# Configuration Nginx pour Huntaze.com
+# Nginx configuration for Huntaze.com
 upstream huntaze_app {
     server huntaze-site:3000;
 }
@@ -182,7 +182,7 @@ server {
     listen [::]:80;
     server_name huntaze.com www.huntaze.com;
     
-    # Redirection vers HTTPS
+    # Redirect to HTTPS
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
@@ -197,11 +197,11 @@ server {
     listen [::]:443 ssl http2;
     server_name huntaze.com www.huntaze.com;
 
-    # Certificats SSL
+    # SSL certificates
     ssl_certificate /etc/letsencrypt/live/huntaze.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/huntaze.com/privkey.pem;
     
-    # Configuration SSL
+    # SSL configuration
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers on;
@@ -210,7 +210,7 @@ server {
     ssl_stapling on;
     ssl_stapling_verify on;
 
-    # Headers de sécurité
+    # Security headers
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
@@ -221,13 +221,13 @@ server {
     access_log /var/log/nginx/huntaze.access.log;
     error_log /var/log/nginx/huntaze.error.log;
 
-    # Configuration des timeouts
+    # Timeouts
     client_max_body_size 10M;
     proxy_connect_timeout 60s;
     proxy_send_timeout 60s;
     proxy_read_timeout 60s;
 
-    # Application Next.js
+    # Next.js application
     location / {
         proxy_pass http://huntaze_app;
         proxy_http_version 1.1;
@@ -250,7 +250,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # Assets statiques Next.js
+    # Next.js static assets
     location /_next/static/ {
         proxy_pass http://huntaze_app;
         proxy_cache_valid 200 365d;
@@ -258,7 +258,7 @@ server {
         add_header Cache-Control "public, immutable";
     }
 
-    # Images et fichiers publics
+    # Images and public files
     location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
         proxy_pass http://huntaze_app;
         expires 30d;
@@ -271,7 +271,7 @@ server {
         access_log off;
     }
 
-    # Bloquer l'accès aux fichiers sensibles
+    # Block access to sensitive files
     location ~ /\. {
         deny all;
     }
@@ -282,45 +282,45 @@ server {
 }
 EOF
     
-    # Copier sur EC2
+    # Copy to EC2
     scp nginx-huntaze.conf ec2-user@${EC2_HOST}:/tmp/
     
-    # Appliquer la configuration
+    # Apply configuration
     ssh ec2-user@${EC2_HOST} << 'ENDSSH'
         sudo cp /tmp/nginx-huntaze.conf /etc/nginx/sites-available/huntaze.conf
         sudo ln -sf /etc/nginx/sites-available/huntaze.conf /etc/nginx/sites-enabled/
         sudo nginx -t && sudo systemctl reload nginx
-        echo "Configuration nginx mise à jour"
+        echo "nginx configuration updated"
 ENDSSH
 }
 
-# Health check après déploiement
+# Health check after deployment
 health_check() {
-    log "Vérification de santé..."
+    log "Running health check..."
     
-    # Attendre un peu
+    # Wait a bit
     sleep 5
     
-    # Tester l'endpoint de santé
+    # Test health endpoint
     HEALTH_URL="https://huntaze.com/api/health"
     
     if curl -f -s ${HEALTH_URL} > /dev/null; then
-        log "✅ Health check réussi!"
+        log "✅ Health check passed!"
     else
-        error "❌ Health check échoué!"
+        error "❌ Health check failed!"
     fi
     
-    # Tester la page d'accueil
+    # Test homepage
     if curl -f -s https://huntaze.com > /dev/null; then
-        log "✅ Page d'accueil accessible!"
+        log "✅ Homepage accessible!"
     else
-        warn "⚠️  Page d'accueil non accessible"
+        warn "⚠️  Homepage not accessible"
     fi
 }
 
-# Fonction principale
+# Main function
 main() {
-    log "🚀 Déploiement de Huntaze (${ENVIRONMENT})"
+    log "🚀 Deploying Huntaze (${ENVIRONMENT})"
     
     check_requirements
     build_image
@@ -329,8 +329,8 @@ main() {
     update_nginx
     health_check
     
-    log "✅ Déploiement terminé avec succès!"
+    log "✅ Deployment finished successfully!"
 }
 
-# Exécuter le déploiement
+# Run deployment
 main

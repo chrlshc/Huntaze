@@ -13,7 +13,7 @@ services:
       PORT: 3000
       HOSTNAME: "0.0.0.0"
     ports:
-      - "3003:3000"  # Port différent pour éviter les conflits
+      - "3003:3000"  # Different port to avoid conflicts
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s

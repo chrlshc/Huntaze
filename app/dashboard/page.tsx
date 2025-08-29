@@ -420,7 +420,7 @@ export default function DashboardPage() {
                 <p className="text-gray-600">
                   Here's your performance overview and key insights • 
                   <Link href="/why-huntaze" className="text-purple-600 hover:text-purple-700 font-medium">
-                    Découvrir pourquoi Huntaze est essentiel →
+                    See why Huntaze matters →
                   </Link>
                 </p>
               </div>

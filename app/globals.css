@@ -290,7 +290,7 @@ p {
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
 }
 
-/* Accessibilité - Focus visible */
+/* Accessibility - Visible focus */
 :focus-visible {
   outline: 3px solid var(--primary-purple);
   outline-offset: 2px;

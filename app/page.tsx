@@ -15,29 +15,25 @@ import CreatorTestimonials from '@/components/creator-testimonials';
 
 export default function HomePageImproved() {
   useEffect(() => {
-    // Désactiver la restauration automatique du scroll
+    // Disable automatic scroll restoration
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    
-    // Force scroll multiple fois
+    // Force scroll to top a few times
     const scrollToTop = () => {
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
     };
-    
-    // Immédiatement
+    // Immediately
     scrollToTop();
-    
-    // Après le DOM ready
+    // After DOM ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', scrollToTop);
     } else {
       scrollToTop();
     }
-    
-    // Après un petit délai
+    // After a short delay
     setTimeout(scrollToTop, 100);
   }, []);
   

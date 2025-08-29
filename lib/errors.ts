@@ -18,20 +18,20 @@ export interface AppError {
   statusCode: number;
 }
 
-const errorMessages: Record<ErrorCode, { en: string; fr: string }> = {
-  AUTH_REQUIRED: { en: 'Authentication required', fr: 'Authentification requise' },
-  FORBIDDEN: { en: 'Access forbidden', fr: 'Accès interdit' },
-  NOT_FOUND: { en: 'Resource not found', fr: 'Ressource introuvable' },
-  RATE_LIMIT: { en: 'Too many requests', fr: 'Trop de requêtes' },
-  BAD_REQUEST: { en: 'Bad request', fr: 'Requête invalide' },
-  NETWORK_ERROR: { en: 'Network error', fr: 'Erreur réseau' },
-  SERVER_ERROR: { en: 'Server error', fr: 'Erreur serveur' },
-  AI_SERVICE_UNAVAILABLE: { en: 'AI service unavailable', fr: 'Service IA indisponible' },
-  STRIPE_ERROR: { en: 'Payment error', fr: 'Erreur de paiement' },
+const errorMessages: Record<ErrorCode, string> = {
+  AUTH_REQUIRED: 'Authentication required',
+  FORBIDDEN: 'Access forbidden',
+  NOT_FOUND: 'Resource not found',
+  RATE_LIMIT: 'Too many requests',
+  BAD_REQUEST: 'Bad request',
+  NETWORK_ERROR: 'Network error',
+  SERVER_ERROR: 'Server error',
+  AI_SERVICE_UNAVAILABLE: 'AI service unavailable',
+  STRIPE_ERROR: 'Payment error',
 };
 
-export function getErrorMessage(code: ErrorCode, locale: 'en' | 'fr' = 'en'): string {
-  return errorMessages[code]?.[locale] || errorMessages.SERVER_ERROR[locale];
+export function getErrorMessage(code: ErrorCode): string {
+  return errorMessages[code] || errorMessages.SERVER_ERROR;
 }
 
 export function createError(code: ErrorCode, details?: any, statusCode?: number): AppError {
