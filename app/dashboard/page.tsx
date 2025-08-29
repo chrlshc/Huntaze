@@ -41,7 +41,9 @@ import {
   CreditCard,
   Star,
   Globe,
-  ChevronDown
+  ChevronDown,
+  Camera,
+  Video
 } from 'lucide-react';
 import type { OverviewMetrics } from '@/types/analytics';
 
@@ -116,42 +118,64 @@ export default function DashboardPage() {
     };
   }, [user, showContextualNotification]);
 
+  const hasConnectedPlatform = aiConfig?.platforms?.length > 0;
+  
   const stats = [
     {
       title: 'Monthly Revenue',
-      value: overview ? `$${overview.metrics.revenueMonthly.toLocaleString()}` : '$24,586',
-      change: overview ? `${(overview.metrics.change.revenue*100).toFixed(1)}%` : '+32.4%',
+      value: hasConnectedPlatform 
+        ? (overview ? `$${overview.metrics.revenueMonthly.toLocaleString()}` : '$0')
+        : '--',
+      change: hasConnectedPlatform 
+        ? (overview ? `${(overview.metrics.change.revenue*100).toFixed(1)}%` : '0%')
+        : '--',
       trend: 'up',
       icon: DollarSign,
-      sparkline: [4, 6, 7, 9, 12, 15, 18, 20, 24],
-      gradient: 'from-emerald-500 to-teal-600'
+      sparkline: hasConnectedPlatform ? [4, 6, 7, 9, 12, 15, 18, 20, 24] : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      gradient: 'from-emerald-500 to-teal-600',
+      needsPlatform: true
     },
     {
       title: 'Active Subscribers',
-      value: overview ? overview.metrics.activeSubscribers.toLocaleString() : '2,847',
-      change: overview ? `${(overview.metrics.change.subscribers*100).toFixed(1)}%` : '+12.3%',
+      value: hasConnectedPlatform 
+        ? (overview ? overview.metrics.activeSubscribers.toLocaleString() : '0')
+        : '--',
+      change: hasConnectedPlatform 
+        ? (overview ? `${(overview.metrics.change.subscribers*100).toFixed(1)}%` : '0%')
+        : '--',
       trend: 'up',
       icon: Users,
-      sparkline: [20, 22, 24, 26, 28, 30, 28, 29, 31],
-      gradient: 'from-blue-500 to-indigo-600'
+      sparkline: hasConnectedPlatform ? [20, 22, 24, 26, 28, 30, 28, 29, 31] : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      gradient: 'from-blue-500 to-indigo-600',
+      needsPlatform: true
     },
     {
       title: 'Avg. Response Time',
-      value: overview ? `${(overview.metrics.avgResponseSeconds/60).toFixed(1)}min` : '1.2min',
-      change: overview ? `${(overview.metrics.change.response*100).toFixed(0)}%` : '-25%',
+      value: hasConnectedPlatform 
+        ? (overview ? `${(overview.metrics.avgResponseSeconds/60).toFixed(1)}min` : '--')
+        : '--',
+      change: hasConnectedPlatform 
+        ? (overview ? `${(overview.metrics.change.response*100).toFixed(0)}%` : '0%')
+        : '--',
       trend: 'up',
       icon: Clock,
-      sparkline: [8, 7, 6, 5, 4, 3, 2, 1.5, 1.2],
-      gradient: 'from-purple-500 to-pink-600'
+      sparkline: hasConnectedPlatform ? [8, 7, 6, 5, 4, 3, 2, 1.5, 1.2] : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      gradient: 'from-purple-500 to-pink-600',
+      needsPlatform: true
     },
     {
       title: 'AI Automation Rate',
-      value: overview ? `${Math.round(overview.metrics.aiAutomationRate*100)}%` : '87%',
-      change: overview ? `${(overview.metrics.change.automation*100).toFixed(1)}%` : '+5.2%',
+      value: hasConnectedPlatform 
+        ? (overview ? `${Math.round(overview.metrics.aiAutomationRate*100)}%` : '0%')
+        : '--',
+      change: hasConnectedPlatform 
+        ? (overview ? `${(overview.metrics.change.automation*100).toFixed(1)}%` : '0%')
+        : '--',
       trend: 'up',
       icon: Bot,
-      sparkline: [65, 68, 72, 75, 78, 82, 84, 86, 87],
-      gradient: 'from-orange-500 to-red-600'
+      sparkline: hasConnectedPlatform ? [65, 68, 72, 75, 78, 82, 84, 86, 87] : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      gradient: 'from-orange-500 to-red-600',
+      needsPlatform: true
     }
   ];
 
@@ -611,6 +635,108 @@ export default function DashboardPage() {
                   avgResponseTime: 1.2
                 }}
               />
+            </div>
+          </div>
+          
+          {/* Social Media Management Section */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Social Media Management</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Instagram */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
+                      <Camera className="w-6 h-6 text-pink-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">Instagram</h3>
+                      <p className="text-sm text-gray-500">Not connected</p>
+                    </div>
+                  </div>
+                  <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                    Connect
+                  </Link>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Followers</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Engagement Rate</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Posts This Week</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Twitter/X */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-black bg-opacity-10">
+                      <MessageSquare className="w-6 h-6 text-gray-900" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">X (Twitter)</h3>
+                      <p className="text-sm text-gray-500">Not connected</p>
+                    </div>
+                  </div>
+                  <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                    Connect
+                  </Link>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Followers</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Impressions</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Tweets This Week</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* TikTok */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-blue-500 bg-opacity-10">
+                      <Video className="w-6 h-6 text-gray-900" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">TikTok</h3>
+                      <p className="text-sm text-gray-500">Not connected</p>
+                    </div>
+                  </div>
+                  <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                    Connect
+                  </Link>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Followers</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Video Views</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Videos This Week</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
