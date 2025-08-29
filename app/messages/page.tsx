@@ -103,7 +103,8 @@ export default function MessagesPage() {
           href: "/messages/inbox",
           icon: Send
         },
-        tips: [oolish          { icon: Zap, text: "Auto-reply during streams" },
+        tips: [
+          { icon: Zap, text: "Auto-reply during streams" },
           { icon: Star, text: "VIP perks for top supporters" },
           { icon: Calendar, text: "Schedule game session invites" },
           { icon: Heart, text: "Thank fans for bits and donations" }
