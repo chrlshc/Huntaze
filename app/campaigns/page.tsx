@@ -12,6 +12,7 @@ import {
   Clock,
   DollarSign,
   Users,
+  UserPlus,
   TrendingUp,
   Zap,
   Bot,
