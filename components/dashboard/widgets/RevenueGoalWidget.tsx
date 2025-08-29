@@ -10,6 +10,7 @@ interface RevenueGoalProps {
 }
 
 export function RevenueGoalWidget({ currentRevenue, monthlyGoal, userProfile }: RevenueGoalProps) {
+  const [showExplanation, setShowExplanation] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const percentage = Math.min((currentRevenue / monthlyGoal) * 100, 100);
   const remainingDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() - new Date().getDate();
