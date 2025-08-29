@@ -124,6 +124,13 @@ export function GatedBanner({ type, userProfile, aiConfig }: Omit<GatedContentPr
       icon: Users,
       cta: 'Import',
       href: '/fans/import'
+    },
+    'premium-feature': {
+      condition: !userProfile?.isPremium,
+      message: 'Upgrade to unlock this feature',
+      icon: Shield,
+      cta: 'Upgrade',
+      href: '/billing/upgrade'
     }
   };
 
