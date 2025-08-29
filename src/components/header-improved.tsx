@@ -264,13 +264,10 @@ export default function HeaderImproved() {
                   onClick={() => setActiveDropdown(activeDropdown === 'user' ? null : 'user')}
                   className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
-                  {user.picture ? (
-                    <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
-                  ) : (
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
-                    </div>
-                  )}
+                  {/* Temporarily disabled avatar for beta */}
+                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
                   <ChevronDown className="w-4 h-4" />
                 </button>
                 
@@ -421,13 +418,10 @@ export default function HeaderImproved() {
                     <>
                       <div className="p-2 border-b border-gray-200 dark:border-gray-700">
                         <div className="flex items-center space-x-3">
-                          {user.picture ? (
-                            <img src={user.picture} alt={user.name} className="w-10 h-10 rounded-full" />
-                          ) : (
-                            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-                              <User className="w-5 h-5 text-white" />
-                            </div>
-                          )}
+                          {/* Temporarily disabled avatar for beta */}
+                          <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-white" />
+                          </div>
                           <div>
                             <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
