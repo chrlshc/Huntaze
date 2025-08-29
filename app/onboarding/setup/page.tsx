@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowRight, Check, Loader2, CreditCard, Bot, User } from 'lucide-react';
+import { ArrowRight, Check, Loader2, CreditCard, Bot, User, Zap, Plus } from 'lucide-react';
 
-type Step = 'profile' | 'ai-config' | 'payment' | 'complete';
+type Step = 'profile' | 'platform' | 'ai-config' | 'complete';
 
 export default function OnboardingSetupPage() {
   const router = useRouter();
@@ -23,14 +23,14 @@ export default function OnboardingSetupPage() {
     monthlyPrice: '9.99',
     welcomeMessage: '',
     
-    // Payment
-    paymentMethod: '',
+    // Platform
+    connectedPlatforms: [] as string[],
   });
 
   const steps = [
-    { id: 'profile', title: 'Profile Setup', icon: User },
-    { id: 'ai-config', title: 'AI Configuration', icon: Bot },
-    { id: 'payment', title: 'Payment Method', icon: CreditCard },
+    { id: 'profile', title: 'Quick Setup', icon: User },
+    { id: 'platform', title: 'Connect Platforms', icon: Zap },
+    { id: 'ai-config', title: 'AI Assistant', icon: Bot },
   ];
 
   useEffect(() => {
@@ -92,12 +92,16 @@ export default function OnboardingSetupPage() {
           console.warn('Onboarding status API failed, continuing anyway');
         }
         
-        setCurrentStep('ai-config');
+        setCurrentStep('platform');
       } catch (error) {
         console.error('Failed to save profile:', error);
         // Continue anyway for demo purposes
-        setCurrentStep('ai-config');
+        setCurrentStep('platform');
       }
+    } else if (currentStep === 'platform') {
+      // Platform connection is handled by button clicks
+      // Just move to next step
+      setCurrentStep('ai-config');
     } else if (currentStep === 'ai-config') {
       // Save AI configuration
       try {
@@ -133,34 +137,11 @@ export default function OnboardingSetupPage() {
           console.warn('Onboarding status API failed, continuing anyway');
         }
         
-        setCurrentStep('payment');
+        setCurrentStep('complete');
       } catch (error) {
         console.error('Failed to save AI config:', error);
         // Continue anyway for demo purposes
-        setCurrentStep('payment');
-      }
-    } else if (currentStep === 'payment') {
-      // For demo purposes, skip payment and go to complete
-      try {
-        const response = await fetch('/api/subscriptions/create-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ planId: 'starter' }), // Default to starter plan
-        });
-
-        if (response.ok) {
-          const { url } = await response.json();
-          // Redirect to Stripe Checkout
-          window.location.href = url;
-        } else {
-          // If payment API fails, continue to dashboard for demo
-          console.warn('Payment API failed, skipping to dashboard for demo');
-          router.push('/dashboard');
-        }
-      } catch (error) {
-        console.error('Failed to create checkout:', error);
-        // Skip to dashboard for demo purposes
-        router.push('/dashboard');
+        setCurrentStep('complete');
       }
     }
     
@@ -168,10 +149,10 @@ export default function OnboardingSetupPage() {
   };
 
   const handlePrevious = () => {
-    if (currentStep === 'ai-config') {
+    if (currentStep === 'platform') {
       setCurrentStep('profile');
-    } else if (currentStep === 'payment') {
-      setCurrentStep('ai-config');
+    } else if (currentStep === 'ai-config') {
+      setCurrentStep('platform');
     }
   };
 
@@ -186,17 +167,17 @@ export default function OnboardingSetupPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Let's set up your profile
+                Welcome to Huntaze
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                This information will be shown to your fans
+                Let's quickly set up your account. You can skip these steps and configure later.
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Display Name
+                  Display Name <span className="text-gray-400">(optional)</span>
                 </label>
                 <input
                   type="text"
@@ -209,7 +190,7 @@ export default function OnboardingSetupPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Bio
+                  Bio <span className="text-gray-400">(optional)</span>
                 </label>
                 <textarea
                   rows={3}
@@ -222,7 +203,7 @@ export default function OnboardingSetupPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Timezone
+                  Timezone <span className="text-gray-400">(optional)</span>
                 </label>
                 <select
                   value={formData.timezone}
@@ -322,35 +303,61 @@ export default function OnboardingSetupPage() {
           </div>
         );
 
-      case 'payment':
+      case 'platform':
         return (
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Add your payment method
+                Connect Your Platforms
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Start your free trial - cancel anytime
+                Link your OnlyFans or Fansly accounts to start managing your messages and fans.
               </p>
             </div>
 
-            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-              <p className="text-sm text-purple-800 dark:text-purple-200">
-                🎉 <strong>Free trial</strong> available. Cancel anytime.
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* OnlyFans Card */}
+              <button className="group relative p-6 border-2 border-gray-300 dark:border-gray-700 rounded-xl hover:border-purple-500 dark:hover:border-purple-400 transition-all">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">OF</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">OnlyFans</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Connect your OnlyFans account
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Plus className="w-5 h-5" />
+                    <span className="font-medium">Connect</span>
+                  </div>
+                </div>
+              </button>
+
+              {/* Fansly Card */}
+              <button className="group relative p-6 border-2 border-gray-300 dark:border-gray-700 rounded-xl hover:border-purple-500 dark:hover:border-purple-400 transition-all">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">F</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Fansly</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Connect your Fansly account
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Plus className="w-5 h-5" />
+                    <span className="font-medium">Connect</span>
+                  </div>
+                </div>
+              </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Stripe Elements placeholder */}
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center">
-                <CreditCard className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 dark:text-gray-400">
-                  Stripe payment form will be integrated here
-                </p>
-              </div>
-
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                Your payment info is securely processed by Stripe. We never store your card details.
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                💡 <strong>Tip:</strong> You can connect multiple accounts and add more platforms later from your dashboard.
               </p>
             </div>
           </div>
@@ -458,7 +465,8 @@ export default function OnboardingSetupPage() {
                   </>
                 ) : (
                   <>
-                    {currentStep === 'payment' ? 'Complete Setup' : 'Continue'}
+                    {currentStep === 'ai-config' ? 'Complete Setup' : 
+                     currentStep === 'platform' ? 'Skip for Now' : 'Continue'}
                     <ArrowRight className="w-5 h-5" />
                   </>
                 )}
