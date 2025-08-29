@@ -1,80 +1,80 @@
-# Guide de Démarrage Rapide Huntaze
+# Huntaze Quick Start Guide
 
-## 🚀 Nouvelles Fonctionnalités
+## 🚀 New Features
 
-### 1. Roadmap & Vote (/roadmap)
-Vote chaque semaine pour les features que tu veux voir développées.
-- **Poids des votes** : Starter=1, Pro=1, Scale=2, Enterprise=3
-- **Résultats** : Visibles en temps réel
-- **Développement** : Les 3 features gagnantes sont développées
+### 1. Roadmap & Voting (/roadmap)
+Vote weekly for the features you want to see built.
+- **Vote weight**: Starter=1, Pro=1, Scale=2, Enterprise=3
+- **Results**: Visible in real time
+- **Development**: Top 3 features get built
 
 ### 2. Repost Engine (/repost)
-Maximise tes revenus en repostant intelligemment ton meilleur contenu.
+Maximize revenue by smartly reposting your best content.
 
-#### Étapes :
-1. **Importe tes performances** (OnlyFans CSV)
-2. **Vois ton top content** classé par ROI
-3. **Sélectionne un créneau** optimisé
-4. **Active l'A/B testing** (optionnel)
+#### Steps:
+1. **Import your performance** (OnlyFans CSV)
+2. **See your top content** ranked by ROI
+3. **Pick an optimized slot**
+4. **Enable A/B testing** (optional)
 
-#### Exemple A/B Testing :
-- Variante A : "New content dropping 🔥 Check DMs"
-- Variante B : "Special surprise in your inbox 💕"
-- Tracking : `/r?rid=varA` vs `/r?rid=varB`
+#### A/B Testing Example:
+- Variant A: "New content dropping 🔥 Check DMs"
+- Variant B: "Special surprise in your inbox 💕"
+- Tracking: `/r?rid=varA` vs `/r?rid=varB`
 
 ### 3. Smart Scheduler (/schedule)
-Planifie tes posts aux meilleurs moments.
+Schedule posts at the best times.
 
-#### Features :
-- **Suggestions AI** : Basées sur 30j de données
-- **Multi-plateforme** : OnlyFans, Fansly
-- **Preview** : Vois exactement ce qui sera posté
-- **Rappels** : Notifications avant publication
+#### Features:
+- **AI Suggestions**: Based on 30 days of data
+- **Multi-platform**: OnlyFans, Fansly
+- **Preview**: See exactly what will be posted
+- **Reminders**: Notifications before publishing
 
 ### 4. Commission Tracker (Dashboard)
-Visualise ta commission mensuelle en temps réel.
-- **Barre de progression** : X$ utilisés sur cap de Y$
-- **Transparence totale** : Sais exactement ce que tu paies
-- **Historique** : Suivi mois par mois
+See your monthly platform commission in real time.
+- **Progress bar**: X$ used out of Y$ cap
+- **Full transparency**: Know exactly what you pay
+- **History**: Month-by-month tracking
 
 ## 📊 Analytics & Attribution
 
-### Liens Trackés
-Remplace tous tes liens par le format `/r` :
+### Tracked Links
+Replace all your links with the `/r` format:
 
 ```
-# Ancien lien
+# Old link
 https://onlyfans.com/tonprofil
 
-# Nouveau lien tracké
+# New tracked link
 https://huntaze.com/r?rid=bio&assetId=main&platform=ONLYFANS&to=https://onlyfans.com/tonprofil
 ```
 
-### Exemples par Contexte :
+### Examples by context:
 
-1. **Bio Instagram/Twitter**
+1. **Instagram/Twitter bio**
 ```
 https://huntaze.com/r?rid=bio_ig&assetId=profile&platform=ONLYFANS&to=https://onlyfans.com/tonprofil
 ```
 
-2. **Story Promo**
+2. **Promo Story**
 ```
 https://huntaze.com/r?rid=story_promo&assetId=asset123&platform=ONLYFANS&to=https://onlyfans.com/tonprofil/campaign/summer
 ```
 
-3. **Post avec PPV**
+3. **Post with PPV**
 ```
 https://huntaze.com/r?rid=ppv_tease&assetId=ppv456&platform=ONLYFANS&to=https://onlyfans.com/tonprofil/post/789
 ```
 
-### Import de Données
+### Data Import
 
 #### Via CSV (OnlyFans Export)
-1. Exporte ton CSV depuis OnlyFans Analytics
-2. Upload sur `/repost` → "Import CSV"
-3. Map les colonnes : Date, Impressions, Clicks, Revenue
+1. Export CSV from OnlyFans Analytics
+2. Upload on `/repost` → "Import CSV"
+3. Map columns: Date, Impressions, Clicks, Revenue
 
-#### Via API (Automatique)
+#### Via API (Automatic)
 ```bash
 POST /api/repost/import
 {
@@ -90,47 +90,47 @@ POST /api/repost/import
 }
 ```
 
-## 🎯 Workflow Optimal
+## 🎯 Optimal Workflow
 
-### Semaine Type :
+### Typical Week:
 
-**Lundi** : Vote sur /roadmap pour les features
-**Mardi** : Import performances OF du weekend
-**Mercredi** : Planifie reposts via /repost
-**Jeudi** : Check analytics, ajuste stratégie
-**Vendredi** : Prépare contenu weekend avec A/B
-**Samedi/Dimanche** : Posts optimisés aux heures peak
+**Mon**: Vote on /roadmap for features
+**Tue**: Import OF weekend performance
+**Wed**: Schedule reposts via /repost
+**Thu**: Check analytics, adjust strategy
+**Fri**: Prepare weekend content with A/B
+**Sat/Sun**: Post at peak hours
 
-### Best Practices :
+### Best Practices:
 
-1. **Toujours tracker** : Utilise `/r` pour TOUS tes liens
-2. **A/B tout** : Teste 2 variantes minimum
-3. **Analyse weekly** : Check tes top performers
-4. **Repost smart** : Respecte cooldown 7-14j
-5. **Peak hours** : Trust les recommendations AI
+1. **Track everything**: Use `/r` for ALL links
+2. **A/B everything**: Test at least 2 variants
+3. **Weekly analysis**: Check top performers
+4. **Smart repost**: Respect 7–14 day cooldown
+5. **Peak hours**: Trust AI recommendations
 
 ## 🔧 Troubleshooting
 
-### "Pas de données dans Repost Engine"
-→ Importe ton CSV OnlyFans ou crée des assets manuellement
+### "No data in Repost Engine"
+→ Import your OnlyFans CSV or create assets manually
 
-### "Suggestions d'horaires génériques"
-→ Plus tu importes de données, plus c'est précis
+### "Generic schedule suggestions"
+→ The more data you import, the more precise it gets
 
-### "A/B test : comment voir le gagnant ?"
-→ Check CTR dans analytics après 24-48h
+### "A/B test: how to see the winner?"
+→ Check CTR in analytics after 24–48h
 
-### "Commission meter vide"
-→ Normal si début de mois ou pas encore de revenus trackés
+### "Commission meter empty"
+→ Normal at start of month or if no tracked revenue yet
 
-## 📈 Métriques à Suivre
+## 📈 Metrics to Track
 
 1. **CTR** (Click-Through Rate) : Cibles 8-12%
 2. **Conversion PPV** : Cibles 15-25% des clics
-3. **Revenue per Repost** : Track amélioration vs original
-4. **Best Hours** : Note les patterns par jour
-5. **A/B Winners** : Build une "swipe file" des meilleures variantes
+3. **Revenue per Repost**: Track improvement vs. original
+4. **Best Hours**: Note patterns by day
+5. **A/B Winners**: Build a swipe file of top variants
 
 ---
 
-💡 **Pro Tip** : Configure des rappels pour importer tes données chaque semaine. Plus tu nourris le système, plus il devient intelligent !
+💡 **Pro Tip**: Set reminders to import your data weekly. The more you feed the system, the smarter it gets!

@@ -16,57 +16,57 @@ export default function WhyHuntazePage() {
       title: 'Revenue Goal Widget',
       icon: DollarSign,
       color: 'purple',
-      problem: 'Tu perds 50% de tes revenus avec une agence',
-      solution: 'Garde 100% de tes gains avec des insights AI personnalisés',
+      problem: 'Paying 50% to an agency destroys your margins',
+      solution: 'Keep your earnings with personalized AI insights',
       features: [
-        'Suivi en temps réel de tes objectifs mensuels',
-        'Suggestions AI pour augmenter tes revenus selon ta niche',
-        'Alertes quand tu es proche d\'un milestone',
-        'Prédictions basées sur tes performances passées'
+        'Real-time tracking of monthly goals',
+        'AI suggestions to grow revenue by niche',
+        'Alerts when you’re close to a milestone',
+        'Predictions based on past performance'
       ],
-      impact: '+73% de revenus en moyenne après 3 mois'
+      impact: '+73% average revenue lift after 3 months'
     },
     {
       title: 'Content Calendar Widget',
       icon: Calendar,
       color: 'blue',
-      problem: 'Tu oublies de poster et perds des fans',
-      solution: 'Ne rate plus jamais les heures optimales de posting',
+      problem: 'Inconsistent posting loses fans and revenue',
+      solution: 'Never miss your optimal posting windows',
       features: [
-        'Horaires optimaux selon ta niche (fitness = matin, gaming = soir)',
-        'Rappels automatiques avant les peak hours',
-        'Planning visuel de tout ton contenu',
-        'Suggestions de contenu basées sur ce qui marche'
+        'Optimal times by niche (fitness = morning, gaming = evening)',
+        'Automatic reminders before peak hours',
+        'Visual planner for all your content',
+        'Suggestions based on what performs'
       ],
-      impact: '3x plus d\'engagement aux bonnes heures'
+      impact: '3x more engagement at peak times'
     },
     {
       title: 'Fan Engagement Widget',
       icon: Users,
       color: 'pink',
-      problem: 'Tu ne sais pas qui sont tes meilleurs fans',
-      solution: 'Segmentation AI pour maximiser chaque relation',
+      problem: 'Not knowing your top fans leaves money on the table',
+      solution: 'AI segmentation to maximize each relationship',
       features: [
-        'Identification automatique des VIP (5% qui génèrent 80% des revenus)',
-        'Alertes pour les fans à risque de partir',
-        'Suggestions personnalisées par segment',
-        'Tracking du potentiel d\'upgrade de chaque fan'
+        'Automatic VIP identification (top 5% driving 80% of revenue)',
+        'Alerts for churn‑risk fans',
+        'Segment‑based personalized suggestions',
+        'Track upgrade potential for each fan'
       ],
-      impact: '+45% de rétention des top fans'
+      impact: '+45% retention among top fans'
     },
     {
       title: 'AI Performance Widget',
       icon: Brain,
       color: 'green',
-      problem: 'Répondre à tous tes messages prend des heures',
-      solution: 'L\'AI répond comme toi pendant que tu dors',
+      problem: 'Replying to every message takes hours',
+      solution: 'AI replies like you—even while you sleep',
       features: [
-        'Réponses instantanées 24/7 dans ton style',
-        'Détection des opportunités de vente',
-        'Apprentissage continu de tes préférences',
-        'Alertes pour les conversations importantes'
+        'Instant replies 24/7 in your style',
+        'Sales opportunity detection',
+        'Continuously learns your preferences',
+        'Alerts for important conversations'
       ],
-      impact: '87% d\'automatisation, 2h économisées/jour'
+      impact: '87% automation, ~2 hours saved/day'
     }
   ];
 
@@ -80,35 +80,32 @@ export default function WhyHuntazePage() {
         <div className="relative max-w-7xl mx-auto px-6 pt-20 pb-12">
           <Link href="/dashboard" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-8">
             <ChevronRight className="w-4 h-4 rotate-180" />
-            Retour au dashboard
+            Back to dashboard
           </Link>
           
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Pourquoi Huntaze est un <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Must-Have</span> 💜
-          </h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">Why Huntaze is a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Must‑Have</span> 💜</h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl">
-            Arrête de donner 50% à une agence. Avec Huntaze, tu payes seulement 15% 
-            et tu multiplies tes revenus avec une AI qui apprend ton style.
+            Stop giving 50% to agencies. Keep 85% of your earnings and scale with an AI that learns your style.
           </p>
 
           {/* Key Numbers */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-3xl font-bold text-purple-600 mb-2">15%</p>
-              <p className="text-gray-600">Commission Huntaze</p>
-              <p className="text-xs text-gray-500">vs 50% agence</p>
+              <p className="text-gray-600">Huntaze commission</p>
+              <p className="text-xs text-gray-500">vs 50% agency</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-3xl font-bold text-pink-600 mb-2">87%</p>
-              <p className="text-gray-600">Messages automatisés</p>
+              <p className="text-gray-600">Automated messages</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-3xl font-bold text-purple-600 mb-2">2h/jour</p>
-              <p className="text-gray-600">Temps économisé</p>
+              <p className="text-gray-600">Time saved</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-3xl font-bold text-pink-600 mb-2">+73%</p>
-              <p className="text-gray-600">Revenus moyens</p>
+              <p className="text-gray-600">Avg. revenue lift</p>
             </div>
           </div>
         </div>
@@ -117,12 +114,8 @@ export default function WhyHuntazePage() {
       {/* How Widgets Help Section */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Comment les Widgets Révolutionnent Ton Business
-          </h2>
-          <p className="text-xl text-gray-600">
-            Chaque widget est conçu pour résoudre un problème spécifique des créatrices
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">How These Widgets Transform Your Business</h2>
+          <p className="text-xl text-gray-600">Each widget is designed to solve a real creator problem.</p>
         </div>
 
         {/* Widget Showcase */}
@@ -163,9 +156,7 @@ export default function WhyHuntazePage() {
               <span className={`font-semibold text-${currentWidget.color}-700`}>{currentWidget.title}</span>
             </div>
 
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Ce que ça fait pour toi :
-            </h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">What it does for you:</h3>
 
             <ul className="space-y-3 mb-6">
               {currentWidget.features.map((feature, index) => (
@@ -177,7 +168,7 @@ export default function WhyHuntazePage() {
             </ul>
 
             <div className="p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl">
-              <p className="text-sm font-semibold text-purple-900 mb-1">Impact moyen :</p>
+              <p className="text-sm font-semibold text-purple-900 mb-1">Average impact:</p>
               <p className="text-lg font-bold text-purple-900">{currentWidget.impact}</p>
             </div>
           </div>
@@ -187,34 +178,32 @@ export default function WhyHuntazePage() {
       {/* Comparison Section */}
       <div className="bg-gray-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Huntaze vs. Agence Traditionnelle
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Huntaze vs. Traditional Agency</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Agence */}
             <div className="bg-gray-800 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-red-400 mb-6">Agence Traditionnelle 👎</h3>
+              <h3 className="text-2xl font-bold text-red-400 mb-6">Traditional Agency 👎</h3>
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
                   <X className="w-5 h-5 text-red-400" />
-                  <span>50% de commission sur TES revenus</span>
+                  <span>50% commission on your earnings</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <X className="w-5 h-5 text-red-400" />
-                  <span>Réponses génériques qui sonnent faux</span>
+                  <span>Generic replies that feel fake</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <X className="w-5 h-5 text-red-400" />
-                  <span>Tu perds le contrôle de ta relation fans</span>
+                  <span>You lose control over your fan relationships</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <X className="w-5 h-5 text-red-400" />
-                  <span>Chatteurs qui connaissent pas ta personnalité</span>
+                  <span>Chatters who don’t know your personality</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <X className="w-5 h-5 text-red-400" />
-                  <span>Pas de données sur ce qui marche vraiment</span>
+                  <span>No data on what truly works</span>
                 </li>
               </ul>
             </div>
@@ -225,23 +214,23 @@ export default function WhyHuntazePage() {
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-green-400" />
-                  <span>85% de TES revenus restent à TOI (vs 50% agence)</span>
+                  <span>Keep 85% of your earnings (vs 50% with agencies)</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-green-400" />
-                  <span>AI qui apprend TON style unique</span>
+                  <span>AI that learns your unique style</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-green-400" />
-                  <span>Tu gardes le contrôle total</span>
+                  <span>You keep full control</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-green-400" />
-                  <span>Réponses personnalisées qui convertissent</span>
+                  <span>Personalized replies that convert</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-green-400" />
-                  <span>Analytics détaillées pour optimiser</span>
+                  <span>Detailed analytics to optimize</span>
                 </li>
               </ul>
             </div>
@@ -251,9 +240,7 @@ export default function WhyHuntazePage() {
 
       {/* Success Stories */}
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-          Ce que disent les créatrices qui utilisent Huntaze
-        </h2>
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">What creators say about Huntaze</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white rounded-xl shadow-lg p-6">
@@ -264,11 +251,8 @@ export default function WhyHuntazePage() {
                 <p className="text-sm text-gray-500">Fitness Creator</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-3">
-              "J'ai triplé mes revenus en 2 mois! L'AI répond exactement comme moi, 
-              mes fans voient pas la différence. Je me concentre sur mon contenu maintenant."
-            </p>
-            <p className="text-sm font-semibold text-purple-600">+12K$/mois depuis Huntaze</p>
+            <p className="text-gray-700 mb-3">"I tripled my revenue in 2 months! The AI answers exactly like me— my fans don’t notice the difference. Now I focus on creating."</p>
+            <p className="text-sm font-semibold text-purple-600">+$12K/mo since Huntaze</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
@@ -279,11 +263,8 @@ export default function WhyHuntazePage() {
                 <p className="text-sm text-gray-500">Gaming Creator</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-3">
-              "Les widgets me montrent exactement quand poster et à qui parler. 
-              J'ai enfin compris qui sont mes vrais VIP fans!"
-            </p>
-            <p className="text-sm font-semibold text-purple-600">87% d'automatisation</p>
+            <p className="text-gray-700 mb-3">"The widgets show exactly when to post and who to engage. I finally understand who my true VIP fans are!"</p>
+            <p className="text-sm font-semibold text-purple-600">87% automation</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
@@ -294,11 +275,8 @@ export default function WhyHuntazePage() {
                 <p className="text-sm text-gray-500">Lifestyle Creator</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-3">
-              "Avant je payais 50% à une agence pour des réponses nulles. 
-              Maintenant je paie seulement 15% et l'AI est 10x meilleure!"
-            </p>
-            <p className="text-sm font-semibold text-purple-600">35% de commission économisée</p>
+            <p className="text-gray-700 mb-3">"I used to pay 50% to an agency for bad replies. Now it’s 15% and the AI is 10x better!"</p>
+            <p className="text-sm font-semibold text-purple-600">35% commission saved</p>
           </div>
         </div>
       </div>
@@ -306,28 +284,24 @@ export default function WhyHuntazePage() {
       {/* CTA Section */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-16">
         <div className="max-w-4xl mx-auto px-6 text-center text-white">
-          <h2 className="text-4xl font-bold mb-6">
-            Prête à garder 85% de tes revenus au lieu de 50% ? 💰
-          </h2>
+          <h2 className="text-4xl font-bold mb-6">Ready to keep 85% instead of 50%? 💰</h2>
           <p className="text-xl mb-8 opacity-90">
-            Rejoins les créatrices qui ont repris le contrôle de leur business
+            Join creators who took back control of their business
             <br />
-            <span className="text-sm opacity-75">Commission Huntaze: 15% seulement vs 50% agence traditionnelle</span>
+            <span className="text-sm opacity-75">Huntaze commission: just 15% vs 50% with agencies</span>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/onboarding" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-xl transition-all">
               <Sparkles className="w-5 h-5" />
-              Commencer gratuitement
+              Start for free
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link href="/dashboard" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-purple-700 text-white rounded-xl font-semibold hover:bg-purple-800 transition-all">
               <BarChart3 className="w-5 h-5" />
-              Voir le dashboard
+              View dashboard
             </Link>
           </div>
-          <p className="mt-4 text-sm opacity-75">
-            Pas de carte requise • Setup en 5 minutes • Annule quand tu veux
-          </p>
+          <p className="mt-4 text-sm opacity-75">No card required • 5‑minute setup • Cancel anytime</p>
         </div>
       </div>
     </div>

@@ -6,28 +6,28 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const faqs = [
   {
-    question: "Puis-je changer de plan à tout moment ?",
-    answer: "Oui, vous pouvez passer à un plan supérieur ou inférieur à tout moment. Les changements prennent effet immédiatement et sont calculés au prorata."
+    question: 'Can I change plans anytime?',
+    answer: 'Yes, you can upgrade or downgrade anytime. Changes take effect immediately and are prorated.'
   },
   {
-    question: "Y a-t-il des frais de configuration ?",
-    answer: "Non, il n'y a aucun frais de configuration. Vous pouvez commencer immédiatement après votre inscription."
+    question: 'Are there setup fees?',
+    answer: 'No setup fees. You can start right after signing up.'
   },
   {
-    question: "Quelle est la politique d'annulation ?",
-    answer: "Vous pouvez annuler votre abonnement à tout moment. Votre accès restera actif jusqu'à la fin de votre période de facturation actuelle."
+    question: 'What is the cancellation policy?',
+    answer: 'Cancel anytime. Your access stays active until the end of the current billing period.'
   },
   {
-    question: "Les prix incluent-ils la TVA ?",
-    answer: "Les prix affichés sont hors TVA. La TVA applicable sera ajoutée lors du paiement en fonction de votre pays de résidence."
+    question: 'Do prices include VAT?',
+    answer: 'Prices are exclusive of VAT. Applicable VAT is added at checkout based on your country.'
   },
   {
-    question: "Proposez-vous des réductions pour les associations ?",
-    answer: "Oui, nous offrons une réduction de 20% pour les associations à but non lucratif. Contactez notre équipe pour en savoir plus."
+    question: 'Do you offer discounts for non‑profits?',
+    answer: 'Yes, we offer a 20% discount for non‑profits. Contact our team for details.'
   },
   {
-    question: "Puis-je avoir un essai gratuit ?",
-    answer: "Oui, tous nos plans incluent un essai gratuit de 3 mois. Aucune carte de crédit n'est requise pour commencer."
+    question: 'Is there a free trial?',
+    answer: 'Yes, all plans include a 3‑month free trial. No credit card required to start.'
   }
 ]
 
@@ -36,9 +36,7 @@ export default function PricingFAQ() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <h2 className="text-3xl font-bold text-center mb-12">
-        Questions fréquentes
-      </h2>
+      <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
       
       <div className="space-y-4">
         {faqs.map((faq, index) => (

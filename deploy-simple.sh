@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Script de déploiement simplifié pour Huntaze sur AWS EC2
-# Usage: ./deploy-simple.sh [votre-ip-ec2]
+# Simplified deployment script for Huntaze on AWS EC2
+# Usage: ./deploy-simple.sh [your-ec2-ip]
 
 set -e
 
 # Configuration
-EC2_HOST=${1:-"your-ec2-ip"}  # Remplacer par votre IP EC2
-EC2_USER="ubuntu"  # ou ec2-user selon votre AMI
+EC2_HOST=${1:-"your-ec2-ip"}  # Replace with your EC2 IP
+EC2_USER="ubuntu"  # or ec2-user depending on your AMI
 PROJECT_NAME="huntaze-site"
 PROJECT_PATH="/home/${EC2_USER}/huntaze"
 
-# Couleurs
+# Colors
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
@@ -25,15 +25,15 @@ error() {
     exit 1
 }
 
-# Vérifier les arguments
+# Validate args
 if [ "$EC2_HOST" == "your-ec2-ip" ]; then
-    error "Veuillez spécifier l'IP de votre instance EC2: ./deploy-simple.sh <IP-EC2>"
+    error "Please specify your EC2 instance IP: ./deploy-simple.sh <EC2-IP>"
 fi
 
-log "🚀 Début du déploiement sur ${EC2_HOST}"
+log "🚀 Starting deployment on ${EC2_HOST}"
 
-# Créer une archive du projet
-log "Création de l'archive du projet..."
+# Create project archive
+log "Creating project archive..."
 tar -czf huntaze-site.tar.gz \
     --exclude='node_modules' \
     --exclude='.next' \
@@ -42,11 +42,11 @@ tar -czf huntaze-site.tar.gz \
     --exclude='*.tar.gz' \
     .
 
-# Copier sur EC2
-log "Copie des fichiers sur EC2..."
+# Copy to EC2
+log "Copying files to EC2..."
 scp huntaze-site.tar.gz ${EC2_USER}@${EC2_HOST}:~/
 
-# Script de déploiement à exécuter sur EC2
+# Remote deployment script to run on EC2
 ssh ${EC2_USER}@${EC2_HOST} << 'ENDSSH'
 set -e
 
@@ -54,44 +54,44 @@ set -e
 PROJECT_NAME="huntaze-site"
 PROJECT_PATH="/home/ubuntu/huntaze"
 
-echo "📦 Préparation du déploiement..."
+echo "📦 Preparing deployment..."
 
-# Créer le répertoire si nécessaire
+# Ensure directory exists
 mkdir -p ${PROJECT_PATH}
 cd ${PROJECT_PATH}
 
-# Extraire l'archive
-echo "Extraction des fichiers..."
+# Extract archive
+echo "Extracting files..."
 tar -xzf ~/huntaze-site.tar.gz
 rm ~/huntaze-site.tar.gz
 
-# Installer les dépendances
-echo "Installation des dépendances..."
+# Install dependencies
+echo "Installing dependencies..."
 npm ci --production
 
-# Build l'application
-echo "Build de l'application..."
+# Build app
+echo "Building app..."
 npm run build
 
-# Arrêter l'ancien processus
-echo "Arrêt de l'ancien processus..."
+# Stop old process
+echo "Stopping previous process..."
 pm2 stop ${PROJECT_NAME} 2>/dev/null || true
 pm2 delete ${PROJECT_NAME} 2>/dev/null || true
 
-# Démarrer avec PM2
-echo "Démarrage de l'application avec PM2..."
+# Start with PM2
+echo "Starting app with PM2..."
 pm2 start npm --name ${PROJECT_NAME} -- start
 pm2 save
 pm2 startup
 
-echo "✅ Application démarrée!"
+echo "✅ Application started!"
 
 # Afficher le statut
 pm2 status
 ENDSSH
 
-# Nettoyer l'archive locale
+# Clean local archive
 rm -f huntaze-site.tar.gz
 
-log "✅ Déploiement terminé!"
-log "Vérifiez votre site sur http://${EC2_HOST}:3000"
+log "✅ Deployment complete!"
+log "Check your site at http://${EC2_HOST}:3000"
