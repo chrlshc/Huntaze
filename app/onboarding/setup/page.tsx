@@ -414,7 +414,7 @@ export default function OnboardingSetupPage() {
                       }`}
                     >
                       <div className="text-3xl mb-2">{niche.icon}</div>
-                      <div className="text-sm font-medium">{niche.name}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">{niche.name}</div>
                     </button>
                   ))}
                 </div>
