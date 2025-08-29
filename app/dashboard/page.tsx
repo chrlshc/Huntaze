@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNotifications } from '@/components/notifications';
 import { 
@@ -52,6 +53,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const { status: onboarding } = useOnboarding();
+  const pathname = usePathname();
   const { showContextualNotification } = useNotifications();
 
   useEffect(() => {
@@ -343,12 +345,21 @@ export default function DashboardPage() {
             
             {/* Navigation */}
             <nav className="space-y-1">
-              <Link href="/dashboard" className="group flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700 rounded-xl transition-all">
-                <div className="p-2 bg-white rounded-lg shadow-sm">
-                  <Activity className="w-5 h-5" />
+              {pathname === '/dashboard' ? (
+                <div aria-current="page" className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700 rounded-xl cursor-default select-none">
+                  <div className="p-2 bg-white rounded-lg shadow-sm">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <span className="font-medium">Dashboard</span>
                 </div>
-                <span className="font-medium">Dashboard</span>
-              </Link>
+              ) : (
+                <Link href="/dashboard" className="group flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-all">
+                  <div className="p-2 bg-gray-100 group-hover:bg-white rounded-lg transition-colors">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <span className="font-medium">Dashboard</span>
+                </Link>
+              )}
               
               <Link href="/messages" className="group flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-all">
                 <div className="p-2 bg-gray-100 group-hover:bg-white rounded-lg transition-colors">
