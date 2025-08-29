@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   TrendingUp, DollarSign, Calendar, Users, Brain, Target, Zap, 
   ChevronRight, ArrowRight, Check, Sparkles, Shield, Clock,
-  MessageSquare, BarChart3, Bell, Heart
+  MessageSquare, BarChart3, Bell, Heart, X
 } from 'lucide-react';
 
 export default function WhyHuntazePage() {
@@ -194,7 +194,7 @@ export default function WhyHuntazePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Agence */}
             <div className="bg-gray-800 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-red-400 mb-6">Agence Traditionnelle 👎</hントjson>
+              <h3 className="text-2xl font-bold text-red-400 mb-6">Agence Traditionnelle 👎</h3>
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
                   <X className="w-5 h-5 text-red-400" />
