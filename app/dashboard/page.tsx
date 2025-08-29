@@ -642,7 +642,7 @@ export default function DashboardPage() {
           <div className="mt-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Social Media Management</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Instagram */}
+              {/* Instagram - Multi Account */}
               <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -651,20 +651,23 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900">Instagram</h3>
-                      <p className="text-sm text-gray-500">Not connected</p>
+                      <p className="text-sm text-gray-500">0 accounts</p>
                     </div>
                   </div>
-                  <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
-                    Connect
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Multi-account</span>
+                    <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                      Add
+                    </Link>
+                  </div>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Followers</span>
+                    <span className="text-sm text-gray-600">Total Followers</span>
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Engagement Rate</span>
+                    <span className="text-sm text-gray-600">Avg. Engagement</span>
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -672,41 +675,42 @@ export default function DashboardPage() {
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                 </div>
+                <button className="mt-4 w-full py-2 text-sm text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
+                  + Add Instagram Account
+                </button>
               </div>
 
-              {/* Twitter/X */}
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
+              {/* Twitter/X - Coming Soon */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all opacity-75">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="p-3 rounded-xl bg-black bg-opacity-10">
-                      <MessageSquare className="w-6 h-6 text-gray-900" />
+                      <MessageSquare className="w-6 h-6 text-gray-400" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900">X (Twitter)</h3>
-                      <p className="text-sm text-gray-500">Not connected</p>
+                      <p className="text-sm text-gray-500">Coming soon</p>
                     </div>
                   </div>
-                  <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
-                    Connect
-                  </Link>
+                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Soon</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Followers</span>
-                    <span className="font-medium text-gray-900">--</span>
+                    <span className="text-sm text-gray-400">Followers</span>
+                    <span className="font-medium text-gray-400">--</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Impressions</span>
-                    <span className="font-medium text-gray-900">--</span>
+                    <span className="text-sm text-gray-400">Impressions</span>
+                    <span className="font-medium text-gray-400">--</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Tweets This Week</span>
-                    <span className="font-medium text-gray-900">--</span>
+                    <span className="text-sm text-gray-400">Tweets This Week</span>
+                    <span className="font-medium text-gray-400">--</span>
                   </div>
                 </div>
               </div>
 
-              {/* TikTok */}
+              {/* TikTok - Multi Account */}
               <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -715,6 +719,44 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900">TikTok</h3>
+                      <p className="text-sm text-gray-500">0 accounts</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Multi-account</span>
+                    <Link href="/platforms/connect" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                      Add
+                    </Link>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Total Followers</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Total Views</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Videos This Week</span>
+                    <span className="font-medium text-gray-900">--</span>
+                  </div>
+                </div>
+                <button className="mt-4 w-full py-2 text-sm text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
+                  + Add TikTok Account
+                </button>
+              </div>
+
+              {/* Reddit */}
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-orange-100">
+                      <MessageSquare className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">Reddit</h3>
                       <p className="text-sm text-gray-500">Not connected</p>
                     </div>
                   </div>
@@ -724,15 +766,15 @@ export default function DashboardPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Followers</span>
+                    <span className="text-sm text-gray-600">Karma</span>
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Video Views</span>
+                    <span className="text-sm text-gray-600">Active Subreddits</span>
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Videos This Week</span>
+                    <span className="text-sm text-gray-600">Posts This Week</span>
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                 </div>
