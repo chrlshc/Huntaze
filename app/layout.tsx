@@ -5,6 +5,7 @@ import FooterImproved from "@/components/footer-improved";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import PageTransition from "@/components/page-transition";
+import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 
 
 export const metadata: Metadata = {
@@ -68,14 +69,16 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
         <ThemeProvider>
-          <HeaderImproved />
-          <PageTransition>
-            <main className="min-h-screen">
-              {children}
-            </main>
-          </PageTransition>
-          <FooterImproved />
-          <MobileBottomNav />
+          <NotificationProvider>
+            <HeaderImproved />
+            <PageTransition>
+              <main className="min-h-screen">
+                {children}
+              </main>
+            </PageTransition>
+            <FooterImproved />
+            <MobileBottomNav />
+          </NotificationProvider>
         </ThemeProvider>
       </body>
     </html>

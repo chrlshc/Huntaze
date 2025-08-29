@@ -8,7 +8,18 @@ export async function middleware(request: NextRequest) {
   const authToken = request.cookies.get('auth_token')?.value;
   
   // Protected routes that require authentication
-  const protectedRoutes = ['/dashboard', '/profile', '/settings', '/configure'];
+  const protectedRoutes = [
+    '/dashboard',
+    '/profile',
+    '/settings',
+    '/configure',
+    '/analytics',
+    '/messages',
+    '/campaigns',
+    '/fans',
+    '/platforms',
+    '/billing'
+  ];
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   
   // Onboarding route
