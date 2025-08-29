@@ -17,6 +17,9 @@ export default {
     './pages/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  safelist: [
+    { pattern: /^(bg|text|border)-(purple|pink|blue|green|orange)-(50|100|200|500|600)$/ },
+  ],
   theme: {
     extend: {
       colors: {
