@@ -471,7 +471,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Social Media</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Instagram */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 hover:shadow-lg hover:border-purple-500/50 transition-all">
+              <div className="elevated-card rounded-xl p-6 hover:shadow-lg transition-all">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
                     <Camera className="w-6 h-6 text-pink-600" />
@@ -486,7 +486,7 @@ export default function DashboardPage() {
 
 
               {/* TikTok */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 hover:shadow-lg hover:border-purple-500/50 transition-all">
+              <div className="elevated-card rounded-xl p-6 hover:shadow-lg transition-all">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-blue-500 bg-opacity-10">
                     <Video className="w-6 h-6 text-gray-900" />
@@ -525,7 +525,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Reddit */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 hover:shadow-lg hover:border-purple-500/50 transition-all">
+              <div className="elevated-card rounded-xl p-6 hover:shadow-lg transition-all">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 rounded-xl bg-orange-100">
                     <MessageSquare className="w-6 h-6 text-orange-600" />
