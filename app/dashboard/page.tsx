@@ -405,46 +405,122 @@ export default function DashboardPage() {
 
           {/* Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Top Fans */}
-            <div className="lg:col-span-2 elevated-card rounded-2xl overflow-hidden">
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-bold text-gray-900">Top Fans</h2>
-                  <Link href="/fans" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                    View all →
-                  </Link>
+            {/* Left column: Top Fans + Social Media */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Top Fans */}
+              <div className="elevated-card rounded-2xl overflow-hidden">
+                <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Top Fans</h2>
+                    <Link href="/fans" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                      View all →
+                    </Link>
+                  </div>
                 </div>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {topFans.slice(0, 3).map((fan, index) => (
-                  <div key={index} className="p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={fan.avatar}
-                          alt={fan.name}
-                          className="w-12 h-12 rounded-xl"
-                        />
-                        <div>
-                          <p className="font-semibold text-gray-900">{fan.name}</p>
-                          <p className="text-sm text-gray-500">{fan.lastActive}</p>
+                <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                  {topFans.slice(0, 3).map((fan, index) => (
+                    <div key={index} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={fan.avatar}
+                            alt={fan.name}
+                            className="w-12 h-12 rounded-xl"
+                          />
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">{fan.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{fan.lastActive}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-gray-900 dark:text-gray-100">{fan.revenue}</p>
+                          <p className="text-sm text-green-600 flex items-center justify-end gap-1">
+                            <ArrowUpRight className="w-3 h-3" />
+                            {fan.trend}
+                          </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-900">{fan.revenue}</p>
-                        <p className="text-sm text-green-600 flex items-center justify-end gap-1">
-                          <ArrowUpRight className="w-3 h-3" />
-                          {fan.trend}
-                        </p>
-                      </div>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Social Media Section (moved to left) */}
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Social Media</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Instagram */}
+                  <div className="elevated-card rounded-xl p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
+                        <Camera className="w-6 h-6 text-pink-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100">Instagram</h3>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Not connected</p>
+                    <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
+                      Connect
+                    </Link>
                   </div>
-                ))}
+
+                  {/* TikTok */}
+                  <div className="elevated-card rounded-xl p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-blue-500 bg-opacity-10">
+                        <Video className="w-6 h-6 text-gray-900" />
+                      </div>
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100">TikTok</h3>
+                    </div>
+                    {tiktokUser ? (
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">@{tiktokUser.display_name}</p>
+                        <div className="space-y-2">
+                          <Link href="/social/tiktok/upload" className="block w-full py-2.5 text-sm text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium">
+                            Upload Video
+                          </Link>
+                          <button 
+                            onClick={async () => {
+                              await fetch('/api/tiktok/disconnect', { method: 'POST' });
+                              setTiktokUser(null);
+                            }}
+                            className="w-full py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                          >
+                            Disconnect
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Not connected</p>
+                        <button 
+                          onClick={() => window.location.href = '/auth/tiktok'}
+                          className="w-full py-2.5 text-sm border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium"
+                        >
+                          Connect
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reddit */}
+                  <div className="elevated-card rounded-xl p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-orange-100 dark:bg-orange-900/20">
+                        <MessageSquare className="w-6 h-6 text-orange-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100">Reddit</h3>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Not connected</p>
+                    <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
+                      Connect
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
             {/* Right: Quick Actions + Social Media */}
             <div className="space-y-6">
-              {/* Quick Actions */}
+              {/* Right: Quick Actions */}
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
                 <div className="space-y-3">
