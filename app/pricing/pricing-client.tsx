@@ -33,18 +33,17 @@ export default function PricingClient({ plans }: PricingClientProps) {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-6xl font-bold text-gray-900 dark:text-white mb-4"
+              className="text-5xl font-bold text-gray-900 dark:text-white mb-3"
             >
-              Revolutionary Pricing That Scales With You
+              Simple, fair pricing
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
+              className="text-lg text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
             >
-              Unlike agencies that take 50-60% forever, Huntaze uses simple, transparent pricing. 
-              Grow without giving away your earnings.
+              Keep more of what you earn. No long contracts, no surprises.
             </motion.p>
             
             {/* Billing Toggle */}
@@ -206,38 +205,12 @@ export default function PricingClient({ plans }: PricingClientProps) {
         </div>
       </div>
 
-      {/* Revolutionary Pricing Section */}
-      <div className="bg-gradient-to-br from-purple-600 to-pink-600 py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h2 className="text-5xl font-bold mb-6">
-            Revolutionary Pricing That Scales With You
-          </h2>
-          <p className="text-xl mb-8 text-purple-100">
-            Unlike agencies that take 50-60% forever, we use simple, transparent pricing. The more you grow, the more you keep.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="#calculator"
-              className="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Calculate Your Savings
-            </Link>
-            <Link
-              href="#breakdown"
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors"
-            >
-              See Pricing Breakdown
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Section removed to reduce page density */}
 
       {/* Features Section */}
       <div className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            What Every Plan Includes
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-10">All plans include</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -284,68 +257,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
         </div>
       </div>
 
-      {/* Comparison Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-gradient-to-b from-purple-50 via-pink-50 to-purple-50/30 rounded-2xl p-10">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center text-purple-700">
-            Huntaze vs Traditional Agencies
-          </h2>
-          <div className="max-w-4xl mx-auto mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold text-red-600">❌ Traditional Agencies</h3>
-                <ul className="space-y-2 text-gray-700">
-                  <li className="flex items-start">
-                    <span className="text-red-500 mr-2">•</span>
-                    Take 50-60% of ALL revenue forever
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-red-500 mr-2">•</span>
-                    Control your account and decisions
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-red-500 mr-2">•</span>
-                    Limited hours (miss opportunities)
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-red-500 mr-2">•</span>
-                    Long contracts with penalties
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-red-500 mr-2">•</span>
-                    Human errors and inconsistency
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold text-green-600">✅ Huntaze Platform</h3>
-                <ul className="space-y-2 text-gray-700">
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    Capped commissions (save 85-98%)
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    You keep 100% control always
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    Consistent automation at scale
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    Cancel anytime, no penalties
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    AI consistency at scale
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Comparison removed to keep page focused */}
 
       {/* Real Savings Examples */}
       <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16">
@@ -417,92 +329,9 @@ export default function PricingClient({ plans }: PricingClientProps) {
         </div>
       </div>
       
-      {/* Testimonials Section */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center mb-12">Creators Love Huntaze</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-purple-600">S</span>
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold">Sarah M.</h4>
-                  <p className="text-sm text-gray-600">$15k/month creator</p>
-                </div>
-              </div>
-              <p className="text-gray-700">
-                "Switched from my agency and now I keep $8k more per month. The AI handles so much of the workload!"
-              </p>
-              <div className="mt-4">
-                <span className="text-yellow-500">★★★★★</span>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-pink-600">J</span>
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold">Jessica L.</h4>
-                  <p className="text-sm text-gray-600">$50k/month creator</p>
-                </div>
-              </div>
-              <p className="text-gray-700">
-                "Best decision ever! Huntaze saves me $23k/month compared to my old agency. It&apos;s insane!"
-              </p>
-              <div className="mt-4">
-                <span className="text-yellow-500">★★★★★</span>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-blue-600">A</span>
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold">Ashley R.</h4>
-                  <p className="text-sm text-gray-600">$30k/month creator</p>
-                </div>
-              </div>
-              <p className="text-gray-700">
-                "The AI is better than any human chatter I&apos;ve worked with. Plus I save $12k every month!"
-              </p>
-              <div className="mt-4">
-                <span className="text-yellow-500">★★★★★</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Testimonials removed for brevity */}
 
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-20">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-5xl font-bold mb-6 text-white">Ready to Keep More of Your Money?</h2>
-          <p className="text-2xl text-purple-100 max-w-2xl mx-auto mb-10">
-            Join creators switching from agencies and keeping more of their revenue every month.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link
-              href="/auth"
-              className="inline-block bg-white text-purple-600 px-10 py-5 rounded-lg text-xl font-bold shadow-2xl hover:scale-105 transform transition-all"
-            >
-              Start free trial
-            </Link>
-            <Link
-              href="/demo"
-              className="inline-block bg-transparent text-white px-10 py-5 rounded-lg text-xl font-bold border-2 border-white hover:bg-white hover:text-purple-600 transition-all"
-            >
-              Watch Live Demo
-            </Link>
-          </div>
-          <p className="text-purple-100 mt-8 text-lg">
-            ✓ Free trial available ✓ Cancel anytime
-          </p>
-        </div>
-      </div>
+      {/* CTA removed to keep focus on plans */}
     </div>
   );
 }

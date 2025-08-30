@@ -16,10 +16,15 @@ function InstagramCallbackContent() {
     if (code) {
       // In production, exchange this code for an access token
       console.log('Instagram authorization successful, code:', code);
-      // Redirect to dashboard after processing
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 2000);
+      // Mark as connected (server will set httpOnly cookie)
+      fetch('/api/platforms/instagram/connected', { credentials: 'include' })
+        .catch(() => {})
+        .finally(() => {
+          // Redirect back to onboarding
+          setTimeout(() => {
+            router.push('/onboarding/setup');
+          }, 1200);
+        });
     }
   }, [code, router]);
 

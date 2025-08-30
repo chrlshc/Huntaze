@@ -15,10 +15,13 @@ function RedditCallbackContent() {
     if (code) {
       // In production, exchange this code for an access token
       console.log('Reddit authorization successful, code:', code);
-      // Redirect to dashboard after processing
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 2000);
+      fetch('/api/platforms/reddit/connected', { credentials: 'include' })
+        .catch(() => {})
+        .finally(() => {
+          setTimeout(() => {
+            router.push('/onboarding/setup');
+          }, 1200);
+        });
     }
   }, [code, router]);
 

@@ -54,11 +54,33 @@ export default function DashboardPage() {
   const [overview, setOverview] = useState<OverviewMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [tiktokUser, setTiktokUser] = useState<any>(null);
   const { status: onboarding } = useOnboarding();
   const pathname = usePathname();
   const { showContextualNotification } = useNotifications();
 
   useEffect(() => {
+    // Check URL params for OAuth callback messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+    
+    if (success === 'tiktok_connected') {
+      showContextualNotification({
+        title: 'TikTok Connected!',
+        message: 'Your TikTok account has been successfully connected.',
+        type: 'success'
+      });
+      window.history.replaceState({}, '', '/dashboard');
+    } else if (error === 'tiktok_auth_failed') {
+      showContextualNotification({
+        title: 'Connection Failed',
+        message: urlParams.get('message') || 'Failed to connect TikTok account.',
+        type: 'error'
+      });
+      window.history.replaceState({}, '', '/dashboard');
+    }
+
     const fetchUser = async () => {
       try {
         const response = await fetch('/api/auth/me');
@@ -77,6 +99,20 @@ export default function DashboardPage() {
     };
 
     fetchUser();
+    
+    // Check TikTok connection
+    const checkTikTok = async () => {
+      try {
+        const response = await fetch('/api/tiktok/user');
+        if (response.ok) {
+          const tiktokData = await response.json();
+          setTiktokUser(tiktokData);
+        }
+      } catch (error) {
+        console.log('TikTok not connected');
+      }
+    };
+    checkTikTok();
   }, []);
 
   useEffect(() => {
@@ -719,7 +755,9 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900">TikTok</h3>
-                      <p className="text-sm text-gray-500">0 accounts</p>
+                      <p className="text-sm text-gray-500">
+                        {tiktokUser ? `@${tiktokUser.display_name}` : '0 accounts'}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -743,9 +781,37 @@ export default function DashboardPage() {
                     <span className="font-medium text-gray-900">--</span>
                   </div>
                 </div>
-                <button className="mt-4 w-full py-2 text-sm text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors">
-                  + Add TikTok Account
-                </button>
+                {tiktokUser ? (
+                  <div className="mt-4 space-y-2">
+                    <Link href="/social/tiktok/upload" className="w-full py-2 text-sm text-white bg-gradient-to-r from-red-500 to-blue-500 rounded-lg hover:opacity-90 transition-opacity block text-center">
+                      <Video className="w-4 h-4 inline mr-2" />
+                      Upload Video
+                    </Link>
+                    <button 
+                      onClick={async () => {
+                        await fetch('/api/tiktok/disconnect', { method: 'POST' });
+                        setTiktokUser(null);
+                      }}
+                      className="w-full py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Disconnect
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      console.log('TikTok button clicked');
+                      try {
+                        window.location.href = '/auth/tiktok';
+                      } catch (error) {
+                        console.error('Error navigating to TikTok:', error);
+                      }
+                    }}
+                    className="mt-4 w-full py-2 text-sm text-purple-600 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+                  >
+                    + Add TikTok Account
+                  </button>
+                )}
               </div>
 
               {/* Reddit */}

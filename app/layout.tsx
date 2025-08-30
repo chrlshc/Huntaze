@@ -39,6 +39,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const minimal = (process.env.NEXT_PUBLIC_MINIMAL_UI || '').toLowerCase() === 'true';
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -67,7 +68,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+      <body className="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors" data-ui={minimal ? 'minimal' : undefined}>
         <ThemeProvider>
           <NotificationProvider>
             <HeaderImproved />

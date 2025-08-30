@@ -64,6 +64,20 @@ const nextConfig = {
     ]
   },
 
+  // Rewrites for cleaner URLs
+  async rewrites() {
+    return [
+      {
+        source: '/terms',
+        destination: '/terms-of-service',
+      },
+      {
+        source: '/privacy',
+        destination: '/privacy-policy',
+      },
+    ];
+  },
+
   // Environment variables
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || ''
