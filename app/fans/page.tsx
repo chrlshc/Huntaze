@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { GatedContent, GatedBanner } from '@/components/dashboard/GatedContent';
 import { 
   Users, 
   ChevronLeft,
@@ -18,7 +16,6 @@ export default function FansPage() {
   const [aiConfig, setAiConfig] = useState<any>(null);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(false);
   const [fans, setFans] = useState<any[]>([]);
-  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -41,8 +38,6 @@ export default function FansPage() {
       } catch {}
     })();
   }, []);
-
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -106,8 +101,6 @@ export default function FansPage() {
             </div>
           </div>
         ) : (
-
-          {/* Empty State */}
           <div className="bg-white rounded-lg border p-8 text-center">
             <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">No fans yet</h2>
