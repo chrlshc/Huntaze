@@ -159,6 +159,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         title: 'AI Response Sent',
         message: `Successfully replied to ${data?.fanName || 'fan'}`,
         duration: 3000
+      }),
+      'tiktok_connected': () => ({
+        type: 'success',
+        title: 'TikTok Connected!',
+        message: 'Your TikTok account has been successfully connected.',
+        icon: <CheckCircle className="w-5 h-5" />
+      }),
+      'connection_failed': () => ({
+        type: 'error',
+        title: 'Connection Failed',
+        message: data?.message || 'Failed to connect account.',
+        icon: <AlertCircle className="w-5 h-5" />
       })
     };
 
