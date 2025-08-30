@@ -43,17 +43,11 @@ export default function DashboardPage() {
     const error = urlParams.get('error');
     
     if (success === 'tiktok_connected') {
-      showContextualNotification({
-        title: 'TikTok Connected!',
-        message: 'Your TikTok account has been successfully connected.',
-        type: 'success'
-      });
+      showContextualNotification('tiktok_connected', {});
       window.history.replaceState({}, '', '/dashboard');
     } else if (error === 'tiktok_auth_failed') {
-      showContextualNotification({
-        title: 'Connection Failed',
-        message: urlParams.get('message') || 'Failed to connect TikTok account.',
-        type: 'error'
+      showContextualNotification('connection_failed', { 
+        message: urlParams.get('message') || 'Failed to connect TikTok account.' 
       });
       window.history.replaceState({}, '', '/dashboard');
     }
