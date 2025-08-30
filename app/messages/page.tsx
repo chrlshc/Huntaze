@@ -56,7 +56,7 @@ export default function MessagesPage() {
               )}
             </div>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium">
+            <button className="btn-gradient rounded-xl flex items-center gap-2 hover:shadow-lg transition-all">
               <Send className="w-4 h-4" />
               <span>Compose</span>
             </button>
@@ -78,7 +78,7 @@ export default function MessagesPage() {
         )}
 
         {/* Empty State */}
-        <div className="elevated-card rounded-2xl overflow-hidden">
+        <div className="elevated-card rounded-xl overflow-hidden">
           <div className="p-12 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
               <MessageSquare className="w-10 h-10 text-purple-600" />
@@ -92,7 +92,7 @@ export default function MessagesPage() {
             
             <Link 
               href={hasConnectedPlatforms ? "/messages/compose" : "/platforms/connect"}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium"
+              className="btn-gradient inline-flex items-center gap-2 hover:shadow-lg transition-all"
             >
               <Plus className="w-5 h-5" />
               {hasConnectedPlatforms ? "Send First Message" : "Connect Platform"}
@@ -102,7 +102,7 @@ export default function MessagesPage() {
 
         {/* AI Status */}
         {hasConnectedPlatforms && (
-          <div className="mt-6 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6">
+          <div className="mt-6 elevated-card rounded-xl p-6">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-xl bg-white shadow-sm">
                 <Bot className="w-6 h-6 text-purple-600" />
