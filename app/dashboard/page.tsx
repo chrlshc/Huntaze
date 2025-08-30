@@ -285,21 +285,28 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Simple Header */}
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+      {/* Premium Header */}
+      <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="font-bold text-xl">Huntaze</Link>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/25">
+                <span className="text-white font-bold text-xl">H</span>
+              </div>
+              <span className="font-bold text-xl text-gray-900">Huntaze</span>
+            </Link>
             <div className="flex items-center gap-4">
-              <Link href="/billing" className="text-sm text-gray-600">Credits: 2,450</Link>
-              {/* External site links */}
-              <Link href={SITE_URL} target="_blank" className="text-sm text-purple-600 hover:text-purple-700">Site</Link>
-              <Link href={SUPPORT_URL} target="_blank" className="text-sm text-gray-600 hover:text-gray-900">Support</Link>
+              <Link href="/billing" className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg text-sm font-medium text-purple-700 hover:bg-purple-100 transition-colors">
+                <CreditCard className="w-4 h-4" />
+                <span>2,450 Credits</span>
+              </Link>
+              <Link href={SITE_URL} target="_blank" className="text-sm font-medium text-purple-600 hover:text-purple-700">Site</Link>
+              <Link href={SUPPORT_URL} target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">Support</Link>
               <img
                 src={user?.picture || "https://ui-avatars.com/api/?name=" + (user?.name || "User")}
                 alt={user?.name}
-                className="w-8 h-8 rounded-full"
+                className="w-9 h-9 rounded-xl ring-2 ring-purple-100"
               />
             </div>
           </div>
@@ -308,9 +315,9 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <div className="flex">
-        {/* Simple Sidebar */}
-        <aside className="hidden lg:block w-64 bg-white border-r min-h-screen">
-          <div className="p-4">
+        {/* Premium Sidebar */}
+        <aside className="hidden lg:block w-72 bg-white/50 backdrop-blur-sm border-r border-gray-200/50 min-h-screen">
+          <div className="p-6">
             {/* Onboarding Alert */}
             {onboarding && !onboarding.completed && (
               <Link href="/onboarding/setup" className="block mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
@@ -320,31 +327,46 @@ export default function DashboardPage() {
             
             {/* Navigation */}
             <nav className="space-y-1">
-              <Link href="/dashboard" className={`block px-3 py-2 rounded-lg ${pathname === '/dashboard' ? 'bg-gray-100 font-medium' : 'hover:bg-gray-50'}`}>
-                Dashboard
+              <Link href="/dashboard" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${pathname === '/dashboard' ? 'bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700' : 'hover:bg-gray-50'}`}>
+                <Activity className="w-5 h-5" />
+                <span className="font-medium">Dashboard</span>
               </Link>
-              <Link href="/messages" className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50">
-                <span>Messages</span>
-                <span className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">24</span>
+              <Link href="/messages" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <MessageSquare className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium flex-1">Messages</span>
+                <span className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-1 rounded-full">24</span>
               </Link>
-              <Link href="/fans" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Fans</Link>
-              <Link href="/automations" className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50">
-                <span>AI Automations</span>
-                <span className="text-xs text-green-600">Active</span>
+              <Link href="/fans" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <Users className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium">Fans</span>
               </Link>
-              <Link href="/campaigns" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Campaigns</Link>
+              <Link href="/automations" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <Zap className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium flex-1">AI Automations</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
+              </Link>
+              <Link href="/campaigns" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <Target className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium">Campaigns</span>
+              </Link>
               
               <div className="pt-4 pb-2">
-                <p className="px-3 text-xs font-medium text-gray-500 uppercase">Analytics</p>
+                <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
               </div>
               
-              <Link href="/analytics" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Analytics</Link>
-              <Link href="/billing" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Billing</Link>
+              <Link href="/analytics" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <BarChart3 className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium">Analytics</span>
+              </Link>
+              <Link href="/billing" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <CreditCard className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium">Billing</span>
+              </Link>
               
               <div className="pt-4">
-                <Link href="/platforms/connect" className="flex items-center gap-2 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400">
-                  <Plus className="w-4 h-4" />
-                  <span>Add Platform</span>
+                <Link href="/platforms/connect" className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-purple-300 text-purple-600 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all">
+                  <Plus className="w-5 h-5" />
+                  <span className="font-medium">Add Platform</span>
                 </Link>
               </div>
             </nav>
@@ -352,26 +374,29 @@ export default function DashboardPage() {
         </aside>
 
         {/* Main Area */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-8">
           {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {user?.name?.split(' ')[0] || 'Creator'}</p>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name?.split(' ')[0] || 'Creator'}! 👋</h1>
+            <p className="text-gray-600">Here's your performance overview for today</p>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="bg-white rounded-lg border p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <Icon className="w-5 h-5 text-gray-400" />
-                    <span className={`text-sm ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                <div key={index} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-purple-200 transition-all">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} bg-opacity-10`}>
+                      <Icon className="w-6 h-6 text-gray-700" />
+                    </div>
+                    <span className={`text-sm font-semibold flex items-center gap-1 ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                      <ArrowUpRight className="w-4 h-4" />
                       {stat.change}
                     </span>
                   </div>
-                  <p className="text-2xl font-semibold mb-1">{stat.value}</p>
+                  <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
                   <p className="text-sm text-gray-600">{stat.title}</p>
                 </div>
               );
@@ -381,33 +406,36 @@ export default function DashboardPage() {
           {/* Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Top Fans */}
-            <div className="lg:col-span-2 bg-white rounded-lg border">
-              <div className="p-4 border-b">
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="p-6 border-b border-gray-100">
                 <div className="flex justify-between items-center">
-                  <h2 className="font-semibold">Top Fans</h2>
-                  <Link href="/fans" className="text-sm text-purple-600">
+                  <h2 className="text-xl font-bold text-gray-900">Top Fans</h2>
+                  <Link href="/fans" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
                     View all →
                   </Link>
                 </div>
               </div>
-              <div className="divide-y">
+              <div className="divide-y divide-gray-100">
                 {topFans.slice(0, 3).map((fan, index) => (
-                  <div key={index} className="p-4">
+                  <div key={index} className="p-4 hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         <img
                           src={fan.avatar}
                           alt={fan.name}
-                          className="w-10 h-10 rounded-full"
+                          className="w-12 h-12 rounded-xl"
                         />
                         <div>
-                          <p className="font-medium">{fan.name}</p>
+                          <p className="font-semibold text-gray-900">{fan.name}</p>
                           <p className="text-sm text-gray-500">{fan.lastActive}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">{fan.revenue}</p>
-                        <p className="text-sm text-green-600">{fan.trend}</p>
+                        <p className="font-bold text-gray-900">{fan.revenue}</p>
+                        <p className="text-sm text-green-600 flex items-center justify-end gap-1">
+                          <ArrowUpRight className="w-3 h-3" />
+                          {fan.trend}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -416,47 +444,60 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg border p-4">
-              <h2 className="font-semibold mb-3">Quick Actions</h2>
-              <div className="space-y-2">
-                {quickActions.map((action, index) => (
-                  <Link key={index} href={action.link} className="block p-3 hover:bg-gray-50 rounded-lg">
-                    <p className="font-medium text-sm">{action.title}</p>
-                  </Link>
-                ))}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+              <div className="space-y-3">
+                {quickActions.map((action, index) => {
+                  const ActionIcon = action.icon;
+                  return (
+                    <Link key={index} href={action.link} className="block">
+                      <div className="group p-4 bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-3">
+                          <ActionIcon className="w-5 h-5 text-purple-600" />
+                          <p className="font-medium text-gray-900">{action.title}</p>
+                          <ChevronRight className="w-4 h-4 text-gray-400 ml-auto group-hover:text-gray-600" />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
 
           
           {/* Social Media */}
-          <div className="mt-6">
-            <h2 className="font-semibold mb-4">Social Media</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Social Media</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Instagram */}
-              <div className="bg-white rounded-lg border p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Camera className="w-5 h-5 text-gray-600" />
-                  <h3 className="font-medium">Instagram</h3>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 hover:shadow-lg hover:border-purple-500/50 transition-all">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
+                    <Camera className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <h3 className="font-bold text-gray-900">Instagram</h3>
                 </div>
-                <p className="text-sm text-gray-500 mb-3">Not connected</p>
-                <Link href="/platforms/connect" className="block w-full py-2 text-sm text-center border rounded-lg hover:bg-gray-50">
+                <p className="text-sm text-gray-500 mb-4">Not connected</p>
+                <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
                   Connect
                 </Link>
               </div>
 
 
               {/* TikTok */}
-              <div className="bg-white rounded-lg border p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Video className="w-5 h-5 text-gray-600" />
-                  <h3 className="font-medium">TikTok</h3>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 hover:shadow-lg hover:border-purple-500/50 transition-all">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-blue-500 bg-opacity-10">
+                    <Video className="w-6 h-6 text-gray-900" />
+                  </div>
+                  <h3 className="font-bold text-gray-900">TikTok</h3>
                 </div>
                 {tiktokUser ? (
                   <div>
-                    <p className="text-sm text-gray-500 mb-3">@{tiktokUser.display_name}</p>
+                    <p className="text-sm text-gray-500 mb-4">@{tiktokUser.display_name}</p>
                     <div className="space-y-2">
-                      <Link href="/social/tiktok/upload" className="block w-full py-2 text-sm text-center bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                      <Link href="/social/tiktok/upload" className="block w-full py-2.5 text-sm text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium">
                         Upload Video
                       </Link>
                       <button 
@@ -464,7 +505,7 @@ export default function DashboardPage() {
                           await fetch('/api/tiktok/disconnect', { method: 'POST' });
                           setTiktokUser(null);
                         }}
-                        className="w-full py-2 text-sm border rounded-lg hover:bg-gray-50"
+                        className="w-full py-2.5 text-sm border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
                       >
                         Disconnect
                       </button>
@@ -472,10 +513,10 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm text-gray-500 mb-3">Not connected</p>
+                    <p className="text-sm text-gray-500 mb-4">Not connected</p>
                     <button 
                       onClick={() => window.location.href = '/auth/tiktok'}
-                      className="w-full py-2 text-sm border rounded-lg hover:bg-gray-50"
+                      className="w-full py-2.5 text-sm border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium"
                     >
                       Connect
                     </button>
@@ -484,13 +525,15 @@ export default function DashboardPage() {
               </div>
 
               {/* Reddit */}
-              <div className="bg-white rounded-lg border p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageSquare className="w-5 h-5 text-gray-600" />
-                  <h3 className="font-medium">Reddit</h3>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 hover:shadow-lg hover:border-purple-500/50 transition-all">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-orange-100">
+                    <MessageSquare className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <h3 className="font-bold text-gray-900">Reddit</h3>
                 </div>
-                <p className="text-sm text-gray-500 mb-3">Not connected</p>
-                <Link href="/platforms/connect" className="block w-full py-2 text-sm text-center border rounded-lg hover:bg-gray-50">
+                <p className="text-sm text-gray-500 mb-4">Not connected</p>
+                <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
                   Connect
                 </Link>
               </div>
@@ -499,13 +542,16 @@ export default function DashboardPage() {
           
           {/* Platform Connection */}
           {!hasConnectedPlatform && (
-            <div className="mt-6 bg-gray-900 text-white rounded-lg p-6">
-              <h3 className="font-semibold mb-2">Connect Your Platforms</h3>
-              <p className="text-sm text-gray-300 mb-4">Start managing your content across all platforms</p>
-              <Link href="/platforms/connect" className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-lg text-sm font-medium hover:bg-gray-100">
-                <Plus className="w-4 h-4" />
-                Add Platform
-              </Link>
+            <div className="mt-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-full blur-3xl"></div>
+              <div className="relative">
+                <h3 className="text-xl font-bold mb-2">Connect Your Platforms</h3>
+                <p className="text-gray-300 mb-4">Start managing your content across all platforms</p>
+                <Link href="/platforms/connect" className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100 transition-colors">
+                  <Plus className="w-4 h-4" />
+                  Add Platform
+                </Link>
+              </div>
             </div>
           )}
         </main>
