@@ -405,7 +405,7 @@ export default function DashboardPage() {
 
           {/* Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Top Fans */}
+            {/* Left: Top Fans */}
             <div className="lg:col-span-2 elevated-card rounded-2xl overflow-hidden">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex justify-between items-center">
@@ -442,100 +442,100 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
+            {/* Right: Quick Actions + Social Media */}
+            <div className="space-y-6">
+              {/* Quick Actions */}
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+                <div className="space-y-3">
+                  {quickActions.map((action, index) => {
+                    const ActionIcon = action.icon;
+                    return (
+                      <Link key={index} href={action.link} className="block">
+                        <div className="group p-4 elevated-card rounded-xl hover:border-purple-300 hover:shadow-md transition-all">
+                          <div className="flex items-center gap-3">
+                            <ActionIcon className="w-5 h-5 text-purple-600" />
+                            <p className="font-medium text-gray-900">{action.title}</p>
+                            <ChevronRight className="w-4 h-4 text-gray-400 ml-auto group-hover:text-gray-600" />
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
 
-            {/* Quick Actions */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-              <div className="space-y-3">
-                {quickActions.map((action, index) => {
-                  const ActionIcon = action.icon;
-                  return (
-                    <Link key={index} href={action.link} className="block">
-                      <div className="group p-4 elevated-card rounded-xl hover:border-purple-300 hover:shadow-md transition-all">
-                        <div className="flex items-center gap-3">
-                          <ActionIcon className="w-5 h-5 text-purple-600" />
-                          <p className="font-medium text-gray-900">{action.title}</p>
-                          <ChevronRight className="w-4 h-4 text-gray-400 ml-auto group-hover:text-gray-600" />
+              {/* Social Media */}
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Social Media</h2>
+                <div className="space-y-4">
+                  {/* Instagram */}
+                  <div className="elevated-card rounded-xl p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
+                        <Camera className="w-6 h-6 text-pink-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-900">Instagram</h3>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-4">Not connected</p>
+                    <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
+                      Connect
+                    </Link>
+                  </div>
+
+                  {/* TikTok */}
+                  <div className="elevated-card rounded-xl p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-blue-500 bg-opacity-10">
+                        <Video className="w-6 h-6 text-gray-900" />
+                      </div>
+                      <h3 className="font-bold text-gray-900">TikTok</h3>
+                    </div>
+                    {tiktokUser ? (
+                      <div>
+                        <p className="text-sm text-gray-500 mb-4">@{tiktokUser.display_name}</p>
+                        <div className="space-y-2">
+                          <Link href="/social/tiktok/upload" className="block w-full py-2.5 text-sm text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium">
+                            Upload Video
+                          </Link>
+                          <button 
+                            onClick={async () => {
+                              await fetch('/api/tiktok/disconnect', { method: 'POST' });
+                              setTiktokUser(null);
+                            }}
+                            className="w-full py-2.5 text-sm border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                          >
+                            Disconnect
+                          </button>
                         </div>
                       </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          
-          {/* Social Media */}
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Social Media</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Instagram */}
-              <div className="elevated-card rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
-                    <Camera className="w-6 h-6 text-pink-600" />
+                    ) : (
+                      <div>
+                        <p className="text-sm text-gray-500 mb-4">Not connected</p>
+                        <button 
+                          onClick={() => window.location.href = '/auth/tiktok'}
+                          className="w-full py-2.5 text-sm border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium"
+                        >
+                          Connect
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <h3 className="font-bold text-gray-900">Instagram</h3>
-                </div>
-                <p className="text-sm text-gray-500 mb-4">Not connected</p>
-                <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
-                  Connect
-                </Link>
-              </div>
 
-
-              {/* TikTok */}
-              <div className="elevated-card rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-blue-500 bg-opacity-10">
-                    <Video className="w-6 h-6 text-gray-900" />
-                  </div>
-                  <h3 className="font-bold text-gray-900">TikTok</h3>
-                </div>
-                {tiktokUser ? (
-                  <div>
-                    <p className="text-sm text-gray-500 mb-4">@{tiktokUser.display_name}</p>
-                    <div className="space-y-2">
-                      <Link href="/social/tiktok/upload" className="block w-full py-2.5 text-sm text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium">
-                        Upload Video
-                      </Link>
-                      <button 
-                        onClick={async () => {
-                          await fetch('/api/tiktok/disconnect', { method: 'POST' });
-                          setTiktokUser(null);
-                        }}
-                        className="w-full py-2.5 text-sm border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-                      >
-                        Disconnect
-                      </button>
+                  {/* Reddit */}
+                  <div className="elevated-card rounded-xl p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-orange-100">
+                        <MessageSquare className="w-6 h-6 text-orange-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-900">Reddit</h3>
                     </div>
-                  </div>
-                ) : (
-                  <div>
                     <p className="text-sm text-gray-500 mb-4">Not connected</p>
-                    <button 
-                      onClick={() => window.location.href = '/auth/tiktok'}
-                      className="w-full py-2.5 text-sm border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium"
-                    >
+                    <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
                       Connect
-                    </button>
+                    </Link>
                   </div>
-                )}
-              </div>
-
-              {/* Reddit */}
-              <div className="elevated-card rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-orange-100">
-                    <MessageSquare className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <h3 className="font-bold text-gray-900">Reddit</h3>
                 </div>
-                <p className="text-sm text-gray-500 mb-4">Not connected</p>
-                <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
-                  Connect
-                </Link>
               </div>
             </div>
           </div>
