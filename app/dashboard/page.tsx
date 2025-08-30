@@ -20,7 +20,8 @@ import {
   Plus,
   ChevronRight,
   Camera,
-  Video
+  Video,
+  Mail
 } from 'lucide-react';
 import type { OverviewMetrics } from '@/types/analytics';
 
