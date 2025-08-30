@@ -63,10 +63,13 @@ export default function DashboardPage() {
           const userData = await response.json();
           setUser(userData);
         } else {
+          // Invalid or expired session: clear cookies then go to auth to avoid redirect loops
+          try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
           window.location.href = '/auth';
         }
       } catch (error) {
         console.error('Failed to fetch user:', error);
+        try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
         window.location.href = '/auth';
       } finally {
         setLoading(false);
