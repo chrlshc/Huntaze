@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Huntaze Logo 1024x1024</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 1024px;
+            height: 1024px;
+            background: linear-gradient(135deg, #9333EA 0%, #6B21A8 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+        }
+        .logo-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-letter {
+            color: white;
+            font-size: 420px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -10px;
+            margin: 0;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .logo-text {
+            color: white;
+            font-size: 80px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            margin-top: -40px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+        .accent {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+        .accent2 {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <div class="accent"></div>
+        <div class="accent2"></div>
+        <h1 class="logo-letter">H</h1>
+        <div class="logo-text">HUNTAZE</div>
+    </div>
+</body>
+</html>

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
-
-// In-memory storage for demo (should use database)
-const platformConnections = new Map();
+import { platformConnections } from '@/lib/services/platformConnections';
 
 export async function POST(request: NextRequest) {
   try {

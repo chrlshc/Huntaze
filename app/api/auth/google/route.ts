@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '617004665472-hoaj6lobp0e6rlt1o3sl6kipnna4av35.apps.googleusercontent.com';
-  const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || 'https://huntaze.com/auth/google/callback';
+  const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || `${appBase}/auth/google/callback`;
   
   if (!GOOGLE_CLIENT_ID) {
     return NextResponse.json({ error: 'Google OAuth not configured' }, { status: 500 });

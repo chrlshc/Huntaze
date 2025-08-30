@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
   const clientId = process.env.INSTAGRAM_CLIENT_ID;
-  const redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || 'https://huntaze.com/auth/instagram/callback';
+  const redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || `${appBase}/auth/instagram/callback`;
   
   if (!clientId) {
     return NextResponse.json({ error: 'Instagram app not configured' }, { status: 500 });

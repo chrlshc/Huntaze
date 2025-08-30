@@ -29,7 +29,7 @@ import {
   Star
 } from 'lucide-react';
 
-type Step = 'profile' | 'platform' | 'niche' | 'ai-config' | 'complete';
+type Step = 'profile' | 'niche' | 'platform' | 'ai-config' | 'plan' | 'complete';
 
 export default function OnboardingSetupPage() {
   const router = useRouter();
@@ -42,11 +42,17 @@ export default function OnboardingSetupPage() {
     bio: '',
     timezone: '',
     language: 'en',
+    businessType: 'individual' as 'individual' | 'agency' | 'studio',
+    contentFrequency: 'weekly' as 'daily' | 'weekly' | 'monthly',
+    gdprConsent: false,
+    marketingEmails: false,
     
     // Niche & Goals
     niche: '',
     goals: [] as string[],
     contentTypes: [] as string[],
+    targetMonthlyRevenue: '',
+    currentMonthlyRevenue: '',
     
     // AI Config
     personality: '',
@@ -104,6 +110,25 @@ export default function OnboardingSetupPage() {
     });
   };
 
+  useEffect(() => {
+    // Refresh platform status after OAuth returns
+    const syncPlatforms = async () => {
+      try {
+        const resp = await fetch('/api/platforms/status', { cache: 'no-store' });
+        if (resp.ok) {
+          const st = await resp.json();
+          const connected: string[] = [];
+          if (st.onlyfans) connected.push('onlyfans');
+          if (st.instagram) connected.push('instagram');
+          if (st.tiktok) connected.push('tiktok');
+          if (st.reddit) connected.push('reddit');
+          setFormData((prev) => ({ ...prev, connectedPlatforms: Array.from(new Set([...prev.connectedPlatforms, ...connected])) }));
+        }
+      } catch {}
+    };
+    syncPlatforms();
+  }, []);
+
   const toggleGoal = (id: string) => {
     setFormData((prev) => {
       const exists = prev.goals.includes(id);
@@ -133,6 +158,7 @@ export default function OnboardingSetupPage() {
     { id: 'niche', title: 'Your Business', icon: Target },
     { id: 'platform', title: 'Platforms', icon: Zap },
     { id: 'ai-config', title: 'AI Assistant', icon: Bot },
+    { id: 'plan', title: 'Plan & Payment', icon: CreditCard },
   ];
 
   useEffect(() => {
@@ -173,6 +199,10 @@ export default function OnboardingSetupPage() {
             bio: formData.bio,
             timezone: formData.timezone,
             language: formData.language,
+            businessType: formData.businessType,
+            contentFrequency: formData.contentFrequency,
+            gdprConsent: formData.gdprConsent,
+            marketingEmails: formData.marketingEmails,
           }),
         });
 
@@ -214,6 +244,8 @@ export default function OnboardingSetupPage() {
               niche: formData.niche,
               goals: formData.goals,
               contentTypes: formData.contentTypes,
+              currentMonthlyRevenue: formData.currentMonthlyRevenue,
+              targetMonthlyRevenue: formData.targetMonthlyRevenue,
             }),
           });
         }
@@ -262,7 +294,7 @@ export default function OnboardingSetupPage() {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              currentStep: 'payment',
+              currentStep: 'plan',
               steps: { profile: true, niche: true, aiConfig: true, payment: false },
             }),
           });
@@ -270,11 +302,10 @@ export default function OnboardingSetupPage() {
           console.warn('Onboarding status API failed, continuing anyway');
         }
         
-        setCurrentStep('complete');
+        setCurrentStep('plan');
       } catch (error) {
         console.error('Failed to save AI config:', error);
-        // Continue anyway for demo purposes
-        setCurrentStep('complete');
+        setCurrentStep('plan');
       }
     }
     
@@ -282,7 +313,7 @@ export default function OnboardingSetupPage() {
   };
 
   const handlePrevious = () => {
-    const stepOrder: Step[] = ['profile', 'niche', 'platform', 'ai-config'];
+    const stepOrder: Step[] = ['profile', 'niche', 'platform', 'ai-config', 'plan'];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(stepOrder[currentIndex - 1]);
@@ -346,6 +377,37 @@ export default function OnboardingSetupPage() {
                 </div>
               </div>
 
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Business Type
+                  </label>
+                  <select
+                    value={formData.businessType}
+                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value as any })}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  >
+                    <option value="individual">Individual creator</option>
+                    <option value="agency">Agency</option>
+                    <option value="studio">Studio</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Content Frequency
+                  </label>
+                  <select
+                    value={formData.contentFrequency}
+                    onChange={(e) => setFormData({ ...formData, contentFrequency: e.target.value as any })}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Bio <span className="text-gray-400">(optional)</span>
@@ -378,6 +440,25 @@ export default function OnboardingSetupPage() {
                   <option value="Asia/Tokyo">Tokyo (JST)</option>
                   <option value="Australia/Sydney">Sydney (AEDT)</option>
                 </select>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <label className="inline-flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-800 rounded-lg">
+                  <input
+                    type="checkbox"
+                    checked={formData.gdprConsent}
+                    onChange={(e) => setFormData({ ...formData, gdprConsent: e.target.checked })}
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">I agree to the Terms and Privacy Policy</span>
+                </label>
+                <label className="inline-flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-800 rounded-lg">
+                  <input
+                    type="checkbox"
+                    checked={formData.marketingEmails}
+                    onChange={(e) => setFormData({ ...formData, marketingEmails: e.target.checked })}
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Allow product updates via email</span>
+                </label>
               </div>
             </div>
           </div>
@@ -417,6 +498,36 @@ export default function OnboardingSetupPage() {
                       <div className="text-sm font-medium text-gray-900 dark:text-white">{niche.name}</div>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Goals (business KPIs) */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Current Monthly Revenue ($)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={formData.currentMonthlyRevenue}
+                    onChange={(e) => setFormData({ ...formData, currentMonthlyRevenue: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Target Monthly Revenue ($)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={formData.targetMonthlyRevenue}
+                    onChange={(e) => setFormData({ ...formData, targetMonthlyRevenue: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  />
                 </div>
               </div>
 
@@ -599,21 +710,17 @@ export default function OnboardingSetupPage() {
                 Connect Your Platforms
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Link your content platforms to start managing everything in one place
+                Link your content platforms and CRMs to start managing everything in one place
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* OnlyFans Card */}
-              <button
-                type="button"
-                onClick={() => togglePlatform('onlyfans')}
-                className={`group relative p-6 border-2 rounded-xl transition-all ${
-                  formData.connectedPlatforms.includes('onlyfans')
-                    ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
-                    : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
-                }`}
-              >
+              <div className={`group relative p-6 border-2 rounded-xl transition-all ${
+                formData.connectedPlatforms.includes('onlyfans')
+                  ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
+                  : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
+              }`}>
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
                     <span className="text-2xl font-bold text-white">OF</span>
@@ -624,25 +731,16 @@ export default function OnboardingSetupPage() {
                       Connect your OnlyFans account
                     </p>
                   </div>
-                  <div className={`flex items-center gap-2 ${
-                    formData.connectedPlatforms.includes('onlyfans')
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-purple-600 dark:text-purple-400'
-                  }`}>
-                    {formData.connectedPlatforms.includes('onlyfans') ? (
-                      <>
-                        <Check className="w-5 h-5" />
-                        <span className="font-medium">Connected</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-5 h-5" />
-                        <span className="font-medium">Connect</span>
-                      </>
-                    )}
-                  </div>
+                  {formData.connectedPlatforms.includes('onlyfans') ? (
+                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                      <Check className="w-5 h-5" />
+                      <span className="font-medium">Connected</span>
+                    </div>
+                  ) : (
+                    <OnlyFansConnect onConnected={() => togglePlatform('onlyfans')} />
+                  )}
                 </div>
-              </button>
+              </div>
 
               {/* Fansly Card */}
               <button
@@ -684,6 +782,66 @@ export default function OnboardingSetupPage() {
                 </div>
               </button>
 
+              {/* Instagram OAuth */}
+              <a
+                href="/auth/instagram"
+                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">IG</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Instagram</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Plus className="w-5 h-5" />
+                    <span className="font-medium">Connect</span>
+                  </div>
+                </div>
+              </a>
+
+              {/* TikTok OAuth */}
+              <a
+                href="/auth/tiktok"
+                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">TT</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">TikTok</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Plus className="w-5 h-5" />
+                    <span className="font-medium">Connect</span>
+                  </div>
+                </div>
+              </a>
+
+              {/* Reddit OAuth */}
+              <a
+                href="/auth/reddit"
+                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">R</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Reddit</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Plus className="w-5 h-5" />
+                    <span className="font-medium">Connect</span>
+                  </div>
+                </div>
+              </a>
+
               {/* Patreon Card - Coming Soon */}
               <div className="relative p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl opacity-60">
                 <div className="absolute inset-0 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center">
@@ -699,6 +857,56 @@ export default function OnboardingSetupPage() {
                       Support coming soon
                     </p>
                   </div>
+                </div>
+              </div>
+
+              {/* CRM: Inflow */}
+              <div className={`group relative p-6 border-2 rounded-xl transition-all ${
+                formData.connectedPlatforms.includes('inflow')
+                  ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
+                  : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
+              }`}>
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">IF</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inflow CRM</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect with API Key</p>
+                  </div>
+                  {formData.connectedPlatforms.includes('inflow') ? (
+                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                      <Check className="w-5 h-5" />
+                      <span className="font-medium">Connected</span>
+                    </div>
+                  ) : (
+                    <CrmConnect provider="inflow" onConnected={() => togglePlatform('inflow')} />
+                  )}
+                </div>
+              </div>
+
+              {/* CRM: Supercreator */}
+              <div className={`group relative p-6 border-2 rounded-xl transition-all ${
+                formData.connectedPlatforms.includes('supercreator')
+                  ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
+                  : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
+              }`}>
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">SC</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Supercreator</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect with API Key</p>
+                  </div>
+                  {formData.connectedPlatforms.includes('supercreator') ? (
+                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                      <Check className="w-5 h-5" />
+                      <span className="font-medium">Connected</span>
+                    </div>
+                  ) : (
+                    <CrmConnect provider="supercreator" onConnected={() => togglePlatform('supercreator')} />
+                  )}
                 </div>
               </div>
 
@@ -790,6 +998,24 @@ export default function OnboardingSetupPage() {
             </button>
           </div>
         );
+
+      case 'plan':
+        return (
+          <PlanSelection
+            onSkip={() => {
+              // Starter plan: no checkout, mark as completed
+              fetch('/api/users/onboarding-status', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  currentStep: 'complete',
+                  steps: { profile: true, niche: true, aiConfig: true, payment: true },
+                  completed: true,
+                }),
+              }).finally(() => setCurrentStep('complete'));
+            }}
+          />
+        );
     }
   };
 
@@ -855,26 +1081,249 @@ export default function OnboardingSetupPage() {
                   Previous
                 </button>
               )}
-              <button
-                onClick={handleNext}
-                disabled={loading}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-lg hover:shadow-xl"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    {currentStep === 'ai-config' ? 'Complete Setup' : 
-                     currentStep === 'platform' && formData.connectedPlatforms.length === 0 ? 'Skip for Now' : 'Continue'}
-                    <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
-              </button>
+              {currentStep !== 'plan' && (
+                <button
+                  onClick={handleNext}
+                  disabled={loading}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-lg hover:shadow-xl"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      {currentStep === 'ai-config' ? 'Continue to Payment' : 
+                       currentStep === 'platform' && formData.connectedPlatforms.length === 0 ? 'Skip for Now' : 'Continue'}
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OnlyFansConnect({ onConnected }: { onConnected: () => void }) {
+  const [username, setUsername] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const submit = async () => {
+    setSubmitting(true);
+    setError('');
+    try {
+      const resp = await fetch('/api/platforms/onlyfans/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, apiKey }),
+      });
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to connect');
+      }
+      onConnected();
+    } catch (e: any) {
+      setError(e.message || 'Connection failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-sm">
+      <div className="grid gap-2 w-full text-left">
+        <input
+          placeholder="OnlyFans username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+        />
+        <input
+          placeholder="OnlyFans API key"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+        />
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button
+          onClick={submit}
+          disabled={submitting || !username || !apiKey}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" /> Connecting...
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4" /> Connect
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CrmConnect({ provider, onConnected }: { provider: 'inflow' | 'supercreator'; onConnected: () => void }) {
+  const [apiKey, setApiKey] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const submit = async () => {
+    setSubmitting(true);
+    setError('');
+    try {
+      const resp = await fetch(`/api/crm/connect/${provider}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey }),
+      });
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to connect');
+      }
+      onConnected();
+    } catch (e: any) {
+      setError(e.message || 'Connection failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const label = provider === 'inflow' ? 'Inflow API Key' : 'Supercreator API Key';
+
+  return (
+    <div className="w-full max-w-sm">
+      <div className="grid gap-2 w-full text-left">
+        <input
+          placeholder={label}
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+        />
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button
+          onClick={submit}
+          disabled={submitting || !apiKey}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" /> Connecting...
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4" /> Connect
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PlanSelection({ onSkip }: { onSkip: () => void }) {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [error, setError] = useState('');
+
+  const startCheckout = async (planId: 'pro' | 'enterprise' | 'scale') => {
+    setLoadingPlan(planId);
+    setError('');
+    try {
+      const resp = await fetch('/api/subscriptions/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId }),
+      });
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to create checkout');
+      }
+      const data = await resp.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('Invalid checkout URL');
+      }
+    } catch (e: any) {
+      setError(e.message || 'Checkout failed');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          Choose Your Plan
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400">
+          Start with a 14-day free trial. Cancel anytime.
+        </p>
+      </div>
+
+      {error && (
+        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        </div>
+      )}
+
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold">Starter</h3>
+          <p className="text-sm text-gray-500 mb-4">For getting started</p>
+          <p className="text-3xl font-bold mb-4">$0</p>
+          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+            <li>Basic AI assistant</li>
+            <li>Up to 100 messages/mo</li>
+            <li>Email support</li>
+          </ul>
+          <button onClick={onSkip} className="w-full py-2 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg">Continue Free</button>
+        </div>
+
+        <div className="border-2 border-purple-500 rounded-xl p-6 shadow-lg">
+          <h3 className="text-lg font-semibold">Pro</h3>
+          <p className="text-sm text-gray-500 mb-4">Best for growing creators</p>
+          <p className="text-3xl font-bold mb-4">$29<span className="text-base font-normal">/mo</span></p>
+          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+            <li>Advanced AI automations</li>
+            <li>Unlimited messaging</li>
+            <li>Priority support</li>
+          </ul>
+          <button
+            onClick={() => startCheckout('pro')}
+            disabled={loadingPlan === 'pro'}
+            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+          >
+            {loadingPlan === 'pro' ? 'Redirecting…' : 'Start Free Trial'}
+          </button>
+        </div>
+
+        <div className="border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold">Enterprise</h3>
+          <p className="text-sm text-gray-500 mb-4">For agencies & teams</p>
+          <p className="text-3xl font-bold mb-4">$99<span className="text-base font-normal">/mo</span></p>
+          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+            <li>Team management</li>
+            <li>Custom SLAs</li>
+            <li>Dedicated support</li>
+          </ul>
+          <button
+            onClick={() => startCheckout('enterprise')}
+            disabled={loadingPlan === 'enterprise'}
+            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+          >
+            {loadingPlan === 'enterprise' ? 'Redirecting…' : 'Contact & Start'}
+          </button>
         </div>
       </div>
     </div>

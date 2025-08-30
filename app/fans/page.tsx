@@ -38,11 +38,13 @@ import {
   Camera,
   ShoppingBag
 } from 'lucide-react';
+import { MINIMAL_UI } from '@/lib/ui';
 
 export default function FansPage() {
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(false);
+  const [fans, setFans] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -57,6 +59,11 @@ export default function FansPage() {
           const config = await a.json();
           setAiConfig(config);
           setHasConnectedPlatforms(config.platforms?.length > 0);
+        }
+        const lf = await fetch('/api/crm/fans', { cache: 'no-store' });
+        if (lf.ok) {
+          const data = await lf.json();
+          setFans(data.fans || []);
         }
       } catch {}
     })();
@@ -247,7 +254,7 @@ export default function FansPage() {
               </Link>
               <div className="flex items-center gap-3">
                 <Users className="w-6 h-6 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900">Fan Management</h1>
+                <h1 className="text-xl font-bold text-gray-900">Fans</h1>
                 {profile?.niche && (
                   <span className="px-2 py-1 text-xs rounded-lg bg-gray-100 text-gray-700 border border-gray-200">
                     {profile.niche === 'fitness' ? 'Fitness Clients' :
@@ -268,10 +275,10 @@ export default function FansPage() {
                 <Search className="w-4 h-4" />
                 Search
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
+              <Link href="/fans/import" className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
                 <UserPlus className="w-4 h-4" />
                 Add Fan
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -283,6 +290,31 @@ export default function FansPage() {
           <GatedBanner type="no-platform" aiConfig={aiConfig} userProfile={profile} />
         )}
         
+        {/* Existing fans list */}
+        {fans.length > 0 && (
+          <div className="mb-8 bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Recent Fans</h3>
+              <Link href="/fans/import" className="text-sm text-purple-600 hover:text-purple-700">Add another</Link>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {fans.slice(0, 6).map((f) => (
+                <div key={f.id} className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">{f.name}</p>
+                    {!MINIMAL_UI && (
+                      <p className="text-sm text-gray-500">{f.platform || 'custom'} {f.handle ? `• @${f.handle}` : ''}</p>
+                    )}
+                  </div>
+                  {typeof f.valueCents === 'number' && f.valueCents > 0 && (
+                    <span className="text-sm font-medium text-gray-700">${(f.valueCents/100).toFixed(2)}/mo</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Empty State */}
         <div className={!hasConnectedPlatforms ? "mt-6 bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden" : "bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden"}>
           {/* Hero Section */}
@@ -291,7 +323,9 @@ export default function FansPage() {
               <Icon className="w-10 h-10 text-purple-600" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-3">{emptyState.title}</h2>
-            <p className="text-lg text-gray-600 max-w-xl mx-auto mb-8">{emptyState.description}</p>
+            {!MINIMAL_UI && (
+              <p className="text-lg text-gray-600 max-w-xl mx-auto mb-8">{emptyState.description}</p>
+            )}
             
             <Link 
               href={emptyState.action.href}
@@ -303,8 +337,8 @@ export default function FansPage() {
             </Link>
           </div>
 
-          {/* Features Grid */}
-          <div className="p-8 bg-gradient-to-br from-gray-50 to-white">
+          {!MINIMAL_UI && (
+          <div className="p-8 bg-gradient-to-br from-gray-50 to-white features-grid">
             <h3 className="font-semibold text-gray-900 mb-6">Powerful Fan Management Features</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {emptyState.features.map((feature, index) => {
@@ -339,12 +373,12 @@ export default function FansPage() {
                   );
                 })}
               </div>
-            </div>
+          </div>
           )}
 
           {/* Metrics Preview */}
-          {emptyState.metrics && (
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50">
+          {!MINIMAL_UI && emptyState.metrics && (
+            <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 metrics-grid">
               <h3 className="font-semibold text-gray-900 mb-6">Expected Performance</h3>
               <div className="grid grid-cols-3 gap-6">
                 {emptyState.metrics.map((metric, index) => (
@@ -363,7 +397,8 @@ export default function FansPage() {
           )}
 
           {/* Call to Action */}
-          <div className="p-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+          {!MINIMAL_UI && (
+          <div className="p-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white integration-notice">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold mb-1">Ready to understand your fans better?</h3>
@@ -386,10 +421,11 @@ export default function FansPage() {
               </button>
             </div>
           </div>
+          )}
         </div>
 
-        {/* Integration Notice */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-6">
+        {!MINIMAL_UI && (
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-6 integration-notice">
           <div className="flex items-start gap-4">
             <Bot className="w-6 h-6 text-blue-600 flex-shrink-0" />
             <div>
@@ -415,8 +451,8 @@ export default function FansPage() {
             </div>
           </div>
         </div>
+        )}
       </main>
     </div>
   );
 }
-

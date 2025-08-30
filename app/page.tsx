@@ -2,12 +2,8 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, TrendingUp, Users, DollarSign, MessageSquare, Zap, BarChart3, Settings } from 'lucide-react';
+import { ArrowRight, CheckCircle, MessageSquare, BarChart3, Settings } from 'lucide-react';
 import { DashboardMockup, ChatInterfaceMockup, AnalyticsMockup } from '@/components/product-mockups';
-import UseCasesCarousel from '@/components/use-cases-carousel';
-import AnimatedCounter, { AnimatedStat } from '@/components/animated-counter';
-import LiveChatDemo from '@/components/live-chat-demo';
 import { motion } from 'framer-motion';
 import PremiumButton from '@/components/premium-button';
 import PremiumCard from '@/components/premium-card';
@@ -40,23 +36,13 @@ export default function HomePageImproved() {
   return (
     <div className="bg-white dark:bg-black transition-colors">
       {/* Hero Section - Simplified like Shopify */}
-      <section className="relative pt-20 md:pt-24 pb-12 md:pb-16 px-6 md:px-8 overflow-hidden">
+      <section className="relative pt-20 md:pt-24 pb-10 md:pb-12 px-6 md:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             {/* Left Content */}
             <div className="w-full lg:w-1/2">
-              {/* Social Proof Badge */}
-              <div className="inline-flex items-center gap-2 mb-6">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 border-2 border-white dark:border-gray-800"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-500 border-2 border-white dark:border-gray-800"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-400 border-2 border-white dark:border-gray-800"></div>
-                  <div className="w-8 h-8 rounded-full bg-gray-500 dark:bg-gray-300 border-2 border-white dark:border-gray-800"></div>
-                </div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">
-                  Trusted by creators switching from agencies
-                </span>
-              </div>
+              {/* Small credibility line */}
+              <div className="text-sm text-gray-600 dark:text-gray-300 mb-4">Trusted by creators who left agencies</div>
 
               {/* Main Headline - Huge & Clear */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
@@ -67,8 +53,8 @@ export default function HomePageImproved() {
               </h1>
 
               {/* Subheadline */}
-              <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Stop paying 50% to agencies. Automate fan conversations with AI while you keep control and earnings.
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-6 leading-relaxed max-w-xl">
+                Automate fan chats with AI. Keep control. Keep more revenue.
               </p>
 
               {/* CTAs */}
@@ -82,15 +68,9 @@ export default function HomePageImproved() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-300">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  <span className="dark:text-gray-300">Free trial available</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  <span className="dark:text-gray-300">Cancel anytime</span>
-                </div>
+              <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300">
+                <span className="inline-flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" /> Free trial</span>
+                <span className="inline-flex items-center gap-2"><CheckCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" /> Cancel anytime</span>
               </div>
             </div>
 
@@ -99,9 +79,7 @@ export default function HomePageImproved() {
               <DashboardMockup />
               
               {/* Floating Badge */}
-              <div className="absolute top-4 right-4 bg-purple-600/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-md">
-                Save on fees
-              </div>
+              <div className="absolute top-4 right-4 bg-purple-600/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-md">Lower fees</div>
             </div>
           </div>
         </div>
@@ -109,67 +87,24 @@ export default function HomePageImproved() {
 
       {/* Stats Bar removed to avoid unsupported claims */}
 
-      {/* Use Cases Carousel */}
-      <UseCasesCarousel />
-
-      {/* Live Chat Demo Section */}
-      <section className="py-20 px-6 md:px-8 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-50 dark:bg-gray-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-12 items-center">
-            <div className="w-full lg:w-1/2">
-              <motion.h2 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent mb-6"
-              >
-                Try our AI live
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-xl text-black mb-8 font-medium"
-              >
-                Experience how our AI engages with fans in real-time. 
-                Type anything and see instant, personalized responses.
-              </motion.p>
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-4 mb-8 lg:mb-0"
-              >
-                <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Instant responses</h3>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">Never miss a message or sale opportunity</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Learns your style</h3>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">AI adapts to your personality and tone</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center flex-shrink-0">
-                    <DollarSign className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Increase sales with smart upsells</h3>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">Personalized offers at the right moment</p>
-                  </div>
-                </div>
-              </motion.div>
+      {/* Compact value highlights */}
+      <section className="py-10 px-6 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800 text-center">
+              <MessageSquare className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+              <div className="font-semibold">AI replies in your style</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">24/7 conversations that convert</div>
             </div>
-            <div className="w-full lg:w-1/2 mt-8 lg:mt-0">
-              <LiveChatDemo />
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800 text-center">
+              <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+              <div className="font-semibold">Know what sells</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Clear revenue and fan insights</div>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800 text-center">
+              <Settings className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+              <div className="font-semibold">Automate the busywork</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Schedule, DM, and optimize</div>
             </div>
           </div>
         </div>
@@ -257,24 +192,24 @@ export default function HomePageImproved() {
         </div>
       </section>
 
-      {/* Product Showcase Section */}
-      <section className="py-20 px-6 md:px-8 bg-gray-50 dark:bg-gray-950">
+      {/* Product Showcase Section - concise */}
+      <section className="py-16 px-6 md:px-8 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
+              className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3"
             >
-              See Huntaze multiply your revenue
+              See the product in action
             </motion.h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8"
+              className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6"
             >
-              Watch how our AI handles everything while you focus on creating content
+              Dashboard, AI chat, and analytics you actually use.
             </motion.p>
             
           </div>
@@ -291,13 +226,11 @@ export default function HomePageImproved() {
               <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
                 <DashboardMockup />
               </div>
-              <div className="mt-6 text-center">
+              <div className="mt-4 text-center">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   Real-time Dashboard
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Track revenue, fans, and performance metrics in real-time
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mb-3">Revenue, fans, and performance at a glance.</p>
                 <Link href="/features/dashboard" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
                   Explore Dashboard →
                 </Link>
@@ -314,13 +247,11 @@ export default function HomePageImproved() {
               <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
                 <ChatInterfaceMockup />
               </div>
-              <div className="mt-6 text-center">
+              <div className="mt-4 text-center">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   AI Chat Assistant
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Engage fans with personalized AI responses
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mb-3">Personalized replies that convert.</p>
                 <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
                   Learn About AI Chat →
                 </Link>
@@ -337,13 +268,11 @@ export default function HomePageImproved() {
               <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
                 <AnalyticsMockup />
               </div>
-              <div className="mt-6 text-center">
+              <div className="mt-4 text-center">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   Smart Analytics
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  AI-powered insights to maximize your revenue
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mb-3">Insights to grow what works.</p>
                 <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
                   View Analytics →
                 </Link>
@@ -351,35 +280,7 @@ export default function HomePageImproved() {
             </motion.div>
           </div>
 
-          {/* Results & Social Proof */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mt-20"
-          >
-            <div className="text-center mb-8">
-              <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4">Proven results from real creators</h3>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">3X</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Revenue in 2 months</div>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">Creators</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Onboarded</div>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">98%</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Revenue retained</div>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 text-center shadow-lg border dark:border-gray-700">
-                <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">AI</div>
-                <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">Assistant</div>
-              </div>
-            </div>
-          </motion.div>
+          {/* Minimal by design: detailed stats moved to analytics page */}
         </div>
       </section>
 
@@ -389,14 +290,10 @@ export default function HomePageImproved() {
       </div>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-pink-600">
         <div className="max-w-4xl mx-auto text-center px-6 md:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to 10x your creator business?
-          </h2>
-          <p className="text-xl text-purple-100 mb-8">
-            Join creators who ditched their agencies and kept more of their revenue.
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Start keeping more of your revenue</h2>
+          <p className="text-base md:text-lg text-purple-100 mb-6">Switch in minutes. No long contracts.</p>
           <div className="flex justify-center">
             <Link href="/join">
               <PremiumButton 
@@ -409,9 +306,7 @@ export default function HomePageImproved() {
               </PremiumButton>
             </Link>
           </div>
-          <p className="text-purple-100 mt-6">
-            ✓ Free trial available ✓ Cancel anytime
-          </p>
+          <p className="text-purple-100 mt-4">✓ Free trial ✓ Cancel anytime</p>
         </div>
       </section>
     </div>

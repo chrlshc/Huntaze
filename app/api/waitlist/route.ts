@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
   // User confirmation (optional)
   if (process.env.WAITLIST_SEND_CONFIRM === 'true' && from) {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
     const html = `
       <p>Thanks! Your address <b>${data.email}</b> has been added to the waitlist.</p>
       <p>We’ll notify you as soon as your access is ready.</p>

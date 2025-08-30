@@ -18,47 +18,61 @@ export async function middleware(request: NextRequest) {
     '/campaigns',
     '/fans',
     '/platforms',
-    '/billing'
+    '/billing',
+    '/social'
   ];
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   
   // Onboarding route
   const isOnboardingRoute = pathname.startsWith('/onboarding');
   
-  // Auth routes
+  // Auth routes (including OAuth callbacks)
   const authRoutes = ['/auth', '/join'];
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+  
+  // OAuth routes that should bypass onboarding check
+  const oauthRoutes = ['/auth/tiktok', '/auth/instagram', '/auth/reddit', '/auth/google'];
+  const isOAuthRoute = oauthRoutes.some(route => pathname.startsWith(route));
+  
+  // Test routes that should bypass onboarding check
+  const testRoutes = ['/test-', '/tiktok-diagnostic', '/debug-'];
+  const isTestRoute = testRoutes.some(route => pathname.includes(route));
   
   // If no auth token and trying to access protected route, redirect to auth
   if (!authToken && (isProtectedRoute || isOnboardingRoute)) {
     return NextResponse.redirect(new URL('/auth', request.url));
   }
   
-  // If authenticated and accessing protected routes (not onboarding)
-  if (authToken && isProtectedRoute) {
-    try {
-      // Check onboarding status
-      const response = await fetch(new URL('/api/users/onboarding-status', request.url), {
-        headers: {
-          Cookie: `auth_token=${authToken}`,
-        },
-      });
-      
-      if (response.ok) {
-        const status = await response.json();
+  // If authenticated and accessing protected routes (not onboarding, OAuth, or test routes)
+  if (authToken && isProtectedRoute && !isOAuthRoute && !isTestRoute) {
+    // Check if onboarding is bypassed
+    const onboardingCompleted = request.cookies.get('onboarding_completed')?.value;
+    
+    if (!onboardingCompleted) {
+      try {
+        // Check onboarding status
+        const response = await fetch(new URL('/api/users/onboarding-status', request.url), {
+          headers: {
+            Cookie: `auth_token=${authToken}`,
+          },
+        });
         
-        // If onboarding not completed, redirect to onboarding
-        if (!status.completed) {
-          return NextResponse.redirect(new URL('/onboarding/setup', request.url));
+        if (response.ok) {
+          const status = await response.json();
+          
+          // If onboarding not completed, redirect to onboarding
+          if (!status.completed) {
+            return NextResponse.redirect(new URL('/onboarding/setup', request.url));
+          }
         }
+      } catch (error) {
+        console.error('Failed to check onboarding status:', error);
       }
-    } catch (error) {
-      console.error('Failed to check onboarding status:', error);
     }
   }
   
   // If authenticated and trying to access auth routes, redirect to dashboard
-  if (authToken && isAuthRoute) {
+  if (authToken && isAuthRoute && !isOAuthRoute) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
   
