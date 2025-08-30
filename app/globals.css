@@ -87,9 +87,9 @@ html {
 
 body {
   /* cleaner neutral base for readability */
-  @apply bg-white text-neutral-900;
+  @apply bg-white text-neutral-900 dark:text-gray-100;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.5;
   letter-spacing: -0.01em;
   /* Prevent zoom on mobile */
@@ -124,9 +124,23 @@ h4 {
 }
 
 p {
-  @apply text-neutral-700;
+  @apply text-neutral-800;
   line-height: 1.7;
 }
+
+/* Increase default text contrast in light mode */
+.text-gray-600 { color: #334155 !important; }
+.text-gray-500 { color: #475569 !important; }
+.text-gray-400 { color: #64748b !important; }
+
+/* Increase text contrast in dark mode */
+.dark .text-gray-300 { color: #e5e7eb !important; }
+.dark .text-gray-400 { color: #cbd5e1 !important; }
+.dark .text-gray-500 { color: #94a3b8 !important; }
+
+/* Strengthen borders for legibility */
+.border-gray-200 { border-color: #d1d5db !important; }
+.dark .border-gray-800 { border-color: #1f2937 !important; }
 
 /* Girly Buttons */
 .btn-gradient {
@@ -184,7 +198,7 @@ p {
 
 /* Neutral elevated card for dashboards */
 .elevated-card {
-  @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+  @apply bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-gray-900 dark:border-gray-700;
 }
 
 .girly-card:hover {
