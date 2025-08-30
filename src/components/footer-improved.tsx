@@ -101,7 +101,8 @@ export default function FooterImproved() {
                 />
                 <Button 
                   type="submit"
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3"
+                  variant="gradient"
+                  className="px-6 py-3"
                 >
                   Subscribe
                   <ArrowRight className="ml-2 h-4 w-4" />

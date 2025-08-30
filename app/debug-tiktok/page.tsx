@@ -29,7 +29,7 @@ export default function DebugTikTok() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-100">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
+      <div className="max-w-2xl mx-auto elevated-card p-6">
         <h1 className="text-2xl font-bold mb-6">Debug TikTok OAuth</h1>
         
         <div className="space-y-4">

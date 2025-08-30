@@ -16,7 +16,7 @@ export default function TestTikTokProduction() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+      <div className="elevated-card p-8 max-w-md w-full">
         <h1 className="text-2xl font-bold mb-6 text-center">Test TikTok Production OAuth</h1>
         
         <div className="space-y-4">

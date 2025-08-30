@@ -14,7 +14,7 @@ export default function DataDeletionPage() {
           Data Deletion Request
         </h1>
         
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+        <div className="elevated-card p-8 mb-8">
           <h2 className="text-2xl font-bold mb-4">How to Delete Your Data</h2>
           
           <p className="text-gray-700 mb-6">

@@ -243,7 +243,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-2xl p-6 border border-gray-200 hover:border-purple-200 hover:shadow-lg transition-all"
+              className="elevated-card rounded-2xl p-6 hover:border-purple-200 hover:shadow-md transition-all"
             >
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
@@ -335,7 +335,7 @@ function ConnectPlatformStep({ onNext, onPrev }: { onNext: () => void; onPrev: (
           <motion.div
             key={platform.id}
             whileHover={{ scale: platform.available ? 1.02 : 1 }}
-            className={`relative bg-white rounded-2xl border-2 transition-all ${
+            className={`relative elevated-card rounded-2xl border-2 transition-all ${
               selectedPlatforms.includes(platform.id)
                 ? 'border-green-500 shadow-lg shadow-green-500/20'
                 : platform.available
@@ -508,7 +508,7 @@ function ConfigureAIStep({ onNext, onPrev }: { onNext: () => void; onPrev: () =>
         <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
           <h4 className="font-semibold text-gray-900 mb-3">AI Response Preview</h4>
           <div className="space-y-3">
-            <div className="bg-white rounded-xl p-4">
+            <div className="elevated-card rounded-xl p-4">
               <p className="text-sm text-gray-600 mb-1">Fan: "Hey! How are you today?"</p>
               <p className="text-sm font-medium text-purple-700">
                 AI: {personality === 'friendly' ? "Hi there! I'm doing great, thanks for asking! 😊 How's your day going?" :
@@ -559,7 +559,7 @@ function CompleteStep({ onNext }: { onNext: () => void }) {
         Your AI assistant is ready to help you scale your creator business
       </p>
 
-      <div className="bg-white rounded-2xl p-8 border border-gray-200 mb-8">
+      <div className="elevated-card rounded-2xl p-8 mb-8">
         <h3 className="text-xl font-semibold text-gray-900 mb-6">What's Next?</h3>
         <div className="space-y-4 text-left">
           <div className="flex items-start gap-3">

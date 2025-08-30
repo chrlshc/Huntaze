@@ -71,7 +71,7 @@ export default function SchedulePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+        <div className="elevated-card rounded-xl p-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Momentum Calendar</h1>
           <p className="text-gray-600 dark:text-gray-300 mb-4">Schedule posts and maintain consistent momentum across platforms.</p>
           <div className="grid md:grid-cols-2 gap-4">
@@ -104,7 +104,7 @@ export default function SchedulePage() {
           {error && <div className="text-red-600 mt-3 text-sm">{error}</div>}
         </div>
 
-        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+        <div className="elevated-card rounded-xl p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Upcoming</h2>
           {topHours.length > 0 && (
             <div className="text-xs text-gray-600 dark:text-gray-400 mb-3">Top hours today (recommended): {topHours.map(h => `${String(h).padStart(2,'0')}:00`).join(' • ')}</div>

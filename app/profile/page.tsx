@@ -26,7 +26,7 @@ export default function ProfilePage() {
           </h1>
 
           {/* Profile Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <div className="elevated-card rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Profile Information
@@ -60,7 +60,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Subscription Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <div className="elevated-card rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Subscription
@@ -96,7 +96,7 @@ export default function ProfilePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all"
+              className="flex items-center justify-center gap-3 p-4 elevated-card rounded-xl hover:shadow-md transition-all"
             >
               <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               <span className="font-medium text-gray-900 dark:text-white">Account Settings</span>
@@ -105,7 +105,7 @@ export default function ProfilePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all"
+              className="flex items-center justify-center gap-3 p-4 elevated-card rounded-xl hover:shadow-md transition-all"
             >
               <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               <span className="font-medium text-gray-900 dark:text-white">Sign Out</span>

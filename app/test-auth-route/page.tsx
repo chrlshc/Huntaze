@@ -31,7 +31,7 @@ export default function TestAuthRoute() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-100">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-6">
+      <div className="max-w-4xl mx-auto elevated-card p-6">
         <h1 className="text-2xl font-bold mb-6">Test /auth/tiktok Route</h1>
         
         <div className="space-y-4">

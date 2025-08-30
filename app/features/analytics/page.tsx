@@ -178,19 +178,19 @@ export default function AnalyticsPage() {
                 </p>
               </div>
               <div className="space-y-4">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="elevated-card p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Churn Risk Detection</span>
                     <span className="text-green-600 font-medium">Active</span>
                   </div>
                 </div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="elevated-card p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Revenue Forecasting</span>
                     <span className="text-green-600 font-medium">Active</span>
                   </div>
                 </div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="elevated-card p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Content Optimization</span>
                     <span className="text-green-600 font-medium">Active</span>
@@ -208,7 +208,7 @@ export default function AnalyticsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 text-center"
+            className="elevated-card p-8 md:p-12 text-center"
           >
             <p className="text-2xl text-gray-700 dark:text-gray-300 mb-6 italic">
               "The analytics showed me I was posting at the wrong times. Changed my schedule based on the AI recommendations and doubled my revenue in 30 days!"

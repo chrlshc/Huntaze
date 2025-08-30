@@ -19,11 +19,10 @@ export default function AutomationsPage() {
       </header>
 
       <main className="max-w-6xl mx-auto p-6">
-        <div className="bg-white border border-gray-200 rounded-xl p-6 text-gray-600">
+        <div className="elevated-card rounded-xl p-6 text-gray-600">
           <p>Automation builder coming soon. Manage your active flows from the Dashboard.</p>
         </div>
       </main>
     </div>
   );
 }
-
