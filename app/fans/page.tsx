@@ -8,37 +8,10 @@ import {
   Users, 
   ChevronLeft,
   UserPlus,
-  Star,
-  Heart,
-  DollarSign,
-  TrendingUp,
   Filter,
   Search,
-  Bot,
-  Calendar,
-  Clock,
-  Target,
-  Zap,
-  ArrowRight,
-  Trophy,
-  Shield,
-  MessageSquare,
-  Activity,
-  Gift,
-  Crown,
-  Sparkles,
-  Database,
-  ChartBar,
-  Globe,
-  Plus,
-  CheckCircle,
-  AlertCircle,
-  Dumbbell,
-  Gamepad2,
-  Camera,
-  ShoppingBag
+  Plus
 } from 'lucide-react';
-import { MINIMAL_UI } from '@/lib/ui';
 
 export default function FansPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -243,40 +216,28 @@ export default function FansPage() {
   const Icon = emptyState.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-6">
-              <Link href="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
                 <ChevronLeft className="w-5 h-5" />
-                <span className="font-medium">Dashboard</span>
               </Link>
-              <div className="flex items-center gap-3">
-                <Users className="w-6 h-6 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900">Fans</h1>
-                {profile?.niche && (
-                  <span className="px-2 py-1 text-xs rounded-lg bg-gray-100 text-gray-700 border border-gray-200">
-                    {profile.niche === 'fitness' ? 'Fitness Clients' :
-                     profile.niche === 'gaming' ? 'Gaming Community' :
-                     profile.niche === 'adult' ? 'Premium Subscribers' :
-                     profile.niche === 'fashion' ? 'Style Community' : 'Creator Fans'}
-                  </span>
-                )}
-              </div>
+              <h1 className="text-xl font-semibold">Fans</h1>
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                <Filter className="w-4 h-4" />
+              <button className="px-3 py-2 border rounded-lg hover:bg-gray-50 text-sm">
+                <Filter className="w-4 h-4 inline mr-1" />
                 Filter
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                <Search className="w-4 h-4" />
+              <button className="px-3 py-2 border rounded-lg hover:bg-gray-50 text-sm">
+                <Search className="w-4 h-4 inline mr-1" />
                 Search
               </button>
-              <Link href="/fans/import" className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
-                <UserPlus className="w-4 h-4" />
+              <Link href="/fans/import" className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm">
+                <UserPlus className="w-4 h-4 inline mr-1" />
                 Add Fan
               </Link>
             </div>
@@ -284,173 +245,53 @@ export default function FansPage() {
         </div>
       </header>
 
-      <main className="px-6 lg:px-8 py-12 max-w-7xl mx-auto">
-        {/* Gated banner if no platform connected */}
+      <main className="px-6 lg:px-8 py-6 max-w-6xl mx-auto">
+        {/* Alert for no platform */}
         {!hasConnectedPlatforms && (
-          <GatedBanner type="no-platform" aiConfig={aiConfig} userProfile={profile} />
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+            <Link href="/platforms/connect" className="text-amber-800">
+              Connect a platform to import fans →
+            </Link>
+          </div>
         )}
         
-        {/* Existing fans list */}
-        {fans.length > 0 && (
-          <div className="mb-8 bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Fans</h3>
-              <Link href="/fans/import" className="text-sm text-purple-600 hover:text-purple-700">Add another</Link>
+        {/* Fans list */}
+        {fans.length > 0 ? (
+          <div className="bg-white rounded-lg border">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h3 className="font-medium">All Fans ({fans.length})</h3>
+              <Link href="/fans/import" className="text-sm text-purple-600">Add</Link>
             </div>
-            <div className="divide-y divide-gray-100">
-              {fans.slice(0, 6).map((f) => (
-                <div key={f.id} className="p-4 flex items-center justify-between">
+            <div className="divide-y">
+              {fans.map((f) => (
+                <div key={f.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
                   <div>
-                    <p className="font-medium text-gray-900">{f.name}</p>
-                    {!MINIMAL_UI && (
-                      <p className="text-sm text-gray-500">{f.platform || 'custom'} {f.handle ? `• @${f.handle}` : ''}</p>
-                    )}
+                    <p className="font-medium">{f.name}</p>
+                    <p className="text-sm text-gray-500">{f.platform || 'custom'}</p>
                   </div>
                   {typeof f.valueCents === 'number' && f.valueCents > 0 && (
-                    <span className="text-sm font-medium text-gray-700">${(f.valueCents/100).toFixed(2)}/mo</span>
+                    <span className="text-sm font-medium">${(f.valueCents/100).toFixed(2)}/mo</span>
                   )}
                 </div>
               ))}
             </div>
           </div>
-        )}
+        ) : (
 
-        {/* Empty State */}
-        <div className={!hasConnectedPlatforms ? "mt-6 bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden" : "bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden"}>
-          {/* Hero Section */}
-          <div className="p-12 text-center border-b border-gray-100">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
-              <Icon className="w-10 h-10 text-purple-600" />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">{emptyState.title}</h2>
-            {!MINIMAL_UI && (
-              <p className="text-lg text-gray-600 max-w-xl mx-auto mb-8">{emptyState.description}</p>
-            )}
+          {/* Empty State */}
+          <div className="bg-white rounded-lg border p-8 text-center">
+            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">No fans yet</h2>
+            <p className="text-gray-600 mb-6">Start building your fan database</p>
             
             <Link 
-              href={emptyState.action.href}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-600/25 transition-all font-medium"
+              href={hasConnectedPlatforms ? "/fans/import" : "/platforms/connect"}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
             >
-              <emptyState.action.icon className="w-5 h-5" />
-              {emptyState.action.label}
-              <ArrowRight className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
+              {hasConnectedPlatforms ? "Add First Fan" : "Connect Platform"}
             </Link>
           </div>
-
-          {!MINIMAL_UI && (
-          <div className="p-8 bg-gradient-to-br from-gray-50 to-white features-grid">
-            <h3 className="font-semibold text-gray-900 mb-6">Powerful Fan Management Features</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {emptyState.features.map((feature, index) => {
-                const FeatureIcon = feature.icon;
-                return (
-                  <div key={index} className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-200">
-                    <div className="flex-shrink-0 w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                      <FeatureIcon className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <p className="text-gray-700">{feature.text}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Segments Preview */}
-          {emptyState.segments && (
-            <div className="p-8 bg-white border-t border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-6">Smart Fan Segmentation</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {emptyState.segments.map((segment, index) => {
-                  const SegmentIcon = segment.icon;
-                  return (
-                    <div key={index} className="text-center p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200">
-                      <div className={`inline-flex items-center justify-center w-12 h-12 bg-${segment.color}-50 rounded-xl mb-3`}>
-                        <SegmentIcon className={`w-6 h-6 text-${segment.color}-600`} />
-                      </div>
-                      <p className="text-2xl font-bold text-gray-900">{segment.count}</p>
-                      <p className="text-sm text-gray-600">{segment.name}</p>
-                    </div>
-                  );
-                })}
-              </div>
-          </div>
-          )}
-
-          {/* Metrics Preview */}
-          {!MINIMAL_UI && emptyState.metrics && (
-            <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 metrics-grid">
-              <h3 className="font-semibold text-gray-900 mb-6">Expected Performance</h3>
-              <div className="grid grid-cols-3 gap-6">
-                {emptyState.metrics.map((metric, index) => (
-                  <div key={index} className="text-center">
-                    <p className="text-3xl font-bold text-gray-900">{metric.value}</p>
-                    <p className="text-sm text-gray-600 mb-1">{metric.label}</p>
-                    {metric.trend !== '--' && (
-                      <p className={`text-sm font-medium ${metric.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                        {metric.trend}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Call to Action */}
-          {!MINIMAL_UI && (
-          <div className="p-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white integration-notice">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold mb-1">Ready to understand your fans better?</h3>
-                <p className="text-purple-100">
-                  {profile?.goals?.includes('revenue') 
-                    ? 'Identify high-value fans and maximize earnings'
-                    : profile?.goals?.includes('growth')
-                    ? 'Track fan growth and engagement patterns'
-                    : profile?.goals?.includes('time')
-                    ? 'Automate fan management and save hours'
-                    : 'Build deeper connections with smart insights'}
-                </p>
-              </div>
-              <button 
-                onClick={() => router.push('/automations')}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur border border-white/30 rounded-xl hover:bg-white/30 transition-colors font-medium"
-              >
-                <Zap className="w-5 h-5" />
-                Setup Automations
-              </button>
-            </div>
-          </div>
-          )}
-        </div>
-
-        {!MINIMAL_UI && (
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-6 integration-notice">
-          <div className="flex items-start gap-4">
-            <Bot className="w-6 h-6 text-blue-600 flex-shrink-0" />
-            <div>
-              <h4 className="font-semibold text-blue-900 mb-1">
-                {profile?.niche === 'fitness' ? 'AI-Powered Client Insights' :
-                 profile?.niche === 'gaming' ? 'Smart Community Analytics' :
-                 profile?.niche === 'adult' ? 'Revenue Optimization AI' :
-                 'Intelligent Fan Analysis'}
-              </h4>
-              <p className="text-blue-800">
-                {profile?.niche === 'fitness' 
-                  ? 'Our AI analyzes workout patterns and suggests personalized check-in times for each client.'
-                  : profile?.niche === 'gaming'
-                  ? 'AI tracks viewer patterns and suggests optimal stream times for maximum engagement.'
-                  : profile?.niche === 'adult'
-                  ? 'Smart algorithms predict renewal likelihood and suggest targeted retention campaigns.'
-                  : 'Advanced AI helps you understand fan behavior and optimize engagement strategies.'}
-              </p>
-              <Link href="/ai/insights" className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-blue-900 hover:text-blue-700">
-                Learn about AI insights
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
         )}
       </main>
     </div>
