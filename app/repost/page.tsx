@@ -57,7 +57,7 @@ export default function RepostPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+        <div className="elevated-card rounded-xl p-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Repost Engine</h1>
           <p className="text-gray-600 dark:text-gray-300">Top content this week based on performance. Pick a slot and add to calendar.</p>
           <div className="mt-3">
@@ -69,7 +69,7 @@ export default function RepostPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+        <div className="elevated-card rounded-xl p-6">
           {loading ? (
             <div>Loading…</div>
           ) : error ? (

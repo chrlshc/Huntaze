@@ -30,7 +30,7 @@ export default function CompleteOnboarding() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-100 flex items-center justify-center">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow p-6 text-center">
+      <div className="max-w-md mx-auto elevated-card p-6 text-center">
         <h1 className="text-2xl font-bold mb-6">Skip Onboarding (Dev Only)</h1>
         
         <button

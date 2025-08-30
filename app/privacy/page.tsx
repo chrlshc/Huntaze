@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             Last updated: 17 Aug 2025
           </p>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8 space-y-6">
+          <div className="elevated-card p-6 mb-8 space-y-6">
             <section>
               <h2 className="text-xl font-semibold mb-3">Data we process</h2>
               <p className="text-neutral-700">

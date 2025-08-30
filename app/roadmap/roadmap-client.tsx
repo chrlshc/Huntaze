@@ -57,7 +57,7 @@ export default function RoadmapClient() {
         {proposals.map((p) => {
           const total = (p.votes || []).reduce((s, v) => s + (v.weight || 0), 0);
           return (
-            <div key={p.id} className="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg p-4">
+            <div key={p.id} className="elevated-card rounded-lg p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{p.title}</h3>
@@ -76,4 +76,3 @@ export default function RoadmapClient() {
     </section>
   );
 }
-

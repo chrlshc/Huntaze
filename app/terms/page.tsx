@@ -17,7 +17,7 @@ export default function TermsPage() {
             Last updated: 17 Aug 2025
           </p>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <div className="elevated-card p-6 mb-8">
             <p className="text-neutral-700 mb-4">
               Huntaze provides a web platform for creators to manage and publish social content. By using Huntaze, you agree:
             </p>

@@ -129,7 +129,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 className={`relative rounded-2xl p-8 min-h-[32rem] flex flex-col ${
                   isPro
                     ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-2xl scale-105'
-                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow'
+                    : 'elevated-card hover:shadow-md transition-shadow'
                 }`}
               >
                 {plan.badge && (
@@ -266,7 +266,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
             See How Much You&apos;ll Save
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-gray-200">
+            <div className="elevated-card rounded-xl p-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $10k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -286,7 +286,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-purple-500">
+            <div className="elevated-card rounded-xl p-6 border-2 border-purple-500">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $30k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -306,7 +306,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-yellow-500">
+            <div className="elevated-card rounded-xl p-6 border-2 border-yellow-500">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $100k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">

@@ -30,7 +30,7 @@ export default function TestTikTokFinal() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full">
+      <div className="elevated-card p-8 max-w-2xl w-full">
         <h1 className="text-2xl font-bold mb-6">TikTok OAuth Configuration</h1>
         
         <div className="mb-6 bg-blue-50 border border-blue-200 rounded p-4">
@@ -38,7 +38,7 @@ export default function TestTikTokFinal() {
           <div className="space-y-2">
             {redirectUris.map((uri, index) => (
               <div key={index} className="flex items-center gap-2">
-                <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">{uri}</code>
+                <code className="flex-1 bg-gray-50 px-3 py-2 rounded border text-sm">{uri}</code>
                 <button
                   onClick={() => copyToClipboard(uri)}
                   className={`px-3 py-2 text-sm rounded transition-colors ${

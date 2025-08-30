@@ -1065,7 +1065,7 @@ export default function OnboardingSetupPage() {
         )}
 
         {/* Content Card */}
-        <div className="bg-white dark:bg-gray-950 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 p-8">
+        <div className="elevated-card rounded-2xl p-8">
           {renderStepContent()}
           
           {/* Navigation */}

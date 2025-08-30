@@ -57,7 +57,7 @@ export default function AutomationPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
-                    className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
+                    className="elevated-card p-6"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{item.time}</span>
@@ -145,7 +145,7 @@ export default function AutomationPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+                className="elevated-card rounded-xl p-6 hover:shadow-md transition-shadow"
               >
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
                   <div className="text-purple-600 dark:text-purple-400">{feature.icon}</div>
@@ -201,7 +201,7 @@ export default function AutomationPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.15 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg"
+                className="elevated-card rounded-xl p-8"
               >
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                   {workflow.title}
@@ -246,7 +246,7 @@ export default function AutomationPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg"
+              className="elevated-card rounded-xl p-8"
             >
               <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">73%</div>
               <p className="text-gray-600 dark:text-gray-400">Less time spent on admin</p>
@@ -255,7 +255,7 @@ export default function AutomationPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg"
+              className="elevated-card rounded-xl p-8"
             >
               <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">4.2x</div>
               <p className="text-gray-600 dark:text-gray-400">More consistent posting</p>
@@ -264,7 +264,7 @@ export default function AutomationPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg"
+              className="elevated-card rounded-xl p-8"
             >
               <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">+156%</div>
               <p className="text-gray-600 dark:text-gray-400">Increase in fan engagement</p>

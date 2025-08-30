@@ -52,7 +52,7 @@ export default function EmailDebugPage() {
         <h1 className="text-3xl font-bold mb-8">Email Debug Tool</h1>
 
         {/* Configuration Check */}
-        <div className="bg-white dark:bg-gray-950 rounded-lg p-6 mb-8">
+        <div className="elevated-card rounded-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Email Configuration</h2>
           <button
             onClick={checkConfig}
@@ -70,7 +70,7 @@ export default function EmailDebugPage() {
         </div>
 
         {/* Test Email Send */}
-        <div className="bg-white dark:bg-gray-950 rounded-lg p-6">
+        <div className="elevated-card rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Send Test Email</h2>
           
           <div className="space-y-4">

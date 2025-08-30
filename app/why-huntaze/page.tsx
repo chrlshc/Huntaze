@@ -123,7 +123,7 @@ export default function WhyHuntazePage() {
           </div>
 
           {/* Active Widget Details */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="elevated-card rounded-2xl p-8">
             <div className={`inline-flex items-center gap-2 px-4 py-2 bg-${currentWidget.color}-100 rounded-lg mb-6`}>
               <currentWidget.icon className={`w-5 h-5 text-${currentWidget.color}-600`} />
               <span className={`font-semibold text-${currentWidget.color}-700`}>{currentWidget.title}</span>

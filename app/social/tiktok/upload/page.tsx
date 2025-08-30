@@ -98,7 +98,7 @@ export default function TikTokUploadPage() {
         </div>
 
         {/* Upload Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <div className="elevated-card rounded-xl p-6">
           {/* Video Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
