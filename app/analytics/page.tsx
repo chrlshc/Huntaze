@@ -640,7 +640,7 @@ export default function AnalyticsPage() {
           {metrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
+              <div key={index} className="elevated-card rounded-2xl p-6 hover:shadow-md transition-all">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <p className="text-sm text-gray-600 mb-1">{metric.title}</p>
@@ -686,7 +686,7 @@ export default function AnalyticsPage() {
         <GatedContent type="no-platform" aiConfig={aiConfig} userProfile={profile}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Revenue Chart */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="lg:col-span-2 elevated-card rounded-2xl p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Revenue Overview</h3>
               <div className="flex items-center gap-2">
@@ -718,7 +718,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Platform Distribution */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="elevated-card rounded-2xl p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Revenue by Platform</h3>
             <div className="h-64">
               <DynamicDoughnut 
@@ -755,7 +755,7 @@ export default function AnalyticsPage() {
         {/* Bottom Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Performers */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="elevated-card rounded-2xl overflow-hidden">
             <div className="p-6 border-b border-gray-100">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900">Top Performers</h3>
@@ -790,7 +790,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Fan Insights */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="elevated-card rounded-2xl p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Fan Insights</h3>
             <div className="space-y-4">
               {fanInsights.map((insight, index) => {

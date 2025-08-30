@@ -43,7 +43,7 @@ export default function DemoPage() {
         </div>
 
         {/* Step 1: Connect TikTok */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+        <div className="elevated-card p-8 mb-8">
           <h2 className="text-2xl font-bold mb-4">Step 1: Connect Your TikTok Account</h2>
           
           {!isConnected ? (
@@ -80,7 +80,7 @@ export default function DemoPage() {
 
         {/* Step 2: Upload Video */}
         {isConnected && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <div className="elevated-card p-8 mb-8">
             <h2 className="text-2xl font-bold mb-4">Step 2: Upload and Publish Video</h2>
             
             {!videoUploaded ? (
@@ -161,7 +161,7 @@ export default function DemoPage() {
         )}
 
         {/* API Flow Explanation */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="elevated-card p-8">
           <h2 className="text-2xl font-bold mb-4">API Flow</h2>
           <ol className="space-y-3 text-sm">
             <li className="flex gap-3">

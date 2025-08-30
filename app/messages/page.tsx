@@ -78,7 +78,7 @@ export default function MessagesPage() {
         )}
 
         {/* Empty State */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="elevated-card rounded-2xl overflow-hidden">
           <div className="p-12 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
               <MessageSquare className="w-10 h-10 text-purple-600" />

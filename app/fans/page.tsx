@@ -56,11 +56,11 @@ export default function FansPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-colors text-white">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
                 <Filter className="w-4 h-4" />
                 <span className="text-sm font-medium">Filter</span>
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-xl hover:bg-white/20 transition-colors text-white">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
                 <Search className="w-4 h-4" />
                 <span className="text-sm font-medium">Search</span>
               </button>
@@ -88,7 +88,7 @@ export default function FansPage() {
         
         {/* Fans list */}
         {fans.length > 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="elevated-card rounded-2xl overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">All Fans ({fans.length})</h3>
               <Link href="/fans/import" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Add another</Link>
@@ -108,7 +108,7 @@ export default function FansPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 shadow-sm overflow-hidden">
+          <div className="elevated-card rounded-2xl overflow-hidden">
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
                 <Users className="w-10 h-10 text-purple-600" />

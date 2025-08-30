@@ -20,7 +20,7 @@ export default function AboutPage() {
         </div>
 
         <section className="space-y-8">
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="elevated-card rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
             <p className="text-gray-700 leading-relaxed">
               Huntaze is built by creators, for creators. We understand the challenges of managing multiple 
@@ -29,7 +29,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="elevated-card rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">What We Do</h2>
             <ul className="space-y-3 text-gray-700">
               <li className="flex items-start">
@@ -51,7 +51,7 @@ export default function AboutPage() {
             </ul>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="elevated-card rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Values</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>

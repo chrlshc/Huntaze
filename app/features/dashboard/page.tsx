@@ -118,7 +118,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+                className="elevated-card rounded-xl p-6 hover:shadow-md transition-shadow"
               >
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
                   <div className="text-purple-600 dark:text-purple-400">{feature.icon}</div>
@@ -173,7 +173,7 @@ export default function DashboardPage() {
                 </ul>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+                <div className="elevated-card rounded-lg p-6">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">$—</div>
                   <div className="text-sm text-green-600">Analytics coming soon</div>
                   <div className="mt-4 h-32 bg-gradient-to-r from-purple-600 to-pink-600 rounded opacity-20"></div>
@@ -190,7 +190,7 @@ export default function DashboardPage() {
             >
               <div className="order-2 lg:order-1">
                 <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-8">
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+                <div className="elevated-card rounded-lg p-6">
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Top Fans</h4>
                     <div className="space-y-3">
                       {['John D. - $2,450', 'Mike S. - $1,890', 'Alex R. - $1,560'].map((fan, i) => (

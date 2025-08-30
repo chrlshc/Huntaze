@@ -118,7 +118,7 @@ export default function AIChatPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+                className="elevated-card rounded-xl p-6 hover:shadow-md transition-shadow"
               >
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
                   <div className="text-purple-600 dark:text-purple-400">{feature.icon}</div>

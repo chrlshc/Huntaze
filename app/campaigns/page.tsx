@@ -388,7 +388,7 @@ export default function CampaignsPage() {
 
       <main className="px-6 lg:px-8 py-12 max-w-7xl mx-auto">
         {/* Empty State */}
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="elevated-card rounded-3xl overflow-hidden">
           {/* Hero Section */}
           <div className="p-12 text-center border-b border-gray-100">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
@@ -421,7 +421,7 @@ export default function CampaignsPage() {
                 {campaignContent.templates.map((template, index) => {
                   const TemplateIcon = template.icon;
                   return (
-                    <div key={index} className="group bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all cursor-pointer overflow-hidden">
+                  <div key={index} className="group elevated-card rounded-xl hover:border-purple-300 hover:shadow-md transition-all cursor-pointer overflow-hidden">
                       <div className="p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className={`p-3 rounded-xl bg-${template.color}-50`}>
@@ -464,7 +464,7 @@ export default function CampaignsPage() {
 
           {/* Best Practices */}
           {campaignContent.bestPractices && (
-            <div className="p-8 bg-white border-t border-gray-100">
+            <div className="p-8 border-t border-gray-100">
               <h3 className="font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-purple-600" />
                 {profile?.niche === 'fitness' ? 'Fitness Campaign Best Practices' :
@@ -572,4 +572,3 @@ export default function CampaignsPage() {
     </div>
   );
 }
-

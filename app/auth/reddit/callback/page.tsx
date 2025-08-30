@@ -28,7 +28,7 @@ function RedditCallbackContent() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <div className="elevated-card p-8 max-w-md w-full text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Reddit Authorization Error</h1>
           <p className="text-gray-700 mb-6">{error}</p>
           <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium">
@@ -41,7 +41,7 @@ function RedditCallbackContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+      <div className="elevated-card p-8 max-w-md w-full text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Connecting to Reddit...</h1>
         <div className="flex justify-center mb-6">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
@@ -56,7 +56,7 @@ export default function RedditCallbackPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <div className="elevated-card p-8 max-w-md w-full text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Loading...</h1>
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>

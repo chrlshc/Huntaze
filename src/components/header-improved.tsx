@@ -131,10 +131,10 @@ export default function HeaderImproved() {
   }, [])
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm dark:shadow-gray-950/50 py-3' 
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm dark:shadow-gray-950/50 py-3'
           : 'bg-white dark:bg-black py-4'
       }`}
     >
@@ -169,7 +169,7 @@ export default function HeaderImproved() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
+                    className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
                   >
                     <div className="p-6">
                       <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-4">
@@ -215,7 +215,7 @@ export default function HeaderImproved() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
+                    className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
                   >
                     <div className="p-6">
                       <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-4">

@@ -386,7 +386,7 @@ export default function DashboardPage() {
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-purple-200 transition-all">
+                <div key={index} className="elevated-card rounded-2xl p-6 hover:shadow-md hover:border-purple-200 transition-all">
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} bg-opacity-10`}>
                       <Icon className="w-6 h-6 text-gray-700" />
@@ -406,7 +406,7 @@ export default function DashboardPage() {
           {/* Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Top Fans */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="lg:col-span-2 elevated-card rounded-2xl overflow-hidden">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold text-gray-900">Top Fans</h2>
@@ -451,7 +451,7 @@ export default function DashboardPage() {
                   const ActionIcon = action.icon;
                   return (
                     <Link key={index} href={action.link} className="block">
-                      <div className="group p-4 bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all">
+                      <div className="group p-4 elevated-card rounded-xl hover:border-purple-300 hover:shadow-md transition-all">
                         <div className="flex items-center gap-3">
                           <ActionIcon className="w-5 h-5 text-purple-600" />
                           <p className="font-medium text-gray-900">{action.title}</p>
