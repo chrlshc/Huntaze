@@ -43,10 +43,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link rel="stylesheet" href="/styles/design-system.css" />
         <script src="/scroll-fix.js"></script>
-        <script src="/disable-zoom.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `

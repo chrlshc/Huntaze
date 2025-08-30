@@ -287,7 +287,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
       {/* Premium Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-2">
@@ -316,7 +316,7 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div className="flex">
         {/* Premium Sidebar */}
-        <aside className="hidden lg:block w-72 bg-white/50 backdrop-blur-sm border-r border-gray-200/50 min-h-screen">
+        <aside className="hidden lg:block w-72 bg-white border-r border-gray-200 min-h-screen">
           <div className="p-6">
             {/* Onboarding Alert */}
             {onboarding && !onboarding.completed && (
