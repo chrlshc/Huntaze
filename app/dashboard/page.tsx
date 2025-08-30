@@ -21,7 +21,8 @@ import {
   ChevronRight,
   Camera,
   Video,
-  Mail
+  Mail,
+  Sparkles
 } from 'lucide-react';
 import type { OverviewMetrics } from '@/types/analytics';
 
