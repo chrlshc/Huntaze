@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Create Stripe checkout session (idempotent)
     const idempotencyKey = `checkout_${userId}_${planId}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
       payment_method_types: ['card'],
@@ -44,8 +45,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com'}/onboarding/setup?session_id={CHECKOUT_SESSION_ID}&step=complete`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com'}/onboarding/setup?step=payment`,
+      success_url: `${appUrl}/onboarding/setup?session_id={CHECKOUT_SESSION_ID}&step=complete`,
+      cancel_url: `${appUrl}/onboarding/setup?step=payment`,
       metadata: {
         userId,
       },

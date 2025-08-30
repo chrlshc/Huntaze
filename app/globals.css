@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Minimal UI mode: hide verbose copy and secondary sections */
+[data-ui="minimal"] .long-copy,
+[data-ui="minimal"] .help-text,
+[data-ui="minimal"] .description,
+[data-ui="minimal"] .subtext,
+[data-ui="minimal"] .tagline {
+  display: none !important;
+}
+
+[data-ui="minimal"] p.text-gray-600,
+[data-ui="minimal"] p.text-gray-500,
+[data-ui="minimal"] p.text-gray-400 {
+  display: none !important;
+}
+
+[data-ui="minimal"] .verbose-section,
+[data-ui="minimal"] .features-grid,
+[data-ui="minimal"] .segments-grid,
+[data-ui="minimal"] .metrics-grid,
+[data-ui="minimal"] .integration-notice {
+  display: none !important;
+}
+
+[data-ui="minimal"] h1, [data-ui="minimal"] h2, [data-ui="minimal"] h3 {
+  margin-bottom: 0.5rem;
+}
+
+[data-ui="minimal"] .card {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);

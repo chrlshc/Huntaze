@@ -25,6 +25,7 @@ import {
   CheckCircle,
   Plus
 } from 'lucide-react';
+import { MINIMAL_UI } from '@/lib/ui';
 
 export default function MessagesPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -55,7 +56,7 @@ export default function MessagesPage() {
       return {
         icon: Globe,
         title: "Connect Your Platform First",
-        description: "Link your OnlyFans or Fansly account to start managing messages",
+        description: MINIMAL_UI ? '' : "Link your OnlyFans or Fansly account to start managing messages",
         action: {
           label: "Connect Platform",
           href: "/onboarding/setup?step=3",
@@ -73,7 +74,7 @@ export default function MessagesPage() {
       return {
         icon: MessageSquare,
         title: "Your Fitness Community Hub",
-        description: "Manage conversations with clients, share workout plans, and provide motivation",
+        description: MINIMAL_UI ? '' : "Manage conversations with clients, share workout plans, and provide motivation",
         action: {
           label: "Import Messages",
           href: "/messages/import",
@@ -97,7 +98,7 @@ export default function MessagesPage() {
       return {
         icon: MessageSquare,
         title: "Gaming Community Messages",
-        description: "Connect with your gaming fans, share exclusive content, and build your community",
+        description: MINIMAL_UI ? '' : "Connect with your gaming fans, share exclusive content, and build your community",
         action: {
           label: "Start Messaging",
           href: "/messages/inbox",
@@ -121,7 +122,7 @@ export default function MessagesPage() {
       return {
         icon: MessageSquare,
         title: "Premium Message Center",
-        description: "Engage with subscribers, send PPV content, and maximize your earnings",
+        description: MINIMAL_UI ? '' : "Engage with subscribers, send PPV content, and maximize your earnings",
         action: {
           label: "View Messages",
           href: "/messages/inbox",
@@ -145,7 +146,7 @@ export default function MessagesPage() {
       return {
         icon: MessageSquare,
         title: "Fashion Community Chat",
-        description: "Share style tips, exclusive looks, and connect with fashion enthusiasts",
+        description: MINIMAL_UI ? '' : "Share style tips, exclusive looks, and connect with fashion enthusiasts",
         action: {
           label: "Open Inbox",
           href: "/messages/inbox",
@@ -169,7 +170,7 @@ export default function MessagesPage() {
     return {
       icon: MessageSquare,
       title: "Start Engaging with Your Fans",
-      description: `Connect authentically and grow your ${profile?.niche || 'creator'} community`,
+      description: MINIMAL_UI ? '' : `Connect authentically and grow your ${profile?.niche || 'creator'} community`,
       action: {
         label: "Open Messages",
         href: "/messages/inbox",
@@ -335,4 +336,3 @@ export default function MessagesPage() {
     </div>
   );
 }
-

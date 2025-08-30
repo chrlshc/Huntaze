@@ -4,17 +4,20 @@ import { generateToken, generateRefreshToken, setAuthCookies } from '../../../..
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  // Resolve base app URL from env or request origin
+  const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+
   // Get OAuth config from environment
   const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-  const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || 'https://huntaze.com/auth/google/callback';
+  const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || `${appBase}/auth/google/callback`;
 
   if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
     console.error('Missing OAuth config:', {
       hasClientId: !!GOOGLE_CLIENT_ID,
       hasClientSecret: !!GOOGLE_CLIENT_SECRET,
     });
-    return NextResponse.redirect(new URL('/join?error=oauth_not_configured', 'https://huntaze.com'));
+    return NextResponse.redirect(new URL('/join?error=oauth_not_configured', appBase));
   }
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
@@ -22,11 +25,11 @@ export async function GET(request: NextRequest) {
 
   // Handle errors
   if (error) {
-    return NextResponse.redirect(new URL('/join?error=oauth_denied', 'https://huntaze.com'));
+    return NextResponse.redirect(new URL('/join?error=oauth_denied', appBase));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL('/join?error=no_code', 'https://huntaze.com'));
+    return NextResponse.redirect(new URL('/join?error=no_code', appBase));
   }
 
   try {
@@ -83,7 +86,7 @@ export async function GET(request: NextRequest) {
     setAuthCookies(accessToken, refreshToken);
 
     // Create response with redirect to onboarding for new users
-    const response = NextResponse.redirect(new URL('/onboarding/setup', 'https://huntaze.com'));
+    const response = NextResponse.redirect(new URL('/onboarding/setup', appBase));
     
     // Set auth cookies
     response.cookies.set('auth_token', accessToken, {
@@ -104,6 +107,6 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('OAuth error:', error);
-    return NextResponse.redirect(new URL('/join?error=oauth_failed', 'https://huntaze.com'));
+    return NextResponse.redirect(new URL('/join?error=oauth_failed', appBase));
   }
 }
