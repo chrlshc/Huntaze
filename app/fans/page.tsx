@@ -64,7 +64,7 @@ export default function FansPage() {
                 <Search className="w-4 h-4" />
                 <span className="text-sm font-medium">Search</span>
               </button>
-              <Link href="/fans/import" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all">
+              <Link href="/fans/import" className="btn-gradient flex items-center gap-2">
                 <UserPlus className="w-4 h-4" />
                 <span className="font-medium">Add Fan</span>
               </Link>
@@ -118,7 +118,7 @@ export default function FansPage() {
               
               <Link 
                 href={hasConnectedPlatforms ? "/fans/import" : "/platforms/connect"}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium"
+                className="btn-gradient inline-flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
                 {hasConnectedPlatforms ? "Add First Fan" : "Connect Platform"}
