@@ -88,7 +88,7 @@ export default function FansPage() {
         
         {/* Fans list */}
         {fans.length > 0 ? (
-          <div className="elevated-card rounded-2xl overflow-hidden">
+          <div className="elevated-card rounded-xl overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">All Fans ({fans.length})</h3>
               <Link href="/fans/import" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Add another</Link>
@@ -108,7 +108,7 @@ export default function FansPage() {
             </div>
           </div>
         ) : (
-          <div className="elevated-card rounded-2xl overflow-hidden">
+          <div className="elevated-card rounded-xl overflow-hidden">
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
                 <Users className="w-10 h-10 text-purple-600" />
