@@ -27,6 +27,8 @@ import {
 import type { OverviewMetrics } from '@/types/analytics';
 
 export default function DashboardPage() {
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://huntaze.com';
+  const SUPPORT_URL = process.env.NEXT_PUBLIC_SUPPORT_URL || `${SITE_URL}/support`;
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
@@ -288,6 +290,9 @@ export default function DashboardPage() {
             <Link href="/" className="font-bold text-xl">Huntaze</Link>
             <div className="flex items-center gap-4">
               <Link href="/billing" className="text-sm text-gray-600">Credits: 2,450</Link>
+              {/* External site links */}
+              <Link href={SITE_URL} target="_blank" className="text-sm text-purple-600 hover:text-purple-700">Site</Link>
+              <Link href={SUPPORT_URL} target="_blank" className="text-sm text-gray-600 hover:text-gray-900">Support</Link>
               <img
                 src={user?.picture || "https://ui-avatars.com/api/?name=" + (user?.name || "User")}
                 alt={user?.name}
