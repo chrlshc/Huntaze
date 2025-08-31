@@ -10,7 +10,8 @@ import {
   Check,
   CheckCheck,
   Clock,
-  DollarSign
+  DollarSign,
+  MessageSquare
 } from 'lucide-react';
 
 export default function MobileMessages() {
