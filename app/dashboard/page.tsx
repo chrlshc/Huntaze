@@ -395,12 +395,33 @@ export default function DashboardPage() {
             <p className="text-gray-600">Here's your performance overview for today</p>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Stats - Mobile carousel + Desktop grid */}
+          {/* Mobile carousel */}
+          <div className="md:hidden -mx-4 px-4 mb-6">
+            <div className="hide-scrollbar flex gap-4 overflow-x-auto snap-x">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={index} className="min-w-[240px] elevated-card rounded-2xl p-4 snap-start">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`p-2 rounded-xl bg-gradient-to-br ${stat.gradient} bg-opacity-10`}>
+                        <Icon className="w-5 h-5 text-gray-700" />
+                      </div>
+                      <span className={`text-xs font-semibold ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>{stat.change}</span>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">{stat.title}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {/* Desktop grid */}
+          <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all">
+                <div key={index} className="elevated-card rounded-2xl p-6 hover:shadow-md transition-all">
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} bg-opacity-10`}>
                       <Icon className="w-6 h-6 text-gray-700" />
@@ -410,8 +431,8 @@ export default function DashboardPage() {
                       {stat.change}
                     </span>
                   </div>
-                  <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                  <p className="text-sm text-gray-600">{stat.title}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">{stat.value}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{stat.title}</p>
                 </div>
               );
             })}
