@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import MobileMessages from './mobile-page';
 import { 
   MessageSquare, 
   ChevronLeft,
@@ -15,7 +16,21 @@ export default function MessagesPage() {
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  if (isMobile) {
+    return <MobileMessages />;
+  }
 
   useEffect(() => {
     (async () => {

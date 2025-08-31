@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import MobileOnboardingSetup from '../mobile-setup';
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -36,6 +37,20 @@ export default function OnboardingSetupPage() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<Step>('profile');
   const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  if (isMobile) {
+    return <MobileOnboardingSetup />;
+  }
   const [formData, setFormData] = useState({
     // Profile
     displayName: '',
