@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import MobileAnalytics from './mobile-page';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -109,6 +110,20 @@ export default function AnalyticsPage() {
   const [aiConfig, setAiConfig] = useState<any>(null);
   const { status: onboarding } = useOnboarding();
   const [overview, setOverview] = useState<OverviewMetrics | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  if (isMobile) {
+    return <MobileAnalytics />;
+  }
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);

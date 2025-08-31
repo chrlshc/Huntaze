@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
+import "./animations.css";
 import HeaderImproved from "@/components/header-improved";
 import FooterImproved from "@/components/footer-improved";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
@@ -68,7 +69,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors" data-ui={minimal ? 'minimal' : undefined}>
+      <body className="antialiased bg-white text-gray-900" data-ui={minimal ? 'minimal' : undefined}>
         <ThemeProvider>
           <NotificationProvider>
             <HeaderImproved />

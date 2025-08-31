@@ -13,7 +13,10 @@ import {
   Camera,
   Video,
   Plus,
-  TrendingUp
+  TrendingUp,
+  Sparkles,
+  Heart,
+  Star
 } from 'lucide-react';
 
 interface MobileDashboardProps {
@@ -32,178 +35,233 @@ export default function MobileDashboard({
   hasConnectedPlatform 
 }: MobileDashboardProps) {
   return (
-    <div className="pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-white pb-20 animate-fadeIn">
       {/* Mobile Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
-        <div className="px-4 py-3">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-40">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                Hi {user?.name?.split(' ')[0] || 'Creator'} 👋
+            <div className="animate-slideIn">
+              <h1 className="text-2xl font-bold gradient-text-animate">
+                Hi {user?.name?.split(' ')[0] || 'Creator'} ✨
               </h1>
-              <p className="text-xs text-gray-600">Your earnings today</p>
+              <p className="text-sm text-gray-600 font-medium">Let's make today amazing!</p>
             </div>
-            <div className="flex items-center gap-3">
-              <button className="relative p-2">
-                <Bell className="w-5 h-5 text-gray-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <div className="flex items-center gap-2">
+              <button className="relative p-2.5 bg-white rounded-full shadow-sm border border-gray-100 bounce-on-hover">
+                <Bell className="w-5 h-5 text-gray-700" />
+                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white notification-pulse"></span>
               </button>
-              <Link href="/billing" className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 rounded-full">
-                <CreditCard className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-700">2,450</span>
+              <Link href="/billing" className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-md">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-bold">2,450</span>
               </Link>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Quick Stats Carousel */}
-      <div className="overflow-x-auto scrollbar-hide">
-        <div className="flex gap-3 p-4" style={{ width: 'max-content' }}>
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div key={index} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100" style={{ minWidth: '140px' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <Icon className="w-5 h-5 text-gray-600" />
-                  <span className={`text-xs font-medium flex items-center gap-0.5 ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                    <ArrowUpRight className="w-3 h-3" />
-                    {stat.change}
-                  </span>
+      {/* Today's Earnings Hero */}
+      <div className="px-4 py-6">
+        <div className="bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 rounded-3xl p-6 text-white shadow-xl gradient-animate animate-slideUp">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-purple-200 text-sm font-medium">Today's Earnings</p>
+              <p className="text-4xl font-bold mt-1 counter-animate">$847.50</p>
+            </div>
+            <div className="p-3 bg-white/20 backdrop-blur rounded-2xl">
+              <TrendingUp className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex -space-x-2">
+              {[1,2,3].map(i => (
+                <img key={i} src={`https://ui-avatars.com/api/?name=Fan${i}&background=ffffff&color=9333ea`} 
+                  className="w-6 h-6 rounded-full border-2 border-white" />
+              ))}
+            </div>
+            <p className="text-sm text-purple-200">+12 new fans today</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="px-4 pb-6">
+        <div className="grid grid-cols-2 gap-3 stagger-animate">
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 card-hover">
+            <div className="flex items-center justify-between mb-2">
+              <MessageSquare className="w-5 h-5 text-purple-600" />
+              <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+15%</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">24</p>
+            <p className="text-sm text-gray-600">New Messages</p>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 card-hover">
+            <div className="flex items-center justify-between mb-2">
+              <Bot className="w-5 h-5 text-pink-600" />
+              <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Active</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">89%</p>
+            <p className="text-sm text-gray-600">AI Automation</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Cards */}
+      <div className="px-4 pb-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-3 animate-slideIn">Quick Actions</h2>
+        <div className="grid grid-cols-2 gap-3 stagger-animate">
+          <Link href="/messages/compose" className="group">
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 text-white relative overflow-hidden h-32 card-hover press-feedback">
+              <div className="absolute -right-4 -bottom-4 opacity-10">
+                <MessageSquare className="w-24 h-24" />
+              </div>
+              <div className="relative z-10">
+                <div className="p-2 bg-white/20 backdrop-blur rounded-xl w-fit mb-2">
+                  <MessageSquare className="w-5 h-5" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-xs text-gray-600 mt-1">{stat.title}</p>
+                <p className="font-bold">Send Message</p>
+                <p className="text-xs text-purple-200 mt-1">Reply to fans</p>
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Platform Connection Card */}
-      {!hasConnectedPlatform && (
-        <div className="mx-4 mb-4 p-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl text-white">
-          <h3 className="font-bold mb-1">Connect Your Platforms</h3>
-          <p className="text-sm text-white/80 mb-3">Start earning more today</p>
-          <Link href="/platforms/connect" className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur text-white rounded-xl text-sm font-medium">
-            <Plus className="w-4 h-4" />
-            Add Platform
-          </Link>
-        </div>
-      )}
-
-      {/* Quick Actions Grid */}
-      <div className="px-4 mb-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-3">Quick Actions</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <Link href="/messages/compose" className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-purple-50 rounded-xl">
-                <MessageSquare className="w-5 h-5 text-purple-600" />
-              </div>
-              <span className="text-2xl font-bold text-gray-900">24</span>
             </div>
-            <p className="text-sm font-medium text-gray-900">New Messages</p>
-            <p className="text-xs text-gray-600">Reply now</p>
           </Link>
 
-          <Link href="/campaigns/new" className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-50 rounded-xl">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+          <Link href="/campaigns/new" className="group">
+            <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-4 text-white relative overflow-hidden h-32">
+              <div className="absolute -right-4 -bottom-4 opacity-10">
+                <TrendingUp className="w-24 h-24" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">89%</span>
+              <div className="relative z-10">
+                <div className="p-2 bg-white/20 backdrop-blur rounded-xl w-fit mb-2">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <p className="font-bold">New Campaign</p>
+                <p className="text-xs text-pink-200 mt-1">Boost sales</p>
+              </div>
             </div>
-            <p className="text-sm font-medium text-gray-900">Launch Campaign</p>
-            <p className="text-xs text-gray-600">Boost sales</p>
           </Link>
         </div>
       </div>
 
-      {/* Top Fans List */}
-      <div className="px-4 mb-6">
+      {/* Top Fans */}
+      <div className="px-4 pb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-gray-900">Top Fans</h2>
-          <Link href="/fans" className="text-sm text-purple-600 font-medium">See all</Link>
+          <h2 className="text-lg font-bold text-gray-900 animate-slideIn">Top Fans</h2>
+          <Link href="/fans" className="text-sm text-purple-600 font-semibold">View all</Link>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 stagger-animate">
           {topFans.slice(0, 3).map((fan, index) => (
-            <Link key={index} href={`/fans/${fan.username}`} className="flex items-center justify-between p-3 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <Link key={index} href={`/fans/${fan.username}`} 
+              className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all card-hover press-feedback">
               <div className="flex items-center gap-3">
-                <img
-                  src={fan.avatar}
-                  alt={fan.name}
-                  className="w-10 h-10 rounded-full"
-                />
+                <div className="relative">
+                  <img
+                    src={fan.avatar}
+                    alt={fan.name}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  {index === 0 && (
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
+                      <Star className="w-3 h-3 text-white fill-white" />
+                    </div>
+                  )}
+                </div>
                 <div>
-                  <p className="font-medium text-gray-900">{fan.name}</p>
-                  <p className="text-xs text-gray-600">{fan.lastActive}</p>
+                  <p className="font-semibold text-gray-900">{fan.name}</p>
+                  <p className="text-sm text-gray-600">{fan.lastActive}</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="font-bold text-gray-900">{fan.revenue}</p>
-                <p className="text-xs text-green-600">{fan.trend}</p>
+                <p className="text-xs text-green-600 font-semibold">{fan.trend}</p>
               </div>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* Social Media Section */}
-      <div className="px-4 mb-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-3">Social Media</h2>
+      {/* Social Media */}
+      <div className="px-4 pb-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-3">Connect & Grow</h2>
         <div className="grid grid-cols-3 gap-3">
-          <Link href="/platforms/connect" className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm text-center">
-            <div className="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl mb-2 mx-auto w-fit">
-              <Camera className="w-6 h-6 text-pink-600" />
+          <Link href="/platforms/connect" 
+            className="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
+            <div className="mx-auto w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center mb-2">
+              <Camera className="w-6 h-6 text-white" />
             </div>
-            <p className="text-xs font-medium text-gray-900">Instagram</p>
-            <p className="text-xs text-gray-600">Connect</p>
+            <p className="text-xs font-semibold text-gray-900">Instagram</p>
+            <p className="text-xs text-gray-600 mt-1">Connect</p>
           </Link>
 
           {tiktokUser ? (
-            <Link href="/social/tiktok/upload" className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm text-center">
-              <div className="p-3 bg-gradient-to-br from-red-50 to-blue-50 rounded-xl mb-2 mx-auto w-fit">
-                <Video className="w-6 h-6 text-gray-900" />
+            <Link href="/social/tiktok/upload" 
+              className="bg-gradient-to-br from-red-100 to-blue-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
+              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-red-400 to-blue-400 rounded-xl flex items-center justify-center mb-2">
+                <Video className="w-6 h-6 text-white" />
               </div>
-              <p className="text-xs font-medium text-gray-900">TikTok</p>
-              <p className="text-xs text-green-600">Connected</p>
+              <p className="text-xs font-semibold text-gray-900">TikTok</p>
+              <p className="text-xs text-green-600 font-semibold mt-1">Connected</p>
             </Link>
           ) : (
             <button 
               onClick={() => window.location.href = '/auth/tiktok'}
-              className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm text-center"
-            >
-              <div className="p-3 bg-gradient-to-br from-red-50 to-blue-50 rounded-xl mb-2 mx-auto w-fit">
-                <Video className="w-6 h-6 text-gray-900" />
+              className="bg-gradient-to-br from-red-100 to-blue-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
+              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-red-400 to-blue-400 rounded-xl flex items-center justify-center mb-2">
+                <Video className="w-6 h-6 text-white" />
               </div>
-              <p className="text-xs font-medium text-gray-900">TikTok</p>
-              <p className="text-xs text-gray-600">Connect</p>
+              <p className="text-xs font-semibold text-gray-900">TikTok</p>
+              <p className="text-xs text-gray-600 mt-1">Connect</p>
             </button>
           )}
 
-          <Link href="/platforms/connect" className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm text-center">
-            <div className="p-3 bg-orange-50 rounded-xl mb-2 mx-auto w-fit">
-              <MessageSquare className="w-6 h-6 text-orange-600" />
+          <Link href="/platforms/connect" 
+            className="bg-gradient-to-br from-orange-100 to-red-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
+            <div className="mx-auto w-12 h-12 bg-gradient-to-br from-orange-400 to-red-400 rounded-xl flex items-center justify-center mb-2">
+              <MessageSquare className="w-6 h-6 text-white" />
             </div>
-            <p className="text-xs font-medium text-gray-900">Reddit</p>
-            <p className="text-xs text-gray-600">Connect</p>
+            <p className="text-xs font-semibold text-gray-900">Reddit</p>
+            <p className="text-xs text-gray-600 mt-1">Connect</p>
           </Link>
         </div>
       </div>
 
-      {/* AI Assistant Card */}
-      <div className="mx-4 mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-white rounded-xl">
-            <Bot className="w-5 h-5 text-purple-600" />
+      {/* AI Assistant Status */}
+      <div className="mx-4 mb-6">
+        <div className="bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-2xl p-4 border border-purple-200 animate-slideUp">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <Bot className="w-6 h-6 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-gray-900">AI Assistant Active</p>
+              <p className="text-sm text-gray-600">Handling messages 24/7</p>
+            </div>
+            <span className="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded-full shadow-sm animate-pulse">
+              ONLINE
+            </span>
           </div>
-          <div className="flex-1">
-            <p className="font-medium text-gray-900">AI Assistant Active</p>
-            <p className="text-xs text-gray-600">Handling 87% of messages</p>
-          </div>
-          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">ON</span>
         </div>
       </div>
+
+      {/* Platform Connection CTA */}
+      {!hasConnectedPlatform && (
+        <div className="mx-4 mb-6">
+          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-6 text-white relative overflow-hidden">
+            <div className="absolute -right-8 -top-8 opacity-20">
+              <Plus className="w-32 h-32" />
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold mb-2">Ready to 3x Your Income?</h3>
+              <p className="text-purple-100 mb-4">Connect your platforms and let AI do the work</p>
+              <Link href="/platforms/connect" 
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-purple-600 rounded-full font-bold shadow-lg">
+                <Plus className="w-5 h-5" />
+                Connect Platform
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

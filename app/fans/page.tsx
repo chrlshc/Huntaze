@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import MobileFans from './mobile-page';
 import { 
   Users, 
   ChevronLeft,
@@ -16,6 +17,20 @@ export default function FansPage() {
   const [aiConfig, setAiConfig] = useState<any>(null);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(false);
   const [fans, setFans] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  if (isMobile) {
+    return <MobileFans />;
+  }
 
   useEffect(() => {
     (async () => {
