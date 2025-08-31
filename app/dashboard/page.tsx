@@ -25,6 +25,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import type { OverviewMetrics } from '@/types/analytics';
+import MobileDashboard from './mobile-page';
 
 export default function DashboardPage() {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://huntaze.com';
@@ -281,6 +282,19 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
+    );
+  }
+
+  // Mobile view
+  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    return (
+      <MobileDashboard 
+        user={user}
+        stats={stats}
+        topFans={topFans}
+        tiktokUser={tiktokUser}
+        hasConnectedPlatform={hasConnectedPlatform}
+      />
     );
   }
 
