@@ -147,6 +147,7 @@ async function updateUserSubscription(userId: string, data: any): Promise<void> 
 
 function getTierFromPriceId(priceId: string): string {
   const tierMap: Record<string, string> = {
+    [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER || '']: 'starter',
     [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO || '']: 'pro',
     [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SCALE || '']: 'scale',
     [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE || '']: 'enterprise',

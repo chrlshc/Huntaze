@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Check, Zap, Shield, Users, Calculator, TrendingUp } from 'lucide-react'
 
@@ -14,6 +15,9 @@ interface Plan {
   badge?: string
   cta: string
   isPremium?: boolean
+  commission?: string
+  revenueCap?: string
+  priceId?: string
 }
 
 interface PricingClientProps {
@@ -22,29 +26,95 @@ interface PricingClientProps {
 
 export default function PricingClient({ plans }: PricingClientProps) {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly')
-  
+  const [loading, setLoading] = useState<string | null>(null)
+  const [detailsPlan, setDetailsPlan] = useState<string | null>(null)
+  const router = useRouter()
+
+  const handleSubscribe = async (planId: string) => {
+    try {
+      setLoading(planId)
+      
+      // Check if user is authenticated
+      const authResponse = await fetch('/api/users/profile')
+      if (!authResponse.ok) {
+        // Not authenticated, redirect to auth with plan info
+        router.push(`/auth?plan=${planId}`)
+        return
+      }
+
+      // Create checkout session
+      const response = await fetch('/api/subscriptions/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId })
+      })
+
+      const data = await response.json()
+      
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session')
+      }
+    } catch (error) {
+      console.error('Subscription error:', error)
+      alert('Failed to start subscription. Please try again.')
+    } finally {
+      setLoading(null)
+    }
+  }
+  // Stripe-aligned marketing copy used in per-plan modal
+  const detailsByPlan: Record<string, string[]> = {
+    starter: [
+      '1,000 AI messages/month',
+      '1 platform integration',
+      'Basic analytics',
+      'Mobile app access',
+      'Standard email support',
+      '7% platform fee',
+      'Revenue cap: $2,500/month',
+    ],
+    pro: [
+      '5,000 AI messages/month',
+      '3 platform integrations',
+      'Advanced analytics',
+      'Priority support',
+      'Real-time automation',
+      '5% platform fee - You keep 95%',
+      'Revenue cap: $5,000/month',
+    ],
+    scale: [
+      '25,000 AI messages/month',
+      '10 platform integrations',
+      'Advanced analytics & API',
+      'Team collaboration (3 users)',
+      'Custom AI training',
+      '3% platform fee - You keep 97%',
+      'Revenue cap: $15,000/month',
+    ],
+    enterprise: [
+      'Unlimited AI messages',
+      'Unlimited integrations',
+      'Custom reporting',
+      'No revenue cap',
+      '1.5% platform fee - You keep 98.5%',
+      'White-label options',
+      'Dedicated account manager',
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-blue-900/20 opacity-70" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
-          <div className="text-center">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-5xl font-bold text-gray-900 dark:text-white mb-3"
-            >
-              Simple, fair pricing
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-lg text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
-            >
-              Keep more of what you earn. No long contracts, no surprises.
-            </motion.p>
+      {/* Hero Section - Simplified */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        <div className="text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            Choose your plan
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+            Start free. Upgrade anytime. No hidden fees.
+          </p>
             
             {/* Billing Toggle */}
             <motion.div 
@@ -75,40 +145,24 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 <span className="ml-1 text-green-600 text-xs">-20%</span>
               </button>
             </motion.div>
-          </div>
         </div>
       </div>
 
-      {/* Trust Badges */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Keep More of Your Revenue</h3>
-            <p className="text-gray-700 dark:text-gray-300 mt-2">
-              Stop giving away 50-60% to agencies. Our transparent pricing helps you keep more of what you earn.
-            </p>
-            <Link href="#breakdown" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
-              See pricing breakdown →
-            </Link>
-          </div>
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">AI Automation</h3>
-            <p className="text-gray-700 dark:text-gray-300 mt-2">
-              Respond faster and scale conversations with an AI assistant tuned to your style.
-            </p>
-            <Link href="#demo" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
-              Watch it in action →
-            </Link>
-          </div>
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Security & Privacy</h3>
-            <p className="text-gray-700 dark:text-gray-300 mt-2">
-              Strong encryption and GDPR‑aligned practices. We only use official platform APIs.
-            </p>
-            <Link href="#security" className="text-purple-600 hover:text-purple-700 font-medium mt-2 inline-block">
-              Learn about security →
-            </Link>
-          </div>
+      {/* Trust Indicators - Simplified */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 dark:text-gray-300">
+          <span className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-600" />
+            Free trial on all plans
+          </span>
+          <span className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-600" />
+            Cancel anytime
+          </span>
+          <span className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-600" />
+            No setup fees
+          </span>
         </div>
       </div>
 
@@ -170,6 +224,20 @@ export default function PricingClient({ plans }: PricingClientProps) {
                       Save ${parseInt(monthlyPrice) * 2.4}/year
                     </p>
                   )}
+                  {plan.commission && (
+                    <div className="mt-4 pt-4 border-t border-opacity-20 border-current">
+                      <p className={`text-lg font-semibold ${
+                        isPro ? 'text-white' : 'text-gray-900 dark:text-white'
+                      }`}>
+                        {plan.commission} platform fee
+                      </p>
+                      <p className={`text-xs ${
+                        isPro ? 'text-purple-100' : 'text-gray-600 dark:text-gray-300'
+                      }`}>
+                        Revenue cap: {plan.revenueCap}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <ul className="space-y-4 mb-8">
@@ -187,18 +255,30 @@ export default function PricingClient({ plans }: PricingClientProps) {
                   ))}
                 </ul>
 
-                <Link
-                  href="/auth"
+                <button
+                  onClick={() => handleSubscribe(plan.priceId || plan.name.toLowerCase())}
+                  disabled={loading === (plan.priceId || plan.name.toLowerCase())}
                   className={`block w-full py-4 px-6 rounded-lg font-semibold transition-all text-center ${
                     isPro
                       ? 'bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 transform shadow-lg'
                       : plan.isPremium
                       ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 hover:from-yellow-500 hover:to-yellow-600 hover:scale-105 transform'
                       : 'bg-gray-900 text-white hover:bg-gray-800 hover:scale-105 transform'
-                  }`}
+                  } ${loading === (plan.priceId || plan.name.toLowerCase()) ? 'opacity-75 cursor-wait' : ''}`}
                 >
-                  {plan.cta}
-                </Link>
+                  {loading === (plan.priceId || plan.name.toLowerCase()) ? 'Loading...' : plan.cta}
+                </button>
+                <div className="mt-3 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setDetailsPlan((plan.priceId || plan.name.toLowerCase()).toLowerCase())}
+                    className={`text-sm underline ${
+                      isPro ? 'text-purple-100 hover:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                    }`}
+                  >
+                    View details
+                  </button>
+                </div>
               </motion.div>
             )
           })}
@@ -207,51 +287,26 @@ export default function PricingClient({ plans }: PricingClientProps) {
 
       {/* Section removed to reduce page density */}
 
-      {/* Features Section */}
-      <div className="bg-gray-50 py-16">
+      {/* Features Section - Simplified */}
+      <div className="bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-10">All plans include</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">AI Automation</h3>
-              <p className="text-sm text-gray-600">
-                Never miss a message or opportunity
-              </p>
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white">Included in all plans</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
+            <div>
+              <Zap className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <p className="font-medium text-gray-900 dark:text-white">AI Chat Assistant</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-pink-600" />
-              </div>
-              <h3 className="font-semibold mb-2">100% Control</h3>
-              <p className="text-sm text-gray-600">
-                You own everything, always
-              </p>
+            <div>
+              <Shield className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <p className="font-medium text-gray-900 dark:text-white">Secure & Private</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Multi-Platform</h3>
-              <p className="text-sm text-gray-600">
-                Works with supported platforms (OnlyFans, Fansly beta)
-              </p>
+            <div>
+              <Users className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <p className="font-medium text-gray-900 dark:text-white">Multi-Platform</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="font-semibold mb-2">No Contracts</h3>
-              <p className="text-sm text-gray-600">
-                Cancel anytime, no penalties
-              </p>
-            </div>
-            <div className="text-center mt-10">
-              <Link href="/roadmap" className="text-purple-600 hover:text-purple-700 font-semibold">
-                Learn about weekly feature voting →
-              </Link>
+            <div>
+              <Check className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <p className="font-medium text-gray-900 dark:text-white">No Lock-in</p>
             </div>
           </div>
         </div>
@@ -267,6 +322,26 @@ export default function PricingClient({ plans }: PricingClientProps) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="elevated-card rounded-xl p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $2k/month</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">With Agency (50%):</span>
+                  <span className="text-red-600 font-bold">-$1,000</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">With Huntaze STARTER (7%):</span>
+                  <span className="text-green-600 font-bold">-$159</span>
+                </div>
+                <div className="pt-2 border-t mt-2">
+                  <div className="flex justify-between">
+                    <span className="font-bold">You save:</span>
+                    <span className="text-green-600 font-bold text-lg">$841/month</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="elevated-card rounded-xl p-6 border-2 border-purple-500">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $10k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -274,64 +349,95 @@ export default function PricingClient({ plans }: PricingClientProps) {
                   <span className="text-red-600 font-bold">-$5,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Huntaze PRO:</span>
-                  <span className="text-green-600 font-bold">-$768</span>
+                  <span className="text-gray-600">With Huntaze SCALE (3%):</span>
+                  <span className="text-green-600 font-bold">-$379</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
                     <span className="font-bold">You save:</span>
-                    <span className="text-green-600 font-bold text-lg">$4,232/month</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="elevated-card rounded-xl p-6 border-2 border-purple-500">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $30k/month</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">With Agency (50%):</span>
-                  <span className="text-red-600 font-bold">-$15,000</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">With Huntaze SCALE:</span>
-                  <span className="text-green-600 font-bold">-$2,098</span>
-                </div>
-                <div className="pt-2 border-t mt-2">
-                  <div className="flex justify-between">
-                    <span className="font-bold">You save:</span>
-                    <span className="text-green-600 font-bold text-lg">$12,902/month</span>
+                    <span className="text-green-600 font-bold text-lg">$4,621/month</span>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="elevated-card rounded-xl p-6 border-2 border-yellow-500">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $100k/month</h3>
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $50k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">With Agency (50%):</span>
-                  <span className="text-red-600 font-bold">-$50,000</span>
+                  <span className="text-red-600 font-bold">-$25,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Huntaze ENTERPRISE:</span>
-                  <span className="text-green-600 font-bold">-$2,499</span>
+                  <span className="text-gray-600">With Huntaze ENTERPRISE (1.5%):</span>
+                  <span className="text-green-600 font-bold">-$949</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
                     <span className="font-bold">You save:</span>
-                    <span className="text-green-600 font-bold text-lg">$47,501/month</span>
+                    <span className="text-green-600 font-bold text-lg">$24,051/month</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="mt-10 text-center">
+          <Link href="/agency-comparison" className="text-purple-600 dark:text-purple-400 font-semibold hover:underline">
+            Prefer a full comparison? See Huntaze vs Agencies →
+          </Link>
+        </div>
       </div>
       
+      {/* Compliance & Safety */}
+      <div className="bg-white dark:bg-gray-900 py-12 border-t border-gray-100 dark:border-gray-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="elevated-card rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Compliance & Safety</h3>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+              <li>AI provides smart replies (suggestions). You approve before sending.</li>
+              <li>OnlyFans integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Fansly, or Meta.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Testimonials removed for brevity */}
 
       {/* CTA removed to keep focus on plans */}
+
+      {/* Per‑plan Details Modal */}
+      {detailsPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setDetailsPlan(null)} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative elevated-card max-w-lg w-[92%] rounded-xl p-6 bg-white dark:bg-gray-900"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white capitalize">
+                {detailsPlan} plan — details
+              </h3>
+              <button onClick={() => setDetailsPlan(null)} className="text-gray-500 hover:text-gray-800 dark:hover:text-white">✕</button>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Marketing feature list</p>
+            <ul className="space-y-2 list-disc pl-5 text-gray-800 dark:text-gray-200">
+              {(detailsByPlan[detailsPlan] || []).map((d, i) => (
+                <li key={i}>{d}</li>
+              ))}
+            </ul>
+            <div className="mt-6 text-right">
+              <button
+                onClick={() => setDetailsPlan(null)}
+                className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

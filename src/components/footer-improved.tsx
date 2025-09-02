@@ -33,15 +33,16 @@ const footerLinks: Record<string, FooterSection> = {
       { name: 'OnlyFans Creators', href: '/features/ai-chat' },
       { name: 'Fansly Creators', href: '/features/ai-chat' },
       { name: 'Instagram Creators', href: '/features/automation' },
-      { name: 'Multi-Platform', href: '/features/dashboard' },
-      { name: 'Agencies', href: '/pricing' }
+      { name: 'Multi-Platform', href: '/features/automation' },
+      { name: 'Agencies', href: '/agency-comparison' }
     ]
   },
   resources: {
     title: 'Resources',
     links: [
+      { name: 'Agency Comparison', href: '/agency-comparison' },
       { name: 'Blog', href: '/about' },
-      { name: 'Creator Academy', href: '/learn' },
+      { name: 'Learn', href: '/#learn' },
       { name: 'Help Center', href: '/about' },
       { name: 'API Documentation', href: '/about' },
       { name: 'System Status', href: '/about' }

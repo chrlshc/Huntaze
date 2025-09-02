@@ -1,110 +1,110 @@
-# Checklist Vidéo Démo TikTok - Guide Simple
+# TikTok Demo Video Checklist — Quick Guide
 
-## 🎬 Ce que tu dois montrer (dans l'ordre)
+## 🎬 Show these in order
 
-### 1. **Début sur Huntaze (0:00-0:10)**
-- [ ] Ouvre Chrome/Safari sur http://localhost:3001
-- [ ] Montre que tu n'es PAS connecté
-- [ ] Clique sur "Sign In"
+### 1. Start on Huntaze (0:00–0:10)
+- [ ] Open Chrome/Safari at http://localhost:3001
+- [ ] Show you are NOT signed in
+- [ ] Click "Sign In"
 
-### 2. **Connexion à Huntaze (0:10-0:20)**
+### 2. Sign in to Huntaze (0:10–0:20)
 - [ ] Email: `demo@huntaze.com`
 - [ ] Password: `password123`
-- [ ] Clique "Sign In"
-- [ ] Arrive sur le Dashboard
+- [ ] Click "Sign In"
+- [ ] Land on the Dashboard
 
-### 3. **Navigation vers TikTok (0:20-0:30)**
-- [ ] Scrolle jusqu'à "Social Media Management"
-- [ ] Montre la carte TikTok (qui dit "0 accounts")
-- [ ] Clique sur "+ Add TikTok Account"
+### 3. Navigate to TikTok (0:20–0:30)
+- [ ] Scroll to "Social Media Management"
+- [ ] Show the TikTok card (it says "0 accounts")
+- [ ] Click "+ Add TikTok Account"
 
-### 4. **Autorisation TikTok (0:30-1:00)**
-- [ ] Tu es redirigé vers TikTok
-- [ ] Connecte-toi avec ton compte SANDBOX
-- [ ] **IMPORTANT**: Montre bien la page d'autorisation avec les 3 permissions:
+### 4. TikTok Authorization (0:30–1:00)
+- [ ] You are redirected to TikTok
+- [ ] Log in with your SANDBOX account
+- [ ] IMPORTANT: Show the authorization page with these 3 permissions:
   - ✓ user.info.basic
-  - ✓ video.upload  
+  - ✓ video.upload
   - ✓ video.publish
-- [ ] Clique "Authorize"
+- [ ] Click "Authorize"
 
-### 5. **Retour sur Huntaze (1:00-1:20)**
-- [ ] Montre que tu es revenu sur Huntaze
-- [ ] La carte TikTok affiche maintenant "@ton_username"
-- [ ] Clique sur "Upload Video"
+### 5. Back to Huntaze (1:00–1:20)
+- [ ] Show the redirect back to Huntaze
+- [ ] The TikTok card now shows "@your_username"
+- [ ] Click "Upload Video"
 
-### 6. **Upload de vidéo (1:20-2:00)**
-- [ ] Sur la page d'upload, clique "Click to upload"
-- [ ] Sélectionne un fichier vidéo MP4 (prépare-le avant)
-- [ ] Entre un caption: "Test demo Huntaze #demo #test"
-- [ ] Clique "Publish to TikTok"
-- [ ] Montre le message de succès
+### 6. Video upload (1:20–2:00)
+- [ ] On the upload page, click "Click to upload"
+- [ ] Select an MP4 video file (prepare it beforehand)
+- [ ] Enter a caption: "Test demo Huntaze #demo #test"
+- [ ] Click "Publish to TikTok"
+- [ ] Show the success message
 
-### 7. **Fin (2:00-2:10)**
-- [ ] Retour au dashboard
-- [ ] Montre que tout fonctionne
+### 7. Wrap up (2:00–2:10)
+- [ ] Return to the dashboard
+- [ ] Show everything is working
 
-## 📋 Prépare avant de filmer
+## 📋 Prepare before recording
 
-1. **Fichier vidéo test**:
-   - Un MP4 de 10-30 secondes
-   - Nom: `demo-video.mp4`
-   - Contenu: N'importe quoi (écran coloré, logo, etc.)
+1. Test video file:
+   - MP4 of 10–30 seconds
+   - Name: `demo-video.mp4`
+   - Content: Anything (color screen, logo, etc.)
 
-2. **Compte TikTok Sandbox**:
-   - Username et mot de passe prêts
-   - Déconnecte-toi de TikTok avant de commencer
+2. TikTok Sandbox account:
+   - Username and password ready
+   - Log out of TikTok before starting
 
-3. **Navigateur**:
-   - Vide le cache
-   - Mode fenêtre normale (pas incognito)
-   - Zoom à 100%
+3. Browser:
+   - Clear cache
+   - Normal window (not incognito)
+   - Zoom at 100%
 
-4. **Serveur local**:
+4. Local server:
    ```bash
    cd /Users/765h/Huntaze/site-web
    npm run dev
    ```
-   - Vérifie que http://localhost:3001 fonctionne
+   - Verify http://localhost:3001 works
 
-## ⚠️ Points CRITIQUES à montrer
+## ⚠️ Critical points to show
 
-1. **L'URL `localhost:3001` ou `huntaze.com`** visible
-2. **La page d'autorisation TikTok** avec les 3 scopes
-3. **Le flow COMPLET** sans coupure
-4. **Message de succès** à la fin
+1. Visible URL `localhost:3001` or `huntaze.com`
+2. TikTok authorization page with the 3 scopes
+3. The full, uncut flow
+4. Success message at the end
 
-## 🎥 Comment enregistrer
+## 🎥 How to record
 
 ### Option 1: QuickTime (Mac)
 ```
 Cmd + Shift + 5
-Sélectionne "Enregistrer l'écran entier"
+Select "Record entire screen"
 ```
 
 ### Option 2: OBS Studio
-- Télécharge OBS Studio (gratuit)
-- Ajoute une source "Capture d'écran"
-- Enregistre en MP4
+- Download OBS Studio (free)
+- Add a Screen Capture source
+- Record in MP4
 
-## 🚫 Erreurs à éviter
+## 🚫 Avoid these mistakes
 
-- ❌ Ne montre PAS de vrais mots de passe
-- ❌ Ne coupe PAS la vidéo pendant l'OAuth
-- ❌ N'accélère PAS la vidéo
-- ❌ Ne montre PAS les credentials dans le code
+- ❌ Do NOT show real passwords
+- ❌ Do NOT cut the video during OAuth
+- ❌ Do NOT speed up the video
+- ❌ Do NOT show credentials in code
 
-## 📤 Format final
+## 📤 Final format
 
-- Format: **MP4** (pas MOV)
-- Durée: **2-3 minutes max**
-- Taille: **< 50MB**
-- Son: Pas obligatoire
+- Format: **MP4** (not MOV)
+- Duration: **2–3 minutes max**
+- Size: **< 50MB**
+- Audio: Not required
 
-## 💡 Astuce
+## 💡 Tip
 
-Si l'upload ne marche pas vraiment (normal en sandbox), tu peux:
-1. Montrer le loading 
-2. Attendre 2 secondes
-3. Le message de succès apparaîtra quand même
+If upload doesn’t fully work (expected in sandbox), you can:
+1. Show the loading state 
+2. Wait 2 seconds
+3. Show the success message anyway
 
-C'est normal, TikTok sandbox ne publie pas vraiment!
+This is normal — TikTok sandbox does not actually publish!

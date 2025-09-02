@@ -205,11 +205,11 @@ export default function MobileOnboardingSetup() {
       </div>
 
       {/* Bottom Action */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 safe-bottom">
         <button
           onClick={handleNext}
           disabled={!canProceed()}
-          className={`w-full py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
+          className={`w-full py-3 min-h-[44px] rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
             canProceed()
               ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
               : 'bg-gray-100 text-gray-400'

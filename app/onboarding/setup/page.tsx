@@ -180,6 +180,7 @@ export default function OnboardingSetupPage() {
     // Check if returning from Stripe
     const sessionId = searchParams.get('session_id');
     const step = searchParams.get('step');
+    const plan = searchParams.get('plan');
     
     if (sessionId && step === 'complete') {
       // Payment successful, mark as complete
@@ -196,6 +197,11 @@ export default function OnboardingSetupPage() {
         setCurrentStep('complete');
       };
       completeOnboarding().catch(console.error);
+    } else if (step === 'payment' && plan) {
+      // Coming from pricing page with a plan selected
+      setCurrentStep('plan');
+      // Pre-select the plan in the plan selection component
+      sessionStorage.setItem('preselectedPlan', plan);
     }
   }, [searchParams]);
 
@@ -1090,7 +1096,7 @@ export default function OnboardingSetupPage() {
                 <button
                   onClick={handlePrevious}
                   disabled={loading}
-                  className="px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                  className="px-6 py-3 min-h-[44px] bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium transition-colors inline-flex items-center gap-2"
                 >
                   <ArrowLeft className="w-5 h-5" />
                   Previous
@@ -1100,7 +1106,7 @@ export default function OnboardingSetupPage() {
                 <button
                   onClick={handleNext}
                   disabled={loading}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-lg hover:shadow-xl"
+                  className="px-6 py-3 min-h-[44px] bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-lg hover:shadow-xl"
                 >
                   {loading ? (
                     <>
@@ -1158,19 +1164,19 @@ function OnlyFansConnect({ onConnected }: { onConnected: () => void }) {
           placeholder="OnlyFans username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+          className="w-full px-3 py-2 min-h-[44px] border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
         />
         <input
           placeholder="OnlyFans API key"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+          className="w-full px-3 py-2 min-h-[44px] border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
           onClick={submit}
           disabled={submitting || !username || !apiKey}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl disabled:opacity-50"
         >
           {submitting ? (
             <>
@@ -1248,8 +1254,22 @@ function CrmConnect({ provider, onConnected }: { provider: 'inflow' | 'supercrea
 function PlanSelection({ onSkip }: { onSkip: () => void }) {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [preselectedPlan, setPreselectedPlan] = useState<string | null>(null);
 
-  const startCheckout = async (planId: 'pro' | 'enterprise' | 'scale') => {
+  useEffect(() => {
+    // Check for preselected plan
+    const plan = sessionStorage.getItem('preselectedPlan');
+    if (plan) {
+      setPreselectedPlan(plan);
+      sessionStorage.removeItem('preselectedPlan');
+      // Auto-start checkout for preselected plan
+      setTimeout(() => {
+        startCheckout(plan);
+      }, 500);
+    }
+  }, []);
+
+  const startCheckout = async (planId: string) => {
     setLoadingPlan(planId);
     setError('');
     try {
