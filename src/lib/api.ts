@@ -145,3 +145,25 @@ export const aiApi = {
     }>
   ) => api.put('/ai/config', data as any),
 };
+
+// OnlyFans Integration (read-only)
+export const ofIntegrationApi = {
+  connect: (data: { username: string; password: string; totp?: string }) =>
+    api.post('/integrations/onlyfans/connect', data),
+  sync: (scopes?: string[]) =>
+    api.post('/integrations/onlyfans/sync', { scopes }),
+  analytics: (period: '7d'|'30d'|'90d' = '30d') =>
+    api.get(`/integrations/onlyfans/analytics?period=${period}`),
+  messages: (cursor?: string, limit: number = 50) =>
+    api.get(`/integrations/onlyfans/messages${cursor ? `?cursor=${cursor}&limit=${limit}` : `?limit=${limit}`}`),
+  status: () =>
+    api.get('/integrations/onlyfans/status'),
+};
+
+// OnlyFans AI (suggestions only)
+export const ofAiApi = {
+  suggest: (data: { conversationId?: string; messageId?: string; messageText?: string; context?: any }) =>
+    api.post('/integrations/onlyfans/ai/suggest', data),
+  getSettings: () => api.get('/integrations/onlyfans/ai/settings'),
+  updateSettings: (settings: any) => api.post('/integrations/onlyfans/ai/settings', settings),
+};

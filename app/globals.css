@@ -96,11 +96,14 @@ body {
   touch-action: manipulation;
 }
 
-/* Corporate Typography */
+/* Corporate Typography - Improved readability */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--neutral-900);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
@@ -350,10 +353,31 @@ p {
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
 }
 
-/* Accessibility - Visible focus */
+/* Accessibility - Enhanced focus states */
 :focus-visible {
-  outline: 3px solid var(--primary-purple);
+  outline: 2px solid var(--primary-purple);
   outline-offset: 2px;
+}
+
+/* Form elements focus */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary-purple);
+  outline-offset: 0;
+  border-color: var(--primary-purple);
+}
+
+/* Button focus */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--primary-purple);
+  outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Skip to main content link */
@@ -471,6 +495,77 @@ p {
   animation: fadeIn 0.6s ease-out;
 }
 
+/* New message slide-in - Smoother animation */
+@keyframes messageSlideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px) scale(0.98); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.new-message-enter {
+  animation: messageSlideIn 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(to right, transparent, rgba(147, 51, 234, 0.03), transparent);
+  transition: background 600ms ease-out;
+}
+
+/* Toasts - Updated with audit improvements */
+.toast-item {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #111827;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: toastIn 160ms ease-out forwards;
+}
+
+.toast-out {
+  animation: toastOut 160ms ease-in forwards;
+}
+
+@keyframes toastIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+@keyframes toastOut {
+  from { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+  to { 
+    opacity: 0; 
+    transform: translateY(-8px) scale(0.95); 
+  }
+}
+
+/* Animation classes for smoother transitions */
+.animate-toastIn {
+  animation: toastIn 160ms ease-out forwards;
+}
+
+.animate-toastOut {
+  animation: toastOut 160ms ease-in forwards;
+}
+
 /* Responsive Utilities - Mobile First */
 .container-width {
   @apply max-w-7xl mx-auto px-4;
@@ -480,7 +575,7 @@ p {
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness - Enhanced */
 @media (max-width: 768px) {
   h1 {
     @apply text-3xl;
@@ -501,7 +596,22 @@ p {
   }
   
   .btn-primary, .btn-secondary {
-    @apply px-4 py-2.5 text-sm w-full;
+    @apply px-4 py-2.5 text-sm;
+    min-height: 44px;
+  }
+  
+  /* Consistent mobile padding */
+  .mobile-px {
+    @apply px-4;
+  }
+  
+  /* Safe area padding for notched devices */
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
   }
   
   /* Mobile menu styles */
@@ -544,11 +654,21 @@ p {
   }
 }
 
-/* Touch-friendly sizing */
+/* Touch-friendly sizing - Ensure 44px touch targets */
 @media (hover: none) and (pointer: coarse) {
-  button, a, .clickable {
+  button, a, .clickable, .touch-target {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  /* Ensure form inputs are touch-friendly */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    min-height: 44px;
+    padding: 0.625rem 1rem;
   }
 }
 
@@ -601,4 +721,59 @@ button {
 p, span, h1, h2, h3, h4, h5, h6, li, a {
   -webkit-user-select: text;
   user-select: text;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: #9CA3AF;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 20%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Explicitly disable key UI motion */
+  .new-message-enter,
+  .animate-fade-in,
+  .animate-toastIn,
+  .animate-toastOut,
+  .toast-item,
+  .typing-indicator span {
+    animation: none !important;
+    transition: none !important;
+  }
 }

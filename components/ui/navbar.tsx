@@ -9,7 +9,8 @@ const navItems = [
   { href: "/", label: "Home" },
   { href: "/marketing", label: "Marketing" },
   { href: "/chatting", label: "Chatting" },
-  { href: "/learn", label: "Learn" },
+  { href: "/#learn", label: "Learn" },
+  { href: "/agency-comparison", label: "Compare" },
 ];
 
 export function Navbar() {

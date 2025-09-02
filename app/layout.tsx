@@ -8,6 +8,7 @@ import MobileBottomNav from "@/components/mobile-bottom-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import PageTransition from "@/components/page-transition";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 
 export const metadata: Metadata = {
@@ -46,6 +47,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#9333EA" />
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="stylesheet" href="/styles/design-system.css" />
         <script src="/scroll-fix.js"></script>
         <script
@@ -65,11 +69,22 @@ export default function RootLayout({
               window.scrollTo(0, 0);
               document.documentElement.scrollTop = 0;
               document.body.scrollTop = 0;
+              
+              // Register service worker
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    registration => console.log('SW registered:', registration),
+                    error => console.log('SW registration failed:', error)
+                  );
+                });
+              }
             `,
           }}
         />
       </head>
       <body className="antialiased bg-white text-gray-900" data-ui={minimal ? 'minimal' : undefined}>
+        <GoogleAnalytics />
         <ThemeProvider>
           <NotificationProvider>
             <HeaderImproved />

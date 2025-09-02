@@ -282,18 +282,18 @@ function ConnectPlatformStep({ onNext, onPrev }: { onNext: () => void; onPrev: (
     {
       id: 'onlyfans',
       name: 'OnlyFans',
-      description: 'Connect your OnlyFans account',
+      description: 'Coming soon',
       icon: '🔥',
       color: 'from-blue-500 to-cyan-600',
-      available: true
+      available: false
     },
     {
       id: 'fansly',
       name: 'Fansly',
-      description: 'Connect your Fansly account',
+      description: 'Coming soon',
       icon: '💎',
       color: 'from-purple-500 to-pink-600',
-      available: true
+      available: false
     },
     {
       id: 'patreon',

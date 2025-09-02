@@ -46,6 +46,18 @@ const navigation = {
     title: 'Resources',
     items: [
       {
+        name: 'Agency Comparison',
+        description: 'Huntaze vs traditional agencies',
+        href: '/agency-comparison',
+        icon: Building
+      },
+      {
+        name: 'Learn',
+        description: 'Overview of features on one page',
+        href: '/#learn',
+        icon: BookOpen
+      },
+      {
         name: 'Help Center',
         description: 'Get support and answers',
         href: '/about',
@@ -55,12 +67,6 @@ const navigation = {
         name: 'Roadmap & Voting',
         description: 'Vote weekly for new features',
         href: '/roadmap',
-        icon: GraduationCap
-      },
-      {
-        name: 'Creator Academy',
-        description: 'Learn growth strategies',
-        href: '/learn',
         icon: GraduationCap
       },
       {
@@ -246,6 +252,10 @@ export default function HeaderImproved() {
 
             <Link href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
               Pricing
+            </Link>
+
+            <Link href="/agency-comparison" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
+              vs Agencies
             </Link>
 
             <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">

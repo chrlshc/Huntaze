@@ -19,6 +19,44 @@ export default function MarketingPage() {
         </p>
       </section>
 
+      {/* Full‑Funnel Growth */}
+      <section className="space-y-8">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Full‑Funnel Growth</h2>
+          <p className="text-gray-600 mb-6">
+            Drive acquisition, optimize conversion, and grow monetization — all in one place.
+          </p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card className="p-5">
+            <h3 className="font-semibold mb-2">Acquisition (Top of Funnel)</h3>
+            <ul className="text-sm text-gray-700 space-y-2 list-disc pl-5">
+              <li>TikTok: viral posts, trend participation, teasers</li>
+              <li>Instagram: Stories, Reels, Posts</li>
+              <li>Reddit: targeted NSFW community engagement</li>
+              <li>Threads: conversations and viral threads</li>
+            </ul>
+          </Card>
+          <Card className="p-5">
+            <h3 className="font-semibold mb-2">Conversion (Middle of Funnel)</h3>
+            <ul className="text-sm text-gray-700 space-y-2 list-disc pl-5">
+              <li>Link‑in‑bio (Smart Links) and optimized landing pages</li>
+              <li>Conversion funnels and attribution</li>
+              <li>A/B testing on copy and offers</li>
+            </ul>
+          </Card>
+          <Card className="p-5">
+            <h3 className="font-semibold mb-2">Monetization (Bottom of Funnel)</h3>
+            <ul className="text-sm text-gray-700 space-y-2 list-disc pl-5">
+              <li>OnlyFans: unified inbox + AI suggestions (manual approval)</li>
+              <li>Upsell flows and price optimization</li>
+              <li>Fan retention and VIP programs</li>
+            </ul>
+          </Card>
+        </div>
+        <p className="text-xs text-gray-500">Availability depends on platform policies and API access; where required, integrations are read‑only.</p>
+      </section>
+
       <section className="space-y-8">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Multi-platform Publishing</h2>
@@ -103,12 +141,11 @@ export default function MarketingPage() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Security & GDPR</h2>
           <p className="text-gray-700 leading-relaxed">
-            Security and privacy are foundational principles of OFM Social OS. We
-            only interact with official platform APIs—there are no shortcuts or
-            engagement manipulation strategies here. Our infrastructure is built
-            with data protection in mind and aligns with the General Data
-            Protection Regulation (GDPR). Your content and your users' data are
-            handled with care.
+            Security and privacy are foundational principles of OFM Social OS. We follow
+            platform guidelines and, where required, provide read‑only integrations. AI suggestions
+            require your approval before sending. Our infrastructure is built with data protection
+            in mind and aligns with the General Data Protection Regulation (GDPR). Your content and
+            your users' data are handled with care.
           </p>
         </div>
       </section>

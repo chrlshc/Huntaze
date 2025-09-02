@@ -111,7 +111,7 @@ export default function HomePageImproved() {
       </section>
 
       {/* Value Props - 3 Column Clean */}
-      <section className="py-20 px-6 md:px-8">
+      <section id="learn" className="py-20 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -139,9 +139,9 @@ export default function HomePageImproved() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Responds to messages in your style. Converts fans while you create.
                 </p>
-                <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
-                </button>
+                </Link>
               </div>
             </PremiumCard>
 
@@ -161,9 +161,9 @@ export default function HomePageImproved() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Know exactly what content sells. Track revenue, engagement, and growth.
                 </p>
-                <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
-                </button>
+                </Link>
               </div>
             </PremiumCard>
 
@@ -181,108 +181,18 @@ export default function HomePageImproved() {
                   Content Automation
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Schedule posts, send mass DMs, and optimize pricing automatically.
+                  Schedule posts, scale replies with AI suggestions (manual approval), and optimize pricing.
                 </p>
-                <button className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
+                <Link href="/features/automation" className="text-purple-600 dark:text-purple-400 font-medium hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
                   Learn more →
-                </button>
+                </Link>
               </div>
             </PremiumCard>
           </div>
         </div>
       </section>
 
-      {/* Product Showcase Section - concise */}
-      <section className="py-16 px-6 md:px-8 bg-gray-50 dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10">
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3"
-            >
-              See the product in action
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6"
-            >
-              Dashboard, AI chat, and analytics you actually use.
-            </motion.p>
-            
-          </div>
-
-          {/* 3 Product Mockups in Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Dashboard Mockup */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="group"
-            >
-              <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
-                <DashboardMockup />
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Real-time Dashboard
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-3">Revenue, fans, and performance at a glance.</p>
-                <Link href="/features/dashboard" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
-                  Explore Dashboard →
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Chat Interface Mockup */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="group"
-            >
-              <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
-                <ChatInterfaceMockup />
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  AI Chat Assistant
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-3">Personalized replies that convert.</p>
-                <Link href="/features/ai-chat" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
-                  Learn About AI Chat →
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Analytics Mockup */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="group"
-            >
-              <div className="relative overflow-hidden rounded-xl shadow-2xl transition-transform group-hover:scale-105">
-                <AnalyticsMockup />
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Smart Analytics
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-3">Insights to grow what works.</p>
-                <Link href="/features/analytics" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">
-                  View Analytics →
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Minimal by design: detailed stats moved to analytics page */}
-        </div>
-      </section>
+      {/* Product showcase section removed per request */}
 
       {/* Creator Testimonials - Hidden on mobile */}
       <div className="hidden md:block">

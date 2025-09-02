@@ -1,118 +1,118 @@
-# Script Démo Vidéo TikTok - Guide Étape par Étape
+# TikTok Demo Video Script — Step by Step
 
-## Préparation avant l'enregistrement
+## Preparation before recording
 
-1. **Ouvre 3 onglets dans ton navigateur** :
-   - Onglet 1 : Huntaze Dashboard (https://huntaze.com ou http://localhost:3002)
-   - Onglet 2 : TikTok (pour te connecter avec ton compte sandbox)
-   - Onglet 3 : TikTok Developer Portal (pour montrer que c'est sandbox)
+1. Open 3 tabs in your browser:
+   - Tab 1: Huntaze Dashboard (https://huntaze.com or http://localhost:3002)
+   - Tab 2: TikTok (to sign in with your sandbox account)
+   - Tab 3: TikTok Developer Portal (to show sandbox context)
 
-2. **Prépare une vidéo test** :
-   - Fichier MP4 court (10-30 secondes)
-   - Nom : "test-huntaze-demo.mp4"
+2. Prepare a test video:
+   - Short MP4 (10–30 seconds)
+   - Name: "test-huntaze-demo.mp4"
 
-3. **Assure-toi d'être déconnecté** de Huntaze et TikTok
+3. Make sure you are signed out of both Huntaze and TikTok
 
-## Script de la démo (2-3 minutes max)
+## Demo script (2–3 minutes max)
 
-### Intro (0:00 - 0:10)
+### Intro (0:00–0:10)
 ```
-"Bonjour, voici une démonstration de l'intégration TikTok dans Huntaze, 
-notre plateforme de gestion de contenu pour créateurs."
+"Hi, this is a demonstration of the TikTok integration in Huntaze, 
+our content management platform for creators."
 ```
-- Montre la page d'accueil Huntaze
+- Show the Huntaze homepage
 
-### Connexion à Huntaze (0:10 - 0:20)
-- Clique sur "Sign In"
-- Connecte-toi à Huntaze
-- Arrive sur le Dashboard
+### Sign in to Huntaze (0:10–0:20)
+- Click "Sign In"
+- Sign in to Huntaze
+- Land on the Dashboard
 
-### Navigation vers Social Media (0:20 - 0:30)
-- Montre le Dashboard
-- Clique sur "Social Media Management"
-- Montre la section TikTok avec le bouton "Connect Account"
+### Navigate to Social Media (0:20–0:30)
+- Show the Dashboard
+- Click "Social Media Management"
+- Show the TikTok section with the "Connect Account" button
 
-### Connexion OAuth TikTok (0:30 - 1:00)
+### TikTok OAuth (0:30–1:00)
 ```
-"Je vais maintenant connecter mon compte TikTok"
+"I’m going to connect my TikTok account now"
 ```
-- Clique sur "Connect TikTok Account"
-- Tu es redirigé vers TikTok
-- Connecte-toi avec ton compte sandbox
-- Montre la page d'autorisation avec les 3 permissions :
+- Click "Connect TikTok Account"
+- You’re redirected to TikTok
+- Sign in with your sandbox account
+- Show the authorization page with the 3 permissions:
   - user.info.basic
   - video.upload
   - video.publish
-- Clique sur "Authorize"
+- Click "Authorize"
 
-### Retour sur Huntaze (1:00 - 1:20)
+### Back to Huntaze (1:00–1:20)
 ```
-"TikTok est maintenant connecté à Huntaze"
+"TikTok is now connected to Huntaze"
 ```
-- Montre le redirect vers Huntaze
-- Montre que le compte est connecté (nom d'utilisateur affiché)
-- Montre le bouton "Create Post" ou "Upload Video"
+- Show the redirect back to Huntaze
+- Show that the account is connected (username visible)
+- Show the "Create Post" or "Upload Video" button
 
-### Upload et publication (1:20 - 2:00)
+### Upload and publish (1:20–2:00)
 ```
-"Je vais maintenant publier une vidéo sur TikTok"
+"I’m going to publish a video to TikTok now"
 ```
-- Clique sur "Create Post" / "Upload Video"
-- Sélectionne ton fichier test
-- Entre un caption : "Test démo Huntaze #huntaze #demo #test"
-- Montre les options disponibles
-- Clique sur "Publish to TikTok"
-- Montre le message de succès
+- Click "Create Post" / "Upload Video"
+- Select your test file
+- Enter a caption: "Huntaze demo test #huntaze #demo #test"
+- Show available options
+- Click "Publish to TikTok"
+- Show the success message
 
-### Conclusion (2:00 - 2:10)
+### Conclusion (2:00–2:10)
 ```
-"La vidéo a été publiée avec succès sur TikTok via l'API Content Posting"
+"The video was successfully published to TikTok using the Content Posting API"
 ```
-- Montre le message de confirmation
-- (Optionnel) Montre l'ID de la vidéo créée
+- Show the confirmation message
+- (Optional) Show the created video ID
 
-## Points importants à montrer
+## Important points to show
 
-✅ **OBLIGATOIRE** :
-- L'URL huntaze.com visible
-- La page d'autorisation TikTok avec les 3 scopes
-- Le flow complet sans coupure
-- Le message de succès final
+✅ Must show:
+- The huntaze.com URL visible
+- The TikTok authorization page with all 3 scopes
+- The complete, uncut flow
+- The final success message
 
-❌ **À ÉVITER** :
-- Ne montre PAS les credentials
-- Ne montre PAS de vrais comptes (utilise sandbox)
-- Ne coupe PAS pendant l'OAuth
-- N'accélère PAS la vidéo
+❌ Avoid:
+- Showing credentials
+- Using real accounts (use sandbox)
+- Cutting during OAuth
+- Speeding up the video
 
-## Si tu rencontres des problèmes
+## If you run into issues
 
-### Erreur de redirect :
-1. Vérifie que le redirect URI dans TikTok correspond exactement
-2. Pour local : `http://localhost:3002/auth/tiktok/callback`
-3. Pour production : `https://huntaze.com/auth/tiktok/callback`
+### Redirect error:
+1. Ensure the TikTok redirect URI matches exactly
+2. For local: `http://localhost:3002/auth/tiktok/callback`
+3. For production: `https://huntaze.com/auth/tiktok/callback`
 
-### Erreur de token :
-1. Vérifie que tu utilises les bons credentials (sandbox vs production)
-2. Vérifie que `TIKTOK_SANDBOX_MODE=true` dans .env.local
+### Token error:
+1. Verify you’re using the correct credentials (sandbox vs production)
+2. Ensure `TIKTOK_SANDBOX_MODE=true` in .env.local
 
-### La vidéo ne s'upload pas :
-- C'est normal en sandbox, tu peux simuler un succès
-- Ou créer un mock de l'API response
+### Video doesn’t upload:
+- This is expected in sandbox; you can simulate success
+- Or mock the API response
 
-## Commandes pour l'enregistrement
+## Recording commands
 
-### Sur Mac :
+### On macOS:
 ```bash
-# Option 1 : QuickTime
+# Option 1: QuickTime
 Cmd + Shift + 5
-# Sélectionne "Enregistrer l'écran entier" ou une zone
+# Select "Record entire screen" or a region
 
-# Option 2 : Via terminal avec ffmpeg
+# Option 2: Terminal with ffmpeg
 ffmpeg -f avfoundation -i "1:0" -t 180 demo-tiktok.mp4
 ```
 
-### Export final :
-- Format : MP4 (pas MOV)
-- Taille : < 50MB
-- Résolution : 720p ou 1080p minimum
+### Final export:
+- Format: MP4 (not MOV)
+- Size: < 50MB
+- Resolution: 720p or 1080p minimum

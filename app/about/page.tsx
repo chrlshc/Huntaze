@@ -52,6 +52,26 @@ export default function AboutPage() {
           </div>
 
           <div className="elevated-card rounded-2xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">System Overview</h2>
+            <p className="text-gray-700 mb-4">
+              Huntaze combines a privacy‑first architecture with AI assistance that you control.
+              Our goal is simple: help you keep more of your revenue, without handing control to an agency.
+            </p>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>AI suggestions, you approve before sending — no chatters pretending to be you.</span></li>
+              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Multi‑platform connectors (OnlyFans, Fansly beta, IG workflows) with clear rate limits and retries.</span></li>
+              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Transparent pricing: Starter, Pro, Scale, Enterprise — keep 93–98.5% of your revenue.</span></li>
+              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Analytics you actually use: revenue breakdowns, message performance, conversion insights.</span></li>
+              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Security best practices: encrypted secrets, least‑privilege services, audit logs.</span></li>
+            </ul>
+            <div className="mt-6">
+              <Link href="/pricing" className="text-purple-600 font-semibold hover:underline">See pricing →</Link>
+              <span className="mx-2 text-gray-400">•</span>
+              <Link href="/agency-comparison" className="text-purple-600 font-semibold hover:underline">Compare with agencies →</Link>
+            </div>
+          </div>
+
+          <div className="elevated-card rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Values</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>

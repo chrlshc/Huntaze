@@ -64,9 +64,17 @@ const nextConfig = {
     ]
   },
 
-  // Rewrites for cleaner URLs
+  // Rewrites for cleaner URLs and API proxy
   async rewrites() {
     return [
+      // API proxy to backend
+      {
+        source: '/api/:path*',
+        destination: process.env.NODE_ENV === 'production' 
+          ? `${process.env.NEXT_PUBLIC_API_URL || 'https://huntaze.com/backend'}/api/:path*`
+          : 'http://localhost:4000/api/:path*'
+      },
+      // Clean URLs
       {
         source: '/terms',
         destination: '/terms-of-service',

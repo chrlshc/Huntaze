@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Learn',
   description:
-    'Discover how OFM Social OS works under the hood. Learn about the marketing pipeline and AI chatting assistant without any outreach functionality.',
+    'Discover how OFM Social OS works. Learn about the marketing pipeline and the AI assistant for replies (no auto-send).',
 };
 
 export default function LearnPage() {
@@ -36,7 +36,7 @@ export default function LearnPage() {
     {
       title: 'Security & compliance',
       description:
-        'Every interaction uses official APIs, and data handling practices are aligned with GDPR principles. We never engage in artificial engagement manipulation.',
+        'We follow platform guidelines. Where required, integrations are read‑only and AI provides suggestions you approve before sending. Data handling aligns with GDPR principles. We never engage in artificial engagement manipulation.',
     },
   ];
 
