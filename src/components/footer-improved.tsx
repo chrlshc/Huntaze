@@ -122,11 +122,12 @@ export default function FooterImproved() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Company Info */}
           <div className="col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">H</span>
-              </div>
-              <span className="text-xl font-bold text-white">Huntaze</span>
+            <Link href="/" className="flex items-center mb-4">
+              <img 
+                src="/huntaze-logo.png" 
+                alt="Huntaze" 
+                className="h-10 w-auto brightness-0 invert"
+              />
             </Link>
             <p className="text-sm text-gray-400 mb-4">
               The AI platform that helps creators keep 98% of their revenue.
