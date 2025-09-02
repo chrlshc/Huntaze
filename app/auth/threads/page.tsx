@@ -16,7 +16,7 @@ export default function ThreadsAuthPage() {
     
     // Threads uses Instagram Basic Display API with additional scopes
     const authUrl = `https://api.instagram.com/oauth/authorize?${new URLSearchParams({
-      client_id: clientId,
+      client_id: clientId || '',
       redirect_uri: redirectUri,
       scope: 'user_profile,user_media,threads_basic,threads_content_publish',
       response_type: 'code',

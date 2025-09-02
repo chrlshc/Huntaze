@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       })
     });
     
-    let stats = {};
+    let stats: any = {};
     if (statsResponse.ok) {
       const statsData = await statsResponse.json();
       stats = statsData.data?.user || {};
@@ -88,9 +88,9 @@ export async function POST(request: NextRequest) {
       user: {
         displayName: userInfo?.display_name,
         avatarUrl: userInfo?.avatar_url,
-        followerCount: stats.follower_count,
-        likesCount: stats.likes_count,
-        videoCount: stats.video_count
+        followerCount: stats?.follower_count || 0,
+        likesCount: stats?.likes_count || 0,
+        videoCount: stats?.video_count || 0
       }
     });
   } catch (error) {
