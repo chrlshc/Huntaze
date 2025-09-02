@@ -7,14 +7,21 @@ declare global {
 }
 
 export const useAnalytics = () => {
-  const trackEvent = (action: string, parameters?: {
-    category?: string;
-    label?: string;
-    value?: number;
-    [key: string]: any;
-  }) => {
+  const trackEvent = (
+    eventName: string,
+    parameters?: Record<string, any>
+  ) => {
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', action, parameters);
+      window.gtag('event', eventName, parameters);
+    }
+  };
+
+  // Backwards-compatible alias
+  const track = trackEvent;
+
+  const identify = (userId: string, traits?: Record<string, any>) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('set', { user_id: userId, ...(traits || {}) });
     }
   };
 
@@ -50,6 +57,8 @@ export const useAnalytics = () => {
 
   return {
     trackEvent,
+    track,
+    identify,
     trackPageView,
     trackPurchase,
     trackSignUp,
