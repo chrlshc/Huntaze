@@ -7,7 +7,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { track, identify } = useAnalytics();
+  const { trackEvent, trackSignUp } = useAnalytics();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -58,13 +58,14 @@ export default function RegisterPage() {
         const data = await response.json();
         
         // Identify user in analytics
-        identify(data.userId || formData.email, {
-          email: formData.email,
-          plan: 'pro', // Initial plan
-        });
+        // TODO: Add user identification when analytics support it
+        // identify(data.userId || formData.email, {
+        //   email: formData.email,
+        //   plan: 'pro', // Initial plan
+        // });
         
         // Track successful registration
-        track('onboarding_started', {
+        trackEvent('onboarding_started', {
           source: 'registration',
         });
         
@@ -74,7 +75,7 @@ export default function RegisterPage() {
         setError(data.message || 'Registration failed');
         
         // Track registration failure
-        track('onboarding_abandoned', {
+        trackEvent('onboarding_abandoned', {
           step: 0,
           stepName: 'registration',
           error: data.message || 'Registration failed',
