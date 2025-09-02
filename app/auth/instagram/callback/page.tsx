@@ -20,6 +20,7 @@ function InstagramCallbackContent() {
       fetch('/api/platforms/instagram/connected', { credentials: 'include' })
         .catch(() => {})
         .finally(() => {
+          try { localStorage.setItem('instagram_connected', '1'); } catch {}
           // Redirect back to onboarding
           setTimeout(() => {
             router.push('/onboarding/setup');

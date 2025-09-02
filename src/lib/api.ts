@@ -167,3 +167,9 @@ export const ofAiApi = {
   getSettings: () => api.get('/integrations/onlyfans/ai/settings'),
   updateSettings: (settings: any) => api.post('/integrations/onlyfans/ai/settings', settings),
 };
+
+// OFM Agent Pro (new)
+export const ofmApi = {
+  aiDraft: (data: any) => api.post('/ofm/ai/draft', data),
+  rfmRecompute: () => api.post('/ofm/rfm/recompute'),
+};
