@@ -39,11 +39,19 @@ export async function GET(request: NextRequest) {
     const defaultStatus = {
       completed: false,
       currentStep: 'profile',
+      current_step: 1,
       steps: {
         profile: false,
         aiConfig: false,
         payment: false,
-      }
+      },
+      // Checklist items (for Sprint 1)
+      checklist: {
+        first_message: { done: false },
+        connect_ig: { done: false },
+        view_analytics: { done: false },
+        create_campaign: { done: false },
+      },
     };
 
     // Store for this session
@@ -78,17 +86,20 @@ export async function PUT(request: NextRequest) {
 
       if (resp.ok) {
         const data = await resp.json();
-        // Also update local storage
-        onboardingStatus.set(token, payload);
+        // Merge with prior local state to preserve fields omitted in payload
+        const prev = onboardingStatus.get(token) || {};
+        onboardingStatus.set(token, { ...prev, ...payload });
         return NextResponse.json(data, { status: resp.status });
       }
     } catch (backendError) {
       console.log('Backend not available, updating local status only');
     }
 
-    // Update local storage for demo
-    onboardingStatus.set(token, payload);
-    return NextResponse.json(payload);
+    // Update local storage for demo; merge to keep unspecified keys
+    const prev = onboardingStatus.get(token) || {};
+    const merged = { ...prev, ...payload };
+    onboardingStatus.set(token, merged);
+    return NextResponse.json(merged);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update onboarding status' }, { status: 500 });
   }

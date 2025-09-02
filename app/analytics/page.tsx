@@ -43,6 +43,8 @@ import {
 } from 'lucide-react';
 import { GatedContent, GatedBanner } from '@/components/dashboard/GatedContent';
 import dynamic from 'next/dynamic';
+import ResumeBanner from '@/components/onboarding/ResumeBanner';
+import { useAnalytics as useGa } from '@/hooks/useAnalytics';
 
 // Dynamic imports for charts to reduce bundle size
 const DynamicLine = dynamic(
@@ -111,6 +113,7 @@ export default function AnalyticsPage() {
   const { status: onboarding } = useOnboarding();
   const [overview, setOverview] = useState<OverviewMetrics | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const { trackEvent } = useGa();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -139,6 +142,12 @@ export default function AnalyticsPage() {
         if (o.ok) setOverview(await o.json());
       } catch {}
     })();
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('visited_analytics', '1');
+        trackEvent('analytics_visited');
+      }
+    } catch {}
   }, []);
 
   // Revenue Chart Data
@@ -564,6 +573,8 @@ export default function AnalyticsPage() {
     );
   }
 
+  const hasConnectedPlatform = Boolean(aiConfig?.platforms?.length);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header */}
@@ -617,6 +628,14 @@ export default function AnalyticsPage() {
       </header>
 
       <main className="px-6 lg:px-8 py-8">
+        <ResumeBanner />
+        {!hasConnectedPlatform && (
+          <div className="mb-6 p-4 rounded-xl border border-purple-200 bg-purple-50">
+            <p className="text-purple-900 font-medium">No data yet</p>
+            <p className="text-sm text-purple-800 mb-2">Connect platforms to start seeing analytics.</p>
+            <Link href="/platforms/connect" className="text-sm font-medium text-purple-900 hover:text-purple-950">Connect platforms →</Link>
+          </div>
+        )}
         {onboarding && !onboarding.completed && (
           <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 p-4">
             <div className="flex items-center justify-between">

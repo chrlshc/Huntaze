@@ -38,12 +38,15 @@ import {
   Timer,
   Filter
 } from 'lucide-react';
+import ResumeBanner from '@/components/onboarding/ResumeBanner';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function CampaignsPage() {
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(false);
   const router = useRouter();
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     (async () => {
@@ -387,6 +390,7 @@ export default function CampaignsPage() {
       </header>
 
       <main className="px-6 lg:px-8 py-12 max-w-7xl mx-auto">
+        <ResumeBanner />
         {/* Empty State */}
         <div className="elevated-card rounded-3xl overflow-hidden">
           {/* Hero Section */}
@@ -399,6 +403,14 @@ export default function CampaignsPage() {
             
             <Link 
               href={campaignContent.action.href}
+              onClick={() => {
+                try {
+                  if (campaignContent.action.href.includes('/campaigns')) {
+                    localStorage.setItem('first_campaign_started', '1');
+                    trackEvent('campaign_launch_click');
+                  }
+                } catch {}
+              }}
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-600/25 transition-all font-medium"
             >
               <campaignContent.action.icon className="w-5 h-5" />
@@ -524,7 +536,13 @@ export default function CampaignsPage() {
                 </p>
               </div>
               <button 
-                onClick={() => router.push('/campaigns/new')}
+                onClick={() => {
+                  try {
+                    localStorage.setItem('first_campaign_started', '1');
+                    trackEvent('campaign_launch_click');
+                  } catch {}
+                  router.push('/campaigns/new');
+                }}
                 className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur border border-white/30 rounded-xl hover:bg-white/30 transition-colors font-medium"
               >
                 <Rocket className="w-5 h-5" />

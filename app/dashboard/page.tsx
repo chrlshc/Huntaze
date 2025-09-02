@@ -27,6 +27,8 @@ import {
 import { ofIntegrationApi } from '@/src/lib/api';
 import type { OverviewMetrics } from '@/types/analytics';
 import MobileDashboard from './mobile-page';
+import OnboardingChecklist from '@/components/onboarding/OnboardingChecklist';
+import ResumeBanner from '@/components/onboarding/ResumeBanner';
 
 export default function DashboardPage() {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://huntaze.com';
@@ -396,10 +398,17 @@ export default function DashboardPage() {
 
         {/* Main Area */}
         <main className="flex-1 p-8">
+          {/* Resume Banner */}
+          <ResumeBanner />
           {/* Welcome */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name?.split(' ')[0] || 'Creator'}! 👋</h1>
             <p className="text-gray-600">Here's your performance overview for today</p>
+          </div>
+
+          {/* Onboarding Checklist */}
+          <div className="mb-8">
+            <OnboardingChecklist />
           </div>
 
           {/* Stats - Mobile carousel + Desktop grid */}

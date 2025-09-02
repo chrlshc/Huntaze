@@ -13,8 +13,11 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { ofIntegrationApi } from '@/src/lib/api';
+import ResumeBanner from '@/components/onboarding/ResumeBanner';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function MessagesPage() {
+  const { trackEvent } = useAnalytics();
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(false);
@@ -192,7 +195,15 @@ export default function MessagesPage() {
                   {ofStatus.connected ? 'OF Connected' : 'OF Not Connected'}
                 </span>
               )}
-              <button className="btn-gradient rounded-xl flex items-center gap-2 hover:shadow-lg transition-all">
+              <button
+                onClick={() => {
+                  try {
+                    localStorage.setItem('first_message_started', '1');
+                    trackEvent('messages_compose_click');
+                  } catch {}
+                }}
+                className="btn-gradient rounded-xl flex items-center gap-2 hover:shadow-lg transition-all"
+              >
                 <Send className="w-4 h-4" />
                 <span>Compose</span>
               </button>
@@ -202,6 +213,7 @@ export default function MessagesPage() {
       </header>
 
       <main className="px-6 lg:px-8 py-8 max-w-7xl mx-auto">
+        <ResumeBanner />
         {/* Alert for no platform */}
         {!hasConnectedPlatforms && (
           <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
@@ -235,7 +247,20 @@ export default function MessagesPage() {
               ))}
             </div>
           ) : conversations.length === 0 ? (
-            <div className="p-8 text-center"><p className="text-gray-600">No conversations yet</p></div>
+            <div className="p-10 text-center">
+              <p className="text-gray-700 mb-3">No conversations yet</p>
+              <button
+                onClick={() => {
+                  try {
+                    localStorage.setItem('first_message_started', '1');
+                    trackEvent('kpi_empty_state_cta_click', { area: 'messages', action: 'first_message' });
+                  } catch {}
+                }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+              >
+                Send your first message
+              </button>
+            </div>
           ) : (
             <div className="divide-y divide-gray-100">
               {conversations.map((c) => {
