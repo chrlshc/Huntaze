@@ -11,60 +11,82 @@ export const metadata: Metadata = {
 const plans = [
   {
     name: 'STARTER',
-    price: 'Free trial',
-    description: 'Perfect to get started and evaluate',
+    price: '$19/mo',
+    description: 'Perfect for emerging creators',
     color: 'green',
+    commission: '7%',
+    revenueCap: '$2,500/month',
     features: [
-      'Try core features with no commitment',
-      'All core automation features',
-      'Email support within 1 business day',
-      '1 new feature/week (community vote)'
+      '✓ 1,000 AI messages/month',
+      '✓ 1 platform integration',
+      '✓ Basic analytics',
+      '✓ Mobile app access',
+      '✓ Standard email support',
+      '✓ 7% platform fee — You keep 93%',
+      '✓ Revenue cap: $2,500/month'
     ],
-    cta: 'Start free trial'
+    cta: 'Start free trial',
+    priceId: 'starter'
   },
   {
     name: 'PRO',
-    price: '$69/mo',
-    description: 'For established creators ready to scale',
+    price: '$39/mo',
+    description: 'For growing creators up to $5k/month',
     color: 'purple',
     badge: 'MOST POPULAR',
+    commission: '5%',
+    revenueCap: '$5,000/month',
     features: [
-      'Advanced analytics & insights',
-      'Higher limits and throughput',
-      'Advanced analytics & insights',
-      'Priority email support',
-      'Custom AI tuning (beta)',
-      '2 new features/week (priority vote)'
+      '✓ 5,000 AI messages/month',
+      '✓ 3 platform integrations',
+      '✓ Advanced analytics',
+      '✓ Priority support',
+      '✓ Real‑time automation',
+      '✓ 5% platform fee — You keep 95%',
+      '✓ Revenue cap: $5,000/month'
     ],
-    cta: 'Start free trial'
+    cta: 'Start free trial',
+    priceId: 'pro'
   },
   {
     name: 'SCALE',
-    price: '$99/mo',
-    description: 'Maximum growth with minimal fees',
+    price: '$79/mo',
+    description: 'For established creators up to $15k/month',
     color: 'blue',
+    badge: 'BEST VALUE',
+    commission: '3%',
+    revenueCap: '$15,000/month',
     features: [
-      'Multi-platform management',
-      'Higher API limits',
-      'Dedicated onboarding assistance',
-      'API access (beta)',
-      '3 new features/week + fast track'
+      '✓ 25,000 AI messages/month', 
+      '✓ 10 platform integrations',
+      '✓ Advanced analytics & API',
+      '✓ Team collaboration (3 users)',
+      '✓ Custom AI training',
+      '✓ 3% platform fee — You keep 97%',
+      '✓ Revenue cap: $15,000/month'
     ],
-    cta: 'Start free trial'
+    cta: 'Start free trial',
+    priceId: 'scale'
   },
   {
     name: 'ENTERPRISE',
-    price: '$499/mo',
+    price: '$199/mo',
     description: 'For top creators and agencies',
     color: 'gold',
     isPremium: true,
+    commission: '1.5%',
+    revenueCap: 'Unlimited',
     features: [
-      'Custom integrations',
-      'SLA and security reviews',
-      'Managed onboarding',
-      'Dedicated support channel'
+      '✓ Unlimited AI messages',
+      '✓ Unlimited integrations',
+      '✓ Custom reporting',
+      '✓ No revenue cap',
+      '✓ 1.5% platform fee — You keep 98.5%',
+      '✓ White‑label options',
+      '✓ Dedicated account manager'
     ],
-    cta: 'Start free trial'
+    cta: 'Contact sales',
+    priceId: 'enterprise'
   }
 ];
 

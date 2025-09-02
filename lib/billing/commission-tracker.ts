@@ -112,6 +112,7 @@ export class CommissionTracker {
     
     // Map price IDs to tiers
     const tierMap: Record<string, string> = {
+      [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER || '']: 'starter',
       [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO || '']: 'pro',
       [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SCALE || '']: 'scale',
       [process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE || '']: 'enterprise',

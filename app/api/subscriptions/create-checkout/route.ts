@@ -24,13 +24,22 @@ export async function POST(request: NextRequest) {
 
     // Map plan IDs to Stripe price IDs
     const priceIds: Record<string, string> = {
-      starter: 'price_starter_monthly', // Free tier
+      starter: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_STARTER || 'price_starter_monthly',
       pro: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO || 'price_pro_monthly',
       scale: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SCALE || 'price_scale_monthly',
       enterprise: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ENTERPRISE || 'price_enterprise_monthly',
     };
 
     const priceId = priceIds[planId] || priceIds.pro;
+
+    // Trial period by plan: starter=14, pro=7, scale=7, enterprise=none
+    const trialMap: Record<string, number | null> = {
+      starter: 14,
+      pro: 7,
+      scale: 7,
+      enterprise: null,
+    };
+    const trialDays = trialMap[planId] ?? 7;
 
     // Create Stripe checkout session (idempotent)
     const idempotencyKey = `checkout_${userId}_${planId}`;
@@ -50,10 +59,8 @@ export async function POST(request: NextRequest) {
       metadata: {
         userId,
       },
-      // Enable 14-day free trial (aligned with site copy)
-      subscription_data: {
-        trial_period_days: 14,
-      },
+      // Optional trial per plan
+      subscription_data: trialDays != null ? { trial_period_days: trialDays } : undefined,
     }, { idempotencyKey });
 
     return NextResponse.json({ 

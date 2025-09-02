@@ -13,8 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/features/ai-chat',
     '/features/analytics',
     '/features/automation',
-    '/features/dashboard',
-    '/learn',
+    // '/features/dashboard', // removed: page does not exist
+    // '/learn', // placeholder removed until page exists
     '/terms',
     '/privacy',
   ]

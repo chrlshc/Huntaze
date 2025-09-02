@@ -24,6 +24,7 @@ import {
   Mail,
   Sparkles
 } from 'lucide-react';
+import { ofIntegrationApi } from '@/src/lib/api';
 import type { OverviewMetrics } from '@/types/analytics';
 import MobileDashboard from './mobile-page';
 
@@ -37,6 +38,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [tiktokUser, setTiktokUser] = useState<any>(null);
+  const [ofStatus, setOfStatus] = useState<any>(null);
+  const [ofSyncing, setOfSyncing] = useState(false);
+  const { showNotification } = useNotifications();
   const { status: onboarding } = useOnboarding();
   const pathname = usePathname();
   const { showContextualNotification } = useNotifications();
@@ -92,6 +96,8 @@ export default function DashboardPage() {
       }
     };
     checkTikTok();
+    // Check OnlyFans status
+    (async () => { try { const st = await ofIntegrationApi.status(); setOfStatus(st); } catch {} })();
   }, []);
 
   useEffect(() => {
@@ -300,6 +306,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {ofSyncing && <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 animate-pulse z-50" />}
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
@@ -482,8 +489,44 @@ export default function DashboardPage() {
 
               {/* Social Media */}
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Social Media</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900">Social Media</h2>
+                  <Link href="/platforms/connect" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Manage Platforms →</Link>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* OnlyFans */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-blue-100">
+                        <MessageSquare className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <h3 className="font-bold text-gray-900">OnlyFans</h3>
+                    </div>
+                    {ofStatus?.connected ? (
+                      <div>
+                        <p className="text-sm text-gray-500 mb-3">@{ofStatus.username} • {ofStatus.lastSync ? new Date(ofStatus.lastSync).toLocaleString() : 'Never synced'}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={async () => { setOfSyncing(true); try { await ofIntegrationApi.sync(['earnings','messages','subscribers']); const st = await ofIntegrationApi.status(); setOfStatus(st); showNotification({ type: 'success', title: 'Sync Complete', message: 'OnlyFans data has been refreshed.' }); } catch (e: any) { showNotification({ type: 'error', title: 'Sync Failed', message: e?.message || 'An error occurred during sync.' }); } finally { setOfSyncing(false); } }}
+                            className="w-full py-2.5 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium disabled:opacity-60"
+                            disabled={ofSyncing}
+                          >
+                            {ofSyncing ? 'Syncing…' : 'Sync Now'}
+                          </button>
+                          <Link href="/messages/onlyfans" className="w-full py-2.5 text-sm text-center border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">View Messages</Link>
+                        </div>
+                        <div className="mt-2 text-xs text-gray-400">Read‑only sync. Manual replies enabled.</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-sm text-gray-500 mb-4">Sync earnings, subscribers and messages.</p>
+                        <Link href="/platforms/connect/onlyfans" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
+                          Connect
+                        </Link>
+                        <div className="mt-2 text-xs text-gray-400">Read‑only sync. Manual replies enabled.</div>
+                      </div>
+                    )}
+                  </div>
                   {/* Instagram */}
                   <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all">
                     <div className="flex items-center gap-3 mb-4">
@@ -492,10 +535,8 @@ export default function DashboardPage() {
                       </div>
                       <h3 className="font-bold text-gray-900">Instagram</h3>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">Not connected</p>
-                    <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
-                      Connect
-                    </Link>
+                    <p className="text-sm text-gray-500 mb-4">Coming soon</p>
+                    <button disabled className="block w-full py-2.5 text-sm text-center border border-gray-200 text-gray-400 rounded-xl cursor-not-allowed">Not available</button>
                   </div>
 
                   {/* TikTok */}
@@ -545,10 +586,8 @@ export default function DashboardPage() {
                       </div>
                       <h3 className="font-bold text-gray-900">Reddit</h3>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">Not connected</p>
-                    <Link href="/platforms/connect" className="block w-full py-2.5 text-sm text-center border border-purple-200 text-purple-600 rounded-xl hover:bg-purple-50 transition-colors font-medium">
-                      Connect
-                    </Link>
+                    <p className="text-sm text-gray-500 mb-4">Coming soon</p>
+                    <button disabled className="block w-full py-2.5 text-sm text-center border border-gray-200 text-gray-400 rounded-xl cursor-not-allowed">Not available</button>
                   </div>
                 </div>
               </div>

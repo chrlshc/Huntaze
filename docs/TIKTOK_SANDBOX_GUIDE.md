@@ -1,28 +1,28 @@
-# Guide TikTok Sandbox et Démo Vidéo
+# TikTok Sandbox Guide and Demo Video
 
-## 1. Configuration du Sandbox TikTok
+## 1. Configure the TikTok Sandbox
 
-### Accéder au Sandbox
-1. Va sur [TikTok Developer Portal](https://developers.tiktok.com/)
-2. Dans ton app Huntaze, clique sur l'onglet "Sandbox"
-3. Tu verras un environnement de test séparé
+### Access the Sandbox
+1. Go to the [TikTok Developer Portal](https://developers.tiktok.com/)
+2. In your Huntaze app, click the "Sandbox" tab
+3. You’ll see a separate testing environment
 
-### Créer des comptes de test
-1. Dans la section Sandbox, clique sur "Test Users"
-2. Clique sur "Create Test User"
-3. Crée au moins 2 comptes de test :
-   - Un compte créateur (pour poster)
-   - Un compte viewer (optionnel, pour voir les posts)
+### Create test accounts
+1. In the Sandbox section, click "Test Users"
+2. Click "Create Test User"
+3. Create at least 2 test accounts:
+   - A creator account (to post)
+   - A viewer account (optional, to view posts)
 
-### Obtenir les credentials Sandbox
-Dans l'onglet Sandbox, tu auras :
-- **Sandbox Client Key** (différent du production)
-- **Sandbox Client Secret** (différent du production)
-- Les URLs OAuth restent les mêmes mais pointent vers l'environnement sandbox
+### Get sandbox credentials
+In the Sandbox tab, you’ll have:
+- Sandbox Client Key (different from production)
+- Sandbox Client Secret (different from production)
+- OAuth URLs are the same but point to the sandbox environment
 
-## 2. Configurer Huntaze pour le Sandbox
+## 2. Configure Huntaze for the Sandbox
 
-### Créer un fichier .env.sandbox
+### Create a .env.sandbox file
 ```bash
 # TikTok Sandbox Credentials
 TIKTOK_CLIENT_KEY=your-sandbox-client-key
@@ -31,8 +31,8 @@ NEXT_PUBLIC_TIKTOK_REDIRECT_URI=https://huntaze.com/auth/tiktok/callback
 TIKTOK_SANDBOX_MODE=true
 ```
 
-### Modifier le code OAuth pour supporter le sandbox
-Crée ou modifie `/app/auth/tiktok/route.ts` :
+### Update OAuth code to support sandbox
+Create or edit `/app/auth/tiktok/route.ts`:
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
   const state = Math.random().toString(36).substring(7);
   
-  // URLs différentes pour sandbox vs production
+  // Different base URL for sandbox vs production
   const baseUrl = isSandbox 
     ? 'https://open-sandbox.tiktok.com' 
     : 'https://www.tiktok.com';
@@ -60,115 +60,115 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-## 3. Enregistrer la Démo Vidéo
+## 3. Record the Demo Video
 
-### Outils recommandés
-- **Mac**: QuickTime Player (Cmd+Shift+5) ou OBS Studio
-- **Windows**: OBS Studio ou Windows Game Bar (Win+G)
-- **Chrome**: Extension Loom ou Screencastify
+### Recommended tools
+- Mac: QuickTime Player (Cmd+Shift+5) or OBS Studio
+- Windows: OBS Studio or Windows Game Bar (Win+G)
+- Chrome: Loom or Screencastify
 
-### Script de la démo (étape par étape)
+### Demo script (step by step)
 
-1. **Intro (0:00-0:10)**
-   - Ouvre ton navigateur sur https://huntaze.com
-   - Montre que tu es déconnecté
+1. Intro (0:00–0:10)
+   - Open your browser at https://huntaze.com
+   - Show you are signed out
 
-2. **Connexion à Huntaze (0:10-0:20)**
-   - Clique sur "Sign In" 
-   - Connecte-toi avec un compte test
+2. Sign in to Huntaze (0:10–0:20)
+   - Click "Sign In"
+   - Sign in with a test account
 
-3. **Navigation vers Social Media (0:20-0:30)**
-   - Va dans le Dashboard
-   - Clique sur "Social Media Management"
-   - Montre la section TikTok
+3. Navigate to Social Media (0:20–0:30)
+   - Go to the Dashboard
+   - Click "Social Media Management"
+   - Show the TikTok section
 
-4. **Connexion TikTok OAuth (0:30-0:50)**
-   - Clique sur "Connect TikTok Account"
-   - Tu seras redirigé vers la page de connexion TikTok Sandbox
-   - Connecte-toi avec ton **compte test sandbox**
-   - Montre la page d'autorisation avec les permissions
-   - Clique sur "Authorize"
+4. TikTok OAuth (0:30–0:50)
+   - Click "Connect TikTok Account"
+   - You will be redirected to the TikTok Sandbox login page
+   - Sign in with your sandbox test account
+   - Show the authorization page with permissions
+   - Click "Authorize"
 
-5. **Retour sur Huntaze (0:50-1:00)**
-   - Montre le redirect vers Huntaze
-   - Montre que le compte TikTok est maintenant connecté
-   - Affiche le nom d'utilisateur TikTok récupéré
+5. Back to Huntaze (0:50–1:00)
+   - Show the redirect back to Huntaze
+   - Show that the TikTok account is now connected
+   - Display the TikTok username
 
-6. **Upload de vidéo (1:00-1:20)**
-   - Clique sur "Create Post" ou "Upload Video"
-   - Sélectionne un fichier vidéo (prépare un .mp4 court)
-   - Montre le preview de la vidéo
+6. Video upload (1:00–1:20)
+   - Click "Create Post" or "Upload Video"
+   - Select a video file (prepare a short .mp4)
+   - Show the preview
 
-7. **Ajout de caption (1:20-1:40)**
-   - Entre un titre/caption
-   - Ajoute des hashtags (#test #huntaze #demo)
-   - Montre les options disponibles
+7. Add caption (1:20–1:40)
+   - Enter a title/caption
+   - Add hashtags (#test #huntaze #demo)
+   - Show the available options
 
-8. **Publication (1:40-2:00)**
-   - Clique sur "Publish to TikTok"
-   - Montre le loading/progress
-   - Montre le message de succès
-   - (Optionnel) Montre l'ID du post créé
+8. Publish (1:40–2:00)
+   - Click "Publish to TikTok"
+   - Show loading/progress
+   - Show the success message
+   - (Optional) Show the created post ID
 
-### Vidéo de test
-Prépare une vidéo courte (10-30 secondes) pour l'upload :
+### Test video
+Prepare a short video (10–30 seconds) for upload:
 - Format: MP4
-- Résolution: 720p ou 1080p
-- Contenu: Peut être juste un écran coloré avec texte "Test Huntaze"
+- Resolution: 720p or 1080p
+- Content: A simple colored screen with “Test Huntaze” text is fine
 
-## 4. Points importants pour la démo
+## 4. Important points for the demo
 
-### ✅ À montrer absolument :
-- L'URL huntaze.com visible dans la barre d'adresse
-- La page d'autorisation TikTok avec les 3 scopes
-- Le flow complet sans coupure
-- Les messages de succès
+### ✅ Must show:
+- huntaze.com visible in the address bar
+- TikTok authorization page with the 3 scopes
+- Complete, uncut flow
+- Success messages
 
-### ❌ À éviter :
-- Ne pas montrer de vrais credentials
-- Ne pas utiliser de comptes réels
-- Ne pas couper la vidéo pendant l'OAuth
-- Ne pas accélérer la vidéo
+### ❌ Avoid:
+- Showing real credentials
+- Using real accounts
+- Cutting the video during OAuth
+- Speeding up the video
 
-## 5. Tester en local avec sandbox
+## 5. Test locally with sandbox
 
-Pour tester localement avant la démo :
+To test locally before the demo:
 
 ```bash
-# Utilise les credentials sandbox
+# Use sandbox credentials
 cp .env.sandbox .env.local
 
-# Lance en local
+# Run locally
 npm run dev
 
-# Modifie temporairement le redirect URI dans TikTok sandbox pour :
+# Temporarily set the redirect URI in TikTok sandbox to:
 # http://localhost:3002/auth/tiktok/callback
 ```
 
-## 6. Après l'enregistrement
+## 6. After recording
 
-1. Exporte en MP4 (pas MOV si possible)
-2. Vérifie que la vidéo fait moins de 50MB
-3. Regarde la vidéo pour vérifier :
-   - Pas de credentials visibles
-   - Tous les scopes sont démontrés
-   - Le flow est clair et complet
+1. Export as MP4 (avoid MOV if possible)
+2. Ensure the file is under 50MB
+3. Review the video:
+   - No credentials visible
+   - All scopes demonstrated
+   - The flow is clear and complete
 
-## 7. Alternative : Vidéo avec mockups
+## 7. Alternative: Mockup video
 
-Si tu ne peux pas faire fonctionner le sandbox :
+If you can’t get the sandbox working:
 
-1. Enregistre le flow jusqu'à la redirection TikTok
-2. Crée des mockups/screenshots de :
-   - La page de login TikTok (floute les credentials)
-   - La page d'autorisation
-   - Le retour sur Huntaze
-3. Monte les séquences ensemble
-4. Ajoute des annotations expliquant chaque étape
+1. Record the flow up to the TikTok redirect
+2. Create mockups/screenshots of:
+   - TikTok login page (blur credentials)
+   - Authorization page
+   - Return to Huntaze
+3. Edit the sequences together
+4. Add annotations explaining each step
 
-## Notes supplémentaires
+## Additional notes
 
-- Le sandbox ne poste pas vraiment sur TikTok
-- Les vidéos uploadées en sandbox ne sont pas publiques
-- Tu peux réutiliser les mêmes comptes test plusieurs fois
-- L'API sandbox a les mêmes endpoints mais des limites différentes
+- The sandbox does not actually post to TikTok
+- Videos uploaded in sandbox are not public
+- You can reuse the same test accounts many times
+- The sandbox API uses the same endpoints with different limits

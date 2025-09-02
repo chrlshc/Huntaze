@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import NotificationSettings from '@/components/NotificationSettings';
 import { useRouter } from 'next/navigation';
 import { 
   User,
@@ -99,6 +100,11 @@ export default function MenuPage() {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Notification Settings */}
+      <div className="px-4 py-4">
+        <NotificationSettings />
       </div>
 
       {/* Quick Stats */}
