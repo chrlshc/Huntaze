@@ -148,11 +148,12 @@ export default function HeaderImproved() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">H</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">Huntaze</span>
+            <Link href="/" className="flex items-center">
+              <img 
+                src="/huntaze-logo.png" 
+                alt="Huntaze" 
+                className="h-10 w-auto"
+              />
             </Link>
           </div>
 
