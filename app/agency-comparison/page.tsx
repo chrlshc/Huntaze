@@ -53,7 +53,7 @@ export default function AgencyComparisonPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Huntaze vs. Traditional Agencies
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
             See why creators are switching from expensive agencies to Huntaze's transparent platform.
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function AgencyComparisonPage() {
       </section>
 
       {/* How Huntaze Really Works */}
-      <section className="bg-gray-50 dark:bg-gray-950 py-16 px-6 md:px-8">
+      <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6 md:px-8">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
             How Huntaze Really Works
@@ -110,7 +110,7 @@ export default function AgencyComparisonPage() {
             <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">1. Connect</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Link your platforms</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-700 dark:text-gray-400">
                 Connect OnlyFans, Fansly, and social accounts. Your data stays private and secure.
               </p>
             </div>
@@ -118,7 +118,7 @@ export default function AgencyComparisonPage() {
             <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">2. Automate</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">AI learns your style</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-700 dark:text-gray-400">
                 Our AI suggests replies in your voice. You review and approve before sending.
               </p>
             </div>
@@ -126,7 +126,7 @@ export default function AgencyComparisonPage() {
             <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">3. Grow</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Scale with insights</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-700 dark:text-gray-400">
                 Track what works, optimize pricing, and keep 93-98.5% of your revenue.
               </p>
             </div>
@@ -141,7 +141,7 @@ export default function AgencyComparisonPage() {
             The Real Cost Difference
           </h2>
           
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/15 dark:to-pink-900/15 rounded-2xl p-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
@@ -149,11 +149,11 @@ export default function AgencyComparisonPage() {
                 </h3>
                 <ul className="space-y-3">
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Your monthly revenue:</span>
+                    <span className="text-gray-700 dark:text-gray-400">Your monthly revenue:</span>
                     <span className="font-medium text-gray-900 dark:text-white">$10,000</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Agency takes (50%):</span>
+                    <span className="text-gray-700 dark:text-gray-400">Agency takes (50%):</span>
                     <span className="font-medium text-red-600 dark:text-red-400">-$5,000</span>
                   </li>
                   <li className="flex justify-between border-t pt-3">
@@ -169,11 +169,11 @@ export default function AgencyComparisonPage() {
                 </h3>
                 <ul className="space-y-3">
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Your monthly revenue:</span>
+                    <span className="text-gray-700 dark:text-gray-400">Your monthly revenue:</span>
                     <span className="font-medium text-gray-900 dark:text-white">$10,000</span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Huntaze fee (3% + $79):</span>
+                    <span className="text-gray-700 dark:text-gray-400">Huntaze fee (3% + $79):</span>
                     <span className="font-medium text-green-600 dark:text-green-400">-$379</span>
                   </li>
                   <li className="flex justify-between border-t pt-3">
