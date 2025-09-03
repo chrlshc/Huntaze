@@ -11,6 +11,7 @@ import PremiumCard from '@/components/premium-card';
 import CreatorTestimonials from '@/components/creator-testimonials';
 import FAQSection from '@/components/faq-section';
 
+// Force redeploy - UI/UX improvements applied
 export default function HomePageImproved() {
   useEffect(() => {
     // Disable automatic scroll restoration
