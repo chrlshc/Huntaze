@@ -2,8 +2,9 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, MessageSquare, BarChart3, Settings } from 'lucide-react';
+import { ArrowRight, CheckCircle, MessageSquare, BarChart3, Settings, TrendingUp, Users, DollarSign } from 'lucide-react';
 import { DashboardMockup, ChatInterfaceMockup, AnalyticsMockup } from '@/components/product-mockups';
+import LiveChatDemo from '@/components/live-chat-demo';
 import { motion } from 'framer-motion';
 import PremiumButton from '@/components/premium-button';
 import PremiumCard from '@/components/premium-card';
@@ -85,7 +86,112 @@ export default function HomePageImproved() {
         </div>
       </section>
 
-      {/* Stats Bar removed to avoid unsupported claims */}
+      {/* Agency vs Huntaze Comparison */}
+      <section className="py-16 px-6 md:px-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Stop losing half your revenue
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              See why creators are switching from agencies to Huntaze
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Traditional Agency */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 relative">
+              <div className="absolute -top-3 left-6 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-sm font-medium">
+                Traditional Agency
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-gray-600 dark:text-gray-300">Their cut</span>
+                  <span className="text-3xl font-bold text-red-600">50%</span>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <span className="text-red-500">✗</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">You lose control</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-red-500">✗</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Generic responses</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-red-500">✗</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Long contracts</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-red-500">✗</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Hidden fees</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* VS */}
+            <div className="flex items-center justify-center">
+              <div className="text-4xl font-bold text-gray-300 dark:text-gray-600">VS</div>
+            </div>
+            
+            {/* Huntaze */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 border-2 border-purple-300 dark:border-purple-700 relative transform scale-105 shadow-xl">
+              <div className="absolute -top-3 left-6 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                Huntaze
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-gray-600 dark:text-gray-300">Platform fee</span>
+                  <span className="text-3xl font-bold text-green-600">1.5-7%</span>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">You keep control</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">AI learns your style</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">Cancel anytime</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">Transparent pricing</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Savings Calculator */}
+          <div className="mt-12 bg-purple-100 dark:bg-purple-900/30 rounded-2xl p-8 text-center">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              If you're making $10k/month
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">With Agency</p>
+                <p className="text-2xl font-bold text-red-600">-$5,000</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">With Huntaze</p>
+                <p className="text-2xl font-bold text-green-600">-$300</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">You save</p>
+                <p className="text-xl md:text-2xl font-bold text-purple-600">$4,700/mo</p>
+              </div>
+            </div>
+            <Link href="/pricing" className="inline-block mt-6 text-purple-600 dark:text-purple-400 font-medium hover:underline">
+              See full pricing breakdown →
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Compact value highlights */}
       <section className="py-10 px-6 md:px-8">
@@ -192,7 +298,182 @@ export default function HomePageImproved() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-20 px-6 md:px-8 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Get started in 3 simple steps
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Switch from your agency in minutes, not months
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Step 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-purple-600">
+                1
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Connect your accounts
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Securely link your OnlyFans, Instagram, and other platforms
+              </p>
+            </motion.div>
+            
+            {/* Step 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-purple-600">
+                2
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Train your AI
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                AI learns your communication style from past conversations
+              </p>
+            </motion.div>
+            
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-purple-600">
+                3
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Start earning more
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                AI handles conversations while you create content and earn
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Platform Integrations */}
+      <section className="py-20 px-6 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Works with all your platforms
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Connect and manage all your content platforms in one place
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl font-bold text-gray-400">OF</span>
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">OnlyFans</p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl font-bold text-gray-400">F</span>
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Fansly</p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl font-bold text-gray-400">IG</span>
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Instagram</p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-3xl font-bold text-gray-400">TT</span>
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">TikTok</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 px-6 md:px-8 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Frequently asked questions
+            </h2>
+          </div>
+          
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Is my content safe and private?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Yes. We use bank-level encryption and never store your content. You maintain full ownership and control.
+              </p>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                How does the AI learn my style?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                The AI analyzes your past conversations to understand your tone, personality, and communication patterns. You can always review and approve messages before sending.
+              </p>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Can I cancel anytime?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Absolutely. No long-term contracts, no cancellation fees. Cancel or change your plan anytime from your dashboard.
+              </p>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                What's the difference between plans?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Plans differ in message limits, platform integrations, and commission rates. Higher plans have lower fees and more features. Start with any plan and upgrade as you grow.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Product showcase section removed per request */}
+
+      {/* Live AI Chat Demo */}
+      <section className="py-20 px-6 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Try our AI in action
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Chat with our AI assistant and see how it adapts to your style
+            </p>
+          </div>
+          <LiveChatDemo />
+        </div>
+      </section>
 
       {/* Creator Testimonials - Hidden on mobile */}
       <div className="hidden md:block">
