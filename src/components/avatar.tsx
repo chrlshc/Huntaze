@@ -15,16 +15,7 @@ export default function Avatar({ name, size = 'md', className = '' }: AvatarProp
     .toUpperCase()
     .slice(0, 2)
 
-  // Generate a consistent color based on name
-  const colors = [
-    'from-purple-400 to-purple-600',
-    'from-violet-400 to-violet-600', 
-    'from-indigo-400 to-indigo-600',
-    'from-fuchsia-400 to-fuchsia-600',
-  ]
-  
-  const colorIndex = name.charCodeAt(0) % colors.length
-  const gradientColor = colors[colorIndex]
+  // Neutral, professional placeholder
 
   const sizeClasses = {
     sm: 'w-8 h-8 text-xs',
@@ -34,7 +25,7 @@ export default function Avatar({ name, size = 'md', className = '' }: AvatarProp
 
   return (
     <div 
-      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br ${gradientColor} flex items-center justify-center text-white font-semibold ${className}`}
+      className={`${sizeClasses[size]} rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-100 font-semibold ${className}`}
     >
       {initials}
     </div>

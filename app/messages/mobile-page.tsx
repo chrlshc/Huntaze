@@ -72,12 +72,12 @@ export default function MobileMessages() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-40">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Messages</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Messages</h1>
             <div className="flex items-center gap-2">
               <button className="p-2.5 bg-white rounded-full shadow-sm border border-gray-100">
                 <Search className="w-5 h-5 text-gray-700" />
@@ -85,7 +85,7 @@ export default function MobileMessages() {
               <button className="p-2.5 bg-white rounded-full shadow-sm border border-gray-100">
                 <Filter className="w-5 h-5 text-gray-700" />
               </button>
-              <Link href="/messages/compose" className="p-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg">
+              <Link href="/messages/compose" className="p-2.5 bg-purple-600 hover:bg-purple-700 rounded-full shadow-sm">
                 <Plus className="w-5 h-5 text-white" />
               </Link>
             </div>
@@ -99,8 +99,8 @@ export default function MobileMessages() {
                 onClick={() => setActiveFilter(filter.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                   activeFilter === filter.id
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-gray-200'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
                 }`}
               >
                 {filter.label}
@@ -115,17 +115,17 @@ export default function MobileMessages() {
 
       {/* AI Status Bar */}
       <div className="mx-4 mt-4 mb-2">
-        <div className="bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-2xl px-4 py-3 flex items-center justify-between border border-purple-200">
+        <div className="rounded-2xl px-4 py-3 flex items-center justify-between border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-white rounded-xl shadow-sm">
+            <div className="p-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
               <Bot className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">AI Assistant Active</p>
-              <p className="text-xs text-gray-600">Handling 87% of messages</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">AI Assistant Active</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Handling 87% of messages</p>
             </div>
           </div>
-          <Link href="/automations" className="px-3 py-1.5 bg-purple-600 text-white text-xs font-bold rounded-full shadow-sm">
+          <Link href="/automations" className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-full">
             Configure
           </Link>
         </div>
@@ -137,7 +137,7 @@ export default function MobileMessages() {
           <Link
             key={message.id}
             href={`/messages/${message.id}`}
-            className="block bg-white rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100"
+            className="block bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-800"
           >
             <div className="p-4">
               <div className="flex items-start gap-3">
@@ -148,7 +148,7 @@ export default function MobileMessages() {
                     className="w-14 h-14 rounded-2xl"
                   />
                   {message.isVip && (
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-md">
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center shadow-sm">
                       <span className="text-[10px] text-white font-bold">VIP</span>
                     </div>
                   )}
@@ -157,11 +157,11 @@ export default function MobileMessages() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <h3 className={`font-medium ${message.unread ? 'text-gray-900' : 'text-gray-700'}`}>
+                      <h3 className={`font-medium ${message.unread ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>
                         {message.name}
                       </h3>
                       {message.aiHandled && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full border border-purple-200">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-purple-50 dark:bg-purple-900/20 rounded-full border border-purple-200 dark:border-purple-800">
                           <Bot className="w-3 h-3 text-purple-600" />
                           <span className="text-[11px] text-purple-700 font-semibold">AI</span>
                         </div>
@@ -170,7 +170,7 @@ export default function MobileMessages() {
                     <span className="text-xs text-gray-500">{message.time}</span>
                   </div>
                   
-                  <p className={`text-sm truncate ${message.unread ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
+                  <p className={`text-sm truncate ${message.unread ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-600 dark:text-gray-400'}`}>
                     {message.lastMessage}
                   </p>
                   
@@ -190,7 +190,7 @@ export default function MobileMessages() {
                 </div>
                 
                 {message.unread && (
-                  <div className="w-3 h-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mt-2 shadow-md"></div>
+                  <div className="w-3 h-3 bg-purple-600 rounded-full mt-2"></div>
                 )}
               </div>
             </div>
@@ -201,14 +201,14 @@ export default function MobileMessages() {
       {/* Empty State */}
       {messages.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 px-4">
-          <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl flex items-center justify-center mb-6">
+          <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center mb-6">
             <MessageSquare className="w-10 h-10 text-purple-600" />
           </div>
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">No messages yet</h3>
-          <p className="text-gray-600 text-center mb-6">Start meaningful conversations with your amazing fans</p>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No messages yet</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-center mb-6">Start meaningful conversations with your amazing fans</p>
           <Link
             href="/messages/compose"
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold shadow-lg hover:shadow-xl transition-all"
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-bold shadow-sm"
           >
             Send First Message
           </Link>

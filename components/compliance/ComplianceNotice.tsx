@@ -17,11 +17,10 @@ export default function ComplianceNotice({ platform, className }: Props) {
           <p className="font-medium mb-1">Compliance & Safety</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>AI provides smart replies (suggestions). You approve before sending — autopilot is disabled.</li>
-            <li>{pf} integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Fansly, or Meta.</li>
+            <li>{pf} integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Instagram, TikTok, Reddit, Threads, or Meta.</li>
           </ul>
         </div>
       </div>
     </div>
   );
 }
-

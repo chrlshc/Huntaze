@@ -35,13 +35,13 @@ export default function MobileDashboard({
   hasConnectedPlatform 
 }: MobileDashboardProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-white pb-20 animate-fadeIn">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20 animate-fadeIn">
       {/* Mobile Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-40">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="animate-slideIn">
-              <h1 className="text-2xl font-bold gradient-text-animate">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Hi {user?.name?.split(' ')[0] || 'Creator'} ✨
               </h1>
               <p className="text-sm text-gray-600 font-medium">Let's make today amazing!</p>
@@ -51,7 +51,7 @@ export default function MobileDashboard({
                 <Bell className="w-5 h-5 text-gray-700" />
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white notification-pulse"></span>
               </button>
-              <Link href="/billing" className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-md">
+              <Link href="/billing" className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-sm">
                 <Sparkles className="w-4 h-4" />
                 <span className="text-sm font-bold">2,450</span>
               </Link>
@@ -62,10 +62,10 @@ export default function MobileDashboard({
 
       {/* Today's Earnings Hero */}
       <div className="px-4 py-6">
-        <div className="bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 rounded-3xl p-6 text-white shadow-xl gradient-animate animate-slideUp">
+        <div className="rounded-3xl p-6 text-white shadow-xl animate-slideUp bg-gray-900 dark:bg-black">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-purple-200 text-sm font-medium">Today's Earnings</p>
+              <p className="text-gray-300 text-sm font-medium">Today's Earnings</p>
               <p className="text-4xl font-bold mt-1 counter-animate">$847.50</p>
             </div>
             <div className="p-3 bg-white/20 backdrop-blur rounded-2xl">
@@ -79,7 +79,7 @@ export default function MobileDashboard({
                   className="w-6 h-6 rounded-full border-2 border-white" />
               ))}
             </div>
-            <p className="text-sm text-purple-200">+12 new fans today</p>
+            <p className="text-sm text-gray-300">+12 new fans today</p>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function MobileDashboard({
         <h2 className="text-lg font-bold text-gray-900 mb-3 animate-slideIn">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3 stagger-animate">
           <Link href="/messages/compose" className="group">
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 text-white relative overflow-hidden h-32 card-hover press-feedback">
+            <div className="bg-purple-600 rounded-2xl p-4 text-white relative overflow-hidden h-32 card-hover press-feedback">
               <div className="absolute -right-4 -bottom-4 opacity-10">
                 <MessageSquare className="w-24 h-24" />
               </div>
@@ -121,13 +121,13 @@ export default function MobileDashboard({
                   <MessageSquare className="w-5 h-5" />
                 </div>
                 <p className="font-bold">Send Message</p>
-                <p className="text-xs text-purple-200 mt-1">Reply to fans</p>
+                <p className="text-xs text-white/80 mt-1">Reply to fans</p>
               </div>
             </div>
           </Link>
 
           <Link href="/campaigns/new" className="group">
-            <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-4 text-white relative overflow-hidden h-32">
+            <div className="bg-gray-800 rounded-2xl p-4 text-white relative overflow-hidden h-32">
               <div className="absolute -right-4 -bottom-4 opacity-10">
                 <TrendingUp className="w-24 h-24" />
               </div>
@@ -136,7 +136,7 @@ export default function MobileDashboard({
                   <TrendingUp className="w-5 h-5" />
                 </div>
                 <p className="font-bold">New Campaign</p>
-                <p className="text-xs text-pink-200 mt-1">Boost sales</p>
+                <p className="text-xs text-white/80 mt-1">Boost sales</p>
               </div>
             </div>
           </Link>
@@ -161,7 +161,7 @@ export default function MobileDashboard({
                     className="w-12 h-12 rounded-full"
                   />
                   {index === 0 && (
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
                       <Star className="w-3 h-3 text-white fill-white" />
                     </div>
                   )}
@@ -185,8 +185,8 @@ export default function MobileDashboard({
         <h2 className="text-lg font-bold text-gray-900 mb-3">Connect & Grow</h2>
         <div className="grid grid-cols-3 gap-3">
           <Link href="/platforms/connect" 
-            className="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
-            <div className="mx-auto w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-xl flex items-center justify-center mb-2">
+            className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl text-center hover:shadow-md transition-all border border-gray-200 dark:border-gray-700">
+            <div className="mx-auto w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-2">
               <Camera className="w-6 h-6 text-white" />
             </div>
             <p className="text-xs font-semibold text-gray-900">Instagram</p>
@@ -195,8 +195,8 @@ export default function MobileDashboard({
 
           {tiktokUser ? (
             <Link href="/social/tiktok/upload" 
-              className="bg-gradient-to-br from-red-100 to-blue-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-red-400 to-blue-400 rounded-xl flex items-center justify-center mb-2">
+              className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl text-center hover:shadow-md transition-all border border-gray-200 dark:border-gray-700">
+              <div className="mx-auto w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-2">
                 <Video className="w-6 h-6 text-white" />
               </div>
               <p className="text-xs font-semibold text-gray-900">TikTok</p>
@@ -205,8 +205,8 @@ export default function MobileDashboard({
           ) : (
             <button 
               onClick={() => window.location.href = '/auth/tiktok'}
-              className="bg-gradient-to-br from-red-100 to-blue-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-red-400 to-blue-400 rounded-xl flex items-center justify-center mb-2">
+              className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl text-center hover:shadow-md transition-all border border-gray-200 dark:border-gray-700">
+              <div className="mx-auto w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-2">
                 <Video className="w-6 h-6 text-white" />
               </div>
               <p className="text-xs font-semibold text-gray-900">TikTok</p>
@@ -215,8 +215,8 @@ export default function MobileDashboard({
           )}
 
           <Link href="/platforms/connect" 
-            className="bg-gradient-to-br from-orange-100 to-red-100 p-4 rounded-2xl text-center hover:shadow-md transition-all">
-            <div className="mx-auto w-12 h-12 bg-gradient-to-br from-orange-400 to-red-400 rounded-xl flex items-center justify-center mb-2">
+            className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl text-center hover:shadow-md transition-all border border-gray-200 dark:border-gray-700">
+            <div className="mx-auto w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center mb-2">
               <MessageSquare className="w-6 h-6 text-white" />
             </div>
             <p className="text-xs font-semibold text-gray-900">Reddit</p>
@@ -227,7 +227,7 @@ export default function MobileDashboard({
 
       {/* AI Assistant Status */}
       <div className="mx-4 mb-6">
-        <div className="bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-2xl p-4 border border-purple-200 animate-slideUp">
+        <div className="rounded-2xl p-4 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 animate-slideUp">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-white rounded-xl shadow-sm">
               <Bot className="w-6 h-6 text-purple-600" />
@@ -246,15 +246,15 @@ export default function MobileDashboard({
       {/* Platform Connection CTA */}
       {!hasConnectedPlatform && (
         <div className="mx-4 mb-6">
-          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-6 text-white relative overflow-hidden">
+          <div className="rounded-3xl p-6 text-gray-900 dark:text-white relative overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <div className="absolute -right-8 -top-8 opacity-20">
               <Plus className="w-32 h-32" />
             </div>
             <div className="relative z-10">
               <h3 className="text-xl font-bold mb-2">Ready to 3x Your Income?</h3>
-              <p className="text-purple-100 mb-4">Connect your platforms and let AI do the work</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Connect your platforms and let AI do the work</p>
               <Link href="/platforms/connect" 
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-purple-600 rounded-full font-bold shadow-lg">
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-bold shadow-sm">
                 <Plus className="w-5 h-5" />
                 Connect Platform
               </Link>

@@ -25,7 +25,7 @@ export default function MobileOnboardingSetup() {
       subtitle: "Let's get you set up in 2 minutes",
       content: (
         <div className="space-y-4">
-          <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 rounded-2xl">
+          <div className="bg-purple-600 text-white p-6 rounded-2xl">
             <h3 className="text-xl font-bold mb-2">Keep 98% of your earnings</h3>
             <p className="text-white/80">No more 50% agency fees. You're in control.</p>
           </div>
@@ -50,9 +50,9 @@ export default function MobileOnboardingSetup() {
       content: (
         <div className="space-y-3">
           {[
-            { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'from-purple-500 to-pink-500' },
-            { id: 'tiktok', name: 'TikTok', icon: Video, color: 'from-red-500 to-blue-500' },
-            { id: 'reddit', name: 'Reddit', icon: MessageSquare, color: 'from-orange-500 to-red-500' }
+            { id: 'instagram', name: 'Instagram', icon: Instagram, color: '' },
+            { id: 'tiktok', name: 'TikTok', icon: Video, color: '' },
+            { id: 'reddit', name: 'Reddit', icon: MessageSquare, color: '' }
           ].map((platform) => {
             const Icon = platform.icon;
             const isSelected = selectedPlatforms.includes(platform.id);
@@ -75,8 +75,8 @@ export default function MobileOnboardingSetup() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`p-3 bg-gradient-to-br ${platform.color} rounded-xl`}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className={`p-3 rounded-xl bg-gray-100`}>
+                      <Icon className="w-6 h-6 text-gray-900" />
                     </div>
                     <div className="text-left">
                       <p className="font-medium text-gray-900">{platform.name}</p>
@@ -159,7 +159,7 @@ export default function MobileOnboardingSetup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur border-b border-gray-100 sticky top-0 z-40">
         <div className="px-4 py-3">
@@ -211,7 +211,7 @@ export default function MobileOnboardingSetup() {
           disabled={!canProceed()}
           className={`w-full py-3 min-h-[44px] rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
             canProceed()
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+              ? 'bg-purple-600 text-white hover:bg-purple-700'
               : 'bg-gray-100 text-gray-400'
           }`}
         >

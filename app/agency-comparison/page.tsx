@@ -111,7 +111,7 @@ export default function AgencyComparisonPage() {
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">1. Connect</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Link your platforms</h3>
               <p className="text-gray-700 dark:text-gray-400">
-                Connect OnlyFans, Fansly, and social accounts. Your data stays private and secure.
+                Use Instagram, TikTok, Reddit, and Threads to drive traffic to your OnlyFans. Connect OnlyFans for messaging and sales. Your data stays private and secure.
               </p>
             </div>
 

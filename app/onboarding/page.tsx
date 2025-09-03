@@ -37,7 +37,7 @@ const steps = [
     name: 'Connect Platforms', 
     icon: Globe,
     title: 'Connect Your Platforms',
-    description: 'Link your OnlyFans, Fansly, or other platforms to start automating'
+    description: 'Use Instagram, TikTok, Reddit, and Threads to drive traffic to your OnlyFans. Connect OnlyFans for messaging & sales.'
   },
   { 
     id: 3, 
@@ -285,14 +285,6 @@ function ConnectPlatformStep({ onNext, onPrev }: { onNext: () => void; onPrev: (
       description: 'Coming soon',
       icon: '🔥',
       color: 'from-blue-500 to-cyan-600',
-      available: false
-    },
-    {
-      id: 'fansly',
-      name: 'Fansly',
-      description: 'Coming soon',
-      icon: '💎',
-      color: 'from-purple-500 to-pink-600',
       available: false
     },
     {
