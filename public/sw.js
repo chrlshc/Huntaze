@@ -1,5 +1,5 @@
 // Service Worker for Huntaze PWA
-const CACHE_NAME = 'huntaze-v1';
+const CACHE_NAME = 'huntaze-v2';
 const urlsToCache = [
   '/',
   '/dashboard',
@@ -39,9 +39,25 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   
+  // Skip caching for navigation requests to prevent blank pages
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match('/');
+      })
+    );
+    return;
+  }
+  
+  // For non-navigation requests, use network-first strategy
   event.respondWith(
     fetch(event.request)
       .then(response => {
+        // Don't cache non-successful responses
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
+        
         // Clone the response
         const responseToCache = response.clone();
         

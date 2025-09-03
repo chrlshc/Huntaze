@@ -179,7 +179,7 @@ export default function HeaderImproved() {
                     className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
                   >
                     <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-4">
+                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-4">
                         {navigation.solutions.title}
                       </h3>
                       <div className="space-y-3">
@@ -194,7 +194,7 @@ export default function HeaderImproved() {
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-200">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -225,7 +225,7 @@ export default function HeaderImproved() {
                     className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
                   >
                     <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-4">
+                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-4">
                         {navigation.resources.title}
                       </h3>
                       <div className="space-y-3">
@@ -240,7 +240,7 @@ export default function HeaderImproved() {
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-200">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -251,15 +251,15 @@ export default function HeaderImproved() {
               </AnimatePresence>
             </div>
 
-            <Link href="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
+            <Link href="/pricing" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
               Pricing
             </Link>
 
-            <Link href="/agency-comparison" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
+            <Link href="/agency-comparison" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
               vs Agencies
             </Link>
 
-            <Link href="/about" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium">
+            <Link href="/about" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
               About
             </Link>
           </div>
