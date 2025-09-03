@@ -12,17 +12,17 @@ const useCases = [
     metric: '$3k → $45k/month',
     description: 'AI handles all messages while she focuses on content creation',
     icon: TrendingUp,
-    color: 'from-purple-500 to-pink-500',
+    color: '',
     image: '/mockups/dashboard-sarah.png'
   },
   {
     id: 2,
     title: 'Emma saves 6 hours daily',
-    subtitle: 'Fansly Top Creator',
+    subtitle: 'Instagram Top Creator',
     metric: '8hrs → 30min/day',
     description: 'Automated responses that sound exactly like her',
     icon: Clock,
-    color: 'from-blue-500 to-purple-500',
+    color: '',
     image: '/mockups/chat-emma.png'
   },
   {
@@ -32,7 +32,7 @@ const useCases = [
     metric: 'Saves $15k/month',
     description: 'No more 50% commission to agencies',
     icon: DollarSign,
-    color: 'from-green-500 to-blue-500',
+    color: '',
     image: '/mockups/analytics-jessica.png'
   },
   {
@@ -42,7 +42,7 @@ const useCases = [
     metric: '1.2k → 2.8k fans',
     description: 'Always-on engagement without burnout',
     icon: MessageSquare,
-    color: 'from-pink-500 to-purple-500',
+    color: '',
     image: '/mockups/growth-mia.png'
   }
 ]
@@ -77,7 +77,7 @@ export default function UseCasesCarousel() {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-black dark:to-gray-950 overflow-hidden">
+    <section className="py-20 px-4 bg-white dark:bg-gray-900 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -102,18 +102,18 @@ export default function UseCasesCarousel() {
                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                     className="absolute inset-0"
                   >
-                    <div className={`h-full bg-gradient-to-br ${useCase.color} p-1 rounded-2xl`}>
-                      <div className="h-full bg-white dark:bg-gray-950 rounded-2xl p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8">
+                    <div className={`h-full p-1 rounded-2xl`}>
+                      <div className="h-full bg-white dark:bg-gray-950 rounded-2xl p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8 border border-gray-200 dark:border-gray-800">
                         {/* Content */}
                         <div className="flex-1 text-center lg:text-left">
-                          <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${useCase.color} text-white mb-4`}>
+                          <div className={`inline-flex p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 mb-4`}>
                             <useCase.icon className="w-8 h-8" />
                           </div>
                           <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
                             {useCase.title}
                           </h3>
                           <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">{useCase.subtitle}</p>
-                          <div className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+                          <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
                             {useCase.metric}
                           </div>
                           <p className="text-lg text-gray-700 dark:text-gray-200 mb-6">
@@ -126,8 +126,8 @@ export default function UseCasesCarousel() {
 
                         {/* Mockup */}
                         <div className="flex-1 relative">
-                          <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl p-4 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                            <div className="aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                          <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl p-4 shadow-2xl">
+                            <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
                               {/* TODO: Add actual screenshot images */}
                               <div className="w-full h-full bg-white dark:bg-gray-950 p-4">
                                 <div className="h-full flex flex-col gap-3">
@@ -146,7 +146,7 @@ export default function UseCasesCarousel() {
                                       <div className="h-4 bg-blue-400 dark:bg-blue-600 rounded"></div>
                                     </div>
                                   </div>
-                                  <div className="h-20 bg-gradient-to-t from-purple-100 to-transparent dark:from-purple-900/20 rounded"></div>
+                                  <div className="h-20 bg-gray-100 dark:bg-gray-800 rounded"></div>
                                 </div>
                               </div>
                             </div>

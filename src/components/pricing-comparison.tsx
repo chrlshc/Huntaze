@@ -76,7 +76,7 @@ export default function PricingComparison() {
                 <div className="font-bold text-lg">Basic</div>
                 <div className="text-gray-600 text-sm">€25/month</div>
               </th>
-              <th className="text-center py-4 px-6 bg-gradient-to-b from-purple-50 to-transparent">
+              <th className="text-center py-4 px-6 bg-gray-50 dark:bg-gray-900">
                 <div className="font-bold text-lg text-purple-600">Grow</div>
                 <div className="text-gray-600 text-sm">€66/month</div>
                 <div className="text-xs text-purple-600 font-medium mt-1">Recommended</div>
@@ -99,7 +99,7 @@ export default function PricingComparison() {
                   <tr key={featureIdx} className="border-b border-gray-100">
                     <td className="py-4 px-6 text-gray-700">{feature.name}</td>
                     <td className="py-4 px-6 text-center">{renderValue(feature.basic)}</td>
-                    <td className="py-4 px-6 text-center bg-gradient-to-b from-purple-50/50 to-transparent">
+                    <td className="py-4 px-6 text-center bg-gray-50 dark:bg-gray-900">
                       {renderValue(feature.grow)}
                     </td>
                     <td className="py-4 px-6 text-center">{renderValue(feature.advanced)}</td>

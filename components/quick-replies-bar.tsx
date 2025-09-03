@@ -82,7 +82,7 @@ export default function QuickRepliesBar({ fan, onPick, onTemplatesChange, classN
           <p className="text-xs text-gray-600 mb-2">One template per line. Use {'{name}'} for fan name.</p>
           <textarea value={draft} onChange={(e) => setDraft(e.target.value)} rows={5} className="w-full text-sm p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none" placeholder="Enter your quick reply templates..." />
           <div className="mt-2 flex justify-end">
-            <button onClick={handleSave} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md">
+            <button onClick={handleSave} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200 shadow-sm">
               <Save className="w-4 h-4" /> Save
             </button>
           </div>
@@ -91,4 +91,3 @@ export default function QuickRepliesBar({ fan, onPick, onTemplatesChange, classN
     </div>
   );
 }
-

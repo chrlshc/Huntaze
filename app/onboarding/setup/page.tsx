@@ -763,45 +763,25 @@ export default function OnboardingSetupPage() {
                 </div>
               </div>
 
-              {/* Fansly Card */}
-              <button
-                type="button"
-                onClick={() => togglePlatform('fansly')}
-                className={`group relative p-6 border-2 rounded-xl transition-all ${
-                  formData.connectedPlatforms.includes('fansly')
-                    ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
-                    : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
-                }`}
+              {/* Threads OAuth */}
+              <a
+                href="/auth/threads"
+                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
               >
                 <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">F</span>
+                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">@</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Fansly</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Connect your Fansly account
-                    </p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Threads</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
                   </div>
-                  <div className={`flex items-center gap-2 ${
-                    formData.connectedPlatforms.includes('fansly')
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-purple-600 dark:text-purple-400'
-                  }`}>
-                    {formData.connectedPlatforms.includes('fansly') ? (
-                      <>
-                        <Check className="w-5 h-5" />
-                        <span className="font-medium">Connected</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-5 h-5" />
-                        <span className="font-medium">Connect</span>
-                      </>
-                    )}
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Plus className="w-5 h-5" />
+                    <span className="font-medium">Connect</span>
                   </div>
                 </div>
-              </button>
+              </a>
 
               {/* Instagram OAuth */}
               <a
@@ -888,7 +868,7 @@ export default function OnboardingSetupPage() {
                   : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
               }`}>
                 <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center">
                     <span className="text-2xl font-bold text-white">IF</span>
                   </div>
                   <div>
@@ -1106,7 +1086,7 @@ export default function OnboardingSetupPage() {
                 <button
                   onClick={handleNext}
                   disabled={loading}
-                  className="px-6 py-3 min-h-[44px] bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-lg hover:shadow-xl"
+                  className="px-6 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-sm"
                 >
                   {loading ? (
                     <>

@@ -18,11 +18,11 @@ export default function PremiumButton({
   variant = 'primary',
   size = 'md'
 }: PremiumButtonProps) {
-  const baseClasses = 'relative overflow-hidden font-medium transition-all duration-300 rounded-lg'
+  const baseClasses = 'relative font-medium transition-all duration-200 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500'
   
   const variants = {
-    primary: 'bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800',
-    secondary: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 hover:border-purple-600 dark:hover:border-purple-400',
+    primary: 'bg-purple-600 text-white hover:bg-purple-700 shadow-sm hover:shadow-md',
+    secondary: 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-sm',
     ghost: 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
   }
   
@@ -35,22 +35,14 @@ export default function PremiumButton({
   return (
     <motion.button
       onClick={onClick}
-      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className} group`}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
     >
-      {/* Shimmer effect */}
-      <div className="absolute inset-0 -top-2 -bottom-2 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer transform -skew-x-12" />
-      
       {/* Content */}
       <span className="relative z-10 flex items-center justify-center gap-2">
         {children}
       </span>
-      
-      {/* Glow effect for primary variant */}
-      {variant === 'primary' && (
-        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-glow pointer-events-none" />
-      )}
     </motion.button>
   )
 }

@@ -22,7 +22,7 @@ export default function SavingsCalculator() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16">
+    <div className="bg-gray-50 dark:bg-gray-900 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Calculate your savings with Huntaze</h2>
@@ -72,11 +72,7 @@ export default function SavingsCalculator() {
                   key={plan}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`p-6 rounded-xl ${
-                    plan === 'grow' 
-                      ? 'bg-gradient-to-br from-purple-100 to-pink-100 border-2 border-purple-300' 
-                      : 'bg-gray-50'
-                  }`}
+                  className={`p-6 rounded-xl ${plan === 'grow' ? 'bg-white dark:bg-gray-900 border-2 border-purple-200 dark:border-purple-800' : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800'}`}
                 >
                   <h3 className="font-bold text-lg capitalize mb-2">{plan}</h3>
                   <p className="text-sm text-gray-600 mb-4">
@@ -111,8 +107,8 @@ export default function SavingsCalculator() {
             })}
           </div>
 
-          <div className="mt-8 p-4 bg-purple-50 rounded-lg">
-            <p className="text-center text-sm text-purple-800">
+          <div className="mt-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <p className="text-center text-sm text-gray-700 dark:text-gray-300">
               💡 <strong>Tip:</strong> With the Grow plan you save {calculateSavings('grow').yearlySavings.toFixed(0)}€ per year —
               that’s like getting {Math.floor(calculateSavings('grow').yearlySavings / 66)} months free!
             </p>

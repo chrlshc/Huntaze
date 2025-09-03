@@ -307,17 +307,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {ofSyncing && <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 animate-pulse z-50" />}
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {ofSyncing && <div className="fixed top-0 left-0 right-0 h-1 bg-purple-600 animate-pulse z-50" />}
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/25">
+              <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-xl">H</span>
               </div>
-              <span className="font-bold text-xl text-gray-900">Huntaze</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">Huntaze</span>
             </Link>
             <div className="flex items-center gap-4">
               <Link href="/billing" className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg text-sm font-medium text-purple-700 hover:bg-purple-100 transition-colors">
@@ -339,7 +339,7 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div className="flex">
         {/* Sidebar */}
-        <aside className="hidden lg:block w-72 bg-white border-r border-gray-200 min-h-screen">
+        <aside className="hidden lg:block w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-screen">
           <div className="p-6">
             {/* Onboarding Alert */}
             {onboarding && !onboarding.completed && (
@@ -539,9 +539,9 @@ export default function DashboardPage() {
                   {/* Instagram */}
                   <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
-                        <Camera className="w-6 h-6 text-pink-600" />
-                      </div>
+              <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30">
+                <Camera className="w-6 h-6 text-pink-600" />
+              </div>
                       <h3 className="font-bold text-gray-900">Instagram</h3>
                     </div>
                     <p className="text-sm text-gray-500 mb-4">Coming soon</p>
@@ -560,9 +560,9 @@ export default function DashboardPage() {
                       <div>
                         <p className="text-sm text-gray-500 mb-4">@{tiktokUser.display_name}</p>
                         <div className="space-y-2">
-                          <Link href="/social/tiktok/upload" className="block w-full py-2.5 text-sm text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all font-medium">
-                            Upload Video
-                          </Link>
+                      <Link href="/social/tiktok/upload" className="block w-full py-2.5 text-sm text-center bg-black hover:bg-gray-900 text-white rounded-xl transition-all font-medium">
+                        Upload Video
+                      </Link>
                           <button 
                             onClick={async () => {
                               await fetch('/api/tiktok/disconnect', { method: 'POST' });
@@ -604,7 +604,7 @@ export default function DashboardPage() {
 
             {/* Right: Quick Actions */}
             <div className="space-y-6">
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200 p-6">
+              <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 bg-white dark:bg-gray-900">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
                 <div className="space-y-3">
                   {quickActions.map((action, index) => {

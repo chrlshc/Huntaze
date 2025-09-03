@@ -105,14 +105,14 @@ export default function PricingClient({ plans }: PricingClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Section - Simplified */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Choose your plan
           </h1>
-          <p className="text-lg text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
             Start free. Upgrade anytime. No hidden fees.
           </p>
             
@@ -180,11 +180,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative rounded-2xl p-8 min-h-[32rem] flex flex-col ${
-                  isPro
-                    ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-2xl scale-105'
-                    : 'elevated-card hover:shadow-md transition-shadow'
-                }`}
+                className={`relative rounded-2xl p-8 min-h-[32rem] flex flex-col elevated-card hover:shadow-md transition-shadow ${isPro ? 'ring-2 ring-purple-300 dark:ring-purple-700' : ''}`}
               >
                 {plan.badge && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -195,45 +191,31 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 )}
 
                 <div className="text-center mb-8">
-                  <h3 className={`text-2xl font-bold mb-2 ${
-                    isPro ? 'text-white' : 'text-gray-900 dark:text-white'
-                  }`}>
+                  <h3 className={`text-2xl font-bold mb-2 text-gray-900 dark:text-white`}>
                     {plan.name}
                   </h3>
-                  <p className={`text-sm mb-4 ${
-                    isPro ? 'text-purple-100' : 'text-gray-700 dark:text-gray-200'
-                  }`}>
+                  <p className={`text-sm mb-4 text-gray-700 dark:text-gray-400`}>
                     {plan.description}
                   </p>
                   <div className="flex items-baseline justify-center">
-                    <span className={`text-5xl font-bold ${
-                      isPro ? 'text-white' : 'text-gray-900 dark:text-white'
-                    }`}>
+                    <span className={`text-5xl font-bold text-gray-900 dark:text-white`}>
                       ${billingPeriod === 'yearly' ? yearlyPrice : monthlyPrice}
                     </span>
-                    <span className={`ml-2 ${
-                      isPro ? 'text-purple-100' : 'text-gray-700 dark:text-gray-200'
-                    }`}>
+                    <span className={`ml-2 text-gray-700 dark:text-gray-400`}>
                       /mo
                     </span>
                   </div>
                   {billingPeriod === 'yearly' && monthlyPrice !== '0' && (
-                    <p className={`text-sm mt-2 ${
-                      isPro ? 'text-purple-100' : 'text-green-600'
-                    }`}>
+                    <p className={`text-sm mt-2 text-green-600`}>
                       Save ${parseInt(monthlyPrice) * 2.4}/year
                     </p>
                   )}
                   {plan.commission && (
                     <div className="mt-4 pt-4 border-t border-opacity-20 border-current">
-                      <p className={`text-lg font-semibold ${
-                        isPro ? 'text-white' : 'text-gray-900 dark:text-white'
-                      }`}>
+                      <p className={`text-lg font-semibold text-gray-900 dark:text-white`}>
                         {plan.commission} platform fee
                       </p>
-                      <p className={`text-xs ${
-                        isPro ? 'text-purple-100' : 'text-gray-700 dark:text-gray-200'
-                      }`}>
+                      <p className={`text-xs text-gray-700 dark:text-gray-400`}>
                         Revenue cap: {plan.revenueCap}
                       </p>
                     </div>
@@ -259,11 +241,9 @@ export default function PricingClient({ plans }: PricingClientProps) {
                   onClick={() => handleSubscribe(plan.priceId || plan.name.toLowerCase())}
                   disabled={loading === (plan.priceId || plan.name.toLowerCase())}
                   className={`block w-full py-4 px-6 rounded-lg font-semibold transition-all text-center ${
-                    isPro
-                      ? 'bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 transform shadow-lg'
-                      : plan.isPremium
-                      ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 hover:from-yellow-500 hover:to-yellow-600 hover:scale-105 transform'
-                      : 'bg-gray-900 text-white hover:bg-gray-800 hover:scale-105 transform'
+                    plan.isPremium
+                      ? 'bg-amber-400 text-gray-900 hover:bg-amber-500'
+                      : 'bg-purple-600 text-white hover:bg-purple-700'
                   } ${loading === (plan.priceId || plan.name.toLowerCase()) ? 'opacity-75 cursor-wait' : ''}`}
                 >
                   {loading === (plan.priceId || plan.name.toLowerCase()) ? 'Loading...' : plan.cta}
@@ -315,9 +295,9 @@ export default function PricingClient({ plans }: PricingClientProps) {
       {/* Comparison removed to keep page focused */}
 
       {/* Real Savings Examples */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16">
+      <div className="bg-gray-50 dark:bg-gray-900 py-16 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
             See How Much You&apos;ll Save
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -396,7 +376,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Compliance & Safety</h3>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-200">
               <li>AI provides smart replies (suggestions). You approve before sending.</li>
-              <li>OnlyFans integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Fansly, or Meta.</li>
+              <li>OnlyFans integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Instagram, TikTok, Reddit, or Meta.</li>
             </ul>
           </div>
         </div>
