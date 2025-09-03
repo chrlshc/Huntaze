@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/huntaze-favicon.png", type: "image/png" },
       { url: "/favicon.ico" }
     ],
     apple: "/apple-touch-icon.png",

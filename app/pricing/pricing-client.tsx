@@ -112,7 +112,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Choose your plan
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto">
             Start free. Upgrade anytime. No hidden fees.
           </p>
             
@@ -150,7 +150,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
 
       {/* Trust Indicators - Simplified */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 dark:text-gray-300">
+        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-700 dark:text-gray-200">
           <span className="flex items-center gap-2">
             <Check className="w-4 h-4 text-green-600" />
             Free trial on all plans
@@ -201,7 +201,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                     {plan.name}
                   </h3>
                   <p className={`text-sm mb-4 ${
-                    isPro ? 'text-purple-100' : 'text-gray-600 dark:text-gray-300'
+                    isPro ? 'text-purple-100' : 'text-gray-700 dark:text-gray-200'
                   }`}>
                     {plan.description}
                   </p>
@@ -212,7 +212,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                       ${billingPeriod === 'yearly' ? yearlyPrice : monthlyPrice}
                     </span>
                     <span className={`ml-2 ${
-                      isPro ? 'text-purple-100' : 'text-gray-600 dark:text-gray-300'
+                      isPro ? 'text-purple-100' : 'text-gray-700 dark:text-gray-200'
                     }`}>
                       /mo
                     </span>
@@ -232,7 +232,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                         {plan.commission} platform fee
                       </p>
                       <p className={`text-xs ${
-                        isPro ? 'text-purple-100' : 'text-gray-600 dark:text-gray-300'
+                        isPro ? 'text-purple-100' : 'text-gray-700 dark:text-gray-200'
                       }`}>
                         Revenue cap: {plan.revenueCap}
                       </p>
@@ -247,7 +247,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                         isPro ? 'text-purple-200' : 'text-green-500'
                       }`} />
                       <span className={`text-sm ${
-                        isPro ? 'text-white' : 'text-gray-700 dark:text-gray-300'
+                        isPro ? 'text-white' : 'text-gray-700 dark:text-gray-200'
                       }`}>
                         {feature}
                       </span>
@@ -273,7 +273,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                     type="button"
                     onClick={() => setDetailsPlan((plan.priceId || plan.name.toLowerCase()).toLowerCase())}
                     className={`text-sm underline ${
-                      isPro ? 'text-purple-100 hover:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                      isPro ? 'text-purple-100 hover:text-white' : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     View details
@@ -325,17 +325,17 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $2k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Agency (50%):</span>
+                  <span className="text-gray-700 dark:text-gray-200">With Agency (50%):</span>
                   <span className="text-red-600 font-bold">-$1,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Huntaze STARTER (7%):</span>
+                  <span className="text-gray-700 dark:text-gray-200">With Huntaze STARTER (7%):</span>
                   <span className="text-green-600 font-bold">-$159</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
                     <span className="font-bold">You save:</span>
-                    <span className="text-green-600 font-bold text-lg">$841/month</span>
+                    <span className="text-green-600 font-bold text-base md:text-lg">$841/mo</span>
                   </div>
                 </div>
               </div>
@@ -345,17 +345,17 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $10k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Agency (50%):</span>
+                  <span className="text-gray-700 dark:text-gray-200">With Agency (50%):</span>
                   <span className="text-red-600 font-bold">-$5,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Huntaze SCALE (3%):</span>
+                  <span className="text-gray-700 dark:text-gray-200">With Huntaze SCALE (3%):</span>
                   <span className="text-green-600 font-bold">-$379</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
                     <span className="font-bold">You save:</span>
-                    <span className="text-green-600 font-bold text-lg">$4,621/month</span>
+                    <span className="text-green-600 font-bold text-base md:text-lg">$4,621/mo</span>
                   </div>
                 </div>
               </div>
@@ -365,17 +365,17 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-800 mb-4">Creator making $50k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Agency (50%):</span>
+                  <span className="text-gray-700 dark:text-gray-200">With Agency (50%):</span>
                   <span className="text-red-600 font-bold">-$25,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">With Huntaze ENTERPRISE (1.5%):</span>
+                  <span className="text-gray-700 dark:text-gray-200">With Huntaze ENTERPRISE (1.5%):</span>
                   <span className="text-green-600 font-bold">-$949</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
                     <span className="font-bold">You save:</span>
-                    <span className="text-green-600 font-bold text-lg">$24,051/month</span>
+                    <span className="text-green-600 font-bold text-base md:text-lg">$24,051/mo</span>
                   </div>
                 </div>
               </div>
@@ -394,7 +394,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elevated-card rounded-xl p-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Compliance & Safety</h3>
-            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-200">
               <li>AI provides smart replies (suggestions). You approve before sending.</li>
               <li>OnlyFans integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Fansly, or Meta.</li>
             </ul>
@@ -421,7 +421,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
               </h3>
               <button onClick={() => setDetailsPlan(null)} className="text-gray-500 hover:text-gray-800 dark:hover:text-white">✕</button>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Marketing feature list</p>
+            <p className="text-sm text-gray-700 dark:text-gray-200 mb-4">Marketing feature list</p>
             <ul className="space-y-2 list-disc pl-5 text-gray-800 dark:text-gray-200">
               {(detailsByPlan[detailsPlan] || []).map((d, i) => (
                 <li key={i}>{d}</li>
