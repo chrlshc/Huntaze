@@ -156,24 +156,24 @@ export default function LiveChatDemo() {
         animate={{ scale: 1, opacity: 1 }}
         className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full max-h-[600px]"
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
+        {/* Header (neutral, professional) */}
+        <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                  <Bot className="w-6 h-6 text-gray-700 dark:text-gray-200" />
                 </div>
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-purple-600"></div>
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white dark:border-gray-900"></div>
               </div>
               <div>
-                <h3 className="text-white font-semibold">AI Assistant</h3>
-                <p className="text-xs text-purple-100">Always online • Instant replies</p>
+                <h3 className="text-gray-900 dark:text-white font-semibold">AI Assistant</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Always online • Instant replies</p>
               </div>
             </div>
-            <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
-              <Sparkles className="w-3 h-3 text-white" />
-              <span className="text-xs text-white font-medium">AI</span>
+            <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full">
+              <Sparkles className="w-3 h-3 text-gray-600 dark:text-gray-300" />
+              <span className="text-xs text-gray-700 dark:text-gray-200 font-medium">AI</span>
             </div>
           </div>
         </div>
