@@ -72,7 +72,7 @@ export default function CreatorTestimonials() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Real creators, real results
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-[var(--text-secondary-dark)]">
             See how creators are transforming their business with Huntaze
           </p>
         </motion.div>
@@ -127,11 +127,11 @@ export default function CreatorTestimonials() {
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-shrink-0">
                       <DollarSign className="w-5 h-5 text-green-600" />
-                      <span className="text-gray-600 dark:text-gray-300">Monthly Revenue</span>
+                      <span className="text-gray-600 dark:text-gray-300 text-sm md:text-base">Monthly Revenue</span>
                     </div>
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{current.revenue}</span>
+                    <span className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{current.revenue}</span>
                   </div>
 
                   <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
@@ -139,7 +139,7 @@ export default function CreatorTestimonials() {
                       <TrendingUp className="w-5 h-5 text-purple-600" />
                       <span className="text-gray-600 dark:text-gray-300">Revenue Growth</span>
                     </div>
-                    <span className="text-2xl font-bold text-green-600">{current.growth}</span>
+                    <span className="text-xl md:text-2xl font-semibold text-green-600 dark:text-green-500">{current.growth}</span>
                   </div>
 
                   <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
@@ -155,14 +155,7 @@ export default function CreatorTestimonials() {
                   </div>
                 </div>
 
-                {/* Dashboard preview */}
-                <div className="mt-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-4 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700">
-                  <p className="text-sm font-medium mb-2">Live Dashboard Preview</p>
-                  <div className="text-3xl font-bold animate-pulse">
-                    ${Math.floor(Math.random() * 50000 + 30000).toLocaleString()}
-                  </div>
-                  <p className="text-sm opacity-90">This month\'s earnings</p>
-                </div>
+                {/* Remove animated dashboard preview */}
               </div>
             </div>
           </motion.div>
