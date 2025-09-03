@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import PremiumButton from '@/components/premium-button';
 import PremiumCard from '@/components/premium-card';
 import CreatorTestimonials from '@/components/creator-testimonials';
+import FAQSection from '@/components/faq-section';
 
 export default function HomePageImproved() {
   useEffect(() => {
@@ -97,30 +98,30 @@ export default function HomePageImproved() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Traditional Agency */}
             <div className="bg-white dark:bg-gray-800/60 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 relative">
-              <div className="absolute -top-3 left-6 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-sm font-medium">
+              <div className="absolute -top-3 left-6 bg-red-100 dark:bg-red-900/30 text-[var(--brand-red)] dark:text-red-400 px-3 py-1 rounded-full text-sm font-medium">
                 Traditional Agency
               </div>
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-gray-700 dark:text-gray-400 font-medium">Their cut</span>
-                  <span className="text-3xl font-bold text-red-600">50%</span>
+                  <span className="text-3xl font-bold text-[var(--brand-red)]">50%</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <span className="text-red-500">✗</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">You lose control</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">You lose control</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-red-500">✗</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">Generic responses</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">Generic responses</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-red-500">✗</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">Long contracts</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">Long contracts</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-red-500">✗</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">Hidden fees</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">Hidden fees</span>
                   </div>
                 </div>
               </div>
@@ -138,25 +139,25 @@ export default function HomePageImproved() {
               </div>
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-700 dark:text-gray-400 font-medium">Platform fee</span>
+                  <span className="text-gray-700 dark:text-gray-400 font-medium">Huntaze Cut</span>
                   <span className="text-3xl font-bold text-green-600">1.5-7%</span>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <span className="text-green-500">✓</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">You keep control</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">You keep control</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-green-500">✓</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">AI learns your style</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">AI learns your style</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-green-500">✓</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">Cancel anytime</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">Cancel anytime</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-green-500">✓</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-400">Transparent pricing</span>
+                    <span className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">Transparent pricing</span>
                   </div>
                 </div>
               </div>
@@ -166,7 +167,7 @@ export default function HomePageImproved() {
           {/* Savings Calculator */}
           <div className="mt-12 bg-gray-100 dark:bg-gray-800/60 rounded-2xl p-8 text-center border border-gray-200 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              If you're making $10k/month
+              If you're making $10k/month with Huntaze Pro
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               <div>
@@ -428,49 +429,7 @@ export default function HomePageImproved() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Left: FAQ */}
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
-                Frequently asked questions
-              </h2>
-              
-              <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Is my content safe and private?
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-400">
-                    Yes. We use bank-level encryption and never store your content. You maintain full ownership and control.
-                  </p>
-                </div>
-                
-                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    How does the AI learn my style?
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-400">
-                    The AI analyzes your past conversations to understand your tone, personality, and communication patterns. You can always review and approve messages before sending.
-                  </p>
-                </div>
-                
-                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Can I cancel anytime?
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-400">
-                    Absolutely. No long-term contracts, no cancellation fees. Cancel or change your plan anytime from your dashboard.
-                  </p>
-                </div>
-                
-                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    What's the difference between plans?
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-400">
-                    Plans differ in message limits, platform integrations, and commission rates. Higher plans have lower fees and more features. Start with any plan and upgrade as you grow.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <FAQSection />
             
             {/* Right: AI Demo */}
             <div>

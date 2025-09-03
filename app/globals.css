@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* High contrast text colors for dark mode (WCAG AAA compliant) */
+  --text-primary-dark: #FFFFFF;
+  --text-secondary-dark: #E0E0E0;
+  --text-tertiary-dark: #CCCCCC;
+  --text-muted-dark: #B3B3B3;
+  
+  /* Light mode text */
+  --text-primary-light: #111827;
+  --text-secondary-light: #374151;
+  --text-tertiary-light: #4B5563;
+  --text-muted-light: #6B7280;
+  
+  /* Brand colors */
+  --brand-red: #DC2626;
+  --brand-purple: #9333EA;
+}
+
 /* Minimal UI mode: hide verbose copy and secondary sections */
 [data-ui="minimal"] .long-copy,
 [data-ui="minimal"] .help-text,
