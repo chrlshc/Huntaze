@@ -193,28 +193,6 @@ export default function HomePageImproved() {
         </div>
       </section>
 
-      {/* Compact value highlights */}
-      <section className="py-16 md:py-24 px-6 md:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border dark:border-gray-700 text-center">
-              <MessageSquare className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-              <div className="font-semibold">AI replies in your style</div>
-              <div className="text-sm text-gray-700 dark:text-gray-400">24/7 conversations that convert</div>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border dark:border-gray-700 text-center">
-              <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-              <div className="font-semibold">Know what sells</div>
-              <div className="text-sm text-gray-700 dark:text-gray-400">Clear revenue and fan insights</div>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border dark:border-gray-700 text-center">
-              <Settings className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-              <div className="font-semibold">Automate the busywork</div>
-              <div className="text-sm text-gray-700 dark:text-gray-400">Schedule, DM, and optimize</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Value Props - 3 Column Clean */}
       <section id="learn" className="py-20 md:py-32 px-6 md:px-8">
@@ -233,9 +211,9 @@ export default function HomePageImproved() {
             <PremiumCard>
               <div className="text-center p-6">
                 <motion.div 
-                  className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
+                  className="w-16 h-16 bg-purple-100 dark:bg-purple-800/40 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <MessageSquare className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </motion.div>
@@ -255,9 +233,9 @@ export default function HomePageImproved() {
             <PremiumCard glowColor="pink">
               <div className="text-center p-6">
                 <motion.div 
-                  className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
+                  className="w-16 h-16 bg-purple-100 dark:bg-purple-800/40 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
                 </motion.div>
@@ -409,69 +387,66 @@ export default function HomePageImproved() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 px-6 md:px-8 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Frequently asked questions
-            </h2>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Is my content safe and private?
-              </h3>
-              <p className="text-gray-700 dark:text-gray-400">
-                Yes. We use bank-level encryption and never store your content. You maintain full ownership and control.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                How does the AI learn my style?
-              </h3>
-              <p className="text-gray-700 dark:text-gray-400">
-                The AI analyzes your past conversations to understand your tone, personality, and communication patterns. You can always review and approve messages before sending.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Can I cancel anytime?
-              </h3>
-              <p className="text-gray-700 dark:text-gray-400">
-                Absolutely. No long-term contracts, no cancellation fees. Cancel or change your plan anytime from your dashboard.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                What's the difference between plans?
-              </h3>
-              <p className="text-gray-700 dark:text-gray-400">
-                Plans differ in message limits, platform integrations, and commission rates. Higher plans have lower fees and more features. Start with any plan and upgrade as you grow.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Product showcase section removed per request */}
-
-      {/* Live AI Chat Demo */}
-      <section className="py-20 px-6 md:px-8">
+      {/* Combined FAQ & AI Demo Section */}
+      <section className="py-20 md:py-32 px-6 md:px-8 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Try our AI in action
-            </h2>
-            <p className="text-lg text-gray-700 dark:text-gray-400">
-              Chat with our AI assistant and see how it adapts to your style
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            {/* Left: FAQ */}
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-8">
+                Frequently asked questions
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Is my content safe and private?
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-400">
+                    Yes. We use bank-level encryption and never store your content. You maintain full ownership and control.
+                  </p>
+                </div>
+                
+                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    How does the AI learn my style?
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-400">
+                    The AI analyzes your past conversations to understand your tone, personality, and communication patterns. You can always review and approve messages before sending.
+                  </p>
+                </div>
+                
+                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Can I cancel anytime?
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-400">
+                    Absolutely. No long-term contracts, no cancellation fees. Cancel or change your plan anytime from your dashboard.
+                  </p>
+                </div>
+                
+                <div className="bg-white dark:bg-gray-800/60 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    What's the difference between plans?
+                  </h3>
+                  <p className="text-gray-700 dark:text-gray-400">
+                    Plans differ in message limits, platform integrations, and commission rates. Higher plans have lower fees and more features. Start with any plan and upgrade as you grow.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right: AI Demo */}
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Try our AI in action
+              </h2>
+              <p className="text-lg text-gray-700 dark:text-gray-400 mb-8">
+                Chat with our AI assistant and see how it adapts to your style
+              </p>
+              <LiveChatDemo />
+            </div>
           </div>
-          <LiveChatDemo />
         </div>
       </section>
 
@@ -481,23 +456,19 @@ export default function HomePageImproved() {
       </div>
 
       {/* Final CTA */}
-      <section className="py-16 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto text-center px-6 md:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Start keeping more of your revenue</h2>
-          <p className="text-base md:text-lg text-purple-100 mb-6">Switch in minutes. No long contracts.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Start keeping more of your revenue</h2>
+          <p className="text-base md:text-lg text-gray-700 dark:text-gray-400 mb-6">Switch in minutes. No long contracts.</p>
           <div className="flex justify-center">
             <Link href="/join">
-              <PremiumButton 
-                variant="secondary"
-                size="lg" 
-                className="bg-white text-purple-600 hover:bg-gray-100 shadow-xl"
-              >
+              <PremiumButton size="lg">
                 Start free trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </PremiumButton>
             </Link>
           </div>
-          <p className="text-purple-100 mt-4">✓ Free trial ✓ Cancel anytime</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-4">✓ Free trial ✓ Cancel anytime</p>
         </div>
       </section>
     </div>

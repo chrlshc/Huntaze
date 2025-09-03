@@ -134,7 +134,7 @@ export function DashboardMockup() {
                   <option>90 Days</option>
                 </select>
               </div>
-              <div className="flex items-baseline gap-3">
+              <div className="flex items-baseline gap-3 ml-4">
                 <span className="text-5xl font-black text-gray-900 dark:text-white">$142,847</span>
                 <span className="text-lg text-green-600 dark:text-green-400 font-bold bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-lg">
                   ↑ 23%
@@ -165,19 +165,19 @@ export function ChatInterfaceMockup() {
       className="bg-gray-900 rounded-2xl p-1 shadow-2xl"
     >
       <div className="bg-white rounded-2xl overflow-hidden">
-        {/* Chat Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
+        {/* Chat Header (neutral) */}
+        <div className="bg-white border-b border-gray-200 p-4 dark:bg-gray-900 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full backdrop-blur-sm"></div>
+              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full"></div>
               <div>
-                <h4 className="text-white font-semibold">AI Assistant</h4>
-                <p className="text-xs text-purple-100">Responding as Sarah</p>
+                <h4 className="text-gray-900 dark:text-white font-semibold">AI Assistant</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Responding as Sarah</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-              <span className="text-xs text-white">Active</span>
+              <span className="text-xs text-gray-700 dark:text-gray-300">Active</span>
             </div>
           </div>
         </div>

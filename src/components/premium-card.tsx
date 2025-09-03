@@ -7,12 +7,14 @@ interface PremiumCardProps {
   children: ReactNode
   className?: string
   glowColor?: string
+  fancy?: boolean
 }
 
 export default function PremiumCard({ 
   children, 
   className = '',
-  glowColor = 'purple'
+  glowColor = 'purple',
+  fancy = false,
 }: PremiumCardProps) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -45,23 +47,25 @@ export default function PremiumCard({
       className={`relative group ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{
+      style={fancy ? {
         transformStyle: 'preserve-3d',
         perspective: '1000px',
-      }}
+      } : undefined}
     >
       <motion.div
-        className="relative bg-white dark:bg-gray-950 rounded-xl shadow-lg transition-all duration-300 group-hover:shadow-2xl border dark:border-gray-800"
-        style={{
+        className="relative bg-white dark:bg-gray-950 rounded-xl shadow-md transition-all duration-200 group-hover:shadow-lg border border-gray-200 dark:border-gray-800"
+        style={fancy ? {
           rotateX,
           rotateY,
           transformStyle: 'preserve-3d',
-        }}
-        whileHover={{ scale: 1.02 }}
+        } : undefined}
+        whileHover={{ scale: 1.01 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
-        {/* Gradient border effect */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-lg" />
+        {/* Gradient border effect (fancy only) */}
+        {fancy && (
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-lg" />
+        )}
         
         {/* Card content */}
         <div className="relative z-10 bg-white dark:bg-gray-950 rounded-xl p-1">
@@ -70,21 +74,23 @@ export default function PremiumCard({
           </div>
         </div>
         
-        {/* Glow effect */}
-        <motion.div
-          className="absolute inset-0 rounded-xl pointer-events-none"
-          style={{
-            background: `radial-gradient(circle at ${x.get() + 50}% ${y.get() + 50}%, ${glowColors[glowColor as keyof typeof glowColors]}, transparent 70%)`,
-          }}
-          animate={{
-            opacity: [0, 0.3, 0],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        {/* Glow effect (fancy only) */}
+        {fancy && (
+          <motion.div
+            className="absolute inset-0 rounded-xl pointer-events-none"
+            style={{
+              background: `radial-gradient(circle at ${x.get() + 50}% ${y.get() + 50}%, ${glowColors[glowColor as keyof typeof glowColors]}, transparent 70%)`,
+            }}
+            animate={{
+              opacity: [0, 0.3, 0],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        )}
       </motion.div>
     </motion.div>
   )
