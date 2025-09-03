@@ -12,6 +12,7 @@ const plans = [
   {
     name: 'STARTER',
     price: '$19/mo',
+    freeTrialDays: 7,
     description: 'Perfect for emerging creators',
     color: 'green',
     commission: '7%',
@@ -31,6 +32,7 @@ const plans = [
   {
     name: 'PRO',
     price: '$39/mo',
+    freeTrialDays: 7,
     description: 'For growing creators up to $5k/month',
     color: 'purple',
     badge: 'MOST POPULAR',
@@ -51,6 +53,7 @@ const plans = [
   {
     name: 'SCALE',
     price: '$79/mo',
+    freeTrialDays: 7,
     description: 'For established creators up to $15k/month',
     color: 'blue',
     badge: 'BEST VALUE',
@@ -71,6 +74,7 @@ const plans = [
   {
     name: 'ENTERPRISE',
     price: '$199/mo',
+    freeTrialDays: 7,
     description: 'For top creators and agencies',
     color: 'gold',
     isPremium: true,

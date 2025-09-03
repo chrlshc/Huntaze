@@ -1,4 +1,24 @@
-/* Mobile-specific styles */
+/* Mobile-specific styles - WCAG 2.5.5 Compliant */
+
+/* CSS Variables for high contrast mode */
+:root {
+  --tap-target-min: 44px;
+  --tap-spacing-min: 8px;
+  --outdoor-contrast: 7;
+}
+
+/* High contrast mode for outdoor visibility */
+@media (prefers-contrast: high) {
+  :root {
+    --text-outdoor: #000000;
+    --bg-outdoor: #FFFFFF;
+  }
+  
+  .dark {
+    --text-outdoor: #FFFFFF;
+    --bg-outdoor: #000000;
+  }
+}
 
 /* Hide scrollbar but keep functionality */
 .scrollbar-hide {
@@ -148,6 +168,10 @@
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s infinite;
   }
+  
+  .dark .skeleton {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  }
 
   @keyframes skeleton-loading {
     0% {
@@ -155,6 +179,79 @@
     }
     100% {
       background-position: -200% 0;
+    }
+  }
+  
+  /* OLED optimizations for dark mode */
+  @media (prefers-color-scheme: dark) {
+    .oled-black {
+      background-color: #000000 !important;
+    }
+    
+    /* Higher contrast borders for outdoor visibility */
+    .dark .border-gray-700 {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .dark .border-gray-800 {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  /* Ensure tap targets meet WCAG 2.5.5 */
+  .tap-target-enforce {
+    position: relative;
+    min-height: var(--tap-target-min);
+    min-width: var(--tap-target-min);
+  }
+  
+  /* Add invisible tap padding for small elements */
+  .tap-extend::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+    left: -8px;
+    z-index: 1;
+  }
+  
+  /* One-handed navigation optimization */
+  .thumb-friendly {
+    max-width: calc(100vw - 32px);
+    margin: 0 auto;
+  }
+  
+  @media (max-height: 700px) {
+    /* Optimize for smaller phones */
+    .mobile-compact {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    
+    .mobile-compact-text {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+  }
+  
+  /* iOS-specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    input, textarea, select {
+      font-size: 16px !important; /* Prevents zoom */
+    }
+    
+    /* Fix for iOS bottom bar */
+    .ios-bottom-fix {
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+  }
+  
+  /* Android-specific optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets for Android */
+    .android-touch {
+      padding: 12px 16px;
     }
   }
 }

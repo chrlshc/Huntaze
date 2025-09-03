@@ -31,7 +31,7 @@ const navigation = {
       {
         name: 'Content Scheduler',
         description: 'Post at optimal times automatically',
-        href: '/features/automation',
+        href: '/features/content-scheduler',
         icon: Calendar
       },
       {
@@ -78,7 +78,7 @@ const navigation = {
       {
         name: 'System Status',
         description: 'Service availability updates',
-        href: '/about',
+        href: '/status',
         icon: Shield
       }
     ]
@@ -194,7 +194,7 @@ export default function HeaderImproved() {
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-700 dark:text-gray-200">{item.description}</p>
+                              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -240,7 +240,7 @@ export default function HeaderImproved() {
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-700 dark:text-gray-200">{item.description}</p>
+                              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{item.description}</p>
                             </div>
                           </Link>
                         ))}
@@ -292,7 +292,7 @@ export default function HeaderImproved() {
                     >
                       <div className="p-4 border-b border-gray-100 dark:border-gray-800">
                         <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                        <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{user.email}</p>
                       </div>
                       <div className="p-2">
                         <Link
@@ -300,7 +300,7 @@ export default function HeaderImproved() {
                           className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                           onClick={() => setActiveDropdown(null)}
                         >
-                          <BarChart3 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <BarChart3 className="w-4 h-4 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
                           <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
                         </Link>
                         <Link
@@ -308,14 +308,14 @@ export default function HeaderImproved() {
                           className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                           onClick={() => setActiveDropdown(null)}
                         >
-                          <Settings className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <Settings className="w-4 h-4 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
                           <span className="text-gray-700 dark:text-gray-300">Settings</span>
                         </Link>
                         <button
                           onClick={handleLogout}
                           className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
                         >
-                          <LogOut className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <LogOut className="w-4 h-4 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
                           <span className="text-gray-700 dark:text-gray-300">Logout</span>
                         </button>
                       </div>
@@ -417,7 +417,7 @@ export default function HeaderImproved() {
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-600 dark:text-gray-400">Theme</span>
+                    <span className="text-gray-600 dark:text-[var(--text-secondary-dark)]">Theme</span>
                     <ThemeToggle />
                   </div>
                   
@@ -435,7 +435,7 @@ export default function HeaderImproved() {
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                            <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{user.email}</p>
                           </div>
                         </div>
                       </div>
@@ -445,7 +445,7 @@ export default function HeaderImproved() {
                         className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <BarChart3 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <BarChart3 className="w-5 h-5 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
                         <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
                       </Link>
                       
@@ -454,7 +454,7 @@ export default function HeaderImproved() {
                         className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <Settings className="w-5 h-5 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
                         <span className="text-gray-700 dark:text-gray-300">Settings</span>
                       </Link>
                       
@@ -465,7 +465,7 @@ export default function HeaderImproved() {
                         }}
                         className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left"
                       >
-                        <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <LogOut className="w-5 h-5 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
                         <span className="text-gray-700 dark:text-gray-300">Logout</span>
                       </button>
                     </>
