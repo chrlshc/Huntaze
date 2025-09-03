@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
               Smart Analytics
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 dark:text-gray-400 max-w-3xl mx-auto">
               AI-powered insights to understand your fans, optimize content, and maximize revenue
             </p>
           </motion.div>
@@ -110,7 +110,7 @@ export default function AnalyticsPage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white">
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-purple-600 dark:text-purple-400">
                   {item.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -177,7 +177,7 @@ export default function AnalyticsPage() {
                   Prediction accuracy for fan behavior
                 </p>
               </div>
-              <div className="space-y-4">
+            <div className="space-y-4">
               <div className="elevated-card p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Churn Risk Detection</span>
@@ -225,16 +225,16 @@ export default function AnalyticsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
             Make data-driven decisions
           </h2>
-          <p className="text-xl text-purple-100 mb-8">
+          <p className="text-xl text-gray-700 dark:text-gray-400 mb-8">
             Stop guessing what works. Know exactly what your fans want.
           </p>
           <Link href="/join">
-            <PremiumButton variant="secondary" size="lg" className="bg-white text-purple-600">
+            <PremiumButton size="lg">
               Get Your Analytics Dashboard
             </PremiumButton>
           </Link>

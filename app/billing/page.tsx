@@ -107,7 +107,7 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Premium Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -180,14 +180,14 @@ export default function BillingPage() {
             >
               {/* Popular Badge */}
               {plan.badge && (
-                <div className={`absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r ${plan.gradient} text-white text-sm font-bold rounded-full shadow-lg`}>
+                <div className={`absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-purple-600 text-white text-sm font-bold rounded-full shadow-sm`}>
                   {plan.badge}
                 </div>
               )}
 
               {/* Plan Header */}
               <div className="p-8 pb-6">
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${plan.gradient} p-3 mb-4`}>
+                <div className={`w-14 h-14 rounded-xl bg-purple-600 p-3 mb-4`}>
                   {plan.id === 'starter' && <Rocket className="w-full h-full text-white" />}
                   {plan.id === 'professional' && <Crown className="w-full h-full text-white" />}
                   {plan.id === 'enterprise' && <Trophy className="w-full h-full text-white" />}
@@ -218,7 +218,7 @@ export default function BillingPage() {
                 <button
                   className={`w-full py-3 rounded-xl font-medium transition-all ${
                     selectedPlan === plan.id
-                      ? `bg-gradient-to-r ${plan.gradient} text-white shadow-lg`
+                      ? 'bg-purple-600 text-white hover:bg-purple-700'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >

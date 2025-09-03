@@ -78,9 +78,9 @@ export default function OnlyFansMessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      {syncing && <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 animate-pulse z-50" />}
-      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {syncing && <div className="fixed top-0 left-0 right-0 h-1 bg-purple-600 animate-pulse z-50" />}
+      <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
         <div className="px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-6">
@@ -90,7 +90,7 @@ export default function OnlyFansMessagesPage() {
               </Link>
               <div className="flex items-center gap-3">
                 <MessageSquare className="w-6 h-6 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900">OnlyFans</h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">OnlyFans</h1>
               </div>
               {status && (
                 <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${status.connected ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
@@ -98,7 +98,7 @@ export default function OnlyFansMessagesPage() {
                 </span>
               )}
             </div>
-            <button onClick={syncNow} disabled={syncing} className="btn-gradient rounded-xl flex items-center gap-2 hover:shadow-lg transition-all">
+            <button onClick={syncNow} disabled={syncing} className="rounded-xl flex items-center gap-2 hover:shadow-md transition-all bg-purple-600 text-white px-4 py-2 disabled:opacity-60">
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
               <span>{syncing ? 'Syncing…' : 'Sync Now'}</span>
             </button>
@@ -140,8 +140,8 @@ export default function OnlyFansMessagesPage() {
 
         {/* Messages list */}
         <div className="elevated-card rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Messages</h3>
+          <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Messages</h3>
           </div>
           {loading ? (
             <div className="p-6 text-gray-600">Loading…</div>
@@ -168,21 +168,21 @@ export default function OnlyFansMessagesPage() {
                   </div>
 
                   {suggestion[m.id] && (
-                    <div className="mt-3 bg-purple-50 p-3 rounded-lg">
+                    <div className="mt-3 bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
                       <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2 text-purple-700 text-sm">
+                        <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300 text-sm">
                           <Bot className="w-4 h-4" />
                           <span>{Math.round(suggestion[m.id].confidence * 100)}% • {suggestion[m.id].tone}</span>
                         </div>
                       </div>
                       <textarea
-                        className="w-full border border-purple-200 rounded-lg p-2 text-sm"
+                        className="w-full border border-purple-200 dark:border-purple-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg p-2 text-sm"
                         rows={3}
                         value={suggestion[m.id].reply}
                         onChange={(e) => setSuggestion(prev => ({ ...prev, [m.id]: { ...prev[m.id], reply: e.target.value } }))}
                       />
                       <div className="mt-2 flex items-center gap-2">
-                        <button disabled className="px-3 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm flex items-center gap-2">
+                        <button disabled className="px-3 py-2 bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-sm flex items-center gap-2">
                           <Send className="w-4 h-4" />
                           Send (manual only)
                         </button>

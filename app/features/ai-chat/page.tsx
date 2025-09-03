@@ -34,7 +34,7 @@ export default function AIChatPage() {
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
               AI Chat Assistant
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 dark:text-gray-400 max-w-3xl mx-auto">
               Your personal AI that responds instantly in your unique voice and style
             </p>
           </motion.div>
@@ -151,7 +151,7 @@ export default function AIChatPage() {
               {
                 step: "1",
                 title: "Connect Your Accounts",
-                description: "Link your creator platforms in 2 minutes. Supports OnlyFans and Fansly (beta)."
+                description: "Connect Instagram, TikTok, Reddit, and Threads to drive traffic to your OnlyFans. Connect OnlyFans for inbox & sales."
               },
               {
                 step: "2",
@@ -189,16 +189,16 @@ export default function AIChatPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
             Ready to 10x your fan engagement?
           </h2>
-          <p className="text-xl text-purple-100 mb-8">
+          <p className="text-xl text-gray-700 dark:text-gray-400 mb-8">
             Join creators who never miss a message or sale opportunity
           </p>
           <Link href="/join">
-            <PremiumButton variant="secondary" size="lg" className="bg-white text-purple-600">
+            <PremiumButton size="lg">
               Start Free Trial
             </PremiumButton>
           </Link>

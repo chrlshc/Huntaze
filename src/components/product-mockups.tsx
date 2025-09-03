@@ -236,7 +236,7 @@ export function AnalyticsMockup() {
       transition={{ duration: 0.6 }}
       className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
     >
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-gray-50 dark:bg-gray-900 p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Fan Analytics</h3>
@@ -264,7 +264,7 @@ export function AnalyticsMockup() {
             className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:shadow-md border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full shadow-lg"></div>
+              <div className="w-12 h-12 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white text-base">{fan.name}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{fan.messages} messages</p>
@@ -295,15 +295,15 @@ export function AnalyticsMockup() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-4 p-6 pt-0">
-        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/10 p-4 rounded-xl text-center">
+        <div className="p-4 rounded-xl text-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <p className="text-3xl font-black text-gray-900 dark:text-white">87%</p>
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">Retention Rate</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10 p-4 rounded-xl text-center">
+        <div className="p-4 rounded-xl text-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <p className="text-3xl font-black text-gray-900 dark:text-white">$47</p>
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">Avg. Tip Size</p>
         </div>
-        <div className="bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-900/10 p-4 rounded-xl text-center">
+        <div className="p-4 rounded-xl text-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <p className="text-3xl font-black text-gray-900 dark:text-white">2.3x</p>
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">PPV Conv. Rate</p>
         </div>

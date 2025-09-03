@@ -40,32 +40,28 @@ export default function MobileAnalytics() {
       value: '$8,476',
       change: '+32.4%',
       trend: 'up',
-      icon: DollarSign,
-      gradient: 'from-green-500 to-emerald-500'
+      icon: DollarSign
     },
     {
       title: 'Total Fans',
       value: '1,247',
       change: '+18.2%',
       trend: 'up',
-      icon: Users,
-      gradient: 'from-blue-500 to-purple-500'
+      icon: Users
     },
     {
       title: 'Engagement Rate',
       value: '4.8%',
       change: '+0.6%',
       trend: 'up',
-      icon: Heart,
-      gradient: 'from-pink-500 to-red-500'
+      icon: Heart
     },
     {
       title: 'Content Views',
       value: '45.2K',
       change: '+23.4%',
       trend: 'up',
-      icon: Eye,
-      gradient: 'from-purple-500 to-pink-500'
+      icon: Eye
     }
   ];
 
@@ -122,17 +118,17 @@ export default function MobileAnalytics() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-40">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Analytics</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Analytics</h1>
             <div className="flex items-center gap-2">
               <button className="p-2.5 bg-white rounded-full shadow-sm border border-gray-100">
                 <Filter className="w-5 h-5 text-gray-700" />
               </button>
-              <button className="p-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg">
+              <button className="p-2.5 bg-purple-600 hover:bg-purple-700 rounded-full shadow-sm">
                 <Download className="w-5 h-5 text-white" />
               </button>
             </div>
@@ -151,8 +147,8 @@ export default function MobileAnalytics() {
                 onClick={() => setDateRange(range.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   dateRange === range.value
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-gray-200'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
                 }`}
               >
                 {range.label}
@@ -163,7 +159,7 @@ export default function MobileAnalytics() {
       </header>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
         <div className="px-4 py-2 flex gap-6 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
             <button
@@ -177,7 +173,7 @@ export default function MobileAnalytics() {
             >
               {tab.label}
               {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600"></div>
               )}
             </button>
           ))}
@@ -190,10 +186,10 @@ export default function MobileAnalytics() {
           {metrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+              <div key={index} className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`p-2.5 bg-gradient-to-r ${metric.gradient} rounded-xl`}>
-                    <Icon className="w-5 h-5 text-white" />
+                  <div className={`p-2.5 bg-purple-100 dark:bg-purple-900/30 rounded-xl`}>
+                    <Icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   {metric.trend === 'up' ? (
                     <div className="flex items-center gap-1 text-green-600">
@@ -207,8 +203,8 @@ export default function MobileAnalytics() {
                     </div>
                   )}
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
-                <p className="text-sm text-gray-600 mt-1">{metric.title}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{metric.value}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{metric.title}</p>
               </div>
             );
           })}
@@ -217,13 +213,13 @@ export default function MobileAnalytics() {
 
       {/* Revenue Chart Placeholder */}
       <div className="px-4 pb-6">
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-900 mb-4">Revenue Trend</h3>
-          <div className="h-48 bg-gradient-to-t from-purple-50 to-transparent rounded-xl flex items-end">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Revenue Trend</h3>
+          <div className="h-48 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-end">
             {[40, 65, 55, 80, 70, 90, 85, 100, 95, 110].map((height, i) => (
               <div
                 key={i}
-                className="flex-1 mx-0.5 bg-gradient-to-t from-purple-600 to-pink-500 rounded-t"
+                className="flex-1 mx-0.5 bg-purple-600 rounded-t"
                 style={{ height: `${height}%` }}
               />
             ))}
@@ -257,7 +253,7 @@ export default function MobileAnalytics() {
       {/* Top Content */}
       <div className="px-4 pb-6">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-900">Top Content</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">Top Content</h3>
           <Link href="/content" className="text-sm text-purple-600 font-semibold flex items-center gap-1">
             View all
             <ChevronRight className="w-4 h-4" />
@@ -265,12 +261,12 @@ export default function MobileAnalytics() {
         </div>
         <div className="space-y-3">
           {topContent.map((content, index) => (
-            <div key={index} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div key={index} className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-gray-900">{content.title}</h4>
+                <h4 className="font-medium text-gray-900 dark:text-white">{content.title}</h4>
                 <span className="text-sm font-bold text-green-600">{content.revenue}</span>
               </div>
-              <div className="flex items-center gap-4 text-xs text-gray-600">
+              <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
                 <span className="flex items-center gap-1">
                   <Eye className="w-3 h-3" />
                   {content.views}
@@ -287,36 +283,34 @@ export default function MobileAnalytics() {
 
       {/* AI Performance */}
       <div className="px-4 pb-6">
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-white">
+        <div className="elevated-card rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-white/20 backdrop-blur rounded-xl">
-                <Bot className="w-6 h-6 text-white" />
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                <Bot className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <h3 className="font-semibold">AI Performance</h3>
-                <p className="text-sm text-purple-100">Last 7 days</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white">AI Performance</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Last 7 days</p>
               </div>
             </div>
-            <span className="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs font-bold">
-              Excellent
-            </span>
+            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-bold text-gray-700 dark:text-gray-300">Excellent</span>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-3xl font-bold">92%</p>
-              <p className="text-sm text-purple-100">Response Rate</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">92%</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Response Rate</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">1.2m</p>
-              <p className="text-sm text-purple-100">Avg. Response</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white">1.2m</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Avg. Response</p>
             </div>
           </div>
           
-          <div className="mt-4 pt-4 border-t border-white/20">
-            <p className="text-sm text-purple-100 mb-2">AI handled 847 messages this week</p>
-            <Link href="/ai/analytics" className="inline-flex items-center gap-1 text-sm font-semibold">
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">AI handled 847 messages this week</p>
+            <Link href="/ai/analytics" className="inline-flex items-center gap-1 text-sm font-semibold text-purple-600 dark:text-purple-400">
               View Details
               <ArrowUpRight className="w-4 h-4" />
             </Link>

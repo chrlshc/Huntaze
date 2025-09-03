@@ -165,8 +165,8 @@ export default function MessagesPage() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-6">
@@ -176,7 +176,7 @@ export default function MessagesPage() {
               </Link>
               <div className="flex items-center gap-3">
                 <MessageSquare className="w-6 h-6 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900">Messages</h1>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Messages</h1>
               </div>
               {aiConfig?.responseStyle && (
                 <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-medium">
@@ -202,7 +202,7 @@ export default function MessagesPage() {
                     trackEvent('messages_compose_click');
                   } catch {}
                 }}
-                className="btn-gradient rounded-xl flex items-center gap-2 hover:shadow-lg transition-all"
+                className="rounded-xl flex items-center gap-2 hover:shadow-md transition-all bg-purple-600 text-white px-4 py-2"
               >
                 <Send className="w-4 h-4" />
                 <span>Compose</span>
@@ -228,8 +228,8 @@ export default function MessagesPage() {
 
         {/* Conversations List */}
         <div className="elevated-card rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Conversations</h3>
+          <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Conversations</h3>
             {unreadCount > 0 && (<span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">{unreadCount} unread</span>)}
           </div>
           {loading ? (
@@ -262,7 +262,7 @@ export default function MessagesPage() {
               </button>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
               {conversations.map((c) => {
                 const last = c.lastMessage
                 const fan = fans[c.fanId]
@@ -288,18 +288,18 @@ export default function MessagesPage() {
                 const animated = lastInsertedId && last && last.id === lastInsertedId;
                 return (
                   <Link key={c.id} href={`/messages/${c.id}`}>
-                    <button onClick={handleClick} className={`w-full text-left p-4 hover:bg-gray-50 transition-all duration-200 ${animated ? 'new-message-enter' : ''}`}>
+                    <button onClick={handleClick} className={`w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 ${animated ? 'new-message-enter' : ''}`}>
                     <div className="flex items-center gap-3">
                       <img src={fan?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fan?.name || 'Fan')}&background=gradient`} alt={fan?.name} className="w-10 h-10 rounded-xl" />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <p className={`truncate ${isUnread ? 'font-bold text-gray-900' : 'text-gray-900'}`}>{fan?.name || c.fanId}</p>
+                          <p className={`truncate ${isUnread ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>{fan?.name || c.fanId}</p>
                           {isUnread && <span className="ml-1 w-2 h-2 bg-red-500/90 rounded-full ring-2 ring-white" />}
                         </div>
                         {last ? (
-                          <p className={`line-clamp-1 text-sm ${isUnread ? 'text-gray-800 font-medium' : 'text-gray-700'}`}>{getMessagePreview(last)}</p>
+                          <p className={`line-clamp-1 text-sm ${isUnread ? 'text-gray-800 dark:text-gray-200 font-medium' : 'text-gray-700 dark:text-gray-400'}`}>{getMessagePreview(last)}</p>
                         ) : (
-                          <p className="truncate text-sm text-gray-600">No messages yet</p>
+                          <p className="truncate text-sm text-gray-600 dark:text-gray-400">No messages yet</p>
                         )}
                       </div>
                     </div>
@@ -315,12 +315,12 @@ export default function MessagesPage() {
         {hasConnectedPlatforms && (
           <div className="mt-6 elevated-card rounded-xl p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-white shadow-sm">
+              <div className="p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                 <Bot className="w-6 h-6 text-purple-600" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-gray-900">AI Assistant Ready</p>
-                <p className="text-sm text-gray-700">Handles routine messages automatically with your personalized style</p>
+                <p className="font-bold text-gray-900 dark:text-white">AI Assistant Ready</p>
+                <p className="text-sm text-gray-700 dark:text-gray-400">Handles routine messages automatically with your personalized style</p>
               </div>
               <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">Active</span>
             </div>

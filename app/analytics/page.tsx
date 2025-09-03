@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
 
   // Platform Distribution
   const platformData = {
-    labels: (overview?.platformDistribution?.map(p => p.platform) || ['OnlyFans', 'Fansly', 'Patreon', 'Others']).map(p => p[0].toUpperCase() + p.slice(1)),
+    labels: (overview?.platformDistribution?.map(p => p.platform) || ['OnlyFans', 'Instagram', 'TikTok', 'Reddit']).map(p => p[0].toUpperCase() + p.slice(1)),
     datasets: [
       {
         data: overview?.platformDistribution?.map(p => Math.round(p.share*100)) || [45, 30, 20, 5],
@@ -576,9 +576,9 @@ export default function AnalyticsPage() {
   const hasConnectedPlatform = Boolean(aiConfig?.platforms?.length);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-6">
@@ -593,13 +593,13 @@ export default function AnalyticsPage() {
                 </div>
                 <div className="hidden md:flex items-center gap-2">
                   {aiConfig?.responseStyle && (
-                    <span className="px-2 py-1 text-xs rounded-lg bg-purple-50 text-purple-700 border border-purple-200 inline-flex items-center gap-1">
+                    <span className="px-2 py-1 text-xs rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 inline-flex items-center gap-1">
                       <Bot className="w-3 h-3" />
                       {aiConfig.responseStyle}
                     </span>
                   )}
                   {profile?.timezone && (
-                    <span className="px-2 py-1 text-xs rounded-lg bg-gray-100 text-gray-700 border border-gray-200 inline-flex items-center gap-1">
+                    <span className="px-2 py-1 text-xs rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 inline-flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {profile.timezone}
                     </span>
@@ -773,7 +773,7 @@ export default function AnalyticsPage() {
               />
             </div>
             <div className="mt-4 space-y-2">
-              {['OnlyFans', 'Fansly', 'Patreon', 'Others'].map((platform, i) => (
+              {['OnlyFans', 'Instagram', 'TikTok', 'Reddit'].map((platform, i) => (
                 <div key={platform} className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">{platform}</span>
                   <span className="text-sm font-medium text-gray-900">
@@ -844,19 +844,19 @@ export default function AnalyticsPage() {
             </div>
             
             {/* AI Performance Card - Personalized */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white">
+            <div className="mt-6 p-4 elevated-card rounded-xl">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Bot className="w-5 h-5" />
-                  <span className="font-medium">AI Performance</span>
+                  <Bot className="w-5 h-5 text-purple-600" />
+                  <span className="font-medium text-gray-900 dark:text-white">AI Performance</span>
                 </div>
-                <span className="text-xs bg-white/20 px-2 py-1 rounded-full">
+                <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full text-gray-700 dark:text-gray-300">
                   {aiConfig?.responseStyle === 'flirty' ? 'Playful' : 
                    aiConfig?.responseStyle === 'professional' ? 'Professional' :
                    aiConfig?.responseStyle === 'motivational' ? 'Inspiring' : 'Excellent'}
                 </span>
               </div>
-              <p className="text-sm opacity-90">
+              <p className="text-sm text-gray-700 dark:text-gray-400">
                 {profile?.niche === 'fitness' 
                   ? 'Your AI motivated 89% of fans to complete their workouts this week!'
                   : profile?.niche === 'gaming'
@@ -865,7 +865,7 @@ export default function AnalyticsPage() {
                   ? 'Your AI maintained a 95% satisfaction rate with personalized responses'
                   : 'Your AI assistant maintained a 92% response rate with 1.2 min average response time'}
               </p>
-              <Link href="/ai/analytics" className="inline-flex items-center gap-1 mt-3 text-sm font-medium hover:underline">
+              <Link href="/ai/analytics" className="inline-flex items-center gap-1 mt-3 text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline">
                 View AI Analytics
                 <ArrowUpRight className="w-4 h-4" />
               </Link>

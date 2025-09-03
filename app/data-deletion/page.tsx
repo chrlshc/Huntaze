@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DataDeletionPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
         <h1 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
           Data Deletion Request

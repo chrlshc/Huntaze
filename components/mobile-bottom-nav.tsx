@@ -53,7 +53,7 @@ export default function MobileBottomNav() {
                 <div className="relative">
                   <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : ''}`} />
                   {item.badge && (
-                    <span className="absolute -top-1 -right-1 min-w-[18px] px-1 py-0.5 text-[10px] font-bold text-white bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-sm">
+                    <span className="absolute -top-1 -right-1 min-w-[18px] px-1 py-0.5 text-[10px] font-bold text-white bg-red-600 rounded-full flex items-center justify-center shadow-sm">
                       {item.badge}
                     </span>
                   )}
@@ -62,7 +62,7 @@ export default function MobileBottomNav() {
                   {item.label}
                 </span>
                 {isActive && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full animate-fade-in" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-purple-600 rounded-full animate-fade-in" />
                 )}
               </Link>
             );
