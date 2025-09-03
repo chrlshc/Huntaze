@@ -28,19 +28,20 @@ export function DashboardMockup() {
       </div>
 
       {/* Dashboard Content */}
-      <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-b-xl shadow-2xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-b-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/80 border-b border-gray-200 dark:border-gray-600 p-8">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Dashboard</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Welcome back, Sarah</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Revenue Dashboard</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Welcome back, Sarah • Last login 2 hours ago</p>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full font-medium">
+            <div className="flex items-center gap-4">
+              <span className="px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-full font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 Live
               </span>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+              <button className="px-6 py-2.5 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all hover:shadow-lg hover:scale-105">
                 Export Report
               </button>
             </div>
@@ -48,7 +49,7 @@ export function DashboardMockup() {
         </div>
 
         {/* Stats Grid */}
-        <div className="p-6">
+        <div className="p-8 bg-gray-50/50 dark:bg-gray-800/30">
           <DashboardStats />
         </div>
 
@@ -105,9 +106,9 @@ export function DashboardMockup() {
         </div>
 
         {/* Chart Area */}
-        <div className="px-6 pb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 h-64 relative overflow-hidden border border-gray-200 dark:border-gray-700">
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-100/50 to-transparent"></div>
+        <div className="p-8 pt-0">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/50 rounded-2xl p-8 h-80 relative overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
+            <div className="absolute inset-0 bg-gradient-to-t from-purple-100/50 to-transparent dark:from-purple-900/20"></div>
             <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="revenue-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -122,11 +123,24 @@ export function DashboardMockup() {
               />
             </svg>
             <div className="relative z-10">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Revenue Growth</h4>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-gray-900">$142,847</span>
-                <span className="text-sm text-green-600 dark:text-green-700">+23% this week</span>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Revenue Growth</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Last 7 days performance</p>
+                </div>
+                <select className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 font-medium">
+                  <option>7 Days</option>
+                  <option>30 Days</option>
+                  <option>90 Days</option>
+                </select>
               </div>
+              <div className="flex items-baseline gap-3">
+                <span className="text-5xl font-black text-gray-900 dark:text-white">$142,847</span>
+                <span className="text-lg text-green-600 dark:text-green-400 font-bold bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-lg">
+                  ↑ 23%
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Compared to $116,294 last week</p>
             </div>
           </div>
         </div>
@@ -220,44 +234,57 @@ export function AnalyticsMockup() {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white rounded-xl shadow-xl border border-gray-200 p-6"
+      className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Fan Analytics</h3>
-        <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
-          View Details →
-        </button>
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Fan Analytics</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Track your top performing fans</p>
+          </div>
+          <button className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-lg transition-all hover:bg-purple-200 dark:hover:bg-purple-900/50">
+            View Details 
+            <span className="text-lg">→</span>
+          </button>
+        </div>
       </div>
 
       {/* Top Fans List */}
-      <div className="space-y-3">
+      <div className="p-6 space-y-4">
         {[
-          { name: 'BigSpender92', spent: '$2,847', messages: 156, status: 'VIP' },
-          { name: 'LoyalFan23', spent: '$1,923', messages: 243, status: 'Regular' },
-          { name: 'NewbieLover', spent: '$567', messages: 89, status: 'New' },
+          { name: 'BigSpender92', spent: '$2,847', messages: 156, status: 'VIP', growth: '+42%' },
+          { name: 'LoyalFan23', spent: '$1,923', messages: 243, status: 'Regular', growth: '+18%' },
+          { name: 'NewbieLover', spent: '$567', messages: 89, status: 'New', growth: 'New' },
         ].map((fan, index) => (
           <motion.div
             key={fan.name}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all hover:shadow-md border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full shadow-lg"></div>
               <div>
-                <p className="font-medium text-gray-900">{fan.name}</p>
-                <p className="text-xs text-gray-500">{fan.messages} messages</p>
+                <p className="font-semibold text-gray-900 dark:text-white text-base">{fan.name}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{fan.messages} messages</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-semibold text-gray-900">{fan.spent}</p>
-              <span className={`text-xs px-2 py-1 rounded-full ${
+              <div className="flex items-center gap-2 mb-1">
+                <p className="font-bold text-xl text-gray-900 dark:text-white">{fan.spent}</p>
+                <span className={`text-xs font-semibold ${
+                  fan.growth === 'New' ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'
+                }`}>
+                  {fan.growth}
+                </span>
+              </div>
+              <span className={`text-xs px-3 py-1 rounded-full font-semibold ${
                 fan.status === 'VIP' 
-                  ? 'bg-purple-100 text-purple-700' 
+                  ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' 
                   : fan.status === 'New'
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-700'
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
               }`}>
                 {fan.status}
               </span>
@@ -267,18 +294,18 @@ export function AnalyticsMockup() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-gray-200">
-        <div className="text-center">
-          <p className="text-2xl font-bold text-gray-900">87%</p>
-          <p className="text-xs text-gray-600">Retention Rate</p>
+      <div className="grid grid-cols-3 gap-4 p-6 pt-0">
+        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/10 p-4 rounded-xl text-center">
+          <p className="text-3xl font-black text-gray-900 dark:text-white">87%</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">Retention Rate</p>
         </div>
-        <div className="text-center">
-          <p className="text-2xl font-bold text-gray-900">$47</p>
-          <p className="text-xs text-gray-600">Avg. Tip Size</p>
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10 p-4 rounded-xl text-center">
+          <p className="text-3xl font-black text-gray-900 dark:text-white">$47</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">Avg. Tip Size</p>
         </div>
-        <div className="text-center">
-          <p className="text-2xl font-bold text-gray-900">2.3x</p>
-          <p className="text-xs text-gray-600">PPV Conv. Rate</p>
+        <div className="bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-900/10 p-4 rounded-xl text-center">
+          <p className="text-3xl font-black text-gray-900 dark:text-white">2.3x</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">PPV Conv. Rate</p>
         </div>
       </div>
     </motion.div>
