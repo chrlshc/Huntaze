@@ -3,21 +3,129 @@
 @tailwind utilities;
 
 :root {
-  /* High contrast text colors for dark mode (WCAG AAA compliant) */
+  /* ULTRA HIGH CONTRAST - Maximum readability */
   --text-primary-dark: #FFFFFF;
-  --text-secondary-dark: #E0E0E0;
-  --text-tertiary-dark: #CCCCCC;
-  --text-muted-dark: #B3B3B3;
+  --text-secondary-dark: #F5F5F5;
+  --text-tertiary-dark: #E5E5E5;
+  --text-muted-dark: #D4D4D4;
   
-  /* Light mode text */
-  --text-primary-light: #111827;
-  --text-secondary-light: #374151;
-  --text-tertiary-light: #4B5563;
-  --text-muted-light: #6B7280;
+  /* Light mode - Pure black for maximum contrast */
+  --text-primary-light: #000000;
+  --text-secondary-light: #18181B;
+  --text-tertiary-light: #27272A;
+  --text-muted-light: #3F3F46;
   
-  /* Brand colors */
-  --brand-red: #DC2626;
-  --brand-purple: #9333EA;
+  /* Brand colors - Vibrant & Premium */
+  --brand-red: #EF4444;
+  --brand-purple: #8B5CF6;
+  --brand-pink: #EC4899;
+  --brand-blue: #3B82F6;
+  --brand-green: #10B981;
+  
+  /* Premium Gradients */
+  --gradient-purple-pink: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  --gradient-blue-purple: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+  --gradient-dark: linear-gradient(180deg, #000000 0%, #18181B 100%);
+  --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+}
+
+/* Premium Design System */
+@layer components {
+  /* Premium shadows */
+  .shadow-premium {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .shadow-premium-lg {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.3);
+  }
+  
+  /* Glassmorphism */
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-gray-200/50 dark:border-gray-700/50;
+  }
+  
+  /* Premium card */
+  .premium-card {
+    @apply bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 hover:shadow-premium-lg;
+  }
+  
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent;
+  }
+  
+  .gradient-text-premium {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Premium buttons */
+  .btn-premium {
+    @apply px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
+  }
+  
+  .btn-outline-premium {
+    @apply px-8 py-4 border-2 border-purple-600 text-purple-600 dark:text-purple-400 font-semibold rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200;
+  }
+}
+
+/* FORCE HIGH CONTRAST ON ALL TEXT */
+h1, h2, h3, h4, h5, h6 {
+  @apply !text-gray-900 dark:!text-white !font-bold;
+}
+
+p {
+  @apply !text-gray-800 dark:!text-gray-100;
+}
+
+/* Override ALL gray text */
+.text-gray-600 {
+  @apply !text-gray-800 dark:!text-gray-200;
+}
+
+.text-gray-500 {
+  @apply !text-gray-800 dark:!text-gray-200;
+}
+
+.text-gray-400 {
+  @apply !text-gray-700 dark:!text-gray-300;
+}
+
+/* Premium animations */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 8s ease infinite;
+}
+
+/* Grid pattern background */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 100px 100px;
+}
+
+/* Premium hover effects */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hover\:float:hover {
+  animation: float 2s ease-in-out infinite;
 }
 
 /* Minimal UI mode: hide verbose copy and secondary sections */
