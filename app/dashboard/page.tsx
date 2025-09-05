@@ -43,7 +43,8 @@ export default function DashboardPage() {
   const [ofStatus, setOfStatus] = useState<any>(null);
   const [ofSyncing, setOfSyncing] = useState(false);
   const { showNotification } = useNotifications();
-  const { status: onboarding } = useOnboarding();
+  const { currentStep, isStepCompleted } = useOnboarding();
+  const onboarding = isStepCompleted('completed') ? { completed: true } : { completed: false };
   const pathname = usePathname();
   const { showContextualNotification } = useNotifications();
 

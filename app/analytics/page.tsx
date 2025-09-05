@@ -637,11 +637,11 @@ export default function AnalyticsPage() {
             <Link href="/platforms/connect" className="text-sm font-medium text-purple-900 hover:text-purple-950">Connect platforms →</Link>
           </div>
         )}
-        {onboarding && !onboarding.completed && (
+        {onboarding !== 'completed' && (
           <div className="mb-6 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">Finish onboarding to see complete analytics.</p>
-              <Link href="/onboarding/setup" className="text-sm font-semibold underline">Complete setup</Link>
+              <Link href="/onboarding-v2" className="text-sm font-semibold underline">Complete setup</Link>
             </div>
           </div>
         )}
