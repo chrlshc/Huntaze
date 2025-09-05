@@ -173,3 +173,28 @@ export const ofmApi = {
   aiDraft: (data: any) => api.post('/ofm/ai/draft', data),
   rfmRecompute: () => api.post('/ofm/rfm/recompute'),
 };
+
+// AI Team (scheduler & orchestration)
+export const aiTeamApi = {
+  // Content Scheduler
+  schedulePlan: (data: {
+    modelId: string;
+    platforms: string[];
+    window?: { startDate: string; endDate: string };
+    timezone?: string;
+    perPlatform?: Record<string, number>;
+    constraints?: { maxPerDay?: number; minGapMinutes?: number };
+  }) => api.post('/ai-team/schedule/plan', data),
+
+  scheduleApply: (plan: any) => api.post('/ai-team/schedule/apply', { plan }),
+
+  // Optional helpers for orchestration
+  initializeTeam: (modelId: string, modelData: any) =>
+    api.post('/ai-team/initialize', { modelId, modelData }),
+
+  assignTask: (agentId: string, taskType: string, taskData?: any, priority?: number) =>
+    api.post('/ai-team/assign-task', { agentId, taskType, taskData, priority }),
+
+  status: (modelId: string) => api.get(`/ai-team/status/${modelId}`),
+  dailyContent: (modelId: string) => api.post(`/ai-team/daily-content/${modelId}`),
+};

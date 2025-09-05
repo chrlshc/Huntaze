@@ -5,7 +5,7 @@ import "./animations.css";
 import HeaderImproved from "@/components/header-improved";
 import FooterImproved from "@/components/footer-improved";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/src/contexts/ThemeContext";
 import PageTransition from "@/components/page-transition";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -56,10 +56,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const theme = localStorage.getItem('theme') || 'system';
+                const theme = localStorage.getItem('theme') || 'light';
                 const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                 const resolved = theme === 'system' ? systemTheme : theme;
-                document.documentElement.classList.add(resolved);
+                document.documentElement.setAttribute('data-theme', resolved);
               } catch {}
               
               // Force scroll to top on page load
@@ -83,7 +83,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-white text-gray-900" data-ui={minimal ? 'minimal' : undefined}>
+      <body className="antialiased" data-ui={minimal ? 'minimal' : undefined}>
         <GoogleAnalytics />
         <ThemeProvider>
           <NotificationProvider>
