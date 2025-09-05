@@ -9,10 +9,10 @@ import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Accueil" },
-  { href: "/features", label: "Fonctionnalités" },
-  { href: "/pricing", label: "Tarifs" },
-  { href: "/about", label: "À propos" },
+  { href: "/", label: "Home" },
+  { href: "/features", label: "Features" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -46,7 +46,7 @@ export function NavigationPro() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">H</span>
               </div>
               <span className="font-bold text-2xl text-gradient">Huntaze</span>
@@ -60,15 +60,15 @@ export function NavigationPro() {
                   href={item.href}
                   className={`relative font-medium transition-colors ${
                     pathname === item.href
-                      ? "text-purple-600 dark:text-purple-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                   }`}
                 >
                   {item.label}
                   {pathname === item.href && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute -bottom-2 left-0 right-0 h-0.5 bg-purple-600 dark:bg-purple-400"
+                      className="absolute -bottom-2 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
                       transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                     />
                   )}
@@ -113,12 +113,12 @@ export function NavigationPro() {
               <div className="hidden md:flex items-center space-x-3">
                 <Link href="/login">
                   <Button variant="ghost" className="font-medium">
-                    Se connecter
+                    Sign In
                   </Button>
                 </Link>
                 <Link href="/onboarding">
                   <Button className="btn-primary">
-                    Démarrer gratuitement
+                    Start Free Trial
                     <ChevronRight className="ml-2 w-4 h-4" />
                   </Button>
                 </Link>
@@ -196,12 +196,12 @@ export function NavigationPro() {
                 <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 space-y-3">
                   <Link href="/login" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="outline" className="w-full">
-                      Se connecter
+                      Sign In
                     </Button>
                   </Link>
                   <Link href="/onboarding" onClick={() => setIsMenuOpen(false)}>
                     <Button className="btn-primary w-full">
-                      Démarrer gratuitement
+                      Start Free Trial
                     </Button>
                   </Link>
                 </div>

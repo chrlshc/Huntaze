@@ -15,18 +15,18 @@
   --text-tertiary-light: #27272A;
   --text-muted-light: #3F3F46;
   
-  /* Brand colors - Vibrant & Premium */
-  --brand-red: #EF4444;
-  --brand-purple: #8B5CF6;
-  --brand-pink: #EC4899;
-  --brand-blue: #3B82F6;
-  --brand-green: #10B981;
+  /* Brand colors - Professional & Bold */
+  --brand-primary: #2563EB; /* Strong blue */
+  --brand-secondary: #7C3AED; /* Deep purple */
+  --brand-accent: #DC2626; /* Power red */
+  --brand-dark: #111827; /* Almost black */
+  --brand-success: #059669; /* Success green */
   
-  /* Premium Gradients */
-  --gradient-purple-pink: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-  --gradient-blue-purple: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-  --gradient-dark: linear-gradient(180deg, #000000 0%, #18181B 100%);
-  --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+  /* Professional Gradients */
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  --gradient-dark: linear-gradient(135deg, #111827 0%, #374151 100%);
+  --gradient-accent: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+  --gradient-premium: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)
 }
 
 /* Premium Design System */
@@ -56,7 +56,7 @@
   
   /* Gradient text */
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent;
   }
   
   .gradient-text-premium {
@@ -68,11 +68,11 @@
   
   /* Premium buttons */
   .btn-premium {
-    @apply px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
+    @apply px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
   }
   
   .btn-outline-premium {
-    @apply px-8 py-4 border-2 border-purple-600 text-purple-600 dark:text-purple-400 font-semibold rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200;
+    @apply px-8 py-4 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200;
   }
 }
 
@@ -317,36 +317,38 @@ p {
 
 /* Text contrast optimizations removed - using default Tailwind values */
 
-/* Girly Buttons */
+/* Professional Buttons */
 .btn-gradient {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
   @apply text-white font-medium px-6 py-3 rounded-xl shadow-md transition-all;
 }
 
 .btn-gradient:hover {
   @apply shadow-lg;
   transform: translateY(-1px);
+  background: linear-gradient(135deg, #1D4ED8, #1E40AF);
 }
 
 .btn-outline-gradient {
-  @apply rounded-xl font-medium px-6 py-3 bg-white border;
-  border-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) 1;
-  color: var(--primary-purple);
+  @apply rounded-xl font-medium px-6 py-3 bg-white border-2 border-blue-600;
+  color: #2563EB;
 }
 
 .btn-outline-gradient:hover {
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.04), rgba(236, 72, 153, 0.04));
+  background: rgba(37, 99, 235, 0.05);
+  border-color: #1D4ED8;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
   @apply text-white font-medium px-6 py-3 rounded-full;
-  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+  background: linear-gradient(135deg, #1D4ED8, #1E40AF);
   transform: translateY(-2px);
 }
 

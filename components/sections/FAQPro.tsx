@@ -6,28 +6,28 @@ import { ChevronDown, HelpCircle } from "lucide-react";
 
 const faqs = [
   {
-    question: "Comment l'IA apprend-elle mon style de communication ?",
-    answer: "Notre IA analyse vos conversations passées pour comprendre votre ton, votre vocabulaire et vos patterns de réponse. Elle s'améliore continuellement grâce au machine learning, tout en respectant votre vie privée. Vous gardez toujours le contrôle final sur les messages envoyés."
+    question: "How does the AI learn my communication style?",
+    answer: "Our AI analyzes your past conversations to understand your tone, vocabulary, and response patterns. It continuously improves through machine learning while respecting your privacy. You always maintain final control over messages sent."
   },
   {
-    question: "Mes données sont-elles en sécurité ?",
-    answer: "Absolument. Nous utilisons un chiffrement de niveau bancaire (AES-256) pour toutes vos données. Vos contenus ne sont jamais partagés ni vendus. Nous sommes conformes RGPD et vous pouvez supprimer vos données à tout moment. Nos serveurs sont hébergés en France."
+    question: "Is my data secure?",
+    answer: "Absolutely. We use bank-level encryption (AES-256) for all your data. Your content is never shared or sold. We're GDPR compliant and you can delete your data anytime. Our servers are hosted on secure cloud infrastructure."
   },
   {
-    question: "Puis-je utiliser Huntaze sur plusieurs plateformes ?",
-    answer: "Oui ! Huntaze fonctionne avec Instagram, TikTok, Reddit, et d'autres plateformes. Le nombre de plateformes connectées dépend de votre plan. Vous pouvez gérer toutes vos conversations depuis un seul dashboard."
+    question: "Can I use Huntaze on multiple platforms?",
+    answer: "Yes! Huntaze works with Instagram, TikTok, Reddit, OnlyFans, and other platforms. The number of connected platforms depends on your plan. You can manage all your conversations from a single dashboard."
   },
   {
-    question: "Que se passe-t-il si je veux annuler ?",
-    answer: "Vous pouvez annuler votre abonnement à tout moment depuis votre dashboard. Il n'y a pas de frais d'annulation ni de période d'engagement minimum. Votre accès reste actif jusqu'à la fin de votre période de facturation."
+    question: "What happens if I want to cancel?",
+    answer: "You can cancel your subscription anytime from your dashboard. There are no cancellation fees or minimum commitment periods. Your access remains active until the end of your billing period."
   },
   {
-    question: "L'IA peut-elle gérer les paiements et les ventes ?",
-    answer: "L'IA peut guider les conversations vers la vente et proposer vos offres, mais les transactions restent sur les plateformes originales. Cela garantit la sécurité et la conformité avec les règles de chaque plateforme."
+    question: "Can the AI handle payments and sales?",
+    answer: "The AI can guide conversations toward sales and suggest your offers, but transactions remain on the original platforms. This ensures security and compliance with each platform's rules."
   },
   {
-    question: "Combien de temps faut-il pour configurer Huntaze ?",
-    answer: "La configuration initiale prend environ 15 minutes. Connectez vos comptes, laissez l'IA analyser vos conversations (quelques minutes), personnalisez vos préférences, et c'est parti ! Notre équipe support est là pour vous aider si besoin."
+    question: "How long does it take to set up Huntaze?",
+    answer: "Initial setup takes about 15 minutes. Connect your accounts, let the AI analyze your conversations (a few minutes), customize your preferences, and you're ready! Our support team is here to help if needed."
   }
 ];
 
@@ -44,15 +44,15 @@ export function FAQPro() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
             <HelpCircle className="w-4 h-4" />
             <span>FAQ</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Questions <span className="text-gradient">fréquentes</span>
+            Frequently Asked <span className="text-gradient">Questions</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Tout ce que vous devez savoir sur Huntaze et comment il peut transformer votre business
+            Everything you need to know about Huntaze and how it can transform your creator business
           </p>
         </motion.div>
 
@@ -109,13 +109,13 @@ export function FAQPro() {
           className="mt-12 text-center"
         >
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Vous avez d'autres questions ?
+            Have more questions?
           </p>
           <a
             href="mailto:support@huntaze.com"
-            className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium hover:underline"
+            className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:underline"
           >
-            Contactez notre équipe support
+            Contact our support team
             <ChevronDown className="w-4 h-4 -rotate-90" />
           </a>
         </motion.div>

@@ -3,59 +3,65 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, X, Sparkles, Zap, Crown } from "lucide-react";
+import { Check, X, Sparkles, Zap, Crown, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
 const plans = [
   {
     name: "Starter",
     icon: Sparkles,
-    price: { monthly: 29, yearly: 290 },
-    description: "Parfait pour débuter",
+    price: { monthly: 19, yearly: 190 },
+    description: "For creators <$2.5K/month",
     features: [
-      { text: "Jusqu'à 500 messages/mois", included: true },
-      { text: "1 plateforme connectée", included: true },
-      { text: "IA basique", included: true },
-      { text: "Analytics essentielles", included: true },
-      { text: "Support par email", included: true },
-      { text: "Personnalisation avancée", included: false },
-      { text: "API access", included: false }
+      { text: "1,000 AI messages/month", included: true },
+      { text: "1 platform connection", included: true },
+      { text: "Basic analytics", included: true },
+      { text: "7% platform fee", included: true },
+      { text: "Email support", included: true },
+      { text: "Social media audit", included: false },
+      { text: "OnlyFans audit", included: false },
+      { text: "Advanced features", included: false },
+      { text: "Team collaboration", included: false }
     ],
-    cta: "Commencer gratuitement",
+    cta: "Start Free Trial",
     popular: false
   },
   {
     name: "Pro",
     icon: Zap,
-    price: { monthly: 99, yearly: 990 },
-    description: "Pour les créateurs sérieux",
+    price: { monthly: 39, yearly: 390 },
+    description: "For creators $2.5K-$7.5K/month",
     features: [
-      { text: "Messages illimités", included: true },
-      { text: "3 plateformes connectées", included: true },
-      { text: "IA avancée + personnalisation", included: true },
-      { text: "Analytics complètes", included: true },
-      { text: "Support prioritaire 24/7", included: true },
-      { text: "Formations exclusives", included: true },
-      { text: "API access", included: false }
+      { text: "5,000 AI messages/month", included: true },
+      { text: "3 platform connections", included: true },
+      { text: "Advanced analytics", included: true },
+      { text: "5% platform fee", included: true },
+      { text: "Priority support", included: true },
+      { text: "Social media audit (monthly)", included: true },
+      { text: "OnlyFans audit (monthly)", included: true },
+      { text: "Smart automation", included: true },
+      { text: "Team collaboration", included: false }
     ],
-    cta: "Essai gratuit 14 jours",
+    cta: "Start Free Trial",
     popular: true
   },
   {
-    name: "Enterprise",
+    name: "Scale",
     icon: Crown,
-    price: { monthly: 299, yearly: 2990 },
-    description: "Solutions sur mesure",
+    price: { monthly: 79, yearly: 790 },
+    description: "For creators >$7.5K/month",
     features: [
-      { text: "Tout du plan Pro", included: true },
-      { text: "Plateformes illimitées", included: true },
-      { text: "IA personnalisée", included: true },
-      { text: "Manager dédié", included: true },
-      { text: "API complète", included: true },
-      { text: "Formation personnalisée", included: true },
-      { text: "SLA garanti", included: true }
+      { text: "25,000 AI messages/month", included: true },
+      { text: "All Pro features", included: true },
+      { text: "3 team seats", included: true },
+      { text: "Advanced automation", included: true },
+      { text: "3% platform fee", included: true },
+      { text: "Weekly social media audit", included: true },
+      { text: "Weekly OnlyFans audit", included: true },
+      { text: "Custom AI training", included: true },
+      { text: "Dedicated success manager", included: true }
     ],
-    cta: "Contacter les ventes",
+    cta: "Book Strategy Call",
     popular: false
   }
 ];
@@ -64,7 +70,7 @@ export function PricingPro() {
   const [isYearly, setIsYearly] = useState(false);
 
   return (
-    <section className="py-20 md:py-32 bg-white dark:bg-black">
+    <section className="py-20 md:py-32 bg-white dark:bg-gray-950">
       <div className="container-width">
         {/* Header */}
         <motion.div
@@ -74,10 +80,10 @@ export function PricingPro() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Des tarifs <span className="text-gradient">transparents</span>
+            Pricing That <span className="text-gradient">Makes Sense</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            Commencez gratuitement, évoluez à votre rythme. Pas de frais cachés.
+            Keep 93-97% of your earnings. No hidden fees, no surprises.
           </p>
 
           {/* Billing toggle */}
@@ -86,21 +92,21 @@ export function PricingPro() {
               onClick={() => setIsYearly(false)}
               className={`px-6 py-2 rounded-full font-medium transition-all ${
                 !isYearly
-                  ? "bg-white dark:bg-gray-800 shadow-md text-purple-600 dark:text-purple-400"
+                  ? "bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400"
                   : "text-gray-600 dark:text-gray-400"
               }`}
             >
-              Mensuel
+              Monthly
             </button>
             <button
               onClick={() => setIsYearly(true)}
               className={`px-6 py-2 rounded-full font-medium transition-all ${
                 isYearly
-                  ? "bg-white dark:bg-gray-800 shadow-md text-purple-600 dark:text-purple-400"
+                  ? "bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400"
                   : "text-gray-600 dark:text-gray-400"
               }`}
             >
-              Annuel
+              Yearly
               <span className="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
                 -20%
               </span>
@@ -121,9 +127,9 @@ export function PricingPro() {
             >
               {plan.popular && (
                 <div className="absolute -top-5 left-0 right-0 text-center">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-full">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full">
                     <Zap className="w-4 h-4" />
-                    Plus populaire
+                    Most Popular
                   </span>
                 </div>
               )}
@@ -131,65 +137,69 @@ export function PricingPro() {
               <div
                 className={`relative h-full bg-white dark:bg-gray-900 rounded-3xl p-8 ${
                   plan.popular
-                    ? "ring-2 ring-purple-600 dark:ring-purple-400 shadow-2xl"
+                    ? "ring-2 ring-blue-600 dark:ring-blue-400 shadow-2xl"
                     : "border border-gray-200 dark:border-gray-800"
                 }`}
               >
                 {/* Plan header */}
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 mb-4">
-                    <plan.icon className="w-7 h-7 text-white" />
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center">
+                    <plan.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">{plan.description}</p>
-                  
-                  <div className="mb-6">
-                    <span className="text-5xl font-bold">
-                      €{isYearly ? Math.floor(plan.price.yearly / 12) : plan.price.monthly}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400">/mois</span>
-                    {isYearly && (
-                      <div className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                        Facturé €{plan.price.yearly} annuellement
-                      </div>
-                    )}
-                  </div>
+                  <p className="text-gray-600 dark:text-gray-400">{plan.description}</p>
                 </div>
 
+                {/* Pricing */}
+                <div className="text-center mb-8">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-5xl font-bold">
+                      ${isYearly ? Math.round(plan.price.yearly / 12) : plan.price.monthly}
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">/month</span>
+                  </div>
+                  {isYearly && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      billed annually (${plan.price.yearly}/year)
+                    </p>
+                  )}
+                </div>
+
+                {/* CTA Button */}
+                <Link href={plan.popular ? "/onboarding" : "/demo"}>
+                  <Button
+                    size="lg"
+                    className={`w-full mb-8 ${
+                      plan.popular
+                        ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+                        : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900"
+                    }`}
+                  >
+                    {plan.cta}
+                  </Button>
+                </Link>
+
                 {/* Features */}
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-4">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       {feature.included ? (
-                        <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
                       ) : (
-                        <X className="w-5 h-5 text-gray-300 dark:text-gray-700 mt-0.5 flex-shrink-0" />
+                        <X className="w-5 h-5 text-gray-400 dark:text-gray-600 flex-shrink-0 mt-0.5" />
                       )}
                       <span
-                        className={
+                        className={`text-sm ${
                           feature.included
                             ? "text-gray-700 dark:text-gray-300"
-                            : "text-gray-400 dark:text-gray-600"
-                        }
+                            : "text-gray-400 dark:text-gray-600 line-through"
+                        }`}
                       >
                         {feature.text}
                       </span>
                     </li>
                   ))}
                 </ul>
-
-                {/* CTA */}
-                <Link href="/onboarding" className="block">
-                  <Button
-                    className={`w-full py-6 text-lg font-medium ${
-                      plan.popular
-                        ? "btn-primary"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    {plan.cta}
-                  </Button>
-                </Link>
               </div>
             </motion.div>
           ))}
@@ -200,26 +210,11 @@ export function PricingPro() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-20 text-center"
+          className="mt-16 text-center"
         >
-          <div className="inline-flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-green-500" />
-              <span>Essai gratuit</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-green-500" />
-              <span>Sans engagement</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-green-500" />
-              <span>Paiement sécurisé</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-green-500" />
-              <span>Support 24/7</span>
-            </div>
-          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            All plans include: Secure payment processing • GDPR compliant • Cancel anytime
+          </p>
         </motion.div>
       </div>
     </section>

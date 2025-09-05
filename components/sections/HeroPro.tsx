@@ -8,16 +8,16 @@ import Link from "next/link";
 import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 
 const features = [
-  { icon: Sparkles, text: "IA Conversationnelle" },
-  { icon: Zap, text: "Automatisation 24/7" },
-  { icon: Shield, text: "100% Conforme" },
-  { icon: BarChart3, text: "Analytics Avancées" },
+  { icon: Zap, text: "AI Automation 24/7" },
+  { icon: Shield, text: "Platform Compliant" },
+  { icon: BarChart3, text: "Revenue Analytics" },
+  { icon: Globe2, text: "Multi-Platform" },
 ];
 
 const testimonials = [
-  { name: "Marie L.", role: "Créatrice Mode", text: "5x plus d'engagement en 2 mois" },
-  { name: "Sophie R.", role: "Influenceuse Fitness", text: "80% de temps gagné par jour" },
-  { name: "Emma K.", role: "Coach Business", text: "+10K abonnés en 3 semaines" },
+  { name: "Alex M.", role: "Top 0.1% Creator", text: "+$127K revenue in 60 days" },
+  { name: "Jordan S.", role: "Content Creator", text: "50% less work, 3x more sales" },
+  { name: "Ryan K.", role: "Agency Owner", text: "Replaced 5 chatters with AI" },
 ];
 
 export function HeroPro() {
@@ -88,10 +88,10 @@ export function HeroPro() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Nouvelle génération d'IA pour créateurs</span>
+              <Zap className="w-4 h-4" />
+              <span>AI-Powered Creator Platform</span>
             </motion.div>
 
             {/* Main heading */}
@@ -101,12 +101,12 @@ export function HeroPro() {
               transition={{ delay: 0.3 }}
               className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
             >
-              <span className="text-gradient">Transformez</span><br />
-              vos DMs en<br />
+              <span className="text-gradient">Stop Paying</span><br />
+              50% to<br />
               <span className="relative">
-                revenus
+                Agencies
                 <motion.span
-                  className="absolute -bottom-2 left-0 right-0 h-3 bg-purple-400 opacity-30 rounded-lg"
+                  className="absolute -bottom-2 left-0 right-0 h-3 bg-blue-500 opacity-30 rounded-lg"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 1, duration: 0.8 }}
@@ -121,8 +121,8 @@ export function HeroPro() {
               transition={{ delay: 0.4 }}
               className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed"
             >
-              L'IA qui répond à vos fans 24/7 sur Instagram, TikTok et Reddit. 
-              Augmentez vos revenus de +300% tout en préservant votre authenticité.
+              Keep 95% of your earnings. Our AI handles fan conversations 24/7 across OnlyFans, 
+              Instagram, and TikTok. Proven to increase revenue by 127% in 60 days.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -134,13 +134,13 @@ export function HeroPro() {
             >
               <Link href="/onboarding">
                 <Button className="btn-primary group px-8 py-6 text-lg">
-                  Commencer gratuitement
+                  Start Free Trial
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link href="/demo">
                 <Button variant="outline" className="px-8 py-6 text-lg border-2">
-                  Voir une démo
+                  Book Demo
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -161,8 +161,8 @@ export function HeroPro() {
                   transition={{ delay: 0.7 + index * 0.1 }}
                   className="flex items-center gap-3"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                    <feature.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <span className="text-sm font-medium">{feature.text}</span>
                 </motion.div>
