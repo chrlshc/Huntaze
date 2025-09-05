@@ -80,9 +80,8 @@ export function HelpSidebar() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button 
-          variant="outline" 
-          size="icon"
-          className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg bg-white hover:bg-gray-50 z-50"
+          variant="outline"
+          className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg bg-white hover:bg-gray-50 z-50 p-0"
         >
           <HelpCircle className="h-6 w-6 text-purple-600" />
         </Button>

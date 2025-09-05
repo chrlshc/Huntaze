@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/src/hooks/useOnboarding";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Confetti } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export function CompletedStep() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export function CompletedStep() {
       <div className="text-center space-y-4">
         <div className="relative">
           <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center animate-pulse">
-            <Confetti className="w-12 h-12 text-white" />
+            <Sparkles className="w-12 h-12 text-white" />
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-32 h-32 rounded-full border-4 border-purple-200 animate-ping" />
