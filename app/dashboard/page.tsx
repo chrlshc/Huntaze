@@ -22,7 +22,8 @@ import {
   Camera,
   Video,
   Mail,
-  Sparkles
+  Sparkles,
+  Shield
 } from 'lucide-react';
 import { ofIntegrationApi } from '@/src/lib/api';
 import type { OverviewMetrics } from '@/types/analytics';
@@ -381,6 +382,11 @@ export default function DashboardPage() {
               <Link href="/analytics" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
                 <BarChart3 className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
                 <span className="font-medium">Analytics</span>
+              </Link>
+              <Link href="/content/moderation" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
+                <Shield className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+                <span className="font-medium">Content Moderation</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full ml-auto">New</span>
               </Link>
               <Link href="/billing" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
                 <CreditCard className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
