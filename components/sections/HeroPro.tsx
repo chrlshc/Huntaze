@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Sparkles, Zap, Shield, BarChart3, Globe2, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 
 const features = [
   { icon: Sparkles, text: "IA Conversationnelle" },
@@ -21,7 +21,7 @@ const testimonials = [
 ];
 
 export function HeroPro() {
-  const { theme } = useTheme();
+  const { theme } = useSafeTheme();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   useEffect(() => {
