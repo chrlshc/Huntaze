@@ -10,7 +10,7 @@ import {
   HeadphonesIcon, GraduationCap, Building,
   User, LogOut, Settings
 } from 'lucide-react'
-import { ThemeToggle } from './theme-toggle'
+// import { ThemeToggle } from './theme-toggle'
 
 const navigation = {
   solutions: {
@@ -266,7 +266,7 @@ export default function HeaderImproved() {
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             {loading ? (
               <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
             ) : user ? (
@@ -418,7 +418,7 @@ export default function HeaderImproved() {
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-gray-600 dark:text-[var(--text-secondary-dark)]">Theme</span>
-                    <ThemeToggle />
+                    {/* <ThemeToggle /> */}
                   </div>
                   
                   {loading ? (
