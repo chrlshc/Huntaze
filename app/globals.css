@@ -174,7 +174,7 @@ p {
 }
 
 :root {
-  /* Girly Purple/Pink Colors */
+  /* Light mode colors */
   --primary-purple: #9333EA;
   --secondary-purple: #7C3AED;
   --primary-pink: #EC4899;
@@ -194,12 +194,57 @@ p {
   --neutral-100: #F3F4F6;
   --neutral-50: #F9FAFB;
   --white: #FFFFFF;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  --bg-tertiary: #F3F4F6;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --border-primary: #E5E7EB;
+  --border-secondary: #D1D5DB;
   --accent-green: #10B981;
   --accent-red: #EF4444;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+  /* Dark mode colors */
+  --primary-purple: #A855F7;
+  --secondary-purple: #9333EA;
+  --primary-pink: #F472B6;
+  --secondary-pink: #EC4899;
+  --light-purple: #581C87;
+  --light-pink: #831843;
+  --gradient-start: #A855F7;
+  --gradient-end: #F472B6;
+  --neutral-900: #F9FAFB;
+  --neutral-800: #F3F4F6;
+  --neutral-700: #E5E7EB;
+  --neutral-600: #D1D5DB;
+  --neutral-500: #9CA3AF;
+  --neutral-400: #6B7280;
+  --neutral-300: #4B5563;
+  --neutral-200: #374151;
+  --neutral-100: #1F2937;
+  --neutral-50: #111827;
+  --white: #000000;
+  --bg-primary: #000000;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1F2937;
+  --text-primary: #F9FAFB;
+  --text-secondary: #D1D5DB;
+  --text-tertiary: #9CA3AF;
+  --border-primary: #374151;
+  --border-secondary: #4B5563;
+  --accent-green: #34D399;
+  --accent-red: #F87171;
+  --shadow-sm: 0 1px 2px 0 rgba(255, 255, 255, 0.05);
+  --shadow: 0 1px 3px 0 rgba(255, 255, 255, 0.1), 0 1px 2px 0 rgba(255, 255, 255, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -1px rgba(255, 255, 255, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05);
 }
 
 /* Utilities — surfaces and elevations */
@@ -223,14 +268,16 @@ html {
 }
 
 body {
-  /* cleaner neutral base for readability */
-  @apply bg-white text-neutral-900;
+  /* Dynamic colors for dark mode support */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: -0.01em;
   /* Prevent zoom on mobile */
   touch-action: manipulation;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Corporate Typography - Improved readability */

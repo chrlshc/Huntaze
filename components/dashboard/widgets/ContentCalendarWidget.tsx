@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Calendar, Clock, Image, Video, FileText, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useAiScheduler } from '@/hooks/useAiScheduler';
+import { showToast } from '@/components/Toast';
 
 interface ContentItem {
   id: string;
@@ -19,6 +21,7 @@ interface ContentCalendarProps {
 
 export function ContentCalendarWidget({ userProfile }: ContentCalendarProps) {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { planSchedule, applySchedule, connectStream, loading } = useAiScheduler();
   
   const mockContent: ContentItem[] = [
     {
@@ -66,6 +69,40 @@ export function ContentCalendarWidget({ userProfile }: ContentCalendarProps) {
 
   const optimalTimes = getOptimalPostingTimes();
 
+  const handleAiSchedule = async () => {
+    try {
+      const modelId = (userProfile?.username || userProfile?.id || 'default_model').toString();
+      const start = new Date();
+      const end = new Date();
+      end.setUTCDate(end.getUTCDate() + 2);
+
+      // Connect SSE for live updates (optional)
+      const disconnect = connectStream(modelId, {
+        onReady: () => showToast('AI Scheduler stream ready'),
+        onUpdate: (p) => {
+          if (p?.task?.status) {
+            showToast(`Task ${p.task.id} → ${p.task.status}`);
+          }
+        },
+        onError: () => {},
+      });
+
+      const plan = await planSchedule({
+        modelId,
+        platforms: ['onlyfans'],
+        window: { startDate: start.toISOString(), endDate: end.toISOString() },
+        perPlatform: { onlyfans: 1 },
+        constraints: { maxPerDay: 3, minGapMinutes: 120 },
+      });
+      const result = await applySchedule(plan);
+      const count = (result?.persisted || []).length;
+      showToast(`AI scheduled ${count} post(s)`);
+      disconnect && disconnect();
+    } catch (e: any) {
+      showToast(`AI schedule failed: ${e?.message || 'error'}`);
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-all">
       <div className="flex items-center justify-between mb-6">
@@ -82,6 +119,10 @@ export function ContentCalendarWidget({ userProfile }: ContentCalendarProps) {
           <Plus className="w-4 h-4" />
           <span className="text-sm font-medium">Schedule</span>
         </Link>
+        <button onClick={handleAiSchedule} disabled={loading} className="ml-2 flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-60">
+          <SparklesIcon />
+          <span className="text-sm font-medium">AI Schedule</span>
+        </button>
       </div>
 
       <div className="space-y-3 mb-6">
@@ -126,5 +167,13 @@ export function ContentCalendarWidget({ userProfile }: ContentCalendarProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+function SparklesIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M5 3l1.5 3L10 7.5 6.5 9 5 12l-1.5-3L0 7.5 3.5 6 5 3zm14 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zm-6 3l2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4z"/>
+    </svg>
   );
 }
