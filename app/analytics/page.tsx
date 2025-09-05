@@ -110,7 +110,8 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [aiConfig, setAiConfig] = useState<any>(null);
-  const { status: onboarding } = useOnboarding();
+  const { currentStep, isStepCompleted } = useOnboarding();
+  const onboarding = isStepCompleted('completed') ? 'completed' : 'in_progress';
   const [overview, setOverview] = useState<OverviewMetrics | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const { trackEvent } = useGa();
