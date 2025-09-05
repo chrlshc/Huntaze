@@ -1,15 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { useOnboarding } from "@/src/hooks/useOnboarding";
 import { Sparkles, Shield, Users, TrendingUp } from "lucide-react";
 
 export function WelcomeStep() {
-  const { updateUserData } = useOnboarding();
-
-  useEffect(() => {
-    updateUserData({ ...useOnboarding.getState().userData, onboardingStartDate: new Date() });
-  }, [updateUserData]);
 
   return (
     <div className="space-y-6">

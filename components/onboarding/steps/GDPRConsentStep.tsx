@@ -194,9 +194,9 @@ export function GDPRConsentStep() {
           </div>
           
           <Button
-            variant="link"
+            variant="ghost"
             onClick={() => setShowPrivacyPolicy(!showPrivacyPolicy)}
-            className="p-0"
+            className="p-0 h-auto text-purple-600 hover:text-purple-700 hover:bg-transparent"
           >
             <FileText className="w-4 h-4 mr-2" />
             {showPrivacyPolicy ? "Masquer" : "Lire"} la politique de confidentialité complète

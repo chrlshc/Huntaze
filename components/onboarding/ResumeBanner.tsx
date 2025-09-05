@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight } from 'lucide-react';
-import { useOnboarding } from '@/hooks/useOnboarding';
+import { useOnboarding } from '@/src/hooks/useOnboarding';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function ResumeBanner() {
-  const { status } = useOnboarding();
+  const { currentStep, isStepCompleted } = useOnboarding();
   const { trackEvent } = useAnalytics();
   const [dismissed, setDismissed] = useState(false);
 
@@ -17,10 +17,12 @@ export default function ResumeBanner() {
     }
   }, []);
 
-  if (!status || status.completed || dismissed) return null;
+  const isOnboardingCompleted = isStepCompleted('completed');
+
+  if (isOnboardingCompleted || dismissed) return null;
 
   const onClick = () => {
-    try { trackEvent('resume_banner_click', { step: status.currentStep }); } catch {}
+    try { trackEvent('resume_banner_click', { step: currentStep }); } catch {}
   };
 
   const onDismiss = () => {
@@ -34,7 +36,7 @@ export default function ResumeBanner() {
     }
   };
 
-  const stepTitle = (status.currentStep || 'setup').replace(/-/g, ' ');
+  const stepTitle = (currentStep || 'setup').replace(/-/g, ' ');
 
   return (
     <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
