@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sun, Moon, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 import { usePathname } from "next/navigation";
 
 const navItems = [
@@ -17,7 +17,7 @@ const navItems = [
 ];
 
 export function NavigationPro() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useSafeTheme();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
