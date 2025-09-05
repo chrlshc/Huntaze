@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
 import "./animations.css";
-import HeaderImproved from "@/components/header-improved";
-import FooterImproved from "@/components/footer-improved";
-import MobileBottomNav from "@/components/mobile-bottom-nav";
-import PageTransition from "@/components/page-transition";
+import HeaderImproved from "@/src/components/header-improved";
+import FooterImproved from "@/src/components/footer-improved";
+import MobileBottomNav from "@/src/components/mobile-bottom-nav";
+import PageTransition from "@/src/components/page-transition";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 
