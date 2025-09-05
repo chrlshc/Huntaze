@@ -1,20 +1,28 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import { ThemeProvider } from '@/src/contexts/ThemeContext';
 
-// Dynamically import NotificationProvider to avoid SSR issues
-const NotificationProvider = dynamic(
-  () => import('@/components/notifications/NotificationProvider').then(mod => mod.NotificationProvider),
-  { ssr: false }
-);
+// Lazy load NotificationProvider with error boundary
+const NotificationProviderWrapper = ({ children }: { children: React.ReactNode }) => {
+  try {
+    const { NotificationProvider } = require('@/components/notifications/NotificationProvider');
+    return <NotificationProvider>{children}</NotificationProvider>;
+  } catch (error) {
+    console.warn('NotificationProvider failed to load:', error);
+    // Return children without notification provider as fallback
+    return <>{children}</>;
+  }
+};
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <NotificationProvider>
-        {children}
-      </NotificationProvider>
+      <Suspense fallback={<>{children}</>}>
+        <NotificationProviderWrapper>
+          {children}
+        </NotificationProviderWrapper>
+      </Suspense>
     </ThemeProvider>
   );
 }
