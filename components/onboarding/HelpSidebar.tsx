@@ -15,37 +15,29 @@ export function HelpSidebar() {
     {
       id: 'security',
       title: 'Sécurité & Confidentialité',
-      icon: <Shield className="w-5 h-5" />,
+      iconName: 'Shield',
       items: [
         {
           question: 'Comment mes données sont-elles protégées?',
           answer: 'Vos données sont chiffrées avec AES-256, stockées dans des serveurs sécurisés en Europe, et nous ne partageons jamais vos informations avec des tiers.'
         },
         {
-          question: 'Comment révoquer l\'accès à une plateforme?',
-          answer: 'Vous pouvez déconnecter une plateforme à tout moment depuis l\'étape "Connexions" ou plus tard dans vos paramètres. L\'accès sera révoqué immédiatement.'
-        },
-        {
-          question: 'Que faire si mon token expire?',
-          answer: 'Pour Instagram: générez un nouveau token dans Meta Business Suite. Pour les autres plateformes, le renouvellement est automatique ou vous serez guidé.'
+          question: 'Qui peut voir mes conversations?',
+          answer: 'Uniquement vous et les destinataires autorisés. Notre équipe n\'a pas accès à vos messages, sauf autorisation explicite pour le support.'
         }
       ]
     },
     {
       id: 'troubleshooting',
-      title: 'Dépannage',
-      icon: <AlertCircle className="w-5 h-5" />,
+      title: 'Résolution de problèmes',
+      iconName: 'AlertCircle',
       items: [
         {
-          question: 'Échec de connexion à une plateforme',
-          answer: 'Vérifiez que vous avez un compte Business/Creator, que les pop-ups sont autorisés, et que vous acceptez toutes les permissions demandées.'
+          question: 'Mon compte Instagram ne se connecte pas',
+          answer: 'Assurez-vous d\'avoir un compte Business ou Creator sur Instagram. Les comptes personnels ne supportent pas l\'API. Vérifiez aussi que votre token n\'a pas expiré.'
         },
         {
-          question: 'L\'IA ne répond pas comme prévu',
-          answer: 'Ajustez le niveau d\'audace dans les paramètres de personnalité. Pour plus de précision, uploadez un corpus de vos conversations passées.'
-        },
-        {
-          question: 'Limites API atteintes',
+          question: 'Messages bloqués ou rate limited',
           answer: 'Chaque plateforme a ses limites horaires/quotidiennes. Attendez le reset (généralement 1h) ou réduisez temporairement votre activité.'
         }
       ]
@@ -53,7 +45,7 @@ export function HelpSidebar() {
     {
       id: 'compliance',
       title: 'Conformité',
-      icon: <Key className="w-5 h-5" />,
+      iconName: 'Key',
       items: [
         {
           question: 'Quelles actions déclenchent une supervision?',
@@ -70,6 +62,19 @@ export function HelpSidebar() {
       ]
     }
   ];
+
+  const renderIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'Shield':
+        return <Shield className="w-5 h-5" />;
+      case 'AlertCircle':
+        return <AlertCircle className="w-5 h-5" />;
+      case 'Key':
+        return <Key className="w-5 h-5" />;
+      default:
+        return <HelpCircle className="w-5 h-5" />;
+    }
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -89,116 +94,82 @@ export function HelpSidebar() {
             Aide & Support
           </SheetTitle>
           <SheetDescription>
-            Trouvez des réponses rapides ou contactez notre équipe
+            Trouvez rapidement des réponses à vos questions
           </SheetDescription>
         </SheetHeader>
-        
-        <div className="mt-6 space-y-6">
-          <Tabs defaultValue="faq" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="faq">FAQ</TabsTrigger>
-              <TabsTrigger value="contact">Contact</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="faq" className="space-y-4 mt-4">
-              {helpTopics.map((topic) => (
-                <Card key={topic.id}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      {topic.icon}
-                      {topic.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {topic.items.map((item, idx) => (
-                      <details key={idx} className="group">
-                        <summary className="flex items-start justify-between cursor-pointer list-none">
-                          <span className="text-sm font-medium pr-2">{item.question}</span>
-                          <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" />
-                        </summary>
-                        <p className="mt-2 text-sm text-gray-600 pl-1">{item.answer}</p>
-                      </details>
-                    ))}
-                  </CardContent>
-                </Card>
-              ))}
-              
-              <Alert className="bg-purple-50 border-purple-200">
-                <AlertDescription>
-                  <strong>Astuce:</strong> La plupart des problèmes se résolvent en vérifiant vos permissions 
-                  et en vous assurant que vos comptes sont bien configurés (Business/Creator).
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-            
-            <TabsContent value="contact" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Support 24/7</CardTitle>
-                  <CardDescription>
-                    Notre équipe est là pour vous aider à chaque étape
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button className="w-full justify-start" variant="outline">
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Chat en direct
-                  </Button>
-                  
-                  <Button className="w-full justify-start" variant="outline">
-                    <Mail className="w-4 h-4 mr-2" />
-                    support@huntaze.com
-                  </Button>
-                  
-                  <Button className="w-full justify-start" variant="outline">
-                    <Phone className="w-4 h-4 mr-2" />
-                    +33 1 23 45 67 89
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-r from-purple-50 to-pink-50">
-                <CardHeader>
-                  <CardTitle className="text-base">Temps de réponse moyen</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Chat en direct:</span>
-                      <span className="font-medium">< 2 minutes</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Email:</span>
-                      <span className="font-medium">< 4 heures</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Téléphone:</span>
-                      <span className="font-medium">Immédiat</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+
+        <Tabs defaultValue="faq" className="mt-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="faq">FAQ</TabsTrigger>
+            <TabsTrigger value="contact">Contact</TabsTrigger>
+          </TabsList>
           
-          <div className="pt-4 border-t">
-            <h4 className="font-medium text-sm mb-3">Raccourcis clavier</h4>
-            <div className="space-y-2 text-sm text-gray-600">
-              <div className="flex justify-between">
-                <span>Ouvrir l'aide:</span>
-                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Ctrl + ?</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span>Navigation suivante:</span>
-                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">→</kbd>
-              </div>
-              <div className="flex justify-between">
-                <span>Navigation précédente:</span>
-                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">←</kbd>
-              </div>
-            </div>
-          </div>
-        </div>
+          <TabsContent value="faq" className="space-y-4 mt-4">
+            {helpTopics.map((topic) => (
+              <Card key={topic.id}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    {renderIcon(topic.iconName)}
+                    {topic.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {topic.items.map((item, idx) => (
+                    <details key={idx} className="group">
+                      <summary className="flex items-start justify-between cursor-pointer list-none">
+                        <span className="text-sm font-medium pr-2">{item.question}</span>
+                        <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" />
+                      </summary>
+                      <p className="mt-2 text-sm text-gray-600 pl-1">{item.answer}</p>
+                    </details>
+                  ))}
+                </CardContent>
+              </Card>
+            ))}
+            
+            <Alert className="bg-purple-50 border-purple-200">
+              <AlertDescription>
+                <strong>Astuce:</strong> La plupart des problèmes se résolvent en vérifiant vos permissions 
+                et en vous assurant que vos comptes sont bien configurés (Business/Creator).
+              </AlertDescription>
+            </Alert>
+          </TabsContent>
+          
+          <TabsContent value="contact" className="space-y-4 mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Support 24/7</CardTitle>
+                <CardDescription>
+                  Notre équipe est là pour vous aider à chaque étape
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button className="w-full justify-start" variant="outline">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Chat en direct
+                </Button>
+                
+                <Button className="w-full justify-start" variant="outline">
+                  <Mail className="w-4 h-4 mr-2" />
+                  support@huntaze.com
+                </Button>
+                
+                <Button className="w-full justify-start" variant="outline">
+                  <Phone className="w-4 h-4 mr-2" />
+                  +33 1 23 45 67 89
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Alert>
+              <AlertDescription className="text-sm">
+                <strong>Heures d'ouverture:</strong><br />
+                Lun-Ven: 9h00 - 20h00<br />
+                Sam-Dim: 10h00 - 18h00 (CET)
+              </AlertDescription>
+            </Alert>
+          </TabsContent>
+        </Tabs>
       </SheetContent>
     </Sheet>
   );
