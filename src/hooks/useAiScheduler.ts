@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { aiTeamApi } from '@/lib/api';
+import { aiTeamApi } from '@/src/lib/api';
 
 type PlanParams = {
   modelId: string;
