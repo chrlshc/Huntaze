@@ -5,9 +5,8 @@ import "./animations.css";
 import HeaderImproved from "@/components/header-improved";
 import FooterImproved from "@/components/footer-improved";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
-import { ThemeProvider } from "@/src/contexts/ThemeContext";
 import PageTransition from "@/components/page-transition";
-import { NotificationProvider } from "@/components/notifications/NotificationProvider";
+import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 
@@ -85,18 +84,16 @@ export default function RootLayout({
       </head>
       <body className="antialiased" data-ui={minimal ? 'minimal' : undefined}>
         <GoogleAnalytics />
-        <ThemeProvider>
-          <NotificationProvider>
-            <HeaderImproved />
-            <PageTransition>
-              <main className="min-h-screen">
-                {children}
-              </main>
-            </PageTransition>
-            <FooterImproved />
-            <MobileBottomNav />
-          </NotificationProvider>
-        </ThemeProvider>
+        <Providers>
+          <HeaderImproved />
+          <PageTransition>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </PageTransition>
+          <FooterImproved />
+          <MobileBottomNav />
+        </Providers>
       </body>
     </html>
   );
