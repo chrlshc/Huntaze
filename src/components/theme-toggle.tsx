@@ -76,7 +76,7 @@ export function ThemeToggle() {
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
                       isActive
-                        ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                         : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                     }`}
                   >
@@ -85,7 +85,7 @@ export function ThemeToggle() {
                     {isActive && (
                       <motion.div
                         layoutId="theme-indicator"
-                        className="absolute left-0 top-0 bottom-0 w-0.5 bg-purple-600"
+                        className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-600"
                       />
                     )}
                   </button>

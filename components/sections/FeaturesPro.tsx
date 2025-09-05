@@ -20,55 +20,55 @@ import Image from "next/image";
 const features = [
   {
     icon: Brain,
-    title: "IA Personnalisée",
-    description: "Notre IA apprend votre style unique et répond comme vous le feriez",
+    title: "AI-Powered Automation",
+    description: "Our AI learns your voice and converts like you would",
     details: [
-      "Analyse de vos conversations passées",
-      "Adaptation au ton et vocabulaire",
-      "Amélioration continue"
+      "Personalized response generation",
+      "Context-aware conversations",
+      "Continuous learning from your style"
     ],
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-blue-600 to-blue-800"
   },
   {
     icon: MessageSquare,
-    title: "Conversations Naturelles",
-    description: "Engagez avec vos fans 24/7 sans perdre votre authenticité",
+    title: "24/7 DM Management",
+    description: "Never miss a sales opportunity again",
     details: [
-      "Réponses contextuelles",
-      "Gestion des émotions",
-      "Multi-langues supporté"
+      "Instant response to all DMs",
+      "Smart conversation routing",
+      "Multi-platform support"
     ],
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-gray-700 to-gray-900"
   },
   {
     icon: Shield,
-    title: "100% Conforme",
-    description: "Respectez les règles des plateformes automatiquement",
+    title: "Platform Compliant",
+    description: "Stay safe and maximize earnings",
     details: [
-      "Filtrage automatique",
-      "Détection de contenu sensible",
-      "Mises à jour régulières"
+      "Automatic content filtering",
+      "Platform guideline adherence",
+      "Risk detection & prevention"
     ],
-    gradient: "from-green-500 to-emerald-500"
+    gradient: "from-green-600 to-emerald-700"
   },
   {
     icon: BarChart3,
-    title: "Analytics Avancées",
-    description: "Comprenez ce qui fonctionne et optimisez vos revenus",
+    title: "Revenue Analytics",
+    description: "Track what works and scale it",
     details: [
-      "Taux de conversion",
-      "Revenus par fan",
-      "Tendances en temps réel"
+      "Conversion rate optimization",
+      "Revenue per subscriber metrics",
+      "Real-time performance data"
     ],
-    gradient: "from-orange-500 to-red-500"
+    gradient: "from-red-600 to-red-800"
   }
 ];
 
 const stats = [
-  { value: "300%", label: "Augmentation des revenus", icon: TrendingUp },
-  { value: "24/7", label: "Disponibilité", icon: Clock },
-  { value: "15min", label: "Configuration rapide", icon: Zap },
-  { value: "100%", label: "Données sécurisées", icon: Lock }
+  { value: "300%", label: "Revenue Increase", icon: TrendingUp },
+  { value: "24/7", label: "Always Active", icon: Clock },
+  { value: "15min", label: "Quick Setup", icon: Zap },
+  { value: "100%", label: "Secure & Private", icon: Lock }
 ];
 
 export function FeaturesPro() {
@@ -82,16 +82,16 @@ export function FeaturesPro() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
-            <span>Fonctionnalités Premium</span>
+            <span>Premium Features</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Tout ce dont vous avez besoin<br />
-            <span className="text-gradient">pour réussir</span>
+            Everything you need<br />
+            <span className="text-gradient">to scale your income</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Une suite complète d'outils pour automatiser, analyser et optimiser votre business de créateur
+            Complete toolkit to automate conversations, analyze performance, and maximize your creator business
           </p>
         </motion.div>
 
@@ -111,7 +111,7 @@ export function FeaturesPro() {
               viewport={{ once: true }}
               className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg"
             >
-              <stat.icon className="w-8 h-8 text-purple-600 dark:text-purple-400 mx-auto mb-3" />
+              <stat.icon className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
               <div className="text-3xl font-bold text-gradient mb-1">{stat.value}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
             </motion.div>
@@ -182,7 +182,7 @@ export function FeaturesPro() {
           viewport={{ once: true }}
           className="mt-20 text-center"
         >
-          <h3 className="text-2xl font-bold mb-8">Compatible avec vos plateformes préférées</h3>
+          <h3 className="text-2xl font-bold mb-8">Works with your favorite platforms</h3>
           <div className="flex flex-wrap justify-center items-center gap-8">
             {["Instagram", "TikTok", "Reddit", "OnlyFans", "Twitter"].map((platform) => (
               <motion.div
