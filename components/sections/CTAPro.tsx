@@ -9,7 +9,7 @@ export function CTAPro() {
   return (
     <section className="relative py-20 md:py-32 overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-600 to-purple-600" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-700 via-blue-800 to-gray-900" />
       
       {/* Pattern overlay */}
       <div className="absolute inset-0 opacity-10">
@@ -33,7 +33,7 @@ export function CTAPro() {
         }}
       />
       <motion.div
-        className="absolute bottom-20 right-20 w-96 h-96 bg-pink-300/10 rounded-full blur-3xl"
+        className="absolute bottom-20 right-20 w-96 h-96 bg-blue-300/10 rounded-full blur-3xl"
         animate={{
           x: [0, -50, 0],
           y: [0, 30, 0],
@@ -61,7 +61,7 @@ export function CTAPro() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Offre limitée - 14 jours d'essai gratuit</span>
+            <span>Limited Offer - 14 Days Free Trial</span>
           </motion.div>
 
           {/* Heading */}
@@ -71,7 +71,7 @@ export function CTAPro() {
             transition={{ delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
           >
-            Prêt à multiplier vos revenus ?
+            Ready to 10x Your Income?
           </motion.h2>
 
           {/* Description */}
@@ -81,7 +81,7 @@ export function CTAPro() {
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12"
           >
-            Rejoignez +2,500 créatrices qui ont déjà automatisé leur succès avec Huntaze
+            Join 2,500+ creators who stopped leaving money on the table
           </motion.p>
 
           {/* Benefits */}
@@ -92,9 +92,9 @@ export function CTAPro() {
             className="flex flex-wrap justify-center gap-6 mb-12"
           >
             {[
-              "Configuration en 15 minutes",
-              "Sans engagement",
-              "Support 24/7",
+              "Setup in 15 minutes",
+              "No credit card required",
+              "Cancel anytime",
             ].map((benefit, index) => (
               <div key={index} className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-white/80" />
@@ -113,9 +113,9 @@ export function CTAPro() {
             <Link href="/onboarding">
               <Button
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-6 text-lg font-semibold group"
+                className="bg-white text-blue-700 hover:bg-gray-100 px-8 py-6 text-lg font-semibold group"
               >
-                Démarrer l'essai gratuit
+                Start Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -125,7 +125,7 @@ export function CTAPro() {
                 variant="outline"
                 className="bg-transparent text-white border-2 border-white/30 hover:bg-white/10 px-8 py-6 text-lg"
               >
-                Voir une démo
+                Watch Demo
               </Button>
             </Link>
           </motion.div>
@@ -137,7 +137,7 @@ export function CTAPro() {
             transition={{ delay: 0.6 }}
             className="mt-8 text-sm text-white/70"
           >
-            Pas de carte bancaire requise • Annulation en 1 clic
+            No credit card required • Cancel anytime
           </motion.p>
         </motion.div>
       </div>
