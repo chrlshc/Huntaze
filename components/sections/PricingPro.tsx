@@ -13,6 +13,7 @@ const plans = [
     icon: Sparkles,
     description: "Launch your empire",
     features: [
+      { text: "AI usage included (fair use)", included: true },
       { text: "1,000 AI suggestions/month", included: true },
       { text: "1 platform connection", included: true },
       { text: "Basic analytics", included: true },
@@ -31,6 +32,7 @@ const plans = [
     icon: Zap,
     description: "Scale to 6 figures",
     features: [
+      { text: "AI usage included (fair use)", included: true },
       { text: "5,000 AI suggestions/month", included: true },
       { text: "3 platform connections", included: true },
       { text: "Advanced analytics", included: true },
@@ -49,6 +51,7 @@ const plans = [
     icon: Crown,
     description: "Dominate your niche",
     features: [
+      { text: "AI usage included (fair use)", included: true },
       { text: "25,000 AI messages/month", included: true },
       { text: "All Pro features", included: true },
       { text: "3 team seats", included: true },
@@ -105,7 +108,7 @@ export function PricingPro() {
                 <div className="absolute -top-5 left-0 right-0 text-center">
                   <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full">
                     <Zap className="w-4 h-4" />
-                    Populaire
+                    Most Popular
                   </span>
                 </div>
               )}
@@ -188,7 +191,7 @@ export function PricingPro() {
           className="mt-16 text-center"
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            All plans include: Secure payments • GDPR compliant • Cancel anytime
+            All plans include: AI usage (fair use) • Secure payments • GDPR compliant • Cancel anytime
           </p>
         </motion.div>
       </div>
