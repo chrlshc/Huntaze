@@ -156,7 +156,11 @@ export function ThemeToggleEnhanced() {
 
 // Minimal toggle for mobile or compact spaces
 export function ThemeToggleCompact() {
-  const { resolvedTheme, toggleTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
+  
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+  }
   
   return (
     <motion.button
