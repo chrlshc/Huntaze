@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Check } from "lucide-react";
 import Link from "next/link";
 import { events } from "@/src/lib/analytics";
+import { DashboardMockup } from "@/components/dashboard-mockup";
 
 export function HeroLinear() {
   const { scrollY } = useScroll();
@@ -31,11 +32,11 @@ export function HeroLinear() {
   ];
 
   return (
-    <section className="relative min-h-screen bg-black text-white overflow-hidden">
+    <section className="relative min-h-screen bg-[#0F0F10] text-[#EEEFF1] overflow-hidden">
       {/* Linear-style gradient mesh background */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20" />
-        <div className="absolute top-0 -right-4 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20" />
+        <div className="absolute top-0 -left-4 w-96 h-96 bg-[#635BFF] rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
+        <div className="absolute top-0 -right-4 w-96 h-96 bg-[#635BFF] rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20" />
       </div>
 
@@ -47,8 +48,8 @@ export function HeroLinear() {
         {/* Trust badges - Linear style */}
         <div className="flex flex-wrap items-center gap-4 mb-8">
           {trustBadges.map((badge, index) => (
-            <div key={index} className="flex items-center gap-2 text-gray-400 text-sm">
-              <Check className="w-4 h-4 text-green-400" />
+            <div key={index} className="flex items-center gap-2 text-[#9CA3AF] text-sm font-medium">
+              <Check className="w-4 h-4 text-[#00D9FF]" />
               <span>{badge}</span>
             </div>
           ))}
@@ -59,10 +60,10 @@ export function HeroLinear() {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight mb-8"
+            className="text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-[-0.02em] mb-8 font-['Inter']"
           >
             AI that turns
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#635BFF] to-[#4F46E5]">
               conversations into cash
             </span>
           </motion.h1>
@@ -72,7 +73,7 @@ export function HeroLinear() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl md:text-2xl text-gray-400 max-w-3xl mb-12 leading-relaxed"
+            className="text-lg md:text-xl text-[#9CA3AF] max-w-3xl mb-12 leading-[1.6]"
           >
             Stop losing money to unread DMs. Huntaze AI responds instantly, 
             sells naturally, and scales infinitely. Join creators earning 2-3x more.
@@ -88,7 +89,7 @@ export function HeroLinear() {
             <Link href="/auth">
               <Button
                 size="lg"
-                className="bg-white hover:bg-gray-100 text-black px-8 py-6 text-lg font-medium"
+                className="bg-[#635BFF] hover:bg-[#5A51E6] text-white px-6 py-3 text-base font-medium transition-all"
                 onClick={() => events.ctaClick({ location: 'hero', label: 'Start for free' })}
               >
                 Start for free
@@ -99,7 +100,7 @@ export function HeroLinear() {
             <Button
               size="lg"
               variant="ghost"
-              className="text-white border border-gray-800 hover:bg-gray-900 px-8 py-6 text-lg"
+              className="text-[#EEEFF1] border border-[#2A2A2A] hover:bg-[#1A1A1A] px-6 py-3 text-base transition-all"
               onClick={() => setVideoPlaying(true)}
             >
               <Play className="mr-2 w-5 h-5" />
@@ -115,18 +116,14 @@ export function HeroLinear() {
           transition={{ delay: 0.4 }}
           className="mt-20 relative"
         >
-          <div className="relative rounded-2xl overflow-hidden border border-gray-800 bg-gray-950/50 backdrop-blur-sm">
-            <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/10 via-transparent to-pink-600/10" />
-            <img
-              src="/dashboard-preview.png"
-              alt="Huntaze Dashboard"
-              className="w-full h-auto"
-            />
+          <div className="relative rounded-xl overflow-hidden border border-[#2A2A2A] bg-[#151516]/80 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#635BFF]/5 via-transparent to-[#635BFF]/5" />
+            <DashboardMockup />
           </div>
           
           {/* Floating stats */}
-          <div className="absolute -top-4 -right-4 bg-black border border-gray-800 rounded-xl p-4 shadow-2xl hidden md:block">
-            <p className="text-sm text-gray-400 mb-1">Avg. response time</p>
+          <div className="absolute -top-4 -right-4 bg-[#151516] border border-[#2A2A2A] rounded-xl p-4 shadow-2xl hidden md:block">
+            <p className="text-sm text-[#9CA3AF] mb-1 font-medium">Avg. response time</p>
             <p className="text-2xl font-bold">0.8s</p>
           </div>
           

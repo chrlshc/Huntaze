@@ -27,7 +27,7 @@ const features = [
       "Drives faster, more consistent replies",
       "Never sleeps, never stops helping"
     ],
-    gradient: "from-purple-600 to-pink-600",
+    gradient: "from-[#635BFF] to-[#4F46E5]",
     highlight: "From $3k to $8k/month (example)"
   },
   {
@@ -39,7 +39,7 @@ const features = [
       "Remembers conversation context",
       "Turns DMs into sales more often"
     ],
-    gradient: "from-blue-600 to-cyan-600",
+    gradient: "from-[#635BFF] to-[#00D9FF]",
     highlight: "Automates thousands of messages daily"
   },
   {
@@ -51,7 +51,7 @@ const features = [
       "Learns per‑platform guidelines",
       "You approve, you stay in control"
     ],
-    gradient: "from-green-600 to-emerald-600",
+    gradient: "from-[#008060] to-[#00D9FF]",
     highlight: "Platform compliant"
   },
   {
@@ -77,7 +77,7 @@ const stats = [
 
 export function FeaturesPro() {
   return (
-    <section className="py-20 md:py-32 bg-gray-50 dark:bg-gray-900">
+    <section className="py-20 md:py-32 bg-[#F6F9FC] dark:bg-[#0F0F10]">
       <div className="container-width">
         {/* Header */}
         <motion.div
@@ -86,15 +86,15 @@ export function FeaturesPro() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6 shadow-lg">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#635BFF]/10 dark:bg-[#635BFF]/20 text-[#635BFF] text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4 animate-pulse" />
             <span>Built for busy creators</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             Everything you need to grow<br />
-            <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">with less work</span>
+            <span className="text-gradient bg-gradient-to-r from-[#635BFF] to-[#4F46E5] bg-clip-text text-transparent">with less work</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg text-[#6C757D] dark:text-[#9CA3AF] max-w-3xl mx-auto leading-[1.6]">
             Practical AI to save time, stay compliant, and focus on what matters
           </p>
         </motion.div>
@@ -113,9 +113,9 @@ export function FeaturesPro() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg"
+              className="bg-white dark:bg-[#151516] rounded-xl p-6 text-center border border-[#E1E3E5] dark:border-[#2A2A2A]"
             >
-              <stat.icon className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
+              <stat.icon className="w-8 h-8 text-[#635BFF] mx-auto mb-3" />
               <div className="text-3xl font-bold text-gradient mb-1">{stat.value}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</div>
             </motion.div>
