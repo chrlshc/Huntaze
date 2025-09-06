@@ -266,8 +266,8 @@ export default function AutomationPage() {
               transition={{ delay: 0.3 }}
               className="elevated-card rounded-xl p-8"
             >
-              <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">+156%</div>
-              <p className="text-gray-600 dark:text-gray-400">Increase in fan engagement</p>
+              <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">2-3x</div>
+              <p className="text-gray-600 dark:text-gray-400">Faster fan responses</p>
             </motion.div>
           </div>
         </div>

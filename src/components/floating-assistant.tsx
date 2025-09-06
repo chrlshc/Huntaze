@@ -12,10 +12,10 @@ const suggestions = [
 ];
 
 const responses = {
-  "How much can I earn with Huntaze?": "Our top creators earn $50K-$100K+ monthly! With AI handling 80% of messaging and sales, creators see an average 312% revenue increase in their first 3 months.",
-  "Show me success stories": "Sarah went from $3K to $45K/month in 4 months. Jake scaled from $8K to $75K/month. Over 10,000 creators have transformed their business with our AI.",
-  "What makes Huntaze different?": "We're the only platform that creates an AI twin of YOUR personality. Not generic templates - real AI that talks, sells, and connects exactly like you do.",
-  "I'm making $5K/month, which plan?": "Perfect! Our Pro plan ($39/mo) is designed for creators like you. You'll get 5,000 AI messages, advanced analytics, and keep 95% of earnings. Most creators at your level see 3-5x growth!"
+  "How much can I earn with Huntaze?": "Creators often save 20+ hours weekly with AI handling routine messaging. Many report 2–3x revenue growth over time — results vary.",
+  "Show me success stories": "One creator went from $3K to $8K/month in 4 months; another scaled from $8K to $20K/month. 5,000+ creators use our AI today.",
+  "What makes Huntaze different?": "We train on your best‑performing conversations to match your tone and guardrails — not generic templates.",
+  "I'm making $5K/month, which plan?": "Great! Our Pro plan ($39/mo) fits creators at your stage: 5,000 AI messages, advanced analytics, and you approve before sending. Many report strong growth after setup."
 };
 
 export function FloatingAssistant() {
