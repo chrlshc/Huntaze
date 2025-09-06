@@ -1,0 +1,77 @@
+2025-09-06T11:23:32.503Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-09-06T11:23:33.130Z [INFO]: # Cloning repository: git@github.com:chrlshc/sitedepot.git
+2025-09-06T11:23:42.292Z [INFO]: 
+2025-09-06T11:23:42.434Z [INFO]: Cloning into 'sitedepot'...
+                                 Updating files:  28% (20391/71363)Updating files:  29% (20696/71363)Updating files:  30% (21409/71363)Updating files:  31% (22123/71363)Updating files:  32% (22837/71363)Updating files:  33% (23550/71363)Updating files:  34% (24264/71363)Updating files:  35% (24978/71363)Updating files:  36% (25691/71363)Updating files:  37% (26405/71363)Updating files:  38% (27118/71363)Updating files:  39% (27832/71363)Updating files:  40% (28546/71363)Updating files:  41% (29259/71363)Updating files:  42% (29973/71363)Updating files:  43% (30687/71363)Updating files:  44% (31400/71363)Updating files:  45% (32114/71363)Updating files:  46% (32827/71363)Updating files:  47% (33541/71363)Updating files:  47% (34051/71363)Updating files:  48% (34255/71363)Updating files:  49% (34968/71363)Updating files:  50% (35682/71363)Updating files:  51% (36396/71363)Updating files:  52% (37109/71363)Updating files:  53% (37823/71363)Updating files:  54% (38537/71363)Updating files:  55% (39250/71363)Updating files:  56% (39964/71363)Updating files:  57% (40677/71363)Updating files:  58% (41391/71363)Updating files:  59% (42105/71363)Updating files:  60% (42818/71363)Updating files:  61% (43532/71363)Updating files:  62% (44246/71363)Updating files:  63% (44959/71363)Updating files:  64% (45673/71363)Updating files:  65% (46386/71363)Updating files:  66% (47100/71363)Updating files:  67% (47814/71363)Updating files:  68% (48527/71363)Updating files:  69% (49241/71363)Updating files:  70% (49955/71363)Updating files:  70% (50117/71363)Updating files:  71% (50668/71363)Updating files:  72% (51382/71363)Updating files:  73% (52095/71363)Updating files:  74% (52809/71363)Updating files:  75% (53523/71363)Updating files:  76% (54236/71363)Updating files:  77% (54950/71363)Updating files:  78% (55664/71363)Updating files:  79% (56377/71363)Updating files:  80% (57091/71363)Updating files:  81% (57805/71363)Updating files:  82% (58518/71363)Updating files:  83% (59232/71363)Updating files:  84% (59945/71363)Updating files:  85% (60659/71363)Updating files:  86% (61373/71363)Updating files:  87% (62086/71363)Updating files:  88% (62800/71363)Updating files:  89% (63514/71363)Updating files:  90% (64227/71363)Updating files:  91% (64941/71363)Updating files:  92% (65654/71363)Updating files:  93% (66368/71363)Updating files:  94% (67082/71363)Updating files:  94% (67479/71363)Updating files:  95% (67795/71363)Updating files:  96% (68509/71363)Updating files:  97% (69223/71363)Updating files:  98% (69936/71363)Updating files:  99% (70650/71363)Updating files: 100% (71363/71363)Updating files: 100% (71363/71363), done.
+2025-09-06T11:23:42.435Z [INFO]: # Switching to commit: 49bc3ffe14fd795ffd8c1d85410fce925a0bc199
+2025-09-06T11:23:42.709Z [INFO]: Note: switching to '49bc3ffe14fd795ffd8c1d85410fce925a0bc199'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at 49bc3ffe Add landing pages and remove pricing
+2025-09-06T11:23:42.786Z [INFO]: Successfully cleaned up Git credentials
+2025-09-06T11:23:42.786Z [INFO]: # Checking for Git submodules at: /codebuild/output/src2864940748/src/sitedepot/.gitmodules
+2025-09-06T11:23:42.794Z [INFO]: # Retrieving environment cache...
+2025-09-06T11:23:42.834Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-09-06T11:23:42.834Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-09-06T11:23:42.834Z [INFO]: SSM params {"Path":"/amplify/d3jljx9im79str/main/","WithDecryption":true}
+2025-09-06T11:23:42.875Z [WARNING]: !Failed to set up process.env.secrets
+2025-09-06T11:23:43.822Z [INFO]: # No package override configuration found.
+2025-09-06T11:23:43.825Z [INFO]: # Retrieving cache...
+2025-09-06T11:23:49.917Z [INFO]: # Extracting cache...
+2025-09-06T11:23:56.311Z [INFO]: # Extraction completed
+2025-09-06T11:23:56.449Z [INFO]: # Retrieved cache
+2025-09-06T11:24:01.042Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-09-06T11:24:01.047Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: nvm use 20 || echo "Using default Node"
+2025-09-06T11:24:08.507Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-09-06T11:24:08.512Z [INFO]: # Executing command: npm ci
+2025-09-06T11:24:30.666Z [INFO]: added 358 packages, and audited 359 packages in 22s
+2025-09-06T11:24:30.671Z [INFO]: 54 packages are looking for funding
+                                 run `npm fund` for details
+                                 found 0 vulnerabilities
+2025-09-06T11:24:30.686Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+                                 # Executing command: npm run build
+2025-09-06T11:24:30.847Z [INFO]: > huntaze-site@1.0.0 build
+                                 > node scripts/validate-env.js && next build
+2025-09-06T11:24:30.923Z [WARNING]: Warning: NEXT_PUBLIC_API_URL does not end with /api (https://huntaze.com). If your backend expects /api, append it (e.g. http://localhost:4000/api).
+2025-09-06T11:24:31.500Z [INFO]: ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+2025-09-06T11:24:31.519Z [INFO]: Attention: Next.js now collects completely anonymous telemetry regarding usage.
+2025-09-06T11:24:31.519Z [INFO]: This information is used to shape Next.js' roadmap and prioritize features.
+                                 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+                                 https://nextjs.org/telemetry
+2025-09-06T11:24:31.577Z [INFO]: ▲ Next.js 14.2.32
+2025-09-06T11:24:31.577Z [INFO]: 
+2025-09-06T11:24:31.669Z [INFO]: Creating an optimized production build ...
+2025-09-06T11:24:59.754Z [INFO]: ✓ Compiled successfully
+2025-09-06T11:24:59.759Z [INFO]: Linting and checking validity of types ...
+2025-09-06T11:25:23.252Z [WARNING]: Failed to compile.
+                                    ./components/sections/PricingPro.tsx:148:54
+                                    Type error: Argument of type '{ plan: string; }' is not assignable to parameter of type '{ plan: string; billing: "monthly" | "yearly"; }'.
+                                    Property 'billing' is missing in type '{ plan: string; }' but required in type '{ plan: string; billing: "monthly" | "yearly"; }'.
+                                    [0m [90m 146 |[39m [32m                        : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900"[39m[0m
+                                    [0m [90m 147 |[39m [32m                    }`[39m}[0m
+                                    [0m[31m[1m>[22m[39m[90m 148 |[39m                     onClick[33m=[39m{() [33m=>[39m events[33m.[39mplanSelect({ plan[33m:[39m plan[33m.[39mname })}[0m
+                                    [0m [90m     |[39m                                                      [31m[1m^[22m[39m[0m
+                                    [0m [90m 149 |[39m                   [33m>[39m[0m
+                                    [0m [90m 150 |[39m                     {plan[33m.[39mcta}[0m
+                                    [0m [90m 151 |[39m                   [33m<[39m[33m/[39m[33mButton[39m[33m>[39m[0m
+2025-09-06T11:25:23.297Z [WARNING]: Next.js build worker exited with code: 1 and signal: null
+2025-09-06T11:25:23.349Z [ERROR]: !!! Build failed
+2025-09-06T11:25:23.349Z [INFO]: Please read more about Amplify Hosting's support for SSR frameworks to find if your build failure is related to an unsupported feature: https://docs.aws.amazon.com/amplify/latest/userguide/amplify-ssr-framework-support.html. You may also find this troubleshooting guide useful: https://docs.aws.amazon.com/amplify/latest/userguide/troubleshooting-ssr-deployment.html
+2025-09-06T11:25:23.349Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-09-06T11:25:23.349Z [INFO]: # Starting environment caching...
+2025-09-06T11:25:23.349Z [INFO]: # Environment caching completed
+
