@@ -41,7 +41,7 @@ export default function HomePagePremium() {
             >
               <Star className="w-5 h-5 text-purple-600" fill="currentColor" />
               <span className="text-sm font-semibold text-purple-800 dark:text-purple-300">
-                Trusted by 10,000+ Creators
+                Trusted by 5,000+ Creators
               </span>
             </motion.div>
 

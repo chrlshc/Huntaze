@@ -90,7 +90,7 @@ export default function HomePage() {
                     <TrendingUp className="w-5 h-5 text-green-500" />
                     <div>
                       <div className="text-xs text-gray-500">Revenue</div>
-                      <div className="font-bold">+285%</div>
+                      <div className="font-bold">2–3x</div>
                     </div>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ export default function HomePage() {
               <Sparkles className="w-10 h-10 md:w-12 md:h-12 text-purple-600 mb-4" />
               <h3 className="mb-3">AI Messaging Assistant</h3>
               <p className="mb-4">
-                Never miss a message again. Our AI learns your voice and personality to engage fans 24/7, increasing tips and PPV sales by up to 300%.
+                Never miss a message again. Our AI learns your voice and personality to engage fans 24/7. Creators report 2-3x revenue growth.
               </p>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">

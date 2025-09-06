@@ -20,51 +20,51 @@ import Image from "next/image";
 const features = [
   {
     icon: Brain,
-    title: "Turn fans into fortune",
-    description: "AI that knows exactly what makes your fans pay and stay",
+    title: "Turn fans into loyal customers",
+    description: "AI that learns what keeps your fans engaged and subscribed",
     details: [
-      "Learns from your top 1% messages",
-      "Converts 3x more than human chat",
-      "Never sleeps, never stops selling"
+      "Learns from your best‑performing messages",
+      "Drives faster, more consistent replies",
+      "Never sleeps, never stops helping"
     ],
     gradient: "from-purple-600 to-pink-600",
-    highlight: "$2.3M+ monthly for top creators"
+    highlight: "From $3k to $8k/month (example)"
   },
   {
     icon: MessageSquare,
-    title: "Scale beyond your limits",
-    description: "Handle 1000x more fans without losing the personal touch",
+    title: "Scale without losing the personal touch",
+    description: "Handle more fans with consistent quality",
     details: [
       "Instant responses to every fan",
-      "Remembers every conversation",
-      "Turns DMs into dollars 24/7"
+      "Remembers conversation context",
+      "Turns DMs into sales more often"
     ],
     gradient: "from-blue-600 to-cyan-600",
-    highlight: "10,000+ messages automated daily"
+    highlight: "Automates thousands of messages daily"
   },
   {
     icon: Shield,
-    title: "Bulletproof your business",
-    description: "Bank-level security meets content creator needs",
+    title: "Compliance‑first by design",
+    description: "Built with platform rules and safety guardrails",
     details: [
-      "Zero creator bans since 2022",
-      "AI learns platform rules instantly",
-      "Your content, your control, always"
+      "Compliance checks before sending",
+      "Learns per‑platform guidelines",
+      "You approve, you stay in control"
     ],
     gradient: "from-green-600 to-emerald-600",
-    highlight: "$0 lost to account bans"
+    highlight: "Platform compliant"
   },
   {
     icon: BarChart3,
-    title: "Know what works, drop what doesn't",
-    description: "See exactly which content makes bank and which wastes time",
+    title: "See what works, focus your time",
+    description: "Understand the content and offers that perform",
     details: [
-      "Predict next month's revenue today",
-      "Track every dollar's source",
-      "AI tells you what to post next"
+      "Forecast upcoming revenue",
+      "Attribute sales to actions",
+      "Get AI suggestions on what to post next"
     ],
     gradient: "from-orange-600 to-red-600",
-    highlight: "47% revenue increase average"
+    highlight: "Creators report 2–3x revenue growth"
   }
 ];
 
@@ -88,14 +88,14 @@ export function FeaturesPro() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6 shadow-lg">
             <Sparkles className="w-4 h-4 animate-pulse" />
-            <span>The Creator's Secret Weapon</span>
+            <span>Built for busy creators</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Everything to become<br />
-            <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">the next top 0.1%</span>
+            Everything you need to grow<br />
+            <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">with less work</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            The same AI technology that helped creators go from bedroom content to boardroom decisions
+            Practical AI to save time, stay compliant, and focus on what matters
           </p>
         </motion.div>
 
@@ -198,6 +198,9 @@ export function FeaturesPro() {
               </motion.div>
             ))}
           </div>
+          <p className="mt-8 text-xs text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            Figures shown are examples reported by creators and not guarantees. Actual results vary based on audience, content, and effort.
+          </p>
         </motion.div>
       </div>
     </section>

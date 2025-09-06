@@ -24,9 +24,9 @@ const caseStudies = [
     timeframe: "3 months",
     testimonial: "I was drowning in messages. Now I create more content and still earn more.",
     highlights: [
-      "141% revenue increase",
-      "65% less time on admin",
-      "Better fan relationships"
+      "2.4x revenue growth",
+      "23 hours saved weekly",
+      "Better fan engagement"
     ]
   },
   {
@@ -46,9 +46,9 @@ const caseStudies = [
     timeframe: "4 months",
     testimonial: "The AI handles the repetitive stuff perfectly. I focus on high-value fans now.",
     highlights: [
-      "103% revenue growth",
-      "Doubled conversion rate",
-      "More time for streaming"
+      "2x revenue growth",
+      "Improved conversion rates",
+      "25 hours saved weekly"
     ]
   },
   {
@@ -68,9 +68,9 @@ const caseStudies = [
     timeframe: "2 months",
     testimonial: "Started small with just welcome messages. Now AI handles 80% of my DMs.",
     highlights: [
-      "77% revenue increase",
-      "68% time saved",
-      "Zero platform warnings"
+      "1.7x revenue growth",
+      "17 hours saved weekly",
+      "Platform compliant"
     ]
   }
 ];
@@ -97,8 +97,8 @@ export default function CaseStudiesPage() {
               Real Creators, <span className="text-gradient">Real Results</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              See how creators like you are growing sustainably with Huntaze. 
-              No overnight millionaires - just smart automation that works.
+              See how creators like you save time and grow revenue with Huntaze. 
+              Real examples from our community. Results vary.
             </p>
           </motion.div>
         </div>
@@ -187,6 +187,17 @@ export default function CaseStudiesPage() {
               </motion.div>
             ))}
           </div>
+          
+          {/* Disclaimer */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mt-16 text-sm text-gray-500 dark:text-gray-400 max-w-3xl mx-auto"
+          >
+            These are examples from real creators. Individual results vary based on audience, 
+            content quality, and personal effort. Huntaze provides tools; success requires your engagement.
+          </motion.p>
         </div>
       </section>
 
@@ -236,10 +247,10 @@ export default function CaseStudiesPage() {
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Your Success Story Starts Today
+            Start Working Smarter Today
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join creators who are working smarter, not harder
+            Join 5,000+ creators saving time with AI automation
           </p>
           <div className="flex justify-center gap-4">
             <Link href="/pricing">
