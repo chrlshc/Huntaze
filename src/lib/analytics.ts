@@ -21,7 +21,7 @@ export function track(event: string, params: Params = {}): void {
 export const events = {
   ctaClick: (params: { location: string; label: string }) => track("cta_click", params),
   pricingToggle: (params: { billing: "monthly" | "yearly" }) => track("pricing_toggle", params),
-  planSelect: (params: { plan: string; billing: "monthly" | "yearly" }) => track("plan_select", params),
+  planSelect: (params: { plan: string; billing?: "monthly" | "yearly" }) => track("plan_select", params),
   faqOpen: (params: { question: string; index: number }) => track("faq_open", params),
   newsletterClick: (params: { location: string }) => track("newsletter_subscribe_click", params),
 };
