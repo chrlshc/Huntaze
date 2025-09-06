@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { 
   ArrowLeft, 
-  Target, 
+  Sparkles, 
   AlertCircle,
   Info
 } from 'lucide-react';
 
-export default function NewCampaignPage() {
+export default function AITrainingPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -17,16 +17,16 @@ export default function NewCampaignPage() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Link
-                href="/campaigns"
+                href="/dashboard"
                 className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Retour aux campagnes</span>
+                <span className="text-sm">Retour au dashboard</span>
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-600" />
-              <span className="font-semibold">Nouvelle Campagne</span>
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              <span className="font-semibold">Entraînement IA</span>
             </div>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default function NewCampaignPage() {
             </div>
             <h2 className="text-2xl font-bold mb-2">Fonctionnalité à venir</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              La création de campagnes automatisées n'est pas encore disponible. Cette fonctionnalité sera ajoutée prochainement.
+              L'entraînement personnalisé de l'IA n'est pas encore disponible. Cette fonctionnalité sera ajoutée prochainement.
             </p>
 
             {/* What's Coming */}
@@ -52,25 +52,32 @@ export default function NewCampaignPage() {
                 <div>
                   <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">Bientôt disponible :</p>
                   <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                    <li>• Campagnes de messages ciblées</li>
-                    <li>• Segmentation par tags et comportement</li>
-                    <li>• A/B testing des messages</li>
-                    <li>• Planification et automatisation</li>
-                    <li>• Analytics de performance</li>
-                    <li>• Templates réutilisables</li>
+                    <li>• Personnalisation du ton et style</li>
+                    <li>• Import de conversations exemples</li>
+                    <li>• Règles de réponse personnalisées</li>
+                    <li>• Vocabulaire et phrases préférées</li>
+                    <li>• Test en temps réel</li>
+                    <li>• Profils multiples par plateforme</li>
                   </ul>
                 </div>
               </div>
             </div>
 
+            {/* Current State */}
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg max-w-md mx-auto">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <strong>Actuellement :</strong> L'IA utilise des modèles pré-entraînés qui apprennent de vos corrections et validations au fil du temps.
+              </p>
+            </div>
+
             {/* CTA */}
             <div className="mt-8">
               <Link
-                href="/campaigns"
+                href="/dashboard"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Retour aux campagnes
+                Retour au dashboard
               </Link>
             </div>
           </div>
@@ -79,4 +86,3 @@ export default function NewCampaignPage() {
     </div>
   );
 }
-

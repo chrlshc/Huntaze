@@ -20,55 +20,55 @@ import Image from "next/image";
 const features = [
   {
     icon: Brain,
-    title: "AI-Powered Automation",
-    description: "Our AI learns your voice and converts like you would",
+    title: "AI Draft Assistance",
+    description: "L'IA suggère des réponses dans votre style",
     details: [
-      "Personalized response generation",
-      "Context-aware conversations",
-      "Continuous learning from your style"
+      "Suggestions de réponses personnalisées",
+      "Apprentissage de votre ton",
+      "Vous approuvez avant envoi"
     ],
     gradient: "from-blue-600 to-blue-800"
   },
   {
     icon: MessageSquare,
-    title: "24/7 DM Management",
-    description: "Never miss a sales opportunity again",
+    title: "Gestion des DMs",
+    description: "Organisez et priorisez vos messages",
     details: [
-      "Instant response to all DMs",
-      "Smart conversation routing",
-      "Multi-platform support"
+      "Tri automatique des messages",
+      "Templates de réponses rapides",
+      "Support OnlyFans et Reddit"
     ],
     gradient: "from-gray-700 to-gray-900"
   },
   {
     icon: Shield,
-    title: "Platform Compliant",
-    description: "Stay safe and maximize earnings",
+    title: "Conformité Plateforme",
+    description: "Respectez les guidelines de chaque réseau",
     details: [
-      "Automatic content filtering",
-      "Platform guideline adherence",
-      "Risk detection & prevention"
+      "Vérification du contenu avant post",
+      "Alertes sur les risques",
+      "Conseils par plateforme"
     ],
     gradient: "from-green-600 to-emerald-700"
   },
   {
     icon: BarChart3,
-    title: "Revenue Analytics",
-    description: "Track what works and scale it",
+    title: "Analytics Revenus",
+    description: "Suivez vos performances en temps réel",
     details: [
-      "Conversion rate optimization",
-      "Revenue per subscriber metrics",
-      "Real-time performance data"
+      "Tracking des conversions",
+      "Revenus par abonné",
+      "Rapports hebdomadaires"
     ],
     gradient: "from-red-600 to-red-800"
   }
 ];
 
 const stats = [
-  { value: "300%", label: "Revenue Increase", icon: TrendingUp },
-  { value: "24/7", label: "Always Active", icon: Clock },
-  { value: "15min", label: "Quick Setup", icon: Zap },
-  { value: "100%", label: "Secure & Private", icon: Lock }
+  { value: "+50%", label: "Gain de temps", icon: TrendingUp },
+  { value: "2-3h", label: "Économisées/jour", icon: Clock },
+  { value: "15min", label: "Installation", icon: Zap },
+  { value: "GDPR", label: "Conforme", icon: Lock }
 ];
 
 export function FeaturesPro() {
@@ -87,11 +87,11 @@ export function FeaturesPro() {
             <span>Premium Features</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Everything you need<br />
-            <span className="text-gradient">to scale your income</span>
+            Tout ce qu'il faut<br />
+            <span className="text-gradient">pour gérer vos fans</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Complete toolkit to automate conversations, analyze performance, and maximize your creator business
+            Outils complets pour organiser vos messages, analyser vos performances et développer votre business créateur
           </p>
         </motion.div>
 
