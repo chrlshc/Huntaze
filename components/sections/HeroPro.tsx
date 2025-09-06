@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/src/components/ui/magnetic-button";
+import { StaggerContainer, StaggerItem } from "@/src/components/ui/stagger-container";
 import { ChevronRight, Sparkles, Zap, Shield, BarChart3, Globe2, ArrowRight, Lock, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useSafeTheme } from "@/src/hooks/useSafeTheme";
@@ -135,41 +137,47 @@ export function HeroPro() {
               className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12"
             >
               <Link href="/onboarding" className="w-full sm:w-auto">
-                <Button className="btn-primary group px-8 py-6 text-lg min-h-[44px] sm:min-h-[48px] w-full sm:w-auto" onClick={() => events.ctaClick({ location: 'hero', label: 'Start Earning 95% Today' })}>
+                <MagneticButton 
+                  size="lg" 
+                  variant="primary"
+                  className="w-full sm:w-auto group"
+                  onClick={() => events.ctaClick({ location: 'hero', label: 'Start Earning 95% Today' })}
+                >
                   Start Earning 95% Today
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                  <ArrowRight className="ml-2 w-5 h-5 inline-block group-hover:translate-x-1 transition-transform" />
+                </MagneticButton>
               </Link>
               <Link href="/demo" className="w-full sm:w-auto">
-                <Button variant="outline" className="px-8 py-6 text-lg border-2 min-h-[44px] sm:min-h-[48px] w-full sm:w-auto" onClick={() => events.ctaClick({ location: 'hero', label: 'See 3-Min Demo' })}>
+                <MagneticButton 
+                  size="lg" 
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                  onClick={() => events.ctaClick({ location: 'hero', label: 'See 3-Min Demo' })}
+                >
                   See 3-Min Demo
-                  <ChevronRight className="ml-2 w-5 h-5" />
-                </Button>
+                  <ChevronRight className="ml-2 w-5 h-5 inline-block" />
+                </MagneticButton>
               </Link>
             </motion.div>
 
             {/* Features */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
+            <StaggerContainer
               className="grid grid-cols-2 gap-4"
+              staggerDelay={0.1}
+              delayChildren={0.6}
             >
               {features.map((feature, index) => (
-                <motion.div
+                <StaggerItem
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 glass-card p-3 hover:scale-105 transition-transform"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                    <feature.icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-sm font-medium">{feature.text}</span>
-                </motion.div>
+                </StaggerItem>
               ))}
-            </motion.div>
+            </StaggerContainer>
 
             {/* Social proof */}
             <motion.div
