@@ -183,7 +183,7 @@ Craft an appropriate response that:
       draft,
       confidence: 0.85,
       reasoning: `Generated response for ${params.fanData.rfmSegment} segment fan with Claude 3.5 Sonnet`,
-      upsell_opportunity: hasUpsell && params.fanData.propensityScore > 0.6,
+      upsell_opportunity: hasUpsell && (params.fanData.propensityScore ?? 0) > 0.6,
       recommended_ppv_price: hasUpsell ? this.calculatePPVPrice(params.fanData) : undefined,
       persona_elements_used: params.persona.tone_keywords.filter(kw => 
         new RegExp(kw, 'i').test(draft)
@@ -196,7 +196,7 @@ Craft an appropriate response that:
     };
   }
 
-  private fallbackResponse(params: LLMDraftParams): LLMDraftResponse {
+  protected fallbackResponse(params: LLMDraftParams): LLMDraftResponse {
     const templates = params.persona.templates || {};
     let template = templates.welcome || "Hey ${name}! Thanks for your message 💕";
     
@@ -245,23 +245,24 @@ Craft an appropriate response that:
 }
 
 // OpenAI Provider
-export class OpenAIProvider implements LLMProvider {
+export class OpenAIProvider extends ClaudeProvider {
   name = 'GPT-4';
-  private apiKey: string;
-  private apiUrl = 'https://api.openai.com/v1/chat/completions';
+  private openAIApiKey: string;
+  private openAIApiUrl = 'https://api.openai.com/v1/chat/completions';
 
   constructor(apiKey: string) {
-    this.apiKey = apiKey;
+    super('');
+    this.openAIApiKey = apiKey;
   }
 
   async generateDraft(params: LLMDraftParams): Promise<LLMDraftResponse> {
     // Similar implementation to Claude but using OpenAI API
     // For brevity, returning fallback for now
-    return new ClaudeProvider('').fallbackResponse(params);
+    return this.fallbackResponse(params);
   }
 
   async validateContent(content: string, guardrails: ContentGuardrails): Promise<ValidationResult> {
-    return new ClaudeProvider('').validateContent(content, guardrails);
+    return super.validateContent(content, guardrails);
   }
 }
 

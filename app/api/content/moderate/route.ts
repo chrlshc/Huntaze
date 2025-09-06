@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       unsafePlatforms: Object.entries(results)
         .filter(([_, result]) => !result.safe)
         .map(([platform]) => platform),
-      recommendations: []
+      recommendations: [] as string[]
     };
 
     // Aggregate recommendations
