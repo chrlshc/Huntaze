@@ -1,26 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* ULTRA HIGH CONTRAST - Maximum readability */
-  --text-primary-dark: #FFFFFF;
-  --text-secondary-dark: #F5F5F5;
-  --text-tertiary-dark: #E5E5E5;
-  --text-muted-dark: #D4D4D4;
+  /* Linear Dark Mode Colors */
+  --bg-primary: #0F0F10;
+  --bg-secondary: #151516;
+  --bg-surface: #1A1A1A;
   
-  /* Light mode - Pure black for maximum contrast */
-  --text-primary-light: #000000;
-  --text-secondary-light: #18181B;
-  --text-tertiary-light: #27272A;
-  --text-muted-light: #3F3F46;
+  /* Text Colors - High Contrast */
+  --text-primary: #EEEFF1;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
   
-  /* Brand colors - Professional & Bold */
-  --brand-primary: #2563EB; /* Strong blue */
-  --brand-secondary: #7C3AED; /* Deep purple */
-  --brand-accent: #DC2626; /* Power red */
-  --brand-dark: #111827; /* Almost black */
-  --brand-success: #059669; /* Success green */
+  /* Shopify/Stripe Accent Colors */
+  --accent-primary: #635BFF; /* Stripe/Linear purple */
+  --accent-hover: #5A51E6;
+  --accent-blue: #006494; /* Shopify blue */
+  --accent-success: #008060; /* Shopify green */
+  
+  /* Borders */
+  --border-color: #2A2A2A;
+  --border-light: #E1E3E5;
   
   /* Professional Gradients */
   --gradient-primary: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
@@ -76,22 +79,40 @@
   }
 }
 
-/* FORCE HIGH CONTRAST ON ALL TEXT */
+/* Base Typography - Inter Font */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  @apply bg-white dark:bg-[#0F0F10] text-[#212529] dark:text-[#EEEFF1];
+  font-feature-settings: 'ss01' 1, 'ss02' 1, 'cv01' 1, 'cv03' 1, 'cv04' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings - Linear/Stripe style */
 h1, h2, h3, h4, h5, h6 {
-  @apply !text-gray-900 dark:!text-white !font-bold;
+  @apply tracking-[-0.02em] leading-[1.1];
 }
 
+h1 {
+  @apply text-[#212529] dark:text-[#EEEFF1] font-semibold;
+}
+
+h2 {
+  @apply text-[#212529] dark:text-[#EEEFF1] font-semibold;
+}
+
+h3 {
+  @apply text-[#212529] dark:text-[#EEEFF1] font-medium;
+}
+
+/* Body Text */
 p {
-  @apply !text-gray-800 dark:!text-gray-100;
+  @apply text-[#6C757D] dark:text-[#9CA3AF] leading-[1.6];
 }
 
-/* Override ALL gray text */
-.text-gray-600 {
-  @apply !text-gray-800 dark:!text-gray-200;
-}
-
-.text-gray-500 {
-  @apply !text-gray-800 dark:!text-gray-200;
+/* Override gray colors for better contrast */
+.text-gray-600, .text-gray-500, .text-gray-400 {
+  @apply text-[#6C757D] dark:text-[#9CA3AF];
 }
 
 .text-gray-400 {
