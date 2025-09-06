@@ -1,0 +1,138 @@
+/* Glassmorphism Base Styles */
+:root {
+  --glass-blur: 12px;
+  --glass-blur-mobile: 8px;
+  --glass-bg-light: rgba(255, 255, 255, 0.15);
+  --glass-bg-dark: rgba(0, 0, 0, 0.15);
+  --glass-border-light: rgba(255, 255, 255, 0.25);
+  --glass-border-dark: rgba(255, 255, 255, 0.1);
+}
+
+/* Base Glass Effect */
+.glass {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  border-radius: 20px;
+  transform: translateZ(0); /* Force GPU layer */
+  will-change: transform;
+}
+
+.dark .glass {
+  background: var(--glass-bg-dark);
+  border-color: var(--glass-border-dark);
+}
+
+/* Glass Variants */
+.glass-card {
+  @apply glass;
+  padding: 2rem;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.glass-navbar {
+  @apply glass;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.dark .glass-navbar {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.glass-button {
+  @apply glass;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Premium Gradient Overlays */
+.glass-gradient {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-gradient::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(120, 119, 198, 0.3),
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.glass-gradient:hover::before {
+  opacity: 1;
+}
+
+/* Performance Optimization for Mobile */
+@media (max-width: 768px) {
+  .glass {
+    --glass-blur: var(--glass-blur-mobile);
+  }
+  
+  /* Disable hover effects on mobile */
+  .glass-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-text {
+  @apply skeleton;
+  height: 1em;
+  border-radius: 4px;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-button {
+  @apply skeleton;
+  height: 3rem;
+  border-radius: 8px;
+  width: 120px;
+}
+
+.skeleton-card {
+  @apply skeleton;
+  height: 200px;
+  border-radius: 20px;
+}

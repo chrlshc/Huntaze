@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
 import "./animations.css";
+import "./glass.css";
 import HeaderImproved from "@/src/components/header-improved";
 import FooterImproved from "@/src/components/footer-improved";
 import MobileBottomNav from "@/src/components/mobile-bottom-nav";
 import PageTransition from "@/src/components/page-transition";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { SmoothScrollProvider } from "@/src/components/providers/SmoothScrollProvider";
 
 
 export const metadata: Metadata = {
@@ -85,14 +87,16 @@ export default function RootLayout({
       <body className="antialiased" data-ui={minimal ? 'minimal' : undefined}>
         <GoogleAnalytics />
         <Providers>
-          <HeaderImproved />
-          <PageTransition>
-            <main className="min-h-screen">
-              {children}
-            </main>
-          </PageTransition>
-          <FooterImproved />
-          <MobileBottomNav />
+          <SmoothScrollProvider>
+            <HeaderImproved />
+            <PageTransition>
+              <main className="min-h-screen">
+                {children}
+              </main>
+            </PageTransition>
+            <FooterImproved />
+            <MobileBottomNav />
+          </SmoothScrollProvider>
         </Providers>
       </body>
     </html>
