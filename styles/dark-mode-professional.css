@@ -1,0 +1,391 @@
+/* Huntaze Professional Dark Mode System
+   Inspired by Linear, Vercel, and Stripe design systems
+   WCAG AAA compliant with optimal readability */
+
+/* ========================================
+   Dark Mode Color System - Professional SaaS Standards
+   ======================================== */
+
+:root {
+  /* Light Mode Colors - Clean and Professional */
+  --background-primary: #FFFFFF;
+  --background-secondary: #FAFAFA;
+  --background-elevated: #FFFFFF;
+  --background-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Text Colors - High Contrast for Light Mode */
+  --text-primary: #0F0F10;
+  --text-secondary: #5C5C66;
+  --text-tertiary: #8C8C99;
+  --text-disabled: #ADADB8;
+  
+  /* Accent Colors - Professional Purple */
+  --accent-primary: #9333EA;
+  --accent-hover: #7E22CE;
+  --accent-active: #6B21A8;
+  --accent-muted: #F3E8FF;
+  
+  /* Status Colors */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+  
+  /* UI Elements */
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.24);
+  
+  /* Shadows - Subtle and Professional */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  
+  /* Focus States */
+  --focus-ring: 0 0 0 2px var(--background-primary), 0 0 0 4px var(--accent-primary);
+}
+
+/* Dark Mode - Linear/Vercel/Stripe Inspired */
+:root.dark,
+:root[data-theme="dark"] {
+  /* Background Colors - Dark grays, not pure black */
+  --background-primary: #0F0F10;
+  --background-secondary: #151516;
+  --background-elevated: #1A1A1C;
+  --background-overlay: rgba(0, 0, 0, 0.7);
+  
+  /* Text Colors - Off-whites for comfort, WCAG AAA compliant */
+  --text-primary: #EEEFF1;
+  --text-secondary: #8C99AD;
+  --text-tertiary: #6B7280;
+  --text-disabled: #4B5563;
+  
+  /* Accent Colors - Desaturated for dark backgrounds */
+  --accent-primary: #A855F7;
+  --accent-hover: #C084FC;
+  --accent-active: #9333EA;
+  --accent-muted: rgba(168, 85, 247, 0.1);
+  
+  /* Status Colors - Adjusted for dark mode */
+  --success: #34D399;
+  --warning: #FBBF24;
+  --error: #F87171;
+  --info: #60A5FA;
+  
+  /* UI Elements - Subtle borders */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  
+  /* Shadows - Darker and more subtle */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.8), 0 2px 4px -2px rgba(0, 0, 0, 0.8);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.8), 0 4px 6px -4px rgba(0, 0, 0, 0.8);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.8);
+  
+  /* Focus States */
+  --focus-ring: 0 0 0 2px var(--background-primary), 0 0 0 4px var(--accent-primary);
+}
+
+/* ========================================
+   Typography Optimization for Dark Mode
+   ======================================== */
+
+.dark {
+  /* Font smoothing for crisp text on dark backgrounds */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Increase letter spacing slightly for better legibility */
+  letter-spacing: 0.01em;
+}
+
+/* Adjust font weights for dark mode */
+.dark body {
+  font-weight: 425; /* Slightly heavier than normal 400 */
+}
+
+.dark h1, 
+.dark h2, 
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  font-weight: 600; /* Reduced from 700 for dark backgrounds */
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* Ensure all text meets WCAG AAA standards */
+.dark p,
+.dark span,
+.dark div {
+  color: var(--text-primary);
+}
+
+.dark .text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+/* ========================================
+   Component Overrides for Professional Dark Mode
+   ======================================== */
+
+/* Cards and Elevated Surfaces */
+.dark .premium-card,
+.dark .card {
+  background: var(--background-elevated);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-md);
+}
+
+.dark .premium-card:hover,
+.dark .card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-lg);
+  background: rgba(26, 26, 28, 0.8);
+}
+
+/* Buttons - Professional Dark Mode */
+.dark .btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+  color: var(--background-primary);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35);
+  transform: translateY(-2px);
+}
+
+.dark .btn-secondary {
+  background: var(--background-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+.dark .btn-secondary:hover {
+  background: var(--background-secondary);
+  border-color: var(--border-strong);
+}
+
+.dark .btn-outline-premium {
+  background: transparent;
+  color: var(--accent-primary);
+  border: 2px solid var(--accent-primary);
+}
+
+.dark .btn-outline-premium:hover {
+  background: var(--accent-muted);
+  border-color: var(--accent-hover);
+}
+
+/* Form Controls */
+.dark input,
+.dark textarea,
+.dark select {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Navigation and Headers */
+.dark header {
+  background: rgba(15, 15, 16, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dark .nav-link {
+  color: var(--text-secondary);
+}
+
+.dark .nav-link:hover {
+  color: var(--text-primary);
+}
+
+/* Footer */
+.dark footer {
+  background: var(--background-secondary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Modals and Overlays */
+.dark .modal-backdrop {
+  background: var(--background-overlay);
+  backdrop-filter: blur(8px);
+}
+
+.dark .modal-content {
+  background: var(--background-elevated);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   Glassmorphism Effects for Dark Mode
+   ======================================== */
+
+.dark .glass-effect {
+  background: rgba(26, 26, 28, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ========================================
+   Gradient Adjustments for Dark Mode
+   ======================================== */
+
+.dark .gradient-text-premium {
+  background: linear-gradient(135deg, #C084FC 0%, #F0ABFC 50%, #E0AAFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .bg-gradient-to-br {
+  opacity: 0.8; /* Reduce gradient intensity in dark mode */
+}
+
+/* ========================================
+   Special Elements for Dark Mode
+   ======================================== */
+
+/* Code blocks */
+.dark pre,
+.dark code {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+/* Tables */
+.dark table {
+  border-color: var(--border-subtle);
+}
+
+.dark th {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.dark td {
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+/* Dividers */
+.dark hr {
+  border-color: var(--border-subtle);
+}
+
+/* ========================================
+   Animation Adjustments for Dark Mode
+   ======================================== */
+
+.dark .animate-gradient {
+  opacity: 0.6; /* Reduce animation intensity */
+}
+
+.dark .shadow-glow {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+/* ========================================
+   Mobile Optimizations for Dark Mode
+   ======================================== */
+
+@media (max-width: 768px) {
+  .dark .mobile-menu {
+    background: var(--background-primary);
+  }
+  
+  .dark .mobile-bottom-nav {
+    background: var(--background-elevated);
+    border-top: 1px solid var(--border-subtle);
+  }
+}
+
+/* ========================================
+   Performance Optimizations
+   ======================================== */
+
+.dark {
+  /* GPU acceleration for smooth transitions */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .dark * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   High Contrast Mode Support
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  :root.dark {
+    --text-primary: #FFFFFF;
+    --text-secondary: #E5E5E5;
+    --border-default: rgba(255, 255, 255, 0.3);
+    --accent-primary: #C084FC;
+  }
+}
+
+/* ========================================
+   Custom Scrollbar for Dark Mode
+   ======================================== */
+
+.dark::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.dark::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+  border: 3px solid var(--background-secondary);
+}
+
+.dark::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Firefox */
+.dark {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) var(--background-secondary);
+}
