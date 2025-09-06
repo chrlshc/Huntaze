@@ -15,8 +15,8 @@ import { FloatingAssistant } from "@/src/components/floating-assistant";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
-  title: "Huntaze - Be the Next Million-Dollar Creator",
-  description: "Join 10,000+ creators earning $50K+ monthly. AI that works 24/7, growing your empire while you sleep.",
+  title: "Huntaze - Double Your Revenue, Half the Work",
+  description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI automation.",
   keywords: "OnlyFans automation, million dollar creator, AI empire builder, top 1% OnlyFans, creator success platform, passive income automation",
   icons: {
     icon: [
@@ -26,15 +26,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Huntaze - Be the Next Million-Dollar Creator",
-    description: "Join 10,000+ creators earning $50K+ monthly. AI that works 24/7, growing your empire while you sleep.",
+    title: "Huntaze - Double Your Revenue, Half the Work",
+    description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI automation.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Huntaze - Be the Next Million-Dollar Creator",
-    description: "Join 10,000+ creators earning $50K+ monthly. AI that works 24/7, growing your empire while you sleep.",
+    title: "Huntaze - Double Your Revenue, Half the Work",
+    description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI automation.",
     images: ["/twitter-image.png"],
   },
 };
