@@ -20,48 +20,48 @@ type Question = {
 const QUIZ_QUESTIONS: Question[] = [
   {
     id: "q1",
-    question: "Quelle plateforme interdit totalement l'automatisation des messages directs (DMs)?",
+    question: "Which platform fully forbids automated direct messages (DMs)?",
     options: ["Instagram", "TikTok", "Reddit", "OnlyFans"],
     correctAnswer: 1,
-    explanation: "TikTok interdit strictement toute automatisation de messages directs via API."
+    explanation: "TikTok strictly forbids any automated DMs via API."
   },
   {
     id: "q2",
-    question: "Quelle est la limite recommandée de posts par jour sur Instagram?",
-    options: ["3 posts", "5 posts", "10 posts", "Illimité"],
+    question: "What is the recommended limit of posts per day on Instagram?",
+    options: ["3 posts", "5 posts", "10 posts", "Unlimited"],
     correctAnswer: 1,
-    explanation: "La limite de 5 posts par jour permet de rester dans les bonnes pratiques d'Instagram."
+    explanation: "Posting up to 5 per day stays within Instagram best practices."
   },
   {
     id: "q3",
-    question: "Que signifie le principe de 'minimisation des données' du RGPD?",
+    question: "What does the GDPR 'data minimization' principle mean?",
     options: [
-      "Supprimer toutes les données",
-      "Collecter uniquement les données nécessaires",
-      "Partager le minimum de données",
-      "Réduire la taille des fichiers"
+      "Delete all data",
+      "Collect only data that is necessary",
+      "Share the minimum data",
+      "Reduce file sizes"
     ],
     correctAnswer: 1,
-    explanation: "Le RGPD exige de ne collecter que les données strictement nécessaires à votre activité."
+    explanation: "GDPR requires collecting only what’s strictly necessary for your activity."
   },
   {
     id: "q4",
-    question: "Combien de temps un utilisateur peut-il demander la suppression de ses données?",
-    options: ["30 jours", "90 jours", "1 an", "À tout moment"],
+    question: "When can a user request deletion of their data?",
+    options: ["30 days", "90 days", "1 year", "Any time"],
     correctAnswer: 3,
-    explanation: "Le RGPD donne le droit à l'effacement des données à tout moment."
+    explanation: "GDPR grants the right to erasure at any time."
   },
   {
     id: "q5",
-    question: "Qu'est-ce qui déclenche une supervision humaine obligatoire?",
+    question: "What triggers mandatory human supervision?",
     options: [
-      "Tout message automatique",
-      "Messages avec prix > 100$ ou > 50 destinataires",
-      "Uniquement les posts publics",
-      "Rien, tout est automatisé"
+      "Any automated message",
+      "Messages with price > $100 or > 50 recipients",
+      "Only public posts",
+      "Nothing, everything is automated"
     ],
     correctAnswer: 1,
-    explanation: "Les seuils de supervision garantissent un contrôle humain sur les actions sensibles."
+    explanation: "Supervision thresholds ensure human control over sensitive actions."
   }
 ];
 
@@ -115,22 +115,22 @@ export function ComplianceTrainingStep() {
       <div className="space-y-6">
         <div className="flex items-center gap-3 mb-4">
           <BookOpen className="w-8 h-8 text-purple-600" />
-          <h3 className="text-xl font-semibold">Formation à la conformité</h3>
+          <h3 className="text-xl font-semibold">Compliance Training</h3>
         </div>
 
         <Alert className="border-purple-200 bg-purple-50">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Cette formation est obligatoire pour garantir une utilisation conforme de la plateforme.
-            Vous devez obtenir au moins 80% pour continuer.
+            This training is required to ensure compliant usage. 
+            You must score at least 80% to continue.
           </AlertDescription>
         </Alert>
 
         <Card className="p-6">
           <div className="mb-4">
             <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Question {currentQuestionIndex + 1} sur {QUIZ_QUESTIONS.length}</span>
-              <span>{Math.round(((currentQuestionIndex) / QUIZ_QUESTIONS.length) * 100)}% complété</span>
+              <span>Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}</span>
+              <span>{Math.round(((currentQuestionIndex) / QUIZ_QUESTIONS.length) * 100)}% complete</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
@@ -158,7 +158,7 @@ export function ComplianceTrainingStep() {
             disabled={!selectedAnswer}
             className="w-full mt-6 bg-purple-600 hover:bg-purple-700"
           >
-            {currentQuestionIndex < QUIZ_QUESTIONS.length - 1 ? "Suivant" : "Terminer le quiz"}
+            {currentQuestionIndex < QUIZ_QUESTIONS.length - 1 ? "Next" : "Finish quiz"}
           </Button>
         </Card>
       </div>
@@ -176,9 +176,9 @@ export function ComplianceTrainingStep() {
             <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
               <Shield className="w-10 h-10 text-green-600" />
             </div>
-            <h3 className="text-2xl font-bold text-green-600">Félicitations!</h3>
+            <h3 className="text-2xl font-bold text-green-600">Congrats!</h3>
             <p className="text-gray-600">
-              Vous avez réussi le quiz avec un score de {score}%
+              You passed the quiz with a score of {score}%
             </p>
           </>
         ) : (
@@ -186,16 +186,16 @@ export function ComplianceTrainingStep() {
             <div className="w-20 h-20 mx-auto bg-red-100 rounded-full flex items-center justify-center">
               <Ban className="w-10 h-10 text-red-600" />
             </div>
-            <h3 className="text-2xl font-bold text-red-600">Score insuffisant</h3>
+            <h3 className="text-2xl font-bold text-red-600">Insufficient score</h3>
             <p className="text-gray-600">
-              Vous avez obtenu {score}%. Un minimum de 80% est requis.
+              You got {score}%. A minimum of 80% is required.
             </p>
           </>
         )}
       </div>
 
       <Card className="p-6 bg-gray-50">
-        <h4 className="font-semibold mb-4">Résultats détaillés:</h4>
+        <h4 className="font-semibold mb-4">Detailed results:</h4>
         {QUIZ_QUESTIONS.map((q, index) => {
           const userAnswer = answers[q.id];
           const isCorrect = userAnswer === q.correctAnswer;
@@ -211,7 +211,7 @@ export function ComplianceTrainingStep() {
                 <div className="flex-1">
                   <p className="font-medium">{q.question}</p>
                   <p className="text-sm text-gray-600 mt-1">
-                    Votre réponse: {q.options[userAnswer]} 
+                    Your answer: {q.options[userAnswer]} 
                     {!isCorrect && ` (Correct: ${q.options[q.correctAnswer]})`}
                   </p>
                   <p className="text-sm text-gray-500 mt-2">{q.explanation}</p>
@@ -227,7 +227,7 @@ export function ComplianceTrainingStep() {
           onClick={resetQuiz} 
           className="w-full bg-purple-600 hover:bg-purple-700"
         >
-          Recommencer le quiz
+          Restart quiz
         </Button>
       )}
     </div>

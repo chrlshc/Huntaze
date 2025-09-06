@@ -27,17 +27,17 @@ export function GDPRConsentStep() {
         <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
           <Shield className="w-8 h-8 text-blue-600" />
         </div>
-        <h3 className="text-xl font-semibold">Protection de vos données</h3>
+        <h3 className="text-xl font-semibold">Protecting your data</h3>
         <p className="text-gray-600">
-          Conformément au RGPD, nous vous expliquons comment vos données sont utilisées
+          In line with GDPR, here’s how your data is used
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Vos droits RGPD</CardTitle>
+          <CardTitle>Your GDPR rights</CardTitle>
           <CardDescription>
-            Vous disposez de droits étendus sur vos données personnelles
+            You have extensive rights over your personal data
           </CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-4">
@@ -45,9 +45,9 @@ export function GDPRConsentStep() {
             <div className="flex items-start gap-3">
               <Download className="w-5 h-5 text-purple-600 mt-0.5" />
               <div>
-                <h4 className="font-medium">Droit d'accès</h4>
+                <h4 className="font-medium">Right of access</h4>
                 <p className="text-sm text-gray-600">
-                  Demandez une copie de toutes vos données à tout moment
+                  Request a copy of all your data anytime
                 </p>
               </div>
             </div>
@@ -55,9 +55,9 @@ export function GDPRConsentStep() {
             <div className="flex items-start gap-3">
               <Trash2 className="w-5 h-5 text-purple-600 mt-0.5" />
               <div>
-                <h4 className="font-medium">Droit à l'effacement</h4>
+                <h4 className="font-medium">Right to erasure</h4>
                 <p className="text-sm text-gray-600">
-                  Supprimez définitivement votre compte et vos données
+                  Permanently delete your account and data
                 </p>
               </div>
             </div>
@@ -67,9 +67,9 @@ export function GDPRConsentStep() {
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-purple-600 mt-0.5" />
               <div>
-                <h4 className="font-medium">Durée de conservation</h4>
+                <h4 className="font-medium">Retention</h4>
                 <p className="text-sm text-gray-600">
-                  90 jours par défaut, personnalisable dans vos paramètres
+                  90 days by default, customizable in settings
                 </p>
               </div>
             </div>
@@ -77,9 +77,9 @@ export function GDPRConsentStep() {
             <div className="flex items-start gap-3">
               <Lock className="w-5 h-5 text-purple-600 mt-0.5" />
               <div>
-                <h4 className="font-medium">Sécurité renforcée</h4>
+                <h4 className="font-medium">Hardened security</h4>
                 <p className="text-sm text-gray-600">
-                  Chiffrement AES-256 et accès strictement contrôlé
+                  AES‑256 encryption and strictly controlled access
                 </p>
               </div>
             </div>
@@ -89,48 +89,48 @@ export function GDPRConsentStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Utilisation de vos données</CardTitle>
+          <CardTitle>How we use your data</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <h4 className="font-medium">Nous utilisons vos données pour:</h4>
+            <h4 className="font-medium">We use your data to:</h4>
             <ul className="space-y-1 text-sm text-gray-700">
-              <li>• Personnaliser les interactions de votre IA</li>
-              <li>• Analyser les performances de vos contenus</li>
-              <li>• Respecter les limites de chaque plateforme</li>
-              <li>• Assurer la conformité réglementaire</li>
-              <li>• Améliorer nos services (données anonymisées)</li>
+              <li>• Personalize your AI’s interactions</li>
+              <li>• Analyze your content performance</li>
+              <li>• Respect each platform’s limits</li>
+              <li>• Ensure regulatory compliance</li>
+              <li>• Improve our services (anonymized data)</li>
             </ul>
           </div>
           
           <div className="bg-red-50 rounded-lg p-4 space-y-2">
-            <h4 className="font-medium">Nous ne faisons JAMAIS:</h4>
+            <h4 className="font-medium">We NEVER:</h4>
             <ul className="space-y-1 text-sm text-red-800">
-              <li>• Vendre vos données à des tiers</li>
-              <li>• Partager vos contenus sans autorisation</li>
-              <li>• Utiliser vos données à des fins publicitaires</li>
-              <li>• Conserver vos données au-delà de la période définie</li>
+              <li>• Sell your data to third parties</li>
+              <li>• Share your content without permission</li>
+              <li>• Use your data for advertising</li>
+              <li>• Keep data beyond defined retention</li>
             </ul>
           </div>
 
           <div className="bg-blue-50 rounded-lg p-4 space-y-2">
-            <h4 className="font-medium">Durées de conservation par type:</h4>
+            <h4 className="font-medium">Retention by data type:</h4>
             <div className="space-y-1 text-sm text-gray-700">
               <div className="flex justify-between">
-                <span>Messages et conversations:</span>
-                <span className="font-medium">90 jours (personnalisable)</span>
+                <span>Messages and conversations:</span>
+                <span className="font-medium">90 days (customizable)</span>
               </div>
               <div className="flex justify-between">
-                <span>Données analytiques:</span>
-                <span className="font-medium">2 ans (puis anonymisées)</span>
+                <span>Analytics data:</span>
+                <span className="font-medium">2 years (then anonymized)</span>
               </div>
               <div className="flex justify-between">
-                <span>Logs de sécurité:</span>
-                <span className="font-medium">30 jours</span>
+                <span>Security logs:</span>
+                <span className="font-medium">30 days</span>
               </div>
               <div className="flex justify-between">
-                <span>Données de facturation:</span>
-                <span className="font-medium">10 ans (obligation légale)</span>
+                <span>Billing data:</span>
+                <span className="font-medium">10 years (legal requirement)</span>
               </div>
             </div>
           </div>
@@ -139,9 +139,9 @@ export function GDPRConsentStep() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Consentements requis</CardTitle>
+          <CardTitle>Required consents</CardTitle>
           <CardDescription>
-            Veuillez lire et accepter nos conditions
+            Please read and accept our terms
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -153,10 +153,10 @@ export function GDPRConsentStep() {
             />
             <div className="space-y-1">
               <Label htmlFor="terms" className="cursor-pointer">
-                J'accepte les conditions d'utilisation*
+                I accept the Terms of Service*
               </Label>
               <p className="text-sm text-gray-600">
-                Incluant les règles de conformité des plateformes
+                Including platform compliance rules
               </p>
             </div>
           </div>
@@ -169,10 +169,10 @@ export function GDPRConsentStep() {
             />
             <div className="space-y-1">
               <Label htmlFor="data-processing" className="cursor-pointer">
-                J'accepte le traitement de mes données personnelles*
+                I consent to personal data processing*
               </Label>
               <p className="text-sm text-gray-600">
-                Conformément à la politique de confidentialité
+                As described in the Privacy Policy
               </p>
             </div>
           </div>
@@ -185,10 +185,10 @@ export function GDPRConsentStep() {
             />
             <div className="space-y-1">
               <Label htmlFor="marketing" className="cursor-pointer">
-                J'accepte de recevoir des communications marketing (optionnel)
+                I agree to receive marketing communications (optional)
               </Label>
               <p className="text-sm text-gray-600">
-                Nouveautés, conseils et offres exclusives
+                Product updates, tips, and exclusive offers
               </p>
             </div>
           </div>
@@ -199,23 +199,23 @@ export function GDPRConsentStep() {
             className="p-0 h-auto text-purple-600 hover:text-purple-700 hover:bg-transparent"
           >
             <FileText className="w-4 h-4 mr-2" />
-            {showPrivacyPolicy ? "Masquer" : "Lire"} la politique de confidentialité complète
+            {showPrivacyPolicy ? "Hide" : "Read"} the full privacy policy
           </Button>
           
           {showPrivacyPolicy && (
             <ScrollArea className="h-48 rounded-lg border p-4">
               <div className="space-y-4 text-sm">
-                <h4 className="font-semibold">1. Collecte des données</h4>
-                <p>Nous collectons uniquement les données nécessaires au fonctionnement du service...</p>
+                <h4 className="font-semibold">1. Data collection</h4>
+                <p>We collect only the data necessary to provide the service...</p>
                 
-                <h4 className="font-semibold">2. Utilisation des données</h4>
-                <p>Vos données sont utilisées exclusivement pour fournir et améliorer nos services...</p>
+                <h4 className="font-semibold">2. Data usage</h4>
+                <p>Your data is used exclusively to provide and improve our services...</p>
                 
-                <h4 className="font-semibold">3. Conservation</h4>
-                <p>Les données sont conservées pendant la durée définie dans vos paramètres...</p>
+                <h4 className="font-semibold">3. Retention</h4>
+                <p>Data is retained for the duration defined in your settings...</p>
                 
-                <h4 className="font-semibold">4. Vos droits</h4>
-                <p>Vous disposez d'un droit d'accès, de rectification et de suppression...</p>
+                <h4 className="font-semibold">4. Your rights</h4>
+                <p>You have rights to access, rectify, and delete your data...</p>
               </div>
             </ScrollArea>
           )}
@@ -225,7 +225,7 @@ export function GDPRConsentStep() {
       {(!userData.acceptedTerms || !userData.dataProcessingConsent) && (
         <Alert>
           <AlertDescription>
-            Les champs marqués d'un * sont obligatoires pour continuer
+            Fields marked with * are required to continue
           </AlertDescription>
         </Alert>
       )}

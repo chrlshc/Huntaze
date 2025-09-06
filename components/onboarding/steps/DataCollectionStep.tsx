@@ -12,15 +12,15 @@ import { User, Mail, Globe, Info } from "lucide-react";
 
 const COUNTRIES = [
   { code: "FR", name: "France" },
-  { code: "US", name: "États-Unis" },
+  { code: "US", name: "United States" },
   { code: "CA", name: "Canada" },
-  { code: "GB", name: "Royaume-Uni" },
-  { code: "DE", name: "Allemagne" },
-  { code: "ES", name: "Espagne" },
-  { code: "IT", name: "Italie" },
-  { code: "BE", name: "Belgique" },
-  { code: "CH", name: "Suisse" },
-  { code: "OTHER", name: "Autre" }
+  { code: "GB", name: "United Kingdom" },
+  { code: "DE", name: "Germany" },
+  { code: "ES", name: "Spain" },
+  { code: "IT", name: "Italy" },
+  { code: "BE", name: "Belgium" },
+  { code: "CH", name: "Switzerland" },
+  { code: "OTHER", name: "Other" }
 ];
 
 export function DataCollectionStep() {
@@ -31,15 +31,15 @@ export function DataCollectionStep() {
     const newErrors: Record<string, string> = {};
     
     if (!userData.pseudonym || userData.pseudonym.length < 3) {
-      newErrors.pseudonym = "Le pseudonyme doit contenir au moins 3 caractères";
+      newErrors.pseudonym = "Handle must be at least 3 characters";
     }
     
     if (!userData.email || !userData.email.includes('@')) {
-      newErrors.email = "Veuillez entrer une adresse email valide";
+      newErrors.email = "Please enter a valid email address";
     }
     
     if (!userData.country) {
-      newErrors.country = "Veuillez sélectionner votre pays";
+      newErrors.country = "Please select your country";
     }
     
     setErrors(newErrors);
@@ -56,29 +56,28 @@ export function DataCollectionStep() {
       <Alert className="bg-blue-50 border-blue-200">
         <Info className="h-4 w-4" />
         <AlertDescription>
-          Conformément au RGPD, nous collectons uniquement les informations essentielles. 
-          Ces données sont nécessaires pour personnaliser votre expérience et respecter les 
-          réglementations locales.
+          In line with GDPR, we collect only essential information. 
+          This data is needed to personalize your experience and meet local regulations.
         </AlertDescription>
       </Alert>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Informations de base</CardTitle>
+            <CardTitle>Basic information</CardTitle>
             <CardDescription>
-              Ces informations nous permettent de personnaliser votre expérience
+              This information helps us personalize your experience
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="pseudonym">
                 <User className="w-4 h-4 inline mr-2" />
-                Pseudonyme créateur
+                Creator handle
               </Label>
               <Input
                 id="pseudonym"
-                placeholder="ex: BellaStar, FitQueen, etc."
+                placeholder="e.g., BellaStar, FitQueen, etc."
                 value={userData.pseudonym || ""}
                 onChange={(e) => updateUserData({ pseudonym: e.target.value })}
                 className={errors.pseudonym ? "border-red-500" : ""}
@@ -87,19 +86,19 @@ export function DataCollectionStep() {
                 <p className="text-sm text-red-500">{errors.pseudonym}</p>
               )}
               <p className="text-xs text-gray-500">
-                Ce nom sera utilisé pour personnaliser vos interactions
+                This name will be used to personalize your interactions
               </p>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">
                 <Mail className="w-4 h-4 inline mr-2" />
-                Adresse email
+                Email address
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="votre@email.com"
+                placeholder="you@example.com"
                 value={userData.email || ""}
                 onChange={(e) => updateUserData({ email: e.target.value })}
                 className={errors.email ? "border-red-500" : ""}
@@ -108,21 +107,21 @@ export function DataCollectionStep() {
                 <p className="text-sm text-red-500">{errors.email}</p>
               )}
               <p className="text-xs text-gray-500">
-                Pour les notifications importantes et la récupération de compte
+                For important notifications and account recovery
               </p>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="country">
                 <Globe className="w-4 h-4 inline mr-2" />
-                Pays de résidence
+                Country of residence
               </Label>
               <Select
                 value={userData.country || ""}
                 onValueChange={(value) => updateUserData({ country: value })}
               >
                 <SelectTrigger className={errors.country ? "border-red-500" : ""}>
-                  <SelectValue placeholder="Sélectionnez votre pays" />
+                  <SelectValue placeholder="Select your country" />
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRIES.map((country) => (
@@ -136,7 +135,7 @@ export function DataCollectionStep() {
                 <p className="text-sm text-red-500">{errors.country}</p>
               )}
               <p className="text-xs text-gray-500">
-                Nécessaire pour appliquer les réglementations locales
+                Needed to apply local regulations
               </p>
             </div>
           </CardContent>
@@ -144,12 +143,12 @@ export function DataCollectionStep() {
 
         <Card className="bg-gradient-to-r from-purple-50 to-pink-50">
           <CardContent className="pt-6">
-            <h4 className="font-semibold mb-2">🔒 Vos données sont protégées</h4>
+            <h4 className="font-semibold mb-2">🔒 Your data is protected</h4>
             <ul className="space-y-1 text-sm text-gray-700">
-              <li>• Chiffrement de bout en bout</li>
-              <li>• Aucune vente de données à des tiers</li>
-              <li>• Droit d'accès et de suppression à tout moment</li>
-              <li>• Conservation limitée selon vos préférences</li>
+              <li>• End‑to‑end encryption</li>
+              <li>• No selling of data to third parties</li>
+              <li>• Right to access and delete at any time</li>
+              <li>• Limited retention based on your preferences</li>
             </ul>
           </CardContent>
         </Card>

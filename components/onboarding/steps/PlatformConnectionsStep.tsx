@@ -31,23 +31,23 @@ const PLATFORMS: Platform[] = [
     id: 'instagram',
     name: 'Instagram',
     icon: <Instagram className="w-6 h-6" />,
-    description: "Connectez votre compte Instagram professionnel ou Creator via Meta Business",
-    permissions: ['Publication de contenu', 'Lecture des statistiques', 'Gestion des commentaires', 'Insights avancés'],
-    limits: ['Max 5 posts/jour', 'Stories non automatisées', '25 API calls/heure'],
+    description: "Connect your Professional or Creator Instagram via Meta Business",
+    permissions: ['Content publishing', 'Stats read', 'Comment management', 'Advanced insights'],
+    limits: ['Max 5 posts/day', 'Stories not automated', '25 API calls/hour'],
     color: 'bg-gradient-to-br from-purple-600 to-pink-600',
     setupInstructions: [
-      'Assurez-vous d\'avoir un compte Instagram Professionnel ou Creator',
-      'Connectez votre compte Instagram à une Page Facebook',
-      'Accédez au Meta Business Suite',
-      'Générez un token d\'accès longue durée'
+      'Ensure you have a Professional or Creator Instagram account',
+      'Connect your Instagram account to a Facebook Page',
+      'Open Meta Business Suite',
+      'Generate a long‑lived access token'
     ],
     tokenInfo: {
-      expiresIn: '60 jours',
+      expiresIn: '60 days',
       refreshMethod: 'Via Meta Business Dashboard',
       notes: [
-        'Le token doit être renouvelé manuellement',
-        'Vous recevrez une notification 7 jours avant expiration',
-        'Gardez votre Meta Business Suite à jour'
+        'Token must be renewed manually',
+        'You will receive a notification 7 days before expiration',
+        'Keep your Meta Business Suite up‑to‑date'
       ]
     }
   },
@@ -55,23 +55,23 @@ const PLATFORMS: Platform[] = [
     id: 'tiktok',
     name: 'TikTok',
     icon: <Video className="w-6 h-6" />,
-    description: "Liez votre compte TikTok Creator via OAuth",
-    permissions: ['Publication de vidéos', 'Analyse des performances', 'Lecture du profil', 'Statistiques vidéo'],
-    limits: ['Max 3 posts/jour', 'Aucun DM automatisé', 'Respect des guidelines', 'Vidéos max 10MB'],
+    description: "Link your TikTok Creator account via OAuth",
+    permissions: ['Video publishing', 'Performance analytics', 'Profile read', 'Video stats'],
+    limits: ['Max 3 posts/day', 'No automated DMs', 'Respect guidelines', 'Videos max 10MB'],
     color: 'bg-black',
     setupInstructions: [
-      'Créez une application développeur TikTok',
-      'Activez le Login Kit',
-      'Configurez les permissions requises',
-      'L\'authentification est automatique via OAuth'
+      'Create a TikTok developer app',
+      'Enable Login Kit',
+      'Configure required permissions',
+      'Authentication is automatic via OAuth'
     ],
     tokenInfo: {
-      expiresIn: '24 heures',
-      refreshMethod: 'Automatique',
+      expiresIn: '24 hours',
+      refreshMethod: 'Automatic',
       notes: [
-        'Renouvellement automatique du token',
-        'Aucune action requise de votre part',
-        'Les DMs ne sont PAS autorisés par l\'API'
+        'Token renews automatically',
+        'No action required on your part',
+        'DMs are NOT allowed by the API'
       ]
     }
   },
@@ -79,23 +79,23 @@ const PLATFORMS: Platform[] = [
     id: 'reddit',
     name: 'Reddit',
     icon: <MessageSquare className="w-6 h-6" />,
-    description: "Connectez votre compte Reddit avec OAuth 2.0",
-    permissions: ['Publication dans les subreddits', 'Lecture des messages', 'Gestion des posts', 'Karma tracking'],
-    limits: ['Max 10 posts/jour', 'Respect des règles subreddit', 'Cooldown entre posts', 'Pas de spam'],
+    description: "Connect your Reddit account with OAuth 2.0",
+    permissions: ['Subreddit posting', 'Read messages', 'Post management', 'Karma tracking'],
+    limits: ['Max 10 posts/day', 'Respect subreddit rules', 'Cooldown between posts', 'No spam'],
     color: 'bg-orange-600',
     setupInstructions: [
-      'Utilisez votre compte Reddit existant',
-      'Autorisez les permissions demandées',
-      'Respectez les règles de chaque subreddit',
-      'Configurez vos limites de posts'
+      'Use your existing Reddit account',
+      'Authorize requested permissions',
+      'Respect each subreddit’s rules',
+      'Configure your posting limits'
     ],
     tokenInfo: {
       expiresIn: '1 heure',
       refreshMethod: 'Automatique',
       notes: [
-        'Token rafraîchi automatiquement',
-        'Respect du ratelimit Reddit',
-        'Vérifiez les règles de chaque sub'
+        'Token refreshes automatically',
+        'Reddit ratelimits are respected',
+        'Check each sub’s rules'
       ]
     }
   },
@@ -103,23 +103,23 @@ const PLATFORMS: Platform[] = [
     id: 'onlyfans',
     name: 'OnlyFans',
     icon: <Heart className="w-6 h-6" />,
-    description: "Intégrez votre compte OnlyFans (API non officielle)",
-    permissions: ['Envoi de PPV', 'Gestion des listes', 'Lecture des messages', 'Mass messaging'],
-    limits: ['Conformité ToS', 'Contenu 18+ uniquement', 'Limites API variables'],
+    description: "Integrate your OnlyFans account (unofficial API)",
+    permissions: ['Send PPV', 'List management', 'Read messages', 'Mass messaging'],
+    limits: ['ToS compliance', '18+ content only', 'Variable API limits'],
     color: 'bg-gradient-to-br from-cyan-500 to-blue-600',
     setupInstructions: [
-      'Connectez-vous avec vos identifiants OnlyFans',
-      'Activez la double authentification si nécessaire',
-      'Accordez les permissions pour l\'automatisation',
-      'Configurez vos préférences de messaging'
+      'Log in with your OnlyFans credentials',
+      'Enable two‑factor auth if needed',
+      'Grant permissions for automation',
+      'Configure your messaging preferences'
     ],
     tokenInfo: {
       expiresIn: 'Session',
-      refreshMethod: 'Manuel si déconnexion',
+      refreshMethod: 'Manual if logged out',
       notes: [
-        'Connexion basée sur session',
-        'Reconnexion requise si déconnecté',
-        'API non officielle - prudence'
+        'Session‑based connection',
+        'Re‑login required if disconnected',
+        'Unofficial API — use with care'
       ]
     }
   }
@@ -135,7 +135,7 @@ export function PlatformConnectionsStep() {
     setConnecting(platform.id);
     
     try {
-      // Pour Instagram, afficher les instructions spéciales
+  // For Instagram, show special instructions
       if (platform.id === 'instagram') {
         setShowInstructions('instagram');
         setConnecting(null);
@@ -167,7 +167,7 @@ export function PlatformConnectionsStep() {
   };
 
   const handleDisconnect = (platformId: PlatformConnection['platform']) => {
-    if (confirm('Êtes-vous sûr de vouloir déconnecter cette plateforme?')) {
+    if (confirm('Are you sure you want to disconnect this platform?')) {
       disconnectPlatform(platformId);
     }
   };
@@ -196,35 +196,34 @@ export function PlatformConnectionsStep() {
       }
     }
 
-    return { status: 'ok', message: 'Connexion active' };
+    return { status: 'ok', message: 'Active connection' };
   };
 
   return (
     <div className="space-y-6">
       <Alert>
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Connexion sécurisée</AlertTitle>
+        <AlertTitle>Secure connection</AlertTitle>
         <AlertDescription>
-          Connectez au moins une plateforme pour continuer. Chaque connexion utilise les méthodes 
-          d'authentification officielles pour garantir la sécurité de vos données.
+          Connect at least one platform to continue. Each connection uses official authentication methods to keep your data safe.
         </AlertDescription>
       </Alert>
 
       {showInstructions === 'instagram' && (
         <Alert className="border-purple-200 bg-purple-50">
           <Info className="h-4 w-4" />
-          <AlertTitle>Instructions pour Instagram</AlertTitle>
+          <AlertTitle>Instagram Instructions</AlertTitle>
           <AlertDescription className="mt-2">
             <ol className="space-y-2 mt-2">
-              <li>1. Rendez-vous sur <a href="https://business.facebook.com" target="_blank" className="underline">Meta Business Suite</a></li>
-              <li>2. Accédez à "Paramètres" → "Intégrations" → "Instagram"</li>
-              <li>3. Générez un token d'accès longue durée (60 jours)</li>
-              <li>4. Copiez le token et collez-le ci-dessous</li>
+              <li>1. Go to <a href="https://business.facebook.com" target="_blank" className="underline">Meta Business Suite</a></li>
+              <li>2. Open "Settings" → "Integrations" → "Instagram"</li>
+              <li>3. Generate a long‑lived access token (60 days)</li>
+              <li>4. Copy the token and paste it below</li>
             </ol>
             <div className="mt-4 space-y-2">
               <input 
                 type="text" 
-                placeholder="Collez votre token Instagram ici"
+                placeholder="Paste your Instagram token here"
                 className="w-full p-2 border rounded"
               />
               <div className="flex gap-2">
@@ -244,13 +243,13 @@ export function PlatformConnectionsStep() {
                   }}
                   className="bg-purple-600 hover:bg-purple-700"
                 >
-                  Valider le token
+                  Validate token
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => setShowInstructions(null)}
                 >
-                  Annuler
+                  Cancel
                 </Button>
               </div>
             </div>
@@ -260,8 +259,8 @@ export function PlatformConnectionsStep() {
 
       <Tabs defaultValue="platforms" className="space-y-4">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="platforms">Plateformes disponibles</TabsTrigger>
-          <TabsTrigger value="help">Aide & Dépannage</TabsTrigger>
+          <TabsTrigger value="platforms">Available platforms</TabsTrigger>
+          <TabsTrigger value="help">Help & Troubleshooting</TabsTrigger>
         </TabsList>
         
         <TabsContent value="platforms" className="space-y-4">
@@ -288,7 +287,7 @@ export function PlatformConnectionsStep() {
                         <div className="space-y-1">
                           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
                             <CheckCircle2 className="w-4 h-4 mr-1" />
-                            Connecté
+                            Connected
                           </Badge>
                           {connectionStatus?.status === 'warning' && (
                             <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-300">
@@ -304,14 +303,14 @@ export function PlatformConnectionsStep() {
                   <CardContent className="space-y-4">
                     {selectedPlatform?.id === platform.id && (
                       <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                        <h5 className="font-medium text-sm">Informations de connexion</h5>
-                        <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <h5 className="font-medium text-sm">Connection info</h5>
+          <div className="grid md:grid-cols-2 gap-4 text-sm">
                           <div>
-                            <p className="font-medium mb-1">Expiration du token:</p>
+                            <p className="font-medium mb-1">Token expiry:</p>
                             <p className="text-gray-600">{platform.tokenInfo?.expiresIn}</p>
                           </div>
                           <div>
-                            <p className="font-medium mb-1">Renouvellement:</p>
+                            <p className="font-medium mb-1">Refresh method:</p>
                             <p className="text-gray-600">{platform.tokenInfo?.refreshMethod}</p>
                           </div>
                         </div>
@@ -328,9 +327,9 @@ export function PlatformConnectionsStep() {
                     
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-medium text-sm mb-2">Permissions accordées:</h4>
+                        <h4 className="font-medium text-sm mb-2">Granted permissions:</h4>
                         <ul className="space-y-1">
-                          {platform.permissions.map((permission, idx) => (
+                      {platform.permissions.map((permission, idx) => (
                             <li key={idx} className="text-sm text-gray-600 flex items-start">
                               <CheckCircle2 className="w-3 h-3 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
                               {permission}
@@ -340,7 +339,7 @@ export function PlatformConnectionsStep() {
                       </div>
                       
                       <div>
-                        <h4 className="font-medium text-sm mb-2">Limites appliquées:</h4>
+                        <h4 className="font-medium text-sm mb-2">Applied limits:</h4>
                         <ul className="space-y-1">
                           {platform.limits.map((limit, idx) => (
                             <li key={idx} className="text-sm text-gray-600 flex items-start">
@@ -372,7 +371,7 @@ export function PlatformConnectionsStep() {
                             className="text-red-600 hover:bg-red-50"
                           >
                             <X className="w-4 h-4 mr-2" />
-                            Déconnecter
+                            Disconnect
                           </Button>
                           <Button
                             variant="outline"
@@ -380,7 +379,7 @@ export function PlatformConnectionsStep() {
                             onClick={() => setSelectedPlatform(platform)}
                           >
                             <Info className="w-4 h-4 mr-2" />
-                            Détails
+                            Details
                           </Button>
                         </>
                       ) : (
@@ -391,11 +390,11 @@ export function PlatformConnectionsStep() {
                             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                           >
                             {connecting === platform.id ? (
-                              <>Connexion en cours...</>
+                              <>Connecting...</>
                             ) : (
                               <>
                                 <ExternalLink className="w-4 h-4 mr-2" />
-                                Connecter {platform.name}
+                                Connect {platform.name}
                               </>
                             )}
                           </Button>
@@ -420,50 +419,48 @@ export function PlatformConnectionsStep() {
         <TabsContent value="help" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Dépannage connexions</CardTitle>
-              <CardDescription>Solutions aux problèmes courants</CardDescription>
+              <CardTitle>Connection troubleshooting</CardTitle>
+              <CardDescription>Solutions to common issues</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-medium mb-1">Token expiré</h4>
+                  <h4 className="font-medium mb-1">Expired token</h4>
                   <p className="text-sm text-gray-600">
-                    Si votre token a expiré, déconnectez la plateforme et reconnectez-vous. 
-                    Pour Instagram, générez un nouveau token dans Meta Business Suite.
+                    If your token expired, disconnect the platform and reconnect. 
+                    For Instagram, generate a new token in Meta Business Suite.
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-1">Échec d'authentification</h4>
+                  <h4 className="font-medium mb-1">Authentication failed</h4>
                   <p className="text-sm text-gray-600">
-                    Vérifiez que votre compte a les permissions requises (compte Business/Creator). 
-                    Assurez-vous que les pop-ups sont autorisés pour OAuth.
+                    Ensure your account has required permissions (Business/Creator). 
+                    Make sure pop‑ups are allowed for OAuth.
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-1">Révoquer l'accès</h4>
+                  <h4 className="font-medium mb-1">Revoke access</h4>
                   <p className="text-sm text-gray-600">
-                    Vous pouvez révoquer l'accès à tout moment depuis les paramètres de sécurité 
-                    de chaque plateforme. L'accès sera immédiatement révoqué côté Huntaze.
+                    You can revoke access anytime from each platform’s security settings. Access will be revoked immediately on Huntaze.
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-1">Limites API dépassées</h4>
+                  <h4 className="font-medium mb-1">API limits reached</h4>
                   <p className="text-sm text-gray-600">
-                    Chaque plateforme a ses propres limites. Si vous atteignez une limite, 
-                    attendez le reset (généralement 1 heure) ou réduisez votre activité.
+                    Each platform has its own limits. If you hit one, wait for reset (usually 1 hour) or reduce your activity.
                   </p>
                 </div>
               </div>
               
               <Alert className="bg-purple-50 border-purple-200">
                 <Info className="h-4 w-4" />
-                <AlertDescription>
-                  Besoin d'aide supplémentaire? Contactez notre support 24/7 via le chat 
-                  ou consultez notre base de connaissances détaillée.
-                </AlertDescription>
+              <AlertDescription>
+                Need more help? Contact our 24/7 support via chat 
+                or browse our detailed knowledge base.
+              </AlertDescription>
               </Alert>
             </CardContent>
           </Card>
@@ -471,11 +468,11 @@ export function PlatformConnectionsStep() {
       </Tabs>
 
       <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800">
-        <p className="font-medium mb-1">🔒 Sécurité garantie</p>
+        <p className="font-medium mb-1">🔒 Security guaranteed</p>
         <p>
-          Toutes les connexions utilisent les protocoles de sécurité officiels (OAuth 2.0). 
-          Vos mots de passe ne sont jamais transmis ni stockés. Vous gardez le contrôle total 
-          et pouvez révoquer l'accès à tout moment.
+          All connections use official security protocols (OAuth 2.0). 
+          Your passwords are never transmitted or stored. You stay in full control 
+          and can revoke access at any time.
         </p>
       </div>
     </div>

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
   title: "Huntaze - Keep More of Your Creator Revenue",
   description: "Stop paying 50% to agencies. Automate fan conversations with AI while you keep control and earnings.",
-  keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative",
+  keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative, DM management",
   icons: {
     icon: [
       { url: "/huntaze-favicon.png", type: "image/png" },
@@ -24,14 +24,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Huntaze - Keep More of Your Creator Revenue",
-    description: "Stop paying 50% to agencies. Automate fan conversations with AI.",
+    description: "Automate fan conversations with AI while you stay in control.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Huntaze - Keep More of Your Creator Revenue",
-    description: "Stop paying 50% to agencies. Automate fan conversations with AI.",
+    description: "Automate fan conversations with AI while you stay in control.",
     images: ["/twitter-image.png"],
   },
 };

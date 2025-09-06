@@ -14,50 +14,50 @@ export function HelpSidebar() {
   const helpTopics = [
     {
       id: 'security',
-      title: 'Sécurité & Confidentialité',
+      title: 'Security & Privacy',
       iconName: 'Shield',
       items: [
         {
-          question: 'Comment mes données sont-elles protégées?',
-          answer: 'Vos données sont chiffrées avec AES-256, stockées dans des serveurs sécurisés en Europe, et nous ne partageons jamais vos informations avec des tiers.'
+          question: 'How is my data protected?',
+          answer: 'Your data is encrypted with AES-256, stored on secure servers, and we never share your information with third parties.'
         },
         {
-          question: 'Qui peut voir mes conversations?',
-          answer: 'Uniquement vous et les destinataires autorisés. Notre équipe n\'a pas accès à vos messages, sauf autorisation explicite pour le support.'
+          question: 'Who can see my conversations?',
+          answer: 'Only you and authorized recipients. Our team has no access unless you explicitly grant it for support.'
         }
       ]
     },
     {
       id: 'troubleshooting',
-      title: 'Résolution de problèmes',
+      title: 'Troubleshooting',
       iconName: 'AlertCircle',
       items: [
         {
-          question: 'Mon compte Instagram ne se connecte pas',
-          answer: 'Assurez-vous d\'avoir un compte Business ou Creator sur Instagram. Les comptes personnels ne supportent pas l\'API. Vérifiez aussi que votre token n\'a pas expiré.'
+          question: 'My Instagram account won’t connect',
+          answer: 'Make sure you have a Business or Creator account on Instagram. Personal accounts do not support the API. Also check that your token hasn’t expired.'
         },
         {
-          question: 'Messages bloqués ou rate limited',
-          answer: 'Chaque plateforme a ses limites horaires/quotidiennes. Attendez le reset (généralement 1h) ou réduisez temporairement votre activité.'
+          question: 'Messages blocked or rate‑limited',
+          answer: 'Each platform has hourly/daily limits. Wait for reset (usually 1h) or reduce your activity temporarily.'
         }
       ]
     },
     {
       id: 'compliance',
-      title: 'Conformité',
+      title: 'Compliance',
       iconName: 'Key',
       items: [
         {
-          question: 'Quelles actions déclenchent une supervision?',
-          answer: 'Messages > 100$, envois à > 50 destinataires, ou confiance IA < 70%. Ces seuils sont personnalisables dans les paramètres de gouvernance.'
+          question: 'What actions trigger supervision?',
+          answer: 'Messages > $100, sending to > 50 recipients, or AI confidence < 70%. Thresholds are configurable in governance settings.'
         },
         {
-          question: 'Comment retirer mon consentement RGPD?',
-          answer: 'Vous pouvez retirer votre consentement à tout moment depuis vos paramètres. Vos données seront supprimées selon la réglementation.'
+          question: 'How do I withdraw GDPR consent?',
+          answer: 'You can withdraw consent anytime in your settings. Your data will be removed per regulation.'
         },
         {
-          question: 'Durée de conservation des données?',
-          answer: '90 jours par défaut pour les messages, personnalisable de 30 à 365 jours. Les données analytiques sont anonymisées après 2 ans.'
+          question: 'Data retention periods?',
+          answer: '90 days by default for messages, customizable from 30 to 365 days. Analytics data is anonymized after 2 years.'
         }
       ]
     }
@@ -90,10 +90,10 @@ export function HelpSidebar() {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-purple-600" />
-            Aide & Support
+            Help & Support
           </SheetTitle>
           <SheetDescription>
-            Trouvez rapidement des réponses à vos questions
+            Quickly find answers to common questions
           </SheetDescription>
         </SheetHeader>
 
@@ -127,25 +127,25 @@ export function HelpSidebar() {
             ))}
             
             <Alert className="bg-purple-50 border-purple-200">
-              <AlertDescription>
-                <strong>Astuce:</strong> La plupart des problèmes se résolvent en vérifiant vos permissions 
-                et en vous assurant que vos comptes sont bien configurés (Business/Creator).
-              </AlertDescription>
+            <AlertDescription>
+              <strong>Tip:</strong> Most issues resolve by checking permissions 
+              and ensuring accounts are correctly set up (Business/Creator).
+            </AlertDescription>
             </Alert>
           </TabsContent>
           
           <TabsContent value="contact" className="space-y-4 mt-4">
             <Card>
               <CardHeader>
-                <CardTitle>Support 24/7</CardTitle>
+                <CardTitle>24/7 Support</CardTitle>
                 <CardDescription>
-                  Notre équipe est là pour vous aider à chaque étape
+                  Our team is here to help every step of the way
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button className="w-full justify-start" variant="outline">
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Chat en direct
+                  Live chat
                 </Button>
                 
                 <Button className="w-full justify-start" variant="outline">
@@ -162,9 +162,9 @@ export function HelpSidebar() {
 
             <Alert>
               <AlertDescription className="text-sm">
-                <strong>Heures d'ouverture:</strong><br />
-                Lun-Ven: 9h00 - 20h00<br />
-                Sam-Dim: 10h00 - 18h00 (CET)
+                <strong>Opening hours:</strong><br />
+                Mon–Fri: 9:00 – 20:00<br />
+                Sat–Sun: 10:00 – 18:00 (CET)
               </AlertDescription>
             </Alert>
           </TabsContent>

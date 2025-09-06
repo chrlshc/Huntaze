@@ -5,58 +5,59 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check, X, Sparkles, Zap, Crown, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { events } from "@/src/lib/analytics";
 
 const plans = [
   {
     name: "Starter",
     icon: Sparkles,
     price: { monthly: 19, yearly: 190 },
-    description: "Pour créatrices <2.5K€/mois",
+    description: "For creators < €2.5k/month",
     features: [
-      { text: "1 000 suggestions IA/mois", included: true },
-      { text: "1 connexion plateforme", included: true },
-      { text: "Analytics de base", included: true },
-      { text: "7% de commission", included: true },
-      { text: "Support email", included: true },
-      { text: "Audit réseaux sociaux", included: false },
-      { text: "Audit OnlyFans", included: false },
-      { text: "Fonctionnalités avancées", included: false },
-      { text: "Collaboration d\'équipe", included: false }
+      { text: "1,000 AI suggestions/month", included: true },
+      { text: "1 platform connection", included: true },
+      { text: "Basic analytics", included: true },
+      { text: "7% platform fee", included: true },
+      { text: "Email support", included: true },
+      { text: "Social audit", included: false },
+      { text: "OnlyFans audit", included: false },
+      { text: "Advanced features", included: false },
+      { text: "Team collaboration", included: false }
     ],
-    cta: "Commencer l'essai gratuit",
+    cta: "Start Free Trial",
     popular: false
   },
   {
     name: "Pro",
     icon: Zap,
     price: { monthly: 39, yearly: 390 },
-    description: "Pour créatrices 2.5K-7.5K€/mois",
+    description: "For creators €2.5–7.5k/month",
     features: [
-      { text: "5 000 suggestions IA/mois", included: true },
-      { text: "3 connexions plateformes", included: true },
-      { text: "Analytics avancés", included: true },
-      { text: "5% de commission", included: true },
-      { text: "Support prioritaire", included: true },
-      { text: "Audit réseaux sociaux (mensuel)", included: true },
-      { text: "Audit OnlyFans (mensuel)", included: true },
-      { text: "Automatisation intelligente", included: true },
-      { text: "Collaboration d\'équipe", included: false }
+      { text: "5,000 AI suggestions/month", included: true },
+      { text: "3 platform connections", included: true },
+      { text: "Advanced analytics", included: true },
+      { text: "5% platform fee", included: true },
+      { text: "Priority support", included: true },
+      { text: "Monthly social audit", included: true },
+      { text: "Monthly OnlyFans audit", included: true },
+      { text: "Smart automations", included: true },
+      { text: "Team collaboration", included: false }
     ],
-    cta: "Commencer l'essai gratuit",
+    cta: "Start Free Trial",
     popular: true
   },
   {
     name: "Scale",
     icon: Crown,
     price: { monthly: 79, yearly: 790 },
-    description: "For creators >$7.5K/month",
+    description: "For creators > €7.5k/month",
     features: [
       { text: "25,000 AI messages/month", included: true },
       { text: "All Pro features", included: true },
       { text: "3 team seats", included: true },
       { text: "Advanced automation", included: true },
       { text: "3% platform fee", included: true },
-      { text: "Weekly social media audit", included: true },
+      { text: "Weekly social audit", included: true },
       { text: "Weekly OnlyFans audit", included: true },
       { text: "Custom AI training", included: true },
       { text: "Dedicated success manager", included: true }
@@ -83,13 +84,13 @@ export function PricingPro() {
             Pricing That <span className="text-gradient">Makes Sense</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            Keep 93-97% of your earnings. No hidden fees, no surprises.
+            Keep 93–97% of your earnings. No hidden fees, no surprises.
           </p>
 
           {/* Billing toggle */}
-          <div className="inline-flex items-center gap-4 p-1 bg-gray-100 dark:bg-gray-900 rounded-full">
+          <div className="inline-flex items-center gap-4 p-1 bg-gray-100 dark:bg-gray-900 rounded-full" role="group" aria-label="Billing">
             <button
-              onClick={() => setIsYearly(false)}
+              onClick={() => { setIsYearly(false); events.pricingToggle({ billing: 'monthly' }); }}
               className={`px-6 py-2 rounded-full font-medium transition-all ${
                 !isYearly
                   ? "bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400"
@@ -99,7 +100,7 @@ export function PricingPro() {
               Monthly
             </button>
             <button
-              onClick={() => setIsYearly(true)}
+              onClick={() => { setIsYearly(true); events.pricingToggle({ billing: 'yearly' }); }}
               className={`px-6 py-2 rounded-full font-medium transition-all ${
                 isYearly
                   ? "bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400"
@@ -129,7 +130,7 @@ export function PricingPro() {
                 <div className="absolute -top-5 left-0 right-0 text-center">
                   <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-full">
                     <Zap className="w-4 h-4" />
-                    Most Popular
+                    Populaire
                   </span>
                 </div>
               )}
@@ -174,6 +175,7 @@ export function PricingPro() {
                         ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
                         : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900"
                     }`}
+                    onClick={() => events.planSelect({ plan: plan.name, billing: isYearly ? 'yearly' : 'monthly' })}
                   >
                     {plan.cta}
                   </Button>
@@ -192,10 +194,13 @@ export function PricingPro() {
                         className={`text-sm ${
                           feature.included
                             ? "text-gray-700 dark:text-gray-300"
-                            : "text-gray-400 dark:text-gray-600 line-through"
+                            : "text-gray-500 dark:text-gray-500"
                         }`}
                       >
                         {feature.text}
+                        {!feature.included && (
+                          <span className="ml-1 text-xs text-gray-500">(Available on higher plan)</span>
+                        )}
                       </span>
                     </li>
                   ))}
@@ -213,7 +218,7 @@ export function PricingPro() {
           className="mt-16 text-center"
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            All plans include: Secure payment processing • GDPR compliant • Cancel anytime
+            All plans include: Secure payments • GDPR compliant • Cancel anytime
           </p>
         </motion.div>
       </div>
