@@ -107,7 +107,13 @@ export const darkModeColors = {
  * Verify all Huntaze dark mode combinations
  */
 export function verifyDarkModeContrast() {
-  const results = [];
+  interface ContrastTestResult extends ContrastResult {
+    combination: string;
+    foreground: string;
+    background: string;
+  }
+  
+  const results: ContrastTestResult[] = [];
   
   // Check primary text on all backgrounds
   Object.entries(darkModeColors.backgrounds).forEach(([bgName, bgColor]) => {
