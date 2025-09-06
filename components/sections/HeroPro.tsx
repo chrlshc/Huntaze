@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/src/hooks/useReducedMotion";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/src/components/ui/magnetic-button";
@@ -11,10 +12,10 @@ import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 import { events } from "@/src/lib/analytics";
 
 const features = [
-  { icon: Zap, text: "3x Faster Responses" },
-  { icon: Shield, text: "100% Platform Safe" },
-  { icon: BarChart3, text: "Track Every Dollar" },
-  { icon: Globe2, text: "Works Everywhere" },
+  { icon: Zap, text: "$50K+ Monthly Revenue", gradient: "from-yellow-400 to-orange-500" },
+  { icon: Shield, text: "Zero Account Bans", gradient: "from-green-400 to-emerald-500" },
+  { icon: BarChart3, text: "312% Growth Average", gradient: "from-blue-400 to-indigo-500" },
+  { icon: Globe2, text: "24/7 AI Working", gradient: "from-purple-400 to-pink-500" },
 ];
 
 const testimonials = [
@@ -26,6 +27,7 @@ const testimonials = [
 export function HeroPro() {
   const { theme } = useSafeTheme();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,10 +41,11 @@ export function HeroPro() {
       {/* Animated gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-purple-900 opacity-10 dark:opacity-20" />
       
-      {/* Floating shapes animation */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-20 -left-20 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 dark:opacity-10"
+      {/* Floating shapes animation - disabled on mobile for performance */}
+      {!isMobile && (
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute -top-20 -left-20 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 dark:opacity-10"
           animate={{
             x: [0, 100, 0],
             y: [0, 50, 0],
@@ -75,26 +78,27 @@ export function HeroPro() {
             repeat: Infinity,
             repeatType: "reverse",
           }}
-        />
-      </div>
+          />
+        </div>
+      )}
 
       <div className="container-width relative z-10 py-12 sm:py-16 md:py-20">
         <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left content */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0, x: isMobile ? 0 : -50, y: isMobile ? 20 : 0 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ duration: isMobile ? 0.4 : 0.8, ease: "easeOut" }}
           >
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6 shadow-lg"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Join 10,000+ Creators Earning More</span>
+              <Sparkles className="w-4 h-4 animate-pulse" />
+              <span>Used by Top 1% OnlyFans Creators</span>
             </motion.div>
 
             {/* Main heading */}
@@ -104,12 +108,14 @@ export function HeroPro() {
               transition={{ delay: 0.3 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight"
             >
-              Turn Your OnlyFans<br />
-              Into a <span className="text-gradient">Profitable</span><br />
+              Build the next<br />
+              <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                creator empire
+              </span><br />
               <span className="relative">
-                Business
+                on autopilot
                 <motion.span
-                  className="absolute -bottom-2 left-0 right-0 h-3 bg-blue-500 opacity-30 rounded-lg"
+                  className="absolute -bottom-2 left-0 right-0 h-3 bg-gradient-to-r from-purple-500 to-pink-500 opacity-30 rounded-lg blur-sm"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ delay: 1, duration: 0.8 }}
@@ -122,11 +128,11 @@ export function HeroPro() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed"
+              className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-2xl"
             >
-              Keep 95% of revenue while AI handles your DMs, analytics, and growth. 
-              Save 2-3 hours daily and increase conversions by 312% with personalized responses 
-              that sound exactly like you.
+              Join 10,000+ creators who turned their passion into $50K+ monthly revenue. 
+              AI that works 24/7, growing your empire while you sleep, live your life, 
+              or create your next masterpiece.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -143,7 +149,7 @@ export function HeroPro() {
                   className="w-full sm:w-auto group"
                   onClick={() => events.ctaClick({ location: 'hero', label: 'Start Earning 95% Today' })}
                 >
-                  Start Earning 95% Today
+                  Claim Your AI Empire
                   <ArrowRight className="ml-2 w-5 h-5 inline-block group-hover:translate-x-1 transition-transform" />
                 </MagneticButton>
               </Link>
@@ -154,7 +160,7 @@ export function HeroPro() {
                   className="w-full sm:w-auto"
                   onClick={() => events.ctaClick({ location: 'hero', label: 'See 3-Min Demo' })}
                 >
-                  See 3-Min Demo
+                  Watch Success Stories
                   <ChevronRight className="ml-2 w-5 h-5 inline-block" />
                 </MagneticButton>
               </Link>
@@ -169,12 +175,12 @@ export function HeroPro() {
               {features.map((feature, index) => (
                 <StaggerItem
                   key={index}
-                  className="flex items-center gap-3 glass-card p-3 hover:scale-105 transition-transform"
+                  className="flex items-center gap-3 glass-card p-3 hover:scale-105 transition-transform cursor-pointer group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${feature.gradient} flex items-center justify-center group-hover:shadow-lg transition-all`}>
                     <feature.icon className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm font-medium">{feature.text}</span>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{feature.text}</span>
                 </StaggerItem>
               ))}
             </StaggerContainer>

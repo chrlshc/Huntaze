@@ -12,7 +12,7 @@ const plans = [
     name: "Starter",
     icon: Sparkles,
     price: { monthly: 19, yearly: 190 },
-    description: "For creators < €2.5k/month",
+    description: "Launch your empire",
     features: [
       { text: "1,000 AI suggestions/month", included: true },
       { text: "1 platform connection", included: true },
@@ -31,7 +31,7 @@ const plans = [
     name: "Pro",
     icon: Zap,
     price: { monthly: 39, yearly: 390 },
-    description: "For creators €2.5–7.5k/month",
+    description: "Scale to 6 figures",
     features: [
       { text: "5,000 AI suggestions/month", included: true },
       { text: "3 platform connections", included: true },
@@ -50,7 +50,7 @@ const plans = [
     name: "Scale",
     icon: Crown,
     price: { monthly: 79, yearly: 790 },
-    description: "For creators > €7.5k/month",
+    description: "Dominate your niche",
     features: [
       { text: "25,000 AI messages/month", included: true },
       { text: "All Pro features", included: true },
@@ -81,10 +81,10 @@ export function PricingPro() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Pricing That <span className="text-gradient">Makes Sense</span>
+            Join the <span className="text-gradient">1% club</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            Keep 93–97% of your earnings. No hidden fees, no surprises.
+            Where top creators keep 97% and AI does 80% of the work
           </p>
 
           {/* Billing toggle */}

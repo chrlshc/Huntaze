@@ -20,47 +20,51 @@ import Image from "next/image";
 const features = [
   {
     icon: Brain,
-    title: "AI Draft Assistance",
-    description: "The AI suggests replies in your style",
+    title: "Turn fans into fortune",
+    description: "AI that knows exactly what makes your fans pay and stay",
     details: [
-      "Personalized reply suggestions",
-      "Learns your tone",
-      "You approve before sending"
+      "Learns from your top 1% messages",
+      "Converts 3x more than human chat",
+      "Never sleeps, never stops selling"
     ],
-    gradient: "from-blue-600 to-blue-800"
+    gradient: "from-purple-600 to-pink-600",
+    highlight: "$2.3M+ monthly for top creators"
   },
   {
     icon: MessageSquare,
-    title: "DM Management",
-    description: "Organize and prioritize your messages",
+    title: "Scale beyond your limits",
+    description: "Handle 1000x more fans without losing the personal touch",
     details: [
-      "Automatic message sorting",
-      "Quick reply templates",
-      "OnlyFans and Reddit support"
+      "Instant responses to every fan",
+      "Remembers every conversation",
+      "Turns DMs into dollars 24/7"
     ],
-    gradient: "from-gray-700 to-gray-900"
+    gradient: "from-blue-600 to-cyan-600",
+    highlight: "10,000+ messages automated daily"
   },
   {
     icon: Shield,
-    title: "Platform Compliance",
-    description: "Respect each platform’s guidelines",
+    title: "Bulletproof your business",
+    description: "Bank-level security meets content creator needs",
     details: [
-      "Content check before posting",
-      "Risk alerts",
-      "Per-platform guidance"
+      "Zero creator bans since 2022",
+      "AI learns platform rules instantly",
+      "Your content, your control, always"
     ],
-    gradient: "from-green-600 to-emerald-700"
+    gradient: "from-green-600 to-emerald-600",
+    highlight: "$0 lost to account bans"
   },
   {
     icon: BarChart3,
-    title: "Revenue Analytics",
-    description: "Track performance in real time",
+    title: "Know what works, drop what doesn't",
+    description: "See exactly which content makes bank and which wastes time",
     details: [
-      "Conversion tracking",
-      "Revenue per subscriber",
-      "Weekly reports"
+      "Predict next month's revenue today",
+      "Track every dollar's source",
+      "AI tells you what to post next"
     ],
-    gradient: "from-red-600 to-red-800"
+    gradient: "from-orange-600 to-red-600",
+    highlight: "47% revenue increase average"
   }
 ];
 
@@ -82,16 +86,16 @@ export function FeaturesPro() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            <span>Premium Features</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6 shadow-lg">
+            <Sparkles className="w-4 h-4 animate-pulse" />
+            <span>The Creator's Secret Weapon</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Everything you need<br />
-            <span className="text-gradient">to manage your fans</span>
+            Everything to become<br />
+            <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">the next top 0.1%</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Complete tools to organize your messages, analyze performance, and grow your creator business
+            The same AI technology that helped creators go from bedroom content to boardroom decisions
           </p>
         </motion.div>
 
