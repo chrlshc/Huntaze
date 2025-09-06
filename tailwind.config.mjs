@@ -23,9 +23,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#0f172a',
-        secondary: '#1e293b',
-        accent: '#3b82f6',
+        // Professional Dark Mode Color System
+        background: {
+          primary: 'var(--background-primary)',
+          secondary: 'var(--background-secondary)',
+          elevated: 'var(--background-elevated)',
+          overlay: 'var(--background-overlay)',
+        },
+        text: {
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          tertiary: 'var(--text-tertiary)',
+          disabled: 'var(--text-disabled)',
+        },
+        accent: {
+          primary: 'var(--accent-primary)',
+          hover: 'var(--accent-hover)',
+          active: 'var(--accent-active)',
+          muted: 'var(--accent-muted)',
+        },
+        border: {
+          subtle: 'var(--border-subtle)',
+          DEFAULT: 'var(--border-default)',
+          strong: 'var(--border-strong)',
+        },
+        // Legacy colors for backward compatibility
+        primary: '#9333EA',
+        secondary: '#7E22CE',
+        accent: '#A855F7',
+      },
+      boxShadow: {
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'xl': 'var(--shadow-xl)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
