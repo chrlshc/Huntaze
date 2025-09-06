@@ -32,11 +32,12 @@ export async function POST(request: NextRequest) {
 
     const tokenData = await tokenResponse.json();
     
-    // Get user info
+    // Get user info (TikTok v2 expects POST with JSON fields)
     const userResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         fields: {
@@ -54,9 +55,10 @@ export async function POST(request: NextRequest) {
     
     // Get user stats (followers, likes, etc.)
     const statsResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         fields: {

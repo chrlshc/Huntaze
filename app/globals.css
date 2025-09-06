@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -99,7 +101,22 @@
   --gradient-purple-pink: linear-gradient(135deg, var(--color-purple-600) 0%, #EC4899 100%);
   --gradient-blue-purple: linear-gradient(135deg, #3B82F6 0%, var(--color-purple-600) 100%);
   --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-dark: linear-gradient(180deg, #000000 0%, #18181B 100%)
+  --gradient-dark: linear-gradient(180deg, #000000 0%, #18181B 100%);
+  
+  /* Additional Linear/Stripe inspired variables from remote */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  
+  /* Shopify/Stripe Accent Colors */
+  --accent-primary: #9333EA;
+  --accent-hover: #7E22CE;
+  --accent-blue: #3B82F6;
+  --accent-success: #10B981;
+  
+  /* Borders */
+  --border-color: #E5E7EB;
+  --border-light: #F3F4F6;
 }
 
 /* Premium Design System */
@@ -129,7 +146,7 @@
   
   /* Gradient text */
   .gradient-text {
-    @apply bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent;
   }
   
   .gradient-text-premium {
@@ -141,30 +158,48 @@
   
   /* Premium buttons */
   .btn-premium {
-    @apply px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
+    @apply px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
   }
   
   .btn-outline-premium {
-    @apply px-8 py-4 border-2 border-purple-600 text-purple-600 dark:text-purple-400 font-semibold rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200;
+    @apply px-8 py-4 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200;
   }
 }
 
-/* FORCE HIGH CONTRAST ON ALL TEXT */
+/* Base Typography - Inter Font */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  @apply bg-white dark:bg-[#0F0F10] text-[#212529] dark:text-[#EEEFF1];
+  font-feature-settings: 'ss01' 1, 'ss02' 1, 'cv01' 1, 'cv03' 1, 'cv04' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings - Linear/Stripe style */
 h1, h2, h3, h4, h5, h6 {
-  @apply !text-gray-900 dark:!text-white !font-bold;
+  @apply tracking-[-0.02em] leading-[1.1];
 }
 
+h1 {
+  @apply text-[#212529] dark:text-[#EEEFF1] font-semibold;
+}
+
+h2 {
+  @apply text-[#212529] dark:text-[#EEEFF1] font-semibold;
+}
+
+h3 {
+  @apply text-[#212529] dark:text-[#EEEFF1] font-medium;
+}
+
+/* Body Text */
 p {
-  @apply !text-gray-800 dark:!text-gray-100;
+  @apply text-[#6C757D] dark:text-[#9CA3AF] leading-[1.6];
 }
 
-/* Override ALL gray text */
-.text-gray-600 {
-  @apply !text-gray-800 dark:!text-gray-200;
-}
-
-.text-gray-500 {
-  @apply !text-gray-800 dark:!text-gray-200;
+/* Override gray colors for better contrast */
+.text-gray-600, .text-gray-500, .text-gray-400 {
+  @apply text-[#6C757D] dark:text-[#9CA3AF];
 }
 
 .text-gray-400 {
@@ -247,7 +282,7 @@ p {
 }
 
 :root {
-  /* Girly Purple/Pink Colors */
+  /* Light mode colors */
   --primary-purple: #9333EA;
   --secondary-purple: #7C3AED;
   --primary-pink: #EC4899;
@@ -267,12 +302,57 @@ p {
   --neutral-100: #F3F4F6;
   --neutral-50: #F9FAFB;
   --white: #FFFFFF;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9FAFB;
+  --bg-tertiary: #F3F4F6;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --border-primary: #E5E7EB;
+  --border-secondary: #D1D5DB;
   --accent-green: #10B981;
   --accent-red: #EF4444;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+  /* Dark mode colors */
+  --primary-purple: #A855F7;
+  --secondary-purple: #9333EA;
+  --primary-pink: #F472B6;
+  --secondary-pink: #EC4899;
+  --light-purple: #581C87;
+  --light-pink: #831843;
+  --gradient-start: #A855F7;
+  --gradient-end: #F472B6;
+  --neutral-900: #F9FAFB;
+  --neutral-800: #F3F4F6;
+  --neutral-700: #E5E7EB;
+  --neutral-600: #D1D5DB;
+  --neutral-500: #9CA3AF;
+  --neutral-400: #6B7280;
+  --neutral-300: #4B5563;
+  --neutral-200: #374151;
+  --neutral-100: #1F2937;
+  --neutral-50: #111827;
+  --white: #000000;
+  --bg-primary: #000000;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1F2937;
+  --text-primary: #F9FAFB;
+  --text-secondary: #D1D5DB;
+  --text-tertiary: #9CA3AF;
+  --border-primary: #374151;
+  --border-secondary: #4B5563;
+  --accent-green: #34D399;
+  --accent-red: #F87171;
+  --shadow-sm: 0 1px 2px 0 rgba(255, 255, 255, 0.05);
+  --shadow: 0 1px 3px 0 rgba(255, 255, 255, 0.1), 0 1px 2px 0 rgba(255, 255, 255, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -1px rgba(255, 255, 255, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(255, 255, 255, 0.1), 0 4px 6px -2px rgba(255, 255, 255, 0.05);
 }
 
 /* Utilities — surfaces and elevations */
@@ -296,14 +376,16 @@ html {
 }
 
 body {
-  /* cleaner neutral base for readability */
-  @apply bg-white text-neutral-900;
+  /* Dynamic colors for dark mode support */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: -0.01em;
   /* Prevent zoom on mobile */
   touch-action: manipulation;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Corporate Typography - Improved readability */
@@ -343,36 +425,38 @@ p {
 
 /* Text contrast optimizations removed - using default Tailwind values */
 
-/* Girly Buttons */
+/* Professional Buttons */
 .btn-gradient {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
   @apply text-white font-medium px-6 py-3 rounded-xl shadow-md transition-all;
 }
 
 .btn-gradient:hover {
   @apply shadow-lg;
   transform: translateY(-1px);
+  background: linear-gradient(135deg, #1D4ED8, #1E40AF);
 }
 
 .btn-outline-gradient {
-  @apply rounded-xl font-medium px-6 py-3 bg-white border;
-  border-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) 1;
-  color: var(--primary-purple);
+  @apply rounded-xl font-medium px-6 py-3 bg-white border-2 border-blue-600;
+  color: #2563EB;
 }
 
 .btn-outline-gradient:hover {
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.04), rgba(236, 72, 153, 0.04));
+  background: rgba(37, 99, 235, 0.05);
+  border-color: #1D4ED8;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
   @apply text-white font-medium px-6 py-3 rounded-full;
-  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+  background: linear-gradient(135deg, #1D4ED8, #1E40AF);
   transform: translateY(-2px);
 }
 

@@ -6,6 +6,55 @@ import { Upload, FileText, Users, MessageSquare } from 'lucide-react';
 export default function OnlyFansImportPage() {
   const [importing, setImporting] = useState(false);
   const [step, setStep] = useState(1);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string>('');
+  const [resultMsg, setResultMsg] = useState<string>('');
+  const [error, setError] = useState<string>('');
+
+  const handleFile = (f: File | null) => {
+    setFile(f);
+    setFileName(f ? f.name : '');
+  };
+
+  const doImport = async () => {
+    if (!file) {
+      setError('Please select an export file');
+      return;
+    }
+    setError('');
+    setImporting(true);
+    setResultMsg('');
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      
+      // Use different endpoint based on file type
+      const endpoint = file.name.endsWith('.zip') 
+        ? '/api/repost/import-of-zip' 
+        : '/api/repost/import-csv';
+      
+      const resp = await fetch(endpoint, { method: 'POST', body: form });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Import failed');
+      
+      // Build result message based on import type
+      let msg = `Imported ${data.imported || 0} records`;
+      if (data.details?.summary) {
+        const s = data.details.summary;
+        msg = `Import complete! ${s.totalPosts || 0} posts, ${s.totalSubscribers || 0} subscribers, ${s.totalTransactions || 0} transactions`;
+        if (s.dateRange?.start && s.dateRange?.end) {
+          msg += ` (${s.dateRange.start} to ${s.dateRange.end})`;
+        }
+      }
+      
+      setResultMsg(msg);
+      setStep(3);
+    } catch (e: any) {
+      setError(e.message || 'Failed to import');
+    } finally {
+      setImporting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -45,12 +94,14 @@ export default function OnlyFansImportPage() {
               
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">Drop your export file here or click to browse</p>
+                <p className="text-gray-600 mb-2">Drop your OnlyFans export here (ZIP or CSV)</p>
+                <p className="text-sm text-gray-500 mb-4">Supports full data export ZIP or individual CSV files</p>
                 <input
                   type="file"
-                  accept=".json,.csv,.zip"
+                  accept=".zip,.csv"
                   className="hidden"
                   id="file-upload"
+                  onChange={(e) => handleFile((e.target.files && e.target.files[0]) || null)}
                 />
                 <label
                   htmlFor="file-upload"
@@ -58,14 +109,22 @@ export default function OnlyFansImportPage() {
                 >
                   Choose File
                 </label>
+                {fileName && (
+                  <p className="mt-2 text-sm text-gray-700">Selected: {fileName}</p>
+                )}
               </div>
               
-              <button
-                onClick={() => setStep(2)}
-                className="w-full py-3 bg-gray-900 text-white rounded-lg font-medium"
-              >
-                Continue Without File
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStep(2)}
+                  className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-medium"
+                >
+                  Continue
+                </button>
+                <a href="/repost" className="flex-1 py-3 bg-gray-100 text-gray-800 rounded-lg text-center font-medium">
+                  Skip to Repost Engine
+                </a>
+              </div>
             </div>
           )}
 
@@ -74,35 +133,30 @@ export default function OnlyFansImportPage() {
               <h3 className="text-lg font-medium">What would you like to import?</h3>
               
               <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input type="checkbox" className="w-5 h-5 text-purple-600" defaultChecked />
+                <input type="checkbox" className="w-5 h-5 text-purple-600" defaultChecked disabled />
                 <Users className="w-5 h-5 text-gray-600" />
                 <div className="flex-1">
-                  <p className="font-medium">Fans list</p>
-                  <p className="text-sm text-gray-600">Import your subscriber information</p>
+                  <p className="font-medium">Performance, revenue & subscribers</p>
+                  <p className="text-sm text-gray-600">Full data import from ZIP or CSV (earnings, posts, subscribers, transactions)</p>
                 </div>
               </label>
               
-              <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input type="checkbox" className="w-5 h-5 text-purple-600" defaultChecked />
+              <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer opacity-60">
+                <input type="checkbox" className="w-5 h-5 text-purple-600" disabled />
                 <MessageSquare className="w-5 h-5 text-gray-600" />
                 <div className="flex-1">
                   <p className="font-medium">Message history</p>
-                  <p className="text-sm text-gray-600">Import past conversations</p>
+                  <p className="text-sm text-gray-600">Planned: operator-assist import when available</p>
                 </div>
               </label>
               
+              {error && <p className="text-sm text-red-600">{error}</p>}
               <button
-                onClick={() => {
-                  setImporting(true);
-                  setTimeout(() => {
-                    setImporting(false);
-                    setStep(3);
-                  }, 2000);
-                }}
+                onClick={doImport}
                 disabled={importing}
                 className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50"
               >
-                {importing ? 'Importing...' : 'Start Import'}
+                {importing ? 'Importing…' : 'Start Import'}
               </button>
             </div>
           )}
@@ -115,14 +169,13 @@ export default function OnlyFansImportPage() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold mb-2">Import Complete!</h3>
-              <p className="text-gray-600 mb-6">
-                We\'ve imported your data. When OnlyFans API is available, we\'ll sync automatically.
-              </p>
+              <p className="text-gray-600 mb-2">{resultMsg || 'Your data has been imported.'}</p>
+              <p className="text-gray-600 mb-6">When OnlyFans API is available, we\'ll sync automatically.</p>
               <a
-                href="/dashboard"
+                href="/repost"
                 className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg font-medium"
               >
-                Go to Dashboard
+                Go to Repost Engine
               </a>
             </div>
           )}

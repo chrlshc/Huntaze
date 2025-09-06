@@ -1,9 +1,12 @@
+"use client";
+
 import Link from 'next/link'
 import { Button } from './ui/button'
 import { 
   Twitter, Instagram, Youtube, Linkedin, Github,
   CheckCircle, ArrowRight, Globe
 } from 'lucide-react'
+import { events } from '@/src/lib/analytics'
 
 type FooterLink = {
   name: string;
@@ -20,30 +23,29 @@ const footerLinks: Record<string, FooterSection> = {
   product: {
     title: 'Product',
     links: [
+      { name: 'How It Works', href: '/how-it-works' },
       { name: 'Features', href: '/features/ai-chat' },
-      { name: 'Pricing', href: '/pricing' },
-      { name: 'Security', href: '/about' },
-      { name: 'Roadmap', href: '/about' },
-      { name: 'Changelog', href: '/about' }
+      { name: 'Contact Sales', href: '/demo' },
+      { name: 'Case Studies', href: '/case-studies' },
+      { name: 'Security', href: '/about' }
     ]
   },
   solutions: {
     title: 'Solutions',
     links: [
-      { name: 'OnlyFans Creators', href: '/features/ai-chat' },
-      { name: 'Instagram Creators', href: '/features/automation' },
-      { name: 'Multi-Platform', href: '/features/automation' },
-      { name: 'Agencies', href: '/agency-comparison' }
+      { name: 'Instagram Creators', href: '/for-instagram-creators' },
+      { name: 'TikTok Creators', href: '/for-tiktok-creators' },
+      { name: 'Creator Agencies', href: '/for-agencies' },
+      { name: 'OnlyFans Creators', href: '/features/ai-chat' }
     ]
   },
   resources: {
     title: 'Resources',
     links: [
+      { name: 'About Us', href: '/about' },
       { name: 'Agency Comparison', href: '/agency-comparison' },
       { name: 'Blog', href: '/about' },
-      { name: 'Learn', href: '/#learn' },
       { name: 'Help Center', href: '/about' },
-      { name: 'API Documentation', href: '/about' },
       { name: 'System Status', href: '/about' }
     ]
   },
@@ -86,10 +88,10 @@ export default function FooterImproved() {
           <div className="lg:flex lg:items-center lg:justify-between">
             <div className="max-w-xl">
               <h3 className="text-2xl font-bold text-white mb-2">
-                Get creator tips & platform updates
+                Get creator tips & product updates
               </h3>
               <p className="text-gray-400">
-                Join 10,000+ creators getting weekly insights to grow their business.
+                Join 5,000+ creators getting weekly insights to grow their business.
               </p>
             </div>
             <div className="mt-6 lg:mt-0">
@@ -103,13 +105,14 @@ export default function FooterImproved() {
                   type="submit"
                   variant="gradient"
                   className="px-6 py-3"
+                  onClick={() => events.newsletterClick({ location: 'footer' })}
                 >
                   Subscribe
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>
               <p className="text-xs text-gray-500 mt-2">
-                Unsubscribe anytime. No spam, ever.
+                Unsubscribe anytime. No spam.
               </p>
             </div>
           </div>
@@ -129,7 +132,7 @@ export default function FooterImproved() {
               />
             </Link>
             <p className="text-sm text-gray-400 mb-4">
-              The AI platform that helps creators keep 98% of their revenue.
+              The AI platform that helps creators keep 95% of their revenue.
             </p>
             <div className="flex items-center space-x-4">
               {socialLinks.map((social) => (
@@ -140,6 +143,7 @@ export default function FooterImproved() {
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white transition-colors"
                   aria-label={social.name}
+                  onClick={() => events.ctaClick({ location: 'footer_social', label: social.name })}
                 >
                   <social.icon className="w-5 h-5" />
                 </a>
@@ -183,15 +187,15 @@ export default function FooterImproved() {
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">Security Best Practices</span>
+              <span className="text-sm text-gray-400">Bonnes pratiques de sécurité</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">AES‑256‑GCM Encryption</span>
+              <span className="text-sm text-gray-400">Chiffrement AES‑256‑GCM</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">High Availability</span>
+              <span className="text-sm text-gray-400">Haute disponibilité</span>
             </div>
           </div>
         </div>
