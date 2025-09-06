@@ -62,7 +62,7 @@ export function CTAPro() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Limited Offer — 14 Days Free Trial</span>
+            <span>Join before prices increase Jan 2025</span>
           </motion.div>
 
           {/* Heading */}
@@ -72,7 +72,7 @@ export function CTAPro() {
             transition={{ delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
           >
-            Ready to 10x Your Income?
+            Your competition is already here
           </motion.h2>
 
           {/* Description */}
@@ -82,7 +82,7 @@ export function CTAPro() {
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12"
           >
-            Join 2,500+ creators who stopped leaving money on the table
+            10,000+ creators turned their bedroom hustle into boardroom empire
           </motion.p>
 
           {/* Benefits */}
