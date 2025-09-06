@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import PricingClient from './pricing-client';
 
 export const metadata: Metadata = {
-  title: 'Pricing - Huntaze',
+  title: 'Tarifs - Huntaze',
   description:
-    'Simple, transparent pricing for creators. Free trial available. Cancel anytime.',
+    'Tarifs simples et transparents pour créatrices. Essai gratuit disponible. Annulez à tout moment.',
 };
 
 // Huntaze Pricing Plans
@@ -13,7 +13,7 @@ const plans = [
     name: 'STARTER',
     price: '$19/mo',
     freeTrialDays: 7,
-    description: 'Perfect for emerging creators',
+    description: 'Parfait pour créatrices débutantes',
     color: 'green',
     commission: '7%',
     revenueCap: '$2,500/month',
@@ -27,16 +27,16 @@ const plans = [
       '✓ Plafond: 2 500$/mois',
       '⚠️ API IA non incluse (+10-20$/mois)'
     ],
-    cta: 'Start free trial',
+    cta: 'Essai gratuit',
     priceId: 'starter'
   },
   {
     name: 'PRO',
     price: '$39/mo',
     freeTrialDays: 7,
-    description: 'For growing creators up to $5k/month',
+    description: 'Pour créatrices en croissance (jusquà 5k€/mois)',
     color: 'purple',
-    badge: 'MOST POPULAR',
+    badge: 'PLUS POPULAIRE',
     commission: '5%',
     revenueCap: '$5,000/month',
     features: [
@@ -49,16 +49,16 @@ const plans = [
       '✓ Plafond: 5 000$/mois',
       '⚠️ API IA non incluse (+20-30$/mois)'
     ],
-    cta: 'Start free trial',
+    cta: 'Essai gratuit',
     priceId: 'pro'
   },
   {
     name: 'SCALE',
     price: '$79/mo',
     freeTrialDays: 7,
-    description: 'For established creators up to $15k/month',
+    description: 'Pour créatrices établies (jusquà 15k€/mois)',',
     color: 'blue',
-    badge: 'BEST VALUE',
+    badge: 'MEILLEUR RAPPORT',
     commission: '3%',
     revenueCap: '$15,000/month',
     features: [
@@ -71,18 +71,18 @@ const plans = [
       '✓ Plafond: 15 000$/mois',
       '⚠️ API IA non incluse (+30-50$/mois)'
     ],
-    cta: 'Start free trial',
+    cta: 'Essai gratuit',
     priceId: 'scale'
   },
   {
     name: 'ENTERPRISE',
     price: '$199/mo',
     freeTrialDays: 7,
-    description: 'For top creators and agencies',
+    description: 'Pour top créatrices et agences',
     color: 'gold',
     isPremium: true,
     commission: '1.5%',
-    revenueCap: 'Unlimited',
+    revenueCap: 'Illimité',
     features: [
       '✓ Suggestions IA illimitées',
       '✓ Intégrations illimitées',
@@ -93,7 +93,7 @@ const plans = [
       '✓ Account manager dédié',
       '⚠️ API IA à votre charge (+10-50$/mois)'
     ],
-    cta: 'Contact sales',
+    cta: 'Contacter l'équipe',
     priceId: 'enterprise'
   }
 ];

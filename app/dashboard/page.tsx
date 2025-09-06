@@ -147,7 +147,7 @@ export default function DashboardPage() {
   
   const stats = [
     {
-      title: 'Monthly Revenue',
+      title: 'Revenus mensuels',
       value: hasConnectedPlatform 
         ? (overview ? `$${overview.metrics.revenueMonthly.toLocaleString()}` : '$0')
         : '--',
@@ -161,7 +161,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'Active Subscribers',
+      title: 'Abonnés actifs',
       value: hasConnectedPlatform 
         ? (overview ? overview.metrics.activeSubscribers.toLocaleString() : '0')
         : '--',
@@ -175,7 +175,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'Avg. Response Time',
+      title: 'Temps de réponse moy.',
       value: hasConnectedPlatform 
         ? (overview ? `${(overview.metrics.avgResponseSeconds/60).toFixed(1)}min` : '--')
         : '--',
@@ -189,7 +189,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'AI Automation Rate',
+      title: 'Taux d'automatisation IA',
       value: hasConnectedPlatform 
         ? (overview ? `${Math.round(overview.metrics.aiAutomationRate*100)}%` : '0%')
         : '--',
@@ -220,7 +220,7 @@ export default function DashboardPage() {
       avatar: 'https://ui-avatars.com/api/?name=Alex+Thompson&background=gradient',
       revenue: '$2,456',
       messages: 145,
-      lastActive: '2 min ago',
+      lastActive: 'Il y a 2 min',
       badge: 'vip',
       trend: '+15%'
     },
@@ -230,7 +230,7 @@ export default function DashboardPage() {
       avatar: 'https://ui-avatars.com/api/?name=Sarah+Mitchell&background=gradient',
       revenue: '$1,789',
       messages: 98,
-      lastActive: '15 min ago',
+      lastActive: 'Il y a 15 min',
       badge: 'loyal',
       trend: '+8%'
     },
@@ -240,7 +240,7 @@ export default function DashboardPage() {
       avatar: 'https://ui-avatars.com/api/?name=Mike+Johnson&background=gradient',
       revenue: '$1,234',
       messages: 76,
-      lastActive: '1h ago',
+      lastActive: 'Il y a 1h',
       badge: 'new',
       trend: '+24%'
     },
@@ -250,7 +250,7 @@ export default function DashboardPage() {
       avatar: 'https://ui-avatars.com/api/?name=Emma+Wilson&background=gradient',
       revenue: '$987',
       messages: 54,
-      lastActive: '3h ago',
+      lastActive: 'Il y a 3h',
       badge: 'regular',
       trend: '+12%'
     }
@@ -258,29 +258,29 @@ export default function DashboardPage() {
 
   const quickActions = [
     {
-      title: 'Launch Campaign',
-      description: 'Create targeted message campaigns',
+      title: 'Lancer une campagne',
+      description: 'Créer des campagnes de messages ciblés',
       icon: Target,
       color: 'purple',
       link: '/campaigns/new'
     },
     {
-      title: 'Bulk Messages',
-      description: 'Send messages to multiple fans',
+      title: 'Messages groupés',
+      description: 'Envoyer des messages à plusieurs fans',
       icon: Mail,
       color: 'blue',
       link: '/messages/bulk'
     },
     {
-      title: 'AI Training',
-      description: 'Improve your AI responses',
+      title: 'Entraînement IA',
+      description: 'Améliorer vos réponses IA',
       icon: Sparkles,
       color: 'orange',
       link: '/ai/training'
     },
     {
-      title: 'View Analytics',
-      description: 'Deep dive into your metrics',
+      title: 'Voir les analytics',
+      description: 'Analyse détaillée de vos métriques',
       icon: BarChart3,
       color: 'green',
       link: '/analytics'
@@ -346,7 +346,7 @@ export default function DashboardPage() {
             {/* Onboarding Alert */}
             {onboarding && !onboarding.completed && (
               <Link href="/onboarding/setup" className="block mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
-                Complete setup →
+                Compléter la configuration →
               </Link>
             )}
             
@@ -367,12 +367,12 @@ export default function DashboardPage() {
               </Link>
               <Link href="/automations" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
                 <Zap className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
-                <span className="font-medium flex-1">AI Automations</span>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Active</span>
+                <span className="font-medium flex-1">Automatisations IA</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Actif</span>
               </Link>
               <Link href="/campaigns" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
                 <Target className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
-                <span className="font-medium">Campaigns</span>
+                <span className="font-medium">Campagnes</span>
               </Link>
               
               <div className="pt-4 pb-2">
@@ -385,18 +385,18 @@ export default function DashboardPage() {
               </Link>
               <Link href="/content/moderation" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
                 <Shield className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
-                <span className="font-medium">Content Moderation</span>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full ml-auto">New</span>
+                <span className="font-medium">Modération de contenu</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full ml-auto">Nouveau</span>
               </Link>
               <Link href="/billing" className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all">
                 <CreditCard className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
-                <span className="font-medium">Billing</span>
+                <span className="font-medium">Facturation</span>
               </Link>
               
               <div className="pt-4">
                 <Link href="/platforms/connect" className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-purple-300 text-purple-600 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all">
                   <Plus className="w-5 h-5" />
-                  <span className="font-medium">Add Platform</span>
+                  <span className="font-medium">Ajouter une plateforme</span>
                 </Link>
               </div>
             </nav>
@@ -409,8 +409,8 @@ export default function DashboardPage() {
           <ResumeBanner />
           {/* Welcome */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name?.split(' ')[0] || 'Creator'}! 👋</h1>
-            <p className="text-gray-600">Here's your performance overview for today</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Bon retour, {user?.name?.split(' ')[0] || 'Créatrice'}! 👋</h1>
+            <p className="text-gray-600">Voici votre aperçu des performances d'aujourd'hui</p>
           </div>
 
           {/* Onboarding Checklist */}
@@ -471,7 +471,7 @@ export default function DashboardPage() {
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold text-gray-900">Top Fans</h2>
                     <Link href="/fans" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                      View all →
+                      Voir tout →
                     </Link>
                   </div>
                 </div>
@@ -506,8 +506,8 @@ export default function DashboardPage() {
               {/* Social Media */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">Social Media</h2>
-                  <Link href="/platforms/connect" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Manage Platforms →</Link>
+                  <h2 className="text-2xl font-bold text-gray-900">Réseaux sociaux</h2>
+                  <Link href="/platforms/connect" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Gérer les plateformes →</Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* OnlyFans */}
