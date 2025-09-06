@@ -11,7 +11,6 @@ const plans = [
   {
     name: "Starter",
     icon: Sparkles,
-    price: { monthly: 19, yearly: 190 },
     description: "Launch your empire",
     features: [
       { text: "1,000 AI suggestions/month", included: true },
@@ -30,7 +29,6 @@ const plans = [
   {
     name: "Pro",
     icon: Zap,
-    price: { monthly: 39, yearly: 390 },
     description: "Scale to 6 figures",
     features: [
       { text: "5,000 AI suggestions/month", included: true },
@@ -49,7 +47,6 @@ const plans = [
   {
     name: "Scale",
     icon: Crown,
-    price: { monthly: 79, yearly: 790 },
     description: "Dominate your niche",
     features: [
       { text: "25,000 AI messages/month", included: true },
@@ -68,7 +65,6 @@ const plans = [
 ];
 
 export function PricingPro() {
-  const [isYearly, setIsYearly] = useState(false);
 
   return (
     <section className="py-20 md:py-32 bg-white dark:bg-gray-950">
@@ -87,31 +83,10 @@ export function PricingPro() {
             Where top creators keep 97% and AI does 80% of the work
           </p>
 
-          {/* Billing toggle */}
-          <div className="inline-flex items-center gap-4 p-1 bg-gray-100 dark:bg-gray-900 rounded-full" role="group" aria-label="Billing">
-            <button
-              onClick={() => { setIsYearly(false); events.pricingToggle({ billing: 'monthly' }); }}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                !isYearly
-                  ? "bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400"
-                  : "text-gray-600 dark:text-gray-400"
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => { setIsYearly(true); events.pricingToggle({ billing: 'yearly' }); }}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                isYearly
-                  ? "bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400"
-                  : "text-gray-600 dark:text-gray-400"
-              }`}
-            >
-              Yearly
-              <span className="ml-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
-                -20%
-              </span>
-            </button>
+          {/* Subtitle */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium shadow-lg">
+            <Sparkles className="w-4 h-4" />
+            <span>Flexible plans for every creator</span>
           </div>
         </motion.div>
 
@@ -151,19 +126,14 @@ export function PricingPro() {
                   <p className="text-gray-600 dark:text-gray-400">{plan.description}</p>
                 </div>
 
-                {/* Pricing */}
+                {/* Contact for pricing */}
                 <div className="text-center mb-8">
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-bold">
-                      ${isYearly ? Math.round(plan.price.yearly / 12) : plan.price.monthly}
-                    </span>
-                    <span className="text-gray-600 dark:text-gray-400">/month</span>
-                  </div>
-                  {isYearly && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      billed annually (${plan.price.yearly}/year)
-                    </p>
-                  )}
+                  <p className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Contact for pricing
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Free trial available
+                  </p>
                 </div>
 
                 {/* CTA Button */}
@@ -175,7 +145,7 @@ export function PricingPro() {
                         ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
                         : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900"
                     }`}
-                    onClick={() => events.planSelect({ plan: plan.name, billing: isYearly ? 'yearly' : 'monthly' })}
+                    onClick={() => events.planSelect({ plan: plan.name })}
                   >
                     {plan.cta}
                   </Button>

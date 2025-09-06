@@ -16,8 +16,31 @@ import { CommandPalette } from './command-palette'
 import { events } from '@/src/lib/analytics'
 
 const navigation = {
+  creators: {
+    title: 'For Creators',
+    items: [
+      {
+        name: 'Instagram Creators',
+        description: 'Monetize your Instagram following',
+        href: '/for-instagram-creators',
+        icon: MessageSquare
+      },
+      {
+        name: 'TikTok Creators',
+        description: 'Turn TikTok fame into income',
+        href: '/for-tiktok-creators',
+        icon: Zap
+      },
+      {
+        name: 'Creator Agencies',
+        description: 'Scale your agency with AI',
+        href: '/for-agencies',
+        icon: Building
+      }
+    ]
+  },
   solutions: {
-    title: 'Solutions',
+    title: 'Features',
     items: [
       {
         name: 'AI Chat Assistant',
@@ -174,6 +197,52 @@ export default function HeaderImproved() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
+            {/* Creators Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setActiveDropdown('creators')}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
+                <span>For Creators</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              <AnimatePresence>
+                {activeDropdown === 'creators' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
+                  >
+                    <div className="p-6">
+                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-4">
+                        {navigation.creators.title}
+                      </h3>
+                      <div className="space-y-3">
+                        {navigation.creators.items.map((item) => (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                          >
+                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
+                              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{item.description}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             {/* Solutions Dropdown */}
             <div 
               className="relative"
@@ -181,7 +250,7 @@ export default function HeaderImproved() {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-                <span>Solutions</span>
+                <span>Features</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               
