@@ -33,10 +33,10 @@ const footerLinks: Record<string, FooterSection> = {
   solutions: {
     title: 'Solutions',
     links: [
-      { name: 'OnlyFans Creators', href: '/features/ai-chat' },
-      { name: 'Instagram Creators', href: '/features/automation' },
-      { name: 'Multi‑platform', href: '/features/automation' },
-      { name: 'Agencies', href: '/agency-comparison' }
+      { name: 'Instagram Creators', href: '/for-instagram-creators' },
+      { name: 'TikTok Creators', href: '/for-tiktok-creators' },
+      { name: 'Creator Agencies', href: '/for-agencies' },
+      { name: 'OnlyFans Creators', href: '/features/ai-chat' }
     ]
   },
   resources: {
