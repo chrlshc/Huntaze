@@ -1,0 +1,263 @@
+# Subreddit Rules Configuration
+# Compatible avec reddit-automation.ts parser
+# 10 subs populaires type "promo/teaser" pour OnlyFans
+
+---
+OnlyFansPromotions:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: true
+  availableFlairs:
+    - "New Creator"
+    - "Top 10%"
+    - "VIP Page"
+    - "Free Page"
+  titleFormat: "[F] or [M] required"
+  bannedWords:
+    - "meet"
+    - "escort"
+    - "service"
+    - "hookup"
+    - "payment processor names"
+  requiresVerification: false
+  cooldownHours: 24
+  minKarma: 100
+  minAccountAge: 30
+  bestTimes:
+    - "22:00-02:00 EST"
+    - "12:00-14:00 EST"
+  notes: "Most active OF promo sub. Strict about no direct links."
+
+---
+OnlyFans101:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: false
+  titleFormat: "[Gender] tag recommended"
+  bannedWords:
+    - "meet"
+    - "escort"
+    - "underage"
+    - "teen"
+    - "paypal"
+    - "cashapp"
+  requiresVerification: true
+  verificationFormat: "Written username on paper + body"
+  cooldownHours: 12
+  minKarma: 50
+  minAccountAge: 14
+  bestTimes:
+    - "21:00-01:00 EST"
+  notes: "Requires verification before posting. High quality expected."
+
+---
+RealGirls:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: false # No links at all
+  requiresFlair: false
+  titleFormat: "Simple, no emojis"
+  bannedWords:
+    - "onlyfans"
+    - "OF"
+    - "subscribe"
+    - "sale"
+    - "discount"
+    - "promo"
+  requiresVerification: true
+  verificationFormat: "3 pics, different angles, username sign"
+  cooldownHours: 24
+  minKarma: 500
+  minAccountAge: 30
+  bestTimes:
+    - "20:00-00:00 EST"
+  notes: "NO SELLING. Subtle promo only. Very strict mods."
+
+---
+PetiteGoneWild:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: false
+  titleFormat: "[F] required"
+  heightWeightRequired: true
+  maxHeight: "5'4""
+  maxWeight: "120lbs"
+  bannedWords:
+    - "payment"
+    - "tip"
+    - "cashapp"
+    - "selling"
+  requiresVerification: true
+  verificationFormat: "3 pics with username"
+  cooldownHours: 24
+  minKarma: 200
+  minAccountAge: 30
+  bestTimes:
+    - "21:00-23:00 EST"
+  notes: "Must be genuinely petite. Include stats in verification."
+
+---
+GoneWild:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: false # No seller links
+  requiresFlair: false
+  titleFormat: "[F] [M] or [FM] required, descriptive titles"
+  bannedWords:
+    - "onlyfans"
+    - "seller"
+    - "premium"
+    - "snapchat"
+    - "kik"
+  requiresVerification: true
+  verificationFormat: "3+ pics, crumpled paper, username"
+  cooldownHours: 12
+  minKarma: 1000
+  minAccountAge: 60
+  bestTimes:
+    - "22:00-01:00 EST"
+  notes: "Original OC sub. NO SELLING ALLOWED. Instant ban."
+
+---
+thick:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: false
+  titleFormat: "Keep it simple"
+  bannedWords:
+    - "pay"
+    - "buy"
+    - "subscribe"
+  requiresVerification: false
+  cooldownHours: 24
+  minKarma: 100
+  minAccountAge: 7
+  bestTimes:
+    - "20:00-23:00 EST"
+  notes: "Curvy girls welcome. Light promo okay in comments."
+
+---
+LatinasGW:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: true
+  availableFlairs:
+    - "Mexican"
+    - "Colombian"
+    - "Brazilian"
+    - "Puerto Rican"
+    - "Mixed"
+  titleFormat: "[F] preferred"
+  bannedWords:
+    - "escort"
+    - "meet"
+    - "payment"
+  requiresVerification: false
+  cooldownHours: 24
+  minKarma: 50
+  minAccountAge: 7
+  bestTimes:
+    - "21:00-00:00 EST"
+  notes: "Latina creators only. Flair helps with visibility."
+
+---
+AsianGoneWild:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: false
+  titleFormat: "[F] required"
+  bannedWords:
+    - "selling"
+    - "premium"
+    - "pay"
+  requiresVerification: true
+  verificationFormat: "3 pics, AGW written on paper"
+  ethnicityRequired: "Asian descent"
+  cooldownHours: 8
+  minKarma: 200
+  minAccountAge: 14
+  bestTimes:
+    - "22:00-02:00 EST"
+    - "10:00-12:00 EST" # Asia timezones
+  notes: "Asian creators only. Verification checks ethnicity."
+
+---
+GoneWild30Plus:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: false
+  titleFormat: "[F] with age [F35] encouraged"
+  ageRequired: 30
+  bannedWords:
+    - "onlyfans"
+    - "snap"
+    - "kik"
+  requiresVerification: true
+  verificationFormat: "Standard 3 pic verification"
+  cooldownHours: 24
+  minKarma: 100
+  minAccountAge: 30
+  bestTimes:
+    - "21:00-23:00 EST"
+  notes: "30+ only. Mature audience, higher conversion rates."
+
+---
+NSFWFunny:
+  requiresNSFW: true
+  allowsLinks: false
+  linkInFirstCommentOnly: true
+  requiresFlair: false
+  titleFormat: "Must be funny/clever"
+  bannedWords:
+    - "serious selling"
+    - "dm for more"
+  requiresVerification: false
+  mustBeFunny: true
+  cooldownHours: 48
+  minKarma: 500
+  minAccountAge: 30
+  bestTimes:
+    - "19:00-22:00 EST"
+  notes: "Content must be humorous. Great for viral potential."
+
+---
+# POSTING BEST PRACTICES
+general_rules:
+  daily_limit: 15 # Across all subs to avoid spam detection
+  stagger_minutes: 20 # Min time between posts
+  unique_content: true # Don't reuse same image
+  engagement_required: true # Reply to comments
+  
+banned_globally:
+  - "underage"
+  - "child"
+  - "teen" # Even if 18/19
+  - "rape"
+  - "forced"
+  - "blood"
+  - "violence"
+  - "drugs"
+  - "illegal"
+
+reddit_wide_rules:
+  no_vote_manipulation: true
+  no_ban_evasion: true
+  follow_reddiquette: true
+  respect_removals: true # Don't repost removed content
+  
+conversion_tips:
+  - "First comment within 1 minute"
+  - "Reply to early comments for visibility"
+  - "Use reddit-hosted images (i.reddit)"
+  - "Post when Americans are horny (10pm-2am EST)"
+  - "Thank commenters to boost engagement"
+  - "Never mention prices publicly"
+  - "Build comment karma in SFW subs first"
+  - "Verify in multiple subs at once"
