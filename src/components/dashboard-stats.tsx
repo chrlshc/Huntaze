@@ -114,7 +114,7 @@ export default function DashboardStats() {
         increment={137}
         maxValue={100000}
         color="green"
-        trend="+285%"
+        trend="2–3x"
       />
       <StatCard
         icon={<Users className="w-6 h-6" />}

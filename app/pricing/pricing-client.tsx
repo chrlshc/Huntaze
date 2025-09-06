@@ -379,8 +379,11 @@ export default function PricingClient({ plans }: PricingClientProps) {
           <div className="elevated-card rounded-xl p-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Compliance & Safety</h3>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">
-              <li>AI provides smart replies (suggestions). You approve before sending.</li>
-              <li>OnlyFans integration is read‑only. Use must comply with each platform’s terms. Huntaze is not affiliated with OnlyFans, Instagram, TikTok, Reddit, or Meta.</li>
+              <li>L'IA fournit des suggestions de réponses. Vous approuvez avant envoi.</li>
+              <li>Intégration OnlyFans en lecture seule (CSV uniquement pour l'instant).</li>
+              <li>Respectez les conditions de chaque plateforme. Huntaze n'est affilié à aucune plateforme.</li>
+              <li>Aucune garantie de zéro bannissement - nous aidons à réduire les risques.</li>
+              <li>Les coûts d'API IA (OpenAI/Claude) sont facturés séparément.</li>
             </ul>
           </div>
         </div>

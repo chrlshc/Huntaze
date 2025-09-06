@@ -62,7 +62,7 @@ export function DashboardMockup() {
           >
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-5 h-5 text-purple-600" />
-              <span className="text-xs text-green-600 font-medium">+285%</span>
+              <span className="text-xs text-green-600 font-medium">2–3x</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">$47,829</p>
             <p className="text-xs text-gray-600">Monthly Revenue</p>
