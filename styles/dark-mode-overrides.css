@@ -1,0 +1,330 @@
+/* Dark Mode Component-Specific Overrides
+   Ensuring all Huntaze components meet WCAG AAA standards */
+
+/* ========================================
+   Hero Section Dark Mode Enhancements
+   ======================================== */
+
+.dark .min-h-screen {
+  background: var(--background-primary);
+}
+
+/* Fix gradient overlays in dark mode */
+.dark .bg-gradient-to-br {
+  background: linear-gradient(135deg, 
+    rgba(147, 51, 234, 0.1) 0%, 
+    rgba(236, 72, 153, 0.1) 50%, 
+    rgba(147, 51, 234, 0.1) 100%);
+}
+
+/* Grid pattern visibility */
+.dark .bg-grid-pattern {
+  opacity: 0.03;
+  background-image: 
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+}
+
+/* ========================================
+   Text Contrast Fixes - WCAG AAA
+   ======================================== */
+
+/* Ensure ALL text meets contrast requirements */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: var(--text-primary) !important;
+}
+
+.dark p, .dark span, .dark div {
+  color: var(--text-primary);
+}
+
+/* Fix specific gray text issues */
+.dark .text-gray-800 { color: var(--text-primary) !important; }
+.dark .text-gray-700 { color: var(--text-secondary) !important; }
+.dark .text-gray-600 { color: var(--text-secondary) !important; }
+.dark .text-gray-500 { color: var(--text-tertiary) !important; }
+.dark .text-gray-400 { color: var(--text-tertiary) !important; }
+
+/* Trust badge improvements */
+.dark .bg-purple-100 {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.dark .text-purple-800 {
+  color: var(--accent-primary) !important;
+}
+
+/* ========================================
+   Button Enhancements
+   ======================================== */
+
+/* Primary button - Premium dark mode styling */
+.dark .bg-gradient-to-r.from-purple-600.to-pink-600 {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+}
+
+.dark .bg-gradient-to-r.from-purple-600.to-pink-600:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35);
+}
+
+/* Secondary buttons */
+.dark .border-gray-300 {
+  border-color: var(--border-default);
+  background: var(--background-elevated);
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background: var(--background-secondary);
+}
+
+/* ========================================
+   Card Components
+   ======================================== */
+
+/* Premium cards with proper elevation */
+.dark .premium-card {
+  background: var(--background-elevated);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 
+              0 2px 4px -2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .premium-card:hover {
+  background: rgba(26, 26, 28, 0.9);
+  border-color: var(--border-default);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 
+              0 4px 6px -4px rgba(0, 0, 0, 0.4);
+}
+
+/* Featured card glow effect */
+.dark .shadow-glow {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2),
+              0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+/* Comparison cards */
+.dark .bg-red-500 { 
+  background: #DC2626;
+  color: white;
+}
+
+.dark .text-red-600 { 
+  color: #F87171 !important; 
+}
+
+.dark .bg-red-100 { 
+  background: rgba(248, 113, 113, 0.1); 
+}
+
+.dark .bg-green-500 { 
+  background: var(--success); 
+}
+
+.dark .bg-green-50 { 
+  background: rgba(16, 185, 129, 0.05); 
+}
+
+.dark .text-green-600 { 
+  color: var(--success) !important; 
+}
+
+/* ========================================
+   Platform Logos Section
+   ======================================== */
+
+.dark .border-gray-200 {
+  border-color: var(--border-subtle);
+}
+
+/* Ensure logos have proper contrast */
+.dark img {
+  filter: brightness(0.9) contrast(1.1);
+}
+
+/* ========================================
+   Features Grid
+   ======================================== */
+
+.dark .bg-gray-50 {
+  background: var(--background-secondary);
+}
+
+/* Feature icon backgrounds - using dynamic classes */
+.dark .bg-purple-100 { background: rgba(168, 85, 247, 0.1); }
+.dark .bg-blue-100 { background: rgba(59, 130, 246, 0.1); }
+.dark .bg-pink-100 { background: rgba(236, 72, 153, 0.1); }
+.dark .bg-green-100 { background: rgba(16, 185, 129, 0.1); }
+.dark .bg-yellow-100 { background: rgba(245, 158, 11, 0.1); }
+.dark .bg-red-100 { background: rgba(239, 68, 68, 0.1); }
+
+/* Feature icon text colors */
+.dark .text-purple-600 { color: var(--accent-primary) !important; }
+.dark .text-blue-600 { color: #60A5FA !important; }
+.dark .text-pink-600 { color: #F0ABFC !important; }
+.dark .text-green-600 { color: var(--success) !important; }
+.dark .text-yellow-600 { color: #FBBF24 !important; }
+.dark .text-red-600 { color: #F87171 !important; }
+
+/* ========================================
+   Navigation & Header
+   ======================================== */
+
+.dark header {
+  background: rgba(15, 15, 16, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+
+.dark footer {
+  background: var(--background-secondary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.dark .footer-link {
+  color: var(--text-tertiary);
+}
+
+.dark .footer-link:hover {
+  color: var(--text-primary);
+}
+
+/* ========================================
+   Final CTA Section
+   ======================================== */
+
+.dark .bg-gradient-to-br.from-purple-600.to-pink-600 {
+  background: linear-gradient(135deg, 
+    rgba(168, 85, 247, 0.95), 
+    rgba(192, 132, 252, 0.95));
+}
+
+.dark .text-purple-100 {
+  color: rgba(233, 213, 255, 0.9);
+}
+
+.dark .text-purple-200 {
+  color: rgba(233, 213, 255, 0.7);
+}
+
+/* White button on gradient background */
+.dark .bg-gradient-to-br.from-purple-600.to-pink-600 .bg-white {
+  background: var(--background-primary);
+  color: var(--accent-primary);
+}
+
+/* ========================================
+   Form Elements
+   ======================================== */
+
+.dark input,
+.dark textarea,
+.dark select {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ========================================
+   Scroll Indicator
+   ======================================== */
+
+.dark .border-gray-400 {
+  border-color: var(--border-strong);
+}
+
+.dark .bg-gray-400 {
+  background: var(--text-tertiary);
+}
+
+/* ========================================
+   Animations & Transitions
+   ======================================== */
+
+/* Smooth theme transitions */
+.dark,
+.dark * {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease,
+              color 0.3s ease;
+}
+
+/* Disable transitions on rapid changes */
+.dark.theme-transitioning,
+.dark.theme-transitioning * {
+  transition: none !important;
+}
+
+/* ========================================
+   Accessibility Improvements
+   ======================================== */
+
+/* Focus states with better visibility */
+.dark *:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Skip links */
+.dark .sr-only:focus {
+  background: var(--background-elevated);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ========================================
+   Performance Optimizations
+   ======================================== */
+
+/* Use GPU acceleration for smooth transitions */
+.dark .premium-card,
+.dark .btn-primary,
+.dark .btn-secondary {
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+}
+
+/* ========================================
+   Mobile Dark Mode Optimizations
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Ensure touch targets remain visible */
+  .dark button,
+  .dark a {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* Mobile menu background */
+  .dark .mobile-menu {
+    background: var(--background-primary);
+  }
+  
+  /* Bottom navigation */
+  .dark .mobile-bottom-nav {
+    background: var(--background-elevated);
+    border-top: 1px solid var(--border-subtle);
+  }
+}
