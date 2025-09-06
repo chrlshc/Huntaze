@@ -56,7 +56,7 @@ const plans = [
     name: 'SCALE',
     price: '$79/mo',
     freeTrialDays: 7,
-    description: 'Pour créatrices établies (jusquà 15k€/mois)',',
+    description: 'Pour créatrices établies (jusqu\'à 15k€/mois)',
     color: 'blue',
     badge: 'MEILLEUR RAPPORT',
     commission: '3%',
@@ -93,7 +93,7 @@ const plans = [
       '✓ Account manager dédié',
       '⚠️ API IA à votre charge (+10-50$/mois)'
     ],
-    cta: 'Contacter l'équipe',
+    cta: 'Contacter l\'équipe',
     priceId: 'enterprise'
   }
 ];
