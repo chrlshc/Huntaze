@@ -13,9 +13,9 @@ const logos = [
 
 export function SocialProofBar() {
   return (
-    <section className="py-12 bg-gray-50 dark:bg-gray-950 border-y border-gray-200 dark:border-gray-800">
+    <section className="py-12 bg-[#F6F9FC] dark:bg-[#0A2540] border-y border-[#E6E6E6] dark:border-[#2A2A2A]">
       <div className="container-width">
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-8">
+        <p className="text-center text-sm text-[#6C757D] dark:text-[#9CA3AF] font-medium mb-8">
           Trusted by 10,000+ creators across all major platforms
         </p>
         
@@ -27,7 +27,7 @@ export function SocialProofBar() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all"
+              className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all"
             >
               <img
                 src={logo.src}

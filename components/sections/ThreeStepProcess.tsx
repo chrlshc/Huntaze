@@ -29,7 +29,7 @@ const steps = [
 
 export function ThreeStepProcess() {
   return (
-    <section className="py-20 md:py-32 bg-white dark:bg-black">
+    <section className="py-20 md:py-32 bg-white dark:bg-[#0F0F10]">
       <div className="container-width">
         {/* Header */}
         <motion.div
@@ -38,13 +38,13 @@ export function ThreeStepProcess() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <p className="text-sm font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-4">
+          <p className="text-sm font-semibold text-[#635BFF] uppercase tracking-wider mb-4">
             How it works
           </p>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Start earning in <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">3 simple steps</span>
+            Start earning in <span className="text-gradient bg-gradient-to-r from-[#635BFF] to-[#4F46E5] bg-clip-text text-transparent">3 simple steps</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <p className="text-lg text-[#6C757D] dark:text-[#9CA3AF] max-w-3xl mx-auto leading-[1.6]">
             No tech skills needed. No complicated setup. Just connect and grow.
           </p>
         </motion.div>
@@ -67,7 +67,7 @@ export function ThreeStepProcess() {
               
               <div className="text-center">
                 {/* Number */}
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-900 mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#F6F9FC] dark:bg-[#151516] border border-[#E6E6E6] dark:border-[#2A2A2A] mb-6">
                   <span className="text-2xl font-bold bg-gradient-to-r ${step.color} bg-clip-text text-transparent">
                     {step.number}
                   </span>
@@ -82,7 +82,7 @@ export function ThreeStepProcess() {
                 
                 {/* Content */}
                 <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{step.description}</p>
+                <p className="text-[#6C757D] dark:text-[#9CA3AF] leading-[1.6]">{step.description}</p>
               </div>
             </motion.div>
           ))}
