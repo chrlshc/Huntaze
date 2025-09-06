@@ -23,11 +23,11 @@ const footerLinks: Record<string, FooterSection> = {
   product: {
     title: 'Product',
     links: [
+      { name: 'How It Works', href: '/how-it-works' },
       { name: 'Features', href: '/features/ai-chat' },
       { name: 'Pricing', href: '/pricing' },
-      { name: 'Security', href: '/about' },
-      { name: 'Roadmap', href: '/about' },
-      { name: 'Changelog', href: '/about' }
+      { name: 'Case Studies', href: '/case-studies' },
+      { name: 'Security', href: '/about' }
     ]
   },
   solutions: {
@@ -42,11 +42,10 @@ const footerLinks: Record<string, FooterSection> = {
   resources: {
     title: 'Resources',
     links: [
+      { name: 'About Us', href: '/about' },
       { name: 'Agency Comparison', href: '/agency-comparison' },
       { name: 'Blog', href: '/about' },
-      { name: 'Learn', href: '/#learn' },
       { name: 'Help Center', href: '/about' },
-      { name: 'API Documentation', href: '/about' },
       { name: 'System Status', href: '/about' }
     ]
   },

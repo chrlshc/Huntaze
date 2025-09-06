@@ -12,16 +12,16 @@ import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 import { events } from "@/src/lib/analytics";
 
 const features = [
-  { icon: Zap, text: "$50K+ Monthly Revenue", gradient: "from-yellow-400 to-orange-500" },
-  { icon: Shield, text: "Zero Account Bans", gradient: "from-green-400 to-emerald-500" },
-  { icon: BarChart3, text: "312% Growth Average", gradient: "from-blue-400 to-indigo-500" },
-  { icon: Globe2, text: "24/7 AI Working", gradient: "from-purple-400 to-pink-500" },
+  { icon: Zap, text: "Save 20+ Hours Weekly", gradient: "from-yellow-400 to-orange-500" },
+  { icon: Shield, text: "Platform Compliant", gradient: "from-green-400 to-emerald-500" },
+  { icon: BarChart3, text: "2-3x Revenue Growth", gradient: "from-blue-400 to-indigo-500" },
+  { icon: Globe2, text: "24/7 Smart Automation", gradient: "from-purple-400 to-pink-500" },
 ];
 
 const testimonials = [
-  { name: "Alex M.", role: "$45K/month Creator", text: "Revenue up 312% in 3 months" },
-  { name: "Jordan S.", role: "$28K/month Creator", text: "Saved 3 hours daily, doubled conversions" },
-  { name: "Ryan K.", role: "$15K/month Creator", text: "Finally running a real business" },
+  { name: "Alex M.", role: "Fitness Creator", text: "From $3k to $8k/month in 4 months" },
+  { name: "Jordan S.", role: "Gaming Creator", text: "Saved 25 hours/week on messages" },
+  { name: "Ryan K.", role: "Lifestyle Creator", text: "Finally have work-life balance" },
 ];
 
 export function HeroPro() {
@@ -98,7 +98,7 @@ export function HeroPro() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6 shadow-lg"
             >
               <Sparkles className="w-4 h-4 animate-pulse" />
-              <span>Used by Top 1% OnlyFans Creators</span>
+              <span>Trusted by 5,000+ Growing Creators</span>
             </motion.div>
 
             {/* Main heading */}
@@ -130,9 +130,9 @@ export function HeroPro() {
               transition={{ delay: 0.4 }}
               className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed max-w-2xl"
             >
-              Join 10,000+ creators who turned their passion into $50K+ monthly revenue. 
-              AI that works 24/7, growing your empire while you sleep, live your life, 
-              or create your next masterpiece.
+              Join thousands of creators who doubled their revenue while working half the time. 
+              Smart automation that handles repetitive tasks, so you can focus on what matters - 
+              creating great content and living your life.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -202,8 +202,8 @@ export function HeroPro() {
                   ))}
                 </div>
                 <div>
-                  <div className="font-semibold">10,000+ creators</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">earning more with Huntaze</div>
+                  <div className="font-semibold">5,000+ creators</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">growing sustainably with Huntaze</div>
                 </div>
               </div>
             </motion.div>

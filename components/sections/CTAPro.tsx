@@ -82,7 +82,7 @@ export function CTAPro() {
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12"
           >
-            10,000+ creators turned their bedroom hustle into boardroom empire
+            5,000+ creators doubled their revenue while working half the time
           </motion.p>
 
           {/* Benefits */}

@@ -49,16 +49,28 @@ const navigation = {
     title: 'Resources',
     items: [
       {
-        name: 'Agency Comparison',
-        description: 'Huntaze vs traditional agencies',
-        href: '/agency-comparison',
+        name: 'How It Works',
+        description: 'Step-by-step process',
+        href: '/how-it-works',
+        icon: Zap
+      },
+      {
+        name: 'Case Studies',
+        description: 'Real creator success stories',
+        href: '/case-studies',
+        icon: Users
+      },
+      {
+        name: 'About Us',
+        description: 'Our mission and values',
+        href: '/about',
         icon: Building
       },
       {
-        name: 'Learn',
-        description: 'Overview of features on one page',
-        href: '/#learn',
-        icon: BookOpen
+        name: 'Agency Comparison',
+        description: 'Huntaze vs traditional agencies',
+        href: '/agency-comparison',
+        icon: DollarSign
       },
       {
         name: 'Help Center',
