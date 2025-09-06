@@ -11,6 +11,7 @@ import {
   User, LogOut, Settings
 } from 'lucide-react'
 // import { ThemeToggle } from './theme-toggle'
+import { CommandPalette } from './command-palette'
 
 import { events } from '@/src/lib/analytics'
 
@@ -269,6 +270,10 @@ export default function HeaderImproved() {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
             {/* <ThemeToggle /> */}
+            
+            {/* Command Palette */}
+            {user && <CommandPalette />}
+            
             {loading ? (
               <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
             ) : user ? (

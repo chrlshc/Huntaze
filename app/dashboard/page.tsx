@@ -30,6 +30,7 @@ import type { OverviewMetrics } from '@/types/analytics';
 import MobileDashboard from './mobile-page';
 import OnboardingChecklist from '@/components/onboarding/OnboardingChecklist';
 import ResumeBanner from '@/components/onboarding/ResumeBanner';
+import { SkeletonDashboard } from '@/src/components/ui/skeleton';
 
 export default function DashboardPage() {
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://huntaze.com';
@@ -289,8 +290,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          <SkeletonDashboard />
+        </div>
       </div>
     );
   }
