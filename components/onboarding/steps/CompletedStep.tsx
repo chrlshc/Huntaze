@@ -27,12 +27,12 @@ export function CompletedStep() {
         </div>
         
         <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-          Félicitations {userData.pseudonym}! 🎉
+          Congrats {userData.pseudonym}! 🎉
         </h2>
         
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Votre compte Huntaze est maintenant configuré. Vous êtes prêt(e) à automatiser 
-          votre présence et maximiser vos revenus!
+          Your Huntaze account is now configured. You’re ready to automate 
+          your presence and maximize your revenue!
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export function CompletedStep() {
             <div className="text-3xl font-bold text-purple-600">
               {platformConnections.length}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Plateformes connectées</p>
+            <p className="text-sm text-gray-600 mt-1">Connected platforms</p>
           </CardContent>
         </Card>
 
@@ -51,7 +51,7 @@ export function CompletedStep() {
             <div className="text-3xl font-bold text-pink-600">
               {selectedPersonality?.name}
             </div>
-            <p className="text-sm text-gray-600 mt-1">Personnalité IA active</p>
+            <p className="text-sm text-gray-600 mt-1">Active AI personality</p>
           </CardContent>
         </Card>
 
@@ -60,14 +60,14 @@ export function CompletedStep() {
             <div className="text-3xl font-bold text-indigo-600">
               100%
             </div>
-            <p className="text-sm text-gray-600 mt-1">Conformité garantie</p>
+            <p className="text-sm text-gray-600 mt-1">Compliance guaranteed</p>
           </CardContent>
         </Card>
       </div>
 
       <Card className="bg-gradient-to-r from-purple-50 via-pink-50 to-indigo-50">
         <CardContent className="pt-6 space-y-4">
-          <h3 className="font-semibold text-lg text-center">Prochaines étapes</h3>
+          <h3 className="font-semibold text-lg text-center">Next steps</h3>
           
           <div className="space-y-3 max-w-md mx-auto">
             <div className="flex items-start gap-3">
@@ -75,9 +75,9 @@ export function CompletedStep() {
                 1
               </div>
               <div>
-                <p className="font-medium">Explorez votre tableau de bord</p>
+                <p className="font-medium">Explore your dashboard</p>
                 <p className="text-sm text-gray-600">
-                  Découvrez toutes les fonctionnalités à votre disposition
+                  Discover all the features at your disposal
                 </p>
               </div>
             </div>
@@ -87,9 +87,9 @@ export function CompletedStep() {
                 2
               </div>
               <div>
-                <p className="font-medium">Importez votre contenu existant</p>
+                <p className="font-medium">Import your existing content</p>
                 <p className="text-sm text-gray-600">
-                  L'IA apprendra de votre style et de vos interactions passées
+                  The AI will learn from your style and past interactions
                 </p>
               </div>
             </div>
@@ -99,9 +99,9 @@ export function CompletedStep() {
                 3
               </div>
               <div>
-                <p className="font-medium">Activez votre première campagne</p>
+                <p className="font-medium">Launch your first campaign</p>
                 <p className="text-sm text-gray-600">
-                  Laissez l'IA commencer à engager votre audience
+                  Let the AI start engaging your audience
                 </p>
               </div>
             </div>
@@ -115,11 +115,11 @@ export function CompletedStep() {
           size="lg"
           className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
         >
-          Accéder au tableau de bord
+          Go to dashboard
         </Button>
         
         <p className="text-sm text-gray-500">
-          Besoin d'aide? Notre équipe support est disponible 24/7
+          Need help? Our support team is available 24/7
         </p>
       </div>
     </div>
