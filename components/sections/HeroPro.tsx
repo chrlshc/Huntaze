@@ -307,7 +307,7 @@ export function HeroPro() {
                       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium">Conversion rate</span>
-                          <span className="text-green-500 text-sm font-bold">+312%</span>
+                          <span className="text-green-500 text-sm font-bold">2–3x</span>
                         </div>
                         <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                           <motion.div

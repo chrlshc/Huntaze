@@ -251,7 +251,7 @@ export default function BillingPage() {
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white text-center">
           <h2 className="text-2xl font-bold mb-4">Ready to scale your creator business?</h2>
           <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
-            Join 10,000+ creators who are using Huntaze to automate their fan interactions and grow their revenue
+            Join 5,000+ creators using Huntaze to automate fan interactions and save time
           </p>
           <button
             onClick={() => {/* handle checkout */}}

@@ -91,7 +91,7 @@ export default function FooterImproved() {
                 Get creator tips & product updates
               </h3>
               <p className="text-gray-400">
-                Join 10,000+ creators getting weekly insights to grow their business.
+                Join 5,000+ creators getting weekly insights to grow their business.
               </p>
             </div>
             <div className="mt-6 lg:mt-0">

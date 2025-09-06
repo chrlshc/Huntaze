@@ -72,7 +72,7 @@ export function CTAPro() {
             transition={{ delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
           >
-            Your competition is already here
+            Save 20+ Hours Weekly
           </motion.h2>
 
           {/* Description */}
@@ -82,7 +82,7 @@ export function CTAPro() {
             transition={{ delay: 0.3 }}
             className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12"
           >
-            5,000+ creators doubled their revenue while working half the time
+            Creators report 2–3x revenue growth and significant time savings. Results may vary.
           </motion.p>
 
           {/* Benefits */}

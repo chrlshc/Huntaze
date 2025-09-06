@@ -96,8 +96,8 @@ export default function HowItWorksPage() {
               How Huntaze <span className="text-gradient">Works</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              From setup to success in 4 simple steps. Most creators see their first 
-              automated sale within 24 hours.
+              From setup to meaningful results in 4 simple steps. Many creators 
+              report faster responses and time savings from day one.
             </p>
             <div className="flex justify-center gap-4">
               <Link href="/onboarding">
@@ -186,7 +186,7 @@ export default function HowItWorksPage() {
               Built for Real Creators
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Not another "get rich quick" scheme. Real tools for sustainable growth.
+              Built for sustainable growth. Results vary based on audience and effort.
             </p>
           </motion.div>
 
@@ -213,10 +213,10 @@ export default function HowItWorksPage() {
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Automate Your Growth?
+            Ready to Save Time and Grow?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join creators who save 20+ hours per week
+            Join 5,000+ creators who work smarter, not harder
           </p>
           <Link href="/onboarding">
             <Button size="lg" className="bg-white text-purple-700 hover:bg-gray-100">
