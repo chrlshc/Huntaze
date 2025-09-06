@@ -84,7 +84,7 @@ export function FeaturesPro() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
-            <span>Premium Features</span>
+            <span>Fonctionnalités Premium</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
             Tout ce qu'il faut<br />
@@ -182,7 +182,7 @@ export function FeaturesPro() {
           viewport={{ once: true }}
           className="mt-20 text-center"
         >
-          <h3 className="text-2xl font-bold mb-8">Works with your favorite platforms</h3>
+          <h3 className="text-2xl font-bold mb-8">Compatible avec vos plateformes préférées</h3>
           <div className="flex flex-wrap justify-center items-center gap-8">
             {["Instagram", "TikTok", "Reddit", "OnlyFans", "Twitter"].map((platform) => (
               <motion.div

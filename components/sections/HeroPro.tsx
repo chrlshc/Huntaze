@@ -8,16 +8,16 @@ import Link from "next/link";
 import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 
 const features = [
-  { icon: Zap, text: "AI Draft Suggestions" },
-  { icon: Shield, text: "Platform Guidelines" },
-  { icon: BarChart3, text: "Revenue Tracking" },
-  { icon: Globe2, text: "OnlyFans Ready" },
+  { icon: Zap, text: "Suggestions IA" },
+  { icon: Shield, text: "Respect des règles" },
+  { icon: BarChart3, text: "Suivi des revenus" },
+  { icon: Globe2, text: "Compatible OnlyFans" },
 ];
 
 const testimonials = [
-  { name: "Alex M.", role: "Creator", text: "Saves me 2 hours daily on messages" },
-  { name: "Jordan S.", role: "Content Creator", text: "Better fan engagement with AI drafts" },
-  { name: "Ryan K.", role: "Creator", text: "Finally organized my DMs efficiently" },
+  { name: "Alex M.", role: "Créatrice", text: "2 heures de gagnées par jour sur mes messages" },
+  { name: "Jordan S.", role: "Créatrice de contenu", text: "Meilleur engagement avec les suggestions IA" },
+  { name: "Ryan K.", role: "Créatrice", text: "Mes DMs enfin organisés efficacement" },
 ];
 
 export function HeroPro() {
@@ -91,7 +91,7 @@ export function HeroPro() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6"
             >
               <Zap className="w-4 h-4" />
-              <span>AI-Powered Creator Platform</span>
+              <span>Plateforme IA pour créatrices</span>
             </motion.div>
 
             {/* Main heading */}
@@ -135,13 +135,13 @@ export function HeroPro() {
             >
               <Link href="/onboarding">
                 <Button className="btn-primary group px-8 py-6 text-lg">
-                  Start Free Trial
+                  Essai gratuit
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link href="/demo">
                 <Button variant="outline" className="px-8 py-6 text-lg border-2">
-                  Book Demo
+                  Voir la démo
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -210,7 +210,7 @@ export function HeroPro() {
                     <div className="flex items-center gap-3 pb-4 border-b">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400" />
                       <div className="flex-1">
-                        <div className="font-semibold">Votre Assistant IA</div>
+                        <div className="font-semibold">Votre assistante IA</div>
                         <div className="text-xs text-green-500">En ligne</div>
                       </div>
                     </div>
