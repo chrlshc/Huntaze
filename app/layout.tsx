@@ -10,13 +10,14 @@ import PageTransition from "@/src/components/page-transition";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { SmoothScrollProvider } from "@/src/components/providers/SmoothScrollProvider";
+import { FloatingAssistant } from "@/src/components/floating-assistant";
 
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
-  title: "Huntaze - Keep More of Your Creator Revenue",
-  description: "Stop paying 50% to agencies. Automate fan conversations with AI while you keep control and earnings.",
-  keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative, DM management",
+  title: "Huntaze - Be the Next Million-Dollar Creator",
+  description: "Join 10,000+ creators earning $50K+ monthly. AI that works 24/7, growing your empire while you sleep.",
+  keywords: "OnlyFans automation, million dollar creator, AI empire builder, top 1% OnlyFans, creator success platform, passive income automation",
   icons: {
     icon: [
       { url: "/huntaze-favicon.png", type: "image/png" },
@@ -25,15 +26,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Huntaze - Keep More of Your Creator Revenue",
-    description: "Automate fan conversations with AI while you stay in control.",
+    title: "Huntaze - Be the Next Million-Dollar Creator",
+    description: "Join 10,000+ creators earning $50K+ monthly. AI that works 24/7, growing your empire while you sleep.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Huntaze - Keep More of Your Creator Revenue",
-    description: "Automate fan conversations with AI while you stay in control.",
+    title: "Huntaze - Be the Next Million-Dollar Creator",
+    description: "Join 10,000+ creators earning $50K+ monthly. AI that works 24/7, growing your empire while you sleep.",
     images: ["/twitter-image.png"],
   },
 };
@@ -96,6 +97,7 @@ export default function RootLayout({
             </PageTransition>
             <FooterImproved />
             <MobileBottomNav />
+            <FloatingAssistant />
           </SmoothScrollProvider>
         </Providers>
       </body>

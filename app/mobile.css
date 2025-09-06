@@ -2,9 +2,47 @@
 
 /* CSS Variables for high contrast mode */
 :root {
-  --tap-target-min: 44px;
+  --tap-target-min: 48px;
   --tap-spacing-min: 8px;
   --outdoor-contrast: 7;
+}
+
+/* Performance optimizations for mobile */
+@media (max-width: 768px) {
+  /* Disable heavy animations */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Reduce blur effects for better FPS */
+  .blur-3xl {
+    filter: blur(20px) !important;
+  }
+  
+  .blur-xl {
+    filter: blur(10px) !important;
+  }
+  
+  /* Optimize backdrop filters */
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  
+  /* Disable floating shapes on mobile */
+  .absolute.bg-purple-400,
+  .absolute.bg-pink-400,
+  .absolute.bg-purple-500 {
+    display: none !important;
+  }
+  
+  /* GPU acceleration for smooth scrolling */
+  body {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
 }
 
 /* High contrast mode for outdoor visibility */
@@ -51,6 +89,12 @@
   button:active, a:active, .clickable:active {
     transform: scale(0.98);
     opacity: 0.9;
+    transition: transform 0.1s ease-out;
+  }
+  
+  /* Prevent double-tap zoom */
+  button, input, select, textarea, a {
+    touch-action: manipulation;
   }
 
   /* Prevent text selection on tap */
@@ -83,6 +127,21 @@
   /* Smooth transitions for mobile */
   .mobile-transition {
     transition: all 0.2s ease-out;
+    will-change: transform;
+  }
+  
+  /* Reduce animation duration on mobile */
+  .animate-pulse {
+    animation-duration: 2s !important;
+  }
+  
+  .animate-spin {
+    animation-duration: 1.5s !important;
+  }
+  
+  /* Disable parallax on mobile */
+  [data-parallax] {
+    transform: none !important;
   }
 
   /* Mobile-optimized shadows */
@@ -237,8 +296,14 @@
   
   /* iOS-specific fixes */
   @supports (-webkit-touch-callout: none) {
+    /* Prevent zoom on form inputs */
     input, textarea, select {
-      font-size: 16px !important; /* Prevents zoom */
+      font-size: 16px !important;
+    }
+    
+    /* Smooth momentum scrolling */
+    .mobile-scroll {
+      -webkit-overflow-scrolling: touch;
     }
     
     /* Fix for iOS bottom bar */
