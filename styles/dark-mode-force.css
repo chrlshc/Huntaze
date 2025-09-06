@@ -1,0 +1,349 @@
+/* Force Dark Mode - Assure que TOUT est en noir/blanc */
+
+/* ========================================
+   FORCE TOUS LES FONDS EN NOIR
+   ======================================== */
+
+/* Force le fond principal en noir pur */
+.dark,
+.dark body,
+.dark .min-h-screen,
+.dark main,
+.dark section,
+.dark div,
+.dark article,
+.dark aside,
+.dark header,
+.dark footer,
+.dark nav {
+  background-color: #000000 !important;
+}
+
+/* Force tous les éléments avec des fonds colorés en noir */
+.dark .bg-white,
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-zinc-50,
+.dark .bg-zinc-100 {
+  background-color: #000000 !important;
+}
+
+/* Sections et containers */
+.dark .container,
+.dark .container-width,
+.dark .max-w-7xl,
+.dark .max-w-6xl,
+.dark .max-w-5xl,
+.dark .max-w-4xl,
+.dark .max-w-3xl,
+.dark .max-w-2xl,
+.dark .max-w-xl {
+  background-color: #000000 !important;
+}
+
+/* Cards et surfaces élevées - légèrement plus clair */
+.dark .card,
+.dark .premium-card,
+.dark .elevated-card,
+.dark .surface,
+.dark .bg-white.rounded-lg,
+.dark .bg-white.rounded-xl,
+.dark .bg-white.rounded-2xl,
+.dark .border {
+  background-color: #0A0A0A !important;
+  border-color: #1A1A1A !important;
+}
+
+/* Modals et overlays */
+.dark .modal,
+.dark .dialog,
+.dark .modal-content,
+.dark [role="dialog"] {
+  background-color: #0A0A0A !important;
+}
+
+/* ========================================
+   FORCE TOUS LES TEXTES EN BLANC
+   ======================================== */
+
+/* Tous les textes en blanc */
+.dark,
+.dark * {
+  color: #FFFFFF !important;
+}
+
+/* Headers et titres */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #FFFFFF !important;
+}
+
+/* Paragraphes et textes */
+.dark p,
+.dark span,
+.dark div,
+.dark a,
+.dark li,
+.dark label,
+.dark td,
+.dark th {
+  color: #FFFFFF !important;
+}
+
+/* Force les textes gris en blanc */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .text-gray-300,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-slate-400,
+.dark .text-zinc-900,
+.dark .text-zinc-800,
+.dark .text-zinc-700,
+.dark .text-zinc-600,
+.dark .text-zinc-500,
+.dark .text-zinc-400 {
+  color: #FFFFFF !important;
+  opacity: 0.9;
+}
+
+/* Textes secondaires - légèrement transparents */
+.dark .text-muted,
+.dark .text-secondary,
+.dark .text-sm,
+.dark .text-xs {
+  color: #FFFFFF !important;
+  opacity: 0.8;
+}
+
+/* ========================================
+   BOUTONS ET INTERACTIFS
+   ======================================== */
+
+/* Boutons primaires */
+.dark .btn-primary,
+.dark .btn-gradient,
+.dark button[class*="bg-purple"],
+.dark button[class*="bg-blue"],
+.dark button[class*="from-"] {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+.dark .btn-primary:hover,
+.dark .btn-gradient:hover {
+  background: #E0E0E0 !important;
+}
+
+/* Boutons secondaires */
+.dark .btn-secondary,
+.dark .btn-outline,
+.dark button[class*="border"] {
+  background: transparent !important;
+  border: 2px solid #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+.dark .btn-secondary:hover {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* ========================================
+   INPUTS ET FORMULAIRES
+   ======================================== */
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #0A0A0A !important;
+  border: 1px solid #2A2A2A !important;
+  color: #FFFFFF !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #666666 !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #FFFFFF !important;
+  outline: none !important;
+}
+
+/* ========================================
+   NAVIGATION
+   ======================================== */
+
+.dark header,
+.dark nav,
+.dark .navbar {
+  background-color: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid #1A1A1A !important;
+}
+
+.dark .nav-link {
+  color: #FFFFFF !important;
+}
+
+.dark .nav-link:hover {
+  color: #FFFFFF !important;
+  opacity: 0.8;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.dark footer {
+  background-color: #000000 !important;
+  border-top: 1px solid #1A1A1A !important;
+}
+
+.dark footer * {
+  color: #FFFFFF !important;
+}
+
+/* ========================================
+   GRADIENTS ET EFFETS SPECIAUX
+   ======================================== */
+
+/* Supprime les gradients colorés */
+.dark .bg-gradient-to-br,
+.dark .bg-gradient-to-r,
+.dark .bg-gradient-to-b,
+.dark [class*="from-"],
+.dark [class*="via-"],
+.dark [class*="to-"] {
+  background: #000000 !important;
+}
+
+/* Gradient texte en blanc */
+.dark .gradient-text,
+.dark .gradient-text-premium,
+.dark .text-gradient {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  color: #FFFFFF !important;
+}
+
+/* ========================================
+   IMAGES ET ICONES
+   ======================================== */
+
+/* Inverse les icônes pour qu'elles soient visibles */
+.dark svg {
+  color: #FFFFFF !important;
+  fill: currentColor;
+}
+
+/* Images avec fond blanc - ajoute un contour */
+.dark img {
+  border: 1px solid #1A1A1A;
+}
+
+/* ========================================
+   ETATS SPECIAUX
+   ======================================== */
+
+/* Hover states */
+.dark *:hover {
+  opacity: 0.9;
+}
+
+/* Focus states */
+.dark *:focus {
+  outline: 2px solid #FFFFFF !important;
+  outline-offset: 2px;
+}
+
+/* Selection */
+.dark ::selection {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* ========================================
+   EXCEPTIONS (si nécessaire)
+   ======================================== */
+
+/* Badges et alerts - peuvent garder des couleurs */
+.dark .bg-green-100,
+.dark .bg-red-100,
+.dark .bg-yellow-100,
+.dark .bg-blue-100 {
+  opacity: 0.1;
+}
+
+/* Status colors */
+.dark .text-green-600,
+.dark .text-red-600,
+.dark .text-yellow-600,
+.dark .text-blue-600 {
+  filter: brightness(1.5);
+}
+
+/* ========================================
+   MOBILE SPECIFIC
+   ======================================== */
+
+@media (max-width: 768px) {
+  .dark .mobile-menu {
+    background-color: #000000 !important;
+  }
+  
+  .dark .mobile-bottom-nav {
+    background-color: #0A0A0A !important;
+    border-top: 1px solid #1A1A1A !important;
+  }
+}
+
+/* ========================================
+   SCROLLBARS
+   ======================================== */
+
+.dark::-webkit-scrollbar {
+  background-color: #000000 !important;
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background-color: #2A2A2A !important;
+}
+
+.dark::-webkit-scrollbar-track {
+  background-color: #000000 !important;
+}
+
+/* ========================================
+   IMPORTANT: ORDRE DE CASCADE
+   ======================================== */
+
+/* S'assure que ces styles ont la priorité maximale */
+html.dark,
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Force le recalcul du style */
+.dark {
+  will-change: background-color, color;
+}
