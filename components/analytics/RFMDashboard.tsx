@@ -213,7 +213,7 @@ export function RFMDashboard({ onImportData }: RFMDashboardProps) {
                   .sort(([_, a]: [string, any], [__, b]: [string, any]) => b.score - a.score)
                   .slice(0, 10)
                   .map(([userId, data]: [string, any]) => {
-                    const config = segmentConfig[data.segment];
+                    const config = segmentConfig[data.segment as keyof typeof segmentConfig];
                     return (
                       <tr key={userId} className="hover:bg-gray-50">
                         <td className="px-4 py-2">
