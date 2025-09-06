@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { Link2 } from 'lucide-react';
 import Link from 'next/link';
-import { ofIntegrationApi } from '@/src/lib/api';
-import FormField from '@/src/components/ui/form-field';
 import ComplianceNotice from '@/components/compliance/ComplianceNotice';
 import { OnlyFansLogoIcon, InstagramLogoIcon, TikTokLogoIcon, RedditLogoIcon, ThreadsLogoIcon } from '@/src/components/platform-icons';
 
@@ -14,29 +12,20 @@ const THREADS_APP_ID = process.env.NEXT_PUBLIC_THREADS_APP_ID || '';
 const THREADS_REDIRECT_URI = process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || 'https://huntaze.com/auth/threads/callback';
 
 export default function ConnectPlatformsPage() {
-  const [ofUsername, setOfUsername] = useState('');
-  const [ofPassword, setOfPassword] = useState('');
-  const [ofTotp, setOfTotp] = useState('');
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
-  const [errors, setErrors] = useState<{ username?: string; password?: string; totp?: string }>({});
 
-  const handleOFConnect = async () => {
-    setError('');
-    setNotice('');
-    const nextErrors: typeof errors = {};
-    if (!ofUsername?.trim()) nextErrors.username = "Username is required";
-    if (!ofPassword?.trim()) nextErrors.password = "Password is required";
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
+  const joinOFWaitlist = async () => {
     try {
       setLoading(true);
-      await ofIntegrationApi.connect({ username: ofUsername, password: ofPassword, totp: ofTotp || undefined });
-      setNotice("OnlyFans connected! Syncing your data...");
-    } catch (e) {
-      setError("Failed to connect. Please check your credentials.");
+      setError('');
+      setNotice('');
+      const resp = await fetch('/api/waitlist/onlyfans', { method: 'POST' });
+      if (!resp.ok) throw new Error('Failed to join waitlist');
+      setNotice('Joined the OnlyFans API waitlist. We will notify you.');
+    } catch (e: any) {
+      setError(e.message || 'Failed to join waitlist');
     } finally {
       setLoading(false);
     }
@@ -97,42 +86,15 @@ export default function ConnectPlatformsPage() {
               <OnlyFansLogoIcon className="w-6 h-6" />
               <h3 className="text-lg font-semibold">OnlyFans</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-4">Connect OnlyFans to sync earnings, subscribers, and messages.</p>
-            <div className="grid gap-3 mb-4">
-              <FormField
-                name="username"
-                label="OnlyFans Username"
-                required
-                placeholder="@username"
-                help="Your OnlyFans profile URL or @username"
-                value={ofUsername}
-                onChange={(e) => { setOfUsername((e.target as HTMLInputElement).value); if (errors.username) setErrors((p)=>({...p, username: undefined})); }}
-                error={errors.username}
-              />
-              <FormField
-                name="password"
-                label="OnlyFans Password"
-                type="password"
-                required
-                placeholder="••••••••"
-                value={ofPassword}
-                onChange={(e) => { setOfPassword((e.target as HTMLInputElement).value); if (errors.password) setErrors((p)=>({...p, password: undefined})); }}
-                error={errors.password}
-              />
-              <FormField
-                name="totp"
-                label="2FA Code"
-                placeholder="Enter 2FA code (if enabled)"
-                value={ofTotp}
-                onChange={(e) => { setOfTotp((e.target as HTMLInputElement).value); if (errors.totp) setErrors((p)=>({...p, totp: undefined})); }}
-                error={errors.totp}
-              />
-            </div>
+            <p className="text-sm text-gray-600 mb-4">Read‑only via CSV import for performance analytics. No password required.</p>
             {notice && <p className="text-green-600 text-sm mb-2">{notice}</p>}
             {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-            <div className="flex items-center gap-3">
-              <button onClick={handleOFConnect} disabled={loading} className="bg-purple-600 hover:bg-purple-700 disabled:opacity-60 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                {loading ? 'Connecting…' : 'Connect OnlyFans'}
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/platforms/import/onlyfans">
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">Import OF CSV</button>
+              </Link>
+              <button onClick={joinOFWaitlist} disabled={loading} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-60">
+                {loading ? 'Joining…' : 'Join OF API Waitlist'}
               </button>
               <Link href="/onboarding" className="text-gray-500 hover:text-gray-700 text-sm">Skip for now</Link>
             </div>

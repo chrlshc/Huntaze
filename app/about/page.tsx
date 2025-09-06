@@ -65,7 +65,7 @@ export default function AboutPage() {
               <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Security best practices: encrypted secrets, least‑privilege services, audit logs.</span></li>
             </ul>
             <div className="mt-6">
-              <Link href="/pricing" className="text-purple-600 dark:text-purple-400 font-semibold hover:underline">See pricing →</Link>
+              <Link href="/demo" className="text-purple-600 dark:text-purple-400 font-semibold hover:underline">Book a demo →</Link>
               <span className="mx-2 text-gray-400">•</span>
               <Link href="/agency-comparison" className="text-purple-600 dark:text-purple-400 font-semibold hover:underline">Compare with agencies →</Link>
             </div>
