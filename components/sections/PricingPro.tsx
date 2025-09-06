@@ -21,7 +21,7 @@ const plans = [
       { text: "Audit réseaux sociaux", included: false },
       { text: "Audit OnlyFans", included: false },
       { text: "Fonctionnalités avancées", included: false },
-      { text: "Collaboration d'équipe", included: false }
+      { text: "Collaboration d\'équipe", included: false }
     ],
     cta: "Commencer l'essai gratuit",
     popular: false
@@ -40,7 +40,7 @@ const plans = [
       { text: "Audit réseaux sociaux (mensuel)", included: true },
       { text: "Audit OnlyFans (mensuel)", included: true },
       { text: "Automatisation intelligente", included: true },
-      { text: "Collaboration d'équipe", included: false }
+      { text: "Collaboration d\'équipe", included: false }
     ],
     cta: "Commencer l'essai gratuit",
     popular: true

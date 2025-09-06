@@ -189,7 +189,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'Taux d'automatisation IA',
+      title: 'Taux d\'automatisation IA',
       value: hasConnectedPlatform 
         ? (overview ? `${Math.round(overview.metrics.aiAutomationRate*100)}%` : '0%')
         : '--',
