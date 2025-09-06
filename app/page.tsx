@@ -2,7 +2,6 @@
 
 import { HeroPro } from "@/components/sections/HeroPro";
 import { FeaturesPro } from "@/components/sections/FeaturesPro";
-import { PricingPro } from "@/components/sections/PricingPro";
 import { FAQPro } from "@/components/sections/FAQPro";
 import { CTAPro } from "@/components/sections/CTAPro";
 
@@ -11,7 +10,6 @@ export default function HomePage() {
     <>
       <HeroPro />
       <FeaturesPro />
-      <PricingPro />
       <FAQPro />
       <CTAPro />
     </>

@@ -25,7 +25,7 @@ const footerLinks: Record<string, FooterSection> = {
     links: [
       { name: 'How It Works', href: '/how-it-works' },
       { name: 'Features', href: '/features/ai-chat' },
-      { name: 'Pricing', href: '/pricing' },
+      { name: 'Contact Sales', href: '/demo' },
       { name: 'Case Studies', href: '/case-studies' },
       { name: 'Security', href: '/about' }
     ]

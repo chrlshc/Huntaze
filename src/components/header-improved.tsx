@@ -335,8 +335,8 @@ export default function HeaderImproved() {
               </AnimatePresence>
             </div>
 
-            <Link href="/pricing" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-              Pricing
+            <Link href="/demo" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
+              Book Demo
             </Link>
 
             <Link href="/agency-comparison" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
@@ -490,11 +490,11 @@ export default function HeaderImproved() {
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <Link
-                    href="/pricing"
+                    href="/demo"
                     className="block p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Pricing
+                    Book Demo
                   </Link>
                   <Link
                     href="/about"
