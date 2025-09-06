@@ -120,7 +120,7 @@ export function calculateABTestWinner(test: ABTest): string | null {
     return null;
   }
   
-  let bestVariant: ABTestVariant | null = null;
+  let bestVariant: ABTestVariant | undefined;
   let bestScore = 0;
   
   test.variants.forEach(variant => {
