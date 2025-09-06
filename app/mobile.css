@@ -68,7 +68,7 @@
   display: none;
 }
 
-/* Smooth scrolling for carousels */
+/* Normal scrolling for carousels */
 .snap-x {
   scroll-snap-type: x mandatory;
 }
@@ -124,10 +124,9 @@
     overscroll-behavior-y: contain;
   }
 
-  /* Smooth transitions for mobile */
+  /* Normal transitions for mobile */
   .mobile-transition {
     transition: all 0.2s ease-out;
-    will-change: transform;
   }
   
   /* Reduce animation duration on mobile */
@@ -301,7 +300,7 @@
       font-size: 16px !important;
     }
     
-    /* Smooth momentum scrolling */
+    /* Normal momentum scrolling */
     .mobile-scroll {
       -webkit-overflow-scrolling: touch;
     }

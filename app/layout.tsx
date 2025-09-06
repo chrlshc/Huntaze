@@ -9,7 +9,6 @@ import MobileBottomNav from "@/src/components/mobile-bottom-nav";
 import PageTransition from "@/src/components/page-transition";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-import { SmoothScrollProvider } from "@/src/components/providers/SmoothScrollProvider";
 import { FloatingAssistant } from "@/src/components/floating-assistant";
 
 
@@ -53,7 +52,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#9333EA" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="stylesheet" href="/styles/design-system.css" />
-        <script src="/scroll-fix.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -88,17 +86,15 @@ export default function RootLayout({
       <body className="antialiased" data-ui={minimal ? 'minimal' : undefined}>
         <GoogleAnalytics />
         <Providers>
-          <SmoothScrollProvider>
-            <HeaderImproved />
-            <PageTransition>
-              <main className="min-h-screen">
-                {children}
-              </main>
-            </PageTransition>
-            <FooterImproved />
-            <MobileBottomNav />
-            <FloatingAssistant />
-          </SmoothScrollProvider>
+          <HeaderImproved />
+          <PageTransition>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </PageTransition>
+          <FooterImproved />
+          <MobileBottomNav />
+          <FloatingAssistant />
         </Providers>
       </body>
     </html>
