@@ -1,14 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
-  Target, 
+  MessageSquare, 
   AlertCircle,
   Info
 } from 'lucide-react';
 
-export default function NewCampaignPage() {
+export default function BulkMessagesPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -17,16 +18,16 @@ export default function NewCampaignPage() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Link
-                href="/campaigns"
+                href="/messages"
                 className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Retour aux campagnes</span>
+                <span className="text-sm">Retour aux messages</span>
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-600" />
-              <span className="font-semibold">Nouvelle Campagne</span>
+              <MessageSquare className="w-5 h-5 text-purple-600" />
+              <span className="font-semibold">Messages groupés</span>
             </div>
           </div>
         </div>
@@ -42,7 +43,7 @@ export default function NewCampaignPage() {
             </div>
             <h2 className="text-2xl font-bold mb-2">Fonctionnalité à venir</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              La création de campagnes automatisées n'est pas encore disponible. Cette fonctionnalité sera ajoutée prochainement.
+              Les messages groupés ne sont pas encore disponibles. Cette fonctionnalité sera ajoutée prochainement.
             </p>
 
             {/* What's Coming */}
@@ -50,14 +51,13 @@ export default function NewCampaignPage() {
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
                 <div>
-                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">Bientôt disponible :</p>
+                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">Ce qui arrive :</p>
                   <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                    <li>• Campagnes de messages ciblées</li>
-                    <li>• Segmentation par tags et comportement</li>
-                    <li>• A/B testing des messages</li>
-                    <li>• Planification et automatisation</li>
-                    <li>• Analytics de performance</li>
+                    <li>• Envoi de messages à plusieurs fans</li>
                     <li>• Templates réutilisables</li>
+                    <li>• Segmentation par tags</li>
+                    <li>• Planification des envois</li>
+                    <li>• Statistiques de performance</li>
                   </ul>
                 </div>
               </div>
@@ -66,11 +66,11 @@ export default function NewCampaignPage() {
             {/* CTA */}
             <div className="mt-8">
               <Link
-                href="/campaigns"
+                href="/messages"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Retour aux campagnes
+                Retour aux messages
               </Link>
             </div>
           </div>
@@ -79,4 +79,3 @@ export default function NewCampaignPage() {
     </div>
   );
 }
-

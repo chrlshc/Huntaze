@@ -18,13 +18,14 @@ const plans = [
     commission: '7%',
     revenueCap: '$2,500/month',
     features: [
-      '✓ 1,000 AI messages/month',
-      '✓ 1 platform integration',
-      '✓ Basic analytics',
-      '✓ Mobile app access',
-      '✓ Standard email support',
-      '✓ 7% platform fee — You keep 93%',
-      '✓ Revenue cap: $2,500/month'
+      '✓ 1 000 suggestions IA/mois',
+      '✓ 1 plateforme connectée',
+      '✓ Analytics de base',
+      '✓ Accès mobile',
+      '✓ Support email standard',
+      '✓ 7% commission — Vous gardez 93%',
+      '✓ Plafond: 2 500$/mois',
+      '⚠️ API IA non incluse (+10-20$/mois)'
     ],
     cta: 'Start free trial',
     priceId: 'starter'
@@ -39,13 +40,14 @@ const plans = [
     commission: '5%',
     revenueCap: '$5,000/month',
     features: [
-      '✓ 5,000 AI messages/month',
-      '✓ 3 platform integrations',
-      '✓ Advanced analytics',
-      '✓ Priority support',
-      '✓ Real‑time automation',
-      '✓ 5% platform fee — You keep 95%',
-      '✓ Revenue cap: $5,000/month'
+      '✓ 5 000 suggestions IA/mois',
+      '✓ 3 plateformes connectées',
+      '✓ Analytics avancés',
+      '✓ Support prioritaire',
+      '✓ Templates personnalisables',
+      '✓ 5% commission — Vous gardez 95%',
+      '✓ Plafond: 5 000$/mois',
+      '⚠️ API IA non incluse (+20-30$/mois)'
     ],
     cta: 'Start free trial',
     priceId: 'pro'
@@ -60,13 +62,14 @@ const plans = [
     commission: '3%',
     revenueCap: '$15,000/month',
     features: [
-      '✓ 25,000 AI messages/month', 
-      '✓ 10 platform integrations',
-      '✓ Advanced analytics & API',
-      '✓ Team collaboration (3 users)',
-      '✓ Custom AI training',
-      '✓ 3% platform fee — You keep 97%',
-      '✓ Revenue cap: $15,000/month'
+      '✓ 25 000 suggestions IA/mois', 
+      '✓ 10 plateformes connectées',
+      '✓ Analytics & API avancés',
+      '✓ Collaboration équipe (3 users)',
+      '✓ Personnalisation IA avancée',
+      '✓ 3% commission — Vous gardez 97%',
+      '✓ Plafond: 15 000$/mois',
+      '⚠️ API IA non incluse (+30-50$/mois)'
     ],
     cta: 'Start free trial',
     priceId: 'scale'
@@ -81,13 +84,14 @@ const plans = [
     commission: '1.5%',
     revenueCap: 'Unlimited',
     features: [
-      '✓ Unlimited AI messages',
-      '✓ Unlimited integrations',
-      '✓ Custom reporting',
-      '✓ No revenue cap',
-      '✓ 1.5% platform fee — You keep 98.5%',
-      '✓ White‑label options',
-      '✓ Dedicated account manager'
+      '✓ Suggestions IA illimitées',
+      '✓ Intégrations illimitées',
+      '✓ Rapports personnalisés',
+      '✓ Aucun plafond de revenus',
+      '✓ 1.5% commission — Vous gardez 98.5%',
+      '✓ Options marque blanche',
+      '✓ Account manager dédié',
+      '⚠️ API IA à votre charge (+10-50$/mois)'
     ],
     cta: 'Contact sales',
     priceId: 'enterprise'

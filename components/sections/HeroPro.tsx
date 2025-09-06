@@ -8,16 +8,16 @@ import Link from "next/link";
 import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 
 const features = [
-  { icon: Zap, text: "AI Automation 24/7" },
-  { icon: Shield, text: "Platform Compliant" },
-  { icon: BarChart3, text: "Revenue Analytics" },
-  { icon: Globe2, text: "Multi-Platform" },
+  { icon: Zap, text: "AI Draft Suggestions" },
+  { icon: Shield, text: "Platform Guidelines" },
+  { icon: BarChart3, text: "Revenue Tracking" },
+  { icon: Globe2, text: "OnlyFans Ready" },
 ];
 
 const testimonials = [
-  { name: "Alex M.", role: "Top 0.1% Creator", text: "+$127K revenue in 60 days" },
-  { name: "Jordan S.", role: "Content Creator", text: "50% less work, 3x more sales" },
-  { name: "Ryan K.", role: "Agency Owner", text: "Replaced 5 chatters with AI" },
+  { name: "Alex M.", role: "Creator", text: "Saves me 2 hours daily on messages" },
+  { name: "Jordan S.", role: "Content Creator", text: "Better fan engagement with AI drafts" },
+  { name: "Ryan K.", role: "Creator", text: "Finally organized my DMs efficiently" },
 ];
 
 export function HeroPro() {
@@ -101,10 +101,10 @@ export function HeroPro() {
               transition={{ delay: 0.3 }}
               className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
             >
-              <span className="text-gradient">Stop Paying</span><br />
-              50% to<br />
+              <span className="text-gradient">Gardez 95%</span><br />
+              de vos<br />
               <span className="relative">
-                Agencies
+                revenus
                 <motion.span
                   className="absolute -bottom-2 left-0 right-0 h-3 bg-blue-500 opacity-30 rounded-lg"
                   initial={{ scaleX: 0 }}
@@ -121,8 +121,9 @@ export function HeroPro() {
               transition={{ delay: 0.4 }}
               className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed"
             >
-              Keep 95% of your earnings. Our AI handles fan conversations 24/7 across OnlyFans, 
-              Instagram, and TikTok. Proven to increase revenue by 127% in 60 days.
+              L'IA vous aide à rédiger des réponses personnalisées. Vous gardez le contrôle, 
+              approuvez chaque message. Compatible OnlyFans, Instagram et Reddit. 
+              Économisez 2-3 heures par jour sur vos DMs.
             </motion.p>
 
             {/* CTA Buttons */}
