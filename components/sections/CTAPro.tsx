@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { events } from "@/src/lib/analytics";
 
 export function CTAPro() {
   return (
@@ -61,7 +62,7 @@ export function CTAPro() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Limited Offer - 14 Days Free Trial</span>
+            <span>Limited Offer — 14 Days Free Trial</span>
           </motion.div>
 
           {/* Heading */}
@@ -114,6 +115,7 @@ export function CTAPro() {
               <Button
                 size="lg"
                 className="bg-white text-blue-700 hover:bg-gray-100 px-8 py-6 text-lg font-semibold group"
+                onClick={() => events.ctaClick({ location: 'cta_final', label: 'Start Free Trial' })}
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -124,6 +126,7 @@ export function CTAPro() {
                 size="lg"
                 variant="outline"
                 className="bg-transparent text-white border-2 border-white/30 hover:bg-white/10 px-8 py-6 text-lg"
+                onClick={() => events.ctaClick({ location: 'cta_final', label: 'Watch Demo' })}
               >
                 Watch Demo
               </Button>

@@ -11,11 +11,11 @@ export function WelcomeStep() {
           <Sparkles className="w-12 h-12 text-white" />
         </div>
         
-        <h2 className="text-2xl font-bold">Bienvenue sur Huntaze! 🎉</h2>
+        <h2 className="text-2xl font-bold">Welcome to Huntaze! 🎉</h2>
         
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Nous sommes ravis de vous accueillir. Huntaze est votre plateforme tout-en-un pour automatiser 
-          et optimiser votre présence sur les réseaux sociaux grâce à l'intelligence artificielle.
+          We’re excited to have you. Huntaze is your all‑in‑one platform to automate 
+          and optimize your social presence with AI.
         </p>
       </div>
 
@@ -24,9 +24,9 @@ export function WelcomeStep() {
           <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
             <Shield className="w-6 h-6 text-white" />
           </div>
-          <h3 className="font-semibold">Conformité garantie</h3>
+          <h3 className="font-semibold">Guaranteed compliance</h3>
           <p className="text-sm text-gray-600">
-            Respectez automatiquement les règles de chaque plateforme
+            Automatically respect each platform’s rules
           </p>
         </div>
 
@@ -34,9 +34,9 @@ export function WelcomeStep() {
           <div className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center">
             <Users className="w-6 h-6 text-white" />
           </div>
-          <h3 className="font-semibold">IA personnalisée</h3>
+          <h3 className="font-semibold">Personalized AI</h3>
           <p className="text-sm text-gray-600">
-            Une équipe virtuelle qui comprend votre style et votre audience
+            A virtual teammate that learns your style and audience
           </p>
         </div>
 
@@ -44,41 +44,41 @@ export function WelcomeStep() {
           <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center">
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
-          <h3 className="font-semibold">Croissance optimisée</h3>
+          <h3 className="font-semibold">Optimized growth</h3>
           <p className="text-sm text-gray-600">
-            Maximisez vos revenus avec des stratégies intelligentes
+            Maximize your revenue with smart strategies
           </p>
         </div>
       </div>
 
       <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-6">
-        <h3 className="font-semibold mb-3">Ce processus d'onboarding comprend:</h3>
+        <h3 className="font-semibold mb-3">This onboarding covers:</h3>
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex items-start">
             <span className="text-purple-600 mr-2">✓</span>
-            Formation sur la conformité et les bonnes pratiques
+            Compliance and best‑practices training
           </li>
           <li className="flex items-start">
             <span className="text-purple-600 mr-2">✓</span>
-            Configuration de vos préférences de confidentialité RGPD
+            Setting up your GDPR privacy preferences
           </li>
           <li className="flex items-start">
             <span className="text-purple-600 mr-2">✓</span>
-            Connexion sécurisée à vos plateformes sociales
+            Securely connecting your social platforms
           </li>
           <li className="flex items-start">
             <span className="text-purple-600 mr-2">✓</span>
-            Personnalisation de votre assistant IA
+            Personalizing your AI assistant
           </li>
           <li className="flex items-start">
             <span className="text-purple-600 mr-2">✓</span>
-            Configuration des paramètres de gouvernance
+            Configuring governance settings
           </li>
         </ul>
       </div>
 
       <p className="text-center text-sm text-gray-500">
-        Durée estimée: 15-20 minutes • Vos données sont sécurisées et chiffrées
+        Estimated time: 15–20 minutes • Your data is secure and encrypted
       </p>
     </div>
   );

@@ -21,15 +21,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { HelpSidebar } from "./HelpSidebar";
 
 const STEPS: { id: OnboardingStep; title: string; description: string }[] = [
-  { id: "welcome", title: "Bienvenue", description: "Introduction à Huntaze" },
-  { id: "compliance-training", title: "Formation", description: "Règles et conformité" },
-  { id: "data-collection", title: "Informations", description: "Données de base" },
-  { id: "gdpr-consent", title: "Consentement", description: "Protection des données" },
-  { id: "platform-connections", title: "Connexions", description: "Lier vos plateformes" },
-  { id: "ai-personality", title: "Personnalité IA", description: "Configurer votre assistant" },
-  { id: "governance-settings", title: "Gouvernance", description: "Paramètres de supervision" },
-  { id: "review", title: "Vérification", description: "Confirmer vos choix" },
-  { id: "completed", title: "Terminé", description: "Onboarding complété" },
+  { id: "welcome", title: "Welcome", description: "Introduction to Huntaze" },
+  { id: "compliance-training", title: "Training", description: "Rules & compliance" },
+  { id: "data-collection", title: "Information", description: "Basic details" },
+  { id: "gdpr-consent", title: "Consent", description: "Data protection" },
+  { id: "platform-connections", title: "Connections", description: "Link your platforms" },
+  { id: "ai-personality", title: "AI Personality", description: "Configure your assistant" },
+  { id: "governance-settings", title: "Governance", description: "Supervision settings" },
+  { id: "review", title: "Review", description: "Confirm your choices" },
+  { id: "completed", title: "Completed", description: "Onboarding finished" },
 ];
 
 export function OnboardingFlow() {
@@ -145,7 +145,7 @@ export function OnboardingFlow() {
               </SelectContent>
             </Select>
             <div className="text-sm text-gray-600">
-              Étape {currentStepIndex + 1} sur {STEPS.length}
+              Step {currentStepIndex + 1} of {STEPS.length}
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export function OnboardingFlow() {
             variant="outline"
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
-            Précédent
+            Previous
           </Button>
           
           <Button
@@ -203,14 +203,14 @@ export function OnboardingFlow() {
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
             {isValidating ? (
-              "Validation..."
+              "Validating..."
             ) : currentStep === 'review' ? (
-              "Terminer"
+              "Finish"
             ) : currentStep === 'completed' ? (
-              "Commencer"
+              "Start"
             ) : (
               <>
-                Suivant
+                Next
                 <ChevronRight className="ml-2 h-4 w-4" />
               </>
             )}

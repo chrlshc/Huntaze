@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 // import { ThemeToggle } from './theme-toggle'
 
+import { events } from '@/src/lib/analytics'
+
 const navigation = {
   solutions: {
     title: 'Solutions',
@@ -328,12 +330,14 @@ export default function HeaderImproved() {
                 <Link 
                   href="/auth" 
                   className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
+                  onClick={() => events.ctaClick({ location: 'nav', label: 'Log in' })}
                 >
                   Log in
                 </Link>
                 <Link 
                   href="/auth" 
                   className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  onClick={() => events.ctaClick({ location: 'nav', label: 'Start free trial' })}
                 >
                   Start free trial
                 </Link>
@@ -474,14 +478,14 @@ export default function HeaderImproved() {
                       <Link
                         href="/auth"
                         className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={() => { events.ctaClick({ location: 'nav_mobile', label: 'Log in' }); setMobileMenuOpen(false); }}
                       >
                         Log in
                       </Link>
                       <Link
                         href="/auth"
                         className="block bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-center font-medium"
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={() => { events.ctaClick({ location: 'nav_mobile', label: 'Start free trial' }); setMobileMenuOpen(false); }}
                       >
                         Start free trial
                       </Link>

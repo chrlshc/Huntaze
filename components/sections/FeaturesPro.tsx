@@ -21,54 +21,54 @@ const features = [
   {
     icon: Brain,
     title: "AI Draft Assistance",
-    description: "L'IA suggère des réponses dans votre style",
+    description: "The AI suggests replies in your style",
     details: [
-      "Suggestions de réponses personnalisées",
-      "Apprentissage de votre ton",
-      "Vous approuvez avant envoi"
+      "Personalized reply suggestions",
+      "Learns your tone",
+      "You approve before sending"
     ],
     gradient: "from-blue-600 to-blue-800"
   },
   {
     icon: MessageSquare,
-    title: "Gestion des DMs",
-    description: "Organisez et priorisez vos messages",
+    title: "DM Management",
+    description: "Organize and prioritize your messages",
     details: [
-      "Tri automatique des messages",
-      "Templates de réponses rapides",
-      "Support OnlyFans et Reddit"
+      "Automatic message sorting",
+      "Quick reply templates",
+      "OnlyFans and Reddit support"
     ],
     gradient: "from-gray-700 to-gray-900"
   },
   {
     icon: Shield,
-    title: "Conformité Plateforme",
-    description: "Respectez les guidelines de chaque réseau",
+    title: "Platform Compliance",
+    description: "Respect each platform’s guidelines",
     details: [
-      "Vérification du contenu avant post",
-      "Alertes sur les risques",
-      "Conseils par plateforme"
+      "Content check before posting",
+      "Risk alerts",
+      "Per-platform guidance"
     ],
     gradient: "from-green-600 to-emerald-700"
   },
   {
     icon: BarChart3,
-    title: "Analytics Revenus",
-    description: "Suivez vos performances en temps réel",
+    title: "Revenue Analytics",
+    description: "Track performance in real time",
     details: [
-      "Tracking des conversions",
-      "Revenus par abonné",
-      "Rapports hebdomadaires"
+      "Conversion tracking",
+      "Revenue per subscriber",
+      "Weekly reports"
     ],
     gradient: "from-red-600 to-red-800"
   }
 ];
 
 const stats = [
-  { value: "+50%", label: "Gain de temps", icon: TrendingUp },
-  { value: "2-3h", label: "Économisées/jour", icon: Clock },
-  { value: "15min", label: "Installation", icon: Zap },
-  { value: "GDPR", label: "Conforme", icon: Lock }
+  { value: "+50%", label: "Time saved", icon: TrendingUp },
+  { value: "2-3h", label: "Saved per day", icon: Clock },
+  { value: "15min", label: "Setup", icon: Zap },
+  { value: "GDPR", label: "Compliant", icon: Lock }
 ];
 
 export function FeaturesPro() {
@@ -84,14 +84,14 @@ export function FeaturesPro() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
-            <span>Fonctionnalités Premium</span>
+            <span>Premium Features</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Tout ce qu'il faut<br />
-            <span className="text-gradient">pour gérer vos fans</span>
+            Everything you need<br />
+            <span className="text-gradient">to manage your fans</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Outils complets pour organiser vos messages, analyser vos performances et développer votre business créateur
+            Complete tools to organize your messages, analyze performance, and grow your creator business
           </p>
         </motion.div>
 
@@ -182,7 +182,7 @@ export function FeaturesPro() {
           viewport={{ once: true }}
           className="mt-20 text-center"
         >
-          <h3 className="text-2xl font-bold mb-8">Compatible avec vos plateformes préférées</h3>
+          <h3 className="text-2xl font-bold mb-8">Works with your favorite platforms</h3>
           <div className="flex flex-wrap justify-center items-center gap-8">
             {["Instagram", "TikTok", "Reddit", "OnlyFans", "Twitter"].map((platform) => (
               <motion.div

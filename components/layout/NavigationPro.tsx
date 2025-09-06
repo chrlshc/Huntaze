@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useSafeTheme } from "@/src/hooks/useSafeTheme";
 import { usePathname } from "next/navigation";
 
+import { events } from '@/src/lib/analytics'
+
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/features", label: "Features" },
@@ -112,12 +114,12 @@ export function NavigationPro() {
               {/* CTA Buttons */}
               <div className="hidden md:flex items-center space-x-3">
                 <Link href="/login">
-                  <Button variant="ghost" className="font-medium">
+                  <Button variant="ghost" className="font-medium" onClick={() => events.ctaClick({ location: 'nav', label: 'Sign In' })}>
                     Sign In
                   </Button>
                 </Link>
                 <Link href="/onboarding">
-                  <Button className="btn-primary">
+                  <Button className="btn-primary" onClick={() => events.ctaClick({ location: 'nav', label: 'Start free trial' })}>
                     Start Free Trial
                     <ChevronRight className="ml-2 w-4 h-4" />
                   </Button>
@@ -195,12 +197,12 @@ export function NavigationPro() {
 
                 <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 space-y-3">
                   <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full" onClick={() => events.ctaClick({ location: 'nav_mobile', label: 'Sign in' })}>
                       Sign In
                     </Button>
                   </Link>
                   <Link href="/onboarding" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="btn-primary w-full">
+                    <Button className="btn-primary w-full" onClick={() => events.ctaClick({ location: 'nav_mobile', label: 'Start free trial' })}>
                       Start Free Trial
                     </Button>
                   </Link>

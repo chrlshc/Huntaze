@@ -147,7 +147,7 @@ export default function DashboardPage() {
   
   const stats = [
     {
-      title: 'Revenus mensuels',
+      title: 'Monthly Revenue',
       value: hasConnectedPlatform 
         ? (overview ? `$${overview.metrics.revenueMonthly.toLocaleString()}` : '$0')
         : '--',
@@ -161,7 +161,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'Abonnés actifs',
+      title: 'Active Subscribers',
       value: hasConnectedPlatform 
         ? (overview ? overview.metrics.activeSubscribers.toLocaleString() : '0')
         : '--',
@@ -175,7 +175,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'Temps de réponse moy.',
+      title: 'Avg. Response Time',
       value: hasConnectedPlatform 
         ? (overview ? `${(overview.metrics.avgResponseSeconds/60).toFixed(1)}min` : '--')
         : '--',
@@ -189,7 +189,7 @@ export default function DashboardPage() {
       needsPlatform: true
     },
     {
-      title: 'Taux d\'automatisation IA',
+      title: 'AI Automation Rate',
       value: hasConnectedPlatform 
         ? (overview ? `${Math.round(overview.metrics.aiAutomationRate*100)}%` : '0%')
         : '--',
@@ -409,8 +409,8 @@ export default function DashboardPage() {
           <ResumeBanner />
           {/* Welcome */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Bon retour, {user?.name?.split(' ')[0] || 'Créatrice'}! 👋</h1>
-            <p className="text-gray-600">Voici votre aperçu des performances d'aujourd'hui</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name?.split(' ')[0] || 'Creator'}! 👋</h1>
+            <p className="text-gray-600">Here's your performance overview for today</p>
           </div>
 
           {/* Onboarding Checklist */}

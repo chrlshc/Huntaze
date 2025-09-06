@@ -20,45 +20,45 @@ export function ReviewStep() {
   const sections = [
     {
       id: 'compliance-training',
-      title: 'Formation conformité',
+      title: 'Compliance training',
       icon: <Shield className="w-4 h-4" />,
       content: (
         <div className="flex items-center justify-between">
-          <span>Quiz complété avec {complianceQuizScore}%</span>
-          <Badge className="bg-green-100 text-green-700">Réussi</Badge>
+          <span>Quiz completed with {complianceQuizScore}%</span>
+          <Badge className="bg-green-100 text-green-700">Passed</Badge>
         </div>
       ),
     },
     {
       id: 'data-collection',
-      title: 'Informations personnelles',
+      title: 'Personal information',
       icon: <User className="w-4 h-4" />,
       content: (
         <div className="space-y-1 text-sm">
-          <p>Pseudonyme: <span className="font-medium">{userData.pseudonym}</span></p>
+          <p>Handle: <span className="font-medium">{userData.pseudonym}</span></p>
           <p>Email: <span className="font-medium">{userData.email}</span></p>
-          <p>Pays: <span className="font-medium">{userData.country}</span></p>
+          <p>Country: <span className="font-medium">{userData.country}</span></p>
         </div>
       ),
     },
     {
       id: 'gdpr-consent',
-      title: 'Consentements RGPD',
+      title: 'GDPR consents',
       icon: <Shield className="w-4 h-4" />,
       content: (
         <div className="space-y-1 text-sm">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-3 h-3 text-green-600" />
-            Conditions d'utilisation acceptées
+            Terms of Service accepted
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-3 h-3 text-green-600" />
-            Traitement des données accepté
+            Data processing accepted
           </div>
           {userData.marketingConsent && (
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-3 h-3 text-green-600" />
-              Communications marketing acceptées
+              Marketing communications accepted
             </div>
           )}
         </div>
@@ -66,7 +66,7 @@ export function ReviewStep() {
     },
     {
       id: 'platform-connections',
-      title: 'Plateformes connectées',
+      title: 'Connected platforms',
       icon: <Link2 className="w-4 h-4" />,
       content: (
         <div className="flex flex-wrap gap-2">
@@ -80,7 +80,7 @@ export function ReviewStep() {
     },
     {
       id: 'ai-personality',
-      title: 'Personnalité IA',
+      title: 'AI personality',
       icon: <Sparkles className="w-4 h-4" />,
       content: selectedPersonality ? (
         <div className="space-y-2">
@@ -96,14 +96,14 @@ export function ReviewStep() {
     },
     {
       id: 'governance-settings',
-      title: 'Paramètres de gouvernance',
+      title: 'Governance settings',
       icon: <Settings className="w-4 h-4" />,
       content: (
         <div className="space-y-1 text-sm">
-          <p>Approbation prix: <span className="font-medium">&gt; ${complianceSettings.requireApprovalAbovePrice}</span></p>
-          <p>Approbation destinataires: <span className="font-medium">&gt; {complianceSettings.requireApprovalAboveRecipients}</span></p>
-          <p>Confiance IA minimum: <span className="font-medium">{Math.round(complianceSettings.aiConfidenceThreshold * 100)}%</span></p>
-          <p>Rétention données: <span className="font-medium">{complianceSettings.dataRetentionDays} jours</span></p>
+          <p>Price approval: <span className="font-medium">&gt; ${complianceSettings.requireApprovalAbovePrice}</span></p>
+          <p>Recipients approval: <span className="font-medium">&gt; {complianceSettings.requireApprovalAboveRecipients}</span></p>
+          <p>Minimum AI confidence: <span className="font-medium">{Math.round(complianceSettings.aiConfidenceThreshold * 100)}%</span></p>
+          <p>Data retention: <span className="font-medium">{complianceSettings.dataRetentionDays} days</span></p>
         </div>
       ),
     },
@@ -115,16 +115,16 @@ export function ReviewStep() {
         <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center">
           <CheckCircle2 className="w-8 h-8 text-purple-600" />
         </div>
-        <h3 className="text-xl font-semibold">Vérifiez vos paramètres</h3>
+        <h3 className="text-xl font-semibold">Review your settings</h3>
         <p className="text-gray-600">
-          Un dernier coup d'œil avant de finaliser votre configuration
+          One last look before finalizing your setup
         </p>
       </div>
 
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Après validation, vous pourrez toujours modifier ces paramètres depuis votre tableau de bord.
+          After validation, you can always change these settings from your dashboard.
         </AlertDescription>
       </Alert>
 
@@ -154,17 +154,17 @@ export function ReviewStep() {
       <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
         <CardContent className="pt-6 text-center space-y-4">
           <div className="space-y-2">
-            <h4 className="font-semibold text-lg">🎉 Tout est prêt!</h4>
+            <h4 className="font-semibold text-lg">🎉 You’re all set!</h4>
             <p className="text-gray-700">
-              Votre compte Huntaze est configuré et prêt à révolutionner votre présence en ligne.
+              Your Huntaze account is configured and ready to elevate your online presence.
             </p>
           </div>
           
           <div className="text-sm text-gray-600 space-y-1">
-            <p>✓ Votre IA est configurée et prête à interagir</p>
-            <p>✓ Les plateformes sont connectées en toute sécurité</p>
-            <p>✓ La conformité est garantie automatiquement</p>
-            <p>✓ La supervision humaine est en place</p>
+            <p>✓ Your AI is set up and ready to engage</p>
+            <p>✓ Platforms are securely connected</p>
+            <p>✓ Compliance is automatically handled</p>
+            <p>✓ Human oversight is in place</p>
           </div>
         </CardContent>
       </Card>

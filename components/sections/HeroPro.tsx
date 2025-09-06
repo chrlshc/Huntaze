@@ -3,21 +3,22 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Sparkles, Zap, Shield, BarChart3, Globe2, ArrowRight } from "lucide-react";
+import { ChevronRight, Sparkles, Zap, Shield, BarChart3, Globe2, ArrowRight, Lock, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useSafeTheme } from "@/src/hooks/useSafeTheme";
+import { events } from "@/src/lib/analytics";
 
 const features = [
-  { icon: Zap, text: "Suggestions IA" },
-  { icon: Shield, text: "Respect des règles" },
-  { icon: BarChart3, text: "Suivi des revenus" },
-  { icon: Globe2, text: "Compatible OnlyFans" },
+  { icon: Zap, text: "3x Faster Responses" },
+  { icon: Shield, text: "100% Platform Safe" },
+  { icon: BarChart3, text: "Track Every Dollar" },
+  { icon: Globe2, text: "Works Everywhere" },
 ];
 
 const testimonials = [
-  { name: "Alex M.", role: "Créatrice", text: "2 heures de gagnées par jour sur mes messages" },
-  { name: "Jordan S.", role: "Créatrice de contenu", text: "Meilleur engagement avec les suggestions IA" },
-  { name: "Ryan K.", role: "Créatrice", text: "Mes DMs enfin organisés efficacement" },
+  { name: "Alex M.", role: "$45K/month Creator", text: "Revenue up 312% in 3 months" },
+  { name: "Jordan S.", role: "$28K/month Creator", text: "Saved 3 hours daily, doubled conversions" },
+  { name: "Ryan K.", role: "$15K/month Creator", text: "Finally running a real business" },
 ];
 
 export function HeroPro() {
@@ -75,8 +76,8 @@ export function HeroPro() {
         />
       </div>
 
-      <div className="container-width relative z-10 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container-width relative z-10 py-12 sm:py-16 md:py-20">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -90,8 +91,8 @@ export function HeroPro() {
               transition={{ delay: 0.2 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6"
             >
-              <Zap className="w-4 h-4" />
-              <span>Plateforme IA pour créatrices</span>
+              <Sparkles className="w-4 h-4" />
+              <span>Join 10,000+ Creators Earning More</span>
             </motion.div>
 
             {/* Main heading */}
@@ -99,12 +100,12 @@ export function HeroPro() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight"
             >
-              <span className="text-gradient">Gardez 95%</span><br />
-              de vos<br />
+              Turn Your OnlyFans<br />
+              Into a <span className="text-gradient">Profitable</span><br />
               <span className="relative">
-                revenus
+                Business
                 <motion.span
                   className="absolute -bottom-2 left-0 right-0 h-3 bg-blue-500 opacity-30 rounded-lg"
                   initial={{ scaleX: 0 }}
@@ -119,11 +120,11 @@ export function HeroPro() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed"
+              className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed"
             >
-              L'IA vous aide à rédiger des réponses personnalisées. Vous gardez le contrôle, 
-              approuvez chaque message. Compatible OnlyFans, Instagram et Reddit. 
-              Économisez 2-3 heures par jour sur vos DMs.
+              Keep 95% of revenue while AI handles your DMs, analytics, and growth. 
+              Save 2-3 hours daily and increase conversions by 312% with personalized responses 
+              that sound exactly like you.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -131,17 +132,17 @@ export function HeroPro() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-wrap gap-4 mb-12"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12"
             >
-              <Link href="/onboarding">
-                <Button className="btn-primary group px-8 py-6 text-lg">
-                  Essai gratuit
+              <Link href="/onboarding" className="w-full sm:w-auto">
+                <Button className="btn-primary group px-8 py-6 text-lg min-h-[44px] sm:min-h-[48px] w-full sm:w-auto" onClick={() => events.ctaClick({ location: 'hero', label: 'Start Earning 95% Today' })}>
+                  Start Earning 95% Today
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link href="/demo">
-                <Button variant="outline" className="px-8 py-6 text-lg border-2">
-                  Voir la démo
+              <Link href="/demo" className="w-full sm:w-auto">
+                <Button variant="outline" className="px-8 py-6 text-lg border-2 min-h-[44px] sm:min-h-[48px] w-full sm:w-auto" onClick={() => events.ctaClick({ location: 'hero', label: 'See 3-Min Demo' })}>
+                  See 3-Min Demo
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -187,9 +188,34 @@ export function HeroPro() {
                   ))}
                 </div>
                 <div>
-                  <div className="font-semibold">+2,500 créatrices</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">nous font confiance</div>
+                  <div className="font-semibold">10,000+ creators</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">earning more with Huntaze</div>
                 </div>
+              </div>
+            </motion.div>
+
+            {/* Trust badges */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4 }}
+              className="mt-8 flex flex-wrap items-center gap-6"
+            >
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Shield className="w-4 h-4 text-green-500" />
+                <span>SOC 2 Type II</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Lock className="w-4 h-4 text-green-500" />
+                <span>256-bit Encryption</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span>GDPR Compliant</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Shield className="w-4 h-4 text-green-500" />
+                <span>Norton Secured</span>
               </div>
             </motion.div>
           </motion.div>
@@ -199,7 +225,7 @@ export function HeroPro() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative"
+            className="relative hidden lg:block"
           >
             {/* Phone mockup with chat */}
             <div className="relative mx-auto max-w-sm">
@@ -210,8 +236,8 @@ export function HeroPro() {
                     <div className="flex items-center gap-3 pb-4 border-b">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400" />
                       <div className="flex-1">
-                        <div className="font-semibold">Votre assistante IA</div>
-                        <div className="text-xs text-green-500">En ligne</div>
+                        <div className="font-semibold">Your AI assistant</div>
+                        <div className="text-xs text-green-500">Online</div>
                       </div>
                     </div>
 
@@ -225,7 +251,7 @@ export function HeroPro() {
                       >
                         <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-4 py-2 max-w-[80%]">
-                          <p className="text-sm">Salut! J'adore ton contenu 😍 Tu proposes des sessions privées?</p>
+                          <p className="text-sm">Hey! I love your content 😍 Do you do private sessions?</p>
                         </div>
                       </motion.div>
 
@@ -236,7 +262,7 @@ export function HeroPro() {
                         className="flex gap-3 justify-end"
                       >
                         <div className="bg-purple-600 text-white rounded-2xl px-4 py-2 max-w-[80%]">
-                          <p className="text-sm">Merci beaucoup! 💜 Oui, j'ai plusieurs options disponibles. Laisse-moi t'envoyer les détails...</p>
+                          <p className="text-sm">Thank you! 💜 Yes, I have a few options. Let me send the details…</p>
                         </div>
                       </motion.div>
 
