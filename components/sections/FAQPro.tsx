@@ -7,6 +7,10 @@ import { events } from "@/src/lib/analytics";
 
 const faqs = [
   {
+    question: "Is AI usage included in my plan?",
+    answer: "Yes. Typical AI usage is included (fair use). This covers normal volume for your plan. Extremely high usage may incur overage at provider cost or require a plan upgrade. You can also bring your own API key if you prefer."
+  },
+  {
     question: "How does the AI learn my communication style?",
     answer: "Our AI analyzes your past conversations to understand your tone, vocabulary, and response patterns. It continuously improves while respecting your privacy. You always approve before sending."
   },
