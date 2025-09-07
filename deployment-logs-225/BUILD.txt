@@ -1,0 +1,64 @@
+2025-09-07T17:05:35.582Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-09-07T17:05:36.255Z [INFO]: # Cloning repository: git@github.com:chrlshc/sitedepot.git
+2025-09-07T17:05:45.994Z [INFO]: 
+2025-09-07T17:05:46.091Z [INFO]: Cloning into 'sitedepot'...
+                                 Updating files:  28% (20219/71513)Updating files:  29% (20739/71513)Updating files:  30% (21454/71513)Updating files:  31% (22170/71513)Updating files:  32% (22885/71513)Updating files:  33% (23600/71513)Updating files:  34% (24315/71513)Updating files:  35% (25030/71513)Updating files:  36% (25745/71513)Updating files:  37% (26460/71513)Updating files:  38% (27175/71513)Updating files:  39% (27891/71513)Updating files:  40% (28606/71513)Updating files:  41% (29321/71513)Updating files:  42% (30036/71513)Updating files:  43% (30751/71513)Updating files:  44% (31466/71513)Updating files:  44% (31700/71513)Updating files:  45% (32181/71513)Updating files:  46% (32896/71513)Updating files:  47% (33612/71513)Updating files:  48% (34327/71513)Updating files:  49% (35042/71513)Updating files:  50% (35757/71513)Updating files:  51% (36472/71513)Updating files:  52% (37187/71513)Updating files:  53% (37902/71513)Updating files:  54% (38618/71513)Updating files:  55% (39333/71513)Updating files:  56% (40048/71513)Updating files:  57% (40763/71513)Updating files:  58% (41478/71513)Updating files:  59% (42193/71513)Updating files:  60% (42908/71513)Updating files:  61% (43623/71513)Updating files:  62% (44339/71513)Updating files:  63% (45054/71513)Updating files:  64% (45769/71513)Updating files:  65% (46484/71513)Updating files:  66% (47199/71513)Updating files:  66% (47558/71513)Updating files:  67% (47914/71513)Updating files:  68% (48629/71513)Updating files:  69% (49344/71513)Updating files:  70% (50060/71513)Updating files:  71% (50775/71513)Updating files:  72% (51490/71513)Updating files:  73% (52205/71513)Updating files:  74% (52920/71513)Updating files:  75% (53635/71513)Updating files:  76% (54350/71513)Updating files:  77% (55066/71513)Updating files:  78% (55781/71513)Updating files:  79% (56496/71513)Updating files:  80% (57211/71513)Updating files:  81% (57926/71513)Updating files:  82% (58641/71513)Updating files:  83% (59356/71513)Updating files:  84% (60071/71513)Updating files:  85% (60787/71513)Updating files:  85% (61013/71513)Updating files:  86% (61502/71513)Updating files:  87% (62217/71513)Updating files:  88% (62932/71513)Updating files:  89% (63647/71513)Updating files:  90% (64362/71513)Updating files:  91% (65077/71513)Updating files:  92% (65792/71513)Updating files:  93% (66508/71513)Updating files:  94% (67223/71513)Updating files:  95% (67938/71513)Updating files:  96% (68653/71513)Updating files:  97% (69368/71513)Updating files:  98% (70083/71513)Updating files:  99% (70798/71513)Updating files: 100% (71513/71513)Updating files: 100% (71513/71513), done.
+2025-09-07T17:05:46.092Z [INFO]: # Switching to commit: a84ad753e15c5c24a9e5273f8835e17c311d6d22
+2025-09-07T17:05:46.856Z [INFO]: Note: switching to 'a84ad753e15c5c24a9e5273f8835e17c311d6d22'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at a84ad753 Simplify deploy: fix ThemeProvider usage, unify Next config (remove next.config.js), correct Amplify API URL + Node CI, update simplified homepage: English copy, remove darkening hover filters and backdrop blur, align feature cards
+2025-09-07T17:05:46.945Z [INFO]: Successfully cleaned up Git credentials
+2025-09-07T17:05:46.945Z [INFO]: # Checking for Git submodules at: /codebuild/output/src3555306251/src/sitedepot/.gitmodules
+2025-09-07T17:05:46.958Z [INFO]: # Retrieving environment cache...
+2025-09-07T17:05:46.995Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-09-07T17:05:46.995Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-09-07T17:05:46.995Z [INFO]: SSM params {"Path":"/amplify/d3jljx9im79str/main/","WithDecryption":true}
+2025-09-07T17:05:47.046Z [WARNING]: !Failed to set up process.env.secrets
+2025-09-07T17:05:47.868Z [INFO]: # No package override configuration found.
+2025-09-07T17:05:47.873Z [INFO]: # Retrieving cache...
+2025-09-07T17:05:59.510Z [INFO]: # Extracting cache...
+2025-09-07T17:06:10.489Z [INFO]: # Extraction completed
+2025-09-07T17:06:10.769Z [INFO]: # Retrieved cache
+2025-09-07T17:06:15.555Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-09-07T17:06:15.560Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: nvm use 20 || echo "Using default Node"
+2025-09-07T17:06:21.941Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-09-07T17:06:21.945Z [INFO]: # Executing command: npm ci
+2025-09-07T17:06:46.570Z [INFO]: added 424 packages, and audited 425 packages in 25s
+2025-09-07T17:06:46.574Z [INFO]: 59 packages are looking for funding
+                                 run `npm fund` for details
+                                 found 0 vulnerabilities
+2025-09-07T17:06:46.593Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+2025-09-07T17:06:46.593Z [INFO]: # Executing command: export NEXT_PUBLIC_APP_URL=https://huntaze.com
+                                 # Executing command: export NEXT_PUBLIC_API_URL=https://api.huntaze.com/api
+                                 # Executing command: npm run build
+2025-09-07T17:06:46.746Z [INFO]: > huntaze-site@1.0.0 build
+                                 > node scripts/validate-env.js && next build
+2025-09-07T17:06:47.362Z [WARNING]: 
+2025-09-07T17:06:47.362Z [WARNING]: > Build error occurred
+2025-09-07T17:06:47.363Z [WARNING]: Error: Configuring Next.js via 'next.config.ts' is not supported. Please replace the file with 'next.config.js' or 'next.config.mjs'.
+                                    at loadConfig (/codebuild/output/src3555306251/src/sitedepot/node_modules/next/dist/server/config.js:800:19)
+                                    at async Span.traceAsyncFn (/codebuild/output/src3555306251/src/sitedepot/node_modules/next/dist/trace/trace.js:154:20)
+                                    at async /codebuild/output/src3555306251/src/sitedepot/node_modules/next/dist/build/index.js:374:28
+                                    at async Span.traceAsyncFn (/codebuild/output/src3555306251/src/sitedepot/node_modules/next/dist/trace/trace.js:154:20)
+                                    at async build (/codebuild/output/src3555306251/src/sitedepot/node_modules/next/dist/build/index.js:368:9)
+2025-09-07T17:06:47.377Z [ERROR]: !!! Build failed
+2025-09-07T17:06:47.378Z [INFO]: Please read more about Amplify Hosting's support for SSR frameworks to find if your build failure is related to an unsupported feature: https://docs.aws.amazon.com/amplify/latest/userguide/amplify-ssr-framework-support.html. You may also find this troubleshooting guide useful: https://docs.aws.amazon.com/amplify/latest/userguide/troubleshooting-ssr-deployment.html
+2025-09-07T17:06:47.378Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-09-07T17:06:47.378Z [INFO]: # Starting environment caching...
+2025-09-07T17:06:47.378Z [INFO]: # Environment caching completed
+
