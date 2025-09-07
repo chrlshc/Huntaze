@@ -7,6 +7,9 @@ frontend:
         - npm install
     build:
       commands:
+        # Set environment variables for build
+        - export NEXT_PUBLIC_APP_URL=https://huntaze.com
+        - export NEXT_PUBLIC_API_URL=https://api.huntaze.com
         - npm run build
   artifacts:
     baseDirectory: .next
@@ -16,3 +19,12 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+  customHeaders:
+    - pattern: '**/*'
+      headers:
+        - key: 'X-Frame-Options'
+          value: 'DENY'
+        - key: 'X-Content-Type-Options'
+          value: 'nosniff'
+        - key: 'X-XSS-Protection'
+          value: '1; mode=block'
