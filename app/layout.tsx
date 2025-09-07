@@ -17,6 +17,18 @@ export const metadata: Metadata = {
   title: "Huntaze - Double Your Revenue, Half the Work",
   description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI.",
   keywords: "OnlyFans automation, creator growth, AI assistant, unified inbox, revenue analytics, productivity",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      maxSnippet: -1,
+      maxImagePreview: 'large',
+      maxVideoPreview: -1,
+    },
+  },
+  alternates: { canonical: '/' },
   icons: {
     icon: [
       { url: "/huntaze-favicon.png", type: "image/png" },
@@ -44,10 +56,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const minimal = (process.env.NEXT_PUBLIC_MINIMAL_UI || '').toLowerCase() === 'true';
+  const disableOverlays = (process.env.NEXT_PUBLIC_DISABLE_OVERLAYS || '').toLowerCase() === 'true';
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#9333EA" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
@@ -91,7 +106,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-white dark:bg-black text-gray-900 dark:text-white" data-ui={minimal ? 'minimal' : undefined}>
+      <body className="antialiased bg-white dark:bg-black text-gray-900 dark:text-white" data-ui={minimal ? 'minimal' : undefined} data-no-overlay={disableOverlays ? 'true' : undefined}>
         <GoogleAnalytics />
         <Providers>
           <HeaderImproved />
