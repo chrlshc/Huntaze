@@ -15,10 +15,22 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export function ManageBusiness() {
-  const [activeTab, setActiveTab] = useState('taxes');
+type BusinessFeatureKey = 'taxes' | 'accounting' | 'savings';
 
-  const businessFeatures = {
+export function ManageBusiness() {
+  const [activeTab, setActiveTab] = useState<BusinessFeatureKey>('taxes');
+
+  const businessFeatures: Record<BusinessFeatureKey, {
+    title: string;
+    icon: typeof Calculator;
+    description: string;
+    benefits: string[];
+    stats: {
+      saved: string;
+      time: string;
+      accuracy: string;
+    };
+  }> = {
     taxes: {
       title: 'Taxes Made Simple',
       icon: Calculator,
@@ -99,7 +111,7 @@ export function ManageBusiness() {
               {Object.entries(businessFeatures).map(([key, feature]) => (
                 <button
                   key={key}
-                  onClick={() => setActiveTab(key)}
+                  onClick={() => setActiveTab(key as BusinessFeatureKey)}
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                     activeTab === key
                       ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-lg'
