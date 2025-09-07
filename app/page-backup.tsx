@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Button } from '../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { ArrowRight, BarChart3, Shield, Zap, Users, Globe, Heart, Sparkles, Crown, CheckCircle, DollarSign, Star, Trophy, TrendingUp } from 'lucide-react';
 
 export default function HomePage() {

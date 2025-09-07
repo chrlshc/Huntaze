@@ -21,7 +21,7 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "paths": {
-      "@/*": ["./*", "./src/*"]
+      "@/*": ["./src/*", "./*"]
     },
     "plugins": [
       {
@@ -39,6 +39,8 @@
     "node_modules",
     "ofm-creators-platform/**/*",
     "huntaze-api/**/*",
-    "site-web/**/*"
+    "site-web/**/*",
+    "components/sections/shopify/**/*",
+    "src/lib/workers/**/*"
   ]
 }

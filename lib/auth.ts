@@ -12,7 +12,8 @@ export const getOAuthUrl = (provider: 'google') => {
   }
 };
 
-// Stub getServerSession function
+// Stub getServerSession for build-time API routes that expect it.
+// Replace with a real session lookup (e.g., reading cookies/JWT) when backend is ready.
 export async function getServerSession(): Promise<{ user?: { id: string; email: string } } | null> {
   return null;
 }
