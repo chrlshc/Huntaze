@@ -1,28 +1,49 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for Docker deployment
+  // Core
+  reactStrictMode: true,
+  swcMinify: true,
+  compress: true,
   output: 'standalone',
-  
-  // Disable CSP in Next.js, let Amplify handle it
+
+  // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
     return []
   },
-  
-  // Image optimization for production
+
+  // Minimal rewrites (no API proxy — keep Next API routes intact)
+  async rewrites() {
+    return [
+      { source: '/terms', destination: '/terms-of-service' },
+      { source: '/privacy', destination: '/privacy-policy' },
+    ]
+  },
+
+  // Image optimization
   images: {
     domains: ['api.dicebear.com'],
+    formats: ['image/avif', 'image/webp'],
     unoptimized: false,
   },
-  
-  // Experimental features for better performance
+
+  // CSS and build perf
   experimental: {
     optimizeCss: true,
   },
-  
-  // Production optimizations
-  swcMinify: true,
-  compress: true,
-};
 
-export default nextConfig;
+  // Client bundle fallbacks
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      }
+    }
+    return config
+  },
+}
+
+export default nextConfig
