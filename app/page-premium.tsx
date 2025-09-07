@@ -26,33 +26,69 @@ export default function HomePagePremium() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
 
-    // Initialize smooth scrolling
-    document.documentElement.style.scrollBehavior = 'smooth';
+    // Standard scrolling for better mobile performance
+    document.documentElement.style.scrollBehavior = 'auto';
   }, []);
 
   return (
     <div className="min-h-screen bg-black overflow-x-hidden">
-      {/* Scroll progress indicator */}
-      <ScrollProgressBar />
+      {/* Removed scroll progress indicator for cleaner experience */}
       
       {/* Premium Animated Hero Section */}
       <SectionErrorBoundary sectionName="Hero">
         <AnimatedHero />
       </SectionErrorBoundary>
+
+      {/* Quick Navigation - 13 Key Pages */}
+      <section className="py-16 bg-black/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center text-white mb-8">
+            Discover all our features
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[
+              { label: 'Pricing', href: '/pricing', icon: '💰' },
+              { label: 'Features', href: '/features', icon: '✨' },
+              { label: 'AI Chat', href: '/features/ai-chat', icon: '🤖' },
+              { label: 'Analytics', href: '/features/analytics', icon: '📊' },
+              { label: 'Dashboard', href: '/features/dashboard', icon: '🎯' },
+              { label: 'OnlyFans', href: '/features/onlyfans', icon: '🔥' },
+              { label: 'For Agencies', href: '/for-agencies', icon: '🏢' },
+              { label: 'Instagram', href: '/for-instagram-creators', icon: '📸' },
+              { label: 'TikTok', href: '/for-tiktok-creators', icon: '🎵' },
+              { label: 'Blog', href: '/blog', icon: '📝' },
+              { label: 'Case Studies', href: '/case-studies', icon: '📈' },
+              { label: 'Support', href: '/support', icon: '💬' },
+              { label: 'Demo', href: '/demo', icon: '🎮' }
+            ].map((item, i) => (
+              <Link key={i} href={item.href}>
+                <motion.div 
+                  className="p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-all cursor-pointer text-center"
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="text-2xl mb-2">{item.icon}</div>
+                  <div className="text-sm text-gray-300">{item.label}</div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
       
-      {/* 3D Phone Mockup showcase */}
-      <ScrollParallax offset={100}>
+      {/* 3D Phone Mockup - simplified for mobile */}
+      <div className="py-16">
         <SectionErrorBoundary sectionName="3D Phone">
           <PhoneMockup3DWrapper />
         </SectionErrorBoundary>
-      </ScrollParallax>
+      </div>
       
-      {/* Live Dashboard Demo */}
-      <ScrollReveal delay={0.2}>
+      {/* Live Dashboard Demo - no delay for mobile */}
+      <div className="py-16">
         <SectionErrorBoundary sectionName="Live Dashboard">
           <LiveDashboard />
         </SectionErrorBoundary>
-      </ScrollReveal>
+      </div>
 
       {/* Platform logos with animation */}
       <ScrollReveal>
@@ -63,7 +99,7 @@ export default function HomePagePremium() {
               whileInView={{ opacity: 1 }}
               className="text-center text-lg font-semibold text-gray-200 mb-8"
             >
-              Fonctionne avec toutes les plateformes majeures
+              Works with all major platforms
             </motion.p>
             <PlatformLogos />
           </div>
@@ -78,11 +114,11 @@ export default function HomePagePremium() {
               <div className="text-center mb-16">
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6">
                   <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                    Les Maths Sont Simples
+                    The Math Is Simple
                   </span>
                 </h2>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                  Voyez exactement combien vous gagnerez en plus avec Huntaze
+                  See exactly how much more you'll earn with Huntaze
                 </p>
               </div>
             </ScrollReveal>
@@ -95,7 +131,7 @@ export default function HomePagePremium() {
                 className="relative glass-card p-8 border border-red-500/20"
               >
                 <div className="absolute -top-4 left-8 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-                  Agence Traditionnelle
+                  Traditional Agency
                 </div>
                 <div className="mt-4">
                   <div className="text-center mb-8">
@@ -107,26 +143,26 @@ export default function HomePagePremium() {
                     >
                       50%
                     </motion.div>
-                    <p className="text-xl font-semibold text-white">Taux de Commission</p>
+                    <p className="text-xl font-semibold text-white">Commission Rate</p>
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
                         <span className="text-red-400 text-sm">✕</span>
                       </div>
-                      <span className="text-gray-300">Messagerie manuelle</span>
+                      <span className="text-gray-300">Manual messaging</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
                         <span className="text-red-400 text-sm">✕</span>
                       </div>
-                      <span className="text-gray-300">Heures limitées</span>
+                      <span className="text-gray-300">Limited hours</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
                         <span className="text-red-400 text-sm">✕</span>
                       </div>
-                      <span className="text-gray-300">Aucun contrôle</span>
+                      <span className="text-gray-300">No control</span>
                     </div>
                   </div>
                 </div>
@@ -150,7 +186,7 @@ export default function HomePagePremium() {
                     >
                       1.5%
                     </motion.div>
-                    <p className="text-xl font-semibold text-white">Taux de Commission</p>
+                    <p className="text-xl font-semibold text-white">Commission Rate</p>
                   </div>
                   <div className="space-y-4">
                     <motion.div 
@@ -162,7 +198,7 @@ export default function HomePagePremium() {
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-white font-medium">IA automation 24/7</span>
+                      <span className="text-white font-medium">AI automation 24/7</span>
                     </motion.div>
                     <motion.div 
                       className="flex items-center gap-3"
@@ -173,7 +209,7 @@ export default function HomePagePremium() {
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-white font-medium">Ne ratez jamais une vente</span>
+                      <span className="text-white font-medium">Never miss a sale</span>
                     </motion.div>
                     <motion.div 
                       className="flex items-center gap-3"
@@ -184,7 +220,7 @@ export default function HomePagePremium() {
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-white font-medium">Vous possédez tout</span>
+                      <span className="text-white font-medium">You own everything</span>
                     </motion.div>
                   </div>
                   <motion.button 
@@ -192,7 +228,7 @@ export default function HomePagePremium() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Commencer Gratuitement
+                    Start Free Trial
                   </motion.button>
                 </div>
               </motion.div>
@@ -204,7 +240,7 @@ export default function HomePagePremium() {
               >
                 <div className="text-center">
                   <h3 className="text-2xl font-bold text-white mb-6">
-                    Vos Économies Mensuelles
+                    Your Monthly Savings
                   </h3>
                   <div className="space-y-6">
                     <motion.div
@@ -212,14 +248,14 @@ export default function HomePagePremium() {
                       whileInView={{ opacity: 1 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <p className="text-gray-300 mb-2">Gagnant 5k€/mois</p>
+                      <p className="text-gray-300 mb-2">Earning $5k/month</p>
                       <motion.p 
                         className="text-3xl font-black text-green-400"
                         initial={{ scale: 0 }}
                         whileInView={{ scale: 1 }}
                         transition={{ type: "spring", delay: 0.4 }}
                       >
-                        +2,420€
+                        +$2,420
                       </motion.p>
                     </motion.div>
                     <motion.div
@@ -227,14 +263,14 @@ export default function HomePagePremium() {
                       whileInView={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      <p className="text-gray-300 mb-2">Gagnant 10k€/mois</p>
+                      <p className="text-gray-300 mb-2">Earning $10k/month</p>
                       <motion.p 
                         className="text-3xl font-black text-green-400"
                         initial={{ scale: 0 }}
                         whileInView={{ scale: 1 }}
                         transition={{ type: "spring", delay: 0.6 }}
                       >
-                        +4,850€
+                        +$4,850
                       </motion.p>
                     </motion.div>
                     <motion.div
@@ -242,14 +278,14 @@ export default function HomePagePremium() {
                       whileInView={{ opacity: 1 }}
                       transition={{ delay: 0.7 }}
                     >
-                      <p className="text-gray-300 mb-2">Gagnant 25k€/mois</p>
+                      <p className="text-gray-300 mb-2">Earning $25k/month</p>
                       <motion.p 
                         className="text-3xl font-black text-green-400"
                         initial={{ scale: 0 }}
                         whileInView={{ scale: 1 }}
                         transition={{ type: "spring", delay: 0.8 }}
                       >
-                        +12,125€
+                        +$12,125
                       </motion.p>
                     </motion.div>
                   </div>
@@ -270,7 +306,7 @@ export default function HomePagePremium() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Calculez Vos Économies Exactes →
+                  Calculate Your Exact Savings →
                 </motion.button>
               </Link>
             </motion.div>
@@ -289,7 +325,7 @@ export default function HomePagePremium() {
                 whileInView={{ opacity: 1, y: 0 }}
               >
                 <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  Tout Pour Scaler
+                  Everything to Scale
                 </span>
               </motion.h2>
               <motion.p 
@@ -298,7 +334,7 @@ export default function HomePagePremium() {
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                Les outils professionnels que les top créateurs utilisent pour maximiser leurs revenus
+                Professional tools that top creators use to maximize their revenue
               </motion.p>
             </div>
 
@@ -306,50 +342,48 @@ export default function HomePagePremium() {
               {[
                 {
                   icon: <Zap className="w-8 h-8" />,
-                  title: "Assistant IA",
-                  description: "Répond instantanément à chaque message avec des réponses personnalisées qui convertissent",
+                  title: "AI Assistant",
+                  description: "Instantly responds to every message with personalized replies that convert",
                   gradient: "from-purple-500 to-pink-500"
                 },
                 {
                   icon: <TrendingUp className="w-8 h-8" />,
-                  title: "Analytics Avancés",
-                  description: "Suivez vos gains, identifiez vos meilleurs fans et optimisez votre stratégie",
+                  title: "Advanced Analytics",
+                  description: "Track your earnings, identify your best fans and optimize your strategy",
                   gradient: "from-blue-500 to-cyan-500"
                 },
                 {
                   icon: <Users className="w-8 h-8" />,
-                  title: "Gestion des Fans",
-                  description: "Segmentez automatiquement par dépenses, engagement et préférences",
+                  title: "Fan Management",
+                  description: "Automatically segment by spending, engagement and preferences",
                   gradient: "from-pink-500 to-rose-500"
                 },
                 {
                   icon: <Shield className="w-8 h-8" />,
-                  title: "100% Sécurisé",
-                  description: "Conçu pour respecter les guidelines - aucun risque pour vos comptes",
+                  title: "100% Secure",
+                  description: "Designed to respect guidelines - no risk to your accounts",
                   gradient: "from-green-500 to-emerald-500"
                 },
                 {
                   icon: <DollarSign className="w-8 h-8" />,
-                  title: "Pricing Intelligent",
-                  description: "L'IA suggère les prix optimaux basés sur le comportement des fans",
+                  title: "Smart Pricing",
+                  description: "AI suggests optimal prices based on fan behavior",
                   gradient: "from-yellow-500 to-orange-500"
                 },
                 {
                   icon: <ArrowRight className="w-8 h-8" />,
-                  title: "Setup Rapide",
-                  description: "Connectez vos comptes et commencez à gagner plus en 2 minutes",
+                  title: "Quick Setup",
+                  description: "Connect your accounts and start earning more in 2 minutes",
                   gradient: "from-red-500 to-pink-500"
                 }
               ].map((feature, index) => (
                 <motion.div
                   key={feature.title}
                   className="glass-card p-8 group cursor-pointer relative overflow-hidden"
-                  whileHover={{ scale: 1.05, y: -10 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ y: -4 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <motion.div 
-                    className={`absolute inset-0 opacity-0 bg-gradient-to-br ${feature.gradient} group-hover:opacity-10 transition-opacity`}
-                  />
+                  {/* Removed darkening overlay effect */}
                   <motion.div 
                     className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 text-white`}
                     whileHover={{ rotate: 360 }}
@@ -409,10 +443,10 @@ export default function HomePagePremium() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6">
-              Prêt à Garder Plus de Vos Revenus?
+              Ready to Keep More of Your Revenue?
             </h2>
             <p className="text-xl text-purple-100 mb-12">
-              Rejoignez des milliers de créateurs qui ont repris le contrôle de leur business
+              Join thousands of creators who have taken back control of their business
             </p>
             <Link href="/auth">
               <motion.button 
@@ -420,7 +454,7 @@ export default function HomePagePremium() {
                 whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
                 whileTap={{ scale: 0.95 }}
               >
-                Commencer Votre Essai Gratuit
+                Start Your Free Trial
               </motion.button>
             </Link>
             <motion.p 
@@ -429,7 +463,7 @@ export default function HomePagePremium() {
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              Aucune carte requise • Setup en 2 minutes • Annulez quand vous voulez
+              No card required • 2-minute setup • Cancel anytime
             </motion.p>
           </motion.div>
         </section>
