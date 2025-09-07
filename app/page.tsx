@@ -4,15 +4,15 @@ import nextDynamic from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 
-const OriginalPage = nextDynamic(
-  () => import('./page-original').catch((err) => {
-    console.error('Failed to load original homepage, falling back to simple:', err);
+const CombinedEN = nextDynamic(
+  () => import('./page-home-en').catch((err) => {
+    console.error('Failed to load combined homepage, falling back to simple:', err);
     return import('./page-simple');
   }),
   { ssr: false }
 );
 
 export default function HomePage() {
-  return <OriginalPage />;
+  return <CombinedEN />;
 }
 // Using premium homepage with all animations
