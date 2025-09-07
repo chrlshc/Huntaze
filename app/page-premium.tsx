@@ -9,7 +9,8 @@ import { ArrowRight, Check, Zap, TrendingUp, Shield, DollarSign, Users, Star } f
 // Import premium animation components
 import AnimatedHero from '@/components/animations/AnimatedHero';
 import PhoneMockup3DWrapper from '@/components/animations/PhoneMockup3DWrapper';
-import LiveDashboard from '@/components/animations/LiveDashboard';
+// Lazy-load LiveDashboard to avoid SSR/hydration issues with Chart.js
+const LiveDashboard = dynamic(() => import('@/components/animations/LiveDashboard'), { ssr: false });
 import { ScrollReveal, ScrollParallax, StaggerChildren, ScrollProgressBar } from '@/components/animations/ScrollAnimations';
 
 // Lazy load existing components
