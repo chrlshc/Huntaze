@@ -1,10 +1,10 @@
 // Force new deployment v4 - Premium homepage with animations
 // Render premium page purely on client to avoid SSR/hydration errors
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 
-const HomePagePremium = dynamic(() => import('./page-premium'), {
+const HomePagePremium = nextDynamic(() => import('./page-premium'), {
   ssr: false,
   loading: () => (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
