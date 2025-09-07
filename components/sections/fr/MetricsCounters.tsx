@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, useSpring } from 'framer-motion';
 
 const METRICS = [
@@ -45,11 +45,8 @@ function CounterCard({ label, target, suffix, color }: { label: string; target: 
 }
 
 function AnimatedNumber({ spring, suffix, integer }: { spring: any; suffix: string; integer: boolean }) {
-  const [value, setValue] = React.useState(0);
-  useEffect(() => {
-    return spring.on('change', (v: number) => setValue(v));
-  }, [spring]);
+  const [value, setValue] = useState(0);
+  useEffect(() => spring.on('change', (v: number) => setValue(v)), [spring]);
   const displayed = integer ? Math.round(value).toString() : value.toFixed(1);
   return <span>{displayed}{suffix}</span>;
 }
-
