@@ -2,11 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowRight, Check, Zap, TrendingUp, Shield, DollarSign, Users, Star } from 'lucide-react';
-import PlatformLogos from '@/components/platform-logos';
-import CreatorTestimonials from '@/components/creator-testimonials';
-import FAQSection from '@/components/faq-section';
+
+// Import premium animation components
+import AnimatedHero from '@/components/animations/AnimatedHero';
+import PhoneMockup3D from '@/components/animations/PhoneMockup3D';
+import LiveDashboard from '@/components/animations/LiveDashboard';
+import { ScrollReveal, ScrollParallax, StaggerChildren, ScrollProgressBar } from '@/components/animations/ScrollAnimations';
+
+// Lazy load existing components
+const PlatformLogos = dynamic(() => import('@/components/platform-logos'));
+const FAQSection = dynamic(() => import('@/components/faq-section'));
 
 export default function HomePagePremium() {
   const [scrolled, setScrolled] = useState(false);
@@ -15,335 +23,409 @@ export default function HomePagePremium() {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+
+    // Initialize smooth scrolling
+    document.documentElement.style.scrollBehavior = 'smooth';
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      {/* Premium Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-600/20 to-purple-600/20 animate-gradient" />
-        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            {/* Trust badge */}
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-8"
+    <div className="min-h-screen bg-black overflow-x-hidden">
+      {/* Scroll progress indicator */}
+      <ScrollProgressBar />
+      
+      {/* Premium Animated Hero Section */}
+      <AnimatedHero />
+      
+      {/* 3D Phone Mockup showcase */}
+      <ScrollParallax offset={100}>
+        <PhoneMockup3D />
+      </ScrollParallax>
+      
+      {/* Live Dashboard Demo */}
+      <ScrollReveal delay={0.2}>
+        <LiveDashboard />
+      </ScrollReveal>
+
+      {/* Platform logos with animation */}
+      <ScrollReveal>
+        <section className="py-16 border-y border-white/10">
+          <div className="max-w-7xl mx-auto px-4">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-center text-lg font-semibold text-gray-200 mb-8"
             >
-              <Star className="w-5 h-5 text-purple-600" fill="currentColor" />
-              <span className="text-sm font-semibold text-purple-800 dark:text-purple-300">
-                Trusted by 5,000+ Creators
-              </span>
-            </motion.div>
-
-            {/* Main headline - HUGE and BOLD */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight">
-              <span className="block text-gray-900 dark:text-white">Stop Paying 50%</span>
-              <span className="block gradient-text-premium">To Agencies</span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="text-xl sm:text-2xl md:text-3xl font-medium text-gray-800 dark:text-gray-100 mb-12 max-w-3xl mx-auto">
-              Keep 98.5% of your revenue with AI-powered automation that works 24/7
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link href="/auth" className="group">
-                <button className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-3">
-                  Start Free Trial
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-              <Link href="/demo">
-                <button className="w-full sm:w-auto px-10 py-5 bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white font-bold text-lg rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
-                  Watch Demo
-                </button>
-              </Link>
-            </div>
-
-            {/* Social proof */}
-            <div className="flex flex-wrap justify-center gap-8 text-gray-800 dark:text-gray-200">
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="font-semibold">No credit card required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="font-semibold">Cancel anytime</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-green-500" />
-                <span className="font-semibold">Setup in 2 minutes</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <div className="animate-bounce">
-            <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-gray-400 rounded-full mt-2" />
-            </div>
+              Fonctionne avec toutes les plateformes majeures
+            </motion.p>
+            <PlatformLogos />
           </div>
-        </motion.div>
-      </section>
-
-      {/* Platform logos */}
-      <section className="py-16 border-y border-gray-200 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-center text-lg font-semibold text-gray-800 dark:text-gray-200 mb-8">
-            Works seamlessly with all major platforms
-          </p>
-          <PlatformLogos />
-        </div>
-      </section>
+        </section>
+      </ScrollReveal>
 
       {/* Comparison Section - Premium Design */}
-      <section className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6">
-              The Math Is Simple
-            </h2>
-            <p className="text-xl text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-              See exactly how much more you'll earn with Huntaze
-            </p>
-          </div>
-
-          {/* Premium comparison cards */}
-          <div className="grid lg:grid-cols-3 gap-8 mb-16">
-            {/* Traditional Agency Card */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="relative premium-card p-8"
-            >
-              <div className="absolute -top-4 left-8 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-                Traditional Agency
+      <ScrollParallax offset={50}>
+        <section className="py-24 px-4">
+          <div className="max-w-7xl mx-auto">
+            <ScrollReveal>
+              <div className="text-center mb-16">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6">
+                  <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    Les Maths Sont Simples
+                  </span>
+                </h2>
+                <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                  Voyez exactement combien vous gagnerez en plus avec Huntaze
+                </p>
               </div>
-              <div className="mt-4">
-                <div className="text-center mb-8">
-                  <div className="text-6xl font-black text-red-600 mb-2">50%</div>
-                  <p className="text-xl font-semibold text-gray-900 dark:text-white">Commission Rate</p>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <span className="text-red-600 text-sm">✕</span>
-                    </div>
-                    <span className="text-gray-800 dark:text-gray-200">Manual messaging</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <span className="text-red-600 text-sm">✕</span>
-                    </div>
-                    <span className="text-gray-800 dark:text-gray-200">Limited hours</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <span className="text-red-600 text-sm">✕</span>
-                    </div>
-                    <span className="text-gray-800 dark:text-gray-200">No control</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            </ScrollReveal>
 
-            {/* Huntaze Card - Featured */}
-            <motion.div
+            {/* Premium comparison cards */}
+            <StaggerChildren staggerDelay={0.2} className="grid lg:grid-cols-3 gap-8 mb-16">
+              {/* Traditional Agency Card */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="relative glass-card p-8 border border-red-500/20"
+              >
+                <div className="absolute -top-4 left-8 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">
+                  Agence Traditionnelle
+                </div>
+                <div className="mt-4">
+                  <div className="text-center mb-8">
+                    <motion.div 
+                      className="text-6xl font-black text-red-500 mb-2"
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 100 }}
+                    >
+                      50%
+                    </motion.div>
+                    <p className="text-xl font-semibold text-white">Taux de Commission</p>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <span className="text-red-400 text-sm">✕</span>
+                      </div>
+                      <span className="text-gray-300">Messagerie manuelle</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <span className="text-red-400 text-sm">✕</span>
+                      </div>
+                      <span className="text-gray-300">Heures limitées</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <span className="text-red-400 text-sm">✕</span>
+                      </div>
+                      <span className="text-gray-300">Aucun contrôle</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Huntaze Card - Featured */}
+              <motion.div
+                whileHover={{ scale: 1.08 }}
+                className="relative glass-card p-8 ring-2 ring-purple-500 shadow-2xl shadow-purple-500/20 transform scale-105"
+              >
+                <div className="absolute -top-4 left-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+                  Huntaze Pro
+                </div>
+                <div className="mt-4">
+                  <div className="text-center mb-8">
+                    <motion.div 
+                      className="text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 100, delay: 0.2 }}
+                    >
+                      1.5%
+                    </motion.div>
+                    <p className="text-xl font-semibold text-white">Taux de Commission</p>
+                  </div>
+                  <div className="space-y-4">
+                    <motion.div 
+                      className="flex items-center gap-3"
+                      initial={{ x: -20, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-white font-medium">IA automation 24/7</span>
+                    </motion.div>
+                    <motion.div 
+                      className="flex items-center gap-3"
+                      initial={{ x: -20, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-white font-medium">Ne ratez jamais une vente</span>
+                    </motion.div>
+                    <motion.div 
+                      className="flex items-center gap-3"
+                      initial={{ x: -20, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-white font-medium">Vous possédez tout</span>
+                    </motion.div>
+                  </div>
+                  <motion.button 
+                    className="w-full mt-8 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Commencer Gratuitement
+                  </motion.button>
+                </div>
+              </motion.div>
+
+              {/* Savings Card */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="relative glass-card p-8 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20"
+              >
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-white mb-6">
+                    Vos Économies Mensuelles
+                  </h3>
+                  <div className="space-y-6">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <p className="text-gray-300 mb-2">Gagnant 5k€/mois</p>
+                      <motion.p 
+                        className="text-3xl font-black text-green-400"
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ type: "spring", delay: 0.4 }}
+                      >
+                        +2,420€
+                      </motion.p>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <p className="text-gray-300 mb-2">Gagnant 10k€/mois</p>
+                      <motion.p 
+                        className="text-3xl font-black text-green-400"
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ type: "spring", delay: 0.6 }}
+                      >
+                        +4,850€
+                      </motion.p>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 0.7 }}
+                    >
+                      <p className="text-gray-300 mb-2">Gagnant 25k€/mois</p>
+                      <motion.p 
+                        className="text-3xl font-black text-green-400"
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ type: "spring", delay: 0.8 }}
+                      >
+                        +12,125€
+                      </motion.p>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </StaggerChildren>
+
+            {/* ROI Calculator CTA */}
+            <motion.div 
+              className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="relative premium-card p-8 ring-2 ring-purple-500 shadow-glow transform scale-105"
+              transition={{ delay: 0.2 }}
             >
-              <div className="absolute -top-4 left-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold">
-                Huntaze Pro
-              </div>
-              <div className="mt-4">
-                <div className="text-center mb-8">
-                  <div className="text-6xl font-black gradient-text-premium mb-2">1.5%</div>
-                  <p className="text-xl font-semibold text-gray-900 dark:text-white">Commission Rate</p>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">AI automation 24/7</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">Never miss a sale</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">You own everything</span>
-                  </div>
-                </div>
-                <button className="w-full mt-8 btn-premium">
-                  Get Started Free
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Savings Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="relative premium-card p-8 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20"
-            >
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  Your Monthly Savings
-                </h3>
-                <div className="space-y-6">
-                  <div>
-                    <p className="text-gray-700 dark:text-gray-300 mb-2">Making $5k/month</p>
-                    <p className="text-3xl font-black text-green-600">+$2,420</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-700 dark:text-gray-300 mb-2">Making $10k/month</p>
-                    <p className="text-3xl font-black text-green-600">+$4,850</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-700 dark:text-gray-300 mb-2">Making $25k/month</p>
-                    <p className="text-3xl font-black text-green-600">+$12,125</p>
-                  </div>
-                </div>
-              </div>
+              <Link href="/pricing">
+                <motion.button 
+                  className="px-8 py-4 border-2 border-purple-500 text-purple-400 font-bold rounded-xl hover:bg-purple-500/10 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Calculez Vos Économies Exactes →
+                </motion.button>
+              </Link>
             </motion.div>
           </div>
-
-          {/* ROI Calculator CTA */}
-          <div className="text-center">
-            <Link href="/pricing">
-              <button className="btn-outline-premium">
-                Calculate Your Exact Savings →
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      </ScrollParallax>
 
       {/* Features Grid - Modern Design */}
-      <section className="py-24 px-4 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6">
-              Everything You Need To Scale
-            </h2>
-            <p className="text-xl text-gray-800 dark:text-gray-200 max-w-2xl mx-auto">
-              Professional tools that top creators use to maximize their earnings
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Zap className="w-8 h-8" />,
-                title: "AI Chat Assistant",
-                description: "Responds instantly to every message with personalized, converting responses",
-                color: "purple"
-              },
-              {
-                icon: <TrendingUp className="w-8 h-8" />,
-                title: "Revenue Analytics",
-                description: "Track earnings, identify top spenders, and optimize your content strategy",
-                color: "blue"
-              },
-              {
-                icon: <Users className="w-8 h-8" />,
-                title: "Fan Management",
-                description: "Segment fans by spending, engagement, and preferences automatically",
-                color: "pink"
-              },
-              {
-                icon: <Shield className="w-8 h-8" />,
-                title: "Platform Safe",
-                description: "Designed to work within platform guidelines - no account risks",
-                color: "green"
-              },
-              {
-                icon: <DollarSign className="w-8 h-8" />,
-                title: "Smart Pricing",
-                description: "AI suggests optimal pricing based on fan behavior and market data",
-                color: "yellow"
-              },
-              {
-                icon: <ArrowRight className="w-8 h-8" />,
-                title: "Quick Setup",
-                description: "Connect your accounts and start earning more in under 2 minutes",
-                color: "red"
-              }
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
+      <ScrollReveal>
+        <section className="py-24 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <motion.h2 
+                className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="premium-card p-8 hover:scale-105 transition-transform"
               >
-                <div className={`w-16 h-16 bg-${feature.color}-100 dark:bg-${feature.color}-900/30 rounded-2xl flex items-center justify-center mb-6`}>
-                  <div className={`text-${feature.color}-600 dark:text-${feature.color}-400`}>
-                    {feature.icon}
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-200 text-lg">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+                <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Tout Pour Scaler
+                </span>
+              </motion.h2>
+              <motion.p 
+                className="text-xl text-gray-300 max-w-2xl mx-auto"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                Les outils professionnels que les top créateurs utilisent pour maximiser leurs revenus
+              </motion.p>
+            </div>
 
-      {/* Testimonials */}
-      <CreatorTestimonials />
+            <StaggerChildren staggerDelay={0.1} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: <Zap className="w-8 h-8" />,
+                  title: "Assistant IA",
+                  description: "Répond instantanément à chaque message avec des réponses personnalisées qui convertissent",
+                  gradient: "from-purple-500 to-pink-500"
+                },
+                {
+                  icon: <TrendingUp className="w-8 h-8" />,
+                  title: "Analytics Avancés",
+                  description: "Suivez vos gains, identifiez vos meilleurs fans et optimisez votre stratégie",
+                  gradient: "from-blue-500 to-cyan-500"
+                },
+                {
+                  icon: <Users className="w-8 h-8" />,
+                  title: "Gestion des Fans",
+                  description: "Segmentez automatiquement par dépenses, engagement et préférences",
+                  gradient: "from-pink-500 to-rose-500"
+                },
+                {
+                  icon: <Shield className="w-8 h-8" />,
+                  title: "100% Sécurisé",
+                  description: "Conçu pour respecter les guidelines - aucun risque pour vos comptes",
+                  gradient: "from-green-500 to-emerald-500"
+                },
+                {
+                  icon: <DollarSign className="w-8 h-8" />,
+                  title: "Pricing Intelligent",
+                  description: "L'IA suggère les prix optimaux basés sur le comportement des fans",
+                  gradient: "from-yellow-500 to-orange-500"
+                },
+                {
+                  icon: <ArrowRight className="w-8 h-8" />,
+                  title: "Setup Rapide",
+                  description: "Connectez vos comptes et commencez à gagner plus en 2 minutes",
+                  gradient: "from-red-500 to-pink-500"
+                }
+              ].map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  className="glass-card p-8 group cursor-pointer relative overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -10 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <motion.div 
+                    className={`absolute inset-0 opacity-0 bg-gradient-to-br ${feature.gradient} group-hover:opacity-10 transition-opacity`}
+                  />
+                  <motion.div 
+                    className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 text-white`}
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {feature.icon}
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-white mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300">
+                    {feature.description}
+                  </p>
+                </motion.div>
+              ))}
+            </StaggerChildren>
+          </div>
+        </section>
+      </ScrollReveal>
 
       {/* FAQ */}
-      <FAQSection />
+      <ScrollReveal>
+        <FAQSection />
+      </ScrollReveal>
 
       {/* Final CTA */}
-      <section className="py-24 px-4 bg-gradient-to-br from-purple-600 to-pink-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6">
-            Ready To Keep More Of Your Money?
-          </h2>
-          <p className="text-xl text-purple-100 mb-12">
-            Join thousands of creators who've taken back control of their business
-          </p>
-          <Link href="/auth">
-            <button className="px-12 py-5 bg-white text-purple-600 font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200">
-              Start Your Free Trial Now
-            </button>
-          </Link>
-          <p className="text-purple-200 mt-6">
-            No credit card required • Setup in 2 minutes • Cancel anytime
-          </p>
-        </div>
-      </section>
+      <ScrollParallax offset={-50}>
+        <section className="py-24 px-4 bg-gradient-to-br from-purple-600 to-pink-600 relative overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute inset-0">
+            {[...Array(10)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-32 h-32 bg-white/10 rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -30, 0],
+                  scale: [1, 1.2, 1],
+                  opacity: [0.1, 0.3, 0.1],
+                }}
+                transition={{
+                  duration: 5 + Math.random() * 5,
+                  repeat: Infinity,
+                  delay: Math.random() * 5,
+                }}
+              />
+            ))}
+          </div>
+          
+          <motion.div 
+            className="max-w-4xl mx-auto text-center relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6">
+              Prêt à Garder Plus de Vos Revenus?
+            </h2>
+            <p className="text-xl text-purple-100 mb-12">
+              Rejoignez des milliers de créateurs qui ont repris le contrôle de leur business
+            </p>
+            <Link href="/auth">
+              <motion.button 
+                className="px-12 py-5 bg-white text-purple-600 font-bold text-lg rounded-2xl shadow-xl"
+                whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Commencer Votre Essai Gratuit
+              </motion.button>
+            </Link>
+            <motion.p 
+              className="text-purple-200 mt-6"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              Aucune carte requise • Setup en 2 minutes • Annulez quand vous voulez
+            </motion.p>
+          </motion.div>
+        </section>
+      </ScrollParallax>
     </div>
   );
 }
