@@ -38,7 +38,7 @@ export default function HomePageImproved() {
   
   return (
     <div className="bg-white dark:bg-black transition-colors">
-      {/* Hero Section - Simplified like Shopify */}
+      {/* Hero Section - Simplified, clean */}
       <section className="relative py-20 md:py-32 px-6 md:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-16 items-center">

@@ -1,4 +1,4 @@
-// PPV Purchase Sound Effects - Like Shopify's "cha-ching!"
+// PPV Purchase Sound Effects - cash register style "cha‑ching"
 // Make creators FEEL the money coming in
 
 export interface SoundEffect {
