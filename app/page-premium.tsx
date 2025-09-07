@@ -13,6 +13,10 @@ import PhoneMockup3DWrapper from '@/components/animations/PhoneMockup3DWrapper';
 const LiveDashboard = dynamic(() => import('@/components/animations/LiveDashboard'), { ssr: false });
 import { ScrollReveal, ScrollParallax, StaggerChildren, ScrollProgressBar } from '@/components/animations/ScrollAnimations';
 import { SectionErrorBoundary } from '@/src/components/ErrorBoundary';
+import FeatureTabsFR from '@/components/sections/fr/FeatureTabs';
+import TestimonialsCarouselFR from '@/components/sections/fr/TestimonialsCarousel';
+import MetricsCountersFR from '@/components/sections/fr/MetricsCounters';
+import ThreeStepsFR from '@/components/sections/fr/ThreeStepsFR';
 
 // Lazy load existing components
 const PlatformLogos = dynamic(() => import('@/components/platform-logos'));
@@ -104,6 +108,26 @@ export default function HomePagePremium() {
             <PlatformLogos />
           </div>
         </section>
+      </ScrollReveal>
+
+      {/* FR — Metrics counters */}
+      <ScrollReveal>
+        <MetricsCountersFR />
+      </ScrollReveal>
+
+      {/* FR — Interactive feature tabs */}
+      <ScrollReveal>
+        <FeatureTabsFR />
+      </ScrollReveal>
+
+      {/* FR — Testimonials carousel */}
+      <ScrollReveal>
+        <TestimonialsCarouselFR />
+      </ScrollReveal>
+
+      {/* FR — Three steps */}
+      <ScrollReveal>
+        <ThreeStepsFR />
       </ScrollReveal>
 
       {/* Comparison Section - Premium Design */}
