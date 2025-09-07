@@ -21,10 +21,10 @@ export default function SimpleHomePage() {
   }
 
   const stats = [
-    { value: '10,847', label: 'Créateurs actifs', icon: <Users className="w-4 h-4" /> },
-    { value: '2.3M€', label: 'Ce mois', icon: <Zap className="w-4 h-4" /> },
-    { value: '500+', label: 'Messages/heure', icon: <Sparkles className="w-4 h-4" /> },
-    { value: '95%', label: 'Rétention', icon: <Shield className="w-4 h-4" /> }
+    { value: '10,847', label: 'Active creators', icon: <Users className="w-4 h-4" /> },
+    { value: '€2.3M', label: 'This month', icon: <Zap className="w-4 h-4" /> },
+    { value: '500+', label: 'Msgs/hour', icon: <Sparkles className="w-4 h-4" /> },
+    { value: '95%', label: 'Retention', icon: <Shield className="w-4 h-4" /> }
   ];
 
   return (
@@ -42,9 +42,9 @@ export default function SimpleHomePage() {
             transition={{ duration: 0.8 }}
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 mb-8">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-sm text-gray-300">10,847 créateurs gagnent 2.3M€ ce mois</span>
+              <span className="text-sm text-gray-300">10,847 creators earned €2.3M this month</span>
             </div>
 
             {/* Title */}
@@ -54,16 +54,15 @@ export default function SimpleHomePage() {
               </span>
             </h1>
 
-            {/* Revenue counter */}
+            {/* Revenue counter */
             <div className="text-5xl md:text-6xl font-bold mb-8">
               <span className="text-white">+312%</span>
-              <span className="text-2xl ml-3 text-gray-300">de revenus en plus</span>
+              <span className="text-2xl ml-3 text-gray-300">more revenue</span>
             </div>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
-              L'IA qui automatise vos conversations, augmente vos ventes 
-              et vous fait gagner 20 heures par semaine
+              AI that automates conversations, boosts sales, and gives you back 20 hours every week.
             </p>
 
             {/* Stats */}
@@ -71,7 +70,7 @@ export default function SimpleHomePage() {
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white/10 backdrop-blur p-4 rounded-lg"
+                  className="bg-white/10 p-4 rounded-lg"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 + index * 0.1 }}
@@ -83,27 +82,27 @@ export default function SimpleHomePage() {
               ))}
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons */
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/demo">
                 <motion.button
-                  className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg font-medium flex items-center gap-2 hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+                  className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg font-medium flex items-center gap-2 transition-transform"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Démarrer l'essai gratuit
+                  Start free trial
                   <ArrowRight className="w-5 h-5" />
                 </motion.button>
               </Link>
               
               <Link href="/features">
                 <motion.button
-                  className="px-8 py-4 bg-white/10 backdrop-blur rounded-lg font-medium flex items-center gap-2 hover:bg-white/20 transition-all"
+                  className="px-8 py-4 bg-white/10 rounded-lg font-medium flex items-center gap-2 transition-transform"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Sparkles className="w-5 h-5" />
-                  Voir la démo live
+                  See live demo
                 </motion.button>
               </Link>
             </div>
@@ -118,7 +117,7 @@ export default function SimpleHomePage() {
           transition={{ delay: 2 }}
         >
           <div className="flex flex-col items-center gap-2 cursor-pointer">
-            <span className="text-xs text-gray-400">Découvrir</span>
+            <span className="text-xs text-gray-400">Explore</span>
             <div className="w-6 h-10 border-2 border-white/20 rounded-full p-1">
               <motion.div
                 className="w-1 h-3 bg-white/50 rounded-full mx-auto"
@@ -141,35 +140,35 @@ export default function SimpleHomePage() {
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Une plateforme tout-en-un
+                An all‑in‑one platform
               </span>
             </h2>
             <p className="text-xl text-gray-400">
-              Tout ce dont vous avez besoin pour automatiser et faire grandir votre business
+              Everything you need to automate and grow your creator business
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
             {[
               {
-                title: "IA Conversationnelle",
-                description: "Réponses personnalisées qui convertissent 3x plus",
+                title: "Conversational AI",
+                description: "Personalized replies that convert 3× better",
                 icon: "💬"
               },
               {
-                title: "Analytics Temps Réel",
-                description: "Suivez vos performances seconde par seconde",
+                title: "Real‑time Analytics",
+                description: "Track performance second by second",
                 icon: "📊"
               },
               {
-                title: "Multi-Plateforme",
-                description: "OnlyFans, Instagram, TikTok - tout centralisé",
+                title: "Multi‑platform",
+                description: "OnlyFans, Instagram, TikTok — all in one place",
                 icon: "🚀"
               }
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="bg-white/5 backdrop-blur rounded-xl p-8 hover:bg-white/10 transition-all"
+                className="bg-white/5 rounded-xl p-8 transition-all h-full flex flex-col"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
