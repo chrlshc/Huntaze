@@ -4,15 +4,20 @@ import nextDynamic from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 
-const HomePagePremium = nextDynamic(() => import('./page-premium'), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
-        <p className="mt-4 text-gray-300">Chargement de l’expérience premium…</p>
+const HomePagePremium = nextDynamic(
+  () => import('./page-premium').catch((err) => {
+    console.error('Failed to load premium homepage, falling back to simple:', err);
+    return import('./page-simple');
+  }),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
+          <p className="mt-4 text-gray-300">Chargement de l’expérience premium…</p>
+        </div>
       </div>
-    </div>
   ),
 });
 

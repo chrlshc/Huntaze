@@ -12,6 +12,7 @@ import PhoneMockup3DWrapper from '@/components/animations/PhoneMockup3DWrapper';
 // Lazy-load LiveDashboard to avoid SSR/hydration issues with Chart.js
 const LiveDashboard = dynamic(() => import('@/components/animations/LiveDashboard'), { ssr: false });
 import { ScrollReveal, ScrollParallax, StaggerChildren, ScrollProgressBar } from '@/components/animations/ScrollAnimations';
+import { SectionErrorBoundary } from '@/src/components/ErrorBoundary';
 
 // Lazy load existing components
 const PlatformLogos = dynamic(() => import('@/components/platform-logos'));
@@ -35,16 +36,22 @@ export default function HomePagePremium() {
       <ScrollProgressBar />
       
       {/* Premium Animated Hero Section */}
-      <AnimatedHero />
+      <SectionErrorBoundary sectionName="Hero">
+        <AnimatedHero />
+      </SectionErrorBoundary>
       
       {/* 3D Phone Mockup showcase */}
       <ScrollParallax offset={100}>
-        <PhoneMockup3DWrapper />
+        <SectionErrorBoundary sectionName="3D Phone">
+          <PhoneMockup3DWrapper />
+        </SectionErrorBoundary>
       </ScrollParallax>
       
       {/* Live Dashboard Demo */}
       <ScrollReveal delay={0.2}>
-        <LiveDashboard />
+        <SectionErrorBoundary sectionName="Live Dashboard">
+          <LiveDashboard />
+        </SectionErrorBoundary>
       </ScrollReveal>
 
       {/* Platform logos with animation */}
