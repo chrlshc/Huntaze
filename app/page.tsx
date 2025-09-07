@@ -1,10 +1,12 @@
 // Force new deployment v4 - Premium homepage with animations
 // Render premium page purely on client to avoid SSR/hydration errors
 import nextDynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-const HomePagePremium = nextDynamic(
+const PremiumPage = nextDynamic(
   () => import('./page-premium').catch((err) => {
     console.error('Failed to load premium homepage, falling back to simple:', err);
     return import('./page-simple');
@@ -21,7 +23,30 @@ const HomePagePremium = nextDynamic(
   ),
 });
 
+const OriginalPage = nextDynamic(() => import('./page-original'), { ssr: false });
+
+function HomeChooser() {
+  const params = useSearchParams();
+  const [locale, setLocale] = useState<'fr' | 'en'>(() => {
+    if (typeof document !== 'undefined') {
+      const match = document.cookie.match(/(?:^|; )locale=([^;]+)/);
+      if (match) return (decodeURIComponent(match[1]) as 'fr' | 'en');
+    }
+    if (typeof navigator !== 'undefined' && navigator.language) {
+      return navigator.language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+    }
+    return 'en';
+  });
+
+  useEffect(() => {
+    const q = params.get('lang');
+    if (q === 'fr' || q === 'en') setLocale(q);
+  }, [params]);
+
+  return locale === 'en' ? <OriginalPage /> : <PremiumPage />;
+}
+
 export default function HomePage() {
-  return <HomePagePremium />;
+  return <HomeChooser />;
 }
 // Using premium homepage with all animations
