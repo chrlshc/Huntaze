@@ -55,7 +55,7 @@ function PhoneMockup({ src, alt, videoSrc, poster, className }: Props) {
             </video>
           ) : (
             src ? (
-              <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 260px, 300px" />
+              <Image src={src as string} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 260px, 300px" />
             ) : null
           )}
         </div>
@@ -94,7 +94,7 @@ function DesktopMockup({ src, alt, videoSrc, poster, className }: Props) {
               <source src={videoSrc} type="video/webm" />
             </video>
           ) : (
-            src ? <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 900px" /> : null
+            src ? <Image src={src as string} alt={alt} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 900px" /> : null
           )}
         </div>
       </div>
