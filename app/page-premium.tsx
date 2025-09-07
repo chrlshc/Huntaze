@@ -38,7 +38,7 @@ export default function HomePagePremium() {
       
       {/* 3D Phone Mockup showcase */}
       <ScrollParallax offset={100}>
-        <PhoneMockup3DWrapper scrollProgress={0} />
+        <PhoneMockup3DWrapper />
       </ScrollParallax>
       
       {/* Live Dashboard Demo */}
