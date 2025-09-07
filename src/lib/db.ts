@@ -1,5 +1,6 @@
-// Minimal stub for database client to satisfy type-check during builds.
-export const db: any = {};
+// Database connection stub for deployment
+// TODO: Set up actual database connection when ready
 
-export default db;
-
+// Placeholder export to satisfy imports
+export const db = {} as any;
+export const sql = {} as any;
