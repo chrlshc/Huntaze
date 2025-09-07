@@ -20,9 +20,11 @@ const PhoneMockup3D = dynamic(
 );
 
 interface PhoneMockup3DWrapperProps {
-  scrollProgress: number;
+  scrollProgress?: number;
+  className?: string;
 }
 
-export default function PhoneMockup3DWrapper({ scrollProgress }: PhoneMockup3DWrapperProps) {
-  return <PhoneMockup3D scrollProgress={scrollProgress} />;
+export default function PhoneMockup3DWrapper({ className }: PhoneMockup3DWrapperProps) {
+  // PhoneMockup3D gère son propre scroll progress en interne
+  return <PhoneMockup3D className={className} />;
 }
