@@ -37,8 +37,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
     
-    const userId = session.user?.id as string | undefined;
-    let filtered = campaigns.filter(c => c.userId === userId);
+    let filtered = campaigns.filter(c => c.userId === session.user!.id);
     
     if (status) {
       filtered = filtered.filter(c => c.status === status);
@@ -65,8 +64,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user?.id as string;
-
     const body = await request.json();
     const validated = createCampaignSchema.parse(body) as CreateCampaignRequest;
 
@@ -75,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     const campaign: OfMassMessageCampaign = {
       id: `campaign_${Date.now()}`,
-      userId,
+      userId: session.user!.id,
       name: validated.name,
       content: validated.content,
       audienceFilter: validated.audienceFilter,

@@ -16,8 +16,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user?.id as string | undefined;
-    const campaign = campaigns.find(c => c.id === params.id && c.userId === userId);
+    const campaign = campaigns.find(c => c.id === params.id && c.userId === session.user!.id);
     
     if (!campaign) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });

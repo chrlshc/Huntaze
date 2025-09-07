@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const validated = sendMessageSchema.parse(body);
 
     // Check rate limits
-    const userId = session.user?.id as string;
+    const userId = session.user!.id;
     const now = new Date();
     const userRateLimit = rateLimitMap.get(userId);
 

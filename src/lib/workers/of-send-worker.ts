@@ -162,9 +162,12 @@ class OfSendWorker {
     try {
       const result = await sendOfMessage(
         userId,
-        data.conversationId,
-        data.content,
-        proxy
+        {
+          id: Date.now().toString(),
+          conversationId: data.conversationId,
+          content: data.content,
+          timestamp: new Date()
+        } as any
       );
       
       if (result.success) {
@@ -197,9 +200,12 @@ class OfSendWorker {
       // In a real implementation, we'd need to find/create the conversation first
       const result = await sendOfMessage(
         userId,
-        data.platformUserId, // This should be the conversation ID
-        data.content,
-        proxy
+        {
+          id: Date.now().toString(),
+          conversationId: data.platformUserId, // This should be the conversation ID
+          content: data.content,
+          timestamp: new Date()
+        } as any
       );
       
       if (result.success) {

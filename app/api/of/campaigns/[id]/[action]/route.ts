@@ -21,8 +21,7 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    const userId = session.user?.id as string | undefined;
-    const campaign = campaigns.find(c => c.id === id && c.userId === userId);
+    const campaign = campaigns.find(c => c.id === id && c.userId === session.user!.id);
     
     if (!campaign) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
