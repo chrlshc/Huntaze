@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, BarChart3, CreditCard, Bot, Shield, Users } from 'lucide-react';
+import DeviceMockup from './DeviceMockup';
 
 type FeatureKey = 'inbox' | 'analytics' | 'payments' | 'ai' | 'security' | 'collab';
 
@@ -136,7 +137,6 @@ export default function FeatureTabsEN() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Mockup placeholder */}
           <AnimatePresence mode="wait">
             <motion.div
               key={active + '-mock'}
@@ -144,12 +144,8 @@ export default function FeatureTabsEN() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="relative rounded-2xl border border-white/10 overflow-hidden"
             >
-              <div className={`h-[320px] bg-gradient-to-br ${data.color} opacity-80`} />
-              <div className="absolute inset-0 grid place-items-center">
-                <p className="text-sm text-white/90">Interface mockup — {data.title}</p>
-              </div>
+              <DeviceMockup type={active === 'analytics' ? 'desktop' : 'phone'} src={MOCKS[active]} alt={data.title} />
             </motion.div>
           </AnimatePresence>
         </div>
@@ -158,3 +154,11 @@ export default function FeatureTabsEN() {
   );
 }
 
+const MOCKS: Record<FeatureKey, string> = {
+  inbox: '/mockups/inbox.svg',
+  analytics: '/mockups/dashboard.svg',
+  payments: '/mockups/offers.svg',
+  ai: '/mockups/inbox.svg',
+  security: '/mockups/dashboard.svg',
+  collab: '/mockups/offers.svg',
+};
