@@ -54,7 +54,7 @@ export default function SimpleHomePage() {
               </span>
             </h1>
 
-            {/* Revenue counter */
+            {/* Revenue counter */}
             <div className="text-5xl md:text-6xl font-bold mb-8">
               <span className="text-white">+312%</span>
               <span className="text-2xl ml-3 text-gray-300">more revenue</span>
@@ -82,7 +82,7 @@ export default function SimpleHomePage() {
               ))}
             </div>
 
-            {/* CTA Buttons */
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/demo">
                 <motion.button

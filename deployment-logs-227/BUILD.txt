@@ -1,0 +1,80 @@
+2025-09-07T17:10:06.109Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-09-07T17:10:06.771Z [INFO]: # Cloning repository: git@github.com:chrlshc/sitedepot.git
+2025-09-07T17:10:17.265Z [INFO]: 
+2025-09-07T17:10:17.368Z [INFO]: Cloning into 'sitedepot'...
+                                 Updating files:  26% (19094/71514)Updating files:  27% (19309/71514)Updating files:  28% (20024/71514)Updating files:  29% (20740/71514)Updating files:  30% (21455/71514)Updating files:  31% (22170/71514)Updating files:  32% (22885/71514)Updating files:  33% (23600/71514)Updating files:  34% (24315/71514)Updating files:  35% (25030/71514)Updating files:  36% (25746/71514)Updating files:  37% (26461/71514)Updating files:  38% (27176/71514)Updating files:  39% (27891/71514)Updating files:  40% (28606/71514)Updating files:  41% (29321/71514)Updating files:  41% (29538/71514)Updating files:  42% (30036/71514)Updating files:  43% (30752/71514)Updating files:  44% (31467/71514)Updating files:  45% (32182/71514)Updating files:  46% (32897/71514)Updating files:  47% (33612/71514)Updating files:  48% (34327/71514)Updating files:  49% (35042/71514)Updating files:  50% (35757/71514)Updating files:  51% (36473/71514)Updating files:  52% (37188/71514)Updating files:  53% (37903/71514)Updating files:  54% (38618/71514)Updating files:  55% (39333/71514)Updating files:  56% (40048/71514)Updating files:  57% (40763/71514)Updating files:  58% (41479/71514)Updating files:  59% (42194/71514)Updating files:  60% (42909/71514)Updating files:  61% (43624/71514)Updating files:  61% (43984/71514)Updating files:  62% (44339/71514)Updating files:  63% (45054/71514)Updating files:  64% (45769/71514)Updating files:  65% (46485/71514)Updating files:  66% (47200/71514)Updating files:  67% (47915/71514)Updating files:  68% (48630/71514)Updating files:  69% (49345/71514)Updating files:  70% (50060/71514)Updating files:  71% (50775/71514)Updating files:  72% (51491/71514)Updating files:  73% (52206/71514)Updating files:  74% (52921/71514)Updating files:  75% (53636/71514)Updating files:  76% (54351/71514)Updating files:  77% (55066/71514)Updating files:  78% (55781/71514)Updating files:  79% (56497/71514)Updating files:  79% (56641/71514)Updating files:  80% (57212/71514)Updating files:  81% (57927/71514)Updating files:  82% (58642/71514)Updating files:  83% (59357/71514)Updating files:  84% (60072/71514)Updating files:  85% (60787/71514)Updating files:  86% (61503/71514)Updating files:  87% (62218/71514)Updating files:  88% (62933/71514)Updating files:  89% (63648/71514)Updating files:  90% (64363/71514)Updating files:  91% (65078/71514)Updating files:  92% (65793/71514)Updating files:  93% (66509/71514)Updating files:  94% (67224/71514)Updating files:  95% (67939/71514)Updating files:  96% (68654/71514)Updating files:  97% (69369/71514)Updating files:  98% (70084/71514)Updating files:  99% (70799/71514)Updating files: 100% (71514/71514)Updating files: 100% (71514/71514), done.
+2025-09-07T17:10:17.374Z [INFO]: # Switching to commit: b1e0254fcbcb17f36fb0be3e682b2c4767e5fa47
+2025-09-07T17:10:17.668Z [INFO]: Note: switching to 'b1e0254fcbcb17f36fb0be3e682b2c4767e5fa47'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at b1e0254f Remove accidentally committed deployment logs artifacts
+2025-09-07T17:10:17.750Z [INFO]: Successfully cleaned up Git credentials
+2025-09-07T17:10:17.750Z [INFO]: # Checking for Git submodules at: /codebuild/output/src1415645507/src/sitedepot/.gitmodules
+2025-09-07T17:10:17.759Z [INFO]: # Retrieving environment cache...
+2025-09-07T17:10:17.794Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-09-07T17:10:17.794Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-09-07T17:10:17.794Z [INFO]: SSM params {"Path":"/amplify/d3jljx9im79str/main/","WithDecryption":true}
+2025-09-07T17:10:17.842Z [WARNING]: !Failed to set up process.env.secrets
+2025-09-07T17:10:18.495Z [INFO]: # No package override configuration found.
+2025-09-07T17:10:18.498Z [INFO]: # Retrieving cache...
+2025-09-07T17:10:30.189Z [INFO]: # Extracting cache...
+2025-09-07T17:10:43.806Z [INFO]: # Extraction completed
+2025-09-07T17:10:44.028Z [INFO]: # Retrieved cache
+2025-09-07T17:10:48.722Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-09-07T17:10:48.728Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: nvm use 20 || echo "Using default Node"
+2025-09-07T17:10:55.139Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-09-07T17:10:55.145Z [INFO]: # Executing command: npm ci
+2025-09-07T17:11:21.548Z [INFO]: added 424 packages, and audited 425 packages in 26s
+2025-09-07T17:11:21.553Z [INFO]: 59 packages are looking for funding
+                                 run `npm fund` for details
+                                 found 0 vulnerabilities
+2025-09-07T17:11:21.570Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+2025-09-07T17:11:21.570Z [INFO]: # Executing command: export NEXT_PUBLIC_APP_URL=https://huntaze.com
+                                 # Executing command: export NEXT_PUBLIC_API_URL=https://api.huntaze.com/api
+                                 # Executing command: npm run build
+2025-09-07T17:11:21.704Z [INFO]: > huntaze-site@1.0.0 build
+                                 > node scripts/validate-env.js && next build
+2025-09-07T17:11:22.521Z [INFO]: ▲ Next.js 14.2.32
+2025-09-07T17:11:22.522Z [INFO]: - Experiments (use with caution):
+                                 · optimizeCss
+2025-09-07T17:11:22.633Z [INFO]: Creating an optimized production build ...
+2025-09-07T17:11:45.899Z [WARNING]: Failed to compile.
+2025-09-07T17:11:45.906Z [WARNING]: ./app/page-simple.tsx
+                                    Error:
+                                    [31mx[0m Unexpected token `div`. Expected jsx identifier
+                                    ,-[[36;1;4m/codebuild/output/src1415645507/src/sitedepot/app/page-simple.tsx[0m:28:1]
+                                    [2m28[0m |   ];
+                                    [2m29[0m |
+                                    [2m30[0m |   return (
+                                    [2m31[0m |     <div className="min-h-screen bg-black text-white">
+                                    : [31;1m     ^^^[0m
+                                    [2m32[0m |       {/* Hero Section */}
+                                    [2m33[0m |       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+                                    [2m34[0m |         {/* Background gradient */}
+                                    `----
+                                    Caused by:
+                                    Syntax Error
+                                    Import trace for requested module:
+                                    ./app/page-simple.tsx
+                                    ./app/page.tsx
+                                    > Build failed because of webpack errors
+2025-09-07T17:11:45.993Z [ERROR]: !!! Build failed
+2025-09-07T17:11:45.993Z [INFO]: Please read more about Amplify Hosting's support for SSR frameworks to find if your build failure is related to an unsupported feature: https://docs.aws.amazon.com/amplify/latest/userguide/amplify-ssr-framework-support.html. You may also find this troubleshooting guide useful: https://docs.aws.amazon.com/amplify/latest/userguide/troubleshooting-ssr-deployment.html
+2025-09-07T17:11:45.994Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-09-07T17:11:45.994Z [INFO]: # Starting environment caching...
+2025-09-07T17:11:45.994Z [INFO]: # Environment caching completed
+
