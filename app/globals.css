@@ -1085,3 +1085,113 @@ p, span, h1, h2, h3, h4, h5, h6, li, a {
 .input-error {
   @apply border-red-500 dark:border-red-400 focus:ring-red-500;
 }
+
+/* Premium Glassmorphism Effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  border-radius: 1rem;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Premium Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #9333ea, #ec4899);
+  border-radius: 3px;
+}
+
+/* Gradient animations */
+@keyframes animate-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-text {
+  background-size: 200% 200%;
+  animation: animate-gradient 3s ease infinite;
+}
+
+/* Mobile & Touch Optimizations */
+.is-touch button,
+.is-touch a,
+.is-touch [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Disable hover on touch devices */
+@media (hover: none) {
+  .glass-card:hover {
+    transform: none;
+  }
+}
+
+/* Low-end device optimizations */
+.low-end-device .glass-card {
+  backdrop-filter: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.low-end-device [class*="animate-"] {
+  animation-duration: 0.2s !important;
+}
+
+/* Low battery mode */
+.low-battery * {
+  animation: none !important;
+  transition: opacity 0.2s ease !important;
+}
+
+/* Mobile-specific responsive adjustments */
+@media (max-width: 768px) {
+  .glass-card {
+    backdrop-filter: blur(10px);
+  }
+
+  /* Adjust font sizes for mobile */
+  .text-6xl { font-size: 2.5rem; }
+  .text-7xl { font-size: 3rem; }
+  .text-8xl { font-size: 3.5rem; }
+
+  /* Reduce padding on mobile */
+  .px-12 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .py-24 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  
+  /* Simplify animations on mobile */
+  .gradient-mesh-fallback {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    animation: none;
+  }
+}
