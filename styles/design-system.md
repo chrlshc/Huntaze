@@ -1,4 +1,4 @@
-# Design System Premium SaaS (Linear/Shopify/Stripe)
+# Premium SaaS Design System
 
 ## Couleurs Exactes
 
@@ -11,7 +11,7 @@
 - Border: #2A2A2A
 - Surface: #1A1A1A
 
-### Shopify Polaris
+### Influences
 - Background: #FFFFFF
 - Surface: #F6F6F7
 - Text Primary: #212529 (très foncé)
@@ -81,7 +81,7 @@
 - shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05)
 - shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1)
 
-### Shopify style
+### Brand style
 - Plus d'ombres mais douces
 - shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)
 - shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.07), 0 10px 15px rgba(0, 0, 0, 0.1)

@@ -1,6 +1,6 @@
 # Structure Complète Site SaaS Premium
 
-## Pages Principales (comme Shopify/Linear/Stripe)
+## Pages Principales (inspirées des meilleurs SaaS)
 
 ### 1. PRODUCT
 - /features ✓ - Toutes les fonctionnalités

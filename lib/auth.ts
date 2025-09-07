@@ -11,3 +11,8 @@ export const getOAuthUrl = (provider: 'google') => {
       throw new Error('Invalid provider');
   }
 };
+
+// Stub getServerSession function
+export async function getServerSession(): Promise<{ user?: { id: string; email: string } } | null> {
+  return null;
+}
