@@ -59,3 +59,7 @@ export const Slider = ({ value = [50], onValueChange, className = "", ...props }
     {...props} 
   />
 )
+
+export const Input = ({ className = "", ...props }: any) => (
+  <input className={`border rounded px-3 py-2 ${className}`} {...props} />
+)

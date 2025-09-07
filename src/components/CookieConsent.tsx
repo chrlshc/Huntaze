@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Cookie, Shield, BarChart3, X } from 'lucide-react';
-import { analytics } from '@/lib/analytics';
 
 interface CookiePreferences {
   necessary: boolean;
