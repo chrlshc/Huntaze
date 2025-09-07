@@ -144,6 +144,24 @@
   .premium-card {
     @apply bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 hover:shadow-premium-lg;
   }
+
+  /* Debug: disable overlays and glass when data-no-overlay is set (does not affect default UI) */
+  [data-no-overlay="true"] *::before,
+  [data-no-overlay="true"] *::after {
+    pointer-events: none !important;
+    opacity: 1 !important;
+    background: transparent !important;
+    filter: none !important;
+  }
+  [data-no-overlay="true"] .glass-card,
+  [data-no-overlay="true"] .glass-effect,
+  [data-no-overlay="true"] .mobile-menu-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  [data-no-overlay="true"] .mobile-menu-overlay { display: none !important; }
   
   /* Gradient text */
   .gradient-text {
@@ -164,6 +182,16 @@
   
   .btn-outline-premium {
     @apply px-8 py-4 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200;
+  }
+}
+
+/* Global reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

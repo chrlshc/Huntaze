@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="#0b0b0d"/>
+  <rect x="60" y="60" width="1080" height="200" rx="16" fill="#15151a"/>
+  <rect x="60" y="300" width="520" height="440" rx="16" fill="#15151a"/>
+  <rect x="620" y="300" width="520" height="440" rx="16" fill="#15151a"/>
+  <rect x="100" y="100" width="240" height="24" rx="6" fill="url(#g)"/>
+  <rect x="100" y="360" width="200" height="20" rx="4" fill="#262631"/>
+  <rect x="100" y="390" width="320" height="14" rx="4" fill="#1f1f2a"/>
+  <rect x="100" y="420" width="280" height="14" rx="4" fill="#1f1f2a"/>
+  <rect x="660" y="360" width="200" height="20" rx="4" fill="#262631"/>
+  <rect x="660" y="390" width="360" height="260" rx="8" fill="#1a1a24"/>
+  <polyline points="680,620 720,560 780,590 840,520 900,540 960,500 1000,530" fill="none" stroke="url(#g)" stroke-width="6"/>
+</svg>

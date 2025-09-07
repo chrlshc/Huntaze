@@ -1,0 +1,76 @@
+2025-09-07T20:50:07.372Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-09-07T20:50:07.975Z [INFO]: # Cloning repository: git@github.com:chrlshc/sitedepot.git
+2025-09-07T20:50:17.286Z [INFO]: 
+2025-09-07T20:50:17.377Z [INFO]: Cloning into 'sitedepot'...
+                                 Updating files:  28% (20397/71521)Updating files:  29% (20742/71521)Updating files:  30% (21457/71521)Updating files:  31% (22172/71521)Updating files:  32% (22887/71521)Updating files:  33% (23602/71521)Updating files:  34% (24318/71521)Updating files:  35% (25033/71521)Updating files:  36% (25748/71521)Updating files:  37% (26463/71521)Updating files:  38% (27178/71521)Updating files:  39% (27894/71521)Updating files:  40% (28609/71521)Updating files:  41% (29324/71521)Updating files:  42% (30039/71521)Updating files:  43% (30755/71521)Updating files:  44% (31470/71521)Updating files:  45% (32185/71521)Updating files:  46% (32900/71521)Updating files:  47% (33615/71521)Updating files:  47% (33879/71521)Updating files:  48% (34331/71521)Updating files:  49% (35046/71521)Updating files:  50% (35761/71521)Updating files:  51% (36476/71521)Updating files:  52% (37191/71521)Updating files:  53% (37907/71521)Updating files:  54% (38622/71521)Updating files:  55% (39337/71521)Updating files:  56% (40052/71521)Updating files:  57% (40767/71521)Updating files:  58% (41483/71521)Updating files:  59% (42198/71521)Updating files:  60% (42913/71521)Updating files:  61% (43628/71521)Updating files:  62% (44344/71521)Updating files:  63% (45059/71521)Updating files:  64% (45774/71521)Updating files:  65% (46489/71521)Updating files:  66% (47204/71521)Updating files:  67% (47920/71521)Updating files:  68% (48635/71521)Updating files:  69% (49350/71521)Updating files:  69% (49663/71521)Updating files:  70% (50065/71521)Updating files:  71% (50780/71521)Updating files:  72% (51496/71521)Updating files:  73% (52211/71521)Updating files:  74% (52926/71521)Updating files:  75% (53641/71521)Updating files:  76% (54356/71521)Updating files:  77% (55072/71521)Updating files:  78% (55787/71521)Updating files:  79% (56502/71521)Updating files:  80% (57217/71521)Updating files:  81% (57933/71521)Updating files:  82% (58648/71521)Updating files:  83% (59363/71521)Updating files:  84% (60078/71521)Updating files:  85% (60793/71521)Updating files:  86% (61509/71521)Updating files:  87% (62224/71521)Updating files:  88% (62939/71521)Updating files:  89% (63654/71521)Updating files:  90% (64369/71521)Updating files:  91% (65085/71521)Updating files:  92% (65800/71521)Updating files:  93% (66515/71521)Updating files:  93% (66864/71521)Updating files:  94% (67230/71521)Updating files:  95% (67945/71521)Updating files:  96% (68661/71521)Updating files:  97% (69376/71521)Updating files:  98% (70091/71521)Updating files:  99% (70806/71521)Updating files: 100% (71521/71521)Updating files: 100% (71521/71521), done.
+2025-09-07T20:50:17.378Z [INFO]: # Switching to commit: d9a99cfcf3ac93c42ed43ab00d17f8b4d9cedec5
+2025-09-07T20:50:17.653Z [INFO]: Note: switching to 'd9a99cfcf3ac93c42ed43ab00d17f8b4d9cedec5'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at d9a99cfc fix(build): import React/useState in MetricsCountersEN to satisfy Next typecheck
+2025-09-07T20:50:17.695Z [INFO]: Successfully cleaned up Git credentials
+2025-09-07T20:50:17.696Z [INFO]: # Checking for Git submodules at: /codebuild/output/src2874141227/src/sitedepot/.gitmodules
+2025-09-07T20:50:17.705Z [INFO]: # Retrieving environment cache...
+2025-09-07T20:50:17.739Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-09-07T20:50:17.739Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-09-07T20:50:17.739Z [INFO]: SSM params {"Path":"/amplify/d3jljx9im79str/main/","WithDecryption":true}
+2025-09-07T20:50:17.784Z [WARNING]: !Failed to set up process.env.secrets
+2025-09-07T20:50:18.547Z [INFO]: # No package override configuration found.
+2025-09-07T20:50:18.550Z [INFO]: # Retrieving cache...
+2025-09-07T20:50:30.833Z [INFO]: # Extracting cache...
+2025-09-07T20:50:41.132Z [INFO]: # Extraction completed
+2025-09-07T20:50:41.348Z [INFO]: # Retrieved cache
+2025-09-07T20:50:45.946Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-09-07T20:50:45.951Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: nvm use 20 || echo "Using default Node"
+2025-09-07T20:50:53.018Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-09-07T20:50:53.022Z [INFO]: # Executing command: npm ci
+2025-09-07T20:51:18.035Z [INFO]: added 440 packages, and audited 441 packages in 25s
+2025-09-07T20:51:18.039Z [INFO]: 69 packages are looking for funding
+                                 run `npm fund` for details
+                                 found 0 vulnerabilities
+2025-09-07T20:51:18.061Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+2025-09-07T20:51:18.061Z [INFO]: # Executing command: export NEXT_PUBLIC_APP_URL=https://huntaze.com
+                                 # Executing command: export NEXT_PUBLIC_API_URL=https://api.huntaze.com/api
+                                 # Executing command: export NEXT_DISABLE_ESLINT=1
+                                 # Executing command: export NEXT_PRIVATE_SKIP_TYPECHECK=true
+                                 # Executing command: export NEXT_TELEMETRY_DISABLED=1
+                                 # Executing command: npm run build
+2025-09-07T20:51:18.171Z [INFO]: > huntaze-site@1.0.0 build
+                                 > node scripts/validate-env.js && next build
+2025-09-07T20:51:18.821Z [INFO]: ▲ Next.js 14.2.32
+2025-09-07T20:51:18.822Z [INFO]: - Experiments (use with caution):
+2025-09-07T20:51:18.822Z [INFO]: · optimizeCss
+2025-09-07T20:51:18.846Z [INFO]: Creating an optimized production build ...
+2025-09-07T20:51:49.539Z [INFO]: ✓ Compiled successfully
+2025-09-07T20:51:49.543Z [INFO]: Linting and checking validity of types ...
+2025-09-07T20:52:20.083Z [WARNING]: Failed to compile.
+                                    ./components/sections/fr/MetricsCounters.tsx:48:29
+                                    Type error: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.
+                                    [0m [90m 46 |[39m[0m
+                                    [0m [90m 47 |[39m [36mfunction[39m [33mAnimatedNumber[39m({ spring[33m,[39m suffix[33m,[39m integer }[33m:[39m { spring[33m:[39m any[33m;[39m suffix[33m:[39m string[33m;[39m integer[33m:[39m boolean }) {[0m
+                                    [0m[31m[1m>[22m[39m[90m 48 |[39m   [36mconst[39m [value[33m,[39m setValue] [33m=[39m [33mReact[39m[33m.[39museState([35m0[39m)[33m;[39m[0m
+                                    [0m [90m    |[39m                             [31m[1m^[22m[39m[0m
+                                    [0m [90m 49 |[39m   useEffect(() [33m=>[39m {[0m
+                                    [0m [90m 50 |[39m     [36mreturn[39m spring[33m.[39mon([32m'change'[39m[33m,[39m (v[33m:[39m number) [33m=>[39m setValue(v))[33m;[39m[0m
+                                    [0m [90m 51 |[39m   }[33m,[39m [spring])[33m;[39m[0m
+2025-09-07T20:52:20.134Z [WARNING]: Next.js build worker exited with code: 1 and signal: null
+2025-09-07T20:52:20.173Z [ERROR]: !!! Build failed
+2025-09-07T20:52:20.174Z [INFO]: Please read more about Amplify Hosting's support for SSR frameworks to find if your build failure is related to an unsupported feature: https://docs.aws.amazon.com/amplify/latest/userguide/amplify-ssr-framework-support.html. You may also find this troubleshooting guide useful: https://docs.aws.amazon.com/amplify/latest/userguide/troubleshooting-ssr-deployment.html
+2025-09-07T20:52:20.174Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-09-07T20:52:20.174Z [INFO]: # Starting environment caching...
+2025-09-07T20:52:20.174Z [INFO]: # Environment caching completed
+
