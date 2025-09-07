@@ -8,7 +8,7 @@ import {
   MessageSquare, BarChart3, Calendar, Shield,
   DollarSign, Users, Zap, BookOpen, FileText,
   HeadphonesIcon, GraduationCap, Building,
-  User, LogOut, Settings
+  User, LogOut, Settings, Globe
 } from 'lucide-react'
 // import { ThemeToggle } from './theme-toggle'
 import { CommandPalette } from './command-palette'
