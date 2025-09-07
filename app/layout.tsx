@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from 'next/headers';
 import "./globals.css";
 import "./mobile.css";
 import "./animations.css";
@@ -14,9 +15,9 @@ import { FloatingAssistant } from "@/src/components/floating-assistant";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
-  title: "Huntaze - Double Your Revenue, Half the Work",
-  description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI automation.",
-  keywords: "OnlyFans automation, million dollar creator, AI empire builder, top 1% OnlyFans, creator success platform, passive income automation",
+  title: "Huntaze - Doublez vos revenus, deux fois plus vite",
+  description: "Rejoignez 5 000+ créateurs qui ont automatisé leur business. Gagnez 20+ heures par semaine grâce à l'IA.",
+  keywords: "Automatisation OnlyFans, créateur 1%, IA, plateforme créateurs, croissance revenus, productivité, messagerie unifiée",
   icons: {
     icon: [
       { url: "/huntaze-favicon.png", type: "image/png" },
@@ -25,15 +26,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Huntaze - Double Your Revenue, Half the Work",
-    description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI automation.",
+    title: "Huntaze - Doublez vos revenus, deux fois plus vite",
+    description: "Rejoignez 5 000+ créateurs qui ont automatisé leur business. Gagnez 20+ heures par semaine grâce à l'IA.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Huntaze - Double Your Revenue, Half the Work",
-    description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI automation.",
+    title: "Huntaze - Doublez vos revenus, deux fois plus vite",
+    description: "Rejoignez 5 000+ créateurs qui ont automatisé leur business. Gagnez 20+ heures par semaine grâce à l'IA.",
     images: ["/twitter-image.png"],
   },
 };
@@ -44,8 +45,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const minimal = (process.env.NEXT_PUBLIC_MINIMAL_UI || '').toLowerCase() === 'true';
+  const cookieStore = cookies();
+  const locale = cookieStore.get('locale')?.value || 'fr';
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link rel="manifest" href="/manifest.json" />
