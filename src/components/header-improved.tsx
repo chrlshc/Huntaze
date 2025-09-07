@@ -467,6 +467,17 @@ export default function HeaderImproved() {
               </div>
             ) : (
               <>
+                {/* Language toggle */}
+                <div className="flex items-center gap-2 mr-2">
+                  <button
+                    onClick={() => { document.cookie = 'locale=fr; path=/; max-age=31536000'; document.documentElement.lang = 'fr'; window.location.reload(); }}
+                    className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >FR</button>
+                  <button
+                    onClick={() => { document.cookie = 'locale=en; path=/; max-age=31536000'; document.documentElement.lang = 'en'; window.location.reload(); }}
+                    className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >EN</button>
+                </div>
                 <Link 
                   href="/auth" 
                   className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
@@ -508,6 +519,17 @@ export default function HeaderImproved() {
               className="lg:hidden mt-4 pb-4"
             >
               <div className="space-y-4">
+                {/* Language toggle (mobile) */}
+                <div className="flex items-center gap-2 px-2">
+                  <button
+                    onClick={() => { document.cookie = 'locale=fr; path=/; max-age=31536000'; document.documentElement.lang = 'fr'; window.location.reload(); }}
+                    className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >FR</button>
+                  <button
+                    onClick={() => { document.cookie = 'locale=en; path=/; max-age=31536000'; document.documentElement.lang = 'en'; window.location.reload(); }}
+                    className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >EN</button>
+                </div>
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2">
                     Solutions
