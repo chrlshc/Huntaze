@@ -72,6 +72,60 @@ const navigation = {
     title: 'Resources',
     items: [
       {
+        name: 'Overview',
+        description: 'Jump to hero',
+        href: '/#top',
+        icon: Zap
+      },
+      {
+        name: 'Platform',
+        description: 'Unified platform',
+        href: '/#platform',
+        icon: BarChart3
+      },
+      {
+        name: 'Sell',
+        description: 'Sell everywhere',
+        href: '/#sell',
+        icon: DollarSign
+      },
+      {
+        name: 'Customers',
+        description: 'Find your audience',
+        href: '/#customers',
+        icon: Users
+      },
+      {
+        name: 'Global',
+        description: 'Grow around the world',
+        href: '/#global',
+        icon: Globe
+      },
+      {
+        name: 'Manage',
+        description: 'Run your business',
+        href: '/#manage',
+        icon: Settings
+      },
+      {
+        name: 'Performance',
+        description: 'Performance & innovation',
+        href: '/#performance',
+        icon: Shield
+      },
+      {
+        name: 'Support',
+        description: 'Support & financing',
+        href: '/#support',
+        icon: HeadphonesIcon
+      },
+      {
+        name: 'Get Started',
+        description: 'Quick start',
+        href: '/#quickstart',
+        icon: ArrowRight
+      },
+      {
         name: 'How It Works',
         description: 'Step-by-step process',
         href: '/how-it-works',
