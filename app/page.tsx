@@ -1,13 +1,24 @@
-// Force new deployment v3 - Premium homepage with animations
-// Deploy timestamp: 2025-09-07 13:45 UTC
-// TEST: This should show the premium page with 3D animations
-import HomePagePremium from './page-premium';
+// Force new deployment v4 - Premium homepage with animations
+// Render premium page purely on client to avoid SSR/hydration errors
+import dynamic from 'next/dynamic';
+
+export const dynamic = 'force-dynamic';
+
+const HomePagePremium = dynamic(() => import('./page-premium'), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
+        <p className="mt-4 text-gray-300">Chargement de l’expérience premium…</p>
+      </div>
+    </div>
+  ),
+});
 
 export default function HomePage() {
-  console.log('🚀 Loading PREMIUM homepage with animations');
   return (
     <>
-      {/* VISIBLE TEST BANNER - Remove after confirming deployment */}
       <div style={{ background: 'red', color: 'white', padding: '10px', textAlign: 'center', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}>
         🚀 PREMIUM VERSION DEPLOYED - {new Date().toISOString()}
       </div>
