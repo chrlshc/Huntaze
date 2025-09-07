@@ -1,7 +1,5 @@
-'use client';
-
-import PremiumHomePage from './page-premium';
+import SimpleHomePage from './page-simple';
 
 export default function HomePage() {
-  return <PremiumHomePage />;
+  return <SimpleHomePage />;
 }
