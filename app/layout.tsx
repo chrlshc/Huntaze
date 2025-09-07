@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from 'next/headers';
 import "./globals.css";
 import "./mobile.css";
 import "./animations.css";
@@ -15,9 +14,9 @@ import { FloatingAssistant } from "@/src/components/floating-assistant";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
-  title: "Huntaze - Doublez vos revenus, deux fois plus vite",
-  description: "Rejoignez 5 000+ créateurs qui ont automatisé leur business. Gagnez 20+ heures par semaine grâce à l'IA.",
-  keywords: "Automatisation OnlyFans, créateur 1%, IA, plateforme créateurs, croissance revenus, productivité, messagerie unifiée",
+  title: "Huntaze - Double Your Revenue, Half the Work",
+  description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI.",
+  keywords: "OnlyFans automation, creator growth, AI assistant, unified inbox, revenue analytics, productivity",
   icons: {
     icon: [
       { url: "/huntaze-favicon.png", type: "image/png" },
@@ -26,15 +25,15 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Huntaze - Doublez vos revenus, deux fois plus vite",
-    description: "Rejoignez 5 000+ créateurs qui ont automatisé leur business. Gagnez 20+ heures par semaine grâce à l'IA.",
+    title: "Huntaze - Double Your Revenue, Half the Work",
+    description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI.",
     images: ["/og-image.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Huntaze - Doublez vos revenus, deux fois plus vite",
-    description: "Rejoignez 5 000+ créateurs qui ont automatisé leur business. Gagnez 20+ heures par semaine grâce à l'IA.",
+    title: "Huntaze - Double Your Revenue, Half the Work",
+    description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI.",
     images: ["/twitter-image.png"],
   },
 };
@@ -45,10 +44,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const minimal = (process.env.NEXT_PUBLIC_MINIMAL_UI || '').toLowerCase() === 'true';
-  const cookieStore = cookies();
-  const locale = cookieStore.get('locale')?.value || 'fr';
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link rel="manifest" href="/manifest.json" />
