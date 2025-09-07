@@ -22,13 +22,6 @@ const HomePagePremium = nextDynamic(
 });
 
 export default function HomePage() {
-  return (
-    <>
-      <div style={{ background: 'red', color: 'white', padding: '10px', textAlign: 'center', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}>
-        🚀 PREMIUM VERSION DEPLOYED - {new Date().toISOString()}
-      </div>
-      <HomePagePremium />
-    </>
-  );
+  return <HomePagePremium />;
 }
 // Using premium homepage with all animations
