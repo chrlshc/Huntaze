@@ -1,49 +1,5 @@
+// Kept for local DX, but Next on Amplify will use next.config.mjs.
+// Intentionally minimal to avoid conflicts; see next.config.mjs for the real config.
 import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
-  // Core
-  reactStrictMode: true,
-  swcMinify: true,
-  compress: true,
-  output: 'standalone',
-
-  // Let Amplify set edge/static headers; avoid duplication here
-  async headers() {
-    return []
-  },
-
-  // Minimal rewrites (no API proxy — keep Next API routes intact)
-  async rewrites() {
-    return [
-      { source: '/terms', destination: '/terms-of-service' },
-      { source: '/privacy', destination: '/privacy-policy' },
-    ]
-  },
-
-  // Image optimization
-  images: {
-    domains: ['api.dicebear.com'],
-    formats: ['image/avif', 'image/webp'],
-    unoptimized: false,
-  },
-
-  // CSS and build perf
-  experimental: {
-    optimizeCss: true,
-  },
-
-  // Client bundle fallbacks
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      }
-    }
-    return config
-  },
-}
-
+const nextConfig: NextConfig = {}
 export default nextConfig
