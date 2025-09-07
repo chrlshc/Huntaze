@@ -8,7 +8,7 @@ import { ArrowRight, Check, Zap, TrendingUp, Shield, DollarSign, Users, Star } f
 
 // Import premium animation components
 import AnimatedHero from '@/components/animations/AnimatedHero';
-import PhoneMockup3D from '@/components/animations/PhoneMockup3D';
+import PhoneMockup3DWrapper from '@/components/animations/PhoneMockup3DWrapper';
 import LiveDashboard from '@/components/animations/LiveDashboard';
 import { ScrollReveal, ScrollParallax, StaggerChildren, ScrollProgressBar } from '@/components/animations/ScrollAnimations';
 
@@ -38,7 +38,7 @@ export default function HomePagePremium() {
       
       {/* 3D Phone Mockup showcase */}
       <ScrollParallax offset={100}>
-        <PhoneMockup3D />
+        <PhoneMockup3DWrapper scrollProgress={0} />
       </ScrollParallax>
       
       {/* Live Dashboard Demo */}
