@@ -35,10 +35,10 @@ const AnimatedHero: React.FC = () => {
   }, [revenueSpring]);
 
   const stats: Stat[] = [
-    { value: '10,847', label: 'Créateurs actifs', icon: <Users className="w-4 h-4" />, color: 'from-purple-400 to-pink-400' },
-    { value: '2.3M€', label: 'Ce mois', icon: <Zap className="w-4 h-4" />, color: 'from-green-400 to-emerald-400' },
-    { value: '500+', label: 'Messages/heure', icon: <Sparkles className="w-4 h-4" />, color: 'from-blue-400 to-cyan-400' },
-    { value: '95%', label: 'Rétention', icon: <Shield className="w-4 h-4" />, color: 'from-orange-400 to-red-400' }
+    { value: '10,847', label: 'Active Creators', icon: <Users className="w-4 h-4" />, color: 'from-purple-400 to-pink-400' },
+    { value: '$2.3M', label: 'This month', icon: <Zap className="w-4 h-4" />, color: 'from-green-400 to-emerald-400' },
+    { value: '500+', label: 'Messages/hour', icon: <Sparkles className="w-4 h-4" />, color: 'from-blue-400 to-cyan-400' },
+    { value: '95%', label: 'Retention', icon: <Shield className="w-4 h-4" />, color: 'from-orange-400 to-red-400' }
   ];
 
   const containerVariants = {
@@ -113,7 +113,7 @@ const AnimatedHero: React.FC = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8"
           >
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-300">10,847 créateurs gagnent 2.3M€ ce mois</span>
+            <span className="text-sm text-gray-300">10,847 creators earning $2.3M this month</span>
           </motion.div>
 
           {/* Main title */}
@@ -157,7 +157,7 @@ const AnimatedHero: React.FC = () => {
               >
                 %
               </motion.span>
-              <span className="text-2xl ml-3 text-gray-300">de revenus en plus</span>
+              <span className="text-2xl ml-3 text-gray-300">more revenue</span>
             </motion.div>
           </motion.div>
 
@@ -167,8 +167,8 @@ const AnimatedHero: React.FC = () => {
             className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto"
             style={{ y: y2 }}
           >
-            L'IA qui automatise vos conversations, augmente vos ventes 
-            et vous fait gagner 20 heures par semaine
+            AI that automates your conversations, boosts sales 
+            and saves you 20 hours per week
           </motion.p>
 
           {/* Stats grid */}
@@ -214,7 +214,7 @@ const AnimatedHero: React.FC = () => {
               onClick={() => window.location.href = '/demo'}
               className="group"
             >
-              <span>Démarrer l'essai gratuit</span>
+              <span>Start free trial</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </MagneticButton>
             
@@ -224,7 +224,7 @@ const AnimatedHero: React.FC = () => {
               onClick={() => window.location.href = '/features'}
             >
               <Sparkles className="w-5 h-5" />
-              <span>Voir la démo live</span>
+              <span>See live demo</span>
             </MagneticButton>
           </motion.div>
 
@@ -263,7 +263,7 @@ const AnimatedHero: React.FC = () => {
           className="flex flex-col items-center gap-2 cursor-pointer"
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
-          <span className="text-xs text-gray-400">Découvrir</span>
+          <span className="text-xs text-gray-400">Explore</span>
           <div className="w-6 h-10 border-2 border-white/20 rounded-full p-1">
             <motion.div
               className="w-1 h-3 bg-white/50 rounded-full mx-auto"
