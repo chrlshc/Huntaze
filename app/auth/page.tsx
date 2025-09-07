@@ -138,7 +138,7 @@ export default function AuthPage() {
             );
           })()}
 
-          {/* Shopify-like email-first flow */}
+          {/* Email-first flow (clean, minimal) */}
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email address</label>

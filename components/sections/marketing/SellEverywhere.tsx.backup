@@ -1,0 +1,250 @@
+"use client";
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Globe, 
+  MessageSquare, 
+  Calendar,
+  DollarSign,
+  Link as LinkIcon,
+  Zap
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+export function SellEverywhere() {
+  const [activeChannel, setActiveChannel] = useState(0);
+
+  const channels = [
+    {
+      name: 'Direct Messages',
+      icon: MessageSquare,
+      description: 'Convert conversations into revenue across all platforms',
+      stats: {
+        conversion: '8x higher conversion',
+        revenue: '$500 average order',
+        time: '2 min response time'
+      },
+      features: [
+        'Unified inbox for all platforms',
+        'AI-suggested responses',
+        'Automated PPV delivery',
+        'Payment processing built-in'
+      ]
+    },
+    {
+      name: 'Content Scheduler',
+      icon: Calendar,
+      description: 'Post everywhere at once with platform-optimized content',
+      stats: {
+        platforms: '15+ platforms',
+        time: '10 hours saved/week',
+        engagement: '3x engagement boost'
+      },
+      features: [
+        'Cross-platform scheduling',
+        'Best time to post AI',
+        'Content recycling engine',
+        'Performance analytics'
+      ]
+    },
+    {
+      name: 'Live Streaming',
+      icon: Zap,
+      description: 'Stream to multiple platforms and monetize in real-time',
+      stats: {
+        viewers: 'Unlimited viewers',
+        platforms: 'Stream everywhere',
+        revenue: '$1000+ per stream avg'
+      },
+      features: [
+        'Multi-platform streaming',
+        'Real-time tip tracking',
+        'Interactive games & polls',
+        'Automatic clip creation'
+      ]
+    },
+    {
+      name: 'Custom Links',
+      icon: LinkIcon,
+      description: 'One link to rule them all - your entire business in one place',
+      stats: {
+        conversion: '45% click-to-sale',
+        loading: '0.3s load time',
+        customization: 'Fully branded'
+      },
+      features: [
+        'Custom domain support',
+        'Smart link routing',
+        'Built-in shop & tips',
+        'Analytics dashboard'
+      ]
+    }
+  ];
+
+  return (
+    <section className="py-24 lg:py-32 bg-white dark:bg-gray-950">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8">
+            <Globe className="w-4 h-4" />
+            <span>Reach fans on 15+ platforms</span>
+          </div>
+
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            Sell here, there, and{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
+              everywhere
+            </span>
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
+            Your fans are scattered across platforms. Now you can reach them all 
+            without the chaos of managing multiple accounts.
+          </p>
+        </motion.div>
+
+        <div className="max-w-6xl mx-auto">
+          {/* Channel Tabs */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {channels.map((channel, index) => (
+              <motion.button
+                key={index}
+                onClick={() => setActiveChannel(index)}
+                className={`flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                  activeChannel === index
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <channel.icon className="w-5 h-5" />
+                {channel.name}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Channel Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeChannel}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="grid lg:grid-cols-2 gap-12 items-center"
+            >
+              {/* Left: Features */}
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                  {channels[activeChannel].description}
+                </h3>
+
+                <div className="grid sm:grid-cols-3 gap-6 mb-8">
+                  {Object.entries(channels[activeChannel].stats).map(([key, value], index) => (
+                    <motion.div
+                      key={key}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="text-center"
+                    >
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                        {value}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                        {key.replace('_', ' ')}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {channels[activeChannel].features.map((feature, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-start gap-3"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <DollarSign className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {feature}
+                      </span>
+                    </motion.li>
+                  ))}
+                </ul>
+
+                <Link href="/demo">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    See it in action
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Right: Visual */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="relative"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-3xl blur-3xl opacity-50" />
+                
+                <div className="relative bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-700">
+                  <div className="aspect-square bg-white dark:bg-gray-950 rounded-2xl flex items-center justify-center">
+                    <channels[activeChannel].icon className="w-32 h-32 text-blue-600 dark:text-blue-400" />
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Platform Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mt-24 text-center"
+        >
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-8">
+            Connect all your platforms in one click
+          </h3>
+          
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            {['OnlyFans', 'Fansly', 'Instagram', 'TikTok', 'X/Twitter', 'Telegram', 'Discord', 'Snapchat', 'YouTube', 'Twitch', 'Patreon', 'CashApp', 'Venmo', 'PayPal', 'Custom'].map((platform, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.03 }}
+                whileHover={{ scale: 1.05 }}
+                className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 cursor-pointer"
+              >
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {platform}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
