@@ -1,39 +1,40 @@
 /* ====================================
-   SUPPRESSION DE L'OVERLAY SOMBRE
-   Supprime tous les effets d'overlay au survol
+   SUPPRESSION DE L'OVERLAY SOMBRE (OPT-IN)
+   Appliqué uniquement si <body data-no-overlay="true">
    ==================================== */
 
-/* Désactive tous les overlays avec pseudo-éléments */
-* {
-  &::before,
-  &::after {
-    pointer-events: none !important;
-    opacity: 1 !important;
-    background: transparent !important;
-    filter: none !important;
-  }
+/* Désactive les overlays et filtres SEULEMENT quand data-no-overlay est actif */
+body[data-no-overlay="true"] *::before,
+body[data-no-overlay="true"] *::after {
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background: transparent !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Désactivation spécifique des overlays communs */
-.overlay,
-[class*="overlay"],
-[class*="filter"],
-.dark-filter,
-.hover-effect,
-[class*="bg-black/"],
-[class*="bg-dark/"],
-[class*="opacity-0"][class*="hover:opacity"] {
+body[data-no-overlay="true"] .overlay,
+body[data-no-overlay="true"] [class*="overlay"],
+body[data-no-overlay="true"] [class*="filter"],
+body[data-no-overlay="true"] .dark-filter,
+body[data-no-overlay="true"] .hover-effect,
+body[data-no-overlay="true"] [class*="bg-black/"],
+body[data-no-overlay="true"] [class*="bg-dark/"],
+body[data-no-overlay="true"] [class*="opacity-0"][class*="hover:opacity"] {
   display: none !important;
   pointer-events: none !important;
   opacity: 0 !important;
 }
 
 /* Supprime les effets de flou au hover */
-[class*="blur"][class*="hover"],
-[class*="hover"][class*="blur"],
-.blur-xl,
-.blur-2xl,
-.blur-3xl {
+body[data-no-overlay="true"] [class*="blur"][class*="hover"],
+body[data-no-overlay="true"] [class*="hover"][class*="blur"],
+body[data-no-overlay="true"] .blur-xl,
+body[data-no-overlay="true"] .blur-2xl,
+body[data-no-overlay="true"] .blur-3xl {
   filter: none !important;
   -webkit-filter: none !important;
   backdrop-filter: none !important;
@@ -41,42 +42,41 @@
 }
 
 /* Fix pour les effets d'overlay créés avec des divs absolues */
-.absolute.inset-0[class*="hover:opacity"],
-.absolute.inset-0[class*="group-hover:opacity"] {
+body[data-no-overlay="true"] .absolute.inset-0[class*="hover:opacity"],
+body[data-no-overlay="true"] .absolute.inset-0[class*="group-hover:opacity"] {
   display: none !important;
 }
 
-/* Désactive les transitions d'opacité sur les overlays */
-[class*="transition-opacity"][class*="hover"],
-[class*="transition-opacity"][class*="group-hover"] {
+/* Désactive les transitions d'opacité sur les overlays ciblés */
+body[data-no-overlay="true"] [class*="transition-opacity"][class*="hover"],
+body[data-no-overlay="true"] [class*="transition-opacity"][class*="group-hover"] {
   transition: none !important;
-  opacity: 0 !important;
 }
 
 /* Fix mobile spécifique */
 @media (max-width: 768px) {
-  body::before,
-  body::after,
-  main::before,
-  main::after {
+  body[data-no-overlay="true"]::before,
+  body[data-no-overlay="true"]::after,
+  body[data-no-overlay="true"] main::before,
+  body[data-no-overlay="true"] main::after {
     display: none !important;
   }
-  
-  /* Désactive les effets de hover sur mobile */
-  * {
+
+  /* Désactive certains effets de hover sur mobile */
+  body[data-no-overlay="true"] * {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
   }
 }
 
-/* Reset des filtres sur le body et containers principaux */
-body, 
-main, 
-.container, 
-.wrapper,
-[class*="section"],
-[class*="hero"],
-[class*="feature"] {
+/* Reset des filtres sur containers principaux (scopé) */
+body[data-no-overlay="true"],
+body[data-no-overlay="true"] main,
+body[data-no-overlay="true"] .container,
+body[data-no-overlay="true"] .wrapper,
+body[data-no-overlay="true"] [class*="section"],
+body[data-no-overlay="true"] [class*="hero"],
+body[data-no-overlay="true"] [class*="feature"] {
   filter: none !important;
   -webkit-filter: none !important;
   backdrop-filter: none !important;
@@ -84,41 +84,31 @@ main,
 }
 
 /* Préserve les hover effects légitimes (sans assombrissement) */
-[class*="hover:scale"],
-[class*="hover:translate"],
-[class*="hover:shadow"],
-[class*="hover:border"] {
+body[data-no-overlay="true"] [class*="hover:scale"],
+body[data-no-overlay="true"] [class*="hover:translate"],
+body[data-no-overlay="true"] [class*="hover:shadow"],
+body[data-no-overlay="true"] [class*="hover:border"] {
   /* Ces effets sont autorisés */
 }
 
-/* Force la suppression des background sombres au hover */
-*:hover {
+/* Force la suppression des background sombres au hover (scopé) */
+body[data-no-overlay="true"] *:hover {
   background-color: inherit !important;
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* Suppression complète de TOUS les filtres */
-*, 
-*::before, 
-*::after {
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  -webkit-filter: none !important;
-}
-
-/* Suppression des effets au hover, focus et active */
-*:hover,
-*:hover::before,
-*:hover::after,
-*:focus,
-*:focus::before,
-*:focus::after,
-*:active,
-*:active::before,
-*:active::after {
+/* Suppression des effets au hover/focus/active (scopé) */
+body[data-no-overlay="true"] *:hover,
+body[data-no-overlay="true"] *:hover::before,
+body[data-no-overlay="true"] *:hover::after,
+body[data-no-overlay="true"] *:focus,
+body[data-no-overlay="true"] *:focus::before,
+body[data-no-overlay="true"] *:focus::after,
+body[data-no-overlay="true"] *:active,
+body[data-no-overlay="true"] *:active::before,
+body[data-no-overlay="true"] *:active::after {
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -126,46 +116,46 @@ main,
   background-color: transparent !important;
 }
 
-/* Supprime complètement les pseudo-éléments qui créent des overlays */
-[class*="overlay"]::before,
-[class*="overlay"]::after,
-[class*="hover"]::before,
-[class*="hover"]::after,
-[class*="group-hover"]::before,
-[class*="group-hover"]::after {
+/* Supprime les pseudo-éléments d'overlays (scopé) */
+body[data-no-overlay="true"] [class*="overlay"]::before,
+body[data-no-overlay="true"] [class*="overlay"]::after,
+body[data-no-overlay="true"] [class*="hover"]::before,
+body[data-no-overlay="true"] [class*="hover"]::after,
+body[data-no-overlay="true"] [class*="group-hover"]::before,
+body[data-no-overlay="true"] [class*="group-hover"]::after {
   display: none !important;
   content: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
 }
 
-/* Suppression des classes Tailwind problématiques */
-[class*="hover:bg-black"],
-[class*="hover:bg-gray-900"],
-[class*="hover:bg-opacity"],
-[class*="hover:brightness"],
-[class*="hover:contrast"],
-[class*="hover:grayscale"],
-[class*="hover:blur"],
-[class*="hover:filter"],
-[class*="dark:hover"],
-[class*="group-hover:bg-black"],
-[class*="group-hover:opacity"] {
+/* Suppression des classes Tailwind d’assombrissement (scopé) */
+body[data-no-overlay="true"] [class*="hover:bg-black"],
+body[data-no-overlay="true"] [class*="hover:bg-gray-900"],
+body[data-no-overlay="true"] [class*="hover:bg-opacity"],
+body[data-no-overlay="true"] [class*="hover:brightness"],
+body[data-no-overlay="true"] [class*="hover:contrast"],
+body[data-no-overlay="true"] [class*="hover:grayscale"],
+body[data-no-overlay="true"] [class*="hover:blur"],
+body[data-no-overlay="true"] [class*="hover:filter"],
+body[data-no-overlay="true"] [class*="dark:hover"],
+body[data-no-overlay="true"] [class*="group-hover:bg-black"],
+body[data-no-overlay="true"] [class*="group-hover:opacity"] {
   transition: none !important;
   background-color: initial !important;
   filter: none !important;
   opacity: 1 !important;
 }
 
-/* Force suppression sur les éléments spécifiques */
-.hero-section *:hover,
-.feature-card *:hover,
-.testimonial-card *:hover,
-.pricing-card *:hover,
-.btn:hover,
-.button:hover,
-button:hover,
-a:hover {
+/* Suppression sur éléments spécifiques (scopé) */
+body[data-no-overlay="true"] .hero-section *:hover,
+body[data-no-overlay="true"] .feature-card *:hover,
+body[data-no-overlay="true"] .testimonial-card *:hover,
+body[data-no-overlay="true"] .pricing-card *:hover,
+body[data-no-overlay="true"] .btn:hover,
+body[data-no-overlay="true"] .button:hover,
+body[data-no-overlay="true"] button:hover,
+body[data-no-overlay="true"] a:hover {
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -173,8 +163,8 @@ a:hover {
   opacity: 1 !important;
 }
 
-/* Supprime les effets de gradient overlay */
-.bg-gradient-to-br[class*="hover:opacity"],
-.bg-gradient-to-br[class*="group-hover:opacity"] {
+/* Supprime les effets de gradient overlay (scopé) */
+body[data-no-overlay="true"] .bg-gradient-to-br[class*="hover:opacity"],
+body[data-no-overlay="true"] .bg-gradient-to-br[class*="group-hover:opacity"] {
   display: none !important;
 }
