@@ -12,7 +12,8 @@ import {
   Plus
 } from 'lucide-react';
 import AppTopbar from '@/src/components/app-topbar';
-import VirtualList from '@/src/components/ui/virtual-list';
+import { VirtualList } from '@/src/components/ui/virtual-list';
+import { motion } from 'framer-motion';
 
 export default function FansPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -60,23 +61,11 @@ export default function FansPage() {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <AppTopbar
         title="Fans"
-        icon={Users}
-        right={(
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filter</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <Search className="w-4 h-4" />
-              <span className="text-sm font-medium">Search</span>
-            </button>
-            <Link href="/fans/import" className="btn-gradient flex items-center gap-2">
-              <UserPlus className="w-4 h-4" />
-              <span className="font-medium">Add Fan</span>
-            </Link>
-          </div>
-        )}
+        secondaryActions={[
+          { label: 'Filter', icon: <Filter className="w-4 h-4" aria-hidden /> },
+          { label: 'Search', icon: <Search className="w-4 h-4" aria-hidden /> },
+        ]}
+        primaryAction={{ label: 'Add Fan', href: '/fans/import', icon: <UserPlus className="w-4 h-4" aria-hidden /> }}
       />
 
       <main className="px-6 lg:px-8 py-8 max-w-7xl mx-auto">
@@ -100,17 +89,22 @@ export default function FansPage() {
               <Link href="/fans/import" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Add another</Link>
             </div>
             <div className="max-h-[70vh] overflow-auto divide-y divide-gray-100 dark:divide-gray-800">
-              <VirtualList items={fans} itemHeight={64} overscan={8} renderItem={(f) => (
-                <div key={f.id} className="p-4 flex items-center justify-between list-row">
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">{f.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{f.platform || 'custom'}</p>
-                  </div>
-                  {typeof f.valueCents === 'number' && f.valueCents > 0 && (
-                    <span className="font-bold text-gray-900 dark:text-white">${(f.valueCents/100).toFixed(2)}/mo</span>
-                  )}
-                </div>
-              )} />
+              <VirtualList
+                items={fans}
+                itemSize={64}
+                overscan={8}
+                renderRow={(f) => (
+                  <motion.div key={f.id} layout className="p-4 flex items-center justify-between list-row">
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">{f.name}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{f.platform || 'custom'}</p>
+                    </div>
+                    {typeof f.valueCents === 'number' && f.valueCents > 0 && (
+                      <span className="font-bold text-gray-900 dark:text-white">${(f.valueCents/100).toFixed(2)}/mo</span>
+                    )}
+                  </motion.div>
+                )}
+              />
             </div>
           </div>
         ) : (
