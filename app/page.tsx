@@ -1,18 +1,17 @@
-// Force new deployment v4 - Premium homepage with animations
-// Render premium page purely on client to avoid SSR/hydration errors
+// Minimal homepage - clean and modern design
 import nextDynamic from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 
-const CombinedEN = nextDynamic(
-  () => import('./page-home-en').catch((err) => {
-    console.error('Failed to load combined homepage, falling back to simple:', err);
+const HomePageMinimal = nextDynamic(
+  () => import('./page-home-en-minimal').catch((err) => {
+    console.error('Failed to load minimal homepage, falling back to simple:', err);
     return import('./page-simple');
   }),
   { ssr: false }
 );
 
 export default function HomePage() {
-  return <CombinedEN />;
+  return <HomePageMinimal />;
 }
-// Using premium homepage with all animations
+// Using minimal homepage with subtle animations

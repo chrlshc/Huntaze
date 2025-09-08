@@ -78,6 +78,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#9333EA" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="stylesheet" href="/styles/design-system.css" />
+        <link rel="stylesheet" href="/styles/minimal.css" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
