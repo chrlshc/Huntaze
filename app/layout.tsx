@@ -4,6 +4,7 @@ import "./mobile.css";
 import "./animations.css";
 import "./glass.css";
 import "../styles/remove-dark-overlay.css";
+import "../styles/no-dark-filters.css";
 import "../styles/mockups.css";
 import "../styles/shopify-typography.css";
 import "../styles/app-visuals.css";
@@ -92,6 +93,27 @@ export default function RootLayout({
                   document.body?.classList.remove('dark');
                 }
               } catch {}
+              
+              // Force suppression des filtres sombres
+              const style = document.createElement('style');
+              style.textContent = \`
+                * { 
+                  filter: none !important; 
+                  backdrop-filter: none !important; 
+                  -webkit-backdrop-filter: none !important; 
+                }
+                *:hover { 
+                  filter: none !important; 
+                  backdrop-filter: none !important; 
+                  opacity: 1 !important; 
+                  background: transparent !important;
+                }
+                *::before, *::after { 
+                  filter: none !important; 
+                  background: transparent !important; 
+                }
+              \`;
+              document.head.appendChild(style);
               
               // Force scroll to top on page load
               if ('scrollRestoration' in history) {
