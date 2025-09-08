@@ -271,9 +271,10 @@
 }
 
 /* Disable transitions on rapid changes */
+/* Theme transitioning - just reduce duration, don't break it */
 .dark.theme-transitioning,
 .dark.theme-transitioning * {
-  transition: none !important;
+  transition-duration: 0.1s !important;
 }
 
 /* ========================================
