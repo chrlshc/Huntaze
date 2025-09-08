@@ -13,21 +13,10 @@ export default function HeroDark() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left column - Content */}
           <div className="text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="mb-8"
-            >
-              <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">
-                5,000+ creators scaling faster
-              </span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ duration: 0.6 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1]"
             >
               Double your revenue.
@@ -38,27 +27,27 @@ export default function HeroDark() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
               className="mt-6 text-lg text-gray-400 max-w-xl"
             >
-              Unified inbox, AI assistant, revenue analytics — working together from day one.
+              Scale fast, automate smarter, and grow your creator business with AI-powered tools.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-10 flex flex-col sm:flex-row gap-4"
             >
               <Link
                 href="/auth"
-                className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-all"
+                className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-all inline-block text-center"
               >
-                Start for free
+                Start free trial
               </Link>
               <Link
                 href="/pricing"
-                className="px-8 py-4 bg-transparent text-white rounded-full font-medium border border-gray-700 hover:bg-gray-900 transition-all"
+                className="px-8 py-4 bg-transparent text-white rounded-full font-medium border border-gray-700 hover:bg-gray-900 transition-all inline-block text-center"
               >
                 View plans
               </Link>
@@ -67,7 +56,7 @@ export default function HeroDark() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
               className="mt-10 flex items-center gap-6 text-sm text-gray-500"
             >
               <div className="flex items-center gap-2">
