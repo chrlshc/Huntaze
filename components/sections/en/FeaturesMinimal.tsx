@@ -64,7 +64,7 @@ export default function FeaturesMinimal() {
   const [activeFeature, setActiveFeature] = useState('inbox');
 
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -73,10 +73,10 @@ export default function FeaturesMinimal() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
             Everything you need to scale
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Stop switching between apps. Manage your entire creator business from one powerful dashboard.
           </p>
         </motion.div>
@@ -92,10 +92,10 @@ export default function FeaturesMinimal() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 onClick={() => setActiveFeature(feature.id)}
-                className={`w-full text-left p-6 rounded-2xl border-2 transition-all ${
+                className={`w-full text-left p-6 rounded-2xl border transition-all ${
                   activeFeature === feature.id 
-                    ? 'bg-white border-purple-500 shadow-lg' 
-                    : 'bg-white border-gray-200 hover:border-gray-300'
+                    ? 'bg-gray-900 border-purple-500 shadow-lg shadow-purple-500/20' 
+                    : 'bg-gray-900 border-gray-800 hover:border-gray-700'
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -105,8 +105,8 @@ export default function FeaturesMinimal() {
                     {feature.icon}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.description}</p>
+                    <h3 className="text-lg font-semibold text-white mb-1">{feature.title}</h3>
+                    <p className="text-gray-400">{feature.description}</p>
                     {activeFeature === feature.id && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
@@ -115,7 +115,7 @@ export default function FeaturesMinimal() {
                         className="mt-4 grid grid-cols-2 gap-2"
                       >
                         {feature.features.map((item, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                          <div key={i} className="flex items-center gap-2 text-sm text-gray-400">
                             <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
@@ -138,9 +138,9 @@ export default function FeaturesMinimal() {
             transition={{ duration: 0.5 }}
             className="sticky top-8"
           >
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+            <div className="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
               {/* Browser header */}
-              <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center gap-2">
+              <div className="bg-gray-800 border-b border-gray-700 px-4 py-3 flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 bg-red-400 rounded-full" />
                   <div className="w-3 h-3 bg-yellow-400 rounded-full" />
@@ -152,22 +152,22 @@ export default function FeaturesMinimal() {
               <div className="p-6">
                 {activeFeature === 'inbox' && (
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-4">Recent Messages</h4>
+                    <h4 className="text-sm font-semibold text-white mb-4">Recent Messages</h4>
                     {features[0].preview.messages?.map((msg, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
+                        className="flex items-center gap-3 p-3 bg-gray-800 rounded-xl"
                       >
                         <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full" />
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-gray-900">{msg.name}</span>
+                            <span className="font-semibold text-sm text-white">{msg.name}</span>
                             <span className="text-xs text-gray-500">{msg.time}</span>
                           </div>
-                          <p className="text-sm text-gray-600">{msg.message}</p>
+                          <p className="text-sm text-gray-400">{msg.message}</p>
                         </div>
                         <div className={`w-2 h-2 rounded-full ${
                           msg.platform === 'instagram' ? 'bg-pink-500' :
@@ -180,19 +180,19 @@ export default function FeaturesMinimal() {
 
                 {activeFeature === 'ai' && (
                   <div className="space-y-4">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-4">AI Suggested Replies</h4>
+                    <h4 className="text-sm font-semibold text-white mb-4">AI Suggested Replies</h4>
                     {features[1].preview.suggestions?.map((suggestion, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="p-4 bg-purple-50 border border-purple-200 rounded-xl cursor-pointer hover:bg-purple-100 transition-colors"
+                        className="p-4 bg-purple-900/20 border border-purple-800 rounded-xl cursor-pointer hover:bg-purple-900/30 transition-colors"
                       >
-                        <p className="text-sm text-gray-800">{suggestion}</p>
+                        <p className="text-sm text-gray-200">{suggestion}</p>
                         <div className="mt-2 flex items-center gap-2">
-                          <button className="text-xs text-purple-600 font-medium">Use this</button>
-                          <button className="text-xs text-gray-600">Edit</button>
+                          <button className="text-xs text-purple-400 font-medium">Use this</button>
+                          <button className="text-xs text-gray-500">Edit</button>
                         </div>
                       </motion.div>
                     ))}
@@ -201,20 +201,20 @@ export default function FeaturesMinimal() {
 
                 {activeFeature === 'analytics' && (
                   <div className="space-y-4">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-4">Revenue Overview</h4>
+                    <h4 className="text-sm font-semibold text-white mb-4">Revenue Overview</h4>
                     {features[2].preview.metrics?.map((metric, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="p-4 bg-gray-50 rounded-xl"
+                        className="p-4 bg-gray-800 rounded-xl"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-gray-600">{metric.label}</span>
+                          <span className="text-sm text-gray-400">{metric.label}</span>
                           <span className="text-xs text-green-600 font-medium">{metric.change}</span>
                         </div>
-                        <div className="text-2xl font-bold text-gray-900">{metric.value}</div>
+                        <div className="text-2xl font-bold text-white">{metric.value}</div>
                         <div className="mt-2 h-8 bg-gradient-to-r from-purple-200 to-purple-100 rounded" />
                       </motion.div>
                     ))}

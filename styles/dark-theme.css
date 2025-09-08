@@ -1,0 +1,87 @@
+/* Dark theme design system */
+
+:root {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #030712; /* gray-950 */
+  --color-bg-tertiary: #111827; /* gray-900 */
+  --color-bg-card: #1f2937; /* gray-800 */
+  
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #9ca3af; /* gray-400 */
+  --color-text-tertiary: #6b7280; /* gray-500 */
+  
+  --color-border-primary: #374151; /* gray-700 */
+  --color-border-secondary: #1f2937; /* gray-800 */
+  
+  --color-accent-primary: #a855f7; /* purple-500 */
+  --color-accent-secondary: #ec4899; /* pink-500 */
+}
+
+/* Override Tailwind defaults for dark theme */
+.dark-theme {
+  color-scheme: dark;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* Typography adjustments */
+body {
+  font-feature-settings: "ss03";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+}
+
+.glow-purple-sm {
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(31, 41, 55, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(55, 65, 81, 0.3);
+}
