@@ -79,6 +79,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="stylesheet" href="/styles/design-system.css" />
         <link rel="stylesheet" href="/styles/minimal.css" />
+        <link rel="stylesheet" href="/styles/dark-theme.css" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -145,7 +146,7 @@ export default function RootLayout({
         <Providers>
           {/* Sidebar app (affiche seulement sur routes post-login) */}
           <AppSidebar />
-          <HeaderImproved />
+          {/* <HeaderImproved /> */}
           <PageTransition>
             <main id="main" className="app-main min-h-screen">
               {children}

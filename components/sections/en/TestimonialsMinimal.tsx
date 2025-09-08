@@ -31,7 +31,7 @@ export default function TestimonialsMinimal() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,10 +40,10 @@ export default function TestimonialsMinimal() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
             Creators love Huntaze
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Don't just take our word for it. See what successful creators say about their experience.
           </p>
         </motion.div>
@@ -56,16 +56,16 @@ export default function TestimonialsMinimal() {
           transition={{ duration: 0.5 }}
           className="max-w-4xl mx-auto mb-12"
         >
-          <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-12">
+          <div className="bg-gray-900 rounded-2xl shadow-xl border border-gray-800 p-8 lg:p-12">
             <div className="flex items-center gap-4 mb-6">
               <div className="text-5xl">{testimonials[activeIndex].avatar}</div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">{testimonials[activeIndex].name}</h3>
-                <p className="text-gray-600">{testimonials[activeIndex].role}</p>
+                <h3 className="text-xl font-semibold text-white">{testimonials[activeIndex].name}</h3>
+                <p className="text-gray-400">{testimonials[activeIndex].role}</p>
               </div>
             </div>
             
-            <p className="text-2xl text-gray-800 leading-relaxed mb-8">
+            <p className="text-2xl text-gray-200 leading-relaxed mb-8">
               "{testimonials[activeIndex].content}"
             </p>
 
@@ -75,7 +75,7 @@ export default function TestimonialsMinimal() {
                   <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
                     {value}
                   </div>
-                  <div className="text-sm text-gray-600 capitalize">{key}</div>
+                  <div className="text-sm text-gray-500 capitalize">{key}</div>
                 </div>
               ))}
             </div>
@@ -91,7 +91,7 @@ export default function TestimonialsMinimal() {
               className={`w-12 h-1 rounded-full transition-all ${
                 index === activeIndex 
                   ? 'bg-purple-600 w-24' 
-                  : 'bg-gray-300 hover:bg-gray-400'
+                  : 'bg-gray-700 hover:bg-gray-600'
               }`}
             />
           ))}
@@ -116,11 +116,11 @@ export default function TestimonialsMinimal() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-              className="text-center bg-white rounded-xl p-6 shadow-sm"
+              className="text-center bg-gray-900 border border-gray-800 rounded-xl p-6"
             >
               <div className="text-3xl mb-3">{item.icon}</div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">{item.metric}</div>
-              <p className="text-gray-600">{item.label}</p>
+              <div className="text-3xl font-bold text-white mb-1">{item.metric}</div>
+              <p className="text-gray-400">{item.label}</p>
             </motion.div>
           ))}
         </motion.div>

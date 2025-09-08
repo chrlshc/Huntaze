@@ -45,7 +45,7 @@ function AnimatedNumber({ value, prefix = '', suffix = '' }: { value: number; pr
 
 export default function MetricsMinimal() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -54,10 +54,10 @@ export default function MetricsMinimal() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
             Trusted by thousands of creators
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Join a community that's collectively earning millions while saving hours every day.
           </p>
         </motion.div>
@@ -75,7 +75,7 @@ export default function MetricsMinimal() {
               <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
                 <AnimatedNumber value={metric.value} prefix={metric.prefix} suffix={metric.suffix} />
               </div>
-              <p className="text-gray-600">{metric.label}</p>
+              <p className="text-gray-400">{metric.label}</p>
             </motion.div>
           ))}
         </div>
@@ -88,14 +88,14 @@ export default function MetricsMinimal() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-20"
         >
-          <p className="text-center text-sm text-gray-500 mb-8">Integrates seamlessly with</p>
+          <p className="text-center text-sm text-gray-600 mb-8">Integrates seamlessly with</p>
           <div className="flex items-center justify-center gap-12 flex-wrap">
             {/* Platform logos */}
-            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
-            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
-            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
-            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
-            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
+            <div className="h-8 w-24 bg-gray-800 rounded animate-pulse" />
+            <div className="h-8 w-24 bg-gray-800 rounded animate-pulse" />
+            <div className="h-8 w-24 bg-gray-800 rounded animate-pulse" />
+            <div className="h-8 w-24 bg-gray-800 rounded animate-pulse" />
+            <div className="h-8 w-24 bg-gray-800 rounded animate-pulse" />
           </div>
         </motion.div>
       </div>
