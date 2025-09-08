@@ -94,27 +94,27 @@ export default function RootLayout({
                 }
               } catch {}
               
-              // Force suppression des filtres sombres
-              const style = document.createElement('style');
-              style.textContent = \`
-                * { 
-                  filter: none !important; 
-                  backdrop-filter: none !important; 
-                  -webkit-backdrop-filter: none !important; 
-                }
-                *:hover { 
-                  filter: none !important; 
-                  backdrop-filter: none !important; 
-                  opacity: 1 !important; 
-                  background: transparent !important;
-                }
-                *::before, *::after { 
-                  filter: none !important; 
-                  background: transparent !important; 
-                }
-              \`;
-              document.head.appendChild(style);
-              
+              // Optional overlay suppression (only when explicitly enabled)
+              if (${(process.env.NEXT_PUBLIC_DISABLE_OVERLAYS || '').toLowerCase() === 'true'}) {
+                const style = document.createElement('style');
+                style.textContent = \`
+                  body[data-no-overlay="true"] *, 
+                  body[data-no-overlay="true"] *::before, 
+                  body[data-no-overlay="true"] *::after { 
+                    filter: none !important; 
+                    backdrop-filter: none !important; 
+                    -webkit-backdrop-filter: none !important; 
+                  }
+                  body[data-no-overlay="true"] *:hover { 
+                    filter: none !important; 
+                    backdrop-filter: none !important; 
+                    opacity: 1 !important; 
+                    background: transparent !important;
+                  }
+                \`;
+                document.head.appendChild(style);
+              }
+
               // Force scroll to top on page load
               if ('scrollRestoration' in history) {
                 history.scrollRestoration = 'manual';

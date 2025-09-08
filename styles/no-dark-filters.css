@@ -1,10 +1,12 @@
 /* ====================================
-   SUPPRESSION TOTALE DES FILTRES SOMBRES
-   Supprime TOUS les effets qui noircissent le site
+   SUPPRESSION TOTALE DES FILTRES SOMBRES (OPT-IN)
+   Actif uniquement si <body data-no-overlay="true">
    ==================================== */
 
-/* RESET TOTAL - Supprime TOUS les filtres */
-* {
+/* RESET SCOPÉ - Supprime les filtres uniquement en mode no-overlay */
+body[data-no-overlay="true"] *,
+body[data-no-overlay="true"] *::before,
+body[data-no-overlay="true"] *::after {
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -12,13 +14,13 @@
   mix-blend-mode: normal !important;
 }
 
-/* Supprime les filtres sur TOUS les états */
-*:hover,
-*:focus,
-*:active,
-*:focus-within,
-*:focus-visible,
-*:target {
+/* Supprime les filtres sur les états (scopé) */
+body[data-no-overlay="true"] *:hover,
+body[data-no-overlay="true"] *:focus,
+body[data-no-overlay="true"] *:active,
+body[data-no-overlay="true"] *:focus-within,
+body[data-no-overlay="true"] *:focus-visible,
+body[data-no-overlay="true"] *:target {
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -28,158 +30,98 @@
   mix-blend-mode: normal !important;
 }
 
-/* Supprime TOUS les pseudo-éléments qui pourraient créer des overlays */
-*::before,
-*::after {
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: transparent !important;
-  opacity: 0 !important;
-  display: none !important;
-  content: none !important;
-  pointer-events: none !important;
-}
-
-/* Exceptions pour les icônes et éléments essentiels */
-.icon::before,
-.icon::after,
-svg::before,
-svg::after,
-[class*="lucide"]::before,
-[class*="lucide"]::after,
-[class*="fa-"]::before,
-[class*="fa-"]::after {
+/* Exceptions icônes (scopé) */
+body[data-no-overlay="true"] .icon::before,
+body[data-no-overlay="true"] .icon::after,
+body[data-no-overlay="true"] svg::before,
+body[data-no-overlay="true"] svg::after,
+body[data-no-overlay="true"] [class*="lucide"]::before,
+body[data-no-overlay="true"] [class*="lucide"]::after,
+body[data-no-overlay="true"] [class*="fa-"]::before,
+body[data-no-overlay="true"] [class*="fa-"]::after {
   display: initial !important;
   opacity: initial !important;
   content: "" !important;
 }
 
-/* Supprime les backgrounds sombres */
-*[class*="bg-black"],
-*[class*="bg-gray-900"],
-*[class*="bg-opacity"],
-*[class*="dark:"],
-*[class*="backdrop"] {
+/* Supprime les backgrounds sombres (scopé) */
+body[data-no-overlay="true"] *[class*="bg-black"],
+body[data-no-overlay="true"] *[class*="bg-gray-900"],
+body[data-no-overlay="true"] *[class*="bg-opacity"],
+body[data-no-overlay="true"] *[class*="dark:"],
+body[data-no-overlay="true"] *[class*="backdrop"] {
   background-color: transparent !important;
 }
 
-/* Supprime les effets de transition qui pourraient créer des effets sombres */
-* {
-  transition-property: transform, scale, border-color !important;
-}
-
-/* Force la transparence sur les overlays connus */
-.overlay,
-.backdrop,
-.modal-backdrop,
-.dialog-backdrop,
-[class*="overlay"],
-[class*="backdrop"],
-[class*="filter"],
-[class*="blur"],
-[class*="darken"],
-[class*="shade"],
-[class*="mask"] {
+/* Force transparence sur overlays connus (scopé) */
+body[data-no-overlay="true"] .overlay,
+body[data-no-overlay="true"] .backdrop,
+body[data-no-overlay="true"] .modal-backdrop,
+body[data-no-overlay="true"] .dialog-backdrop,
+body[data-no-overlay="true"] [class*="overlay"],
+body[data-no-overlay="true"] [class*="backdrop"],
+body[data-no-overlay="true"] [class*="filter"],
+body[data-no-overlay="true"] [class*="blur"],
+body[data-no-overlay="true"] [class*="darken"],
+body[data-no-overlay="true"] [class*="shade"],
+body[data-no-overlay="true"] [class*="mask"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-/* Supprime les effets CSS spécifiques */
-* {
-  -webkit-filter: none !important;
-  filter: none !important;
-  
-  /* Supprime les effets de filtre individuels */
-  filter: brightness(100%) !important;
-  filter: contrast(100%) !important;
-  filter: grayscale(0%) !important;
-  filter: sepia(0%) !important;
-  filter: saturate(100%) !important;
-  filter: hue-rotate(0deg) !important;
-  filter: invert(0%) !important;
-  filter: opacity(100%) !important;
-  filter: blur(0px) !important;
-  filter: drop-shadow(none) !important;
-}
-
-/* Supprime les box-shadows sombres */
-*:hover {
-  box-shadow: none !important;
-  text-shadow: none !important;
-}
-
-/* Force les images et vidéos à rester claires */
-img,
-video,
-picture,
-canvas,
-svg {
+/* Images et médias (scopé) */
+body[data-no-overlay="true"] img,
+body[data-no-overlay="true"] video,
+body[data-no-overlay="true"] picture,
+body[data-no-overlay="true"] canvas,
+body[data-no-overlay="true"] svg {
   opacity: 1 !important;
   filter: none !important;
   mix-blend-mode: normal !important;
 }
 
-/* Supprime les gradients sombres */
-*[class*="gradient"] {
+/* Supprime les gradients sombres (scopé) */
+body[data-no-overlay="true"] *[class*="gradient"] {
   background-image: none !important;
 }
 
-/* Maintient la visibilité des boutons */
-button,
-a,
-.btn,
-.button,
-[role="button"] {
+/* Boutons visibles (scopé) */
+body[data-no-overlay="true"] button,
+body[data-no-overlay="true"] a,
+body[data-no-overlay="true"] .btn,
+body[data-no-overlay="true"] .button,
+body[data-no-overlay="true"] [role="button"] {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
 }
 
-/* Supprime les effets sur le body et html */
-html,
-body {
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background-color: white !important;
-}
-
-html.dark,
-body.dark {
-  background-color: #000000 !important;
-}
-
-/* Force la suppression sur les conteneurs principaux */
-main,
-.main,
-#__next,
-#root,
-.container,
-.wrapper {
+/* Body/html (scopé) */
+body[data-no-overlay="true"],
+body[data-no-overlay="true"].dark {
   filter: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* NUCLEAR OPTION - Supprime TOUT effet de hover qui pourrait assombrir */
-*:hover * {
+/* Conteneurs principaux (scopé) */
+body[data-no-overlay="true"] main,
+body[data-no-overlay="true"] .main,
+body[data-no-overlay="true"] #__next,
+body[data-no-overlay="true"] #root,
+body[data-no-overlay="true"] .container,
+body[data-no-overlay="true"] .wrapper {
   filter: none !important;
-  opacity: 1 !important;
-  background-color: initial !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-/* Assure que le texte reste lisible */
-*:not(input):not(textarea) {
-  color: inherit !important;
-}
-
-/* Debug - rend visible les éléments cachés qui pourraient créer des overlays */
-.hidden[class*="overlay"],
-.invisible[class*="overlay"],
-[style*="display: none"][class*="overlay"] {
+/* Debug overlays (scopé) */
+body[data-no-overlay="true"] .hidden[class*="overlay"],
+body[data-no-overlay="true"] .invisible[class*="overlay"],
+body[data-no-overlay="true"] [style*="display: none"][class*="overlay"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
