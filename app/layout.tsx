@@ -96,26 +96,24 @@ export default function RootLayout({
                 }
               } catch {}
               
-              // Optional overlay suppression (only when explicitly enabled)
-              if (${(process.env.NEXT_PUBLIC_DISABLE_OVERLAYS || '').toLowerCase() === 'true'}) {
-                const style = document.createElement('style');
-                style.textContent = \`
-                  body[data-no-overlay="true"] *, 
-                  body[data-no-overlay="true"] *::before, 
-                  body[data-no-overlay="true"] *::after { 
-                    filter: none !important; 
-                    backdrop-filter: none !important; 
-                    -webkit-backdrop-filter: none !important; 
-                  }
-                  body[data-no-overlay="true"] *:hover { 
-                    filter: none !important; 
-                    backdrop-filter: none !important; 
-                    opacity: 1 !important; 
-                    background: transparent !important;
-                  }
-                \`;
-                document.head.appendChild(style);
-              }
+              // Force overlay suppression
+              const style = document.createElement('style');
+              style.textContent = \`
+                body[data-no-overlay="true"] *, 
+                body[data-no-overlay="true"] *::before, 
+                body[data-no-overlay="true"] *::after { 
+                  filter: none !important; 
+                  backdrop-filter: none !important; 
+                  -webkit-backdrop-filter: none !important; 
+                }
+                body[data-no-overlay="true"] *:hover { 
+                  filter: none !important; 
+                  backdrop-filter: none !important; 
+                  opacity: 1 !important; 
+                  background: transparent !important;
+                }
+              \`;
+              document.head.appendChild(style);
 
               // Force scroll to top on page load
               if ('scrollRestoration' in history) {
@@ -138,7 +136,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-white dark:bg-black text-gray-900 dark:text-white" data-ui={minimal ? 'minimal' : undefined} data-no-overlay={disableOverlays ? 'true' : undefined}>
+      <body className="antialiased bg-white dark:bg-black text-gray-900 dark:text-white" data-ui={minimal ? 'minimal' : undefined} data-no-overlay="true">
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-3 focus:py-2 focus:rounded" aria-label="Skip to content">Skip to content</a>
         <GoogleAnalytics />
         <RemoveDarkOverlay />
