@@ -16,7 +16,8 @@ import { ofIntegrationApi } from '@/src/lib/api';
 import ResumeBanner from '@/components/onboarding/ResumeBanner';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import AppTopbar from '@/src/components/app-topbar';
-import VirtualList from '@/src/components/ui/virtual-list';
+import { VirtualList } from '@/src/components/ui/virtual-list';
+import { motion } from 'framer-motion';
 
 export default function MessagesPage() {
   const { trackEvent } = useAnalytics();
@@ -177,35 +178,41 @@ export default function MessagesPage() {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <AppTopbar
         title="Messages"
-        icon={MessageSquare}
-        right={(
+        secondaryActions={[
+          {
+            label: 'OnlyFans',
+            href: '/messages/onlyfans',
+            icon: <ExternalLink className="w-4 h-4" aria-hidden />,
+          },
+        ]}
+        primaryAction={{
+          label: 'Compose',
+          onClick: () => {
+            try {
+              localStorage.setItem('first_message_started', '1');
+              trackEvent('messages_compose_click');
+            } catch {}
+          },
+          icon: <Send className="w-4 h-4" aria-hidden />,
+        }}
+        rightSlot={(
           <div className="flex items-center gap-3">
+            {ofStatus && (
+              <span
+                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                  ofStatus.connected
+                    ? 'bg-green-100 text-green-700 border border-green-200'
+                    : 'bg-red-100 text-red-700 border border-red-200'
+                }`}
+              >
+                {ofStatus.connected ? 'OF Connected' : 'OF Not Connected'}
+              </span>
+            )}
             {aiConfig?.responseStyle && (
               <span className="hidden md:inline text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-medium">
                 AI: {aiConfig.responseStyle}
               </span>
             )}
-            <Link href="/messages/onlyfans" className="px-3 py-2 border border-purple-200 text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl text-sm font-medium flex items-center gap-2">
-              <ExternalLink className="w-4 h-4" />
-              OnlyFans
-            </Link>
-            {ofStatus && (
-              <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${ofStatus.connected ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
-                {ofStatus.connected ? 'OF Connected' : 'OF Not Connected'}
-              </span>
-            )}
-            <button
-              onClick={() => {
-                try {
-                  localStorage.setItem('first_message_started', '1');
-                  trackEvent('messages_compose_click');
-                } catch {}
-              }}
-              className="rounded-xl flex items-center gap-2 hover:shadow-md transition-all bg-purple-600 text-white px-4 py-2"
-            >
-              <Send className="w-4 h-4" />
-              <span>Compose</span>
-            </button>
           </div>
         )}
       />
@@ -262,7 +269,7 @@ export default function MessagesPage() {
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-gray-800">
               <div className="max-h-[70vh] overflow-auto">
-                <VirtualList items={conversations} itemHeight={76} overscan={6} renderItem={(c) => {
+                <VirtualList items={conversations} itemSize={76} overscan={6} renderRow={(c, idx) => {
                   const last = c.lastMessage
                   const fan = fans[c.fanId]
                   const isUnread = last && last.direction === 'in' && !last.read
@@ -287,7 +294,11 @@ export default function MessagesPage() {
                   const animated = lastInsertedId && last && last.id === lastInsertedId;
                   return (
                     <Link key={c.id} href={`/messages/${c.id}`}>
-                      <button onClick={handleClick} className={`w-full text-left p-4 list-row transition-all duration-200 ${animated ? 'is-new' : ''}`}>
+                      <motion.button
+                        layout
+                        onClick={handleClick}
+                        className={`w-full text-left p-4 list-row transition-all duration-200 ${animated ? 'is-new' : ''}`}
+                      >
                         <div className="flex items-center gap-3">
                           <img src={fan?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fan?.name || 'Fan')}&background=gradient`} alt={fan?.name} className="w-10 h-10 rounded-xl" />
                           <div className="flex-1 min-w-0">
@@ -302,7 +313,7 @@ export default function MessagesPage() {
                             )}
                           </div>
                         </div>
-                      </button>
+                      </motion.button>
                     </Link>
                   )
                 }} />

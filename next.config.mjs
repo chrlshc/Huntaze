@@ -21,7 +21,7 @@ const nextConfig = {
 
   // Image optimization
   images: {
-    domains: ['api.dicebear.com'],
+    domains: ['api.dicebear.com', 'ui-avatars.com', 'cdn.huntaze.com', 'static.onlyfansassets.com'],
     formats: ['image/avif', 'image/webp'],
     unoptimized: false,
   },
@@ -53,4 +53,3 @@ const nextConfig = {
 }
 
 export default nextConfig
-

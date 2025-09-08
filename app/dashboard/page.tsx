@@ -317,15 +317,13 @@ export default function DashboardPage() {
       {ofSyncing && <div className="fixed top-0 left-0 right-0 h-1 bg-purple-600 animate-pulse z-50" />}
       <AppTopbar
         title="Dashboard"
-        icon={Activity}
-        right={(
-          <div className="flex items-center gap-4">
-            <Link href="/billing" className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg text-sm font-medium text-purple-700 hover:bg-purple-100 transition-colors">
-              <CreditCard className="w-4 h-4" />
-              <span>2,450 Credits</span>
-            </Link>
-            <Link href={SITE_URL} target="_blank" className="text-sm font-medium text-purple-600 hover:text-purple-700">Site</Link>
-            <Link href={SUPPORT_URL} target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">Support</Link>
+        secondaryActions={[
+          { label: 'Credits', href: '/billing', icon: <CreditCard className="w-4 h-4" aria-hidden /> },
+          { label: 'Site', href: SITE_URL },
+          { label: 'Support', href: SUPPORT_URL },
+        ]}
+        rightSlot={(
+          <div className="flex items-center gap-3">
             <img
               src={user?.picture || "https://ui-avatars.com/api/?name=" + (user?.name || "User")}
               alt={user?.name}

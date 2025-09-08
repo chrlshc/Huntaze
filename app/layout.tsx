@@ -137,6 +137,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-white dark:bg-black text-gray-900 dark:text-white" data-ui={minimal ? 'minimal' : undefined} data-no-overlay={disableOverlays ? 'true' : undefined}>
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-3 focus:py-2 focus:rounded" aria-label="Skip to content">Skip to content</a>
         <GoogleAnalytics />
         <RemoveDarkOverlay />
         <PerformanceMonitor />
@@ -145,7 +146,7 @@ export default function RootLayout({
           <AppSidebar />
           <HeaderImproved />
           <PageTransition>
-            <main className="min-h-screen">
+            <main id="main" className="app-main min-h-screen">
               {children}
             </main>
           </PageTransition>
