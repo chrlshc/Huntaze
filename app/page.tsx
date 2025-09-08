@@ -1,17 +1,17 @@
-// Minimal homepage - clean and modern design
+// Dark homepage - modern black design
 import nextDynamic from 'next/dynamic';
 
 export const dynamic = 'force-dynamic';
 
-const HomePageMinimal = nextDynamic(
-  () => import('./page-home-en-minimal').catch((err) => {
-    console.error('Failed to load minimal homepage, falling back to simple:', err);
+const HomePageDark = nextDynamic(
+  () => import('./page-dark').catch((err) => {
+    console.error('Failed to load dark homepage, falling back to simple:', err);
     return import('./page-simple');
   }),
   { ssr: false }
 );
 
 export default function HomePage() {
-  return <HomePageMinimal />;
+  return <HomePageDark />;
 }
-// Using minimal homepage with subtle animations
+// Using dark homepage with modern design
