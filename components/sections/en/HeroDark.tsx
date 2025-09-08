@@ -16,10 +16,9 @@ export default function HeroDark() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-7xl font-normal tracking-tight leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-7xl font-normal tracking-tight leading-[1.1] text-white"
             >
-              The platform built for{' '}
-              <span className="text-gray-400">premium creators.</span>
+              The platform built for premium creators.
             </motion.h1>
 
             <motion.p
@@ -39,7 +38,7 @@ export default function HeroDark() {
             >
               <Link
                 href="/auth"
-                className="px-8 py-3 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-all inline-block text-center text-base"
+                className="px-10 py-4 bg-white text-black rounded-full font-semibold hover:bg-gray-100 hover:-translate-y-0.5 transition-all inline-block text-center text-base shadow-[0_2px_10px_rgba(255,255,255,0.1)] hover:shadow-[0_4px_20px_rgba(255,255,255,0.2)]"
               >
                 Start for free
               </Link>
