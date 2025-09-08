@@ -1,0 +1,63 @@
+/* ====================================
+   ANIMATION FIX - Ensure animations work properly
+   This file MUST be loaded LAST to override any broken rules
+   ==================================== */
+
+/* Reset any global animation blockers */
+* {
+  /* Remove any forced animation disabling */
+  animation-duration: revert !important;
+  animation-iteration-count: revert !important;
+  animation-play-state: revert !important;
+  transition-duration: revert !important;
+}
+
+/* Ensure Framer Motion animations work */
+[data-framer-motion] * {
+  animation-duration: revert !important;
+  transition-duration: revert !important;
+}
+
+/* Fix for motion divs */
+div[style*="transform"],
+div[style*="opacity"],
+div[style*="scale"] {
+  animation-duration: revert !important;
+  transition-duration: revert !important;
+  will-change: auto !important;
+}
+
+/* Ensure hover animations work */
+*:hover {
+  transition-duration: revert !important;
+}
+
+/* Fix specific animation classes */
+.animate-*,
+[class*="animate-"],
+.motion-*,
+[class*="motion-"],
+.transition-*,
+[class*="transition-"] {
+  animation-duration: revert !important;
+  animation-iteration-count: revert !important;
+  transition-duration: revert !important;
+}
+
+/* Only apply reduced motion when ACTUALLY requested by user */
+@media (prefers-reduced-motion: reduce) {
+  /* Just reduce duration, don't break animations */
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.3s !important;
+  }
+}
+
+/* Ensure print styles don't affect screen */
+@media screen {
+  * {
+    /* Animations should work on screen */
+    animation: revert !important;
+    transition: revert !important;
+  }
+}

@@ -79,6 +79,7 @@ export default function AppSidebar() {
   const isApp = useMemo(() => APP_PREFIXES.some((p) => pathname?.startsWith(p)), [pathname]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const openBtnRef = useRef<HTMLButtonElement>(null);
 
   // Enable SSE (we're in app only) to update counters globally
   useSSE(true);
@@ -92,9 +93,10 @@ export default function AppSidebar() {
     };
   }, [isApp]);
 
-  // Mobile drawer a11y: ESC to close, focus trap
+  // Mobile drawer a11y: ESC to close, focus trap, restore focus
   useEffect(() => {
     if (!drawerOpen) return;
+    const prevFocused = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
       if (e.key !== "Tab") return;
@@ -142,6 +144,7 @@ export default function AppSidebar() {
       document.body.style.overflow = prevOverflow;
       if (prevMainHidden === null) mainEl?.removeAttribute('aria-hidden'); else mainEl?.setAttribute('aria-hidden', prevMainHidden);
       if (prevHeaderHidden === null) headerEl?.removeAttribute('aria-hidden'); else headerEl?.setAttribute('aria-hidden', prevHeaderHidden);
+      (openBtnRef.current ?? prevFocused)?.focus();
     };
   }, [drawerOpen]);
 
@@ -160,7 +163,7 @@ export default function AppSidebar() {
               const Icon = item.icon;
               const count = item.badge
                 ? useSSECounter({
-                    url: item.badge.url,
+                    url: item.badge.type === "unread" ? `${item.badge.url}?sse=1` : item.badge.url,
                     eventName: item.badge.type === "unread" ? "unread" : "alerts",
                   })
                 : 0;
@@ -218,6 +221,7 @@ export default function AppSidebar() {
 
       {/* Mobile trigger */}
       <button
+        ref={openBtnRef}
         aria-label="Open menu"
         className="lg:hidden fixed top-3 left-3 z-40 rounded-lg bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-800 backdrop-blur px-3 py-2 shadow"
         onClick={() => setDrawerOpen(true)}

@@ -9,6 +9,7 @@ import "../styles/mockups.css";
 import "../styles/shopify-typography.css";
 import "../styles/app-visuals.css";
 import "../styles/performance-optimizations.css";
+import "../styles/fix-animations.css"; // MUST BE LAST to fix animations
 import HeaderImproved from "@/src/components/header-improved";
 import FooterImproved from "@/src/components/footer-improved";
 import MobileBottomNav from "@/src/components/mobile-bottom-nav";

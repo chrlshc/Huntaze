@@ -98,13 +98,22 @@
   100% { background-position: -200% 0; }
 }
 
-/* Reduce motion */
+/* Reduce motion - ONLY for users who explicitly request it */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
+  /* Don't break ALL animations, just reduce them */
+  *, *::before, *::after {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.3s !important;
   }
-  .skeleton { animation: none !important; }
+  
+  /* Disable infinite animations */
+  .skeleton { 
+    animation: none !important;
+    background: #eee;
+  }
+  
+  /* Keep scroll smooth but not instant */
+  * {
+    scroll-behavior: smooth !important;
+  }
 }
