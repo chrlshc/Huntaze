@@ -117,7 +117,7 @@ export default function HeaderMinimal() {
               onMouseEnter={() => setActiveDropdown('solutions')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm">
+              <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm focus:outline-none">
                 <span>Solutions</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -163,7 +163,7 @@ export default function HeaderMinimal() {
               onMouseEnter={() => setActiveDropdown('resources')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm">
+              <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm focus:outline-none">
                 <span>Resources</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -216,7 +216,7 @@ export default function HeaderMinimal() {
             </Link>
             <Link 
               href="/auth" 
-              className="bg-white hover:bg-gray-200 text-black px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="bg-white hover:bg-gray-100 text-black px-6 py-3 rounded-full text-sm font-medium transition-colors"
             >
               Start for free
             </Link>
@@ -306,7 +306,7 @@ export default function HeaderMinimal() {
                   </Link>
                   <Link
                     href="/auth"
-                    className="block bg-white text-black py-2 rounded-lg text-center font-medium"
+                    className="block bg-white text-black py-3 rounded-full text-center font-medium"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Start for free
