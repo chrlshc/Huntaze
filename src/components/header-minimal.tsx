@@ -197,11 +197,11 @@ export default function HeaderMinimal() {
               </AnimatePresence>
             </div>
 
-            <Link href="/pricing" className="text-gray-300 hover:text-white text-sm">
+            <Link href="/pricing" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg text-sm transition-all">
               Pricing
             </Link>
 
-            <Link href="/about" className="text-gray-300 hover:text-white text-sm">
+            <Link href="/about" className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg text-sm transition-all">
               About
             </Link>
           </div>
@@ -210,7 +210,7 @@ export default function HeaderMinimal() {
           <div className="hidden lg:flex items-center space-x-4">
             <Link 
               href="/auth" 
-              className="text-gray-300 hover:text-white text-sm"
+              className="px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg text-sm transition-all"
             >
               Log in
             </Link>
