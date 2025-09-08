@@ -80,6 +80,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="/styles/design-system.css" />
         <link rel="stylesheet" href="/styles/minimal.css" />
         <link rel="stylesheet" href="/styles/dark-theme.css" />
+        <link rel="stylesheet" href="/styles/buttons.css" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
