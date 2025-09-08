@@ -94,6 +94,83 @@ main,
 /* Force la suppression des background sombres au hover */
 *:hover {
   background-color: inherit !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Suppression complète de TOUS les filtres */
+*, 
+*::before, 
+*::after {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* Suppression des effets au hover, focus et active */
+*:hover,
+*:hover::before,
+*:hover::after,
+*:focus,
+*:focus::before,
+*:focus::after,
+*:active,
+*:active::before,
+*:active::after {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 1 !important;
+  background-color: transparent !important;
+}
+
+/* Supprime complètement les pseudo-éléments qui créent des overlays */
+[class*="overlay"]::before,
+[class*="overlay"]::after,
+[class*="hover"]::before,
+[class*="hover"]::after,
+[class*="group-hover"]::before,
+[class*="group-hover"]::after {
+  display: none !important;
+  content: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Suppression des classes Tailwind problématiques */
+[class*="hover:bg-black"],
+[class*="hover:bg-gray-900"],
+[class*="hover:bg-opacity"],
+[class*="hover:brightness"],
+[class*="hover:contrast"],
+[class*="hover:grayscale"],
+[class*="hover:blur"],
+[class*="hover:filter"],
+[class*="dark:hover"],
+[class*="group-hover:bg-black"],
+[class*="group-hover:opacity"] {
+  transition: none !important;
+  background-color: initial !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Force suppression sur les éléments spécifiques */
+.hero-section *:hover,
+.feature-card *:hover,
+.testimonial-card *:hover,
+.pricing-card *:hover,
+.btn:hover,
+.button:hover,
+button:hover,
+a:hover {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: var(--hover-bg, initial) !important;
+  opacity: 1 !important;
 }
 
 /* Supprime les effets de gradient overlay */

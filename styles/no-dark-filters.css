@@ -1,0 +1,186 @@
+/* ====================================
+   SUPPRESSION TOTALE DES FILTRES SOMBRES
+   Supprime TOUS les effets qui noircissent le site
+   ==================================== */
+
+/* RESET TOTAL - Supprime TOUS les filtres */
+* {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  -webkit-filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Supprime les filtres sur TOUS les états */
+*:hover,
+*:focus,
+*:active,
+*:focus-within,
+*:focus-visible,
+*:target {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  -webkit-filter: none !important;
+  opacity: 1 !important;
+  background: transparent !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Supprime TOUS les pseudo-éléments qui pourraient créer des overlays */
+*::before,
+*::after {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+/* Exceptions pour les icônes et éléments essentiels */
+.icon::before,
+.icon::after,
+svg::before,
+svg::after,
+[class*="lucide"]::before,
+[class*="lucide"]::after,
+[class*="fa-"]::before,
+[class*="fa-"]::after {
+  display: initial !important;
+  opacity: initial !important;
+  content: "" !important;
+}
+
+/* Supprime les backgrounds sombres */
+*[class*="bg-black"],
+*[class*="bg-gray-900"],
+*[class*="bg-opacity"],
+*[class*="dark:"],
+*[class*="backdrop"] {
+  background-color: transparent !important;
+}
+
+/* Supprime les effets de transition qui pourraient créer des effets sombres */
+* {
+  transition-property: transform, scale, border-color !important;
+}
+
+/* Force la transparence sur les overlays connus */
+.overlay,
+.backdrop,
+.modal-backdrop,
+.dialog-backdrop,
+[class*="overlay"],
+[class*="backdrop"],
+[class*="filter"],
+[class*="blur"],
+[class*="darken"],
+[class*="shade"],
+[class*="mask"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Supprime les effets CSS spécifiques */
+* {
+  -webkit-filter: none !important;
+  filter: none !important;
+  
+  /* Supprime les effets de filtre individuels */
+  filter: brightness(100%) !important;
+  filter: contrast(100%) !important;
+  filter: grayscale(0%) !important;
+  filter: sepia(0%) !important;
+  filter: saturate(100%) !important;
+  filter: hue-rotate(0deg) !important;
+  filter: invert(0%) !important;
+  filter: opacity(100%) !important;
+  filter: blur(0px) !important;
+  filter: drop-shadow(none) !important;
+}
+
+/* Supprime les box-shadows sombres */
+*:hover {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Force les images et vidéos à rester claires */
+img,
+video,
+picture,
+canvas,
+svg {
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Supprime les gradients sombres */
+*[class*="gradient"] {
+  background-image: none !important;
+}
+
+/* Maintient la visibilité des boutons */
+button,
+a,
+.btn,
+.button,
+[role="button"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Supprime les effets sur le body et html */
+html,
+body {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: white !important;
+}
+
+html.dark,
+body.dark {
+  background-color: #000000 !important;
+}
+
+/* Force la suppression sur les conteneurs principaux */
+main,
+.main,
+#__next,
+#root,
+.container,
+.wrapper {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* NUCLEAR OPTION - Supprime TOUT effet de hover qui pourrait assombrir */
+*:hover * {
+  filter: none !important;
+  opacity: 1 !important;
+  background-color: initial !important;
+}
+
+/* Assure que le texte reste lisible */
+*:not(input):not(textarea) {
+  color: inherit !important;
+}
+
+/* Debug - rend visible les éléments cachés qui pourraient créer des overlays */
+.hidden[class*="overlay"],
+.invisible[class*="overlay"],
+[style*="display: none"][class*="overlay"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
