@@ -216,9 +216,9 @@ export default function HeaderMinimal() {
             </Link>
             <Link 
               href="/auth" 
-              className="bg-white hover:bg-gray-100 text-black px-6 py-3 rounded-full text-sm font-medium transition-colors"
+              className="bg-white hover:bg-gray-100 text-black px-6 py-3 rounded-full text-sm font-bold transition-colors shadow-md"
             >
-              Start free trial
+              Start for free
             </Link>
           </div>
 
