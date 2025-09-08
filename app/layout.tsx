@@ -11,6 +11,7 @@ import "../styles/app-visuals.css";
 import "../styles/performance-optimizations.css";
 import "../styles/fix-animations.css"; // MUST BE LAST to fix animations
 import "../styles/simple-animations.css"; // Simple CSS animations
+import "../styles/link-hover.css"; // Link hover effects
 import HeaderImproved from "@/src/components/header-improved";
 import FooterImproved from "@/src/components/footer-improved";
 import MobileBottomNav from "@/src/components/mobile-bottom-nav";

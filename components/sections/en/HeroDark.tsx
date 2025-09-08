@@ -19,8 +19,7 @@ export default function HeroDark() {
               transition={{ duration: 0.6 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1]"
             >
-              The platform built for
-              <br />
+              The platform built for{' '}
               <span className="text-gray-400">premium creators.</span>
             </motion.h1>
 
@@ -47,7 +46,7 @@ export default function HeroDark() {
               </Link>
               <Link
                 href="/pricing"
-                className="px-8 py-4 bg-transparent text-white rounded-full font-medium border border-gray-700 hover:bg-gray-900 transition-all inline-block text-center"
+                className="px-8 py-4 bg-transparent text-white rounded-full font-medium border border-gray-700 hover:bg-gray-900 transition-all inline-block text-center no-underline"
               >
                 View plans
               </Link>
@@ -63,24 +62,8 @@ export default function HeroDark() {
             className="relative lg:block hidden"
           >
             <div className="relative">
-              {/* Browser chrome */}
-              <div className="bg-gray-900 rounded-t-xl border border-gray-800 p-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 bg-red-500 rounded-full" />
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                    <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  </div>
-                  <div className="flex-1 flex justify-center">
-                    <div className="bg-gray-800 rounded px-3 py-1 text-xs text-gray-400">
-                      app.huntaze.com
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Dashboard content */}
-              <div className="bg-gray-950 rounded-b-xl border-x border-b border-gray-800 p-6">
+              <div className="bg-gray-950 rounded-xl border border-gray-800 p-6 shadow-2xl">
                 <div className="grid grid-cols-1 gap-4">
                   {/* Revenue card */}
                   <div className="bg-gray-900 rounded-xl p-5 border border-gray-800">
