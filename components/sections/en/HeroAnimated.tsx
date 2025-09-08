@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import GradientMesh from '@/components/animations/GradientMesh';
 import Link from 'next/link';
-import { IPhoneMockup } from '@/components/CSSMockups';
+import { SafeMockup } from '@/components/SafeMockup';
 import Image from 'next/image';
 
 export default function HeroAnimatedEN() {
@@ -57,7 +57,7 @@ export default function HeroAnimatedEN() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="relative"
           >
-            <IPhoneMockup scale={0.9}>
+            <SafeMockup type="phone" scale={0.9}>
               <div className="relative w-full h-full bg-gradient-to-br from-purple-50 to-pink-50">
                 {/* Mock content - simplified dashboard */}
                 <div className="p-4">
@@ -80,7 +80,7 @@ export default function HeroAnimatedEN() {
                   </div>
                 </div>
               </div>
-            </IPhoneMockup>
+            </SafeMockup>
           </motion.div>
         </div>
       </div>

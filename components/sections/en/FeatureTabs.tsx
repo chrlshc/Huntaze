@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, BarChart3, CreditCard, Bot, Shield, Users } from 'lucide-react';
-import { IPhoneMockup, DesktopMockup } from '@/components/CSSMockups';
+import { SafeMockup } from '@/components/SafeMockup';
 
 type FeatureKey = 'inbox' | 'analytics' | 'payments' | 'ai' | 'security' | 'collab';
 
@@ -307,17 +307,17 @@ export default function FeatureTabsEN() {
               className="relative"
             >
               {active === 'analytics' || active === 'security' ? (
-                <DesktopMockup>
+                <SafeMockup type="desktop">
                   <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 p-6">
                     <MockupContent type={active} />
                   </div>
-                </DesktopMockup>
+                </SafeMockup>
               ) : (
-                <IPhoneMockup scale={0.8}>
+                <SafeMockup type="phone" scale={0.8}>
                   <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 p-4">
                     <MockupContent type={active} />
                   </div>
-                </IPhoneMockup>
+                </SafeMockup>
               )}
             </motion.div>
           </AnimatePresence>

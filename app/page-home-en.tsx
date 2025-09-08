@@ -7,7 +7,7 @@ import FeatureTabsEN from '@/components/sections/en/FeatureTabs';
 import TestimonialsCarouselEN from '@/components/sections/en/TestimonialsCarousel';
 import ThreeStepsEN from '@/components/sections/en/ThreeSteps';
 import CTAPro from '@/components/sections/CTAPro';
-import { DeviceShowcase } from '@/components/CSSMockups';
+import { SafeDeviceShowcase } from '@/components/SafeMockup';
 import { motion } from 'framer-motion';
 
 export default function HomePageAnimatedEN() {
@@ -41,7 +41,7 @@ export default function HomePageAnimatedEN() {
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <DeviceShowcase />
+            <SafeDeviceShowcase />
           </motion.div>
         </div>
       </section>

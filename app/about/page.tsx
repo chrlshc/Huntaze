@@ -1,118 +1,26 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Metadata } from 'next';
+import { HeroSection } from '@/components/about/HeroSection';
+import { StorySection } from '@/components/about/StorySection';
+import { ValuesSection } from '@/components/about/ValuesSection';
+import { TeamSection } from '@/components/about/TeamSection';
 
 export const metadata: Metadata = {
-  title: 'About - Huntaze',
-  description: 'Learn about Huntaze - AI Platform for Content Creators',
+  title: 'About - Huntaze | Reinventing Creator Business Management',
+  description: 'Discover how Huntaze is revolutionizing the way creators manage their business with magical tools that teams love to use.',
+  openGraph: {
+    title: 'About Huntaze',
+    description: 'Our mission: making creator business management more human and efficient',
+    images: [{ url: '/og-about-huntaze.jpg', width: 1200, height: 630 }],
+  },
 };
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto px-6 py-16 space-y-12">
-        <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-6">
-            About Huntaze
-          </h1>
-          <p className="text-xl text-gray-700 dark:text-gray-400 max-w-2xl mx-auto">
-            Empowering content creators with AI-driven automation tools to scale their business.
-          </p>
-        </div>
-
-        <section className="space-y-8">
-          <div className="elevated-card rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
-            <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
-              Huntaze is built by creators, for creators. We understand the challenges of managing multiple 
-              social media platforms while trying to create quality content. Our mission is to automate the 
-              repetitive tasks so you can focus on what you do best - creating amazing content.
-            </p>
-          </div>
-
-          <div className="elevated-card rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">What We Do</h2>
-            <ul className="space-y-3 text-gray-700 dark:text-gray-400">
-              <li className="flex items-start">
-                <span className="text-purple-500 mr-3">✓</span>
-                <span>Automate content scheduling across TikTok, Instagram, and other platforms</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 mr-3">✓</span>
-                <span>AI-powered fan engagement and message automation</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 mr-3">✓</span>
-                <span>Advanced analytics to optimize your content strategy</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-purple-500 mr-3">✓</span>
-                <span>Revenue optimization tools with transparent commission structure</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="elevated-card rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">System Overview</h2>
-            <p className="text-gray-700 dark:text-gray-400 mb-4">
-              Huntaze combines a privacy‑first architecture with AI assistance that you control.
-              Our goal is simple: help you keep more of your revenue, without handing control to an agency.
-            </p>
-            <ul className="space-y-3 text-gray-700 dark:text-gray-400">
-              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>AI suggestions, you approve before sending — no chatters pretending to be you.</span></li>
-              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Socials (Instagram, TikTok, Reddit, Threads) drive traffic; OnlyFans is your monetization hub.</span></li>
-              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Transparent pricing: Starter, Pro, Scale, Enterprise — keep 93–98.5% of your revenue.</span></li>
-              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Analytics you actually use: revenue breakdowns, message performance, conversion insights.</span></li>
-              <li className="flex items-start"><span className="text-purple-500 mr-3">✓</span><span>Security best practices: encrypted secrets, least‑privilege services, audit logs.</span></li>
-            </ul>
-            <div className="mt-6">
-              <Link href="/demo" className="text-purple-600 dark:text-purple-400 font-semibold hover:underline">Book a demo →</Link>
-              <span className="mx-2 text-gray-400">•</span>
-              <Link href="/agency-comparison" className="text-purple-600 dark:text-purple-400 font-semibold hover:underline">Compare with agencies →</Link>
-            </div>
-          </div>
-
-          <div className="elevated-card rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Values</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-              <h3 className="font-semibold text-lg text-purple-600 mb-2">Transparency</h3>
-              <p className="text-gray-700 dark:text-gray-400">Clear pricing, no hidden fees. You know exactly what you pay.</p>
-            </div>
-              <div>
-              <h3 className="font-semibold text-lg text-purple-600 mb-2">Privacy First</h3>
-              <p className="text-gray-700 dark:text-gray-400">Your data is yours. We never share it without your consent.</p>
-            </div>
-              <div>
-              <h3 className="font-semibold text-lg text-purple-600 mb-2">Creator Success</h3>
-              <p className="text-gray-700 dark:text-gray-400">We only succeed when you succeed. Your growth is our priority.</p>
-            </div>
-              <div>
-              <h3 className="font-semibold text-lg text-purple-600 mb-2">Innovation</h3>
-              <p className="text-gray-700 dark:text-gray-400">Constantly evolving based on creator feedback and needs.</p>
-            </div>
-          </div>
-        </div>
-
-          <div className="elevated-card rounded-2xl p-8 text-center bg-white dark:bg-gray-900">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Join Our Community</h2>
-            <p className="text-gray-700 dark:text-gray-400 mb-6">
-              Be part of a growing community of successful content creators who are scaling their business with Huntaze.
-            </p>
-            <Link 
-              href="/join" 
-              className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition"
-            >
-              Get Early Access
-            </Link>
-          </div>
-        </section>
-
-        <div className="text-center pt-8">
-          <Link href="/" className="text-purple-600 dark:text-purple-400 hover:underline font-medium">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-    </div>
+    <main className="bg-white dark:bg-gray-950">
+      <HeroSection />
+      <StorySection />
+      <ValuesSection />
+      <TeamSection />
+    </main>
   );
 }
