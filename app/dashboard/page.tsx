@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import AppTopbar from '@/src/components/app-topbar';
 import { usePathname } from 'next/navigation';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useNotifications } from '@/components/notifications';
@@ -314,37 +315,30 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {ofSyncing && <div className="fixed top-0 left-0 right-0 h-1 bg-purple-600 animate-pulse z-50" />}
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-xl">H</span>
-              </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-white">Huntaze</span>
+      <AppTopbar
+        title="Dashboard"
+        icon={Activity}
+        right={(
+          <div className="flex items-center gap-4">
+            <Link href="/billing" className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg text-sm font-medium text-purple-700 hover:bg-purple-100 transition-colors">
+              <CreditCard className="w-4 h-4" />
+              <span>2,450 Credits</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/billing" className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg text-sm font-medium text-purple-700 hover:bg-purple-100 transition-colors">
-                <CreditCard className="w-4 h-4" />
-                <span>2,450 Credits</span>
-              </Link>
-              <Link href={SITE_URL} target="_blank" className="text-sm font-medium text-purple-600 hover:text-purple-700">Site</Link>
-              <Link href={SUPPORT_URL} target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">Support</Link>
-              <img
-                src={user?.picture || "https://ui-avatars.com/api/?name=" + (user?.name || "User")}
-                alt={user?.name}
-                className="w-9 h-9 rounded-xl ring-2 ring-purple-100"
-              />
-            </div>
+            <Link href={SITE_URL} target="_blank" className="text-sm font-medium text-purple-600 hover:text-purple-700">Site</Link>
+            <Link href={SUPPORT_URL} target="_blank" className="text-sm font-medium text-gray-600 hover:text-gray-900">Support</Link>
+            <img
+              src={user?.picture || "https://ui-avatars.com/api/?name=" + (user?.name || "User")}
+              alt={user?.name}
+              className="w-9 h-9 rounded-xl ring-2 ring-purple-100"
+            />
           </div>
-        </div>
-      </header>
+        )}
+      />
 
       {/* Main Content */}
       <div className="flex">
         {/* Sidebar */}
-        <aside className="hidden lg:block w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-screen">
+        <aside data-app-shell-hide="true" className="hidden lg:block w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-screen">
           <div className="p-6">
             {/* Onboarding Alert */}
             {onboarding && !onboarding.completed && (

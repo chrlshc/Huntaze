@@ -29,6 +29,13 @@ const nextConfig = {
   // CSS and build perf
   experimental: {
     optimizeCss: true,
+    // Optimize for Core Web Vitals
+    optimizePackageImports: ['framer-motion', 'lucide-react', '@radix-ui/react-*'],
+  },
+  
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 
   // Client bundle fallbacks

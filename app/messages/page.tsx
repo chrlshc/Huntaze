@@ -15,6 +15,8 @@ import {
 import { ofIntegrationApi } from '@/src/lib/api';
 import ResumeBanner from '@/components/onboarding/ResumeBanner';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import AppTopbar from '@/src/components/app-topbar';
+import VirtualList from '@/src/components/ui/virtual-list';
 
 export default function MessagesPage() {
   const { trackEvent } = useAnalytics();
@@ -29,6 +31,7 @@ export default function MessagesPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
 
   const getMessagePreview = (msg: any) => {
     if (!msg) return 'No content';
@@ -48,7 +51,12 @@ export default function MessagesPage() {
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const onScroll = () => setScrolled(window.scrollY > 2);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('scroll', onScroll as any);
+    };
   }, []);
 
   // Live insert new messages from SSE
@@ -133,25 +141,26 @@ export default function MessagesPage() {
           (data.fans || []).forEach((f: any) => { map[f.id] = f; });
           setFans(map);
         }
-        // Load conversations + messages
+        // Load conversations + messages (concurrently to reduce latency)
         const cr = await fetch('/api/crm/conversations', { cache: 'no-store' });
-        let totalUnread = 0;
         if (cr.ok) {
           const data = await cr.json();
           const convs = data.conversations || [];
-          const enriched: any[] = [];
-          for (const c of convs) {
-            const mr = await fetch(`/api/crm/conversations/${c.id}/messages`, { cache: 'no-store' });
-            let messages: any[] = [];
-            if (mr.ok) {
-              const md = await mr.json();
-              messages = md.messages || [];
-            }
-            const last = messages[messages.length - 1];
-            const unread = messages.filter((m) => m.direction === 'in' && !m.read).length;
-            totalUnread += unread;
-            enriched.push({ ...c, lastMessage: last, unread, messages });
-          }
+          const enriched = await Promise.all(
+            convs.map(async (c: any) => {
+              try {
+                const mr = await fetch(`/api/crm/conversations/${c.id}/messages`, { cache: 'no-store' });
+                const md = mr.ok ? await mr.json() : { messages: [] };
+                const messages: any[] = md.messages || [];
+                const last = messages[messages.length - 1];
+                const unread = messages.filter((m: any) => m.direction === 'in' && !m.read).length;
+                return { ...c, lastMessage: last, unread, messages };
+              } catch {
+                return { ...c, lastMessage: null, unread: 0, messages: [] };
+              }
+            })
+          );
+          const totalUnread = enriched.reduce((sum: number, cv: any) => sum + (cv.unread || 0), 0);
           setConversations(enriched);
           setUnreadCount(totalUnread);
           window.dispatchEvent(new CustomEvent('unread-count', { detail: { count: totalUnread } }));
@@ -166,51 +175,40 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
-        <div className="px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-6">
-              <Link href="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                <ChevronLeft className="w-5 h-5" />
-                <span className="font-medium">Dashboard</span>
-              </Link>
-              <div className="flex items-center gap-3">
-                <MessageSquare className="w-6 h-6 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Messages</h1>
-              </div>
-              {aiConfig?.responseStyle && (
-                <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-medium">
-                  AI: {aiConfig.responseStyle}
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Link href="/messages/onlyfans" className="px-3 py-2 border border-purple-200 text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl text-sm font-medium flex items-center gap-2">
-                <ExternalLink className="w-4 h-4" />
-                OnlyFans
-              </Link>
-              {ofStatus && (
-                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${ofStatus.connected ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
-                  {ofStatus.connected ? 'OF Connected' : 'OF Not Connected'}
-                </span>
-              )}
-              <button
-                onClick={() => {
-                  try {
-                    localStorage.setItem('first_message_started', '1');
-                    trackEvent('messages_compose_click');
-                  } catch {}
-                }}
-                className="rounded-xl flex items-center gap-2 hover:shadow-md transition-all bg-purple-600 text-white px-4 py-2"
-              >
-                <Send className="w-4 h-4" />
-                <span>Compose</span>
-              </button>
-            </div>
+      <AppTopbar
+        title="Messages"
+        icon={MessageSquare}
+        right={(
+          <div className="flex items-center gap-3">
+            {aiConfig?.responseStyle && (
+              <span className="hidden md:inline text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-medium">
+                AI: {aiConfig.responseStyle}
+              </span>
+            )}
+            <Link href="/messages/onlyfans" className="px-3 py-2 border border-purple-200 text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl text-sm font-medium flex items-center gap-2">
+              <ExternalLink className="w-4 h-4" />
+              OnlyFans
+            </Link>
+            {ofStatus && (
+              <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${ofStatus.connected ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
+                {ofStatus.connected ? 'OF Connected' : 'OF Not Connected'}
+              </span>
+            )}
+            <button
+              onClick={() => {
+                try {
+                  localStorage.setItem('first_message_started', '1');
+                  trackEvent('messages_compose_click');
+                } catch {}
+              }}
+              className="rounded-xl flex items-center gap-2 hover:shadow-md transition-all bg-purple-600 text-white px-4 py-2"
+            >
+              <Send className="w-4 h-4" />
+              <span>Compose</span>
+            </button>
           </div>
-        </div>
-      </header>
+        )}
+      />
 
       <main className="px-6 lg:px-8 py-8 max-w-7xl mx-auto">
         <ResumeBanner />
@@ -263,50 +261,52 @@ export default function MessagesPage() {
             </div>
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-gray-800">
-              {conversations.map((c) => {
-                const last = c.lastMessage
-                const fan = fans[c.fanId]
-                const isUnread = last && last.direction === 'in' && !last.read
-                const handleClick = async () => {
-                  if (isUnread) {
-                    try {
-                      await fetch(`/api/messages/${last.id}/read`, { method: 'PATCH' })
-                      setConversations((prev) => prev.map((cv) => {
-                        if (cv.id !== c.id) return cv
-                        const newMsgs = (cv.messages || []).map((m: any) => m.id === last.id ? { ...m, read: true } : m)
-                        const newUnread = Math.max(0, (cv.unread || 0) - 1)
-                        return { ...cv, messages: newMsgs, unread: newUnread, lastMessage: { ...last, read: true } }
-                      }))
-                      setUnreadCount((prev) => {
-                        const next = Math.max(0, prev - 1)
-                        window.dispatchEvent(new CustomEvent('unread-count', { detail: { count: next } }))
-                        return next
-                      })
-                    } catch {}
+              <div className="max-h-[70vh] overflow-auto">
+                <VirtualList items={conversations} itemHeight={76} overscan={6} renderItem={(c) => {
+                  const last = c.lastMessage
+                  const fan = fans[c.fanId]
+                  const isUnread = last && last.direction === 'in' && !last.read
+                  const handleClick = async () => {
+                    if (isUnread) {
+                      try {
+                        await fetch(`/api/messages/${last.id}/read`, { method: 'PATCH' })
+                        setConversations((prev) => prev.map((cv) => {
+                          if (cv.id !== c.id) return cv
+                          const newMsgs = (cv.messages || []).map((m: any) => m.id === last.id ? { ...m, read: true } : m)
+                          const newUnread = Math.max(0, (cv.unread || 0) - 1)
+                          return { ...cv, messages: newMsgs, unread: newUnread, lastMessage: { ...last, read: true } }
+                        }))
+                        setUnreadCount((prev) => {
+                          const next = Math.max(0, prev - 1)
+                          window.dispatchEvent(new CustomEvent('unread-count', { detail: { count: next } }))
+                          return next
+                        })
+                      } catch {}
+                    }
                   }
-                }
-                const animated = lastInsertedId && last && last.id === lastInsertedId;
-                return (
-                  <Link key={c.id} href={`/messages/${c.id}`}>
-                    <button onClick={handleClick} className={`w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 ${animated ? 'new-message-enter' : ''}`}>
-                    <div className="flex items-center gap-3">
-                      <img src={fan?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fan?.name || 'Fan')}&background=gradient`} alt={fan?.name} className="w-10 h-10 rounded-xl" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className={`truncate ${isUnread ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>{fan?.name || c.fanId}</p>
-                          {isUnread && <span className="ml-1 w-2 h-2 bg-red-500/90 rounded-full ring-2 ring-white" />}
+                  const animated = lastInsertedId && last && last.id === lastInsertedId;
+                  return (
+                    <Link key={c.id} href={`/messages/${c.id}`}>
+                      <button onClick={handleClick} className={`w-full text-left p-4 list-row transition-all duration-200 ${animated ? 'is-new' : ''}`}>
+                        <div className="flex items-center gap-3">
+                          <img src={fan?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fan?.name || 'Fan')}&background=gradient`} alt={fan?.name} className="w-10 h-10 rounded-xl" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className={`truncate ${isUnread ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>{fan?.name || c.fanId}</p>
+                              {isUnread && <span className="ml-1 w-2 h-2 bg-red-500/90 rounded-full ring-2 ring-white" />}
+                            </div>
+                            {last ? (
+                              <p className={`line-clamp-1 text-sm ${isUnread ? 'text-gray-800 dark:text-gray-200 font-medium' : 'text-gray-700 dark:text-gray-400'}`}>{getMessagePreview(last)}</p>
+                            ) : (
+                              <p className="truncate text-sm text-gray-600 dark:text-gray-400">No messages yet</p>
+                            )}
+                          </div>
                         </div>
-                        {last ? (
-                          <p className={`line-clamp-1 text-sm ${isUnread ? 'text-gray-800 dark:text-gray-200 font-medium' : 'text-gray-700 dark:text-gray-400'}`}>{getMessagePreview(last)}</p>
-                        ) : (
-                          <p className="truncate text-sm text-gray-600 dark:text-gray-400">No messages yet</p>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                  </Link>
-                )
-              })}
+                      </button>
+                    </Link>
+                  )
+                }} />
+              </div>
             </div>
           )}
         </div>

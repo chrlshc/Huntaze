@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Menu, X, ChevronDown, ArrowRight,
@@ -178,6 +180,11 @@ const navigation = {
 }
 
 export default function HeaderImproved() {
+  const pathname = usePathname()
+  const isApp = !!pathname && [
+    '/dashboard','/messages','/fans','/analytics','/campaigns','/automations','/schedule','/platforms','/billing','/configure','/profile','/social'
+  ].some(p => pathname.startsWith(p))
+  if (isApp) return null
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
@@ -240,10 +247,13 @@ export default function HeaderImproved() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <img 
-                src="/huntaze-logo.png" 
-                alt="Huntaze" 
+            <Link href="/" className="flex items-center" aria-label="Huntaze home">
+              <Image
+                src="/huntaze-logo.png"
+                alt="Huntaze"
+                width={132}
+                height={40}
+                priority
                 className="h-10 w-auto"
               />
             </Link>

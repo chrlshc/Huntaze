@@ -18,7 +18,7 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Fetch messages
-  const { data, loading, error } = useCachedFetch(`/api/of/threads/${conversationId}`);
+  const { data, loading, error, refresh } = useCachedFetch(`/api/of/threads/${conversationId}`);
   const messages = data?.messages || [];
 
   // Quick replies
@@ -34,6 +34,25 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Live updates from SSE for this conversation
+  useEffect(() => {
+    const handler = (e: Event) => {
+      try {
+        const detail: any = (e as CustomEvent).detail;
+        if (detail?.type === 'new-message' && detail.conversationId === conversationId) {
+          // Refresh thread to include the new message
+          refresh().then(() => {
+            requestAnimationFrame(() => {
+              messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            });
+          });
+        }
+      } catch {}
+    };
+    window.addEventListener('new-message', handler as EventListener);
+    return () => window.removeEventListener('new-message', handler as EventListener);
+  }, [conversationId, refresh]);
 
   const sendMessage = async () => {
     if (!message.trim() || sending) return;
@@ -51,8 +70,12 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
 
       if (response.ok) {
         setMessage('');
-        // Refresh messages
-        window.location.reload();
+        // Refresh messages without full reload
+        await refresh();
+        // Ensure scroll to bottom after refresh
+        requestAnimationFrame(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        });
       } else {
         const error = await response.json();
         alert(error.error || 'Failed to send message');
@@ -68,7 +91,7 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-[600px]">
       {/* Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex items-center gap-4">
+      <div className="sticky top-0 z-10 sticky-header-blur p-4 flex items-center gap-4">
         <button
           onClick={onBack}
           className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -93,29 +116,16 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
           <div className="text-center text-gray-500">Loading messages...</div>
         ) : (
           messages.map((msg: OfMessage) => (
-            <div
-              key={msg.id}
-              className={`flex ${msg.isFromCreator ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                  msg.isFromCreator
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                }`}
-              >
+            <div key={msg.id} className={`flex ${msg.isFromCreator ? 'justify-end' : 'justify-start'}`}>
+              <div className={`bubble ${msg.isFromCreator ? 'bubble-outgoing' : 'bubble-incoming'}`}>
                 {msg.content.tip && (
                   <div className="flex items-center gap-1 text-sm mb-1 opacity-90">
                     <DollarSign className="w-3 h-3" />
                     <span>Tipped ${msg.content.tip}</span>
                   </div>
                 )}
-                
-                <p className="whitespace-pre-wrap">{msg.content.text}</p>
-                
-                <div className={`text-xs mt-1 ${
-                  msg.isFromCreator ? 'text-purple-200' : 'text-gray-500 dark:text-gray-400'
-                }`}>
+                {msg.content.text}
+                <div className={`bubble-meta ${msg.isFromCreator ? 'text-white/80' : 'text-gray-600 dark:text-gray-400'}`}>
                   {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
                   {msg.readAt && ' • Read'}
                 </div>

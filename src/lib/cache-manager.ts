@@ -35,8 +35,14 @@ class SmartCacheManager {
     this.startPrefetchWorker();
   }
 
-  // Get data from cache with smart prefetching
+  // Get data from cache with smart prefetching (data only)
   async get(key: string): Promise<any | null> {
+    const entry = await this.getEntry(key);
+    return entry ? entry.data : null;
+  }
+
+  // Get full cache entry (with timestamp, metadata)
+  async getEntry(key: string): Promise<CacheEntry | null> {
     const entry = this.cache.get(key);
     
     if (!entry) {
@@ -58,7 +64,7 @@ class SmartCacheManager {
     // Predictive prefetching based on access patterns
     this.predictAndPrefetch(key);
 
-    return entry.data;
+    return entry;
   }
 
   // Set data in cache with size management
@@ -328,19 +334,34 @@ export function useCachedFetch(url: string, options?: RequestInit) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const refresh = useCallback(async () => {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const fresh = await response.json();
+      cacheManager.set(url, fresh);
+      setData(fresh);
+      setError(null);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [url]);
+
   useEffect(() => {
     let cancelled = false;
 
     const fetchData = async () => {
       try {
-        // Check cache first
-        const cached = await cacheManager.get(url);
-        if (cached) {
-          setData(cached);
+        // Check cache first (with entry metadata)
+        const entry = await cacheManager.getEntry(url);
+        if (entry) {
+          setData(entry.data);
           setLoading(false);
           
           // Refresh in background if stale
-          const age = Date.now() - cached.timestamp;
+          const age = Date.now() - entry.timestamp;
           if (age > 60 * 1000) { // 1 minute
             fetch(url, options)
               .then(res => res.json())
@@ -349,7 +370,8 @@ export function useCachedFetch(url: string, options?: RequestInit) {
                   cacheManager.set(url, fresh);
                   setData(fresh);
                 }
-              });
+              })
+              .catch(() => {});
           }
           return;
         }
@@ -382,7 +404,7 @@ export function useCachedFetch(url: string, options?: RequestInit) {
     };
   }, [url]);
 
-  return { data, loading, error };
+  return { data, loading, error, refresh };
 }
 
 // Prefetch hook for route-based prefetching
