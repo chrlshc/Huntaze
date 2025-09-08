@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, BarChart3, CreditCard, Bot, Shield, Users } from 'lucide-react';
-import { SafeMockup } from '@/components/SafeMockup';
+// Removed SafeMockup import - using simple divs instead
 
 type FeatureKey = 'inbox' | 'analytics' | 'payments' | 'ai' | 'security' | 'collab';
 
@@ -306,19 +306,16 @@ export default function FeatureTabsEN() {
               transition={{ duration: 0.3 }}
               className="relative"
             >
-              {active === 'analytics' || active === 'security' ? (
-                <SafeMockup type="desktop">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+              {/* Simple preview box instead of mockups */}
+              <div className="relative max-w-2xl mx-auto">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-1 rounded-2xl">
+                  <div className="bg-white rounded-xl p-8">
                     <MockupContent type={active} />
                   </div>
-                </SafeMockup>
-              ) : (
-                <SafeMockup type="phone" scale={0.8}>
-                  <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-                    <MockupContent type={active} />
-                  </div>
-                </SafeMockup>
-              )}
+                </div>
+                {/* Glow effect */}
+                <div className="absolute -inset-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-2xl blur-3xl opacity-20 -z-10" />
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>
