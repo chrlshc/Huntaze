@@ -28,10 +28,25 @@ export default function MobileBottomNav() {
   const [lastScrollY, setLastScrollY] = useState(0)
   const [items, setItems] = useState<NavItem[]>(navItemsInitial)
 
-  // Start SSE connection (handles new-message events, haptics, toast)
-  useSSE()
+  // Limit presence + SSE to authenticated/app sections (reduces overhead on marketing pages)
+  const isAppSection = !!pathname && [
+    '/dashboard',
+    '/messages',
+    '/fans',
+    '/analytics',
+    '/profile',
+    '/configure',
+    '/campaigns',
+    '/platforms',
+    '/billing',
+    '/social'
+  ].some(prefix => pathname.startsWith(prefix))
+
+  // Start SSE connection only when in app sections
+  useSSE(isAppSection)
 
   useEffect(() => {
+    if (!isAppSection) return
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       
@@ -47,10 +62,11 @@ export default function MobileBottomNav() {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  }, [lastScrollY, isAppSection])
 
   // Fetch badges data (Messages/Fans/Analytics)
   useEffect(() => {
+    if (!isAppSection) return
     let timer: any;
     const refreshBadges = async () => {
       try {
@@ -75,7 +91,7 @@ export default function MobileBottomNav() {
     const handleNewMessage = () => { refreshBadges() }
     window.addEventListener('new-message', handleNewMessage)
     return () => window.removeEventListener('new-message', handleNewMessage)
-  }, [])
+  }, [isAppSection])
 
   // Listen to cross-app unread-count updates (e.g., from Messages UI)
   useEffect(() => {
@@ -92,6 +108,9 @@ export default function MobileBottomNav() {
     window.addEventListener('unread-count', handler as EventListener)
     return () => window.removeEventListener('unread-count', handler as EventListener)
   }, [])
+
+  // Hide completely on non-app routes (after hooks initialization to preserve order)
+  if (!isAppSection) return null
 
   return (
     <>

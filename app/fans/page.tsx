@@ -11,6 +11,8 @@ import {
   Search,
   Plus
 } from 'lucide-react';
+import AppTopbar from '@/src/components/app-topbar';
+import VirtualList from '@/src/components/ui/virtual-list';
 
 export default function FansPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -55,38 +57,27 @@ export default function FansPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-6">
-              <Link href="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
-                <ChevronLeft className="w-5 h-5" />
-                <span className="font-medium">Dashboard</span>
-              </Link>
-              <div className="flex items-center gap-3">
-                <Users className="w-6 h-6 text-purple-600" />
-                <h1 className="text-xl font-bold text-gray-900">Fans</h1>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
-                <Filter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
-                <Search className="w-4 h-4" />
-                <span className="text-sm font-medium">Search</span>
-              </button>
-              <Link href="/fans/import" className="btn-gradient flex items-center gap-2">
-                <UserPlus className="w-4 h-4" />
-                <span className="font-medium">Add Fan</span>
-              </Link>
-            </div>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <AppTopbar
+        title="Fans"
+        icon={Users}
+        right={(
+          <div className="flex items-center gap-3">
+            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter</span>
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <Search className="w-4 h-4" />
+              <span className="text-sm font-medium">Search</span>
+            </button>
+            <Link href="/fans/import" className="btn-gradient flex items-center gap-2">
+              <UserPlus className="w-4 h-4" />
+              <span className="font-medium">Add Fan</span>
+            </Link>
           </div>
-        </div>
-      </header>
+        )}
+      />
 
       <main className="px-6 lg:px-8 py-8 max-w-7xl mx-auto">
         {/* Alert for no platform */}
@@ -104,22 +95,22 @@ export default function FansPage() {
         {/* Fans list */}
         {fans.length > 0 ? (
           <div className="elevated-card rounded-xl overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">All Fans ({fans.length})</h3>
+            <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">All Fans ({fans.length})</h3>
               <Link href="/fans/import" className="text-sm text-purple-600 hover:text-purple-700 font-medium">Add another</Link>
             </div>
-            <div className="divide-y divide-gray-100">
-              {fans.map((f) => (
-                <div key={f.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+            <div className="max-h-[70vh] overflow-auto divide-y divide-gray-100 dark:divide-gray-800">
+              <VirtualList items={fans} itemHeight={64} overscan={8} renderItem={(f) => (
+                <div key={f.id} className="p-4 flex items-center justify-between list-row">
                   <div>
-                    <p className="font-semibold text-gray-900">{f.name}</p>
-                    <p className="text-sm text-gray-500">{f.platform || 'custom'}</p>
+                    <p className="font-semibold text-gray-900 dark:text-white">{f.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{f.platform || 'custom'}</p>
                   </div>
                   {typeof f.valueCents === 'number' && f.valueCents > 0 && (
-                    <span className="font-bold text-gray-900">${(f.valueCents/100).toFixed(2)}/mo</span>
+                    <span className="font-bold text-gray-900 dark:text-white">${(f.valueCents/100).toFixed(2)}/mo</span>
                   )}
                 </div>
-              ))}
+              )} />
             </div>
           </div>
         ) : (

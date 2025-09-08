@@ -1,6 +1,8 @@
 "use client";
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import { Button } from './ui/button'
 import { 
   Twitter, Instagram, Youtube, Linkedin, Github,
@@ -80,6 +82,11 @@ const socialLinks = [
 ]
 
 export default function FooterImproved() {
+  const pathname = usePathname()
+  const isApp = !!pathname && [
+    '/dashboard','/messages','/fans','/analytics','/campaigns','/automations','/schedule','/platforms','/billing','/configure','/profile','/social'
+  ].some(p => pathname.startsWith(p))
+  if (isApp) return null
   return (
     <footer className="bg-gray-900 text-gray-300">
       {/* Newsletter Section */}
@@ -124,10 +131,12 @@ export default function FooterImproved() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Company Info */}
           <div className="col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center mb-4">
-              <img 
+            <Link href="/" className="flex items-center mb-4" aria-label="Huntaze home">
+              <Image 
                 src="/huntaze-logo.png" 
                 alt="Huntaze" 
+                width={132}
+                height={40}
                 className="h-10 w-auto brightness-0 invert"
               />
             </Link>
