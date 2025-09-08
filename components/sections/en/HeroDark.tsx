@@ -10,7 +10,7 @@ export default function HeroDark() {
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-black to-black" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
-        <div className="text-center">
+        <div className="text-left max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -26,7 +26,7 @@ export default function HeroDark() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-normal tracking-tight"
+            className="text-5xl sm:text-6xl lg:text-[80px] font-normal tracking-tight leading-[1.1]"
           >
             Double your revenue.
             <br />
@@ -37,7 +37,7 @@ export default function HeroDark() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 text-lg text-gray-400 max-w-2xl mx-auto"
+            className="mt-6 text-lg text-gray-400 max-w-2xl"
           >
             Unified inbox, AI assistant, revenue analytics — working together from day one.
           </motion.p>
@@ -46,19 +46,19 @@ export default function HeroDark() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+            className="mt-10 flex flex-col sm:flex-row gap-4"
           >
             <Link
               href="/auth"
-              className="px-8 py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-all"
+              className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-all"
             >
-              Start free trial
+              Start for free
             </Link>
             <Link
-              href="#features"
-              className="px-8 py-3 bg-transparent text-white rounded-lg font-medium border border-gray-800 hover:bg-gray-900 transition-all"
+              href="/pricing"
+              className="px-8 py-4 bg-transparent text-white rounded-full font-medium border border-gray-700 hover:bg-gray-900 transition-all"
             >
-              See how it works
+              View plans
             </Link>
           </motion.div>
 
@@ -66,7 +66,7 @@ export default function HeroDark() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-10 flex items-center justify-center gap-6 text-sm text-gray-500"
+            className="mt-10 flex items-center gap-6 text-sm text-gray-500"
           >
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -88,9 +88,9 @@ export default function HeroDark() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-20 relative"
+          className="mt-24 relative"
         >
-          <div className="relative mx-auto max-w-5xl">
+          <div className="relative max-w-6xl mx-auto">
             {/* Browser chrome */}
             <div className="bg-gray-900 rounded-t-xl border border-gray-800 p-3">
               <div className="flex items-center gap-2">
