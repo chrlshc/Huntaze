@@ -1,0 +1,39 @@
+/* Link hover effects - Shopify style */
+
+/* Remove underlines from all links */
+a {
+  text-decoration: none !important;
+}
+
+/* Create pill/bubble effect on hover for navigation links */
+.nav-link {
+  position: relative;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+}
+
+.nav-link:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underline from buttons and CTA links */
+a.rounded-full,
+a[class*="btn-"],
+a[class*="button"] {
+  text-decoration: none !important;
+}
+
+a.rounded-full:hover,
+a[class*="btn-"]:hover,
+a[class*="button"]:hover {
+  text-decoration: none !important;
+}
+
+/* Ensure no underlines on any state */
+a:hover,
+a:focus,
+a:active,
+a:visited {
+  text-decoration: none !important;
+}
