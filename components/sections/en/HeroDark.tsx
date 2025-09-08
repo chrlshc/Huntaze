@@ -19,9 +19,9 @@ export default function HeroDark() {
               transition={{ duration: 0.6 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1]"
             >
-              The AI platform built
+              The platform built for
               <br />
-              <span className="text-gray-400">for content creators.</span>
+              <span className="text-gray-400">premium creators.</span>
             </motion.h1>
 
             <motion.p
@@ -30,7 +30,7 @@ export default function HeroDark() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="mt-6 text-lg text-gray-400 max-w-xl"
             >
-              Everything you need to monetize your content and scale your creator business.
+              Automate conversations, boost revenue, and scale your exclusive content business with AI.
             </motion.p>
 
             <motion.div
