@@ -4,10 +4,11 @@ import { useEffect } from 'react'
 import { showToast, showMessageToast } from '@/components/Toast'
 import { usePushNotifications } from './usePushNotifications'
 
-export function useSSE() {
+export function useSSE(enabled: boolean = true) {
   const { showLocalNotification, permission } = usePushNotifications();
   
   useEffect(() => {
+    if (!enabled) return;
     let es: EventSource | null = null
 
     const connect = () => {
@@ -87,5 +88,5 @@ export function useSSE() {
     return () => {
       es?.close()
     }
-  }, [])
+  }, [enabled])
 }

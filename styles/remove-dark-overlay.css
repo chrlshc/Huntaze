@@ -1,0 +1,103 @@
+/* ====================================
+   SUPPRESSION DE L'OVERLAY SOMBRE
+   Supprime tous les effets d'overlay au survol
+   ==================================== */
+
+/* Désactive tous les overlays avec pseudo-éléments */
+* {
+  &::before,
+  &::after {
+    pointer-events: none !important;
+    opacity: 1 !important;
+    background: transparent !important;
+    filter: none !important;
+  }
+}
+
+/* Désactivation spécifique des overlays communs */
+.overlay,
+[class*="overlay"],
+[class*="filter"],
+.dark-filter,
+.hover-effect,
+[class*="bg-black/"],
+[class*="bg-dark/"],
+[class*="opacity-0"][class*="hover:opacity"] {
+  display: none !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* Supprime les effets de flou au hover */
+[class*="blur"][class*="hover"],
+[class*="hover"][class*="blur"],
+.blur-xl,
+.blur-2xl,
+.blur-3xl {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Fix pour les effets d'overlay créés avec des divs absolues */
+.absolute.inset-0[class*="hover:opacity"],
+.absolute.inset-0[class*="group-hover:opacity"] {
+  display: none !important;
+}
+
+/* Désactive les transitions d'opacité sur les overlays */
+[class*="transition-opacity"][class*="hover"],
+[class*="transition-opacity"][class*="group-hover"] {
+  transition: none !important;
+  opacity: 0 !important;
+}
+
+/* Fix mobile spécifique */
+@media (max-width: 768px) {
+  body::before,
+  body::after,
+  main::before,
+  main::after {
+    display: none !important;
+  }
+  
+  /* Désactive les effets de hover sur mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Reset des filtres sur le body et containers principaux */
+body, 
+main, 
+.container, 
+.wrapper,
+[class*="section"],
+[class*="hero"],
+[class*="feature"] {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Préserve les hover effects légitimes (sans assombrissement) */
+[class*="hover:scale"],
+[class*="hover:translate"],
+[class*="hover:shadow"],
+[class*="hover:border"] {
+  /* Ces effets sont autorisés */
+}
+
+/* Force la suppression des background sombres au hover */
+*:hover {
+  background-color: inherit !important;
+}
+
+/* Supprime les effets de gradient overlay */
+.bg-gradient-to-br[class*="hover:opacity"],
+.bg-gradient-to-br[class*="group-hover:opacity"] {
+  display: none !important;
+}

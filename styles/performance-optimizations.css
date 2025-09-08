@@ -1,0 +1,295 @@
+/* ====================================
+   CORE WEB VITALS OPTIMIZATIONS
+   Target metrics:
+   - LCP < 2.5s
+   - FID < 100ms
+   - CLS < 0.1
+   - TTI < 3.5s
+   ==================================== */
+
+/* 1. Prevent Layout Shifts (CLS) */
+/* Define explicit dimensions for all media */
+img, video, iframe {
+  aspect-ratio: attr(width) / attr(height);
+  height: auto;
+  max-width: 100%;
+}
+
+/* Reserve space for dynamic content */
+.skeleton-loader {
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 25%,
+    #e5e7eb 50%,
+    #f3f4f6 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Font loading optimization - prevent FOIT/FOUT */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap; /* Ensure text remains visible during webfont load */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* 2. Optimize Largest Contentful Paint (LCP) */
+/* Preload critical above-the-fold content */
+.hero-section {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Use CSS containment for performance */
+.feature-card,
+.testimonial-card,
+.mockup-container {
+  contain: layout style paint;
+}
+
+/* 3. Minimize First Input Delay (FID) */
+/* Optimize interactive elements */
+button, 
+a, 
+input, 
+textarea, 
+select {
+  /* GPU acceleration for smooth interactions */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  
+  /* Optimize touch targets */
+  touch-action: manipulation;
+}
+
+/* Debounce hover effects on mobile */
+@media (hover: hover) {
+  button:hover,
+  a:hover {
+    transition: all 0.2s ease;
+  }
+}
+
+/* 4. Resource Loading Priorities */
+/* Critical CSS for above-the-fold content */
+.critical-hero {
+  /* Inline critical styles */
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+/* 5. Animation Performance */
+/* Use transform and opacity for animations */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 6. Image Loading Optimization */
+/* Native lazy loading with fallback */
+img[loading="lazy"] {
+  /* Reserve space to prevent layout shift */
+  background: #f3f4f6;
+}
+
+/* Progressive image loading */
+.progressive-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.progressive-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: opacity 0.3s ease;
+}
+
+.progressive-image.loaded::before {
+  opacity: 0;
+}
+
+/* 7. Scroll Performance */
+/* Use passive event listeners hint */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* 8. CSS Grid/Flexbox Performance */
+.grid-optimized {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  contain: layout;
+}
+
+/* 9. Reduce Paint Areas */
+.card {
+  /* Isolate paint operations */
+  will-change: auto;
+  transform: translateZ(0);
+  isolation: isolate;
+}
+
+/* 10. Optimize CSS Selectors */
+/* Use efficient selectors - avoid deep nesting */
+.btn-primary { /* Good - single class */ }
+/* Avoid: body > div > section > div > button { } */
+
+/* 11. Hardware Acceleration for Smooth Animations */
+.hardware-accelerated {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Clean up will-change after animation */
+.animation-complete {
+  will-change: auto;
+}
+
+/* 12. Optimize Web Fonts */
+/* Subset fonts for better performance */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0000-00FF;
+}
+
+/* 13. CSS Containment for Complex Layouts */
+.complex-section {
+  contain: strict;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* 14. Optimize Backdrop Filters (expensive operation) */
+@supports (backdrop-filter: blur(10px)) {
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* Fallback for better performance */
+@supports not (backdrop-filter: blur(10px)) {
+  .glass-effect {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* 15. Minimize Reflows */
+.batch-dom-updates {
+  /* Use CSS transforms instead of changing dimensions */
+  transform: scale(1.1);
+  /* Instead of: width: 110%; height: 110%; */
+}
+
+/* 16. Optimize SVG Performance */
+svg {
+  /* Prevent unnecessary repaints */
+  shape-rendering: optimizeSpeed;
+  /* For icons and simple graphics */
+}
+
+svg.detailed {
+  shape-rendering: geometricPrecision;
+  /* For complex illustrations */
+}
+
+/* 17. Memory-efficient Animations */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* 18. Loading States */
+.loading-placeholder {
+  background: #f3f4f6;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 19. Intersection Observer Hints */
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* 20. Print Optimization */
+@media print {
+  /* Hide non-essential elements */
+  .no-print,
+  video,
+  .animation,
+  .interactive-demo {
+    display: none !important;
+  }
+  
+  /* Optimize for print */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

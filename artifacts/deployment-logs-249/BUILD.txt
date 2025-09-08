@@ -1,0 +1,76 @@
+2025-09-07T21:55:06.668Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-09-07T21:55:07.357Z [INFO]: # Cloning repository: git@github.com:chrlshc/sitedepot.git
+2025-09-07T21:55:16.629Z [INFO]: 
+2025-09-07T21:55:16.718Z [INFO]: Cloning into 'sitedepot'...
+                                 Updating files:  28% (20356/71536)Updating files:  29% (20746/71536)Updating files:  30% (21461/71536)Updating files:  31% (22177/71536)Updating files:  32% (22892/71536)Updating files:  33% (23607/71536)Updating files:  34% (24323/71536)Updating files:  35% (25038/71536)Updating files:  36% (25753/71536)Updating files:  37% (26469/71536)Updating files:  38% (27184/71536)Updating files:  39% (27900/71536)Updating files:  40% (28615/71536)Updating files:  41% (29330/71536)Updating files:  42% (30046/71536)Updating files:  43% (30761/71536)Updating files:  44% (31476/71536)Updating files:  45% (32192/71536)Updating files:  46% (32907/71536)Updating files:  46% (33460/71536)Updating files:  47% (33622/71536)Updating files:  48% (34338/71536)Updating files:  49% (35053/71536)Updating files:  50% (35768/71536)Updating files:  51% (36484/71536)Updating files:  52% (37199/71536)Updating files:  53% (37915/71536)Updating files:  54% (38630/71536)Updating files:  55% (39345/71536)Updating files:  56% (40061/71536)Updating files:  57% (40776/71536)Updating files:  58% (41491/71536)Updating files:  59% (42207/71536)Updating files:  60% (42922/71536)Updating files:  61% (43637/71536)Updating files:  62% (44353/71536)Updating files:  63% (45068/71536)Updating files:  64% (45784/71536)Updating files:  65% (46499/71536)Updating files:  66% (47214/71536)Updating files:  67% (47930/71536)Updating files:  67% (48090/71536)Updating files:  68% (48645/71536)Updating files:  69% (49360/71536)Updating files:  70% (50076/71536)Updating files:  71% (50791/71536)Updating files:  72% (51506/71536)Updating files:  73% (52222/71536)Updating files:  74% (52937/71536)Updating files:  75% (53652/71536)Updating files:  76% (54368/71536)Updating files:  77% (55083/71536)Updating files:  78% (55799/71536)Updating files:  79% (56514/71536)Updating files:  80% (57229/71536)Updating files:  81% (57945/71536)Updating files:  82% (58660/71536)Updating files:  83% (59375/71536)Updating files:  84% (60091/71536)Updating files:  85% (60806/71536)Updating files:  86% (61521/71536)Updating files:  87% (62237/71536)Updating files:  88% (62952/71536)Updating files:  89% (63668/71536)Updating files:  90% (64383/71536)Updating files:  90% (64959/71536)Updating files:  91% (65098/71536)Updating files:  92% (65814/71536)Updating files:  93% (66529/71536)Updating files:  94% (67244/71536)Updating files:  95% (67960/71536)Updating files:  96% (68675/71536)Updating files:  97% (69390/71536)Updating files:  98% (70106/71536)Updating files:  99% (70821/71536)Updating files: 100% (71536/71536)Updating files: 100% (71536/71536), done.
+2025-09-07T21:55:16.718Z [INFO]: # Switching to commit: a72988d7b6fa552bcbd6f27bd123f3c814009e39
+2025-09-07T21:55:17.210Z [INFO]: Note: switching to 'a72988d7b6fa552bcbd6f27bd123f3c814009e39'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at a72988d7 fix(build): correct Next.js robots.googleBot keys using bracket notation (max-snippet, max-image-preview, max-video-preview)
+2025-09-07T21:55:17.288Z [INFO]: Successfully cleaned up Git credentials
+2025-09-07T21:55:17.289Z [INFO]: # Checking for Git submodules at: /codebuild/output/src4209442668/src/sitedepot/.gitmodules
+2025-09-07T21:55:17.298Z [INFO]: # Retrieving environment cache...
+2025-09-07T21:55:17.336Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-09-07T21:55:17.336Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-09-07T21:55:17.336Z [INFO]: SSM params {"Path":"/amplify/d3jljx9im79str/main/","WithDecryption":true}
+2025-09-07T21:55:17.397Z [WARNING]: !Failed to set up process.env.secrets
+2025-09-07T21:55:18.209Z [INFO]: # No package override configuration found.
+2025-09-07T21:55:18.212Z [INFO]: # Retrieving cache...
+2025-09-07T21:55:29.821Z [INFO]: # Extracting cache...
+2025-09-07T21:55:40.063Z [INFO]: # Extraction completed
+2025-09-07T21:55:40.260Z [INFO]: # Retrieved cache
+2025-09-07T21:55:44.954Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-09-07T21:55:44.959Z [INFO]: ## Starting Frontend Build
+2025-09-07T21:55:44.959Z [INFO]: # Starting phase: preBuild
+                                 # Executing command: nvm use 20 || echo "Using default Node"
+2025-09-07T21:55:52.276Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-09-07T21:55:52.280Z [INFO]: # Executing command: npm ci
+2025-09-07T21:56:16.808Z [INFO]: added 440 packages, and audited 441 packages in 24s
+2025-09-07T21:56:16.813Z [INFO]: 69 packages are looking for funding
+                                 run `npm fund` for details
+                                 found 0 vulnerabilities
+2025-09-07T21:56:16.835Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+2025-09-07T21:56:16.835Z [INFO]: # Executing command: export NEXT_PUBLIC_APP_URL=https://huntaze.com
+                                 # Executing command: export NEXT_PUBLIC_API_URL=https://api.huntaze.com/api
+                                 # Executing command: export NEXT_DISABLE_ESLINT=1
+                                 # Executing command: export NEXT_PRIVATE_SKIP_TYPECHECK=true
+                                 # Executing command: export NEXT_TELEMETRY_DISABLED=1
+                                 # Executing command: npm run build
+2025-09-07T21:56:16.971Z [INFO]: > huntaze-site@1.0.0 build
+                                 > node scripts/validate-env.js && next build
+2025-09-07T21:56:17.707Z [INFO]: ▲ Next.js 14.2.32
+2025-09-07T21:56:17.708Z [INFO]: - Experiments (use with caution):
+                                 · optimizeCss
+2025-09-07T21:56:17.734Z [INFO]: Creating an optimized production build ...
+2025-09-07T21:56:48.545Z [INFO]: ✓ Compiled successfully
+2025-09-07T21:56:48.549Z [INFO]: Linting and checking validity of types ...
+2025-09-07T21:57:19.523Z [WARNING]: Failed to compile.
+                                    ./components/sections/en/DeviceMockup.tsx:58:32
+                                    Type error: Type 'string | undefined' is not assignable to type 'string'.
+                                    Type 'undefined' is not assignable to type 'string'.
+                                    [0m [90m 56 |[39m           ) [33m:[39m ([0m
+                                    [0m [90m 57 |[39m             src [33m&&[39m ([0m
+                                    [0m[31m[1m>[22m[39m[90m 58 |[39m               [33m<[39m[33mImage[39m src[33m=[39m{src} alt[33m=[39m{alt} fill className[33m=[39m[32m"object-cover"[39m sizes[33m=[39m[32m"(max-width: 768px) 260px, 300px"[39m [33m/[39m[33m>[39m[0m
+                                    [0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+                                    [0m [90m 59 |[39m             )[0m
+                                    [0m [90m 60 |[39m           )}[0m
+                                    [0m [90m 61 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+2025-09-07T21:57:19.571Z [WARNING]: Next.js build worker exited with code: 1 and signal: null
+2025-09-07T21:57:19.616Z [ERROR]: !!! Build failed
+2025-09-07T21:57:19.616Z [INFO]: Please read more about Amplify Hosting's support for SSR frameworks to find if your build failure is related to an unsupported feature: https://docs.aws.amazon.com/amplify/latest/userguide/amplify-ssr-framework-support.html. You may also find this troubleshooting guide useful: https://docs.aws.amazon.com/amplify/latest/userguide/troubleshooting-ssr-deployment.html
+2025-09-07T21:57:19.616Z [ERROR]: !!! Error: Command failed with exit code 1
+2025-09-07T21:57:19.616Z [INFO]: # Starting environment caching...
+2025-09-07T21:57:19.617Z [INFO]: # Environment caching completed
+

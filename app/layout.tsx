@@ -3,6 +3,11 @@ import "./globals.css";
 import "./mobile.css";
 import "./animations.css";
 import "./glass.css";
+import "../styles/remove-dark-overlay.css";
+import "../styles/mockups.css";
+import "../styles/shopify-typography.css";
+import "../styles/app-visuals.css";
+import "../styles/performance-optimizations.css";
 import HeaderImproved from "@/src/components/header-improved";
 import FooterImproved from "@/src/components/footer-improved";
 import MobileBottomNav from "@/src/components/mobile-bottom-nav";
@@ -10,6 +15,9 @@ import PageTransition from "@/src/components/page-transition";
 import { Providers } from "./providers";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { FloatingAssistant } from "@/src/components/floating-assistant";
+import RemoveDarkOverlay from "@/components/RemoveDarkOverlay";
+import AppSidebar from "@/src/components/app-sidebar";
+import PerformanceMonitor from "@/components/PerformanceMonitor";
 
 
 export const metadata: Metadata = {
@@ -108,7 +116,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-white dark:bg-black text-gray-900 dark:text-white" data-ui={minimal ? 'minimal' : undefined} data-no-overlay={disableOverlays ? 'true' : undefined}>
         <GoogleAnalytics />
+        <RemoveDarkOverlay />
+        <PerformanceMonitor />
         <Providers>
+          {/* Sidebar app (affiche seulement sur routes post-login) */}
+          <AppSidebar />
           <HeaderImproved />
           <PageTransition>
             <main className="min-h-screen">
