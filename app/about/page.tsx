@@ -1,26 +1,26 @@
-import { Metadata } from 'next';
-import { HeroSection } from '@/components/about/HeroSection';
-import { StorySection } from '@/components/about/StorySection';
-import { ValuesSection } from '@/components/about/ValuesSection';
-import { TeamSection } from '@/components/about/TeamSection';
+import type { Metadata } from 'next';
+import { HeroSectionSimple } from '@/components/about/HeroSectionSimple';
+import { StorySectionSimple } from '@/components/about/StorySectionSimple';
+import { ValuesSectionSimple } from '@/components/about/ValuesSectionSimple';
+import { TeamSectionSimple } from '@/components/about/TeamSectionSimple';
 
 export const metadata: Metadata = {
-  title: 'About - Huntaze | Reinventing Creator Business Management',
-  description: 'Discover how Huntaze is revolutionizing the way creators manage their business with magical tools that teams love to use.',
+  title: 'About Huntaze - Revolutionizing Creator Business Management',
+  description: 'Learn about Huntaze\'s mission to transform how creators manage their business through AI-powered tools and authentic human connections.',
   openGraph: {
-    title: 'About Huntaze',
-    description: 'Our mission: making creator business management more human and efficient',
-    images: [{ url: '/og-about-huntaze.jpg', width: 1200, height: 630 }],
+    title: 'About Huntaze - The Future of Creator Business',
+    description: 'Discover how we\'re building the next generation of creator tools.',
+    images: ['/images/about-hero.jpg'],
   },
 };
 
 export default function AboutPage() {
   return (
     <main className="bg-white dark:bg-gray-950">
-      <HeroSection />
-      <StorySection />
-      <ValuesSection />
-      <TeamSection />
+      <HeroSectionSimple />
+      <StorySectionSimple />
+      <ValuesSectionSimple />
+      <TeamSectionSimple />
     </main>
   );
 }
