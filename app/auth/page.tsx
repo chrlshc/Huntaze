@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Mail } from 'lucide-react';
+import { ArrowLeft, Mail, Sparkles, Check } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import './auth-styles.css';
 
 export default function AuthPage() {
   const router = useRouter();
@@ -16,8 +17,7 @@ export default function AuthPage() {
   const [authMethod, setAuthMethod] = useState<'signin' | 'signup'>('signup');
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [error, setError] = useState('');
-  const [localeOpen, setLocaleOpen] = useState(false);
-  const [locale, setLocale] = useState<'United States' | 'France'>('United States');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Store plan in session storage to persist after auth
   useEffect(() => {
@@ -70,217 +70,291 @@ export default function AuthPage() {
     window.location.href = googleAuthUrl;
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 pt-24 pb-12">
-      <div className="max-w-md w-full">
-        {/* Back button */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to home</span>
-        </Link>
+  const features = [
+    'AI that responds 24/7 in your voice',
+    'Smart pricing that maximizes revenue',
+    'Multi-platform growth automation',
+    '300% average conversion increase'
+  ];
 
-        {/* Card */}
-        <div className="bg-white dark:bg-gray-950 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 p-8">
-          {/* Locale selector */}
-          <div className="flex justify-between items-center mb-2">
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setLocaleOpen((v) => !v)}
-                className="px-2.5 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-                aria-haspopup="listbox"
-                aria-expanded={localeOpen}
-              >
-                {locale}
-              </button>
-              {localeOpen && (
-                <div className="absolute mt-1 w-40 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg z-10">
-                  {(['United States','France'] as const).map((opt) => (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => { setLocale(opt); setLocaleOpen(false); }}
-                      className={`block w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 ${opt===locale?'text-purple-600':'text-gray-700 dark:text-gray-300'}`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
+  return (
+    <div className="min-h-screen bg-surface-light dark:bg-surface flex">
+      {/* Left Side - Auth Form */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12 relative">
+        {/* Gradient Background Effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10" />
+        
+        <div className="relative w-full max-w-md">
+          {/* Back button */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-content-tertiary hover:text-content-primary mb-8 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to home</span>
+          </Link>
+
+          {/* Card */}
+          <div className="bg-surface-elevated-light dark:bg-surface-elevated rounded-2xl shadow-soft border border-border-light dark:border-border p-8">
+            {/* Logo */}
+            <div className="flex justify-center mb-8">
+              <div className="w-14 h-14 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg hover-lift-soft">
+                <span className="text-white font-bold text-2xl">H</span>
+              </div>
+            </div>
+
+            {(() => {
+              const plan = (planId || '').toLowerCase();
+              const trialMap: Record<string, number | null> = { starter: 14, pro: 7, scale: 7, enterprise: null };
+              const trial = plan ? trialMap[plan] : undefined;
+              const title = authMethod === 'signup' ? (trial === null ? 'Create your account' : 'Start your free trial') : 'Welcome back';
+              const subtitle = plan
+                ? (authMethod === 'signup'
+                    ? (trial === null ? 'Enterprise plan - Contact sales' : `${trial}-day free trial • Cancel anytime`)
+                    : `Continue with ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan`)
+                : (authMethod === 'signup' ? '14-day free trial • No credit card required' : 'Sign in to your Huntaze account');
+              return (
+                <>
+                  <h1 className="text-3xl font-bold text-center text-content-primary mb-2">{title}</h1>
+                  <p className="text-center text-content-secondary mb-8">{subtitle}</p>
+                </>
+              );
+            })()}
+
+            {/* Email Form */}
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-content-primary mb-2">
+                  Email address
+                </label>
+                <div className="relative">
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-3 pr-10 border border-input-border-light dark:border-input-border bg-input-bg-light dark:bg-input-bg rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-content-primary placeholder-content-tertiary transition-all"
+                  />
+                  <Mail className="absolute right-3 top-3.5 w-5 h-5 text-content-tertiary" />
+                </div>
+              </div>
+
+              {showEmailForm && (
+                <>
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-content-primary mb-2">
+                      {authMethod === 'signup' ? 'Create a password' : 'Password'}
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        minLength={authMethod === 'signup' ? 8 : undefined}
+                        placeholder="••••••••"
+                        className="w-full px-4 py-3 pr-10 border border-input-border-light dark:border-input-border bg-input-bg-light dark:bg-input-bg rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-content-primary placeholder-content-tertiary transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3.5 text-content-tertiary hover:text-content-secondary transition-colors"
+                      >
+                        {showPassword ? (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    {authMethod === 'signup' && (
+                      <p className="mt-1 text-xs text-content-tertiary">Must be at least 8 characters</p>
+                    )}
+                  </div>
+
+                  {error && (
+                    <div className="p-3 bg-danger/10 border border-danger/20 rounded-lg animate-shake">
+                      <p className="text-sm text-danger">{error}</p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {!showEmailForm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowEmailForm(true)}
+                  className="btn-primary w-full"
+                >
+                  Continue with email
+                </button>
+              ) : (
+                <div className="flex gap-3">
+                  <button type="submit" disabled={isLoading} className="btn-primary flex-1">
+                    {isLoading ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : (
+                      authMethod === 'signin' ? 'Sign in' : 'Create account'
+                    )}
+                  </button>
+                  <button type="button" onClick={() => setShowEmailForm(false)} className="btn-secondary px-6">
+                    Back
+                  </button>
                 </div>
               )}
-            </div>
-            <div />
-          </div>
-          {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">H</span>
-            </div>
-          </div>
+            </form>
 
-          {(() => {
-            const plan = (planId || '').toLowerCase();
-            const trialMap: Record<string, number | null> = { starter: 14, pro: 7, scale: 7, enterprise: null };
-            const trial = plan ? trialMap[plan] : undefined;
-            const title = authMethod === 'signup' ? (trial === null ? 'Create your account' : 'Start your free trial') : 'Log in to Huntaze';
-            const subtitle = plan
-              ? (authMethod === 'signup'
-                  ? (trial === null ? 'Enterprise has no free trial.' : `${trial}-day free trial. Cancel anytime.`)
-                  : `Sign in to continue with ${plan.toUpperCase()} plan`)
-              : (authMethod === 'signup' ? 'Free trial available. Cancel anytime.' : 'Welcome back to your account');
-            return (
-              <>
-                <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">{title}</h1>
-                <p className="text-center text-gray-600 dark:text-gray-400 mb-8">{subtitle}</p>
-              </>
-            );
-          })()}
+            {/* Dev Mode Bypass - Only in development */}
+            {true && (
+              <div className="my-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <p className="text-xs text-center text-yellow-800 dark:text-yellow-200 mb-3 font-medium">🚀 Dev Mode - Quick Access</p>
+                <div className="flex gap-2">
+                  <a
+                    href="/onboarding/setup"
+                    className="flex-1 px-4 py-2.5 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors text-center shadow-sm"
+                  >
+                    → Onboarding Flow
+                  </a>
+                  <a
+                    href="/dashboard"
+                    className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors text-center shadow-sm"
+                  >
+                    → Dashboard
+                  </a>
+                </div>
+              </div>
+            )}
 
-          {/* Email-first flow (clean, minimal) */}
-          <form onSubmit={handleEmailSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email address</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-900 dark:text-white"
-              />
+            {/* Divider */}
+            <div className="my-6 flex items-center">
+              <div className="flex-1 h-px bg-border-light dark:bg-border" />
+              <span className="px-3 text-sm text-content-tertiary">or continue with</span>
+              <div className="flex-1 h-px bg-border-light dark:bg-border" />
             </div>
 
-            {!showEmailForm ? (
-              <button
-                type="button"
-                onClick={() => setShowEmailForm(true)}
-                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
-              >
-                Continue with email
+            {/* OAuth buttons */}
+            <div className="space-y-3">
+              <button onClick={handleGoogleSignIn} className="btn-outline w-full group">
+                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <span className="font-medium">{authMethod === 'signin' ? 'Continue with Google' : 'Sign up with Google'}</span>
               </button>
-            ) : (
-              <>
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{authMethod === 'signup' ? 'Create a password' : 'Password'}</label>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={authMethod === 'signup' ? 8 : undefined}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-900 dark:text-white"
-                  />
-                  {authMethod === 'signup' && (
-                    <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">Minimum 8 characters</p>
-                  )}
-                </div>
-                {error && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                  </div>
-                )}
-                <div className="flex gap-3">
-                  <button type="submit" disabled={isLoading} className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50">
-                    {isLoading ? (authMethod === 'signin' ? 'Signing in...' : 'Creating account...') : (authMethod === 'signin' ? 'Sign in' : 'Create account')}
+            </div>
+
+            {/* Switch auth method */}
+            <p className="mt-6 text-center text-sm text-content-secondary">
+              {authMethod === 'signin' ? (
+                <>
+                  New to Huntaze?{' '}
+                  <button
+                    onClick={() => {
+                      setAuthMethod('signup');
+                      setShowEmailForm(false);
+                      setError('');
+                    }}
+                    className="text-primary hover:text-primary-hover font-medium transition-colors"
+                  >
+                    Create an account →
                   </button>
-                  <button type="button" onClick={() => setShowEmailForm(false)} className="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Back</button>
-                </div>
-              </>
-            )}
-          </form>
+                </>
+              ) : (
+                <>
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => {
+                      setAuthMethod('signin');
+                      setShowEmailForm(false);
+                      setError('');
+                    }}
+                    className="text-primary hover:text-primary-hover font-medium transition-colors"
+                  >
+                    Sign in →
+                  </button>
+                </>
+              )}
+            </p>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center"><div className="flex-1 h-px bg-gray-200 dark:bg-gray-800" /><span className="px-3 text-sm text-gray-500">or</span><div className="flex-1 h-px bg-gray-200 dark:bg-gray-800" /></div>
+            {/* Terms */}
+            <p className="mt-6 text-xs text-center text-content-tertiary">
+              By continuing, you agree to our{' '}
+              <Link href="/terms" className="text-primary hover:text-primary-hover underline">
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link href="/privacy" className="text-primary hover:text-primary-hover underline">
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
 
-          {/* OAuth buttons */}
-          <div className="space-y-3">
-            <button onClick={handleGoogleSignIn} className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">{authMethod === 'signin' ? 'Continue with Google' : 'Sign up with Google'}</span>
-            </button>
+      {/* Right Side - Features/Benefits (Desktop only) */}
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary to-secondary p-12 items-center justify-center relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl" />
+        </div>
 
-            <button disabled className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg opacity-50 cursor-not-allowed relative">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.51-3.74 4.25z"/>
-              </svg>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">{authMethod === 'signin' ? 'Continue with Apple' : 'Sign up with Apple'}</span>
-              <span className="absolute top-1 right-1 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full">Soon</span>
-            </button>
-
-            <button disabled className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg opacity-50 cursor-not-allowed relative">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">{authMethod === 'signin' ? 'Continue with Facebook' : 'Sign up with Facebook'}</span>
-              <span className="absolute top-1 right-1 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full">Soon</span>
-            </button>
+        <div className="relative max-w-lg">
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-white/80 text-sm font-medium">Huntaze AI Platform</span>
+            </div>
+            <h2 className="text-4xl font-bold text-white mb-4">
+              {authMethod === 'signup' ? 'Join 10,000+ creators earning more' : 'Welcome back to your growth'}
+            </h2>
+            <p className="text-white/80 text-lg">
+              The AI platform that helps OnlyFans creators maximize revenue while working less.
+            </p>
           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            {authMethod === 'signin' ? (
-              <>
-                New to Huntaze?{' '}
-                <button
-                  onClick={() => {
-                    setAuthMethod('signup');
-                    setShowEmailForm(false);
-                    setError('');
-                  }}
-                  className="text-purple-600 hover:text-purple-700 font-medium"
-                >
-                  Create an account →
-                </button>
-              </>
-            ) : (
-              <>
-                Already have a Huntaze account?{' '}
-                <button
-                  onClick={() => {
-                    setAuthMethod('signin');
-                    setShowEmailForm(false);
-                    setError('');
-                  }}
-                  className="text-purple-600 hover:text-purple-700 font-medium"
-                >
-                  Log in →
-                </button>
-              </>
-            )}
-          </p>
+          <div className="space-y-4">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-start gap-3 bg-white/10 backdrop-blur rounded-lg p-4 hover:bg-white/15 transition-colors">
+                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <span className="text-white/90">{feature}</span>
+              </div>
+            ))}
+          </div>
 
-          {/* Terms */}
-          <p className="mt-8 text-xs text-center text-gray-500 dark:text-gray-400">
-            By proceeding, you agree to the{' '}
-            <Link href="/terms" className="text-purple-600 hover:text-purple-700">
-              Terms and Conditions
-            </Link>{' '}
-            and{' '}
-            <Link href="/privacy" className="text-purple-600 hover:text-purple-700">
-              Privacy Policy
-            </Link>
-          </p>
-
-          {/* Help links */}
-          <div className="mt-4 flex justify-center gap-4 text-xs">
-            <Link href="/support" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-              Help
-            </Link>
-            <span className="text-gray-400 dark:text-gray-600">•</span>
-            <Link href="/privacy" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-              Privacy
-            </Link>
-            <span className="text-gray-400 dark:text-gray-600">•</span>
-            <Link href="/terms" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-              Terms
-            </Link>
+          {/* Social Proof */}
+          <div className="mt-12 pt-8 border-t border-white/20">
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur border-2 border-white/40" />
+                ))}
+              </div>
+              <div>
+                <p className="text-white font-medium">Trusted by top creators</p>
+                <p className="text-white/70 text-sm">$50M+ managed revenue</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -59,7 +59,7 @@ export function Hero() {
             <Link href="/demo">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="btn-primary hover-lift-soft animate-pulse-soft px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 Start free
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -69,7 +69,7 @@ export function Hero() {
               <Button
                 variant="outline"
                 size="lg"
-                className="px-8 py-6 text-lg font-semibold rounded-xl border-2 border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-300"
+                className="btn-outline px-8 py-6 text-lg font-semibold rounded-xl transition-all duration-300"
               >
                 See how it works
               </Button>
@@ -82,4 +82,3 @@ export function Hero() {
 }
 
 export default Hero;
-

@@ -3,6 +3,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type SellPlanOption =
+  | 'subs' | 'ppv' | 'customs' | 'sexting' | 'calls' | 'merch' | 'later';
+
 export type OnboardingStep = 
   | 'welcome'
   | 'compliance-training'
@@ -59,6 +62,47 @@ export type OnboardingState = {
   complianceQuizScore?: number;
   onboardingStartDate?: Date;
   onboardingCompletedDate?: Date;
+  // Extended onboarding config (MVP)
+  niches?: string[];
+  goals?: { revenueTarget?: number | null; timeSaved?: number | null; automationLevel?: number };
+  persona?: {
+    stageName?: string;
+    shortBio?: string;
+    toneSliders?: { friendlyFlirty?: number; playfulRefined?: number; directSoft?: number };
+    emojiUsage?: 'low' | 'med' | 'high';
+    punctuationStyle?: 'sober' | 'energetic';
+    complexity?: 'simple' | 'rich';
+    signaturePhrases?: string[];
+    forbiddenPhrases?: string[];
+  };
+  boundaries?: { nsfwLevel?: 'soft' | 'explicit'; restrictedTopics?: string[]; safeWord?: string | null; platformRulesFlags?: { OF?: boolean; IG?: boolean; TT?: boolean } };
+  monetization?: {
+    subPrice?: number;
+    trialEnabled?: boolean;
+    trialDays?: number;
+    ppvRange?: { min: number; typical: number; max: number };
+    bundles?: { months: number; discountPct: number }[];
+    discountCapPct?: number;
+    upsellMenu?: { item: string; price: number; eta?: string }[];
+    customContentEnabled?: boolean;
+  };
+  ops?: {
+    timezone?: string;
+    activeHours?: { start: string; end: string }[];
+    responseSLA?: { normal?: string; vip?: string };
+    automationLevel?: number;
+    reviewThresholds?: { ppvAmount?: number; customRequest?: boolean };
+    dailyCaps?: { global?: number; vip?: number };
+    reengageWindows?: string[];
+    // Extended flags for welcome/connect steps
+    platforms?: { onlyfans?: boolean; instagram?: boolean; tiktok?: boolean; reddit?: boolean };
+    businessState?: 'new' | 'existing';
+  };
+  segmentation?: { whaleThreshold?: number; cohorts?: { name: string; min?: number; max?: number }[] };
+  dataConsent?: { trainingConsent?: boolean; retentionDays?: number };
+  funnels?: { linkHub?: string; priorityGoals?: string[] };
+  // Sell plan (selected features to enable)
+  sellPlan: SellPlanOption[];
 };
 
 export type OnboardingActions = {
@@ -74,6 +118,17 @@ export type OnboardingActions = {
   resetOnboarding: () => void;
   isStepCompleted: (step: OnboardingStep) => boolean;
   canProceedToStep: (step: OnboardingStep) => boolean;
+  // Extended setters
+  setNiches: (niches: string[]) => void;
+  setGoals: (goals: OnboardingState['goals']) => void;
+  updatePersona: (data: Partial<NonNullable<OnboardingState['persona']>>) => void;
+  updateBoundaries: (data: Partial<NonNullable<OnboardingState['boundaries']>>) => void;
+  updateMonetization: (data: Partial<NonNullable<OnboardingState['monetization']>>) => void;
+  updateOps: (data: Partial<NonNullable<OnboardingState['ops']>>) => void;
+  updateSegmentation: (data: Partial<NonNullable<OnboardingState['segmentation']>>) => void;
+  updateDataConsent: (data: Partial<NonNullable<OnboardingState['dataConsent']>>) => void;
+  updateFunnels: (data: Partial<NonNullable<OnboardingState['funnels']>>) => void;
+  setSellPlan: (v: SellPlanOption[]) => void;
 };
 
 const defaultComplianceSettings: ComplianceSettings = {
@@ -113,6 +168,7 @@ export const useOnboarding = create<OnboardingState & OnboardingActions>()(
       },
       platformConnections: [],
       complianceSettings: defaultComplianceSettings,
+      sellPlan: ['subs', 'ppv'],
 
       setCurrentStep: (step) => set({ currentStep: step }),
 
@@ -193,9 +249,30 @@ export const useOnboarding = create<OnboardingState & OnboardingActions>()(
         const dependencies = stepDependencies[step] || [];
         return dependencies.every((dep) => state.completedSteps.has(dep));
       },
+
+      // Extended setters
+      setNiches: (niches) => set({ niches }),
+      setGoals: (goals) => set({ goals }),
+      updatePersona: (data) => set((s) => ({ persona: { ...(s.persona || {}), ...data } })),
+      updateBoundaries: (data) => set((s) => ({ boundaries: { ...(s.boundaries || {}), ...data } })),
+      updateMonetization: (data) => set((s) => ({ monetization: { ...(s.monetization || {}), ...data } })),
+      updateOps: (data) => set((s) => ({ ops: { ...(s.ops || {}), ...data } })),
+      updateSegmentation: (data) => set((s) => ({ segmentation: { ...(s.segmentation || {}), ...data } })),
+      updateDataConsent: (data) => set((s) => ({ dataConsent: { ...(s.dataConsent || {}), ...data } })),
+      updateFunnels: (data) => set((s) => ({ funnels: { ...(s.funnels || {}), ...data } })),
+
+      setSellPlan: (v) => {
+        set({ sellPlan: v });
+        // keep ops in sync if mirrored there
+        try {
+          const ops = (get() as any).ops || {};
+          (get() as any).updateOps?.({ ...ops, sellPlan: v });
+        } catch {}
+      },
     }),
     {
       name: 'huntaze-onboarding',
+      version: 2,
       partialize: (state) => ({
         completedSteps: Array.from(state.completedSteps),
         userData: state.userData,
@@ -205,12 +282,29 @@ export const useOnboarding = create<OnboardingState & OnboardingActions>()(
         complianceQuizScore: state.complianceQuizScore,
         onboardingStartDate: state.onboardingStartDate,
         onboardingCompletedDate: state.onboardingCompletedDate,
+        niches: state.niches,
+        goals: state.goals,
+        persona: state.persona,
+        boundaries: state.boundaries,
+        monetization: state.monetization,
+        ops: state.ops,
+        segmentation: state.segmentation,
+        dataConsent: state.dataConsent,
+        funnels: state.funnels,
+        sellPlan: state.sellPlan,
       }),
       merge: (persisted: any, current) => ({
         ...current,
         ...(persisted || {}),
         completedSteps: new Set(persisted?.completedSteps || []),
       }),
+      migrate: (persisted: any, _version?: number) => {
+        if (!persisted) return persisted;
+        if (!Array.isArray(persisted.sellPlan)) {
+          persisted.sellPlan = ['subs', 'ppv'];
+        }
+        return persisted;
+      },
     }
   )
 );
@@ -241,4 +335,3 @@ export const availablePersonalities: AIPersonality[] = [
     boldnessLevel: 0.6,
   },
 ];
-

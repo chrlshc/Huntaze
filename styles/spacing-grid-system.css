@@ -1,0 +1,235 @@
+/* 8px Baseline Grid Spacing System */
+
+/* Override default spacing with 8px grid */
+* {
+  /* Reset any odd spacing */
+  margin: 0;
+  padding: 0;
+}
+
+/* Padding utilities following 8px grid */
+.p-0 { padding: 0; }
+.p-1 { padding: var(--spacing-xs); } /* 8px */
+.p-2 { padding: var(--spacing-sm); } /* 16px */
+.p-3 { padding: var(--spacing-md); } /* 24px */
+.p-4 { padding: var(--spacing-lg); } /* 32px */
+.p-5 { padding: var(--spacing-xl); } /* 40px */
+.p-6 { padding: var(--spacing-2xl); } /* 48px */
+.p-7 { padding: var(--spacing-3xl); } /* 56px */
+.p-8 { padding: calc(var(--spacing-lg) * 2); } /* 64px */
+
+/* Margin utilities following 8px grid */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--spacing-xs); } /* 8px */
+.m-2 { margin: var(--spacing-sm); } /* 16px */
+.m-3 { margin: var(--spacing-md); } /* 24px */
+.m-4 { margin: var(--spacing-lg); } /* 32px */
+.m-5 { margin: var(--spacing-xl); } /* 40px */
+.m-6 { margin: var(--spacing-2xl); } /* 48px */
+.m-7 { margin: var(--spacing-3xl); } /* 56px */
+.m-8 { margin: calc(var(--spacing-lg) * 2); } /* 64px */
+
+/* Gap utilities for flexbox/grid */
+.gap-1 { gap: var(--spacing-xs); } /* 8px */
+.gap-2 { gap: var(--spacing-sm); } /* 16px */
+.gap-3 { gap: var(--spacing-md); } /* 24px */
+.gap-4 { gap: var(--spacing-lg); } /* 32px */
+.gap-5 { gap: var(--spacing-xl); } /* 40px */
+.gap-6 { gap: var(--spacing-2xl); } /* 48px */
+
+/* Section spacing */
+section,
+.section {
+  padding: var(--spacing-3xl) var(--content-padding); /* 56px vertical, responsive horizontal */
+}
+
+@media (max-width: 767px) {
+  section,
+  .section {
+    padding: var(--spacing-2xl) var(--content-padding); /* 48px on mobile */
+  }
+}
+
+/* Component spacing */
+.card,
+.panel,
+.box {
+  padding: var(--spacing-md); /* 24px */
+  margin-bottom: var(--spacing-md);
+}
+
+/* Text spacing */
+h1, .h1 { 
+  margin-bottom: var(--spacing-lg); /* 32px */
+  line-height: var(--line-height-tight);
+}
+
+h2, .h2 { 
+  margin-bottom: var(--spacing-md); /* 24px */
+  line-height: var(--line-height-tight);
+}
+
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 { 
+  margin-bottom: var(--spacing-sm); /* 16px */
+  line-height: var(--line-height-normal);
+}
+
+p {
+  margin-bottom: var(--spacing-sm); /* 16px */
+  line-height: var(--line-height-relaxed);
+}
+
+/* List spacing */
+ul, ol {
+  margin-bottom: var(--spacing-md); /* 24px */
+  padding-left: var(--spacing-md);
+}
+
+li {
+  margin-bottom: var(--spacing-xs); /* 8px */
+}
+
+/* Form element spacing */
+.form-group,
+.field {
+  margin-bottom: var(--spacing-md); /* 24px */
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs); /* 8px */
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: var(--spacing-sm); /* 16px */
+  margin-bottom: var(--spacing-xs); /* 8px */
+  min-height: var(--touch-target-min); /* 44px */
+}
+
+/* Button spacing in groups */
+.button-group {
+  display: flex;
+  gap: var(--spacing-xs); /* 8px */
+  margin-bottom: var(--spacing-md);
+}
+
+/* Container spacing */
+.container {
+  padding-left: var(--content-padding);
+  padding-right: var(--content-padding);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Safe area adjustments */
+.safe-area-top {
+  padding-top: max(var(--spacing-md), var(--safe-area-top));
+}
+
+.safe-area-bottom {
+  padding-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+}
+
+.safe-area-left {
+  padding-left: max(var(--content-padding), var(--safe-area-left));
+}
+
+.safe-area-right {
+  padding-right: max(var(--content-padding), var(--safe-area-right));
+}
+
+/* Dead zone margins */
+.no-edge-tap {
+  margin-left: var(--edge-dead-zone); /* 20px */
+  margin-right: var(--edge-dead-zone); /* 20px */
+}
+
+/* Grid system with 8px base */
+.grid {
+  display: grid;
+  gap: var(--spacing-sm); /* 16px */
+}
+
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 767px) {
+  .mobile\:grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+  .mobile\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Stack spacing */
+.stack > * + * {
+  margin-top: var(--spacing-sm); /* 16px */
+}
+
+.stack-lg > * + * {
+  margin-top: var(--spacing-md); /* 24px */
+}
+
+.stack-xl > * + * {
+  margin-top: var(--spacing-lg); /* 32px */
+}
+
+/* Responsive spacing utilities */
+@media (max-width: 767px) {
+  .mobile\:p-2 { padding: var(--spacing-sm); }
+  .mobile\:p-3 { padding: var(--spacing-md); }
+  .mobile\:p-4 { padding: var(--spacing-lg); }
+  
+  .mobile\:m-0 { margin: 0; }
+  .mobile\:m-2 { margin: var(--spacing-sm); }
+  .mobile\:m-3 { margin: var(--spacing-md); }
+  
+  .mobile\:gap-2 { gap: var(--spacing-sm); }
+  .mobile\:gap-3 { gap: var(--spacing-md); }
+}
+
+/* Ensure consistent spacing in common patterns */
+.hero-content {
+  padding: var(--spacing-3xl) var(--content-padding);
+}
+
+.feature-grid {
+  display: grid;
+  gap: var(--spacing-lg); /* 32px */
+  margin-top: var(--spacing-2xl); /* 48px */
+  margin-bottom: var(--spacing-2xl);
+}
+
+.testimonial-card {
+  padding: var(--spacing-lg); /* 32px */
+  margin-bottom: var(--spacing-md); /* 24px */
+}
+
+/* Fix existing components to use grid system */
+.navbar {
+  padding: 0 var(--content-padding);
+  height: var(--mobile-header-height);
+}
+
+.footer {
+  padding: var(--spacing-2xl) var(--content-padding);
+}
+
+/* Progressive disclosure spacing */
+.accordion-item {
+  margin-bottom: var(--spacing-xs); /* 8px */
+}
+
+.accordion-content {
+  padding: var(--spacing-md); /* 24px */
+}
+
+.tab-content {
+  padding: var(--spacing-md); /* 24px */
+  margin-top: var(--spacing-sm); /* 16px */
+}

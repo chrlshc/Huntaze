@@ -1,0 +1,162 @@
+/* FORCE BLACK BACKGROUND EVERYWHERE - NO PURPLE */
+
+/* Override ALL backgrounds to black */
+* {
+  background-image: none !important;
+}
+
+/* Target all sections and containers */
+section,
+div[class*="section"],
+div[class*="container"],
+main,
+article,
+aside,
+header,
+footer {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Remove ALL gradient classes */
+[class*="gradient"],
+[class*="purple"],
+[class*="violet"],
+[class*="indigo"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Target specific Tailwind gradient utilities */
+.bg-gradient-to-br,
+.bg-gradient-to-r,
+.bg-gradient-to-b,
+.bg-gradient-to-t,
+.bg-gradient-to-l,
+.bg-gradient-to-tr,
+.bg-gradient-to-tl,
+.bg-gradient-to-bl {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Remove all purple color classes */
+.from-purple-900,
+.from-purple-800,
+.from-purple-700,
+.from-purple-600,
+.from-purple-500,
+.from-purple-400,
+.via-purple-900,
+.via-purple-800,
+.via-purple-700,
+.via-purple-600,
+.via-purple-500,
+.via-purple-400,
+.to-purple-900,
+.to-purple-800,
+.to-purple-700,
+.to-purple-600,
+.to-purple-500,
+.to-purple-400,
+.bg-purple-900,
+.bg-purple-800,
+.bg-purple-700,
+.bg-purple-600,
+.bg-purple-500,
+.bg-purple-400 {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Remove violet classes too */
+.from-violet-900,
+.from-violet-800,
+.from-violet-700,
+.from-violet-600,
+.from-violet-500,
+.from-violet-400,
+.via-violet-900,
+.via-violet-800,
+.via-violet-700,
+.via-violet-600,
+.via-violet-500,
+.via-violet-400,
+.to-violet-900,
+.to-violet-800,
+.to-violet-700,
+.to-violet-600,
+.to-violet-500,
+.to-violet-400,
+.bg-violet-900,
+.bg-violet-800,
+.bg-violet-700,
+.bg-violet-600,
+.bg-violet-500,
+.bg-violet-400 {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Force black on any element with style attribute containing purple/violet */
+[style*="purple"],
+[style*="violet"],
+[style*="147, 51, 234"],
+[style*="#9333ea"],
+[style*="#8b5cf6"],
+[style*="#7c3aed"],
+[style*="#6d28d9"],
+[style*="#5b21b6"],
+[style*="#4c1d95"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Ensure body and html are black */
+html,
+body {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Remove any pseudo elements with backgrounds */
+*::before,
+*::after {
+  background-image: none !important;
+}
+
+/* Target specific problem sections */
+.enterprise-ready,
+section.enterprise-ready,
+div.enterprise-ready,
+[class*="enterprise"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Override inline styles with RGB values */
+[style*="background-color: rgb"],
+[style*="background: rgb"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Ensure no hover effects add purple */
+*:hover {
+  background-image: none !important;
+}
+
+/* Fix any backdrop filters that might show purple */
+* {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

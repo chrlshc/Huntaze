@@ -84,3 +84,48 @@
   outline: none;
   box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.5);
 }
+
+/* Huntaze pill button (exact style as requested) */
+.huntaze-button {
+  background: white;
+  color: black;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.huntaze-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Outline pill CTA (white background, black text) */
+.cta-pill-outline {
+  background: white;
+  color: black;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.cta-pill-outline:hover {
+  background: #f0f0f0;
+}

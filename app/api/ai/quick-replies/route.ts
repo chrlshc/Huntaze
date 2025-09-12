@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { crmData } from '@/lib/services/crmData';
-
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const token = request.cookies.get('auth_token')?.value;
-  if (!token) return null;
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    return payload.userId as string;
-  } catch {
-    return null;
-  }
-}
+import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = await getUserId(request);
+    const user = await getUserFromRequest(request);
+    const userId = user?.userId || null;
     if (!userId) return NextResponse.json({ templates: [] }, { status: 200 });
     const templates = crmData.listQuickReplies(userId);
     return NextResponse.json({ templates });
@@ -27,7 +16,8 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const userId = await getUserId(request);
+    const user = await getUserFromRequest(request);
+    const userId = user?.userId || null;
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const { templates } = await request.json();
     if (!Array.isArray(templates)) return NextResponse.json({ error: 'templates must be an array' }, { status: 400 });
@@ -37,4 +27,3 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to save templates' }, { status: 500 });
   }
 }
-

@@ -1,0 +1,231 @@
+/* Mobile Design Standards - Based on comprehensive research */
+
+:root {
+  /* Safe area variables */
+  --safe-area-top: env(safe-area-inset-top, 0);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0);
+  --safe-area-left: env(safe-area-inset-left, 0);
+  --safe-area-right: env(safe-area-inset-right, 0);
+  
+  /* Standard dimensions */
+  --mobile-header-height: 56px;
+  --mobile-header-small: 44px; /* For devices < 375px */
+  --mobile-header-large: 64px; /* For devices > 414px */
+  
+  /* Touch target sizes */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+  --touch-target-primary: 60px;
+  
+  /* Spacing system (8px baseline grid) */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 40px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 56px;
+  
+  /* Dead zones / Edge spacing */
+  --edge-dead-zone: 20px;
+  --content-padding-mobile: 16px;
+  --content-padding-tablet: 24px;
+  --content-padding-desktop: 32px;
+  
+  /* Typography scale */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+  --text-3xl: 1.875rem; /* 30px */
+  --text-4xl: 2.25rem; /* 36px */
+  
+  /* Line heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+}
+
+/* Media queries for responsive spacing */
+@media (max-width: 374px) {
+  :root {
+    --mobile-header-height: var(--mobile-header-small);
+    --content-padding: var(--content-padding-mobile);
+  }
+}
+
+@media (min-width: 375px) and (max-width: 414px) {
+  :root {
+    --mobile-header-height: 56px;
+    --content-padding: var(--content-padding-mobile);
+  }
+}
+
+@media (min-width: 415px) and (max-width: 767px) {
+  :root {
+    --mobile-header-height: var(--mobile-header-large);
+    --content-padding: var(--content-padding-tablet);
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --content-padding: var(--content-padding-desktop);
+  }
+}
+
+/* Header with safe areas */
+.mobile-header {
+  height: var(--mobile-header-height);
+  padding-top: var(--safe-area-top);
+  padding-left: max(var(--safe-area-left), var(--content-padding));
+  padding-right: max(var(--safe-area-right), var(--content-padding));
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+
+/* Compensate for fixed header */
+body {
+  padding-top: calc(var(--mobile-header-height) + var(--safe-area-top));
+}
+
+/* Touch-friendly buttons */
+.touch-button {
+  min-height: var(--touch-target-comfortable);
+  min-width: var(--touch-target-comfortable);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin: var(--spacing-xs);
+}
+
+.touch-button-primary {
+  min-height: var(--touch-target-primary);
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+/* Icon buttons */
+.icon-button {
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Safe content area */
+.safe-content {
+  padding-left: max(var(--edge-dead-zone), var(--safe-area-left));
+  padding-right: max(var(--edge-dead-zone), var(--safe-area-right));
+  padding-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+}
+
+/* Hero sections with modern viewport units */
+.hero-section {
+  min-height: 100vh; /* Fallback */
+  min-height: 100svh; /* Small viewport height */
+  min-height: -webkit-fill-available; /* iOS fallback */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--content-padding);
+}
+
+/* Feature sections */
+.feature-section {
+  min-height: 50vh;
+  min-height: 50svh;
+  padding: var(--spacing-3xl) var(--content-padding);
+}
+
+/* Content sections */
+.content-section {
+  padding: var(--spacing-2xl) var(--content-padding);
+}
+
+/* Typography hierarchy */
+.mobile-heading-1 {
+  font-size: var(--text-3xl);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-md);
+}
+
+.mobile-heading-2 {
+  font-size: var(--text-2xl);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-sm);
+}
+
+.mobile-body {
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Thumb-friendly zones */
+.thumb-zone {
+  position: fixed;
+  bottom: var(--edge-dead-zone);
+  left: var(--edge-dead-zone);
+  right: var(--edge-dead-zone);
+  padding-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+}
+
+/* Progressive disclosure */
+.expandable-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.expandable-content.expanded {
+  max-height: 100vh;
+}
+
+/* Container queries for component adaptation */
+@container (min-width: 400px) {
+  .adaptive-component {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+}
+
+/* Performance optimizations */
+.use-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Scroll performance */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* Prevent accidental edge gestures */
+.no-edge-swipe {
+  margin-left: var(--edge-dead-zone);
+  margin-right: var(--edge-dead-zone);
+}
+
+/* Mobile-first utilities */
+@media (max-width: 767px) {
+  .mobile-only {
+    display: block !important;
+  }
+  
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}

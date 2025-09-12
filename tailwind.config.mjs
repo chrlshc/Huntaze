@@ -18,12 +18,57 @@ export default {
     './src/**/*.{ts,tsx}',
   ],
   safelist: [
-    { pattern: /^(bg|text|border)-(purple|pink|blue|green|orange)-(50|100|200|500|600)$/ },
+    // Needed for dynamic niche color classes like bg-${color}-500
+    { pattern: /^(bg|text|border)-(purple|pink|blue|green|emerald|indigo|red|gray|rose|amber|violet|cyan|orange)-(50|100|200|500|600)$/ },
   ],
   theme: {
     extend: {
       colors: {
-        // Professional Dark Mode Color System
+        // Huntaze Design System Colors
+        surface: {
+          DEFAULT: 'var(--color-surface)',
+          light: 'var(--color-surface-light)',
+          elevated: 'var(--color-surface-elevated)',
+          'elevated-light': 'var(--color-surface-elevated-light)',
+          hover: 'var(--color-surface-hover)',
+          'hover-light': 'var(--color-surface-hover-light)',
+        },
+        content: {
+          primary: 'var(--color-content-primary)',
+          secondary: 'var(--color-content-secondary)',
+          tertiary: 'var(--color-content-tertiary)',
+        },
+        border: {
+          DEFAULT: 'var(--color-border)',
+          light: 'var(--color-border-light)',
+        },
+        primary: {
+          DEFAULT: 'rgb(var(--color-primary-rgb) / <alpha-value>)',
+          hover: 'rgb(var(--color-teal-600-rgb) / <alpha-value>)',
+          foreground: 'var(--color-btn-primary-text)',
+        },
+        secondary: {
+          DEFAULT: 'rgb(var(--color-secondary-rgb) / <alpha-value>)',
+          foreground: 'var(--text-primary)',
+        },
+        danger: 'var(--color-danger)',
+        input: {
+          bg: {
+            DEFAULT: 'var(--color-input-bg)',
+            light: 'var(--color-input-bg-light)',
+          },
+          border: {
+            DEFAULT: 'var(--color-input-border)',
+            light: 'var(--color-input-border-light)',
+          },
+        },
+        neutral: {
+          200: 'var(--color-neutral-200)',
+          300: 'var(--color-neutral-300)',
+          700: 'var(--color-neutral-700)',
+          800: 'var(--color-neutral-800)',
+        },
+        // Professional Dark Mode Color System (Legacy)
         background: {
           primary: 'var(--background-primary)',
           secondary: 'var(--background-secondary)',
@@ -42,21 +87,16 @@ export default {
           active: 'var(--accent-active)',
           muted: 'var(--accent-muted)',
         },
-        border: {
-          subtle: 'var(--border-subtle)',
-          DEFAULT: 'var(--border-default)',
-          strong: 'var(--border-strong)',
-        },
-        // Legacy colors for backward compatibility
-        primary: '#9333EA',
-        secondary: '#7E22CE',
-        accent: '#A855F7',
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
       },
       boxShadow: {
         'sm': 'var(--shadow-sm)',
         'md': 'var(--shadow-md)',
         'lg': 'var(--shadow-lg)',
         'xl': 'var(--shadow-xl)',
+        'soft': 'var(--shadow-soft)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

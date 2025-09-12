@@ -1,18 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { crmData } from '@/lib/services/crmData';
-
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const token = request.cookies.get('auth_token')?.value;
-  if (!token) return null;
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-  const { payload } = await jwtVerify(token, secret);
-  return payload.userId as string;
-}
+import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = await getUserId(request);
+    const user = await getUserFromRequest(request);
+    const userId = user?.userId || null;
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const conversations = crmData.listConversations(userId);
     return NextResponse.json({ conversations });
@@ -23,7 +16,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getUserId(request);
+    const user = await getUserFromRequest(request);
+    const userId = user?.userId || null;
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const { fanId, platform } = await request.json();
     if (!fanId) return NextResponse.json({ error: 'fanId is required' }, { status: 400 });
@@ -33,4 +27,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 });
   }
 }
-

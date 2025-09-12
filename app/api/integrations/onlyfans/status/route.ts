@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) return NextResponse.json({ connected: false, reason: 'unauthenticated' }, { status: 401 });
 
     // Proxy to backend platforms list to infer OF connection
@@ -18,4 +18,3 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ connected: false }, { status: 200 });
   }
 }
-

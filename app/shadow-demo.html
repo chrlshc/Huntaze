@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Neon Effect - Eminence in Shadow Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        /* Container principal */
+        .shadow-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #16213e 100%);
+        }
+
+        /* Canvas pour les lignes d'ombre néon */
+        #shadowCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Contenu principal */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        /* Titre SANS effet néon direct */
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: white;
+            /* PAS de text-shadow néon ici */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8A2BE2, #C724B1);
+            color: white;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(138, 43, 226, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(138, 43, 226, 0.1);
+            color: #C724B1;
+            border: 1px solid rgba(199, 36, 177, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(138, 43, 226, 0.2);
+            border-color: rgba(199, 36, 177, 0.6);
+        }
+
+        /* Tag AI Platform */
+        .tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid rgba(199, 36, 177, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="shadow-container">
+        <!-- Canvas pour les lignes d'ombre néon -->
+        <canvas id="shadowCanvas"></canvas>
+        
+        <!-- Contenu principal -->
+        <div class="main-content">
+            <div class="hero-section">
+                <span class="tag">⚡ AI-Powered Creator Platform</span>
+                <h1 class="hero-title">
+                    Become the<br>
+                    creator earning<br>
+                    six figures
+                </h1>
+                <p class="hero-subtitle">
+                    Build bigger, earn smarter, grow further with Huntaze's AI-powered platform
+                </p>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary">Start Free Trial</button>
+                    <button class="btn btn-secondary">Watch Demo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Classe pour créer les lignes d'ombre néon AUTOUR du contenu
+        class ShadowLinesEffect {
+            constructor() {
+                this.canvas = document.getElementById('shadowCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.shadowLines = [];
+                this.floatingOrbs = [];
+                this.energyBeams = [];
+                this.time = 0;
+                this.mouseX = window.innerWidth / 2;
+                this.mouseY = window.innerHeight / 2;
+                
+                // Palette de couleurs Shadow
+                this.colors = {
+                    primary: '#8A2BE2',     // Violet
+                    secondary: '#C724B1',   // Rose néon
+                    tertiary: '#FF1493',    // Deep pink
+                    glow: '#E0B0FF',       // Lavande clair
+                    dark: '#4B0082'        // Indigo
+                };
+                
+                this.init();
+                this.animate();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                window.addEventListener('mousemove', (e) => {
+                    this.mouseX = e.clientX;
+                    this.mouseY = e.clientY;
+                });
+                
+                // Créer les lignes d'ombre flottantes
+                this.createShadowLines();
+                this.createFloatingOrbs();
+                this.createEnergyBeams();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            createShadowLines() {
+                // Créer des lignes qui flottent AUTOUR du contenu central
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                const radius = 300;
+                
+                for (let i = 0; i < 8; i++) {
+                    const angle = (Math.PI * 2 / 8) * i;
+                    this.shadowLines.push({
+                        // Position de départ en cercle autour du centre
+                        startX: centerX + Math.cos(angle) * radius,
+                        startY: centerY + Math.sin(angle) * radius,
+                        // Position de fin
+                        endX: centerX + Math.cos(angle + 0.5) * (radius + 100),
+                        endY: centerY + Math.sin(angle + 0.5) * (radius + 100),
+                        // Points de contrôle pour courbe de Bézier
+                        cp1x: centerX + Math.cos(angle + 0.2) * (radius + 50),
+                        cp1y: centerY + Math.sin(angle + 0.2) * (radius + 50),
+                        cp2x: centerX + Math.cos(angle + 0.3) * (radius + 80),
+                        cp2y: centerY + Math.sin(angle + 0.3) * (radius + 80),
+                        // Propriétés d'animation
+                        angle: angle,
+                        speed: 0.002 + Math.random() * 0.003,
+                        width: 2 + Math.random() * 2,
+                        opacity: 0.3 + Math.random() * 0.4,
+                        color: this.getRandomColor(),
+                        offset: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+            
+            createFloatingOrbs() {
+                // Créer des orbes qui flottent autour
+                for (let i = 0; i < 6; i++) {
+                    this.floatingOrbs.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: 3 + Math.random() * 5,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        opacity: 0.5 + Math.random() * 0.3,
+                        pulsePhase: Math.random() * Math.PI * 2,
+                        color: this.getRandomColor()
+                    });
+                }
+            }
+            
+            createEnergyBeams() {
+                // Créer des faisceaux d'énergie qui apparaissent périodiquement
+                for (let i = 0; i < 3; i++) {
+                    this.energyBeams.push({
+                        active: false,
+                        startX: 0,
+                        startY: 0,
+                        endX: 0,
+                        endY: 0,
+                        progress: 0,
+                        speed: 0.02,
+                        width: 3,
+                        color: this.colors.secondary
+                    });
+                }
+            }
+            
+            getRandomColor() {
+                const colors = [this.colors.primary, this.colors.secondary, this.colors.tertiary];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            drawShadowLine(line) {
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                const radius = 300;
+                
+                // Animer la ligne autour du centre
+                const animatedAngle = line.angle + this.time * line.speed + line.offset;
+                const radiusVariation = Math.sin(this.time * 0.001 + line.offset) * 50;
+                const currentRadius = radius + radiusVariation;
+                
+                // Recalculer les positions avec l'animation
+                line.startX = centerX + Math.cos(animatedAngle) * currentRadius;
+                line.startY = centerY + Math.sin(animatedAngle) * currentRadius;
+                line.endX = centerX + Math.cos(animatedAngle + 0.5) * (currentRadius + 100);
+                line.endY = centerY + Math.sin(animatedAngle + 0.5) * (currentRadius + 100);
+                line.cp1x = centerX + Math.cos(animatedAngle + 0.2) * (currentRadius + 50);
+                line.cp1y = centerY + Math.sin(animatedAngle + 0.2) * (currentRadius + 50);
+                line.cp2x = centerX + Math.cos(animatedAngle + 0.3) * (currentRadius + 80);
+                line.cp2y = centerY + Math.sin(animatedAngle + 0.3) * (currentRadius + 80);
+                
+                // Pulse d'opacité
+                const pulse = Math.sin(this.time * 0.002 + line.offset) * 0.2 + 0.8;
+                
+                this.ctx.save();
+                this.ctx.globalCompositeOperation = 'screen';
+                
+                // Dessiner plusieurs couches pour l'effet néon
+                for (let i = 4; i >= 0; i--) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(line.startX, line.startY);
+                    this.ctx.bezierCurveTo(
+                        line.cp1x, line.cp1y,
+                        line.cp2x, line.cp2y,
+                        line.endX, line.endY
+                    );
+                    
+                    if (i === 0) {
+                        // Ligne centrale blanche
+                        this.ctx.strokeStyle = 'rgba(255, 255, 255, ' + (line.opacity * pulse) + ')';
+                        this.ctx.lineWidth = line.width * 0.3;
+                    } else {
+                        // Couches de glow
+                        this.ctx.strokeStyle = line.color;
+                        this.ctx.globalAlpha = (line.opacity * pulse) / (i * 2);
+                        this.ctx.lineWidth = line.width * (i + 1);
+                        this.ctx.shadowColor = line.color;
+                        this.ctx.shadowBlur = 10 * i;
+                    }
+                    
+                    this.ctx.stroke();
+                }
+                
+                this.ctx.restore();
+            }
+            
+            drawFloatingOrb(orb) {
+                // Animer l'orbe
+                orb.x += orb.vx;
+                orb.y += orb.vy;
+                
+                // Rebondir sur les bords
+                if (orb.x < 0 || orb.x > this.canvas.width) orb.vx *= -1;
+                if (orb.y < 0 || orb.y > this.canvas.height) orb.vy *= -1;
+                
+                // Pulse
+                orb.pulsePhase += 0.02;
+                const pulse = Math.sin(orb.pulsePhase) * 0.3 + 0.7;
+                
+                this.ctx.save();
+                this.ctx.globalCompositeOperation = 'screen';
+                
+                // Gradient radial pour l'orbe
+                const gradient = this.ctx.createRadialGradient(
+                    orb.x, orb.y, 0,
+                    orb.x, orb.y, orb.radius * 3
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, ' + orb.opacity + ')');
+                gradient.addColorStop(0.3, orb.color);
+                gradient.addColorStop(1, 'transparent');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.globalAlpha = orb.opacity * pulse;
+                this.ctx.fillRect(
+                    orb.x - orb.radius * 3,
+                    orb.y - orb.radius * 3,
+                    orb.radius * 6,
+                    orb.radius * 6
+                );
+                
+                // Centre brillant
+                this.ctx.beginPath();
+                this.ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'rgba(255, 255, 255, ' + (orb.opacity * pulse) + ')';
+                this.ctx.fill();
+                
+                this.ctx.restore();
+            }
+            
+            triggerEnergyBeam() {
+                // Déclencher un faisceau d'énergie aléatoirement
+                if (Math.random() > 0.98) {
+                    const beam = this.energyBeams.find(b => !b.active);
+                    if (beam) {
+                        beam.active = true;
+                        beam.progress = 0;
+                        
+                        // Position aléatoire sur les bords
+                        const side = Math.floor(Math.random() * 4);
+                        switch(side) {
+                            case 0: // Haut
+                                beam.startX = Math.random() * this.canvas.width;
+                                beam.startY = 0;
+                                beam.endX = this.canvas.width / 2 + (Math.random() - 0.5) * 200;
+                                beam.endY = this.canvas.height / 2 + (Math.random() - 0.5) * 200;
+                                break;
+                            case 1: // Droite
+                                beam.startX = this.canvas.width;
+                                beam.startY = Math.random() * this.canvas.height;
+                                beam.endX = this.canvas.width / 2 + (Math.random() - 0.5) * 200;
+                                beam.endY = this.canvas.height / 2 + (Math.random() - 0.5) * 200;
+                                break;
+                            case 2: // Bas
+                                beam.startX = Math.random() * this.canvas.width;
+                                beam.startY = this.canvas.height;
+                                beam.endX = this.canvas.width / 2 + (Math.random() - 0.5) * 200;
+                                beam.endY = this.canvas.height / 2 + (Math.random() - 0.5) * 200;
+                                break;
+                            case 3: // Gauche
+                                beam.startX = 0;
+                                beam.startY = Math.random() * this.canvas.height;
+                                beam.endX = this.canvas.width / 2 + (Math.random() - 0.5) * 200;
+                                beam.endY = this.canvas.height / 2 + (Math.random() - 0.5) * 200;
+                                break;
+                        }
+                    }
+                }
+            }
+            
+            drawEnergyBeam(beam) {
+                if (!beam.active) return;
+                
+                beam.progress += beam.speed;
+                if (beam.progress >= 1) {
+                    beam.active = false;
+                    return;
+                }
+                
+                this.ctx.save();
+                this.ctx.globalCompositeOperation = 'screen';
+                
+                // Calculer la position actuelle du faisceau
+                const currentX = beam.startX + (beam.endX - beam.startX) * beam.progress;
+                const currentY = beam.startY + (beam.endY - beam.startY) * beam.progress;
+                
+                // Traînée du faisceau
+                const trailLength = 100;
+                const trailX = currentX - (beam.endX - beam.startX) * (trailLength / this.canvas.width);
+                const trailY = currentY - (beam.endY - beam.startY) * (trailLength / this.canvas.height);
+                
+                // Gradient pour le faisceau
+                const gradient = this.ctx.createLinearGradient(trailX, trailY, currentX, currentY);
+                gradient.addColorStop(0, 'transparent');
+                gradient.addColorStop(0.5, beam.color);
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+                
+                // Dessiner le faisceau
+                this.ctx.beginPath();
+                this.ctx.moveTo(trailX, trailY);
+                this.ctx.lineTo(currentX, currentY);
+                this.ctx.strokeStyle = gradient;
+                this.ctx.lineWidth = beam.width;
+                this.ctx.shadowColor = beam.color;
+                this.ctx.shadowBlur = 20;
+                this.ctx.stroke();
+                
+                // Point lumineux à l'extrémité
+                this.ctx.beginPath();
+                this.ctx.arc(currentX, currentY, beam.width * 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                this.ctx.fill();
+                
+                this.ctx.restore();
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.time++;
+                
+                // Dessiner les effets
+                this.shadowLines.forEach(line => this.drawShadowLine(line));
+                this.floatingOrbs.forEach(orb => this.drawFloatingOrb(orb));
+                
+                // Déclencher et dessiner les faisceaux d'énergie
+                this.triggerEnergyBeam();
+                this.energyBeams.forEach(beam => this.drawEnergyBeam(beam));
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialiser l'effet au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            new ShadowLinesEffect();
+        });
+    </script>
+</body>
+</html>

@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { platformConnections } from '@/lib/services/platformConnections';
+import { getUserFromRequest } from '@/lib/auth/request';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    
-    if (!token) {
+    // Basic write-rate limit
+    const limited = rateLimit(request, { windowMs: 60_000, max: 20 });
+    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
+    const userId = user.userId;
 
     const { username, apiKey } = await request.json();
 
@@ -74,16 +74,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    
-    if (!token) {
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
+    const userId = user.userId;
 
     // Get user connections
     const connections = platformConnections.get(userId) || [];

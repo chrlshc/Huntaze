@@ -25,6 +25,10 @@ const AnimatedHero: React.FC = () => {
 
   // Spring animation for smooth number counting
   const revenueSpring = useSpring(0, { damping: 30, stiffness: 100 });
+  // Derived transforms MUST be declared at top-level (not inside JSX)
+  const revenueOpacity = useTransform(revenueSpring, [0, 312], [0, 1]);
+  const revenueScaleMotion = useTransform(revenueSpring, [0, 312], [0.8, 1]);
+  const unitScale = useSpring(1, { damping: 10, stiffness: 100 });
 
   useEffect(() => {
     setMounted(true);
@@ -135,8 +139,8 @@ const AnimatedHero: React.FC = () => {
               <motion.span
                 className="inline-block"
                 style={{
-                  opacity: useTransform(revenueSpring, [0, 312], [0, 1]),
-                  scale: useTransform(revenueSpring, [0, 312], [0.8, 1])
+                  opacity: revenueOpacity,
+                  scale: revenueScaleMotion,
                 }}
               >
                 +
@@ -144,7 +148,7 @@ const AnimatedHero: React.FC = () => {
               <motion.span
                 className="inline-block tabular-nums"
                 style={{
-                  scale: useSpring(1, { damping: 10, stiffness: 100 })
+                  scale: unitScale,
                 }}
               >
                 {Math.floor(revenueSpring.get())}

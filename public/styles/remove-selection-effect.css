@@ -1,0 +1,46 @@
+/* Remove white selection effect from nav items */
+
+/* Remove selection background */
+nav *::selection {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+nav *::-moz-selection {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Remove focus/active states that might cause white backgrounds */
+nav a:focus,
+nav a:active,
+nav button:focus,
+nav button:active {
+  background-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any focus-visible effects */
+nav a:focus-visible,
+nav button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+/* Disable text selection highlight */
+nav {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow selection only on specific elements if needed */
+nav a[href="/get-started"] {
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+}

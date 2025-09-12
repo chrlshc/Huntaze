@@ -216,7 +216,7 @@ export default function HeaderMinimal() {
             </Link>
             <Link 
               href="/auth" 
-              className="bg-white hover:bg-gray-100 hover:-translate-y-0.5 text-black px-6 py-3 rounded-full text-sm font-semibold transition-all shadow-[0_2px_10px_rgba(255,255,255,0.1)] hover:shadow-[0_4px_20px_rgba(255,255,255,0.2)]"
+              className="cta-pill-outline"
             >
               Start for free
             </Link>

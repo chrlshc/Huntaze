@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huntaze - User Flows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .flow-section {
+            margin-bottom: 80px;
+        }
+
+        .flow-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            padding-left: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 40px 20px;
+            background: #1a1a1a;
+            border-radius: 20px;
+        }
+
+        .flow-step {
+            min-width: 280px;
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .step-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .step-features {
+            list-style: none;
+        }
+
+        .step-features li {
+            padding: 8px 0;
+            color: #c0c0c0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .step-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .arrow {
+            color: #667eea;
+            font-size: 30px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            background: #1a1a1a;
+            border-radius: 20px;
+        }
+
+        .pricing-card {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card.featured {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price span {
+            font-size: 18px;
+            color: #a0a0a0;
+        }
+
+        .pricing-description {
+            color: #a0a0a0;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #3a3a3a;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .pricing-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+        }
+
+        .onboarding-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 4px solid #0a0a0a;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content:first-child {
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .flow-container {
+                flex-direction: column;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+
+            .timeline-line {
+                left: 20px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px !important;
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: #a0a0a0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Huntaze User Experience Flows</h1>
+            <p>Monetization Platform for Content Creators</p>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">$50M+</div>
+                <div class="metric-label">Revenue Generated</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">10K+</div>
+                <div class="metric-label">Active Creators</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">300%</div>
+                <div class="metric-label">Avg. Revenue Increase</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">24/7</div>
+                <div class="metric-label">AI Automation</div>
+            </div>
+        </div>
+
+        <!-- App Flow -->
+        <div class="flow-section">
+            <h2 class="flow-title">📱 Application Flow</h2>
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Discovery</h3>
+                    <p class="step-description">Land on Huntaze through social proof and creator success stories</p>
+                    <ul class="step-features">
+                        <li>Hero section with ROI calculator</li>
+                        <li>Creator testimonials</li>
+                        <li>Live revenue counter</li>
+                        <li>Platform comparison tool</li>
+                    </ul>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Sign Up</h3>
+                    <p class="step-description">Quick registration with social login options</p>
+                    <ul class="step-features">
+                        <li>OAuth with Instagram/TikTok</li>
+                        <li>Import existing audience</li>
+                        <li>AI profile optimization</li>
+                        <li>Instant account verification</li>
+                    </ul>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Setup Dashboard</h3>
+                    <p class="step-description">Customize your creator command center</p>
+                    <ul class="step-features">
+                        <li>Connect payment methods</li>
+                        <li>Set pricing tiers</li>
+                        <li>Configure AI assistant</li>
+                        <li>Design PPV templates</li>
+                    </ul>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Engage & Earn</h3>
+                    <p class="step-description">Start monetizing with AI-powered tools</p>
+                    <ul class="step-features">
+                        <li>Real-time chat management</li>
+                        <li>Automated PPV sales</li>
+                        <li>Fan segmentation</li>
+                        <li>Revenue analytics</li>
+                    </ul>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <h3 class="step-title">Scale</h3>
+                    <p class="step-description">Grow revenue with advanced features</p>
+                    <ul class="step-features">
+                        <li>Multi-platform sync</li>
+                        <li>Team management</li>
+                        <li>Advanced analytics</li>
+                        <li>White-label options</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Flow -->
+        <div class="flow-section">
+            <h2 class="flow-title">💳 Pricing Plans</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-price">$97<span>/month</span></div>
+                    <p class="pricing-description">Perfect for new creators starting their monetization journey</p>
+                    <ul class="pricing-features">
+                        <li>Up to 1,000 fans</li>
+                        <li>Basic AI responses</li>
+                        <li>PPV messaging</li>
+                        <li>Standard analytics</li>
+                        <li>Email support</li>
+                        <li>5% transaction fee</li>
+                    </ul>
+                    <button class="btn btn-secondary">Start Free Trial</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-name">Professional</div>
+                    <div class="pricing-price">$297<span>/month</span></div>
+                    <p class="pricing-description">For established creators ready to maximize revenue</p>
+                    <ul class="pricing-features">
+                        <li>Up to 10,000 fans</li>
+                        <li>Advanced AI with personalization</li>
+                        <li>Smart fan segmentation</li>
+                        <li>Multi-platform sync</li>
+                        <li>Priority support</li>
+                        <li>3% transaction fee</li>
+                        <li>Custom PPV templates</li>
+                        <li>A/B testing tools</li>
+                    </ul>
+                    <button class="btn">Get Started Now</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-name">Enterprise</div>
+                    <div class="pricing-price">Custom</div>
+                    <p class="pricing-description">For agencies and top creators with custom needs</p>
+                    <ul class="pricing-features">
+                        <li>Unlimited fans</li>
+                        <li>White-label platform</li>
+                        <li>Dedicated account manager</li>
+                        <li>Custom AI training</li>
+                        <li>API access</li>
+                        <li>1% transaction fee</li>
+                        <li>Team seats included</li>
+                        <li>Custom integrations</li>
+                    </ul>
+                    <button class="btn btn-secondary">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onboarding Flow -->
+        <div class="flow-section">
+            <h2 class="flow-title">🚀 Onboarding Journey</h2>
+            <div class="onboarding-timeline">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3 class="step-title">Welcome & Account Setup</h3>
+                        <p class="step-description">Day 1 - Get started in minutes</p>
+                        <ul class="step-features">
+                            <li>Personalized welcome video</li>
+                            <li>Quick profile wizard</li>
+                            <li>Connect social accounts</li>
+                            <li>Import existing content</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content" style="opacity: 0; pointer-events: none;"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content" style="opacity: 0; pointer-events: none;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3 class="step-title">AI Training & Customization</h3>
+                        <p class="step-description">Day 2-3 - Configure your AI assistant</p>
+                        <ul class="step-features">
+                            <li>Train AI on your voice</li>
+                            <li>Set response templates</li>
+                            <li>Configure pricing rules</li>
+                            <li>Test conversations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3 class="step-title">First Campaign Launch</h3>
+                        <p class="step-description">Day 4-7 - Start earning</p>
+                        <ul class="step-features">
+                            <li>Launch welcome campaign</li>
+                            <li>Set up PPV content</li>
+                            <li>Activate fan segmentation</li>
+                            <li>Monitor first results</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content" style="opacity: 0; pointer-events: none;"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content" style="opacity: 0; pointer-events: none;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3 class="step-title">Optimization & Scaling</h3>
+                        <p class="step-description">Week 2-4 - Maximize revenue</p>
+                        <ul class="step-features">
+                            <li>Review analytics insights</li>
+                            <li>Optimize pricing strategy</li>
+                            <li>Expand to new platforms</li>
+                            <li>Access advanced features</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h3 class="step-title">Success & Growth</h3>
+                        <p class="step-description">Month 2+ - Continuous improvement</p>
+                        <ul class="step-features">
+                            <li>Monthly strategy calls</li>
+                            <li>Exclusive creator community</li>
+                            <li>Beta feature access</li>
+                            <li>Revenue milestones</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content" style="opacity: 0; pointer-events: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Dashboard Preview -->
+        <div class="flow-section">
+            <h2 class="flow-title">💻 Dashboard Experience</h2>
+            <div style="background: #1a1a1a; border-radius: 20px; padding: 40px;">
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: 30px;">
+                    <!-- Sidebar -->
+                    <div style="background: #2a2a2a; border-radius: 16px; padding: 20px;">
+                        <div style="margin-bottom: 30px;">
+                            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold;">
+                                HUNTAZE
+                            </div>
+                        </div>
+                        <nav>
+                            <div style="padding: 12px; margin-bottom: 10px; background: #3a3a3a; border-radius: 8px; cursor: pointer;">
+                                📊 Dashboard
+                            </div>
+                            <div style="padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; opacity: 0.7;">
+                                💬 Messages
+                            </div>
+                            <div style="padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; opacity: 0.7;">
+                                👥 Fans
+                            </div>
+                            <div style="padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; opacity: 0.7;">
+                                💰 Revenue
+                            </div>
+                            <div style="padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; opacity: 0.7;">
+                                🤖 AI Settings
+                            </div>
+                            <div style="padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; opacity: 0.7;">
+                                📈 Analytics
+                            </div>
+                            <div style="padding: 12px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; opacity: 0.7;">
+                                ⚙️ Settings
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div>
+                        <!-- Stats Cards -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                            <div style="background: #2a2a2a; padding: 20px; border-radius: 12px;">
+                                <div style="color: #a0a0a0; font-size: 14px; margin-bottom: 10px;">Today's Revenue</div>
+                                <div style="font-size: 28px; font-weight: bold;">$3,847</div>
+                                <div style="color: #4ade80; font-size: 14px; margin-top: 5px;">↑ 23% from yesterday</div>
+                            </div>
+                            <div style="background: #2a2a2a; padding: 20px; border-radius: 12px;">
+                                <div style="color: #a0a0a0; font-size: 14px; margin-bottom: 10px;">Active Conversations</div>
+                                <div style="font-size: 28px; font-weight: bold;">142</div>
+                                <div style="color: #667eea; font-size: 14px; margin-top: 5px;">AI handling 89%</div>
+                            </div>
+                            <div style="background: #2a2a2a; padding: 20px; border-radius: 12px;">
+                                <div style="color: #a0a0a0; font-size: 14px; margin-bottom: 10px;">PPV Sales</div>
+                                <div style="font-size: 28px; font-weight: bold;">47</div>
+                                <div style="color: #4ade80; font-size: 14px; margin-top: 5px;">$127 average</div>
+                            </div>
+                            <div style="background: #2a2a2a; padding: 20px; border-radius: 12px;">
+                                <div style="color: #a0a0a0; font-size: 14px; margin-bottom: 10px;">New Subscribers</div>
+                                <div style="font-size: 28px; font-weight: bold;">28</div>
+                                <div style="color: #4ade80; font-size: 14px; margin-top: 5px;">↑ 15% conversion</div>
+                            </div>
+                        </div>
+
+                        <!-- Revenue Chart -->
+                        <div style="background: #2a2a2a; padding: 30px; border-radius: 16px; margin-bottom: 30px;">
+                            <h3 style="margin-bottom: 20px;">Revenue Trend</h3>
+                            <div style="height: 200px; background: linear-gradient(to top, transparent, rgba(102, 126, 234, 0.1)); border-radius: 12px; position: relative;">
+                                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(102, 126, 234, 0.3), transparent); border-radius: 12px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div style="background: #2a2a2a; padding: 30px; border-radius: 16px;">
+                            <h3 style="margin-bottom: 20px;">Recent Activity</h3>
+                            <div style="space-y: 15px;">
+                                <div style="display: flex; align-items: center; padding: 15px; background: #3a3a3a; border-radius: 12px; margin-bottom: 15px;">
+                                    <div style="width: 10px; height: 10px; background: #4ade80; border-radius: 50%; margin-right: 15px;"></div>
+                                    <div style="flex: 1;">
+                                        <div>New PPV sale to user_4829</div>
+                                        <div style="color: #a0a0a0; font-size: 14px;">$89 - 2 minutes ago</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; padding: 15px; background: #3a3a3a; border-radius: 12px; margin-bottom: 15px;">
+                                    <div style="width: 10px; height: 10px; background: #667eea; border-radius: 50%; margin-right: 15px;"></div>
+                                    <div style="flex: 1;">
+                                        <div>AI handled conversation with VIP fan</div>
+                                        <div style="color: #a0a0a0; font-size: 14px;">5 messages - 5 minutes ago</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; padding: 15px; background: #3a3a3a; border-radius: 12px;">
+                                    <div style="width: 10px; height: 10px; background: #fbbf24; border-radius: 50%; margin-right: 15px;"></div>
+                                    <div style="flex: 1;">
+                                        <div>New subscriber from Instagram</div>
+                                        <div style="color: #a0a0a0; font-size: 14px;">Premium tier - 8 minutes ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px; margin-top: 80px;">
+            <h2 style="font-size: 36px; margin-bottom: 20px;">Ready to 10x Your Creator Revenue?</h2>
+            <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">Join thousands of creators earning six figures with Huntaze</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn" style="background: white; color: #667eea; padding: 20px 40px; font-size: 18px;">
+                    Start Free Trial
+                </button>
+                <button class="btn btn-secondary" style="padding: 20px 40px; font-size: 18px; border-color: white;">
+                    Book a Demo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate metrics on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '0';
+                        entry.target.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            entry.target.style.transition = 'all 0.6s ease';
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, 100);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all flow steps
+            document.querySelectorAll('.flow-step, .pricing-card, .timeline-content, .metric-card').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Add hover effects to navigation items
+            document.querySelectorAll('nav > div').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.background = '#3a3a3a';
+                    this.style.opacity = '1';
+                });
+                item.addEventListener('mouseleave', function() {
+                    if (!this.style.background.includes('3a3a3a')) {
+                        this.style.background = 'transparent';
+                        this.style.opacity = '0.7';
+                    }
+                });
+            });
+
+            // Animate numbers
+            const animateValue = (element, start, end, duration) => {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    element.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            // Trigger number animations when visible
+            const metricObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.animated) {
+                        entry.target.animated = true;
+                        const value = entry.target.textContent.replace(/[^0-9]/g, '');
+                        if (value) {
+                            animateValue(entry.target, 0, parseInt(value), 2000);
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.metric-value').forEach(el => {
+                metricObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

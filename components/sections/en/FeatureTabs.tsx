@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, BarChart3, CreditCard, Bot, Shield, Users } from 'lucide-react';
 // Removed SafeMockup import - using simple divs instead
@@ -238,6 +238,10 @@ function MockupContent({ type }: { type: FeatureKey }) {
 
 export default function FeatureTabsEN() {
   const [active, setActive] = useState<FeatureKey>('inbox');
+  const prevIndexRef = useRef<number>(0);
+  const activeIndex = ORDER.indexOf(active);
+  const direction = Math.sign(activeIndex - prevIndexRef.current) || 1;
+  useEffect(() => { prevIndexRef.current = activeIndex; }, [activeIndex]);
   const data = FEATURES[active][0];
   const Icon = data.icon;
 
@@ -251,7 +255,7 @@ export default function FeatureTabsEN() {
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
+        <div className="flex flex-wrap justify-center gap-2 pb-4 mb-10 border-b border-white/25 relative">
           {ORDER.map(key => {
             const label = FEATURES[key][0].title;
             const isActive = key === active;
@@ -260,7 +264,7 @@ export default function FeatureTabsEN() {
                 key={key}
                 onClick={() => setActive(key)}
                 className={`px-4 py-2 rounded-full border text-sm transition-colors ${
-                  isActive ? 'bg-white text-black border-white' : 'border-white/20 hover:bg-white/10'
+                  isActive ? 'border-white text-white' : 'border-white/20 hover:border-white/40 hover:bg-transparent'
                 }`}
               >
                 {label}
@@ -274,10 +278,10 @@ export default function FeatureTabsEN() {
           <AnimatePresence mode="wait">
             <motion.div
               key={active + '-copy'}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: 24 * direction, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -24 * direction, scale: 0.98 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
             >
               <div className="inline-flex items-center gap-3 mb-4">
                 <span className={`p-2 rounded-lg bg-gradient-to-r ${data.color}`}>
@@ -300,10 +304,10 @@ export default function FeatureTabsEN() {
           <AnimatePresence mode="wait">
             <motion.div
               key={active + '-mock'}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: -24 * direction, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 24 * direction, scale: 0.98 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
               className="relative"
             >
               {/* Simple preview box instead of mockups */}

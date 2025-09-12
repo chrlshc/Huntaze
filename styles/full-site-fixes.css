@@ -1,0 +1,164 @@
+/* Full Site Fixes - Clean up all visual issues */
+
+/* Fix navigation pills/buttons */
+nav .rounded-full,
+nav button,
+nav a {
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+}
+
+/* Navigation items - remove excessive borders */
+nav > div > div > a,
+nav > div > div > button {
+  border: none !important;
+  background: transparent !important;
+  color: #8b8b8b !important;
+}
+
+nav > div > div > a:hover,
+nav > div > div > button:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Primary nav CTA */
+nav a[href*="/get-started"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+/* Sign in link */
+nav a[href*="/sign"] {
+  background: transparent !important;
+  color: #8b8b8b !important;
+  border: none !important;
+}
+
+/* Fix the secondary CTA button in hero */
+.hero-section a[href*="/case-studies"] {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+}
+
+.hero-section a[href*="/case-studies"]:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Fix Value Propositions cards */
+.value-propositions .rounded-2xl,
+.value-propositions .bg-white,
+.value-propositions [class*="card"] {
+  background-color: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+}
+
+/* Fix platform capabilities cards */
+.platform-capabilities .rounded-2xl,
+.platform-capabilities [class*="card"] {
+  background-color: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Remove thick white borders from all cards */
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl {
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Fix the "Platform overview" button placement */
+a[href="/platform"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #8b8b8b !important;
+  font-size: 14px !important;
+  margin-top: 16px !important;
+}
+
+a[href="/platform"]:hover {
+  color: #ffffff !important;
+}
+
+/* Clean up section spacing */
+section {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+}
+
+/* Fix metrics badges in hero */
+.hero-section .bg-gray-100 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Fix pricing cards */
+.pricing-section .rounded-2xl {
+  background-color: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Remove thick borders only on specific elements */
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl {
+  max-width: 100%;
+}
+
+/* Fix FAQ items */
+.faq-section .border {
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #161616 !important;
+}
+
+/* Ensure dropdowns have proper styling */
+.absolute.top-full {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background-color: #161616 !important;
+}
+
+/* Fix any remaining purple text */
+.text-purple-600,
+.text-purple-400 {
+  color: #ffffff !important;
+}
+
+/* Remove box shadows on cards only */
+.card,
+[class*="card"],
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl {
+  box-shadow: none !important;
+}
+
+/* Fix the popular badge on pricing */
+.absolute.-top-4 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Clean up trust bar */
+.trust-bar {
+  background-color: #0a0a0a !important;
+  padding: 16px 0 !important;
+}
+
+/* Fix footer links */
+footer a {
+  color: #8b8b8b !important;
+  background: transparent !important;
+}
+
+footer a:hover {
+  color: #ffffff !important;
+}

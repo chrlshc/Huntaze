@@ -38,7 +38,7 @@ export default function SkipOnboarding() {
         
         <button
           onClick={skipOnboarding}
-          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+          className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 hover-lift-soft font-medium"
         >
           Skip Onboarding & Go to Dashboard
         </button>

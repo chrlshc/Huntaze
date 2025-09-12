@@ -1,0 +1,83 @@
+/* AMOLED Mode - Pure black for OLED screens (39-47% battery savings) */
+
+/* AMOLED variant of dark mode */
+.dark-mode.amoled {
+  /* Override base colors with pure black */
+  --linear-bg-primary: #000000;
+  --linear-bg-secondary: #0a0a0a;
+  --linear-bg-tertiary: #141414;
+  --linear-bg-elevated: #1a1a1a;
+  
+  --surface-0: #000000;
+  --surface-1: #0a0a0a;
+  --surface-2: #111111;
+  --surface-3: #1a1a1a;
+  --surface-4: #222222;
+  
+  /* Increase contrast for better readability on pure black */
+  --text-primary: #f5f5f5;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #b0b0b0;
+  
+  /* Stronger borders for definition */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-default: rgba(255, 255, 255, 0.15);
+  --border-strong: rgba(255, 255, 255, 0.2);
+}
+
+/* AMOLED-specific adjustments */
+.dark-mode.amoled {
+  background-color: #000000 !important;
+}
+
+.dark-mode.amoled .enterprise-nav {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.dark-mode.amoled .card,
+.dark-mode.amoled .modal-content {
+  border-width: 1px;
+  border-color: var(--border-default);
+}
+
+/* Purple accents need slight adjustment for pure black */
+.dark-mode.amoled {
+  --purple-400: #d8b4fe; /* Slightly brighter for better contrast */
+  --accent-primary: #d8b4fe;
+}
+
+/* Power saving indicator */
+.amoled-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-default);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.dark-mode.amoled .amoled-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.amoled-indicator::before {
+  content: '🔋';
+  margin-right: 6px;
+}
+
+/* Media query for OLED detection (experimental) */
+@media (prefers-color-scheme: dark) and (color-gamut: p3) {
+  /* Devices with P3 color gamut often have OLED screens */
+  .auto-amoled .dark-mode {
+    @extend .amoled;
+  }
+}

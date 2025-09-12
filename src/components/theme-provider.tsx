@@ -13,16 +13,22 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('system')
+  const defaultTheme = (process.env.NEXT_PUBLIC_DEFAULT_THEME as Theme) || 'light'
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     const stored = localStorage.getItem('theme') as Theme | null
-    if (stored) {
-      setTheme(stored)
-    }
+    // Always prefer the configured default during this debug phase.
+    // This avoids being stuck in a persisted dark mode.
+    const initial = defaultTheme || stored || 'light'
+    setTheme(initial)
+    localStorage.setItem('theme', initial)
+    // Clean up any stale dark class immediately
+    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add(initial === 'dark' ? 'dark' : 'light')
   }, [])
 
   useEffect(() => {

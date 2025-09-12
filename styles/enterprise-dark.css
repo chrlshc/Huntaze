@@ -1,0 +1,240 @@
+/* Enterprise Components - Dark Mode Overrides */
+
+/* Hero Section */
+.dark-mode .enterprise-hero {
+  background: linear-gradient(180deg, var(--surface-0) 0%, var(--surface-1) 100%);
+}
+
+.dark-mode .enterprise-hero h1 {
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.dark-mode .enterprise-hero .gradient-text {
+  background: linear-gradient(135deg, var(--purple-400-dark) 0%, var(--purple-300-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Trust Bar */
+.dark-mode .trust-bar {
+  background-color: var(--surface-1);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dark-mode .trust-metric {
+  color: var(--text-secondary);
+}
+
+.dark-mode .trust-metric-value {
+  color: var(--purple-400-dark);
+  font-weight: 700;
+}
+
+/* Platform Capabilities Cards */
+.dark-mode .capability-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode .capability-card:hover {
+  background-color: var(--card-hover-bg);
+  border-color: var(--card-hover-border);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark-mode .capability-icon {
+  color: var(--purple-400-dark);
+}
+
+/* ROI Calculator */
+.dark-mode .roi-calculator {
+  background-color: var(--surface-1);
+}
+
+.dark-mode .roi-input {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+}
+
+.dark-mode .roi-input:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow);
+}
+
+.dark-mode .roi-result {
+  background: linear-gradient(135deg, var(--purple-600-dark) 0%, var(--purple-700-dark) 100%);
+  color: white;
+  border: none;
+}
+
+/* Enterprise CTA */
+.dark-mode .enterprise-cta-section {
+  background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-0) 100%);
+}
+
+.dark-mode .cta-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(147, 70, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .cta-primary:hover {
+  background-color: var(--btn-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(147, 70, 255, 0.4);
+}
+
+.dark-mode .cta-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 1px solid var(--btn-secondary-border);
+}
+
+.dark-mode .cta-secondary:hover {
+  background-color: var(--btn-secondary-hover-bg);
+  border-color: var(--btn-secondary-hover-border);
+}
+
+/* Enterprise Footer */
+.dark-mode .enterprise-footer {
+  background-color: var(--surface-0);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.dark-mode .footer-link {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.dark-mode .footer-link:hover {
+  color: var(--purple-400-dark);
+}
+
+/* Navigation Bar */
+.dark-mode .enterprise-nav {
+  background-color: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dark-mode .nav-logo {
+  color: var(--text-heading);
+}
+
+.dark-mode .nav-link {
+  color: var(--nav-item-text);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .nav-link:hover {
+  color: var(--nav-item-hover-text);
+}
+
+.dark-mode .nav-link.active {
+  color: var(--nav-item-active-text);
+}
+
+/* Live Dashboard Demo */
+.dark-mode .dashboard-demo {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 0 50px rgba(147, 70, 255, 0.1);
+}
+
+.dark-mode .dashboard-stat {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+.dark-mode .dashboard-stat-value {
+  color: var(--purple-400-dark);
+}
+
+/* Creator Pain Points */
+.dark-mode .pain-point-card {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+}
+
+.dark-mode .pain-point-problem {
+  color: var(--text-secondary);
+}
+
+.dark-mode .pain-point-solution {
+  color: var(--purple-400-dark);
+  font-weight: 600;
+}
+
+/* Proof By Numbers */
+.dark-mode .metric-card {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s ease;
+}
+
+.dark-mode .metric-card:hover {
+  background-color: var(--surface-2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.dark-mode .metric-value {
+  color: var(--purple-400-dark);
+  font-weight: 800;
+}
+
+/* Contact Form Modal */
+.dark-mode .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .modal-content {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-default);
+}
+
+/* Animations for dark mode */
+@keyframes pulse-purple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(147, 70, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(147, 70, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(147, 70, 255, 0);
+  }
+}
+
+.dark-mode .pulse-purple {
+  animation: pulse-purple 2s infinite;
+}
+
+/* Gradient borders for premium feel */
+.dark-mode .gradient-border {
+  position: relative;
+  background: var(--surface-1);
+  border-radius: 12px;
+}
+
+.dark-mode .gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--purple-400-dark), var(--purple-600-dark));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}

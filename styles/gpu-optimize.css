@@ -1,0 +1,149 @@
+/* GPU Optimization Classes */
+
+/* Force GPU acceleration */
+.gpu-accelerate {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000;
+}
+
+/* Optimize scrolling performance */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* Contain layout calculations */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-all {
+  contain: layout style paint;
+}
+
+/* Reduce motion for low performance */
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Low performance mode */
+body.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+}
+
+body.reduce-motion .animated-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background-size: 100% 100% !important;
+  animation: none !important;
+}
+
+/* Optimize text rendering */
+.optimize-text {
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* Optimize images */
+.optimize-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Prevent layout thrashing */
+.no-layout-shift {
+  aspect-ratio: attr(width) / attr(height);
+  contain: layout;
+}
+
+/* Optimize animations */
+@keyframes slideIn {
+  from { transform: translate3d(-100%, 0, 0); opacity: 0; }
+  to { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale3d(0.9, 0.9, 1); opacity: 0; }
+  to { transform: scale3d(1, 1, 1); opacity: 1; }
+}
+
+/* Use GPU-friendly animations */
+.animate-slide {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+.animate-fade {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-scale {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* Trigger animations when in viewport */
+[data-in-view="true"] .animate-fade {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+[data-in-view="true"] .animate-slide {
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+[data-in-view="true"] .animate-scale {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+/* Optimize hover states */
+.hover-lift {
+  transition: transform 0.2s ease-out;
+  transform: translate3d(0, 0, 0);
+}
+
+.hover-lift:hover {
+  transform: translate3d(0, -4px, 0);
+}
+
+/* Optimize focus states */
+.focus-ring {
+  outline: none;
+  position: relative;
+}
+
+.focus-ring::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  opacity: 0;
+  box-shadow: 0 0 0 2px currentColor;
+  transition: opacity 0.2s ease-out;
+  pointer-events: none;
+}
+
+.focus-ring:focus-visible::after {
+  opacity: 0.5;
+}

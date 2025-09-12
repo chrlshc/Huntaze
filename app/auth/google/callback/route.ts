@@ -80,30 +80,19 @@ export async function GET(request: NextRequest) {
       provider: 'google',
     });
 
-    const refreshToken = await generateRefreshToken(userId);
+    const refreshToken = await generateRefreshToken({
+      userId,
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+      provider: 'google',
+    });
 
     // Set auth cookies
     setAuthCookies(accessToken, refreshToken);
 
-    // Create response with redirect to onboarding for new users
-    const response = NextResponse.redirect(new URL('/onboarding/setup', appBase));
-    
-    // Set auth cookies
-    response.cookies.set('auth_token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
-    });
-    
-    response.cookies.set('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
-    });
-    
-    return response;
+    // Redirect to onboarding for new users (cookies already set by setAuthCookies)
+    return NextResponse.redirect(new URL('/onboarding/setup', appBase));
 
   } catch (error) {
     console.error('OAuth error:', error);

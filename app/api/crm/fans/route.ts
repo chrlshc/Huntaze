@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { crmData } from '@/lib/services/crmData';
-
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const token = request.cookies.get('auth_token')?.value;
-  if (!token) return null;
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-  const { payload } = await jwtVerify(token, secret);
-  return payload.userId as string;
-}
+import { getUserFromRequest } from '@/lib/auth/request';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = await getUserId(request);
+    const user = await getUserFromRequest(request);
+    const userId = user?.userId || null;
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const fans = crmData.listFans(userId);
     return NextResponse.json({ fans });
@@ -23,7 +17,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getUserId(request);
+    // modest rate limit to protect write endpoint
+    const limited = rateLimit(request, { windowMs: 60_000, max: 60 });
+    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+
+    const user = await getUserFromRequest(request);
+    const userId = user?.userId || null;
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const body = await request.json();
     const fan = crmData.createFan(userId, body || {});
@@ -32,4 +31,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create fan' }, { status: 500 });
   }
 }
-

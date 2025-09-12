@@ -64,7 +64,6 @@ const footerLinks: Record<string, FooterSection> = {
   legal: {
     title: 'Legal',
     links: [
-      { name: 'Terms of Service', href: '/terms' },
       { name: 'Privacy Policy', href: '/privacy' },
       { name: 'Cookie Policy', href: '/privacy' },
       { name: 'GDPR', href: '/privacy' },
@@ -84,47 +83,25 @@ const socialLinks = [
 export default function FooterImproved() {
   const pathname = usePathname()
   const isApp = !!pathname && [
-    '/dashboard','/messages','/fans','/analytics','/campaigns','/automations','/schedule','/platforms','/billing','/configure','/profile','/social'
+    '/dashboard',
+    '/messages',
+    '/fans',
+    '/analytics',
+    '/campaigns',
+    '/automations',
+    '/schedule',
+    '/platforms',
+    '/billing',
+    '/configure',
+    '/profile',
+    '/social',
+    // Hide marketing footer on onboarding flows
+    '/onboarding'
   ].some(p => pathname.startsWith(p))
   if (isApp) return null
   return (
     <footer className="bg-gray-900 text-gray-300">
-      {/* Newsletter Section */}
-      <div className="border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="lg:flex lg:items-center lg:justify-between">
-            <div className="max-w-xl">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Get creator tips & product updates
-              </h3>
-              <p className="text-gray-400">
-                Join 5,000+ creators getting weekly insights to grow their business.
-              </p>
-            </div>
-            <div className="mt-6 lg:mt-0">
-              <form className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 flex-1"
-                />
-                <Button 
-                  type="submit"
-                  variant="gradient"
-                  className="px-6 py-3"
-                  onClick={() => events.newsletterClick({ location: 'footer' })}
-                >
-                  Subscribe
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </form>
-              <p className="text-xs text-gray-500 mt-2">
-                Unsubscribe anytime. No spam.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Newsletter Section removed per request */}
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -132,13 +109,7 @@ export default function FooterImproved() {
           {/* Company Info */}
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center mb-4" aria-label="Huntaze home">
-              <Image 
-                src="/huntaze-logo.png" 
-                alt="Huntaze" 
-                width={132}
-                height={40}
-                className="h-10 w-auto brightness-0 invert"
-              />
+              <span className="sr-only">Huntaze</span>
             </Link>
             <p className="text-sm text-gray-400 mb-4">
               The AI platform that helps creators keep 95% of their revenue.
@@ -213,7 +184,7 @@ export default function FooterImproved() {
         <div className="mt-8 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <span>© 2024 Huntaze. All rights reserved.</span>
+              <span>© 2025 Huntaze. All rights reserved.</span>
               <span className="hidden md:inline">•</span>
               <Link href="/about" className="hover:text-white transition-colors hidden md:inline">
                 Sitemap

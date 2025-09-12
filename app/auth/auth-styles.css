@@ -1,0 +1,140 @@
+/* Auth Page Specific Styles using Huntaze Design Tokens */
+
+/* Button styles using our design system */
+.btn-primary {
+  @apply px-6 py-3 rounded-lg font-medium transition-all;
+  background: var(--gradient-primary);
+  color: var(--color-btn-primary-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-lg font-medium transition-all;
+  background: var(--color-neutral-200);
+  color: var(--color-content-primary);
+  border: 1px solid var(--color-border-light);
+}
+
+.btn-secondary:hover {
+  background: var(--color-neutral-300);
+  border-color: var(--color-border);
+}
+
+.btn-outline {
+  @apply px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center;
+  background: var(--color-surface-elevated-light);
+  color: var(--color-content-primary);
+  border: 1px solid var(--color-border-light);
+}
+
+.btn-outline:hover {
+  background: var(--color-surface-hover-light);
+  border-color: var(--color-border);
+  transform: translateY(-1px);
+}
+
+/* Dark mode button styles */
+@media (prefers-color-scheme: dark) {
+  .btn-secondary {
+    background: var(--color-neutral-800);
+    border-color: var(--color-border);
+  }
+  
+  .btn-secondary:hover {
+    background: var(--color-neutral-700);
+  }
+  
+  .btn-outline {
+    background: var(--color-surface-elevated);
+    border-color: var(--color-border);
+  }
+  
+  .btn-outline:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Hover lift effect */
+.hover-lift-soft {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift-soft:hover {
+  transform: translateY(-2px);
+}
+
+/* Focus styles */
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism effect for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-content-tertiary);
+}

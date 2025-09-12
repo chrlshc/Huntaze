@@ -17,12 +17,12 @@ export const AlertTitle = ({ children, className = "" }: any) => <h4 className={
 
 export const Progress = ({ value = 0, className = "" }: any) => (
   <div className={`h-2 w-full bg-gray-200 rounded-full overflow-hidden ${className}`}>
-    <div className="h-full bg-blue-600 transition-all" style={{ width: `${value}%` }}></div>
+    <div className="h-full bg-primary transition-all" style={{ width: `${value}%` }}></div>
   </div>
 )
 
 export const Button = ({ children, className = "", variant = "default", ...props }: any) => {
-  const variantClasses = variant === "outline" ? "border border-gray-300" : "bg-blue-600 text-white";
+  const variantClasses = variant === "outline" ? "btn-outline" : "btn-primary";
   return <button className={`px-4 py-2 rounded-md ${variantClasses} ${className}`} {...props}>{children}</button>
 }
 

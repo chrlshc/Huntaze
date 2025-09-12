@@ -1,0 +1,85 @@
+/* Emergency Fix - Remove all unwanted borders */
+
+/* Reset all borders */
+* {
+  border: none !important;
+}
+
+/* Only add borders where needed */
+nav {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Cards need subtle borders */
+.card,
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.value-propositions > div > div,
+.platform-capabilities > div > div {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* FAQ items */
+.faq-section .border {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Dropdown menus */
+.absolute.top-full {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Secondary button in hero */
+.hero-section a[href*="/case-studies"] {
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Remove all debug borders */
+body,
+section,
+div:not(.card):not(.rounded-lg):not(.rounded-xl):not(.rounded-2xl),
+main,
+header,
+footer,
+article,
+aside {
+  border: none !important;
+}
+
+/* Fix navigation items */
+nav a,
+nav button,
+nav > div > div > * {
+  border: none !important;
+}
+
+/* Fix layout containers */
+.enterprise-page,
+.hero-section,
+.trust-bar,
+.value-propositions,
+.platform-capabilities,
+.pricing-section,
+.faq-section,
+.final-cta-section {
+  border: none !important;
+}
+
+/* Remove borders from text elements */
+h1, h2, h3, h4, h5, h6,
+p, span, a, li, ul, ol {
+  border: none !important;
+}
+
+/* Fix metrics boxes */
+.hero-section .bg-gray-100 {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Input fields need borders */
+input,
+textarea,
+select {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}

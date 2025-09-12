@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { crmConnections, CrmProviderId } from '@/lib/services/crmConnections';
+import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function POST(request: NextRequest, { params }: { params: { provider: string } }) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const userId = user.userId as string;
 
     const provider = (params.provider || '').toLowerCase() as CrmProviderId;
     if (!['inflow', 'supercreator'].includes(provider)) {
@@ -49,12 +46,9 @@ export async function POST(request: NextRequest, { params }: { params: { provide
 
 export async function GET(request: NextRequest, { params }: { params: { provider: string } }) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const userId = user.userId as string;
 
     const provider = (params.provider || '').toLowerCase() as CrmProviderId;
     const existing = (crmConnections.get(userId) || []).find((c) => c.provider === provider);
@@ -63,4 +57,3 @@ export async function GET(request: NextRequest, { params }: { params: { provider
     return NextResponse.json({ error: 'Failed to get CRM connection' }, { status: 500 });
   }
 }
-

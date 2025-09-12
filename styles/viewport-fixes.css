@@ -1,0 +1,107 @@
+/* Viewport Unit Fixes for Mobile Browsers */
+
+/* Replace all vh units with svh for better mobile support */
+/* This fixes the issue where browser UI elements cause layout jumps */
+
+/* Hero sections */
+.hero-section,
+section.hero,
+[class*="hero"] {
+  min-height: 100vh; /* Fallback */
+  min-height: 100svh; /* Small viewport height */
+  min-height: -webkit-fill-available; /* iOS fallback */
+}
+
+/* Full height sections */
+.min-h-screen,
+.h-screen,
+[class*="min-h-"][class*="screen"],
+[class*="h-"][class*="screen"] {
+  min-height: 100vh; /* Fallback */
+  min-height: 100svh;
+  min-height: -webkit-fill-available;
+}
+
+/* Specific vh replacements */
+[class*="min-h-"][class*="100vh"] {
+  min-height: 100vh; /* Fallback */
+  min-height: 100svh;
+}
+
+[class*="min-h-"][class*="90vh"] {
+  min-height: 90vh; /* Fallback */
+  min-height: 90svh;
+}
+
+[class*="min-h-"][class*="50vh"] {
+  min-height: 50vh; /* Fallback */
+  min-height: 50svh;
+}
+
+[class*="h-"][class*="100vh"] {
+  height: 100vh; /* Fallback */
+  height: 100svh;
+}
+
+/* Modal and overlay heights */
+.modal,
+.overlay,
+[class*="modal"],
+[class*="overlay"],
+[class*="max-h-"][class*="vh"] {
+  max-height: 100vh; /* Fallback */
+  max-height: 100svh;
+}
+
+/* Calc-based heights */
+[style*="calc(100vh"] {
+  /* These need JavaScript to update dynamically */
+  /* Using CSS custom properties as a workaround */
+  --viewport-height: 100vh;
+  --viewport-height: 100svh;
+}
+
+/* Feature sections with proportional heights */
+.feature-section {
+  min-height: 50vh; /* Fallback */
+  min-height: 50svh;
+}
+
+.content-section {
+  min-height: 40vh; /* Fallback */
+  min-height: 40svh;
+}
+
+/* Ensure proper behavior on iOS */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific fixes */
+  .hero-section,
+  section.hero,
+  .min-h-screen,
+  .h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Dynamic viewport height for elements that need to adapt */
+.dynamic-height {
+  min-height: 100vh; /* Fallback */
+  min-height: 100dvh; /* Dynamic viewport height */
+}
+
+/* Large viewport height for desktop-like experience */
+.stable-height {
+  min-height: 100vh; /* Fallback */
+  min-height: 100lvh; /* Large viewport height */
+}
+
+/* Fix for modals and overlays */
+@media (max-width: 767px) {
+  .modal-content,
+  .overlay-content {
+    max-height: 90vh; /* Fallback */
+    max-height: 90svh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

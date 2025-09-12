@@ -1,0 +1,110 @@
+/* CTA Button Fixes - Ensure visibility */
+
+/* Primary CTA buttons - White background with dark text */
+a[href*="/get-started"],
+a[href="/get-started"],
+.hero-section .bg-gray-900,
+.hero-section .inline-flex.bg-gray-900 {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
+a[href*="/get-started"]:hover {
+  background-color: #f0f0f0 !important;
+  color: #000000 !important;
+}
+
+/* Secondary CTA buttons - Dark with light border */
+a[href*="/case-studies"],
+a[href="/case-studies"],
+.text-gray-700.font-medium,
+.hero-section .inline-flex:not(.bg-gray-900) {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  opacity: 1 !important;
+}
+
+/* Specific fix for the secondary button */
+.hero-section a.inline-flex.items-center:not([class*="bg-"]) {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+a[href*="/case-studies"]:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Fix arrow icons in buttons */
+.hero-section svg {
+  color: currentColor !important;
+  opacity: 1 !important;
+}
+
+/* Force visibility on both buttons */
+.hero-section .mt-8.flex.flex-wrap.gap-4 > a {
+  display: inline-flex !important;
+  align-items: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* First button - white background */
+.hero-section .mt-8.flex.flex-wrap.gap-4 > a:first-child {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+/* Second button - transparent with border */
+.hero-section .mt-8.flex.flex-wrap.gap-4 > a:last-child {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+}
+
+/* Ensure button text is visible */
+.hero-section a span,
+.hero-section a {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Fix flex layout for buttons */
+.hero-section .flex.gap-4 {
+  display: flex !important;
+  gap: 16px !important;
+}
+
+/* Ensure buttons have proper padding */
+.hero-section a[class*="px-"] {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+/* Fix rounded corners */
+.hero-section .rounded-lg {
+  border-radius: 8px !important;
+}
+
+/* Override any transparent backgrounds on primary CTAs */
+.hero-section a[href*="/get-started"] * {
+  background: transparent !important;
+}
+
+/* Make sure button container is visible */
+.hero-section > div > div {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
