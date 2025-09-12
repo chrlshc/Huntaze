@@ -1,0 +1,269 @@
+/* Linear-style Typography & Alignment for Huntaze */
+
+/* Container principal - exact Linear (sans image) */
+.hero-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 120px 32px 160px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Titre principal */
+.hero-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 80px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  margin: 0 0 32px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #8b8b8b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Sous-titre */
+.hero-subtitle {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #8b8b8b;
+  max-width: 640px;
+  margin: 0 0 48px 0;
+}
+
+/* Boutons */
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Boutons héros (scope local pour ne pas impacter le site) */
+.hero-buttons .btn-primary {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  transition: none;
+}
+
+.hero-buttons .btn-secondary {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #333333;
+  cursor: pointer;
+  transition: none;
+}
+
+.hero-buttons .btn-secondary:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: #555555;
+}
+
+/* Disable hover movement on hero primary button */
+.hero-buttons .btn-primary:hover {
+  background: #f0f0f0;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-primary {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .hero-container { padding: 100px 24px 120px 24px; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero-container { padding: 80px 16px 100px 16px; }
+  .hero-title { font-size: 42px; letter-spacing: -0.03em; }
+  .hero-subtitle { font-size: 16px; }
+  .hero-buttons { flex-direction: column; gap: 12px; align-items: stretch; }
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary,
+  .hero-buttons .cta-pill-outline,
+  .cta-pill-outline { width: 100%; }
+}
+
+/* Pas d'image dans la section héro Linear */
+
+/* Header blur + fixed (as requested) */
+.header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 20px;
+  height: 64px; /* 4rem */
+}
+
+/* Décalage fort (10 blocs ~ 320px) sur desktop large */
+@media (min-width: 1200px) {
+  .header { padding-left: 340px; }
+}
+
+/* Header container */
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+/* Nav menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 32px;
+}
+
+.nav-menu li { position: relative; }
+
+.nav-menu a, .nav-menu button {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #9CA3AF;
+  text-decoration: none;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-menu a:hover, .nav-menu button:hover { color: #ffffff; }
+
+/* Header actions */
+.header-actions { display: flex; align-items: center; gap: 16px; }
+.header-actions { margin-left: 160px; }
+
+/* Supprimer les carrés (focus) dans le header seulement */
+.header a:focus, .header button:focus { outline: none !important; box-shadow: none !important; }
+.header-actions .btn-login { 
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px; font-weight: 400; color: #9CA3AF; padding: 8px 0;
+}
+.header-actions .btn-login:hover { color: #ffffff; }
+.header-actions .btn-signup {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px; font-weight: 600; background: #ffffff; color: #000000;
+  padding: 12px 24px; border-radius: 12px; text-decoration: none; border: none;
+}
+.header-actions .btn-signup:hover { background: #f0f0f0; }
+
+/* Keep smaller CTA style in header */
+.header .cta-pill-outline {
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+/* Push nav menu slightly to the right (3 blocks ~ 96px) */
+.header .nav-menu { margin-left: 96px; }
+
+/* Remove any background/outline squares on summary (Solutions/Resources) */
+.header summary { 
+  background: transparent !important;
+  outline: none !important; 
+  box-shadow: none !important; 
+  border: none !important; 
+  list-style: none; 
+  position: relative;
+}
+.header summary:hover,
+.header summary:focus,
+.header details[open] > summary {
+  background: transparent !important;
+}
+.header summary::-webkit-details-marker { display: none; }
+
+/* White underline effect under nav items (hover/open) */
+.header .nav-menu a::after,
+.header .nav-menu summary::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 3px;
+  width: 0;
+  background: #ffffff;
+  opacity: 0.9;
+  transition: width 160ms ease;
+}
+
+.header .nav-menu a:hover::after,
+.header .nav-menu summary:hover::after,
+.header details[open] > summary::after {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .nav-menu { display: none; }
+  .header { padding: 0 16px; }
+}
+
+/* Right cluster (nav + actions) */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Optional logo styles (if enabled) */
+.logo { display: flex; align-items: center; text-decoration: none; }
+.logo-icon { width: 28px; height: 28px; margin-right: 8px; border-radius: 6px; background: #fff; color: #000; display:flex;align-items:center;justify-content:center; font-weight:700; font-size:16px; }
+.logo-text { font-family: "Inter", sans-serif; font-size: 18px; font-weight: 600; color: #fff; }
+
+/* Compensate content under fixed header */
+.content {
+  margin-top: 64px; /* header height compensation */
+}
+
+/* Ensure header stays fixed on desktop too */
+@media (min-width: 1024px) {
+  .header {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  .content { margin-top: 64px !important; }
+}
+
+/* Hide all ArrowRight (lucide) icons globally */
+.lucide-arrow-right { display: none !important; }

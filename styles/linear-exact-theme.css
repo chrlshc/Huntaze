@@ -1,0 +1,389 @@
+/* Linear Exact Theme - Match Linear.app Design */
+
+/* Linear color palette */
+:root {
+  --linear-bg: #0d0d0d;
+  --linear-surface: #161616;
+  --linear-border: rgba(255, 255, 255, 0.08);
+  --linear-text: #e5e5e5;
+  --linear-text-muted: #8b8b8b;
+  --linear-white: #ffffff;
+  --linear-hover: rgba(255, 255, 255, 0.05);
+}
+
+/* Base styles */
+html,
+body {
+  background-color: var(--linear-bg) !important;
+  color: var(--linear-text) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Remove ALL colors and gradients */
+* {
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Header/Navigation - Linear style */
+nav,
+.enterprise-nav,
+.fixed.inset-x-0.top-0 {
+  background-color: rgba(13, 13, 13, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-bottom: 1px solid var(--linear-border) !important;
+  height: 64px !important;
+}
+
+/* Nav links */
+nav a,
+nav button {
+  color: var(--linear-text-muted) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  transition: color 0.2s ease !important;
+}
+
+nav a:hover,
+nav button:hover {
+  color: var(--linear-white) !important;
+  background: transparent !important;
+}
+
+/* Logo */
+.text-2xl.font-bold {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--linear-white) !important;
+}
+
+/* Buttons - Linear style */
+button,
+a[href*="/get-started"],
+.bg-gray-900,
+.bg-white {
+  background-color: var(--linear-white) !important;
+  color: var(--linear-bg) !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
+  border: none !important;
+  transition: opacity 0.2s ease !important;
+}
+
+button:hover,
+a[href*="/get-started"]:hover {
+  opacity: 0.9 !important;
+  transform: none !important;
+}
+
+/* Sign in link */
+a[href*="/auth"],
+a[href*="/sign"] {
+  background: transparent !important;
+  color: var(--linear-text-muted) !important;
+}
+
+a[href*="/auth"]:hover,
+a[href*="/sign"]:hover {
+  color: var(--linear-white) !important;
+}
+
+/* Sections */
+section {
+  background-color: var(--linear-bg) !important;
+}
+
+/* Hero section */
+.hero-section h1 {
+  font-size: 48px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.1 !important;
+  color: var(--linear-white) !important;
+}
+
+.hero-section p {
+  font-size: 20px !important;
+  color: var(--linear-text-muted) !important;
+  font-weight: 400 !important;
+}
+
+/* Remove ALL gradient text effects */
+.bg-clip-text,
+.text-transparent,
+[class*="gradient"] {
+  background: none !important;
+  color: var(--linear-white) !important;
+  -webkit-text-fill-color: var(--linear-white) !important;
+}
+
+/* Cards */
+.card,
+[class*="card"],
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.bg-gray-50,
+.bg-gray-100,
+.bg-white {
+  background-color: var(--linear-surface) !important;
+  border: 1px solid var(--linear-border) !important;
+  border-radius: 8px !important;
+}
+
+.card:hover,
+[class*="card"]:hover {
+  background-color: var(--linear-surface) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Text colors */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--linear-white) !important;
+  font-weight: 600 !important;
+}
+
+p, span, div, li {
+  color: var(--linear-text) !important;
+}
+
+.text-gray-400,
+.text-gray-500,
+.text-gray-600,
+[class*="text-gray"] {
+  color: var(--linear-text-muted) !important;
+}
+
+/* Links */
+a {
+  color: var(--linear-text) !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  color: var(--linear-white) !important;
+}
+
+/* Dropdown menus */
+.absolute.top-full {
+  background-color: var(--linear-surface) !important;
+  border: 1px solid var(--linear-border) !important;
+  border-radius: 8px !important;
+}
+
+/* Input fields */
+input,
+textarea,
+select {
+  background-color: var(--linear-surface) !important;
+  border: 1px solid var(--linear-border) !important;
+  color: var(--linear-white) !important;
+  border-radius: 6px !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  outline: none !important;
+}
+
+/* Remove all decorative elements and backgrounds */
+.absolute.inset-0[aria-hidden="true"] {
+  display: none !important;
+}
+
+/* Force remove ALL gradient backgrounds */
+[class*="from-"],
+[class*="to-"],
+[class*="via-"],
+[class*="bg-purple"],
+[class*="bg-pink"],
+[class*="bg-gradient"],
+[class*="gradient"] {
+  background: var(--linear-bg) !important;
+  background-color: var(--linear-bg) !important;
+  background-image: none !important;
+}
+
+/* Override inline styles that might have gradients */
+[style*="background"] {
+  background: var(--linear-bg) !important;
+  background-image: none !important;
+}
+
+/* Trust bar - minimal */
+.trust-bar {
+  background-color: var(--linear-surface) !important;
+  border-top: 1px solid var(--linear-border) !important;
+  border-bottom: 1px solid var(--linear-border) !important;
+}
+
+/* Footer */
+footer,
+.footer-section {
+  background-color: var(--linear-bg) !important;
+  border-top: 1px solid var(--linear-border) !important;
+}
+
+/* FAQ items */
+.faq-section .border {
+  background-color: var(--linear-surface) !important;
+  border-color: var(--linear-border) !important;
+}
+
+/* Pricing cards */
+.pricing-section [class*="card"] {
+  background-color: var(--linear-surface) !important;
+}
+
+/* Remove ring effects */
+.ring-2,
+.ring-purple-600 {
+  box-shadow: none !important;
+  border: 2px solid var(--linear-border) !important;
+}
+
+/* Metrics badges */
+.bg-gray-100,
+.bg-gray-200 {
+  background-color: var(--linear-surface) !important;
+  border: 1px solid var(--linear-border) !important;
+}
+
+/* Icons - keep them subtle */
+svg {
+  color: var(--linear-text-muted) !important;
+}
+
+/* Remove all purple/pink text */
+.text-purple-600,
+.text-purple-400,
+.text-pink-600,
+[class*="text-purple"],
+[class*="text-pink"] {
+  color: var(--linear-text) !important;
+}
+
+/* Hover effects - subtle like Linear */
+.hover\:shadow-lg:hover,
+.hover\:scale-\[1\.02\]:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* REMOVE ALL HOVER COLORS */
+*:hover {
+  background-image: none !important;
+  filter: none !important;
+}
+
+/* Fix hover states on all elements */
+[class*="hover:"]:hover,
+[class*=":hover"] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Specific fixes for value proposition section */
+.value-propositions *:hover,
+.value-propositions:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Card hover states */
+.card:hover,
+[class*="card"]:hover,
+.rounded-lg:hover,
+.rounded-xl:hover,
+.rounded-2xl:hover {
+  background-color: var(--linear-surface) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  transform: none !important;
+}
+
+/* Link hover states */
+a:hover {
+  background: transparent !important;
+  background-image: none !important;
+  color: var(--linear-white) !important;
+}
+
+/* Remove purple hover from buttons */
+.hover\:bg-purple-700:hover,
+.hover\:bg-purple-600:hover,
+[class*="hover:bg-purple"]:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  background-image: none !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--linear-bg) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--linear-surface) !important;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  display: none !important;
+}
+
+/* Clean animations */
+* {
+  transition-property: color, background-color, border-color, opacity !important;
+  transition-duration: 0.2s !important;
+  transition-timing-function: ease !important;
+}
+
+/* Force override any remaining purple/violet */
+.bg-purple-100,
+.bg-purple-200,
+.bg-purple-300,
+.bg-purple-400,
+.bg-purple-500,
+.bg-purple-600,
+.bg-purple-700,
+.bg-purple-800,
+.bg-purple-900,
+.from-purple-100,
+.from-purple-200,
+.to-purple-100,
+.to-pink-100 {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Ensure sections stay clean */
+.value-propositions,
+.hero-section,
+.platform-capabilities,
+all sections {
+  background: var(--linear-bg) !important;
+  background-color: var(--linear-bg) !important;
+  background-image: none !important;
+}

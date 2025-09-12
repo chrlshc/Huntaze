@@ -1,8 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import MobileOnboardingSetup from '../mobile-setup';
+import './onboarding-styles.css';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { presets } from '@/presets/onlyfans-2025';
+import { NICHES, DEFAULTS } from '@/src/lib/onboarding/config';
+import { StepShellV2 as StepShell } from '@/components/onboarding/StepShellV2';
+import LoadDemoButton from '@/components/onboarding/LoadDemoButton';
+import { ONBOARDING_COPY as C } from '@/src/lib/onboarding/copy';
+import { PREVIEW_TEMPLATES } from '@/src/lib/onboarding/previewTemplates';
+import { ppvTypicalWithMultipliers } from '@/src/lib/onboarding/price';
+import { detectTimezone } from '@/src/lib/onboarding/timezone';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { showToast } from '@/components/Toast';
+import ComplianceChecker from '@/components/ComplianceChecker';
+import EditableField from '@/components/EditableField';
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -13,11 +26,9 @@ import {
   User, 
   Zap, 
   Plus,
-  Globe,
-  Target,
-  Palette,
+  Upload,
   MessageSquare,
-  Languages,
+  // Languages,
   Image,
   Video,
   Mic,
@@ -27,30 +38,42 @@ import {
   Users,
   Clock,
   Heart,
-  Star
+  Star,
+  CheckCircle,
+  Sparkles,
+  Rocket,
+  X,
+  Target,
+  Share2,
+  Brain,
+  Sliders,
+  Wand2,
+  // Missing icons used in niche mapping
+  Dumbbell,
+  Camera,
+  Gamepad2,
+  Flame,
+  BookOpen,
+  Palette,
+  Instagram,
+  Music2,
+  Megaphone,
+  Plane,
+  Copy
 } from 'lucide-react';
 
-type Step = 'profile' | 'niche' | 'platform' | 'ai-config' | 'plan' | 'complete';
+type Step = 'profile' | 'sell-plan' | 'niche' | 'platform' | 'ai-config' | 'plan' | 'complete';
 
 export default function OnboardingSetupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { completeOnboarding, sellPlan, setSellPlan, updateOps } = useOnboarding();
   const [currentStep, setCurrentStep] = useState<Step>('profile');
+  // Sell Plan is persisted in store now
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [animationDirection, setAnimationDirection] = useState<'forward' | 'backward'>('forward');
+  // No JS measurement for progress connectors; handled via CSS pseudo-elements
   
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  
-  if (isMobile) {
-    return <MobileOnboardingSetup />;
-  }
   const [formData, setFormData] = useState({
     // Profile
     displayName: '',
@@ -61,280 +84,265 @@ export default function OnboardingSetupPage() {
     contentFrequency: 'weekly' as 'daily' | 'weekly' | 'monthly',
     gdprConsent: false,
     marketingEmails: false,
+    avatarUrl: '',
     
     // Niche & Goals
     niche: '',
     goals: [] as string[],
     contentTypes: [] as string[],
-    targetMonthlyRevenue: '',
-    currentMonthlyRevenue: '',
+    targetMonthlyRevenue: '1k-5k',
+    currentMonthlyRevenue: '0-1k',
     
     // AI Config
     personality: '',
     responseStyle: 'flirty',
-    monthlyPrice: '9.99',
+    automationLevel: 70,
+    autoReply: true,
     welcomeMessage: '',
+    monthlyPrice: '9.99',
     
     // Platform
     connectedPlatforms: [] as string[],
+    socialPlatforms: {
+      instagram: false,
+      tiktok: false,
+      reddit: false,
+    },
+    
+    // AI Personality
+    aiPersonality: {
+      tone: 'flirty' as 'flirty' | 'friendly' | 'professional' | 'casual',
+      responseSpeed: 'medium' as 'instant' | 'medium' | 'delayed',
+      traits: [] as string[],
+      voiceSample: null as File | null,
+      writingSamples: [] as string[],
+    },
   });
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'de', name: 'German', flag: '🇩🇪' },
-    { code: 'pt', name: 'Portuguese', flag: '🇵🇹' },
-    { code: 'it', name: 'Italian', flag: '🇮🇹' }
-  ];
-
-  const niches = [
-    { id: 'fitness', name: 'Fitness & Health', icon: '💪', color: 'green' },
-    { id: 'fashion', name: 'Fashion & Beauty', icon: '👗', color: 'pink' },
-    { id: 'gaming', name: 'Gaming', icon: '🎮', color: 'purple' },
-    { id: 'lifestyle', name: 'Lifestyle', icon: '✨', color: 'blue' },
-    { id: 'adult', name: 'Adult Content', icon: '🔥', color: 'red' },
-    { id: 'education', name: 'Education & Coaching', icon: '📚', color: 'indigo' },
-    { id: 'art', name: 'Art & Creative', icon: '🎨', color: 'orange' },
-    { id: 'other', name: 'Other', icon: '🌟', color: 'gray' }
-  ];
-
-  const businessGoals = [
-    { id: 'revenue', name: 'Grow Revenue', icon: DollarSign, description: 'Maximize earnings from content' },
-    { id: 'engagement', name: 'Increase Engagement', icon: Heart, description: 'Build stronger fan relationships' },
-    { id: 'time', name: 'Save Time', icon: Clock, description: 'Automate repetitive tasks' },
-    { id: 'growth', name: 'Grow Audience', icon: Users, description: 'Attract more subscribers' }
-  ];
-
-  const contentTypes = [
-    { id: 'photos', name: 'Photos', icon: Image },
-    { id: 'videos', name: 'Videos', icon: Video },
-    { id: 'live', name: 'Live Streams', icon: Mic },
-    { id: 'messages', name: 'Messages', icon: MessageSquare },
-    { id: 'posts', name: 'Text Posts', icon: FileText }
-  ];
-
-  const togglePlatform = (id: string) => {
-    setFormData((prev) => {
-      const exists = prev.connectedPlatforms.includes(id);
-      return {
-        ...prev,
-        connectedPlatforms: exists
-          ? prev.connectedPlatforms.filter((p) => p !== id)
-          : [...prev.connectedPlatforms, id],
-      };
-    });
-  };
+  const [showPlaybook, setShowPlaybook] = useState(false);
+  const { track } = useAnalytics();
+  const [customPlaybook, setCustomPlaybook] = useState<{
+    dmSequences?: Partial<Record<'day1'|'day2'|'day3'|'day4'|'day5'|'day6'|'day7', string>>;
+    cadence?: { postsPerWeek: number; storiesPerWeek: number; dmCheckinsPerDay: number };
+    upsellMenu?: { name: string; price: string; eta: string }[];
+  }>({});
+  const [editingDM, setEditingDM] = useState<Partial<Record<'day1'|'day2'|'day3'|'day4'|'day5'|'day6'|'day7', boolean>>>({});
+  const [editCadence, setEditCadence] = useState(false);
+  const [editUpsells, setEditUpsells] = useState(false);
+  const [autoSave, setAutoSave] = useState(false);
 
   useEffect(() => {
-    // Refresh platform status after OAuth returns
-    const syncPlatforms = async () => {
-      try {
-        const resp = await fetch('/api/platforms/status', { cache: 'no-store' });
-        if (resp.ok) {
-          const st = await resp.json();
-          const connected: string[] = [];
-          if (st.onlyfans) connected.push('onlyfans');
-          if (st.instagram) connected.push('instagram');
-          if (st.tiktok) connected.push('tiktok');
-          if (st.reddit) connected.push('reddit');
-          setFormData((prev) => ({ ...prev, connectedPlatforms: Array.from(new Set([...prev.connectedPlatforms, ...connected])) }));
-        }
-      } catch {}
-    };
-    syncPlatforms();
-  }, []);
+    if (showPlaybook && formData.niche) {
+      try { track('playbook_opened', { niche: formData.niche }); } catch {}
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPlaybook]);
 
-  const toggleGoal = (id: string) => {
-    setFormData((prev) => {
-      const exists = prev.goals.includes(id);
-      return {
-        ...prev,
-        goals: exists
-          ? prev.goals.filter((g) => g !== id)
-          : [...prev.goals, id],
-      };
-    });
+  const copyToClipboard = async (label: string, text: string, meta: Record<string, any> = {}) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(`${label} copied to clipboard`);
+      try { track(meta.event || 'copied', meta); } catch {}
+    } catch {
+      // ignore
+    }
   };
 
-  const toggleContentType = (id: string) => {
-    setFormData((prev) => {
-      const exists = prev.contentTypes.includes(id);
-      return {
-        ...prev,
-        contentTypes: exists
-          ? prev.contentTypes.filter((c) => c !== id)
-          : [...prev.contentTypes, id],
-      };
-    });
+  const saveDraft = async (changed: 'dm' | 'cadence' | 'upsells') => {
+    try {
+      const niche = formData.niche || (typeof window !== 'undefined' ? localStorage.getItem('selectedNiche') : null);
+      const overrides: any = {};
+      if (changed === 'dm' && customPlaybook.dmSequences) overrides.dmSequences = customPlaybook.dmSequences;
+      if (changed === 'cadence' && customPlaybook.cadence) overrides.cadence = customPlaybook.cadence;
+      if (changed === 'upsells' && customPlaybook.upsellMenu) overrides.upsellMenu = customPlaybook.upsellMenu;
+      await fetch('/api/onboarding/save-playbook-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ niche, ...overrides })
+      });
+      try { track('playbook_draft_saved', { niche, changed }); } catch {}
+    } catch {}
   };
 
   const steps = [
-    { id: 'profile', title: 'Profile Setup', icon: User },
-    { id: 'niche', title: 'Your Business', icon: Target },
+    { id: 'profile', title: 'Profile', icon: User },
+    { id: 'sell-plan', title: 'Sell Plan', icon: DollarSign },
+    { id: 'niche', title: 'Business', icon: Target },
     { id: 'platform', title: 'Platforms', icon: Zap },
-    { id: 'ai-config', title: 'AI Assistant', icon: Bot },
-    { id: 'plan', title: 'Plan & Payment', icon: CreditCard },
-  ];
+    { id: 'ai-config', title: 'AI Setup', icon: Bot },
+    { id: 'plan', title: 'Choose Plan', icon: CreditCard },
+  ] as const;
+  const totalSteps = steps.length;
 
-  useEffect(() => {
-    // Check if returning from Stripe
-    const sessionId = searchParams.get('session_id');
-    const step = searchParams.get('step');
-    const plan = searchParams.get('plan');
-    
-    if (sessionId && step === 'complete') {
-      // Payment successful, mark as complete
-      const completeOnboarding = async () => {
-        await fetch('/api/users/onboarding-status', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            currentStep: 'complete',
-            steps: { profile: true, niche: true, aiConfig: true, payment: true },
-            completed: true,
-          }),
-        });
-        setCurrentStep('complete');
-      };
-      completeOnboarding().catch(console.error);
-    } else if (step === 'payment' && plan) {
-      // Coming from pricing page with a plan selected
-      setCurrentStep('plan');
-      // Pre-select the plan in the plan selection component
-      sessionStorage.setItem('preselectedPlan', plan);
+  // Curated, revenue-focused niches for creators
+  const colorMap: Record<string, string> = {
+    gfe: 'rose', cosplay: 'indigo', dominatrix: 'red', fetish: 'rose', milf: 'amber', alt: 'purple', bbw: 'violet', gamer: 'violet', fitness: 'emerald', fashion: 'pink', couple: 'cyan', college: 'amber', ethnic: 'purple', luxury: 'blue',
+  };
+  const niches = NICHES.map(n => ({ id: n.id, name: n.name, icon: 'star', color: colorMap[n.id] || 'gray' }));
+
+  // Derive visible strategy bullets from the selected preset
+  const getPresetTips = (id: string) => {
+    const preset = (presets as any)[id];
+    if (!preset) return [] as string[];
+    const tips: string[] = [];
+    tips.push(`Cadence: ${preset.cadence.postsPerWeek}/wk posts · ${preset.cadence.storiesPerWeek}/wk stories · ${preset.cadence.dmCheckinsPerDay}/day DMs`);
+    tips.push(`KPIs: Conv ${preset.kpis.subConvRate} · PPV ${preset.kpis.ppvAttachRate} · Churn ${preset.kpis.monthlyChurn}`);
+    if (preset.price) tips.push(`Suggested price: $${preset.price}`);
+    return tips;
+  };
+
+  // Revenue ranges for steppers + selects
+  const revenueRanges = ['0-1k','1k-5k','5k-10k','10k-25k','25k-50k','>50k'] as const;
+
+  const stepRevenue = (type: 'current' | 'target', dir: -1 | 1) => {
+    const arr = revenueRanges as unknown as string[];
+    const current = type === 'current' ? (formData.currentMonthlyRevenue || arr[0]) : (formData.targetMonthlyRevenue || arr[0]);
+    let idx = Math.max(0, arr.indexOf(current));
+    idx = Math.min(arr.length - 1, idx + dir);
+    if (type === 'current') {
+      setFormData({ ...formData, currentMonthlyRevenue: arr[idx] });
+    } else {
+      setFormData({ ...formData, targetMonthlyRevenue: arr[idx] });
     }
-  }, [searchParams]);
+  };
+
+  // Auto-detect timezone on first render; lock language to English (US market)
+  useEffect(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz && !formData.timezone) {
+        setFormData(prev => ({ ...prev, timezone: tz }));
+      }
+    } catch {}
+  }, []);
+
+  // OAuth return handling (banner removed)
+  useEffect(() => {
+    // Check if returning from OAuth
+    const platform = searchParams.get('platform');
+    const status = searchParams.get('status');
+    
+    if (platform && status === 'connected') {
+      // Update connected platforms
+      if (platform === 'onlyfans') {
+        setFormData(prev => ({
+          ...prev,
+          connectedPlatforms: [...prev.connectedPlatforms, platform]
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          socialPlatforms: {
+            ...prev.socialPlatforms,
+            [platform]: true
+          }
+        }));
+      }
+      
+      // Return to platform step
+      const returnStep = sessionStorage.getItem('onboarding_return');
+      if (returnStep) {
+        setCurrentStep(returnStep as Step);
+        sessionStorage.removeItem('onboarding_return');
+      }
+    }
+  }, [searchParams])
 
   const handleNext = async () => {
     setLoading(true);
+    setAnimationDirection('forward');
     
-    // Save current step data
-    if (currentStep === 'profile') {
-      // Save profile data
-      try {
-        const response = await fetch('/api/users/profile', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            displayName: formData.displayName,
-            bio: formData.bio,
-            timezone: formData.timezone,
-            language: formData.language,
-            businessType: formData.businessType,
-            contentFrequency: formData.contentFrequency,
-            gdprConsent: formData.gdprConsent,
-            marketingEmails: formData.marketingEmails,
-          }),
-        });
-
-        if (!response.ok) {
-          console.warn('Profile API failed, continuing anyway for demo');
-        }
-        
-        // Update onboarding status
-        try {
-          await fetch('/api/users/onboarding-status', {
-            method: 'PUT',
+    try {
+      // Save data based on current step
+      switch(currentStep) {
+        case 'profile':
+          await fetch('/api/onboarding/save-profile', {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              currentStep: 'niche',
-              steps: { profile: true, niche: false, aiConfig: false, payment: false },
-            }),
+              displayName: formData.displayName,
+              bio: formData.bio,
+              timezone: formData.timezone,
+              language: formData.language,
+              avatar: formData.avatarUrl
+            })
           });
-        } catch (e) {
-          console.warn('Onboarding status API failed, continuing anyway');
-        }
-        
-        setCurrentStep('niche');
-      } catch (error) {
-        console.error('Failed to save profile:', error);
-        // Continue anyway for demo purposes
-        setCurrentStep('niche');
-      }
-    } else if (currentStep === 'niche') {
-      // Save niche data
-      try {
-        const profileResponse = await fetch('/api/users/profile');
-        if (profileResponse.ok) {
-          const currentProfile = await profileResponse.json();
-          await fetch('/api/users/profile', {
-            method: 'PUT',
+          break;
+          
+        case 'ai-config':
+          await fetch('/api/onboarding/save-ai-config', {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              ...currentProfile,
-              niche: formData.niche,
-              goals: formData.goals,
+              tone: formData.aiPersonality.tone,
+              responseSpeed: formData.aiPersonality.responseSpeed,
+              personalityTraits: formData.aiPersonality.traits,
               contentTypes: formData.contentTypes,
-              currentMonthlyRevenue: formData.currentMonthlyRevenue,
-              targetMonthlyRevenue: formData.targetMonthlyRevenue,
-            }),
+              voiceSample: formData.aiPersonality.voiceSample ? 'uploaded' : null,
+              writingSamples: formData.aiPersonality.writingSamples,
+              autoLearn: true,
+              selectedNicheId: formData.niche || null,
+              price: formData.monthlyPrice || null,
+              ...(formData.niche && (presets as any)[formData.niche]
+                ? (() => {
+                    const p = (presets as any)[formData.niche];
+                    const dm = customPlaybook.dmSequences
+                      ? { ...p.dmSequences, ...customPlaybook.dmSequences }
+                      : p.dmSequences;
+                    const cadence = customPlaybook.cadence || p.cadence;
+                    return {
+                      dmSequences: dm,
+                      cadence,
+                      upsellMenu: customPlaybook.upsellMenu || p.upsellMenu,
+                    };
+                  })()
+                : {}),
+            })
           });
-        }
-      } catch (e) {
-        console.warn('Failed to save niche data, continuing');
+          // Route to optimization step instead of inline stepper
+          try { router.push('/onboarding/optimize'); } catch {}
+          return;
+          break;
       }
-      setCurrentStep('platform');
-    } else if (currentStep === 'platform') {
-      try {
-        const existing = await fetch('/api/ai/config', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({}));
-        const updated = { ...existing, platforms: formData.connectedPlatforms };
-        await fetch('/api/ai/config', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updated),
-        });
-      } catch (e) {
-        console.warn('Failed to persist platforms, continuing');
-      }
-      setCurrentStep('ai-config');
-    } else if (currentStep === 'ai-config') {
-      // Save AI configuration
-      try {
-        const response = await fetch('/api/ai/config', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            personality: formData.personality,
-            responseStyle: formData.responseStyle,
-            pricing: {
-              monthlyPrice: formData.monthlyPrice,
-              welcomeMessage: formData.welcomeMessage,
-            },
-            niche: formData.niche,
-            contentTypes: formData.contentTypes,
-          }),
-        });
-        
-        if (!response.ok) {
-          console.warn('AI config API failed, continuing anyway for demo');
-        }
-        
-        // Update onboarding status
+      
+      // Move to next step
+      const stepOrder: Step[] = ['profile', 'sell-plan', 'niche', 'platform', 'ai-config', 'plan', 'complete'];
+      const currentIndex = stepOrder.indexOf(currentStep);
+      
+      if (currentIndex < stepOrder.length - 1) {
+        setCurrentStep(stepOrder[currentIndex + 1]);
+      } else if (currentStep === 'plan') {
+        // Complete onboarding: call API to set cookie/server flag, sync client store, then redirect
         try {
-          await fetch('/api/users/onboarding-status', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              currentStep: 'plan',
-              steps: { profile: true, niche: true, aiConfig: true, payment: false },
-            }),
-          });
+          const resp = await fetch('/api/onboarding/complete', { method: 'POST' });
+          if (!resp.ok) {
+            console.warn('Failed to persist onboarding completion to server');
+          }
         } catch (e) {
-          console.warn('Onboarding status API failed, continuing anyway');
+          console.log('Onboarding completion API not reachable');
         }
-        
-        setCurrentStep('plan');
-      } catch (error) {
-        console.error('Failed to save AI config:', error);
-        setCurrentStep('plan');
+
+        // Mark as completed locally for UI that relies on the store
+        try { completeOnboarding(); } catch {}
+        try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
+
+        // Show completion screen briefly, then go to dashboard
+        setCurrentStep('complete');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 2000);
       }
+    } catch (error) {
+      console.error('Failed to save onboarding data:', error);
+      alert('Failed to save. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const handlePrevious = () => {
-    const stepOrder: Step[] = ['profile', 'niche', 'platform', 'ai-config', 'plan'];
+    setAnimationDirection('backward');
+    const stepOrder: Step[] = ['profile', 'sell-plan', 'niche', 'platform', 'ai-config', 'plan'];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(stepOrder[currentIndex - 1]);
@@ -345,1000 +353,1317 @@ export default function OnboardingSetupPage() {
     router.push('/dashboard');
   };
 
+  // Helper to mark onboarding completed and route
+  const completeAndRoute = async () => {
+    setLoading(true);
+    try {
+      try {
+        const resp = await fetch('/api/onboarding/complete', { method: 'POST' });
+        if (!resp.ok) console.warn('Failed to persist onboarding completion to server');
+      } catch {}
+      try { completeOnboarding(); } catch {}
+      try { localStorage.setItem('onboarding_completed', 'true'); } catch {}
+      setCurrentStep('complete');
+      setTimeout(() => router.push('/dashboard'), 1200);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStepProgress = () => {
+    // Progress aligned to visible step bubbles
+    const currentIndex = steps.findIndex(s => s.id === currentStep);
+    return ((currentIndex + 1) / steps.length) * 100;
+  };
+
+  const getVerticalFill = () => {
+    // Deprecated: no longer used with CSS-only connectors.
+    return '0%';
+  };
+
+  // Simple feature-based hints driven by Sell Plan
+  const suggestsFlirty = (sellPlan || []).includes('sexting' as any) || (sellPlan || []).includes('ppv' as any);
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 'profile':
         return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Welcome to Huntaze! Let's personalize your experience
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Tell us a bit about yourself to customize your dashboard
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Display Name <span className="text-gray-400">(optional)</span>
-                </label>
+          <StepShell
+            step={1}
+            total={totalSteps}
+            title={C.welcome.title}
+            subtitle={C.welcome.subtitle}
+            onBack={handlePrevious}
+            onSkip={() => setCurrentStep('sell-plan')}
+            onContinue={handleNext}
+          >
+            <div className="space-y-6">
+              <div className="form-group">
+                <label className="form-label text-center block mb-2">Display name</label>
                 <input
                   type="text"
                   value={formData.displayName}
                   onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                  placeholder="Your creator name"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  placeholder="e.g. Ava Hart"
+                  className="form-input text-center text-2xl font-semibold"
+                  autoFocus
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Language
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, language: lang.code })}
-                      className={`p-3 rounded-lg border-2 transition-all ${
-                        formData.language === lang.code
-                          ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{lang.flag}</span>
-                        <span className="font-medium text-sm">{lang.name}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Business Type
-                  </label>
-                  <select
-                    value={formData.businessType}
-                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value as any })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                  >
-                    <option value="individual">Individual creator</option>
-                    <option value="agency">Agency</option>
-                    <option value="studio">Studio</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Content Frequency
-                  </label>
-                  <select
-                    value={formData.contentFrequency}
-                    onChange={(e) => setFormData({ ...formData, contentFrequency: e.target.value as any })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Bio <span className="text-gray-400">(optional)</span>
-                </label>
-                <textarea
-                  rows={3}
-                  value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder="Tell your fans about yourself..."
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+              <div className="form-group">
+                <label className="form-label text-center block mb-2">Primary language</label>
+                <input
+                  type="text"
+                  value="English (United States)"
+                  readOnly
+                  className="form-input text-center opacity-70 cursor-not-allowed"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Timezone <span className="text-gray-400">(for optimal posting)</span>
-                </label>
-                <select
-                  value={formData.timezone}
-                  onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                >
-                  <option value="">Select timezone</option>
-                  <option value="America/New_York">Eastern Time (EST)</option>
-                  <option value="America/Chicago">Central Time (CST)</option>
-                  <option value="America/Denver">Mountain Time (MST)</option>
-                  <option value="America/Los_Angeles">Pacific Time (PST)</option>
-                  <option value="Europe/London">London (GMT)</option>
-                  <option value="Europe/Paris">Paris (CET)</option>
-                  <option value="Asia/Tokyo">Tokyo (JST)</option>
-                  <option value="Australia/Sydney">Sydney (AEDT)</option>
-                </select>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <label className="inline-flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-800 rounded-lg">
-                  <input
-                    type="checkbox"
-                    checked={formData.gdprConsent}
-                    onChange={(e) => setFormData({ ...formData, gdprConsent: e.target.checked })}
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">I agree to the Terms and Privacy Policy</span>
-                </label>
-                <label className="inline-flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-800 rounded-lg">
-                  <input
-                    type="checkbox"
-                    checked={formData.marketingEmails}
-                    onChange={(e) => setFormData({ ...formData, marketingEmails: e.target.checked })}
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Allow product updates via email</span>
-                </label>
+              <div className="form-group">
+                <label className="form-label text-center block mb-2">Time zone (auto‑detected)</label>
+                <input
+                  type="text"
+                  value={formData.timezone || detectTimezone()}
+                  readOnly
+                  placeholder="Auto‑detected"
+                  className="form-input text-center opacity-70 cursor-not-allowed"
+                />
               </div>
             </div>
-          </div>
+          </StepShell>
+        );
+
+      case 'sell-plan':
+        return (
+          <StepShell
+            step={2}
+            total={totalSteps}
+            title={C.sellPlan.title}
+            subtitle={C.sellPlan.subtitle}
+            onBack={handlePrevious}
+            onSkip={() => setCurrentStep('niche')}
+            onContinue={handleNext}
+            rightRail={
+              <div className="space-y-2">
+                <div className="platform-card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-semibold">Recommended setup</div>
+                      <div className="text-xs text-content-tertiary">{C.sellPlan.recommendedTip}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setSellPlan(['subs','ppv']); updateOps?.({ sellPlan: ['subs','ppv'] }); handleNext(); }}
+                      className="btn-outline"
+                    >
+                      <Check className="w-4 h-4 mr-1 inline-block" /> {C.sellPlan.primaryCta}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          >
+
+            <div className="form-group">
+              <label className="form-label">Choose what you plan to sell</label>
+              <div className="niche-grid">
+                {C.sellPlan.options.map((o) => {
+                  const selected = sellPlan.includes(o.key as any);
+                  return (
+                    <button
+                      key={o.key}
+                      type="button"
+                      onClick={() => {
+                        const s = new Set(sellPlan || []);
+                        s.has(o.key as any) ? s.delete(o.key as any) : s.add(o.key as any);
+                        const next = Array.from(s) as any;
+                        setSellPlan(next);
+                        updateOps?.({ sellPlan: next });
+                      }}
+                      className={`niche-card ${selected ? 'selected' : ''}`}
+                    >
+                      <h4 className="niche-title">{o.label}</h4>
+                      {o.caption && <p className="text-xs text-content-tertiary">{o.caption}</p>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+          </StepShell>
         );
 
       case 'niche':
         return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Define Your Business
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                This helps us customize features and analytics for your specific needs
-              </p>
+          <StepShell
+            step={3}
+            total={totalSteps}
+            title={C.nichesGoals.title}
+            subtitle={C.nichesGoals.subtitle}
+            onBack={handlePrevious}
+            onSkip={() => setCurrentStep('platform')}
+            onContinue={handleNext}
+          >
+
+            <div className="form-group">
+              <label className="form-label">Choose Your Niche</label>
+              <div className="niche-grid">
+                {niches.map((n) => {
+                  const Icon = {
+                    dumbbell: Dumbbell,
+                    shirt: Camera, /* no Shirt icon in lucide-react here; reuse neutral */
+                    'gamepad-2': Gamepad2,
+                    sparkles: Sparkles,
+                    flame: Flame,
+                    'book-open': BookOpen,
+                    palette: Palette,
+                    star: Star,
+                    camera: Camera,
+                    users: Users,
+                    heart: Heart,
+                    target: Target,
+                    'wand-2': Wand2,
+                    plane: Plane,
+                  }[n.icon as keyof any] || Star;
+                  return (
+                    <button
+                      key={n.id}
+                      type="button"
+                      onClick={() => {
+                        const preset = (presets as any)[n.id];
+                        if (preset) {
+                          setFormData({
+                            ...formData,
+                            niche: n.id,
+                            contentTypes: preset.contentTypes,
+                            monthlyPrice: preset.price,
+                            aiPersonality: {
+                              ...formData.aiPersonality,
+                              tone: preset.tone,
+                              traits: preset.traits,
+                            },
+                          });
+                          try { localStorage.setItem('selectedNiche', n.id); } catch {}
+                        } else {
+                          setFormData({ ...formData, niche: n.id });
+                          try { localStorage.setItem('selectedNiche', n.id); } catch {}
+                        }
+                        try { setNiches([n.id]); setGoals({ automationLevel: DEFAULTS.automation.defaultPct }); } catch {}
+                      }}
+                      className={`niche-card ${formData.niche === n.id ? 'selected' : ''}`}
+                    >
+                      <div className={`niche-icon-container bg-${n.color}-500`}>
+                        <Icon className="niche-icon" />
+                      </div>
+                      <h4 className="niche-title">{n.name}</h4>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="space-y-6">
-              {/* Niche Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                  What's your content niche?
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {niches.map((niche) => (
-                    <button
-                      key={niche.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, niche: niche.id })}
-                      className={`p-4 rounded-lg border-2 transition-all text-center ${
-                        formData.niche === niche.id
-                          ? `border-${niche.color}-500 bg-${niche.color}-50 dark:bg-${niche.color}-900/20`
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="text-3xl mb-2">{niche.icon}</div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">{niche.name}</div>
-                    </button>
-                  ))}
+            {formData.niche && (
+              <div className="mt-2">
+                <div className="platform-card">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm font-semibold text-content-primary">AI Strategy for {niches.find(x => x.id === formData.niche)?.name}</div>
+                    <div className="flex items-center gap-3">
+                      {(presets as any)[formData.niche] && (
+                        <button
+                          type="button"
+                          onClick={() => setShowPlaybook(true)}
+                          className="text-xs font-semibold text-purple-600 hover:text-purple-700 underline"
+                        >
+                          View full playbook
+                        </button>
+                      )}
+                      <div className="text-xs text-content-tertiary">Applied automatically</div>
+                      {(presets as any)[formData.niche]?.confidence && (
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                            ((presets as any)[formData.niche].confidence === 'high' && 'bg-green-100 text-green-700') ||
+                            ((presets as any)[formData.niche].confidence === 'medium' && 'bg-amber-100 text-amber-700') ||
+                            'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          Confidence: {(presets as any)[formData.niche].confidence}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <ul className="grid sm:grid-cols-3 gap-2 text-sm text-content-secondary">
+                    {getPresetTips(formData.niche)?.map((t: string, i: number) => (
+                      <li key={i} className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5" />{t}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
+            )}
 
-              {/* Goals (business KPIs) */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Current Monthly Revenue ($)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
+            {/* Full Playbook Modal */}
+            {showPlaybook && formData.niche && (presets as any)[formData.niche] && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+                <div className="w-full max-w-3xl bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 relative">
+                  <button
+                    aria-label="Close"
+                    className="absolute top-3 right-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setShowPlaybook(false)}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  {(() => {
+                    const p = (presets as any)[formData.niche];
+                    return (
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex items-center justify-between gap-3 flex-wrap">
+                            <h3 className="text-lg font-semibold">Full Playbook</h3>
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  try {
+                                    const niche = formData.niche || 'playbook';
+                                    const p = (presets as any)[formData.niche as any] || {};
+                                    const dm = customPlaybook.dmSequences ? { ...p.dmSequences, ...customPlaybook.dmSequences } : p.dmSequences;
+                                    const cadence = customPlaybook.cadence || p.cadence;
+                                    const upsellMenu = customPlaybook.upsellMenu || p.upsellMenu;
+                                    // Helper: deep strip emojis from all string fields
+                                    const stripEmojis = (input: any): any => {
+                                      const emojiRegex = /[\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE0F}]/gu;
+                                      const cleanse = (v: any): any => {
+                                        if (typeof v === 'string') return v.replace(emojiRegex, '');
+                                        if (Array.isArray(v)) return v.map(cleanse);
+                                        if (v && typeof v === 'object') {
+                                          const out: any = {};
+                                          for (const k of Object.keys(v)) out[k] = cleanse(v[k]);
+                                          return out;
+                                        }
+                                        return v;
+                                      };
+                                      return cleanse(input);
+                                    };
+                                    const payload = stripEmojis({
+                                      niche,
+                                      aiPersonality: {
+                                        tone: formData.aiPersonality.tone,
+                                        traits: formData.aiPersonality.traits,
+                                      },
+                                      price: formData.monthlyPrice,
+                                      contentTypes: formData.contentTypes,
+                                      dmSequences: dm,
+                                      cadence,
+                                      upsellMenu,
+                                      kpis: p.kpis,
+                                      complianceNotes: p.complianceNotes,
+                                      ppvPriceBands: p.ppvPriceBands,
+                                      platforms: p.platforms,
+                                      exportedAt: new Date().toISOString(),
+                                      generatedBy: 'Huntaze',
+                                      version: '2025-presets',
+                                    });
+                                    const json = JSON.stringify(payload, null, 2);
+                                    const blob = new Blob([json], { type: 'application/json' });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `huntaze-${niche}-playbook.json`;
+                                    a.click();
+                                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                                    try { track('playbook_exported', { niche, format: 'json', size: json.length }); } catch {}
+                                  } catch {}
+                                }}
+                                className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200"
+                              >
+                                Export JSON
+                              </button>
+                              <label className="flex items-center gap-2 text-xs">
+                                <input
+                                  type="checkbox"
+                                  checked={autoSave}
+                                  onChange={(e) => {
+                                    setAutoSave(e.target.checked);
+                                    try { track(e.target.checked ? 'playbook_autosave_enabled' : 'playbook_autosave_disabled', { niche: formData.niche }); } catch {}
+                                  }}
+                                />
+                                Auto‑save
+                              </label>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <p className="text-sm text-content-tertiary">DM sequences, cadence, upsells, pricing, and compliance</p>
+                            {p.confidence && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                                  (p.confidence === 'high' && 'bg-green-100 text-green-700') ||
+                                  (p.confidence === 'medium' && 'bg-amber-100 text-amber-700') ||
+                                  'bg-gray-100 text-gray-700'
+                                }`}
+                              >
+                                Confidence: {p.confidence}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="border border-border-light rounded-lg p-4">
+                            <div className="font-semibold mb-2">7‑Day DM Sequence</div>
+                            <ul className="space-y-3 text-sm">
+                              {(['day1','day2','day3','day4','day5','day6','day7'] as const).map(key => {
+                                const currentVal = (customPlaybook.dmSequences && customPlaybook.dmSequences[key]) || p.dmSequences[key];
+                                const isEditing = !!editingDM[key];
+                                return (
+                                  <li key={key}>
+                                    <div className="flex items-start gap-2">
+                                      <span className="font-medium uppercase text-xs mt-1 mr-1">{key}</span>
+                                      <div className="flex-1">
+                                        {isEditing ? (
+                                          <div className="flex items-start gap-2">
+                                            <textarea
+                                              defaultValue={currentVal}
+                                              className="flex-1 p-2 border rounded min-h-[70px]"
+                                              onChange={(e) => {
+                                                const val = e.target.value;
+                                                setCustomPlaybook(prev => ({
+                                                  ...prev,
+                                                  dmSequences: { ...(prev.dmSequences || {}), [key]: val },
+                                                }));
+                                              }}
+                                            />
+                                            <div className="flex flex-col gap-2">
+                                              <button
+                                                className="px-3 py-1 text-xs bg-green-600 text-white rounded"
+                                                onClick={async () => {
+                                                  setEditingDM(prev => ({ ...prev, [key]: false }));
+                                                  if (autoSave) await saveDraft('dm');
+                                                }}
+                                              >
+                                                Enregistrer
+                                              </button>
+                                              <button
+                                                className="px-3 py-1 text-xs bg-gray-100 rounded"
+                                                onClick={() => setEditingDM(prev => ({ ...prev, [key]: false }))}
+                                              >
+                                                Annuler
+                                              </button>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div className="group flex items-start gap-2">
+                                            <span className="flex-1">{currentVal}</span>
+                                            <button
+                                              type="button"
+                                              className="text-[11px] text-blue-600 hover:underline mr-1"
+                                              onClick={() => setEditingDM(prev => ({ ...prev, [key]: true }))}
+                                            >
+                                              Personnaliser
+                                            </button>
+                                            <button
+                                              aria-label={`Copy ${key} message`}
+                                              className="opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                                              onClick={() => copyToClipboard(`Day ${key} message`, currentVal, { event: 'dm_sequence_copied', niche: formData.niche, day: key, message_length: currentVal?.length || 0 })}
+                                            >
+                                              <Copy className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <ComplianceChecker
+                                      content={currentVal}
+                                      niche={formData.niche || 'gfe'}
+                                      context="dm_message"
+                                      className="mt-2"
+                                      autoCheck={false}
+                                    />
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                          <div className="space-y-4">
+                            <div className="border border-border-light rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="font-semibold">Cadence {(customPlaybook.cadence ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Modifié</span> : null)}</div>
+                                <button
+                                  type="button"
+                                  className="text-[11px] text-blue-600 hover:underline"
+                                  onClick={() => setEditCadence(!editCadence)}
+                                >
+                                  {editCadence ? 'Annuler' : 'Personnaliser'}
+                                </button>
+                              </div>
+                              {editCadence ? (
+                                <div className="grid grid-cols-3 gap-2 text-sm">
+                                  <label className="flex flex-col">
+                                    <span className="text-xs text-gray-500">Posts/week</span>
+                                    <input
+                                      type="number"
+                                      defaultValue={(customPlaybook.cadence?.postsPerWeek ?? p.cadence.postsPerWeek)}
+                                      className="p-2 border rounded"
+                                      onChange={(e) => setCustomPlaybook(prev => ({
+                                        ...prev,
+                                        cadence: {
+                                          postsPerWeek: Number(e.target.value || 0),
+                                          storiesPerWeek: prev.cadence?.storiesPerWeek ?? p.cadence.storiesPerWeek,
+                                          dmCheckinsPerDay: prev.cadence?.dmCheckinsPerDay ?? p.cadence.dmCheckinsPerDay,
+                                        }
+                                      }))}
+                                    />
+                                  </label>
+                                  <label className="flex flex-col">
+                                    <span className="text-xs text-gray-500">Stories/week</span>
+                                    <input
+                                      type="number"
+                                      defaultValue={(customPlaybook.cadence?.storiesPerWeek ?? p.cadence.storiesPerWeek)}
+                                      className="p-2 border rounded"
+                                      onChange={(e) => setCustomPlaybook(prev => ({
+                                        ...prev,
+                                        cadence: {
+                                          postsPerWeek: prev.cadence?.postsPerWeek ?? p.cadence.postsPerWeek,
+                                          storiesPerWeek: Number(e.target.value || 0),
+                                          dmCheckinsPerDay: prev.cadence?.dmCheckinsPerDay ?? p.cadence.dmCheckinsPerDay,
+                                        }
+                                      }))}
+                                    />
+                                  </label>
+                                  <label className="flex flex-col">
+                                    <span className="text-xs text-gray-500">DM/day</span>
+                                    <input
+                                      type="number"
+                                      defaultValue={(customPlaybook.cadence?.dmCheckinsPerDay ?? p.cadence.dmCheckinsPerDay)}
+                                      className="p-2 border rounded"
+                                      onChange={(e) => setCustomPlaybook(prev => ({
+                                        ...prev,
+                                        cadence: {
+                                          postsPerWeek: prev.cadence?.postsPerWeek ?? p.cadence.postsPerWeek,
+                                          storiesPerWeek: prev.cadence?.storiesPerWeek ?? p.cadence.storiesPerWeek,
+                                          dmCheckinsPerDay: Number(e.target.value || 0),
+                                        }
+                                      }))}
+                                    />
+                                  </label>
+                                  <div className="col-span-3 flex items-center gap-2 mt-2">
+                                    <button
+                                      className="px-3 py-1 text-xs bg-green-600 text-white rounded"
+                                      onClick={async () => {
+                                        setEditCadence(false);
+                                        if (autoSave) await saveDraft('cadence');
+                                      }}
+                                    >
+                                      Enregistrer
+                                    </button>
+                                    <button
+                                      className="px-3 py-1 text-xs bg-gray-100 rounded"
+                                      onClick={() => {
+                                        setEditCadence(false);
+                                        setCustomPlaybook(prev => ({ ...prev, cadence: undefined }));
+                                      }}
+                                    >
+                                      Annuler
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="text-sm">Posts: {(customPlaybook.cadence?.postsPerWeek ?? p.cadence.postsPerWeek)}/week</div>
+                                  <div className="text-sm">Stories: {(customPlaybook.cadence?.storiesPerWeek ?? p.cadence.storiesPerWeek)}/week</div>
+                                  <div className="text-sm">DM check‑ins: {(customPlaybook.cadence?.dmCheckinsPerDay ?? p.cadence.dmCheckinsPerDay)}/day</div>
+                                </>
+                              )}
+                            </div>
+                            <div className="border border-border-light rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="font-semibold">Upsell Menu {(customPlaybook.upsellMenu ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Modifié</span> : null)}</div>
+                                <button
+                                  type="button"
+                                  className="text-[11px] text-blue-600 hover:underline"
+                                  onClick={() => setEditUpsells(!editUpsells)}
+                                >
+                                  {editUpsells ? 'Terminer' : 'Personnaliser'}
+                                </button>
+                              </div>
+                              {editUpsells ? (
+                                <ul className="space-y-3 text-sm">
+                                  {(customPlaybook.upsellMenu || p.upsellMenu).map((u: any, idx: number) => (
+                                    <li key={idx} className="border rounded p-3">
+                                      <div className="grid grid-cols-3 gap-3">
+                                        <EditableField
+                                          label="Name"
+                                          value={u.name}
+                                          onSave={async (val) => {
+                                            setCustomPlaybook(prev => {
+                                              const base = prev.upsellMenu || p.upsellMenu;
+                                              const next = base.map((x: any, i: number) => i === idx ? { ...x, name: val } : x);
+                                              return { ...prev, upsellMenu: next };
+                                            });
+                                            if (autoSave) await saveDraft('upsells');
+                                          }}
+                                        />
+                                        <EditableField
+                                          label="Price"
+                                          value={u.price}
+                                          onSave={async (val) => {
+                                            setCustomPlaybook(prev => {
+                                              const base = prev.upsellMenu || p.upsellMenu;
+                                              const next = base.map((x: any, i: number) => i === idx ? { ...x, price: val } : x);
+                                              return { ...prev, upsellMenu: next };
+                                            });
+                                            if (autoSave) await saveDraft('upsells');
+                                          }}
+                                        />
+                                        <EditableField
+                                          label="ETA"
+                                          value={u.eta}
+                                          onSave={async (val) => {
+                                            setCustomPlaybook(prev => {
+                                              const base = prev.upsellMenu || p.upsellMenu;
+                                              const next = base.map((x: any, i: number) => i === idx ? { ...x, eta: val } : x);
+                                              return { ...prev, upsellMenu: next };
+                                            });
+                                            if (autoSave) await saveDraft('upsells');
+                                          }}
+                                        />
+                                      </div>
+                                    </li>
+                                  ))}
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      className="px-3 py-1 text-xs bg-green-600 text-white rounded"
+                                      onClick={async () => {
+                                        setEditUpsells(false);
+                                        if (autoSave) await saveDraft('upsells');
+                                      }}
+                                    >
+                                      Enregistrer
+                                    </button>
+                                    <button
+                                      className="px-3 py-1 text-xs bg-gray-100 rounded"
+                                      onClick={() => {
+                                        setEditUpsells(false);
+                                        setCustomPlaybook(prev => ({ ...prev, upsellMenu: undefined }));
+                                      }}
+                                    >
+                                      Annuler
+                                    </button>
+                                  </div>
+                                </ul>
+                              ) : (
+                                <ul className="space-y-2 text-sm">
+                                  {(customPlaybook.upsellMenu || p.upsellMenu).map((u: any, idx: number) => (
+                                    <li key={idx} className="flex items-center justify-between group">
+                                      <span>{u.name}</span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-content-tertiary">{u.price} · {u.eta}</span>
+                                        <button
+                                          aria-label={`Copy upsell: ${u.name}`}
+                                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                                          onClick={() => copyToClipboard('Upsell item', `${u.name} — ${u.price} — ${u.eta}`, { event: 'upsell_item_copied', niche: formData.niche, name: u.name, price: u.price })}
+                                        >
+                                          <Copy className="w-4 h-4" />
+                                        </button>
+                                      </div>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                            <div className="border border-border-light rounded-lg p-4">
+                              <div className="font-semibold mb-2">KPIs & Compliance</div>
+                              <div className="text-sm">Conv: {p.kpis.subConvRate} · PPV: {p.kpis.ppvAttachRate} · Churn: {p.kpis.monthlyChurn}</div>
+                              <ul className="mt-2 text-sm list-disc list-inside text-content-secondary">
+                                {p.complianceNotes?.map((c: string, idx: number) => (
+                                  <li key={idx}>{c}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            {p.ppvPriceBands?.length ? (
+                              <div className="border border-border-light rounded-lg p-4">
+                                <div className="font-semibold mb-2">Pricing Guidance</div>
+                                <div className="grid grid-cols-3 gap-2 mt-2">
+                                  {p.ppvPriceBands.map((band: string, i: number) => (
+                                    <div key={i} className="bg-gray-50 dark:bg-gray-800/60 p-2 rounded text-sm">
+                                      <div className="text-xs text-gray-500">Tier {i + 1}</div>
+                                      <div className="font-medium">{band}</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })()}
+                </div>
+              </div>
+            )}
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="form-group">
+                <label className="form-label">Current Monthly Revenue (range)</label>
+                <div className="flex items-center gap-2">
+                  <button type="button" aria-label="Previous range" onClick={() => stepRevenue('current', -1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <select
                     value={formData.currentMonthlyRevenue}
                     onChange={(e) => setFormData({ ...formData, currentMonthlyRevenue: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                  />
+                    className="form-select flex-1"
+                  >
+                    <option value="0-1k">$0 – $1k</option>
+                    <option value="1k-5k">$1k – $5k</option>
+                    <option value="5k-10k">$5k – $10k</option>
+                    <option value="10k-25k">$10k – $25k</option>
+                    <option value="25k-50k">$25k – $50k</option>
+                    <option value=">50k">$50k+</option>
+                  </select>
+                  <button type="button" aria-label="Next range" onClick={() => stepRevenue('current', 1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Target Monthly Revenue ($)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Target Monthly Revenue (range)</label>
+                <div className="flex items-center gap-2">
+                  <button type="button" aria-label="Previous range" onClick={() => stepRevenue('target', -1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <select
                     value={formData.targetMonthlyRevenue}
                     onChange={(e) => setFormData({ ...formData, targetMonthlyRevenue: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
-
-              {/* Business Goals */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                  What are your main goals? (Select all that apply)
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {businessGoals.map((goal) => {
-                    const Icon = goal.icon;
-                    const isSelected = formData.goals.includes(goal.id);
-                    return (
-                      <button
-                        key={goal.id}
-                        type="button"
-                        onClick={() => toggleGoal(goal.id)}
-                        className={`p-4 rounded-lg border-2 transition-all text-left ${
-                          isSelected
-                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
-                        }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={`p-2 rounded-lg ${
-                            isSelected ? 'bg-purple-100 dark:bg-purple-800/30' : 'bg-gray-100 dark:bg-gray-800'
-                          }`}>
-                            <Icon className={`w-5 h-5 ${
-                              isSelected ? 'text-purple-600' : 'text-gray-600'
-                            }`} />
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900 dark:text-white">{goal.name}</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{goal.description}</div>
-                          </div>
-                          {isSelected && (
-                            <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Content Types */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                  What type of content do you create? (Select all that apply)
-                </label>
-                <div className="flex flex-wrap gap-3">
-                  {contentTypes.map((type) => {
-                    const Icon = type.icon;
-                    const isSelected = formData.contentTypes.includes(type.id);
-                    return (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => toggleContentType(type.id)}
-                        className={`px-4 py-2.5 rounded-lg border-2 transition-all inline-flex items-center gap-2 ${
-                          isSelected
-                            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-purple-300 text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                        <span className="font-medium text-sm">{type.name}</span>
-                        {isSelected && <Check className="w-4 h-4" />}
-                      </button>
-                    );
-                  })}
+                    className="form-select flex-1"
+                  >
+                    <option value="1k-5k">$1k – $5k</option>
+                    <option value="5k-10k">$5k – $10k</option>
+                    <option value="10k-25k">$10k – $25k</option>
+                    <option value="25k-50k">$25k – $50k</option>
+                    <option value=">50k">$50k+</option>
+                  </select>
+                  <button type="button" aria-label="Next range" onClick={() => stepRevenue('target', 1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        );
-
-      case 'ai-config':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Configure your AI assistant
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Customize how your AI responds to messages on your platforms
-              </p>
-              {formData.niche && (
-                <div className="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
-                  <p className="text-sm text-purple-800 dark:text-purple-200">
-                    💡 <strong>AI optimized for {niches.find(n => n.id === formData.niche)?.name}:</strong> Your assistant will be trained with industry-specific knowledge and communication styles.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  AI Personality & Background Story
-                </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Describe your persona, interests, and how you want the AI to interact with fans.
-                </p>
-                <textarea
-                  rows={6}
-                  value={formData.personality}
-                  onChange={(e) => setFormData({ ...formData, personality: e.target.value })}
-                  placeholder={
-                    formData.niche === 'fitness' 
-                      ? "Example: You are a 25-year-old fitness coach who loves helping people achieve their goals. Be motivating and supportive, share workout tips and healthy recipes. You're passionate about wellness and creating a positive community..."
-                      : formData.niche === 'adult'
-                      ? "Example: You are confident and playful. Be flirty and engaging while maintaining boundaries. Use emojis to express personality. You enjoy creating exclusive content and making fans feel special..."
-                      : "Example: Describe your background, interests, personality traits, and how you want to interact with your audience. Be specific about your communication style and what makes you unique..."
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Response Style
-                </label>
-                <select
-                  value={formData.responseStyle}
-                  onChange={(e) => setFormData({ ...formData, responseStyle: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                >
-                  <option value="friendly">Friendly & Casual</option>
-                  <option value="flirty">Flirty & Playful</option>
-                  <option value="professional">Professional</option>
-                  <option value="motivational">Motivational & Supportive</option>
-                  <option value="educational">Educational & Informative</option>
-                  <option value="mysterious">Mysterious & Intriguing</option>
-                </select>
-              </div>
-
-              {formData.connectedPlatforms.length > 0 && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Monthly Subscription Price ($)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={formData.monthlyPrice}
-                      onChange={(e) => setFormData({ ...formData, monthlyPrice: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Welcome Message (Auto-sent to new subscribers)
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={formData.welcomeMessage}
-                      onChange={(e) => setFormData({ ...formData, welcomeMessage: e.target.value })}
-                      placeholder={
-                        formData.niche === 'fitness'
-                          ? "Welcome to my fitness journey! 💪 I'm excited to help you reach your goals. Check out my exclusive workout plans and nutrition tips..."
-                          : "Hey! Welcome to my exclusive content 💕 I'm so glad you're here! Feel free to message me anytime..."
-                      }
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+          </StepShell>
         );
 
       case 'platform':
         return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Connect Your Platforms
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Link your content platforms and CRMs to start managing everything in one place
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* OnlyFans Card */}
-              <div className={`group relative p-6 border-2 rounded-xl transition-all ${
-                formData.connectedPlatforms.includes('onlyfans')
-                  ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
-                  : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
-              }`}>
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">OF</span>
+          <StepShell
+            step={4}
+            total={totalSteps}
+            title={C.connect.title}
+            subtitle={C.connect.subtitle}
+            onBack={handlePrevious}
+            onSkip={() => setCurrentStep('ai-config')}
+            onContinue={handleNext}
+          >
+            {(sellPlan || []).includes('calls' as any) && (
+              <div className="rounded-lg border p-3 text-xs text-content-tertiary mb-3">
+                Calls are selected in your Sell Plan. Call options become available after platform connect.
+              </div>
+            )}
+            <div className="platform-grid">
+              {/* OnlyFans */}
+              <div className={`platform-card ${formData.connectedPlatforms.includes('onlyfans') ? 'selected' : ''}`}>
+                <div className="platform-header">
+                  <div className="platform-icon-container bg-blue-500">
+                    <MessageSquare className="platform-icon text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">OnlyFans</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Connect your OnlyFans account
-                    </p>
-                  </div>
-                  {formData.connectedPlatforms.includes('onlyfans') ? (
-                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                      <Check className="w-5 h-5" />
-                      <span className="font-medium">Connected</span>
-                    </div>
+                  <h3 className="platform-name">OnlyFans</h3>
+                </div>
+                <ul className="platform-features">
+                  <li className="platform-feature"><Check className="platform-feature-icon" /><span>Smart auto‑DMs</span></li>
+                  <li className="platform-feature"><Check className="platform-feature-icon" /><span>Schedule posts</span></li>
+                  <li className="platform-feature"><Check className="platform-feature-icon" /><span>Insights & alerts</span></li>
+                </ul>
+                <button
+                  onClick={async () => {
+                    if (!formData.connectedPlatforms.includes('onlyfans')) {
+                      setLoading(true);
+                      try {
+                        const response = await fetch('/api/onboarding/connect-platform', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ platform: 'onlyfans', action: 'connect' })
+                        });
+                        const data = await response.json();
+                        if (data.authUrl) {
+                          // In production, redirect to OAuth
+                          // window.location.href = data.authUrl;
+                          // For demo, just mark as connected and apply auto calibration
+                          setFormData({ 
+                            ...formData, 
+                            connectedPlatforms: [...formData.connectedPlatforms, 'onlyfans'] 
+                          });
+                          try {
+                            const res = await fetch('/api/onboarding/mock-ingest');
+                            if (res.ok) {
+                              const mock = await res.json();
+                              const niche = formData.niche || (typeof window !== 'undefined' ? localStorage.getItem('selectedNiche') || '' : '');
+                              const def = NICHES.find(x => x.id === niche);
+                              const mult = def?.ppvMultiplier || 1.0;
+                              const typical = Math.round((mock.ppvAnchor || DEFAULTS.ppv.typical) * mult);
+                              const min = Math.max(DEFAULTS.ppv.min, Math.round(typical * 0.33));
+                              const max = Math.round(typical * 2.5);
+                              updateMonetization({ ppvRange: { min, typical, max } });
+                              if (Array.isArray(mock.peakHours) && mock.peakHours.length > 0) {
+                                const h = mock.peakHours[0];
+                                updateOps({ activeHours: [{ start: h.start, end: h.end }] });
+                              }
+                              if (mock.sendVolume === 'high') {
+                                updateOps({ dailyCaps: { global: DEFAULTS.caps.dailyGlobal, vip: DEFAULTS.caps.dailyVip } });
+                              }
+                              if (mock.suggestLowerWhaleThreshold) {
+                                updateSegmentation({ whaleThreshold: mock.suggestLowerWhaleThreshold });
+                              }
+                              if (mock.igRisk || mock.ttRisk) {
+                                updateBoundaries({ platformRulesFlags: { IG: !!mock.igRisk, TT: !!mock.ttRisk } });
+                              }
+                            }
+                          } catch {}
+                          alert('OnlyFans connected! Auto‑calibration applied. (Demo mode)');
+                        }
+                      } catch (error) {
+                        alert('Failed to connect OnlyFans');
+                      } finally {
+                        setLoading(false);
+                      }
+                    } else {
+                      // Disconnect
+                      setFormData({ 
+                        ...formData, 
+                        connectedPlatforms: formData.connectedPlatforms.filter(p => p !== 'onlyfans') 
+                      });
+                    }
+                  }}
+                  className="btn-primary w-full mt-4"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Connecting...
+                    </>
+                  ) : formData.connectedPlatforms.includes('onlyfans') ? (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      Connected
+                    </>
                   ) : (
-                    <OnlyFansConnect onConnected={() => togglePlatform('onlyfans')} />
+                    <>
+                      <Plus className="w-4 h-4" />
+                      Connect OnlyFans
+                    </>
                   )}
-                </div>
+                </button>
               </div>
 
-              {/* Threads OAuth */}
-              <a
-                href="/auth/threads"
-                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
-              >
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">@</span>
+              {/* Social Media Promotion */}
+              <div className="platform-card">
+                <div className="platform-header">
+                  <div className="platform-icon-container bg-gradient-to-br from-purple-500 to-pink-500">
+                    <Share2 className="platform-icon text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Threads</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                    <Plus className="w-5 h-5" />
-                    <span className="font-medium">Connect</span>
-                  </div>
+                  <h3 className="platform-name">Social Media</h3>
                 </div>
-              </a>
-
-              {/* Instagram OAuth */}
-              <a
-                href="/auth/instagram"
-                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
-              >
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">IG</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Instagram</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                    <Plus className="w-5 h-5" />
-                    <span className="font-medium">Connect</span>
-                  </div>
-                </div>
-              </a>
-
-              {/* TikTok OAuth */}
-              <a
-                href="/auth/tiktok"
-                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
-              >
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">TT</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">TikTok</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                    <Plus className="w-5 h-5" />
-                    <span className="font-medium">Connect</span>
-                  </div>
-                </div>
-              </a>
-
-              {/* Reddit OAuth */}
-              <a
-                href="/auth/reddit"
-                className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
-              >
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">R</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Reddit</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect via OAuth</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                    <Plus className="w-5 h-5" />
-                    <span className="font-medium">Connect</span>
-                  </div>
-                </div>
-              </a>
-
-              {/* Patreon Card - Coming Soon */}
-              <div className="relative p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl opacity-60">
-                <div className="absolute inset-0 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center">
-                  <span className="text-gray-500 font-medium">Coming Soon</span>
-                </div>
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">P</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Patreon</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Support coming soon
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* CRM: Inflow */}
-              <div className={`group relative p-6 border-2 rounded-xl transition-all ${
-                formData.connectedPlatforms.includes('inflow')
-                  ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
-                  : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
-              }`}>
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-purple-600 text-white rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">IF</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inflow CRM</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect with API Key</p>
-                  </div>
-                  {formData.connectedPlatforms.includes('inflow') ? (
-                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                      <Check className="w-5 h-5" />
-                      <span className="font-medium">Connected</span>
-                    </div>
-                  ) : (
-                    <CrmConnect provider="inflow" onConnected={() => togglePlatform('inflow')} />
-                  )}
-                </div>
-              </div>
-
-              {/* CRM: Supercreator */}
-              <div className={`group relative p-6 border-2 rounded-xl transition-all ${
-                formData.connectedPlatforms.includes('supercreator')
-                  ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/10'
-                  : 'border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400'
-              }`}>
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">SC</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Supercreator</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Connect with API Key</p>
-                  </div>
-                  {formData.connectedPlatforms.includes('supercreator') ? (
-                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                      <Check className="w-5 h-5" />
-                      <span className="font-medium">Connected</span>
-                    </div>
-                  ) : (
-                    <CrmConnect provider="supercreator" onConnected={() => togglePlatform('supercreator')} />
-                  )}
-                </div>
-              </div>
-
-              {/* Custom Platform */}
-              <div className="relative p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl opacity-60">
-                <div className="absolute inset-0 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center">
-                  <span className="text-gray-500 font-medium">Coming Soon</span>
-                </div>
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-gray-500 rounded-full flex items-center justify-center">
-                    <Plus className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Other Platforms</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      More platforms soon
-                    </p>
-                  </div>
+                <p className="platform-description">Promote your OnlyFans across social platforms</p>
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                  {/* Instagram */}
+                  <button
+                    onClick={() => { sessionStorage.setItem('onboarding_return', 'platform'); window.location.href = '/api/auth/instagram'; }}
+                    className="flex items-center justify-center gap-1 px-3 py-2 text-xs rounded-lg text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:opacity-90"
+                    aria-label="Connect Instagram"
+                  >
+                    <Instagram className="w-4 h-4" /> IG
+                  </button>
+                  {/* TikTok */}
+                  <button
+                    onClick={() => { sessionStorage.setItem('onboarding_return', 'platform'); window.location.href = '/api/auth/tiktok'; }}
+                    className="flex items-center justify-center gap-1 px-3 py-2 text-xs rounded-lg bg-black text-white border border-neutral-700 hover:border-pink-500/50"
+                    aria-label="Connect TikTok"
+                  >
+                    <Music2 className="w-4 h-4 text-cyan-400" /> TT
+                  </button>
+                  {/* Reddit */}
+                  <button
+                    onClick={() => { sessionStorage.setItem('onboarding_return', 'platform'); window.location.href = '/api/auth/reddit'; }}
+                    className="flex items-center justify-center gap-1 px-3 py-2 text-xs rounded-lg text-white bg-orange-500 hover:bg-orange-600"
+                    aria-label="Connect Reddit"
+                  >
+                    <Megaphone className="w-4 h-4" /> Reddit
+                  </button>
                 </div>
               </div>
             </div>
-
-            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-              <p className="text-sm text-purple-800 dark:text-purple-200">
-                💡 <strong>Tip:</strong> You can connect multiple accounts and add more platforms later from your dashboard. Platform connections are optional but recommended for full functionality.
-              </p>
-            </div>
-          </div>
+          </StepShell>
         );
 
-      case 'complete':
+      case 'ai-config':
         return (
-          <div className="text-center space-y-6">
-            <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto">
-              <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
+          <StepShell
+            step={5}
+            total={totalSteps}
+            title={C.persona.title}
+            subtitle={C.persona.subtitle}
+            onBack={handlePrevious}
+            onSkip={() => setCurrentStep('plan')}
+            onContinue={handleNext}
+            rightRail={<LoadDemoButton />}
+          >
+
+            {/* AI Tone Selection */}
+            <div className="form-group">
+              <label className="form-label">Conversation tone</label>
+              {suggestsFlirty && (
+                <p className="text-xs text-content-tertiary mb-2">Tip: With Sexting or PPV selected, a flirty tone tends to perform best.</p>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { value: 'flirty', label: 'Flirty', desc: 'Playful and teasing' },
+                  { value: 'friendly', label: 'Friendly', desc: 'Warm and welcoming' },
+                  { value: 'professional', label: 'Professional', desc: 'Business-like' },
+                  { value: 'casual', label: 'Casual', desc: 'Laid-back and chill' },
+                ].map((tone) => {
+                  const recommended = formData.niche === 'gfe' && tone.value === 'flirty';
+                  return (
+                    <button
+                      key={tone.value}
+                      onClick={() => setFormData({
+                        ...formData,
+                        aiPersonality: { ...formData.aiPersonality, tone: tone.value as any }
+                      })}
+                      className={`relative p-4 rounded-lg border-2 transition-all ${
+                        formData.aiPersonality.tone === tone.value
+                          ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {recommended && (
+                        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white">Recommended</span>
+                      )}
+                      <div className="font-semibold">{tone.label}</div>
+                      <div className="text-xs text-gray-500 mt-1">{tone.desc}</div>
+                    </button>
+                  );
+                })}
+              </div>
+              {formData.niche === 'gfe' && (
+                <p className="text-xs text-content-tertiary mt-2">Recommended for Girlfriend Experience conversations.</p>
+              )}
             </div>
-            
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                You're all set! 🎉
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Your personalized dashboard is ready
+
+            {/* Personality Traits */}
+            <div className="form-group">
+              <label className="form-label">Personality Traits{(() => {
+                const p = (formData.niche && (presets as any)[formData.niche]) || null;
+                if (!p) return '';
+                const a = (formData.aiPersonality.traits || []).slice().sort().join('|');
+                const b = (p.traits || []).slice().sort().join('|');
+                return a !== b ? ' • Modifié' : '';
+              })()}</label>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  'Funny', 'Romantic', 'Mysterious', 'Dominant', 'Submissive', 
+                  'Intellectual', 'Adventurous', 'Caring', 'Confident', 'Playful'
+                ].map((trait) => (
+                  <button
+                    key={trait}
+                    onClick={() => {
+                      const traits = formData.aiPersonality.traits.includes(trait)
+                        ? formData.aiPersonality.traits.filter(t => t !== trait)
+                        : [...formData.aiPersonality.traits, trait];
+                      setFormData({
+                        ...formData,
+                        aiPersonality: { ...formData.aiPersonality, traits }
+                      });
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      formData.aiPersonality.traits.includes(trait)
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                    }`}
+                  >
+                    {trait}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3">
+                <EditableField
+                  label="Edit traits (comma separated)"
+                  value={(formData.aiPersonality.traits || []).join(', ')}
+                  onSave={(newTraits) => {
+                    const arr = newTraits.split(',').map((t) => t.trim()).filter(Boolean);
+                    setFormData({
+                      ...formData,
+                      aiPersonality: { ...formData.aiPersonality, traits: arr },
+                    });
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Pricing with inline customization */}
+            <div className="form-group">
+              <EditableField
+                label={`Suggested monthly price ($/month)${(() => {
+                  const p = (formData.niche && (presets as any)[formData.niche]) || null;
+                  if (!p) return '';
+                  return String(formData.monthlyPrice || '').trim() !== String(p.price || '').trim() ? ' • Modifié' : '';
+                })()}`}
+                value={String(formData.monthlyPrice || '')}
+                onSave={(newPrice) => {
+                  setFormData({ ...formData, monthlyPrice: newPrice })
+                  const n = parseFloat(String(newPrice))
+                  if (!isNaN(n)) {
+                    try { monetizationSchema.parse({ subPrice: n }); updateMonetization({ subPrice: n }); } catch {}
+                  }
+                }}
+              />
+              <p className="text-xs text-content-tertiary mt-1">Auto‑set from niche. You can adjust anytime.</p>
+              <p className="text-xs text-content-tertiary mt-1">
+                Guidance: if your PPV content is usually under $10, keep a lower subscription to maximize volume. If you sell higher‑priced PPV bundles, set your subscription higher for positioning.
               </p>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-left max-w-md mx-auto">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">What's been configured:</h3>
-              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                {formData.displayName && (
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span>Profile: {formData.displayName}</span>
-                  </li>
-                )}
-                {formData.niche && (
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span>Niche: {niches.find(n => n.id === formData.niche)?.name}</span>
-                  </li>
-                )}
-                {formData.goals.length > 0 && (
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span>{formData.goals.length} business goals set</span>
-                  </li>
-                )}
-                {formData.connectedPlatforms.length > 0 && (
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span>{formData.connectedPlatforms.length} platform(s) connected</span>
-                  </li>
-                )}
-                {formData.personality && (
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-500" />
-                    <span>AI assistant configured</span>
-                  </li>
-                )}
-              </ul>
+            {/* Dynamic Preview (DM + PPV suggestion) */}
+            <div className="rounded-2xl p-6 border border-border-light bg-white dark:bg-gray-900">
+              <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Live Preview</h4>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">AI DM Example</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    {(() => {
+                      const tone = formData.aiPersonality.tone;
+                      const niche = formData.niche;
+                      const flair = niche === 'cosplay' ? '✨' : niche === 'dominatrix' ? '👠' : niche === 'gfe' ? '💕' : '⭐️';
+                      if (tone === 'friendly') return `Hi there! I’m so glad you’re here ${flair} What do you want to see next?`;
+                      if (tone === 'flirty') return `Hey you… I saved something special for you ${flair} Want a peek?`;
+                      if (tone === 'professional') return `Hello! I’m here to help — tell me what you’re in the mood for today.`;
+                      return `Hey! I’ve got new ideas lined up — want me to surprise you ${flair}?`;
+                    })()}
+                  </div>
+                </div>
+                <div className="rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Suggested PPV (by niche)</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {(() => {
+                      const niche = formData.niche;
+                      const def = NICHES.find(x => x.id === niche);
+                      const mult = def?.ppvMultiplier || 1.0;
+                      const typical = Math.round(DEFAULTS.ppv.typical * mult);
+                      try { monetizationSchema.parse({ ppvRange: { typical } }); } catch {}
+                      return `$${typical}`;
+                    })()}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Auto‑calibrates after OnlyFans connect</div>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={handleComplete}
-              className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all inline-flex items-center gap-2 shadow-lg hover:shadow-xl"
-            >
-              Go to Dashboard
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
+            {/* AI Personality Setup */}
+            <div className="form-group">
+              <label className="form-label">Welcome message (sent to new fans)</label>
+              <textarea
+                placeholder="Ex: Welcome! I’m excited you’re here — check my latest post and say hi!"
+                className="form-textarea"
+                rows={4}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  welcomeMessage: e.target.value
+                })}
+              />
+              <p className="text-xs text-gray-500 mt-2">Used to greet new subscribers automatically.</p>
+              <ComplianceChecker
+                content={formData.welcomeMessage || ''}
+                niche={formData.niche || 'gfe'}
+                context="dm_message"
+                className="mt-2"
+                onContentChange={(fixed) => setFormData({ ...formData, welcomeMessage: fixed })}
+              />
+            </div>
+
+            {/* Writing Examples */}
+            <div className="form-group">
+              <label className="form-label">Your typical replies (optional)</label>
+              <textarea
+                placeholder="Example: Thanks for the support! What kind of content do you like most?"
+                className="form-textarea"
+                rows={5}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  aiPersonality: { 
+                    ...formData.aiPersonality, 
+                    writingSamples: e.target.value.split('\n').filter(s => s.trim()) 
+                  }
+                })}
+              />
+            </div>
+
+            {/* Live Preview & Apply multipliers */}
+            <div className="rounded-2xl p-6 border border-border-light bg-white dark:bg-gray-900">
+              <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Live Preview</h4>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">AI DM Example</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    {(() => {
+                      const niches = formData.niche ? [formData.niche] : [];
+                      const price = `$${ppvTypicalWithMultipliers(niches)}`;
+                      const primary = formData.niche || 'generic';
+                      const tmpl = (PREVIEW_TEMPLATES as any)[primary] || PREVIEW_TEMPLATES.generic;
+                      return tmpl(price);
+                    })()}
+                  </div>
+                </div>
+                <div className="rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Suggested PPV (by niche)</div>
+                  <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {(() => `$${ppvTypicalWithMultipliers(formData.niche ? [formData.niche] : [])}`)()}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Auto‑calibrates after OnlyFans connect</div>
+                </div>
+              </div>
+              <div className="mt-3">
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    const niches = formData.niche ? [formData.niche] : [];
+                    const newTyp = ppvTypicalWithMultipliers(niches);
+                    updateMonetization({ ppvRange: { min: DEFAULTS.ppv.min, typical: newTyp, max: DEFAULTS.ppv.max } });
+                    alert(`Typical PPV → $${newTyp} (based on niche multipliers)`);
+                  }}
+                >
+                  {C.monetization.applyMultipliers}
+                </button>
+              </div>
+            </div>
+
+          </StepShell>
         );
 
       case 'plan':
         return (
-          <PlanSelection
-            onSkip={() => {
-              // Starter plan: no checkout, mark as completed
-              fetch('/api/users/onboarding-status', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  currentStep: 'complete',
-                  steps: { profile: true, niche: true, aiConfig: true, payment: true },
-                  completed: true,
-                }),
-              }).finally(() => setCurrentStep('complete'));
-            }}
-          />
+          <StepShell
+            step={6}
+            total={totalSteps}
+            title={C.launch.title}
+            onBack={handlePrevious}
+            onSkip={completeAndRoute}
+            onContinue={completeAndRoute}
+            rightRail={<LoadDemoButton />}
+          >
+
+            <div className="pricing-grid">
+              {/* Starter Plan */}
+              <div className="pricing-card">
+                <div className="pricing-header">
+                  <h3 className="pricing-title">Starter</h3>
+                  <div className="pricing-price">
+                    $0<span className="pricing-price-unit">/mo</span>
+                  </div>
+                  <p className="pricing-description">Perfect for beginners</p>
+                </div>
+                <ul className="pricing-features">
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Basic AI assistant</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Up to 100 messages/mo</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Email support</span>
+                  </li>
+                </ul>
+                <button 
+                  onClick={completeAndRoute}
+                  className="btn-secondary w-full"
+                >
+                  Continue Free
+                </button>
+              </div>
+
+              {/* Pro Plan */}
+              <div className="pricing-card recommended">
+                <span className="pricing-badge">Recommended</span>
+                <div className="pricing-header">
+                  <h3 className="pricing-title">Pro</h3>
+                  <div className="pricing-price">
+                    $49<span className="pricing-price-unit">/mo</span>
+                  </div>
+                  <p className="pricing-description">Best for growing creators</p>
+                </div>
+                <ul className="pricing-features">
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Advanced AI with learning</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Unlimited messaging</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Priority support</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Analytics dashboard</span>
+                  </li>
+                </ul>
+                <button onClick={completeAndRoute} className="btn-primary w-full">
+                  Start Free Trial
+                </button>
+              </div>
+
+              {/* Enterprise Plan */}
+              <div className="pricing-card">
+                <div className="pricing-header">
+                  <h3 className="pricing-title">Enterprise</h3>
+                  <div className="pricing-price">
+                    $199<span className="pricing-price-unit">/mo</span>
+                  </div>
+                  <p className="pricing-description">For agencies & teams</p>
+                </div>
+                <ul className="pricing-features">
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Everything in Pro</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Team management</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Custom integrations</span>
+                  </li>
+                  <li className="pricing-feature">
+                    <Check className="pricing-feature-icon" />
+                    <span className="pricing-feature-text">Dedicated support</span>
+                  </li>
+                </ul>
+                <button className="btn-outline w-full">
+                  Contact Sales
+                </button>
+              </div>
+            </div>
+          </StepShell>
+        );
+
+      case 'complete':
+        return (
+          <div className="complete-container">
+            <div className="complete-icon-container">
+              <Rocket className="complete-icon" />
+            </div>
+            
+            <h2 className="complete-title">You're all set! 🎉</h2>
+            <p className="complete-message">
+              Your AI assistant is ready to help you grow
+            </p>
+
+            <div className="complete-stats">
+              <div className="complete-stat">
+                <div className="complete-stat-value">24/7</div>
+                <div className="complete-stat-label">AI Response</div>
+              </div>
+              <div className="complete-stat">
+                <div className="complete-stat-value">5x</div>
+                <div className="complete-stat-label">Time Saved</div>
+              </div>
+              <div className="complete-stat">
+                <div className="complete-stat-value">∞</div>
+                <div className="complete-stat-label">Possibilities</div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleComplete}
+              className="btn-primary"
+            >
+              <Sparkles className="w-5 h-5" />
+              Go to Dashboard
+            </button>
+          </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-24 pb-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Progress Steps */}
-        {currentStep !== 'complete' && (
-          <div className="mb-12">
-            <div className="flex items-center justify-between">
-              {steps.map((step, index) => {
-                const isActive = step.id === currentStep;
-                const isCompleted = steps.findIndex(s => s.id === currentStep) > index;
-                
-                return (
-                  <div key={step.id} className="flex items-center">
-                    <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${
-                      isActive ? 'bg-purple-600 ring-4 ring-purple-100' : isCompleted ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-700'
-                    }`}>
-                      {isCompleted ? (
-                        <Check className="w-5 h-5 text-white" />
-                      ) : (
-                        <step.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                      )}
-                    </div>
-                    
-                    {index < steps.length - 1 && (
-                      <div className={`w-16 sm:w-24 h-1 transition-all ${
-                        isCompleted ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-700'
-                      }`} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            
-            <div className="flex justify-between mt-3">
-              {steps.map(step => (
-                <p key={step.id} className={`text-xs sm:text-sm ${
-                  step.id === currentStep ? 'text-purple-600 font-medium' : 'text-gray-500'
-                }`}>
-                  {step.title}
-                </p>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Content Card */}
-        <div className="elevated-card rounded-2xl p-8">
-          {renderStepContent()}
-          
-          {/* Navigation */}
-          {currentStep !== 'complete' && (
-            <div className="mt-8 flex justify-between">
-              {currentStep !== 'profile' && (
-                <button
-                  onClick={handlePrevious}
-                  disabled={loading}
-                  className="px-6 py-3 min-h-[44px] bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium transition-colors inline-flex items-center gap-2"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                  Previous
-                </button>
-              )}
-              {currentStep !== 'plan' && (
-                <button
-                  onClick={handleNext}
-                  disabled={loading}
-                  className="px-6 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-all inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto shadow-sm"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Saving...
-                    </>
+    <div className="min-h-screen bg-surface-light dark:bg-surface flex flex-col">
+      {/* Top progress (desktop & mobile) */}
+      <div className="progress-container max-w-4xl mx-auto w-full px-4 pt-8">
+        <div className="progress-steps">
+          {steps.map((step, index) => {
+            const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+            const isActive = step.id === currentStep;
+            const isCompleted = currentStepIndex > index;
+            const Icon = step.icon;
+            return (
+              <div
+                key={step.id}
+                className={`progress-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
+                onClick={() => isCompleted && setCurrentStep(step.id)}
+              >
+                <div className="progress-step-indicator">
+                  {isCompleted && !isActive ? (
+                    <Check className="progress-step-icon" />
                   ) : (
-                    <>
-                      {currentStep === 'ai-config' ? 'Continue to Payment' : 
-                       currentStep === 'platform' && formData.connectedPlatforms.length === 0 ? 'Skip for Now' : 'Continue'}
-                      <ArrowRight className="w-5 h-5" />
-                    </>
+                    <Icon className="progress-step-icon" />
                   )}
-                </button>
-              )}
-            </div>
-          )}
+                </div>
+                <span className="progress-step-label">{step.title}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  );
-}
 
-function OnlyFansConnect({ onConnected }: { onConnected: () => void }) {
-  const [username, setUsername] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+      {/* Main Content */}
+      <div className="flex-1 px-4 py-8 pb-safe">
+        <div className="max-w-3xl mx-auto">
+          <div className="step-content">
+            {renderStepContent()}
 
-  const submit = async () => {
-    setSubmitting(true);
-    setError('');
-    try {
-      const resp = await fetch('/api/platforms/onlyfans/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, apiKey }),
-      });
-      if (!resp.ok) {
-        const data = await resp.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to connect');
-      }
-      onConnected();
-    } catch (e: any) {
-      setError(e.message || 'Connection failed');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+            {/* Navigation */}
+            {currentStep !== 'complete' && (
+              <div className="nav-buttons">
+                {currentStep !== 'profile' ? (
+                  <button onClick={handlePrevious} className="btn-back">
+                    <ArrowLeft className="w-5 h-5" />
+                    Back
+                  </button>
+                ) : (
+                  <div />
+                )}
 
-  return (
-    <div className="w-full max-w-sm">
-      <div className="grid gap-2 w-full text-left">
-        <input
-          placeholder="OnlyFans username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-3 py-2 min-h-[44px] border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-        />
-        <input
-          placeholder="OnlyFans API key"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          className="w-full px-3 py-2 min-h-[44px] border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          onClick={submit}
-          disabled={submitting || !username || !apiKey}
-          className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl disabled:opacity-50"
-        >
-          {submitting ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" /> Connecting...
-            </>
-          ) : (
-            <>
-              <Plus className="w-4 h-4" /> Connect
-            </>
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function CrmConnect({ provider, onConnected }: { provider: 'inflow' | 'supercreator'; onConnected: () => void }) {
-  const [apiKey, setApiKey] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-
-  const submit = async () => {
-    setSubmitting(true);
-    setError('');
-    try {
-      const resp = await fetch(`/api/crm/connect/${provider}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey }),
-      });
-      if (!resp.ok) {
-        const data = await resp.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to connect');
-      }
-      onConnected();
-    } catch (e: any) {
-      setError(e.message || 'Connection failed');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const label = provider === 'inflow' ? 'Inflow API Key' : 'Supercreator API Key';
-
-  return (
-    <div className="w-full max-w-sm">
-      <div className="grid gap-2 w-full text-left">
-        <input
-          placeholder={label}
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          onClick={submit}
-          disabled={submitting || !apiKey}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
-        >
-          {submitting ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" /> Connecting...
-            </>
-          ) : (
-            <>
-              <Plus className="w-4 h-4" /> Connect
-            </>
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function PlanSelection({ onSkip }: { onSkip: () => void }) {
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const [error, setError] = useState('');
-  const [preselectedPlan, setPreselectedPlan] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Check for preselected plan
-    const plan = sessionStorage.getItem('preselectedPlan');
-    if (plan) {
-      setPreselectedPlan(plan);
-      sessionStorage.removeItem('preselectedPlan');
-      // Auto-start checkout for preselected plan
-      setTimeout(() => {
-        startCheckout(plan);
-      }, 500);
-    }
-  }, []);
-
-  const startCheckout = async (planId: string) => {
-    setLoadingPlan(planId);
-    setError('');
-    try {
-      const resp = await fetch('/api/subscriptions/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId }),
-      });
-      if (!resp.ok) {
-        const data = await resp.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to create checkout');
-      }
-      const data = await resp.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error('Invalid checkout URL');
-      }
-    } catch (e: any) {
-      setError(e.message || 'Checkout failed');
-    } finally {
-      setLoadingPlan(null);
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Choose Your Plan
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Start with a 14-day free trial. Cancel anytime.
-        </p>
-      </div>
-
-      {error && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        </div>
-      )}
-
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="border border-gray-200 dark:border-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold">Starter</h3>
-          <p className="text-sm text-gray-500 mb-4">For getting started</p>
-          <p className="text-3xl font-bold mb-4">$0</p>
-          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
-            <li>Basic AI assistant</li>
-            <li>Up to 100 messages/mo</li>
-            <li>Email support</li>
-          </ul>
-          <button onClick={onSkip} className="w-full py-2 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg">Continue Free</button>
-        </div>
-
-        <div className="border-2 border-purple-500 rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-semibold">Pro</h3>
-          <p className="text-sm text-gray-500 mb-4">Best for growing creators</p>
-          <p className="text-3xl font-bold mb-4">$29<span className="text-base font-normal">/mo</span></p>
-          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
-            <li>Advanced AI automations</li>
-            <li>Unlimited messaging</li>
-            <li>Priority support</li>
-          </ul>
-          <button
-            onClick={() => startCheckout('pro')}
-            disabled={loadingPlan === 'pro'}
-            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
-          >
-            {loadingPlan === 'pro' ? 'Redirecting…' : 'Start Free Trial'}
-          </button>
-        </div>
-
-        <div className="border border-gray-200 dark:border-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold">Enterprise</h3>
-          <p className="text-sm text-gray-500 mb-4">For agencies & teams</p>
-          <p className="text-3xl font-bold mb-4">$99<span className="text-base font-normal">/mo</span></p>
-          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
-            <li>Team management</li>
-            <li>Custom SLAs</li>
-            <li>Dedicated support</li>
-          </ul>
-          <button
-            onClick={() => startCheckout('enterprise')}
-            disabled={loadingPlan === 'enterprise'}
-            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
-          >
-            {loadingPlan === 'enterprise' ? 'Redirecting…' : 'Contact & Start'}
-          </button>
+                {currentStep !== 'plan' && (
+                  <button onClick={handleNext} disabled={loading} className="btn-continue">
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        Continue
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

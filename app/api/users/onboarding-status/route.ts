@@ -1,22 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import {
+  getOnboarding,
+  getOrInitStatus,
+  mergeOnboarding,
+} from '@/app/api/_store/onboarding';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
-// In-memory storage for demo (in production this would be in a database)
-const onboardingStatus = new Map<string, any>();
-
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Check if we have a stored status for this session
-    const storedStatus = onboardingStatus.get(token);
-    if (storedStatus) {
-      return NextResponse.json(storedStatus);
+    // If cookie says completed, reflect it in local store snapshot
+    const cookieCompleted = request.cookies.get('onboarding_completed')?.value === 'true';
+    if (cookieCompleted) {
+      const status = getOrInitStatus(token);
+      if (!status.completed) {
+        mergeOnboarding(token, { status: { ...status, completed: true, currentStep: 'completed' } });
+      }
+    }
+
+    // Return stored snapshot if exists
+    const snapshot = getOnboarding(token);
+    if (snapshot?.status) {
+      return NextResponse.json(snapshot.status);
     }
 
     // Try to fetch from backend
@@ -29,35 +40,15 @@ export async function GET(request: NextRequest) {
 
       if (resp.ok) {
         const data = await resp.json();
+        mergeOnboarding(token, { status: data });
         return NextResponse.json(data, { status: resp.status });
       }
     } catch (backendError) {
       console.log('Backend not available, using default onboarding status');
     }
 
-    // Default onboarding status for new users
-    const defaultStatus = {
-      completed: false,
-      currentStep: 'profile',
-      current_step: 1,
-      steps: {
-        profile: false,
-        aiConfig: false,
-        payment: false,
-      },
-      // Checklist items (for Sprint 1)
-      checklist: {
-        first_message: { done: false },
-        connect_ig: { done: false },
-        view_analytics: { done: false },
-        create_campaign: { done: false },
-      },
-    };
-
-    // Store for this session
-    onboardingStatus.set(token, defaultStatus);
-    
-    return NextResponse.json(defaultStatus);
+    const status = getOrInitStatus(token);
+    return NextResponse.json(status);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch onboarding status' }, { status: 500 });
   }
@@ -65,7 +56,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -86,20 +77,17 @@ export async function PUT(request: NextRequest) {
 
       if (resp.ok) {
         const data = await resp.json();
-        // Merge with prior local state to preserve fields omitted in payload
-        const prev = onboardingStatus.get(token) || {};
-        onboardingStatus.set(token, { ...prev, ...payload });
+        // Merge local snapshot
+        mergeOnboarding(token, { status: { ...(getOnboarding(token)?.status || {}), ...payload } });
         return NextResponse.json(data, { status: resp.status });
       }
     } catch (backendError) {
       console.log('Backend not available, updating local status only');
     }
 
-    // Update local storage for demo; merge to keep unspecified keys
-    const prev = onboardingStatus.get(token) || {};
-    const merged = { ...prev, ...payload };
-    onboardingStatus.set(token, merged);
-    return NextResponse.json(merged);
+    // Update local store for demo; merge to keep unspecified keys
+    const merged = mergeOnboarding(token, { status: { ...(getOnboarding(token)?.status || {}), ...payload } });
+    return NextResponse.json(merged.status);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update onboarding status' }, { status: 500 });
   }

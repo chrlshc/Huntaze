@@ -1,0 +1,134 @@
+/* High Contrast Styles for Better Readability */
+
+/* Text contrast improvements */
+.text-gray-400 {
+  color: #6b7280 !important; /* Darker gray for better contrast */
+}
+
+.text-gray-500 {
+  color: #4b5563 !important; /* Even darker */
+}
+
+.text-gray-600 {
+  color: #374151 !important; /* Much darker */
+}
+
+/* Ensure all paragraph text has good contrast */
+p {
+  color: #374151;
+  line-height: 1.7;
+}
+
+/* Headers should be very dark */
+h1, h2, h3, h4, h5, h6 {
+  color: #111827 !important;
+  font-weight: 700;
+}
+
+/* Links should be clearly visible */
+a {
+  color: #7c3aed; /* Purple */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  color: #6d28d9;
+  text-decoration: underline;
+}
+
+/* Buttons text contrast */
+button, .btn, [role="button"] {
+  font-weight: 600;
+}
+
+/* Form inputs */
+input, textarea, select {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Cards and panels */
+.bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6 !important;
+}
+
+/* Ensure good contrast on colored backgrounds */
+.bg-purple-50 {
+  background-color: #f5f3ff !important;
+}
+
+.text-purple-600 {
+  color: #7c3aed !important;
+}
+
+.text-purple-700 {
+  color: #6d28d9 !important;
+}
+
+/* Remove any remaining green colors */
+.text-green-400,
+.text-green-500,
+.text-green-600,
+.bg-green-50,
+.bg-green-100,
+.from-green-50,
+.to-green-50,
+.from-green-600,
+.to-emerald-600 {
+  color: #7c3aed !important;
+  background-color: #f5f3ff !important;
+}
+
+/* Border colors */
+.border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+.border-gray-300 {
+  border-color: #d1d5db !important;
+}
+
+/* Shadow improvements for depth */
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  p {
+    font-size: 16px;
+    color: #374151;
+  }
+  
+  .text-sm {
+    font-size: 14px !important;
+  }
+  
+  .text-xs {
+    font-size: 12px !important;
+  }
+}

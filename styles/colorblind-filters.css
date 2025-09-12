@@ -1,0 +1,97 @@
+/* Colorblind accessibility filters - Based on research from colorblinding.com */
+
+/* Protanopia (Red-blind) - 1.3% of males */
+.colorblind-protanopia {
+  filter: url('#protanopia-filter');
+}
+
+/* Deuteranopia (Green-blind) - 5% of males */
+.colorblind-deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+/* Tritanopia (Blue-blind) - 0.001% of population */
+.colorblind-tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+/* High contrast mode for better accessibility */
+.high-contrast {
+  filter: contrast(1.25) saturate(1.3);
+}
+
+/* SVG Filters for accurate color transformation */
+.colorblind-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Alternative color scheme for universal accessibility */
+.colorblind-safe {
+  /* Replace purple with accessible alternatives */
+  --purple-brand: #00a8cc; /* Cyan - universally distinguishable */
+  --purple-400: #00c9ff;
+  --purple-500: #0099cc;
+  --purple-600: #0077aa;
+  --purple-700: #005588;
+  --purple-800: #003366;
+  
+  /* Status colors optimized for colorblind users */
+  --status-success: #00a550; /* Green with blue tint */
+  --status-warning: #ff9500; /* Orange instead of yellow */
+  --status-error: #cc0000; /* Deep red with high contrast */
+  --status-info: #0099ff; /* Bright cyan */
+}
+
+/* Focus indicators with patterns for colorblind users */
+.colorblind-safe *:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+  /* Add pattern for additional distinction */
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Text contrast enhancement for colorblind mode */
+.colorblind-safe .dark-mode {
+  --text-primary: #f0f0f0; /* Increased brightness */
+  --text-secondary: #d4d4d4;
+  --text-tertiary: #a8a8a8;
+}
+
+/* Button states with patterns */
+.colorblind-safe .btn-primary:hover {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.1) 2px,
+    rgba(255, 255, 255, 0.1) 4px
+  );
+}
+
+/* Icons with colorblind-safe indicators */
+.colorblind-safe .icon-success::after,
+.colorblind-safe .icon-error::after,
+.colorblind-safe .icon-warning::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-base);
+}
+
+.colorblind-safe .icon-success::after {
+  background-color: var(--status-success);
+}
+
+.colorblind-safe .icon-error::after {
+  background-color: var(--status-error);
+}
+
+.colorblind-safe .icon-warning::after {
+  background-color: var(--status-warning);
+}

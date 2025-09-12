@@ -1,0 +1,144 @@
+/* Section Styles for Better Visual Hierarchy */
+
+/* Section separators */
+section {
+  position: relative;
+}
+
+/* Add visual separation between sections */
+section:not(:first-child) {
+  /* Removed borders - clean transitions */
+  margin-top: 0;
+}
+
+/* Alternating section backgrounds */
+section:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Section padding for breathing room */
+.section-padding {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+/* Visual dividers - Removed purple lines */
+.section-divider {
+  width: 100%;
+  height: 0;
+  margin: 40px 0;
+}
+
+/* CTA Button Fixes */
+.cta-primary {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+  color: #ffffff !important;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
+}
+
+.cta-secondary {
+  background: transparent;
+  color: #ffffff !important;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+.cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Fix white on white text */
+.text-white-fix {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Card styling for better separation */
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 32px;
+  backdrop-filter: blur(10px);
+}
+
+.feature-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+/* Section headers */
+.section-header {
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+.section-header h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  background: linear-gradient(to right, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-header p {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Visual hierarchy improvements */
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Gradient overlays for depth */
+.gradient-overlay-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(
+    to bottom,
+    rgba(11, 6, 20, 1),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.gradient-overlay-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(
+    to top,
+    rgba(11, 6, 20, 1),
+    transparent
+  );
+  pointer-events: none;
+}

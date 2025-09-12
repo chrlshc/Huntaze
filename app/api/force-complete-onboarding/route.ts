@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { markCompleted } from '@/app/api/_store/onboarding';
 
-export async function GET() {
+export async function GET(req: Request) {
   const authToken = cookies().get('auth_token')?.value;
-  
-  if (!authToken) {
+  const isDev = process.env.NODE_ENV !== 'production';
+  const url = new URL(req.url);
+  const isLocalHost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+
+  // In development or localhost, allow skipping without auth cookie
+  if (!authToken && !(isDev || isLocalHost)) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
@@ -22,6 +27,12 @@ export async function GET() {
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 30, // 30 days
     });
+    
+    // Update in-memory status (if token available)
+    const token = cookies().get('access_token')?.value || cookies().get('auth_token')?.value || 'dev';
+    if (token) {
+      try { markCompleted(token); } catch {}
+    }
     
     return response;
   } catch (error) {

@@ -1,0 +1,114 @@
+/* Override Tailwind Dark Classes on Mobile */
+
+@media screen and (max-width: 767px) {
+  /* Override Tailwind background utilities */
+  .bg-black { background-color: white !important; }
+  .bg-gray-900 { background-color: white !important; }
+  .bg-gray-950 { background-color: white !important; }
+  .bg-gray-800 { background-color: #f9fafb !important; }
+  .bg-gray-700 { background-color: #f3f4f6 !important; }
+  
+  /* Override Tailwind text utilities */
+  .text-white { color: #111827 !important; }
+  .text-gray-100 { color: #1f2937 !important; }
+  .text-gray-200 { color: #374151 !important; }
+  .text-gray-300 { color: #4b5563 !important; }
+  .text-gray-400 { color: #6b7280 !important; }
+  
+  /* Override dark mode variants */
+  .dark\:bg-black { background-color: white !important; }
+  .dark\:bg-gray-900 { background-color: white !important; }
+  .dark\:bg-gray-950 { background-color: white !important; }
+  .dark\:bg-gray-800 { background-color: #f9fafb !important; }
+  
+  .dark\:text-white { color: #111827 !important; }
+  .dark\:text-gray-100 { color: #1f2937 !important; }
+  .dark\:text-gray-200 { color: #374151 !important; }
+  
+  /* Override gradient utilities */
+  .from-black { --tw-gradient-from: white !important; }
+  .from-gray-950 { --tw-gradient-from: white !important; }
+  .from-gray-900 { --tw-gradient-from: #f9fafb !important; }
+  .to-black { --tw-gradient-to: white !important; }
+  .to-gray-950 { --tw-gradient-to: white !important; }
+  .to-gray-900 { --tw-gradient-to: #f9fafb !important; }
+  .via-black { --tw-gradient-via: white !important; }
+  .via-gray-950 { --tw-gradient-via: white !important; }
+  
+  /* Fix gradient backgrounds */
+  .bg-gradient-to-b,
+  .bg-gradient-to-r,
+  .bg-gradient-to-t,
+  .bg-gradient-to-l {
+    --tw-gradient-from: white !important;
+    --tw-gradient-to: #f9fafb !important;
+  }
+  
+  /* Preserve purple/pink gradients */
+  .from-purple-400,
+  .from-purple-500,
+  .from-purple-600,
+  .to-pink-400,
+  .to-pink-500,
+  .to-pink-600 {
+    --tw-gradient-from: #9333ea !important;
+    --tw-gradient-to: #ec4899 !important;
+  }
+  
+  /* Border colors */
+  .border-white { border-color: #e5e7eb !important; }
+  .border-gray-800 { border-color: #e5e7eb !important; }
+  .border-gray-700 { border-color: #d1d5db !important; }
+  
+  /* Divide colors */
+  .divide-gray-800 > * + * { border-color: #e5e7eb !important; }
+  .divide-gray-700 > * + * { border-color: #d1d5db !important; }
+  
+  /* Ring colors */
+  .ring-white { --tw-ring-color: #e5e7eb !important; }
+  .ring-gray-800 { --tw-ring-color: #e5e7eb !important; }
+  
+  /* Placeholder colors */
+  .placeholder-gray-400::placeholder { color: #9ca3af !important; }
+  .placeholder-gray-500::placeholder { color: #6b7280 !important; }
+  
+  /* Focus states */
+  .focus\:bg-gray-800:focus { background-color: #f3f4f6 !important; }
+  .focus\:bg-gray-700:focus { background-color: #e5e7eb !important; }
+  
+  /* Hover states */
+  .hover\:bg-gray-800:hover { background-color: #f3f4f6 !important; }
+  .hover\:bg-gray-700:hover { background-color: #e5e7eb !important; }
+  .hover\:text-white:hover { color: #111827 !important; }
+  
+  /* Selection colors */
+  ::selection {
+    background-color: #ddd6fe !important;
+    color: #111827 !important;
+  }
+  
+  /* Scrollbar colors */
+  ::-webkit-scrollbar {
+    background-color: #f3f4f6 !important;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #d1d5db !important;
+  }
+  
+  /* Shadow colors */
+  .shadow-white { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important; }
+  
+  /* Opacity utilities with dark backgrounds */
+  .bg-black\/50 { background-color: rgba(255, 255, 255, 0.5) !important; }
+  .bg-gray-900\/50 { background-color: rgba(255, 255, 255, 0.5) !important; }
+  .bg-gray-950\/50 { background-color: rgba(255, 255, 255, 0.5) !important; }
+  
+  /* Backdrop blur with light background */
+  .backdrop-blur-sm,
+  .backdrop-blur,
+  .backdrop-blur-md,
+  .backdrop-blur-lg {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+  }
+}

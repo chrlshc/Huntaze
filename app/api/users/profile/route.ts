@@ -7,7 +7,7 @@ const profiles = new Map<string, any>();
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }

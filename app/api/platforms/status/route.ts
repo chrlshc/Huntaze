@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { platformConnections } from '@/lib/services/platformConnections';
 import { crmConnections } from '@/lib/services/crmConnections';
+import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const userId = user.userId as string;
 
     const onlyFans = (platformConnections.get(userId) || []).some(c => c.platform === 'onlyfans' && c.isActive);
     const tiktok = Boolean(request.cookies.get('tiktok_access_token'));

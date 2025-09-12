@@ -1,0 +1,242 @@
+/* Safe Zones and Dead Areas for Mobile Gestures */
+
+/* Prevent interactive elements in system gesture zones */
+.safe-layout {
+  /* Keep content away from edges */
+  padding-left: max(var(--edge-dead-zone), var(--safe-area-left));
+  padding-right: max(var(--edge-dead-zone), var(--safe-area-right));
+  padding-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+}
+
+/* Bottom navigation safe area */
+.bottom-nav,
+.tab-bar,
+.bottom-bar {
+  padding-bottom: max(var(--spacing-sm), var(--safe-area-bottom));
+}
+
+/* Top header safe area */
+.top-bar,
+.header,
+.navbar {
+  padding-top: var(--safe-area-top);
+}
+
+/* Floating elements need edge protection */
+.floating-button,
+.fab,
+.toast,
+.snackbar {
+  /* Minimum 20px from edges to avoid gesture conflicts */
+  margin: var(--edge-dead-zone);
+  /* Account for safe areas */
+  bottom: max(var(--edge-dead-zone), var(--safe-area-bottom));
+  right: max(var(--edge-dead-zone), var(--safe-area-right));
+}
+
+/* Modal and overlay positioning */
+.modal,
+.drawer,
+.sheet {
+  /* Respect safe areas */
+  padding-top: max(var(--spacing-md), var(--safe-area-top));
+  padding-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+  padding-left: max(var(--spacing-md), var(--safe-area-left));
+  padding-right: max(var(--spacing-md), var(--safe-area-right));
+}
+
+/* Swipeable elements need edge margins */
+.swipeable,
+.carousel,
+.slider {
+  margin-left: var(--edge-dead-zone);
+  margin-right: var(--edge-dead-zone);
+}
+
+/* Thumb-friendly zones for primary actions */
+.thumb-zone {
+  position: fixed;
+  bottom: var(--edge-dead-zone);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - (var(--edge-dead-zone) * 2));
+  max-width: 400px;
+  /* Account for safe area */
+  bottom: max(var(--edge-dead-zone), var(--safe-area-bottom));
+}
+
+/* Hard-to-reach zones for dangerous actions */
+.danger-zone {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  /* Keep away from easy thumb reach */
+}
+
+/* Side drawers respect edge gestures */
+.drawer-left {
+  margin-left: var(--edge-dead-zone);
+  width: calc(100% - var(--edge-dead-zone));
+  max-width: 320px;
+}
+
+.drawer-right {
+  margin-right: var(--edge-dead-zone);
+  width: calc(100% - var(--edge-dead-zone));
+  max-width: 320px;
+}
+
+/* Full-width elements need edge padding */
+.full-width {
+  width: 100%;
+  padding-left: var(--edge-dead-zone);
+  padding-right: var(--edge-dead-zone);
+}
+
+/* Cards and list items */
+.card,
+.list-item {
+  margin-left: var(--content-padding);
+  margin-right: var(--content-padding);
+}
+
+/* Prevent accidental edge touches */
+.no-edge-touch {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: var(--edge-dead-zone);
+}
+
+.no-edge-touch.left {
+  left: 0;
+}
+
+.no-edge-touch.right {
+  right: 0;
+}
+
+/* iOS specific adjustments */
+@supports (-webkit-touch-callout: none) {
+  /* Home indicator area */
+  .bottom-safe {
+    padding-bottom: max(34px, var(--safe-area-bottom));
+  }
+  
+  /* Status bar area */
+  .top-safe {
+    padding-top: max(44px, var(--safe-area-top));
+  }
+}
+
+/* Android gesture navigation */
+@media (max-width: 767px) {
+  /* Bottom gesture area is typically 24dp */
+  .android-gesture-safe {
+    padding-bottom: max(24px, var(--safe-area-bottom));
+  }
+}
+
+/* Notch and Dynamic Island handling */
+@media only screen 
+  and (device-width: 430px) 
+  and (device-height: 932px) 
+  and (-webkit-device-pixel-ratio: 3) {
+  /* iPhone 14 Pro Max with Dynamic Island */
+  .top-bar,
+  .header {
+    padding-top: max(59px, var(--safe-area-top));
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) {
+  .landscape-safe {
+    padding-left: max(var(--spacing-2xl), var(--safe-area-left));
+    padding-right: max(var(--spacing-2xl), var(--safe-area-right));
+  }
+}
+
+/* Interactive map safe zones */
+.map-container {
+  /* Keep controls away from edges */
+  .map-controls {
+    top: calc(var(--mobile-header-height) + var(--safe-area-top) + var(--spacing-md));
+    right: max(var(--spacing-md), var(--safe-area-right));
+    left: max(var(--spacing-md), var(--safe-area-left));
+    bottom: max(var(--spacing-3xl), var(--safe-area-bottom));
+  }
+}
+
+/* Video player controls */
+.video-player {
+  .controls {
+    bottom: max(var(--spacing-md), var(--safe-area-bottom));
+    left: max(var(--spacing-md), var(--safe-area-left));
+    right: max(var(--spacing-md), var(--safe-area-right));
+  }
+}
+
+/* Form submit buttons in thumb zone */
+form {
+  .submit-button,
+  button[type="submit"] {
+    position: sticky;
+    bottom: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    /* Keep in thumb-friendly zone */
+    margin-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+  }
+}
+
+/* Chat input safe positioning */
+.chat-input,
+.message-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--spacing-sm);
+  padding-bottom: max(var(--spacing-sm), var(--safe-area-bottom));
+  padding-left: max(var(--spacing-sm), var(--safe-area-left));
+  padding-right: max(var(--spacing-sm), var(--safe-area-right));
+}
+
+/* Ensure fixed elements respect safe areas (opt-in to avoid full-screen overlays) */
+.fixed[data-respect-safe-areas] {
+  /* Use CSS max() to ensure safe area compliance */
+  top: max(0px, var(--safe-area-top));
+  right: max(0px, var(--safe-area-right));
+  bottom: max(0px, var(--safe-area-bottom));
+  left: max(0px, var(--safe-area-left));
+}
+
+/* Debug mode to visualize safe zones */
+.debug-safe-zones {
+  /* Top safe area */
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--safe-area-top);
+    background: rgba(255, 0, 0, 0.2);
+    pointer-events: none;
+    z-index: 9999;
+  }
+  
+  /* Edge dead zones */
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--edge-dead-zone);
+    background: rgba(255, 255, 0, 0.2);
+    pointer-events: none;
+    z-index: 9999;
+  }
+}

@@ -72,8 +72,9 @@ export default function PricingClient({ plans }: PricingClientProps) {
       'Basic analytics',
       'Mobile app access',
       'Standard email support',
-      '7% platform fee',
-      'Revenue cap: $2,500/month',
+      '9% platform fee (capped at $180/mo)',
+      'Eligible up to $2,000 GMV/month',
+      'Revenue cap: $2,000/month',
     ],
     pro: [
       '5,000 AI messages/month',
@@ -81,8 +82,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
       'Advanced analytics',
       'Priority support',
       'Real-time automation',
-      '5% platform fee - You keep 95%',
-      'Revenue cap: $5,000/month',
+      '7% platform fee - You keep 93% (cap $525/mo)',
+      'Revenue cap: $7,500/month',
     ],
     scale: [
       '25,000 AI messages/month',
@@ -90,15 +91,14 @@ export default function PricingClient({ plans }: PricingClientProps) {
       'Advanced analytics & API',
       'Team collaboration (3 users)',
       'Custom AI training',
-      '3% platform fee - You keep 97%',
-      'Revenue cap: $15,000/month',
+      '5% platform fee - You keep 95% (cap $1,250/mo)',
+      'Revenue cap: $25,000/month',
     ],
     enterprise: [
       'Unlimited AI messages',
       'Unlimited integrations',
       'Custom reporting',
-      'No revenue cap',
-      '1.5% platform fee - You keep 98.5%',
+      '2% platform fee (annual commitment, min $399/mo)',
       'White-label options',
       'Dedicated account manager',
     ],
@@ -114,6 +114,9 @@ export default function PricingClient({ plans }: PricingClientProps) {
           </h1>
           <p className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
             Start free. Upgrade anytime. No hidden fees.
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mb-6 max-w-2xl mx-auto">
+            Payment processing (Stripe) not included (≈ 2.9% + $0.30/txn). Overage (plan policy): Starter $3/1k • Pro $15/1k • Scale $30/1k • Enterprise contractual.
           </p>
             
             {/* Billing Toggle */}
@@ -309,16 +312,16 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Creator making $2k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">With Agency (50%):</span>
-                  <span className="text-red-600 font-bold">-$1,000</span>
+                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Agency (50%) cost</span>
+                  <span className="text-gray-900 dark:text-white font-bold">$1,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">With Huntaze STARTER (7%):</span>
-                  <span className="text-green-600 font-bold">-$159</span>
+                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Cost (Huntaze STARTER)</span>
+                  <span className="text-gray-900 dark:text-white font-bold">$159</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
-                    <span className="font-bold text-gray-900 dark:text-white">You save:</span>
+                    <span className="font-bold text-gray-900 dark:text-white">Savings vs agency 50%:</span>
                     <span className="text-green-600 font-bold text-base md:text-lg">$841/mo</span>
                   </div>
                 </div>
@@ -329,16 +332,16 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Creator making $10k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">With Agency (50%):</span>
-                  <span className="text-red-600 font-bold">-$5,000</span>
+                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Agency (50%) cost</span>
+                  <span className="text-gray-900 dark:text-white font-bold">$5,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">With Huntaze SCALE (3%):</span>
-                  <span className="text-green-600 font-bold">-$379</span>
+                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Cost (Huntaze SCALE)</span>
+                  <span className="text-gray-900 dark:text-white font-bold">$379</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
-                    <span className="font-bold text-gray-900 dark:text-white">You save:</span>
+                    <span className="font-bold text-gray-900 dark:text-white">Savings vs agency 50%:</span>
                     <span className="text-green-600 font-bold text-base md:text-lg">$4,621/mo</span>
                   </div>
                 </div>
@@ -349,17 +352,17 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Creator making $50k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">With Agency (50%):</span>
-                  <span className="text-red-600 font-bold">-$25,000</span>
+                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Agency (50%) cost</span>
+                  <span className="text-gray-900 dark:text-white font-bold">$25,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">With Huntaze ENTERPRISE (1.5%):</span>
-                  <span className="text-green-600 font-bold">-$949</span>
+                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Cost (Huntaze ENTERPRISE · 0%)</span>
+                  <span className="text-gray-900 dark:text-white font-bold">$399</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
                   <div className="flex justify-between">
-                    <span className="font-bold text-gray-900 dark:text-white">You save:</span>
-                    <span className="text-green-600 font-bold text-base md:text-lg">$24,051/mo</span>
+                    <span className="font-bold text-gray-900 dark:text-white">Savings vs agency 50%:</span>
+                    <span className="text-green-600 font-bold text-base md:text-lg">$24,601/mo</span>
                   </div>
                 </div>
               </div>

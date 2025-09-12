@@ -1,0 +1,140 @@
+/* Professional Dark Theme */
+
+/* Base colors for dark theme */
+body {
+  background-color: #000000;
+  color: #e5e7eb;
+}
+
+/* Section backgrounds */
+.bg-white {
+  background-color: #000000 !important;
+  color: #e5e7eb !important;
+}
+
+.bg-gray-50 {
+  background-color: #0a0a0a !important;
+  color: #e5e7eb !important;
+}
+
+.bg-gray-100 {
+  background-color: #111111 !important;
+  color: #e5e7eb !important;
+}
+
+/* Cards and panels */
+.bg-white.rounded-xl,
+.bg-white.rounded-2xl,
+.bg-white.rounded-lg,
+.bg-gray-50.rounded-xl,
+.bg-gray-50.rounded-2xl,
+.bg-gray-50.rounded-lg {
+  background-color: #111111 !important;
+  border-color: #1f2937 !important;
+}
+
+/* Text colors for dark theme */
+.text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.text-gray-800 {
+  color: #f3f4f6 !important;
+}
+
+.text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+.text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* Headings in dark theme */
+h1, h2, h3, h4, h5, h6,
+.text-4xl, .text-3xl, .text-2xl, .text-xl, .text-lg {
+  color: #f9fafb !important;
+}
+
+/* Links */
+a {
+  color: #a78bfa;
+}
+
+a:hover {
+  color: #c4b5fd;
+}
+
+/* Borders */
+.border-gray-200 {
+  border-color: #1f2937 !important;
+}
+
+.border-gray-300 {
+  border-color: #374151 !important;
+}
+
+/* Purple accents stay purple */
+.bg-purple-50 {
+  background-color: rgba(139, 92, 246, 0.1) !important;
+}
+
+.bg-purple-100 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+.text-purple-600 {
+  color: #a78bfa !important;
+}
+
+.text-purple-700 {
+  color: #8b5cf6 !important;
+}
+
+/* Buttons */
+.bg-gray-50:not(.bg-gradient-to-r) {
+  background-color: #1f2937 !important;
+}
+
+/* Input fields */
+input, textarea, select {
+  background-color: #111111 !important;
+  border-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Code blocks and pre */
+pre, code {
+  background-color: #0a0a0a !important;
+  color: #e5e7eb !important;
+}
+
+/* Remove any remaining light backgrounds */
+section:not([class*="bg-gradient"]) {
+  background-color: #000000 !important;
+}
+
+/* Mobile specific dark theme */
+@media (max-width: 768px) {
+  body {
+    background-color: #000000 !important;
+    color: #e5e7eb !important;
+  }
+  
+  * {
+    border-color: #374151 !important;
+  }
+}

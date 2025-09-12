@@ -43,7 +43,12 @@ export async function POST(request: NextRequest) {
       provider: 'apple',
     });
 
-    const refreshToken = await generateRefreshToken(userId);
+    const refreshToken = await generateRefreshToken({
+      userId,
+      email: idTokenPayload.email,
+      name: userData?.name ? `${userData.name.firstName} ${userData.name.lastName}` : null,
+      provider: 'apple',
+    });
 
     // Set auth cookies
     setAuthCookies(accessToken, refreshToken);

@@ -1,0 +1,46 @@
+/* Force remove ALL borders from nav elements */
+
+/* Target the nav and all its children */
+nav,
+nav *:not(a[href="/get-started"]) {
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any ring effects */
+nav *:not(a[href="/get-started"]) {
+  --tw-ring-shadow: 0 0 transparent !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-shadow: 0 0 transparent !important;
+}
+
+/* Override any border utility classes */
+nav [class*="border"]:not(a[href="/get-started"]) {
+  border: none !important;
+}
+
+/* Specific overrides for common border classes */
+.border { border: none !important; }
+.border-b { border: none !important; }
+.border-t { border: none !important; }
+.border-l { border: none !important; }
+.border-r { border: none !important; }
+.border-gray-200 { border: none !important; }
+.border-gray-300 { border: none !important; }
+.border-gray-400 { border: none !important; }
+.border-gray-500 { border: none !important; }
+.border-gray-600 { border: none !important; }
+.border-gray-700 { border: none !important; }
+.border-gray-800 { border: none !important; }
+.border-white { border: none !important; }
+
+/* Keep Start for free button borders */
+nav a[href="/get-started"] {
+  /* Preserve original styling */
+}

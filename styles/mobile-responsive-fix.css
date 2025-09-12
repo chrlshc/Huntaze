@@ -1,0 +1,316 @@
+/* Mobile Responsive Fixes for the Entire Site */
+
+/* Fix body background and text color */
+@media (max-width: 767px) {
+  body {
+    background-color: white !important;
+    color: #111827 !important; /* gray-900 */
+  }
+  
+  /* Fix dark backgrounds on all sections */
+  section,
+  .section,
+  div[class*="bg-black"],
+  div[class*="bg-gray-9"],
+  div[class*="bg-gray-950"],
+  .bg-black,
+  .bg-gray-900,
+  .bg-gray-950,
+  .dark {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+  
+  /* Fix text colors */
+  .text-white,
+  .text-gray-100,
+  .text-gray-200,
+  .text-gray-300,
+  .text-gray-400 {
+    color: #374151 !important; /* gray-700 */
+  }
+  
+  /* Headings should be dark */
+  h1, h2, h3, h4, h5, h6,
+  .text-5xl,
+  .text-4xl,
+  .text-3xl,
+  .text-2xl,
+  .text-xl,
+  .font-bold {
+    color: #111827 !important; /* gray-900 */
+  }
+  
+  /* Fix header/navigation */
+  header,
+  nav,
+  .header,
+  .navbar {
+    background-color: white !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    color: #111827 !important;
+  }
+  
+  /* Fix mobile menu */
+  .mobile-menu,
+  [class*="mobile-menu"] {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+  
+  /* Fix buttons visibility */
+  .btn,
+  button,
+  a[role="button"],
+  [class*="btn-"] {
+    min-height: 48px !important;
+    padding: 12px 24px !important;
+  }
+  
+  /* Primary buttons */
+  .btn-primary,
+  [class*="bg-purple"],
+  [class*="bg-gradient"] {
+    background: linear-gradient(to right, #9333ea, #ec4899) !important;
+    color: white !important;
+  }
+  
+  /* Secondary/outline buttons */
+  .btn-outline,
+  [class*="border-white"] {
+    border-color: #e5e7eb !important;
+    color: #111827 !important;
+    background-color: transparent !important;
+  }
+  
+  /* Fix container width and padding */
+  .container,
+  [class*="container"],
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl {
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Fix text that's too large on mobile */
+  .text-7xl { font-size: 2.5rem !important; line-height: 1.2 !important; }
+  .text-6xl { font-size: 2rem !important; line-height: 1.2 !important; }
+  .text-5xl { font-size: 1.75rem !important; line-height: 1.2 !important; }
+  .text-4xl { font-size: 1.5rem !important; line-height: 1.3 !important; }
+  .text-3xl { font-size: 1.25rem !important; line-height: 1.4 !important; }
+  
+  /* Fix spacing issues */
+  [class*="py-24"],
+  [class*="py-20"],
+  [class*="py-16"] {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+  
+  /* Fix flex layouts for mobile */
+  .flex-row {
+    flex-direction: column !important;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Fix images and mockups */
+  img,
+  [class*="mockup"] {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Fix overlapping content */
+  .absolute {
+    position: relative !important;
+  }
+  
+  /* Fix z-index issues */
+  header,
+  .header,
+  nav,
+  .navbar {
+    z-index: 1000 !important;
+  }
+  
+  /* Hide desktop-only elements */
+  .hidden-mobile,
+  .desktop-only,
+  [class*="lg:block"]:not([class*="block"]) {
+    display: none !important;
+  }
+  
+  /* Fix cards and panels */
+  .card,
+  [class*="rounded-2xl"],
+  [class*="rounded-xl"],
+  [class*="rounded-lg"] {
+    background-color: #f9fafb !important; /* gray-50 */
+    border: 1px solid #e5e7eb !important;
+    color: #111827 !important;
+  }
+  
+  /* Fix hero sections */
+  .hero-section,
+  [class*="hero"] {
+    min-height: calc(100vh - 56px) !important;
+    padding: 2rem 1rem !important;
+    background-color: white !important;
+  }
+  
+  /* Fix forms */
+  input,
+  textarea,
+  select {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    color: #111827 !important;
+    min-height: 44px !important;
+  }
+  
+  /* Fix navigation links */
+  nav a,
+  .nav-link {
+    color: #4b5563 !important; /* gray-600 */
+    padding: 0.5rem 1rem !important;
+    display: block !important;
+  }
+  
+  nav a:hover,
+  nav a:active {
+    color: #111827 !important;
+    background-color: #f3f4f6 !important;
+  }
+  
+  /* Fix mobile menu button */
+  .menu-button,
+  [aria-label*="menu"],
+  button:has(svg) {
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Fix overflow issues */
+  body {
+    overflow-x: hidden !important;
+  }
+  
+  .overflow-hidden {
+    overflow: visible !important;
+  }
+  
+  /* Fix gradient text */
+  .text-transparent {
+    -webkit-text-fill-color: #9333ea !important;
+    color: #9333ea !important;
+  }
+  
+  /* Ensure content is readable */
+  p,
+  .text-base,
+  .text-sm {
+    color: #4b5563 !important; /* gray-600 */
+    line-height: 1.6 !important;
+  }
+  
+  /* Fix feature sections */
+  .feature,
+  [class*="feature"] {
+    background-color: white !important;
+    padding: 1rem !important;
+  }
+  
+  /* Fix testimonials */
+  .testimonial,
+  [class*="testimonial"] {
+    background-color: #f9fafb !important;
+    padding: 1.5rem !important;
+    border-radius: 0.75rem !important;
+  }
+  
+  /* Fix pricing cards */
+  .pricing-card,
+  [class*="pricing"] {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    padding: 1.5rem !important;
+  }
+  
+  /* Fix footer */
+  footer,
+  .footer {
+    background-color: #f9fafb !important;
+    color: #4b5563 !important;
+    padding: 2rem 1rem !important;
+  }
+  
+  /* Fix mobile bottom navigation */
+  .bottom-nav,
+  .mobile-bottom-nav {
+    background-color: white !important;
+    border-top: 1px solid #e5e7eb !important;
+  }
+  
+  /* Force readable link colors */
+  a:not(.btn) {
+    color: #7c3aed !important; /* purple-600 */
+  }
+  
+  /* Fix any remaining contrast issues */
+  * {
+    background-color: inherit;
+    color: inherit;
+  }
+  
+  /* Specific fixes for common issues */
+  .min-h-screen {
+    min-height: calc(100vh - 56px) !important;
+  }
+  
+  /* Ensure all content is visible */
+  .invisible,
+  .opacity-0 {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  
+  .text-7xl { font-size: 3rem !important; }
+  .text-6xl { font-size: 2.5rem !important; }
+  .text-5xl { font-size: 2rem !important; }
+}
+
+/* High specificity fixes for stubborn elements */
+@media (max-width: 767px) {
+  body.dark,
+  html.dark body,
+  [data-theme="dark"] body {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+  
+  /* Force white background on main content areas */
+  main,
+  #main,
+  .main,
+  [role="main"] {
+    background-color: white !important;
+    color: #111827 !important;
+  }
+}

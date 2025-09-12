@@ -1,0 +1,468 @@
+/* Clean Dark Theme - No Purple, Black Background, White Text */
+
+/* CRITICAL: Override everything with !important */
+* {
+  background-image: none !important;
+}
+
+body * {
+  background-color: transparent !important;
+}
+
+body {
+  background-color: #000000 !important;
+}
+
+/* Force black background on ALL elements */
+:root {
+  --background: #000000 !important;
+  --foreground: #ffffff !important;
+  --card: #0a0a0a !important;
+  --card-foreground: #ffffff !important;
+  --primary: #ffffff !important;
+  --primary-foreground: #000000 !important;
+  --secondary: #1a1a1a !important;
+  --secondary-foreground: #ffffff !important;
+  --muted: #262626 !important;
+  --muted-foreground: #a1a1a1 !important;
+  --accent: #262626 !important;
+  --accent-foreground: #ffffff !important;
+  --border: #262626 !important;
+}
+
+/* Global styles */
+html,
+body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Remove ALL purple/violet backgrounds */
+.bg-gradient-to-br,
+.bg-gradient-to-r,
+.bg-gradient-to-b,
+[class*="bg-purple"],
+[class*="bg-violet"],
+[class*="bg-pink"],
+[class*="from-purple"],
+[class*="to-purple"],
+[class*="via-purple"],
+[class*="from-pink"],
+[class*="to-pink"],
+[class*="via-pink"] {
+  background: #000000 !important;
+  background-image: none !important;
+}
+
+/* Navigation - Pure black */
+nav,
+.enterprise-nav {
+  background: #000000 !important;
+  border-bottom: 1px solid #1a1a1a !important;
+}
+
+/* All sections - Pure black */
+section {
+  background-color: #000000 !important;
+}
+
+/* Remove section alternating colors */
+section:nth-child(even),
+section:nth-child(odd) {
+  background-color: #000000 !important;
+}
+
+/* Cards and containers */
+.bg-white,
+.bg-gray-50,
+.bg-gray-100,
+.bg-gray-200,
+[class*="bg-gray-"] {
+  background-color: #0a0a0a !important;
+  border: 1px solid #1a1a1a !important;
+}
+
+/* Dark mode specific */
+.dark-mode,
+.theme-dark {
+  background-color: #000000 !important;
+}
+
+/* Text colors - All white */
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li, td, th {
+  color: #ffffff !important;
+}
+
+/* Muted text */
+.text-gray-500,
+.text-gray-600,
+.text-gray-400,
+[class*="text-gray-"] {
+  color: #a1a1a1 !important;
+}
+
+/* Links */
+a {
+  color: #ffffff !important;
+}
+
+a:hover {
+  color: #e0e0e0 !important;
+}
+
+/* Buttons - White with black text */
+.bg-gray-900,
+button,
+[role="button"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+}
+
+.bg-gray-900:hover,
+button:hover,
+[role="button"]:hover {
+  background-color: #e0e0e0 !important;
+}
+
+/* Secondary buttons */
+.border-gray-300,
+.border {
+  border-color: #262626 !important;
+}
+
+/* Remove purple from buttons */
+.bg-purple-600,
+.bg-purple-700,
+[class*="bg-purple"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Feature cards */
+.capability-card,
+.feature-card,
+[class*="card"] {
+  background-color: #0a0a0a !important;
+  border: 1px solid #1a1a1a !important;
+}
+
+/* Dropdown menus */
+.bg-white.rounded-lg.shadow-xl {
+  background-color: #0a0a0a !important;
+  border: 1px solid #1a1a1a !important;
+}
+
+/* Input fields */
+input,
+textarea,
+select {
+  background-color: #0a0a0a !important;
+  border: 1px solid #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Remove gradient backgrounds */
+.from-gray-50.to-white,
+.from-purple-50,
+.from-purple-100,
+.to-pink-100 {
+  background: #000000 !important;
+}
+
+/* Hero section specific */
+.hero-section {
+  background: #000000 !important;
+}
+
+/* Trust bar */
+.trust-bar {
+  background: #0a0a0a !important;
+}
+
+/* Remove all box shadows with color */
+[class*="shadow"] {
+  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Final CTA section */
+.final-cta-section,
+.bg-gray-900 {
+  background-color: #000000 !important;
+}
+
+/* Footer */
+footer,
+.footer-section {
+  background-color: #000000 !important;
+  border-top: 1px solid #1a1a1a !important;
+}
+
+/* Pricing cards */
+.ring-purple-600 {
+  box-shadow: 0 0 0 2px #ffffff !important;
+}
+
+/* Icons and emojis - monochrome */
+.text-green-500 {
+  color: #ffffff !important;
+}
+
+.text-red-500,
+.text-red-600 {
+  color: #ffffff !important;
+}
+
+/* Remove ALL background colors from decorative elements */
+[class*="bg-"] {
+  background-color: transparent !important;
+}
+
+/* Only keep backgrounds for main containers */
+body,
+section,
+nav,
+footer {
+  background-color: #000000 !important;
+}
+
+/* Cards get slight elevation */
+.card,
+[class*="card"],
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl {
+  background-color: #0a0a0a !important;
+  border: 1px solid #1a1a1a !important;
+}
+
+/* Purple text to white */
+.text-purple-600,
+.text-purple-400,
+[class*="text-purple"] {
+  color: #ffffff !important;
+}
+
+/* Hover states */
+.hover\:bg-gray-50:hover,
+.hover\:bg-gray-100:hover {
+  background-color: #1a1a1a !important;
+}
+
+/* Remove purple gradients from text */
+.bg-clip-text,
+.text-transparent {
+  background: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Remove ALL gradient effects and colored overlays */
+[class*="gradient"],
+[class*="from-"],
+[class*="to-"],
+[class*="via-"] {
+  background: none !important;
+  background-image: none !important;
+}
+
+/* Remove all shadow effects that might have color */
+* {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Force clean appearance on all elements */
+img,
+svg,
+span,
+div {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Modal backgrounds */
+.fixed.inset-0 {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  background: #000000 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626 !important;
+}
+
+/* Remove all decorative backgrounds */
+.absolute.inset-0[aria-hidden="true"] {
+  display: none !important;
+}
+
+/* Fix specific Huntaze sections */
+.enterprise-page {
+  background: #000000 !important;
+}
+
+.hero-section,
+.trust-bar,
+.value-propositions,
+.platform-capabilities,
+.pricing-section,
+.proof-numbers,
+.creator-pain-points,
+.enterprise-ready,
+.roi-section,
+.faq-section,
+.final-cta-section,
+.footer-section {
+  background: #000000 !important;
+}
+
+/* Override inline styles */
+[style*="background"] {
+  background: #000000 !important;
+}
+
+/* Nav specific overrides */
+.fixed.inset-x-0.top-0 {
+  background: #000000 !important;
+  backdrop-filter: none !important;
+}
+
+/* Remove any remaining overlay effects */
+.absolute {
+  mix-blend-mode: normal !important;
+}
+
+/* Clean up Value Propositions icons specifically */
+.value-propositions span {
+  background: none !important;
+  filter: none !important;
+}
+
+/* Ensure buttons stay clean */
+button,
+a[href] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  border: none !important;
+}
+
+button:hover,
+a[href]:hover {
+  background-color: #e0e0e0 !important;
+  transform: none !important;
+}
+
+/* Exception for nav links */
+nav a,
+nav button {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+nav a:hover,
+nav button:hover {
+  background-color: transparent !important;
+  color: #e0e0e0 !important;
+}
+
+/* FAQ Section */
+.faq-section {
+  background: #000000 !important;
+}
+
+/* Pricing section */
+.pricing-section {
+  background: #000000 !important;
+}
+
+/* Platform capabilities */
+.platform-capabilities {
+  background: #000000 !important;
+}
+
+/* Value propositions */
+.value-propositions {
+  background: #000000 !important;
+}
+
+/* Remove purple from badges */
+.bg-purple-100,
+.bg-purple-900\/30 {
+  background-color: #1a1a1a !important;
+}
+
+/* Header buttons */
+nav a,
+nav button {
+  color: #ffffff !important;
+}
+
+nav a:hover,
+nav button:hover {
+  color: #e0e0e0 !important;
+}
+
+/* Get started button in nav */
+nav .bg-gray-900,
+nav .bg-white {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+nav .bg-gray-900:hover,
+nav .bg-white:hover {
+  background-color: #e0e0e0 !important;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  background-color: #1a1a1a !important;
+  border: 1px solid #262626 !important;
+}
+
+/* Live dashboard mockup */
+.bg-gradient-to-br {
+  background: #0a0a0a !important;
+}
+
+/* Remove ALL pseudo elements with colors */
+*::before,
+*::after {
+  background: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Ensure emojis stay normal */
+.text-2xl,
+.text-4xl,
+.text-6xl {
+  filter: none !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: none !important;
+}
+
+/* Metrics badges */
+.bg-gray-100 {
+  background-color: #1a1a1a !important;
+}
+
+/* Interactive elements */
+.bg-purple-100,
+.bg-purple-900\/20,
+.bg-pink-900\/20 {
+  background: #0a0a0a !important;
+  border: 1px solid #1a1a1a !important;
+}

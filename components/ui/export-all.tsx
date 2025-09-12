@@ -17,12 +17,33 @@ export const AlertTitle = ({ children, className = "" }: any) => <h4 className={
 
 export const Progress = ({ value = 0, className = "" }: any) => (
   <div className={`h-2 w-full bg-gray-200 rounded-full overflow-hidden ${className}`}>
-    <div className="h-full bg-blue-600 transition-all" style={{ width: `${value}%` }}></div>
+    <div className="h-full bg-primary transition-all" style={{ width: `${value}%` }}></div>
   </div>
 )
 
+export const Input = ({ className = "", ...props }: any) => (
+  <input className={`w-full border rounded px-3 py-2 outline-none focus:ring ${className}`} {...props} />
+)
+
+export const Textarea = ({ className = "", rows = 3, ...props }: any) => (
+  <textarea rows={rows} className={`w-full border rounded px-3 py-2 outline-none focus:ring ${className}`} {...props} />
+)
+
+export const Separator = ({ className = "" }: any) => (
+  <hr className={`border-t border-gray-200 my-2 ${className}`} />
+)
+
+export const Switch = ({ checked = false, onCheckedChange, className = "", ...props }: any) => (
+  <label className={`inline-flex items-center gap-2 cursor-pointer ${className}`}>
+    <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onCheckedChange?.(e.target.checked)} {...props} />
+    <span className={`w-10 h-6 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-gray-300'}`}>
+      <span className={`block w-5 h-5 bg-white rounded-full shadow transform transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+    </span>
+  </label>
+)
+
 export const Button = ({ children, className = "", variant = "default", ...props }: any) => {
-  const variantClasses = variant === "outline" ? "border border-gray-300" : "bg-blue-600 text-white";
+  const variantClasses = variant === "outline" ? "btn-outline" : "btn-primary";
   return <button className={`px-4 py-2 rounded-md ${variantClasses} ${className}`} {...props}>{children}</button>
 }
 

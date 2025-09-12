@@ -6,16 +6,18 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Menu, X, ChevronDown, ArrowRight,
+  Menu, X,
   MessageSquare, BarChart3, Calendar, Shield,
   DollarSign, Users, Zap, BookOpen, FileText,
   HeadphonesIcon, GraduationCap, Building,
   User, LogOut, Settings, Globe
 } from 'lucide-react'
 // import { ThemeToggle } from './theme-toggle'
-import { CommandPalette } from './command-palette'
+// import { CommandPalette } from './command-palette'
 
 import { events } from '@/src/lib/analytics'
+import MegaMenu from '@/src/components/MegaMenu'
+import { solutionsNav, resourcesNav } from '@/src/components/nav.data'
 
 const navigation = {
   creators: {
@@ -125,7 +127,7 @@ const navigation = {
         name: 'Get Started',
         description: 'Quick start',
         href: '/#quickstart',
-        icon: ArrowRight
+        icon: Zap
       },
       {
         name: 'How It Works',
@@ -144,12 +146,6 @@ const navigation = {
         description: 'Our mission and values',
         href: '/about',
         icon: Building
-      },
-      {
-        name: 'Agency Comparison',
-        description: 'Huntaze vs traditional agencies',
-        href: '/agency-comparison',
-        icon: DollarSign
       },
       {
         name: 'Help Center',
@@ -182,7 +178,20 @@ const navigation = {
 export default function HeaderImproved() {
   const pathname = usePathname()
   const isApp = !!pathname && [
-    '/dashboard','/messages','/fans','/analytics','/campaigns','/automations','/schedule','/platforms','/billing','/configure','/profile','/social'
+    '/dashboard',
+    '/messages',
+    '/fans',
+    '/analytics',
+    '/campaigns',
+    '/automations',
+    '/schedule',
+    '/platforms',
+    '/billing',
+    '/configure',
+    '/profile',
+    '/social',
+    // Hide marketing header on onboarding flows
+    '/onboarding'
   ].some(p => pathname.startsWith(p))
   if (isApp) return null
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -236,263 +245,67 @@ export default function HeaderImproved() {
   }, [])
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-sm dark:shadow-gray-950/50 py-3'
-          : 'bg-white dark:bg-black py-4'
-      }`}
-    >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
+    <header className="header fixed inset-x-0 top-0 z-[1000]" data-header="linear-0927">
+      <nav className="header-container">
+        <div className="flex items-center gap-10">
+          {/* Logo (temporarily hidden) */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center" aria-label="Huntaze home">
-              <Image
-                src="/huntaze-logo.png"
-                alt="Huntaze"
-                width={132}
-                height={40}
-                priority
-                className="h-10 w-auto"
-              />
+              <span className="sr-only">Huntaze</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {/* Creators Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setActiveDropdown('creators')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-                <span>For Creators</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              
-              <AnimatePresence>
-                {activeDropdown === 'creators' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
-                  >
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-4">
-                        {navigation.creators.title}
-                      </h3>
-                      <div className="space-y-3">
-                        {navigation.creators.items.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                          >
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{item.description}</p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+          <div className="header-right ml-auto">
+          <div className="nav-menu hidden lg:flex items-center gap-8">
+            <MegaMenu label="Solutions" groups={solutionsNav} columns={3} align="left" panelAlign="viewport-left" panelGutter={320} footerLinks={[{ title: 'See all solutions', href: '/solutions' }, { title: 'Compare plans', href: '/pricing' }]} />
 
-            {/* Solutions Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setActiveDropdown('solutions')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-                <span>Features</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              
-              <AnimatePresence>
-                {activeDropdown === 'solutions' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
-                  >
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-4">
-                        {navigation.solutions.title}
-                      </h3>
-                      <div className="space-y-3">
-                        {navigation.solutions.items.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                          >
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{item.description}</p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Resources Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setActiveDropdown('resources')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center space-x-1 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-                <span>Resources</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              
-              <AnimatePresence>
-                {activeDropdown === 'resources' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 w-96 mt-2 elevated-card overflow-hidden"
-                  >
-                    <div className="p-6">
-                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-4">
-                        {navigation.resources.title}
-                      </h3>
-                      <div className="space-y-3">
-                        {navigation.resources.items.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                          >
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{item.description}</p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            <Link href="/demo" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-              Book Demo
+            {/* Pricing */}
+            <Link href="/pricing" className="text-text-secondary hover:text-text-primary text-[14px] font-normal">
+              Pricing
             </Link>
 
-            <Link href="/agency-comparison" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-              vs Agencies
-            </Link>
-
-            <Link href="/about" className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-medium">
-              About
-            </Link>
+            <MegaMenu label="Resources" groups={resourcesNav} columns={4} align="left" panelAlign="viewport-left" panelGutter={96} footerLinks={[{ title: 'See all resources', href: '/resources' }]} />
           </div>
 
-          {/* Desktop CTAs */}
-          <div className="hidden lg:flex items-center space-x-4">
-            {/* <ThemeToggle /> */}
-            
-            {/* Command Palette */}
-            {user && <CommandPalette />}
-            
-            {loading ? (
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
-            ) : user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setActiveDropdown(activeDropdown === 'user' ? null : 'user')}
-                  className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+          
+
+          {/* Right actions */}
+          <div className="header-actions hidden lg:flex">
+            {loading ? null : user ? (
+              <>
+                <Link 
+                  href="/dashboard" 
+                  className="text-text-primary/90 hover:text-text-primary text-sm font-medium px-3 py-2"
                 >
-                  {/* Temporarily disabled avatar for beta */}
-                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
-                  <ChevronDown className="w-4 h-4" />
+                  Dashboard
+                </Link>
+                <button 
+                  onClick={handleLogout} 
+                  className="text-text-secondary hover:text-text-primary text-sm font-medium px-3 py-2"
+                >
+                  Logout
                 </button>
-                
-                <AnimatePresence>
-                  {activeDropdown === 'user' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-950 rounded-lg shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden"
-                    >
-                      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
-                        <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
-                        <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{user.email}</p>
-                      </div>
-                      <div className="p-2">
-                        <Link
-                          href="/dashboard"
-                          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                          onClick={() => setActiveDropdown(null)}
-                        >
-                          <BarChart3 className="w-4 h-4 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
-                          <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
-                        </Link>
-                        <Link
-                          href="/configure"
-                          className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                          onClick={() => setActiveDropdown(null)}
-                        >
-                          <Settings className="w-4 h-4 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
-                          <span className="text-gray-700 dark:text-gray-300">Settings</span>
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
-                        >
-                          <LogOut className="w-4 h-4 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
-                          <span className="text-gray-700 dark:text-gray-300">Logout</span>
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              </>
             ) : (
               <>
                 <Link 
                   href="/auth" 
-                  className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium"
+                  className="text-text-primary/90 hover:text-text-primary text-sm font-medium px-4 py-2"
                   onClick={() => events.ctaClick({ location: 'nav', label: 'Log in' })}
                 >
                   Log in
                 </Link>
-                <Link 
-                  href="/auth" 
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                  onClick={() => events.ctaClick({ location: 'nav', label: 'Start free trial' })}
-                >
-                  Start free trial
-                </Link>
+                  <Link 
+                    href="/auth" 
+                    className="btn-outline rounded-full px-5 py-2"
+                    onClick={() => events.ctaClick({ location: 'nav', label: 'Start for free' })}
+                  >
+                    Start for free
+                  </Link>
               </>
             )}
+          </div>
           </div>
 
           {/* Mobile menu button */}
@@ -501,9 +314,9 @@ export default function HeaderImproved() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+              <X className="w-6 h-6 text-text-primary/80" />
             ) : (
-              <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+              <Menu className="w-6 h-6 text-text-primary/80" />
             )}
           </button>
         </div>
@@ -522,15 +335,15 @@ export default function HeaderImproved() {
                   <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2">
                     Solutions
                   </p>
-                  {navigation.solutions.items.map((item) => (
+                  {[...navigation.creators.items, ...navigation.solutions.items].map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary/10"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
+                      <item.icon className="w-5 h-5 text-primary" />
+                      <span className="text-text-primary">{item.name}</span>
                     </Link>
                   ))}
                 </div>
@@ -539,33 +352,30 @@ export default function HeaderImproved() {
                   <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2">
                     Resources
                   </p>
-                  {navigation.resources.items.map((item) => (
+                  {navigation.resources.items.filter((i) => i.name !== 'Agency Comparison').map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary/10"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <span className="text-gray-700 dark:text-gray-300">{item.name}</span>
+                      <item.icon className="w-5 h-5 text-primary" />
+                      <span className="text-text-primary">{item.name}</span>
                     </Link>
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2">
+                    Pages
+                  </p>
                   <Link
-                    href="/demo"
-                    className="block p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                    href="/pricing"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary/10"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Book Demo
-                  </Link>
-                  <Link
-                    href="/about"
-                    className="block p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    About
+                    <span className="w-5 h-5" />
+                    <span className="text-text-primary">Pricing</span>
                   </Link>
                 </div>
 
@@ -577,19 +387,19 @@ export default function HeaderImproved() {
                   
                   {loading ? (
                     <div className="p-4 flex justify-center">
-                      <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+                      <div className="w-8 h-8 bg-primary/20 rounded-full animate-pulse-soft" />
                     </div>
                   ) : user ? (
                     <>
                       <div className="p-2 border-b border-gray-200 dark:border-gray-700">
                         <div className="flex items-center space-x-3">
                           {/* Temporarily disabled avatar for beta */}
-                          <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-white" />
+                          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-primary-foreground" />
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900 dark:text-white">{user.name || user.email}</p>
-                            <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{user.email}</p>
+                            <p className="font-medium text-text-primary">{user.name || user.email}</p>
+                            <p className="text-sm text-text-secondary">{user.email}</p>
                           </div>
                         </div>
                       </div>
@@ -599,8 +409,8 @@ export default function HeaderImproved() {
                         className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <BarChart3 className="w-5 h-5 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
-                        <span className="text-gray-700 dark:text-gray-300">Dashboard</span>
+                        <BarChart3 className="w-5 h-5 text-text-secondary" />
+                        <span className="text-text-primary">Dashboard</span>
                       </Link>
                       
                       <Link
@@ -608,8 +418,8 @@ export default function HeaderImproved() {
                         className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Settings className="w-5 h-5 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
-                        <span className="text-gray-700 dark:text-gray-300">Settings</span>
+                        <Settings className="w-5 h-5 text-text-secondary" />
+                        <span className="text-text-primary">Settings</span>
                       </Link>
                       
                       <button
@@ -619,25 +429,25 @@ export default function HeaderImproved() {
                         }}
                         className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left"
                       >
-                        <LogOut className="w-5 h-5 text-gray-600 dark:text-[var(--text-secondary-dark)]" />
-                        <span className="text-gray-700 dark:text-gray-300">Logout</span>
+                        <LogOut className="w-5 h-5 text-text-secondary" />
+                        <span className="text-text-primary">Logout</span>
                       </button>
                     </>
                   ) : (
                     <>
                       <Link
                         href="/auth"
-                        className="block p-2 text-gray-700 hover:bg-gray-50 rounded-lg text-center"
+                        className="block p-2 text-text-primary hover:bg-primary/10 rounded-lg text-center"
                         onClick={() => { events.ctaClick({ location: 'nav_mobile', label: 'Log in' }); setMobileMenuOpen(false); }}
                       >
                         Log in
                       </Link>
                       <Link
                         href="/auth"
-                        className="block bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-center font-medium"
-                        onClick={() => { events.ctaClick({ location: 'nav_mobile', label: 'Start free trial' }); setMobileMenuOpen(false); }}
+                        className="block btn-primary px-10 py-4 rounded-full text-center font-semibold text-base"
+                        onClick={() => { events.ctaClick({ location: 'nav_mobile', label: 'Start for free' }); setMobileMenuOpen(false); }}
                       >
-                        Start free trial
+                        Start for free
                       </Link>
                     </>
                   )}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
+import { getUserFromRequest } from '@/lib/auth/request';
 
 // Commission structure based on pricing page
 const COMMISSION_TIERS = {
@@ -34,15 +34,9 @@ const COMMISSION_TIERS = {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    
-    if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const userId = user.userId as string;
 
     const { monthlyRevenue, subscriptionTier, accountAge } = await request.json();
 

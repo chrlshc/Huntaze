@@ -1,0 +1,257 @@
+/* Linear-style Dark Mode - Clean and differentiated */
+
+/* Reset overly dark backgrounds */
+.dark-mode {
+  /* Linear uses subtle grays, not pure black */
+  --bg-primary: #0d0d0d; /* Very dark gray, not black */
+  --bg-secondary: #161616; /* Slightly lighter for cards */
+  --bg-tertiary: #1a1a1a; /* Even lighter for elevated elements */
+  --bg-accent: #1f1f1f; /* Accent sections */
+  
+  /* Purple accents - subtle and professional */
+  --purple-primary: #8b5cf6; /* Softer purple */
+  --purple-secondary: #7c3aed; /* Deeper purple */
+  --purple-muted: rgba(139, 92, 246, 0.1); /* Very subtle purple tint */
+  --purple-border: rgba(139, 92, 246, 0.2); /* Purple borders */
+  
+  /* Text hierarchy - better contrast */
+  --text-primary: #fafafa; /* Almost white for headers */
+  --text-body: #e4e4e7; /* Light gray for body text */
+  --text-muted: #a1a1aa; /* Muted gray for secondary text */
+  --text-disabled: #71717a; /* Even more muted */
+  
+  /* Borders - visible but subtle */
+  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-secondary: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+}
+
+/* Base styles */
+.dark-mode body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-weight: 400;
+}
+
+/* Section differentiation */
+.dark-mode section:nth-child(odd) {
+  background-color: var(--bg-primary);
+}
+
+.dark-mode section:nth-child(even) {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+/* Hero section - slightly different */
+.dark-mode .enterprise-hero {
+  background: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+/* Navigation - floating style like Linear */
+.dark-mode .enterprise-nav {
+  background: rgba(13, 13, 13, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards with subtle elevation */
+.dark-mode .card,
+.dark-mode .capability-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .card:hover,
+.dark-mode .capability-card:hover {
+  background: var(--bg-accent);
+  border-color: var(--purple-border);
+  box-shadow: 0 0 0 1px var(--purple-border);
+  transform: translateY(-2px);
+}
+
+/* Purple accent sections */
+.dark-mode .cta-section,
+.dark-mode .enterprise-cta-section {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--purple-muted) 100%);
+  border: 1px solid var(--purple-border);
+}
+
+/* Buttons - Linear style */
+.dark-mode .btn-primary {
+  background: var(--purple-primary);
+  color: white;
+  font-weight: 500;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .btn-primary:hover {
+  background: var(--purple-secondary);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.dark-mode .btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.dark-mode .btn-secondary:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+/* Typography improvements */
+.dark-mode h1 {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.dark-mode h2 {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.dark-mode h3 {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.dark-mode p {
+  color: var(--text-body);
+  line-height: 1.6;
+}
+
+/* Code blocks - Linear style */
+.dark-mode pre,
+.dark-mode code {
+  background: #0a0a0a;
+  border: 1px solid var(--border-primary);
+  color: var(--text-body);
+}
+
+/* Input fields */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+}
+
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+  border-color: var(--purple-primary);
+  box-shadow: 0 0 0 3px var(--purple-muted);
+}
+
+/* Tables with alternating rows */
+.dark-mode table {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+.dark-mode th {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.dark-mode tr:nth-child(even) {
+  background: var(--bg-tertiary);
+}
+
+.dark-mode tr:hover {
+  background: var(--bg-accent);
+}
+
+/* Links with purple accent */
+.dark-mode a {
+  color: var(--purple-primary);
+  text-decoration: none;
+}
+
+.dark-mode a:hover {
+  color: var(--purple-secondary);
+  text-decoration: underline;
+}
+
+/* Navigation links - different style */
+.dark-mode .nav-link {
+  color: var(--text-muted);
+}
+
+.dark-mode .nav-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.dark-mode .nav-link.active {
+  color: var(--purple-primary);
+  background: var(--purple-muted);
+}
+
+/* Dashboard sections */
+.dark-mode .dashboard-demo {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .metric-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+}
+
+.dark-mode .metric-value {
+  color: var(--purple-primary);
+}
+
+/* Footer - darker */
+.dark-mode footer,
+.dark-mode .enterprise-footer {
+  background: #0a0a0a;
+  border-top: 1px solid var(--border-primary);
+}
+
+/* Scrollbar styling */
+.dark-mode::-webkit-scrollbar {
+  width: 12px;
+  background: var(--bg-primary);
+}
+
+.dark-mode::-webkit-scrollbar-thumb {
+  background: var(--bg-accent);
+  border-radius: 6px;
+  border: 2px solid var(--bg-primary);
+}
+
+.dark-mode::-webkit-scrollbar-thumb:hover {
+  background: var(--purple-muted);
+}
+
+/* Remove pure black backgrounds */
+.dark-mode * {
+  background-color: inherit;
+}
+
+/* Section separators */
+.dark-mode .section-separator {
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--border-primary) 50%, 
+    transparent 100%
+  );
+  margin: 4rem 0;
+}

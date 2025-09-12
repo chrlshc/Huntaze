@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { eventEmitter } from '@/lib/services/eventEmitter';
+import { getUserFromRequest } from '@/lib/auth/request';
 
 async function getUserId(request: NextRequest): Promise<string | null> {
-  const token = request.cookies.get('auth_token')?.value;
-  if (!token) return null;
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    return payload.userId as string;
-  } catch {
-    return null;
-  }
+  const user = await getUserFromRequest(request);
+  return user?.userId || null;
 }
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
@@ -33,4 +26,3 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     return NextResponse.json({ error: 'Failed to emit typing event' }, { status: 500 });
   }
 }
-

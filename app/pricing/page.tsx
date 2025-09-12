@@ -53,7 +53,7 @@ const plans = [
     name: "Scale",
     icon: Crown,
     description: "For power creators",
-    price: { monthly: 199, yearly: 159 },
+    price: { monthly: 79, yearly: 63 },
     commission: "3%",
     features: [
       { text: "Unlimited AI messages", included: true },

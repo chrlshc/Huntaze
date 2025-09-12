@@ -1,0 +1,99 @@
+/* Unified CTA Button Styles - Professional SaaS Standard */
+
+/* Primary CTA - Main action button */
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: #ffffff;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 9999px; /* Full rounded */
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.cta-primary:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cta-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Secondary CTA - Alternative action */
+.cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Large CTA - For final sections */
+.cta-large {
+  padding: 1.25rem 3rem;
+  font-size: 1.125rem;
+}
+
+/* CTA with gradient background - Special occasions only */
+.cta-gradient {
+  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+  color: #ffffff;
+}
+
+.cta-gradient:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(147, 51, 234, 0.3);
+}
+
+/* Text link style - For less prominent actions */
+.cta-text {
+  color: #a855f7;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cta-text:hover {
+  color: #9333ea;
+  text-decoration: underline;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .cta-primary,
+  .cta-secondary {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.938rem;
+  }
+  
+  .cta-large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}

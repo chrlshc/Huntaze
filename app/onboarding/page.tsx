@@ -64,9 +64,19 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
-    } else {
-      router.push('/join');
+      return;
     }
+
+    // Allow local development access without token
+    try {
+      if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        localStorage.setItem('token', 'dev');
+        return;
+      }
+    } catch {}
+
+    // In production, require token
+    router.push('/join');
   }, [token, router]);
 
   const handleNextStep = () => {
@@ -86,7 +96,7 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 relative overflow-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full opacity-20 blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full opacity-20 blur-3xl animate-pulse delay-1000"></div>
       </div>
@@ -101,7 +111,7 @@ export default function OnboardingPage() {
         />
       </div>
 
-      <div className="relative z-10 pt-16 pb-12 px-4">
+      <div className="relative z-10 pt-16 pb-12 px-4 pb-safe">
         <div className="max-w-6xl mx-auto">
           {/* Logo */}
           <div className="flex justify-center mb-12">
@@ -115,7 +125,16 @@ export default function OnboardingPage() {
 
           {/* Steps Indicator */}
           <div className="flex justify-center mb-12">
-            <div className="flex items-center gap-3">
+            <div className="relative w-full max-w-3xl">
+              {/* Continuous progress track behind bubbles */}
+              <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200/80 rounded-full -z-10 transform -translate-y-1/2" />
+              <motion.div
+                className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full -z-10 transform -translate-y-1/2"
+                initial={{ width: '0%' }}
+                animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+              />
+              <div className="flex items-center gap-3 justify-between">
               {steps.map((step, index) => {
                 const Icon = step.icon;
                 const isActive = step.id === currentStep;
@@ -165,6 +184,7 @@ export default function OnboardingPage() {
                   </div>
                 );
               })}
+              </div>
             </div>
           </div>
 

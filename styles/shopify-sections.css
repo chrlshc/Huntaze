@@ -1,0 +1,112 @@
+/* Shopify-style section separators */
+.section-separator {
+  position: relative;
+  background: #ffffff;
+  padding: 80px 0;
+  overflow: hidden;
+}
+
+.section-separator:nth-child(even) {
+  background: #f6f6f7;
+}
+
+/* Dark sections for contrast */
+.section-dark {
+  background: #0b0614;
+  color: white;
+  position: relative;
+  padding: 80px 0;
+}
+
+/* Add subtle top border */
+.section-separator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Clean container spacing */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Section headers */
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-title {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 24px;
+  color: #212326;
+}
+
+.section-dark .section-title {
+  color: white;
+}
+
+.section-subtitle {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #6b7177;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.section-dark .section-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Grid layouts */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+/* Cards */
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.feature-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.section-dark .feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section-separator,
+  .section-dark {
+    padding: 48px 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.125rem;
+  }
+}

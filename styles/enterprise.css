@@ -1,0 +1,173 @@
+/* Enterprise Landing Page Styles */
+
+/* Force visibility for debugging */
+.enterprise-page * {
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+.enterprise-page {
+  background-color: white !important;
+  color: #111827 !important;
+}
+
+/* Enterprise Color Palette */
+:root {
+  --enterprise-primary: #7C3AED; /* Purple - Authority */
+  --enterprise-secondary: #EC4899; /* Pink - Creativity */
+  --enterprise-dark: #111827; /* Near black for text */
+  --enterprise-light: #F9FAFB; /* Light gray backgrounds */
+  --enterprise-border: #E5E7EB;
+  --enterprise-success: #10B981;
+  --enterprise-gradient: linear-gradient(135deg, var(--enterprise-primary) 0%, var(--enterprise-secondary) 100%);
+}
+
+/* Neutral variant — use restrained, professional neutrals instead of violet/pink */
+.enterprise-neutral {
+  --enterprise-primary: #111827; /* Gray 900 */
+  --enterprise-secondary: #374151; /* Gray 700 */
+  --enterprise-gradient: linear-gradient(135deg, var(--enterprise-primary) 0%, var(--enterprise-secondary) 100%);
+}
+
+/* Typography - Professional & Clean */
+.enterprise-page h1 {
+  font-size: 3.75rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.enterprise-page h2 {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.enterprise-page h3 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .enterprise-page h1 {
+    font-size: 2.5rem;
+  }
+  
+  .enterprise-page h2 {
+    font-size: 2rem;
+  }
+}
+
+/* Enterprise Navigation */
+.enterprise-nav {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Metric Card Animations */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metric-animate {
+  animation: countUp 0.8s ease-out forwards;
+}
+
+/* Progressive Disclosure Hover States */
+.capability-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.capability-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Interactive Demo Effects */
+.demo-glow {
+  box-shadow: 
+    0 0 50px rgba(124, 58, 237, 0.3),
+    0 0 100px rgba(236, 72, 153, 0.2);
+}
+
+/* Trust Signals Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.trust-scroll {
+  animation: scroll 20s linear infinite;
+}
+
+/* Enterprise CTA Buttons */
+.enterprise-cta {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.enterprise-cta::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s ease;
+}
+
+.enterprise-cta:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Case Study Cards */
+.case-study-card {
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  transition: all 0.3s ease;
+}
+
+.case-study-card:hover {
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Performance Optimizations */
+.enterprise-page {
+  font-feature-settings: 'kern' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Loading States */
+.skeleton-loader {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 400% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

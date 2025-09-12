@@ -1,0 +1,365 @@
+/* Unified Navigation Styles with Huntaze Design System */
+
+/* App Sidebar Styles */
+.app-sidebar {
+  @apply fixed inset-y-0 left-0 w-72 z-40 flex flex-col;
+  @apply bg-surface-elevated-light dark:bg-surface-elevated;
+  @apply border-r border-border-light dark:border-border;
+}
+
+.app-sidebar-header {
+  @apply h-16 px-4 flex items-center;
+  @apply border-b border-border-light dark:border-border;
+}
+
+.app-sidebar-logo {
+  @apply flex items-center gap-3;
+}
+
+.app-sidebar-content {
+  @apply flex-1 overflow-y-auto px-3 py-4;
+}
+
+/* Navigation Sections */
+.nav-section {
+  @apply mb-6;
+}
+
+.nav-section-label {
+  @apply px-3 py-2 text-xs font-semibold uppercase tracking-wider;
+  @apply text-content-tertiary;
+}
+
+.nav-item-list {
+  @apply space-y-1;
+}
+
+/* Navigation Items */
+.nav-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg;
+  @apply transition-all duration-200;
+  @apply text-content-secondary hover:text-content-primary;
+  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+}
+
+.nav-item:hover {
+  transform: translateX(2px);
+}
+
+.nav-item.active {
+  @apply text-content-primary font-medium;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background-clip: padding-box;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  opacity: 0.1;
+  border-radius: inherit;
+}
+
+.nav-item-icon {
+  @apply w-5 h-5 flex-shrink-0;
+  @apply text-content-tertiary;
+}
+
+.nav-item.active .nav-item-icon {
+  @apply text-purple-600;
+}
+
+.nav-item-label {
+  @apply flex-1 truncate;
+}
+
+/* Badges */
+.nav-badge {
+  @apply min-w-[20px] h-5 px-1.5 text-xs font-semibold;
+  @apply rounded-full flex items-center justify-center;
+  @apply bg-red-600 text-white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.nav-badge-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .8;
+  }
+}
+
+/* Action Button */
+.nav-action-button {
+  @apply w-full px-4 py-3 rounded-lg font-medium;
+  @apply text-center transition-all;
+  background: var(--gradient-primary);
+  color: var(--color-btn-primary-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-action-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Mobile Drawer */
+.mobile-drawer-trigger {
+  @apply lg:hidden fixed top-4 left-4 z-50;
+  @apply px-3 py-2 rounded-lg;
+  @apply bg-surface-elevated-light dark:bg-surface-elevated;
+  @apply border border-border-light dark:border-border;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+}
+
+.mobile-drawer-overlay {
+  @apply fixed inset-0 bg-black/50 z-50;
+  backdrop-filter: blur(4px);
+}
+
+.mobile-drawer {
+  @apply fixed inset-y-0 left-0 w-80 z-50;
+  @apply bg-surface-elevated-light dark:bg-surface-elevated;
+  @apply border-r border-border-light dark:border-border;
+  box-shadow: var(--shadow-xl);
+}
+
+.mobile-drawer-header {
+  @apply p-4 flex items-center justify-between;
+  @apply border-b border-border-light dark:border-border;
+}
+
+.mobile-drawer-close {
+  @apply p-2 rounded-lg transition-colors;
+  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+}
+
+/* Main Navigation (Marketing Site) */
+.main-nav {
+  @apply flex items-center gap-8;
+}
+
+.main-nav-item {
+  @apply text-content-secondary hover:text-content-primary;
+  @apply font-medium transition-colors duration-200;
+  @apply relative;
+}
+
+.main-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.main-nav-item:hover::after {
+  transform: scaleX(1);
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  @apply md:hidden absolute top-full left-0 right-0;
+  @apply bg-surface-elevated-light dark:bg-surface-elevated;
+  @apply border-b border-border-light dark:border-border;
+  box-shadow: var(--shadow-lg);
+}
+
+.mobile-menu-content {
+  @apply flex flex-col p-6 space-y-3;
+}
+
+.mobile-menu-item {
+  @apply px-4 py-3 rounded-lg;
+  @apply text-content-primary font-medium;
+  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+  @apply transition-all duration-200;
+}
+
+.mobile-menu-item:active {
+  transform: scale(0.98);
+}
+
+/* Bottom Navigation (Mobile App) */
+.bottom-nav {
+  @apply fixed bottom-0 left-0 right-0 z-40;
+  @apply bg-surface-elevated-light dark:bg-surface-elevated;
+  @apply border-t border-border-light dark:border-border;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-content {
+  @apply flex justify-around items-center;
+  @apply h-16;
+}
+
+.bottom-nav-item {
+  @apply flex-1 flex flex-col items-center justify-center;
+  @apply py-2 px-3 relative;
+  @apply text-content-tertiary transition-colors;
+}
+
+.bottom-nav-item.active {
+  @apply text-primary;
+}
+
+.bottom-nav-item-icon {
+  @apply w-6 h-6 mb-1;
+}
+
+.bottom-nav-item-label {
+  @apply text-xs font-medium;
+}
+
+.bottom-nav-item.active .bottom-nav-item-icon {
+  animation: bounce-in 0.3s ease-out;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Breadcrumbs */
+.breadcrumb-nav {
+  @apply flex items-center gap-2;
+  @apply text-sm text-content-tertiary;
+}
+
+.breadcrumb-separator {
+  @apply text-content-tertiary opacity-50;
+}
+
+.breadcrumb-item {
+  @apply hover:text-content-primary transition-colors;
+}
+
+.breadcrumb-item.active {
+  @apply text-content-primary font-medium;
+}
+
+/* Tab Navigation */
+.tab-nav {
+  @apply flex items-center gap-1 p-1;
+  @apply bg-surface-light dark:bg-surface;
+  @apply rounded-lg;
+}
+
+.tab-nav-item {
+  @apply flex-1 px-4 py-2.5 rounded-md;
+  @apply text-center font-medium;
+  @apply text-content-secondary;
+  @apply transition-all duration-200;
+}
+
+.tab-nav-item:hover:not(.active) {
+  @apply bg-surface-hover-light dark:bg-surface-hover;
+  @apply text-content-primary;
+}
+
+.tab-nav-item.active {
+  @apply bg-surface-elevated-light dark:bg-surface-elevated;
+  @apply text-content-primary;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Scrollbar Styling for Navigation */
+.app-sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app-sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-sidebar-content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.app-sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-content-tertiary);
+}
+
+/* Dark Mode Specific Overrides */
+@media (prefers-color-scheme: dark) {
+  .nav-item.active {
+    box-shadow: 0 2px 8px rgba(107, 70, 193, 0.3);
+  }
+  
+  .mobile-drawer-trigger {
+    background: rgba(17, 17, 27, 0.9);
+  }
+  
+  .bottom-nav {
+    background: rgba(17, 17, 27, 0.95);
+  }
+  
+  .nav-badge {
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+  }
+}
+
+/* Animations */
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mobile-drawer {
+  animation: slide-in-left 0.3s ease-out;
+}
+
+.mobile-drawer-overlay {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .app-sidebar {
+    @apply w-full;
+  }
+  
+  .nav-section-label {
+    @apply text-xs;
+  }
+  
+  .nav-item {
+    @apply py-3;
+  }
+}

@@ -14,6 +14,8 @@ const warnIfMissing = [
   'TIKTOK_CLIENT_KEY',
   'TIKTOK_CLIENT_SECRET',
   'NEXT_PUBLIC_TIKTOK_REDIRECT_URI',
+  'STRIPE_SECRET_KEY',
+  'STRIPE_WEBHOOK_SECRET',
 ];
 
 function main() {

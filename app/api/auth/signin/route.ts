@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
+import { generateToken, generateRefreshToken } from '@/lib/auth/jwt';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Basic rate limit to reduce abuse of signin endpoint
+    const limited = rateLimit(request, { windowMs: 60_000, max: 10 });
+    if (!limited.ok) {
+      return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 });
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
@@ -21,10 +28,9 @@ export async function POST(request: NextRequest) {
     // 2. Compare the provided password with the stored hash
     // 3. Return appropriate error if user not found or password incorrect
 
-    // Demo user (in production, this would come from database)
+    // Demo user (in production, fetch from database and compare hash)
     const mockStoredHash = await bcrypt.hash('password123', 10);
     const isValidPassword = await bcrypt.compare(password, mockStoredHash);
-
     if (!isValidPassword && password !== 'password123') {
       return NextResponse.json(
         { error: 'Invalid email or password' },
@@ -40,20 +46,19 @@ export async function POST(request: NextRequest) {
       provider: 'email',
     };
 
-    // Generate JWT
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-
-    const token = await new SignJWT({ 
+    // Generate short-lived access token and refresh token
+    const token = await generateToken({
       userId: user.id,
       email: user.email,
-      provider: 'email'
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('10y')
-      .sign(secret);
+      name: user.name,
+      provider: user.provider,
+    });
+    const refreshToken = await generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      provider: user.provider,
+    });
 
     // Create response
     const response = NextResponse.json({ 
@@ -66,13 +71,28 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Set auth cookie
-    response.cookies.set('auth_token', token, {
+    // Set secure cookies
+    const baseCookie = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       path: '/',
-      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
+    };
+
+    // New standard cookie
+    response.cookies.set('access_token', token, {
+      ...baseCookie,
+      maxAge: 60 * 60, // 1 hour
+    });
+    response.cookies.set('refresh_token', refreshToken, {
+      ...baseCookie,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    // Backward-compatibility for existing code paths
+    response.cookies.set('auth_token', token, {
+      ...baseCookie,
+      maxAge: 60 * 60, // 1 hour
     });
 
     return response;
