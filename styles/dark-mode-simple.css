@@ -1,0 +1,92 @@
+/* Simple Dark Mode - Default with white text */
+
+/* Force dark mode by default */
+html,
+body {
+  background-color: #0d0d0d !important;
+  color: #ffffff !important;
+}
+
+/* All text should be white or light gray */
+.dark-mode,
+.dark-mode *,
+.theme-dark,
+.theme-dark * {
+  color: #ffffff !important;
+}
+
+/* Headers - pure white */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: #ffffff !important;
+}
+
+/* Paragraphs and general text - slightly off-white for better readability */
+.dark-mode p,
+.dark-mode li,
+.dark-mode span,
+.dark-mode div {
+  color: #f5f5f5 !important;
+}
+
+/* Links - light purple */
+.dark-mode a {
+  color: #b794f6 !important;
+}
+
+.dark-mode a:hover {
+  color: #d6bcfa !important;
+}
+
+/* Navigation */
+.dark-mode nav,
+.enterprise-nav {
+  background-color: rgba(13, 13, 13, 0.95) !important;
+  color: #ffffff !important;
+}
+
+/* Buttons */
+.dark-mode button,
+.dark-mode .btn {
+  color: #ffffff !important;
+}
+
+/* Primary buttons with purple */
+.dark-mode .bg-purple-600,
+.dark-mode .btn-primary {
+  background-color: #9333ea !important;
+  color: #ffffff !important;
+}
+
+/* Cards and sections - subtle gray backgrounds */
+.dark-mode .card {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Remove any black text */
+.dark-mode .text-black,
+.dark-mode .text-gray-900,
+.dark-mode .text-gray-800,
+.dark-mode .text-gray-700,
+.dark-mode .text-gray-600 {
+  color: #e0e0e0 !important;
+}
+
+/* Inputs */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #333333 !important;
+}
+
+/* Ensure everything is readable */
+* {
+  min-contrast: 4.5;
+}

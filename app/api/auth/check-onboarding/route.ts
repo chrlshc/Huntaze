@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
+import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    
-    if (!token) {
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
-
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
 
     // TODO: Check if user has completed onboarding in database
     // For now, we'll check if they have AI config set
@@ -19,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ 
       completed: hasCompletedOnboarding,
-      userId: payload.userId 
+      userId: user.userId 
     });
   } catch (error) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 });

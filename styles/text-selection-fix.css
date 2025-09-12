@@ -1,0 +1,48 @@
+/* Fix text selection issue */
+body {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Allow text selection on all elements by default */
+* {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Disable selection only on specific UI elements */
+button,
+.select-none,
+nav,
+.pointer-events-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Fix for clicking outside selected text to deselect */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure proper text selection behavior */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  cursor: auto;
+}
+
+/* Allow proper deselection by clicking elsewhere */
+body::selection {
+  background-color: rgba(139, 92, 246, 0.3);
+  color: inherit;
+}
+
+body::-moz-selection {
+  background-color: rgba(139, 92, 246, 0.3);
+  color: inherit;
+}

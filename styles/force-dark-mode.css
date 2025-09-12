@@ -1,0 +1,169 @@
+/* Force Dark Mode - Override all light backgrounds */
+
+/* Global dark mode enforcement */
+.dark-mode,
+.theme-dark {
+  background-color: #0d0d0d !important;
+}
+
+/* Fix all white/light backgrounds */
+.dark-mode .bg-white,
+.dark-mode .bg-gray-50,
+.dark-mode .bg-gray-100,
+.dark-mode .bg-purple-50,
+.dark-mode .bg-purple-100 {
+  background-color: #1a1a1a !important;
+}
+
+/* Fix purple section - make it subtle */
+.dark-mode .bg-gradient-to-br.from-purple-50,
+.dark-mode .bg-purple-600,
+.dark-mode [class*="bg-purple-"] {
+  background: linear-gradient(135deg, #1a1a1a 0%, rgba(139, 92, 246, 0.05) 100%) !important;
+}
+
+/* Fix hero gradient */
+.dark-mode .from-gray-50.to-white {
+  background: linear-gradient(180deg, #161616 0%, #0d0d0d 100%) !important;
+}
+
+/* Fix nav dropdown menus */
+.dark-mode .bg-white.rounded-lg.shadow-xl {
+  background-color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Fix all text colors */
+.dark-mode .text-gray-900 {
+  color: #ffffff !important;
+}
+
+.dark-mode .text-gray-800 {
+  color: #f5f5f5 !important;
+}
+
+.dark-mode .text-gray-700 {
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .text-gray-600 {
+  color: #a1a1aa !important;
+}
+
+.dark-mode .text-gray-500 {
+  color: #71717a !important;
+}
+
+/* Fix navigation */
+.dark-mode nav,
+.dark-mode .enterprise-nav {
+  background: rgba(13, 13, 13, 0.9) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Fix cards */
+.dark-mode .capability-card,
+.dark-mode [class*="card"] {
+  background-color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark-mode .capability-card:hover,
+.dark-mode [class*="card"]:hover {
+  background-color: #242424 !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Fix buttons */
+.dark-mode .bg-gray-900 {
+  background-color: #8b5cf6 !important;
+}
+
+.dark-mode .bg-purple-600 {
+  background-color: #8b5cf6 !important;
+}
+
+.dark-mode .hover\:bg-purple-700:hover {
+  background-color: #7c3aed !important;
+}
+
+/* Fix inputs and selects */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background-color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* ROI Calculator specific fixes */
+.dark-mode .from-purple-50.via-white.to-pink-50 {
+  background: #0d0d0d !important;
+}
+
+.dark-mode .bg-gradient-to-br.from-purple-600.to-pink-600 {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+}
+
+/* Final CTA section fix */
+.dark-mode .bg-gradient-to-br.from-purple-900.via-purple-800.to-pink-900 {
+  background: linear-gradient(135deg, #1a1a1a 0%, rgba(139, 92, 246, 0.15) 50%, #1a1a1a 100%) !important;
+}
+
+/* Remove any remaining light backgrounds */
+.dark-mode section {
+  background-color: inherit !important;
+}
+
+.dark-mode .bg-gray-50 {
+  background-color: #161616 !important;
+}
+
+/* Icon backgrounds */
+.dark-mode .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.dark-mode .bg-white.text-gray-900 {
+  background-color: #242424 !important;
+  color: #ffffff !important;
+}
+
+/* Section alternation */
+.dark-mode section:nth-child(even) {
+  background-color: #161616 !important;
+}
+
+.dark-mode section:nth-child(odd) {
+  background-color: #0d0d0d !important;
+}
+
+/* Ensure all text is visible */
+.dark-mode * {
+  color: inherit;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: #ffffff !important;
+}
+
+.dark-mode p,
+.dark-mode span,
+.dark-mode div {
+  color: #e4e4e7 !important;
+}
+
+/* Links */
+.dark-mode a:not(.btn):not(.button) {
+  color: #a78bfa !important;
+}
+
+.dark-mode a:not(.btn):not(.button):hover {
+  color: #c4b5fd !important;
+}

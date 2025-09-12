@@ -1,0 +1,98 @@
+/* Remove ALL Purple/Violet Backgrounds from Sections */
+
+/* Force black background on enterprise-ready section */
+.enterprise-ready,
+.enterprise-ready section,
+section.enterprise-ready {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Remove purple from any gradient sections */
+.bg-gradient-to-br,
+.bg-gradient-to-r,
+.bg-gradient-to-b,
+.from-purple-900,
+.via-purple-800,
+.to-purple-900,
+.from-purple-600,
+.to-purple-600,
+.bg-purple-600,
+.bg-purple-500,
+.bg-purple-700,
+.bg-purple-800,
+.bg-purple-900 {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Fix text colors in these sections */
+.enterprise-ready h2,
+.enterprise-ready h3,
+.enterprise-ready p,
+.enterprise-ready span,
+.enterprise-ready div {
+  color: #ffffff !important;
+}
+
+/* Fix cards in enterprise section */
+.enterprise-ready .bg-white,
+.enterprise-ready [class*="card"] {
+  background-color: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Fix buttons in enterprise section */
+.enterprise-ready a,
+.enterprise-ready button {
+  background-color: transparent !important;
+  color: #8b8b8b !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+}
+
+.enterprise-ready a:hover,
+.enterprise-ready button:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Fix checkmarks/list items */
+.enterprise-ready ul li::before,
+.enterprise-ready .check {
+  content: "✓" !important;
+  color: #22c55e !important;
+  margin-right: 8px !important;
+}
+
+/* Remove any remaining purple overlays */
+.enterprise-ready::before,
+.enterprise-ready::after,
+.enterprise-ready > div::before,
+.enterprise-ready > div::after {
+  background: none !important;
+  background-image: none !important;
+  display: none !important;
+}
+
+/* Ensure all sections have black background */
+section {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Override any inline styles */
+[style*="background-color: rgb(147, 51, 234)"],
+[style*="background: rgb(147, 51, 234)"],
+[style*="background-color: #9333ea"],
+[style*="background: #9333ea"],
+[style*="purple"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+}

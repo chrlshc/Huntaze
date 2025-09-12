@@ -201,13 +201,13 @@ export const ACTUAL_DIFFERENTIATORS = {
 export const SIMPLIFIED_PRICING = {
   starter: {
     price: 19,
-    target: "New creators (<$2.5k/mo)",
+    target: "New creators (eligible up to $2k/mo)",
     value: "Better than doing it yourself"
   },
   
   pro: {
     price: 39, // Lower it back
-    target: "Growing creators ($2.5-7.5k/mo)",
+    target: "Growing creators ($2k–7.5k/mo)",
     value: "2x your engagement & sales"
   },
   
@@ -218,7 +218,7 @@ export const SIMPLIFIED_PRICING = {
   },
   
   enterprise: {
-    price: 199, // Lower it back
+    price: 399, // 2% platform fee (annual commitment)
     target: "Top creators ($25k+/mo)",
     value: "Unfair advantage over competition"
   }

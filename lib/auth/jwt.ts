@@ -38,8 +38,8 @@ export async function generateToken(payload: Omit<UserPayload, 'iat' | 'exp'>) {
 }
 
 // Generate refresh token
-export async function generateRefreshToken(userId: string) {
-  const token = await new SignJWT({ userId })
+export async function generateRefreshToken(payload: Omit<UserPayload, 'iat' | 'exp'>) {
+  const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(REFRESH_TOKEN_EXPIRY)
@@ -107,10 +107,38 @@ export async function refreshAccessToken(): Promise<string | null> {
 
   try {
     const { payload } = await jwtVerify(refreshToken, getSecret());
-    
-    // TODO: Get full user data from database using userId
-    // For now, return null (implement when DB is ready)
-    return null;
+    const user = payload as UserPayload;
+    // Re-issue a short-lived access token using payload from refresh
+    const newAccess = await new SignJWT({
+      userId: user.userId,
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+      provider: user.provider,
+    })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime(ACCESS_TOKEN_EXPIRY)
+      .sign(getSecret());
+
+    // Update cookies
+    cookies().set('access_token', newAccess, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60,
+    });
+    // Legacy compatibility cookie
+    cookies().set('auth_token', newAccess, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60,
+    });
+
+    return newAccess;
   } catch (error) {
     console.error('Refresh token verification failed:', error);
     return null;

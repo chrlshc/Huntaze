@@ -1,0 +1,87 @@
+/* Typography Fixes - Ensure all titles are visible */
+
+/* Force white color on all headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff !important;
+}
+
+/* Ensure all section titles are white */
+.section-title,
+section h2,
+section h3,
+section h4 {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Fix gradient text to ensure visibility */
+.text-transparent {
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Ensure paragraphs have proper contrast */
+p {
+  color: #e5e7eb; /* Light gray for body text */
+}
+
+/* Fix any text that might be too dark */
+.text-gray-400 {
+  color: #9ca3af !important; /* Ensure readable gray */
+}
+
+.text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.text-gray-300 {
+  color: #d1d5db !important;
+}
+
+/* Ensure white text is truly white */
+.text-white {
+  color: #ffffff !important;
+}
+
+/* Fix for any elements that might have inherited dark colors */
+.bg-black *,
+.bg-gray-900 *,
+.bg-gray-800 * {
+  color: inherit;
+}
+
+/* Specific fixes for components */
+.feature-card h3,
+.feature-card h4 {
+  color: #ffffff !important;
+}
+
+.testimonial-card h3,
+.testimonial-card h4 {
+  color: #ffffff !important;
+}
+
+/* Navigation text should be white */
+nav a,
+nav button {
+  color: #ffffff !important;
+}
+
+nav a:hover,
+nav button:hover {
+  color: #e5e7eb !important;
+}
+
+/* Ensure CTA button text is visible */
+.cta-primary {
+  color: #000000 !important; /* Black text on white button */
+}
+
+.cta-secondary {
+  color: #ffffff !important; /* White text on transparent button */
+}
+
+.cta-gradient {
+  color: #ffffff !important; /* White text on gradient button */
+}

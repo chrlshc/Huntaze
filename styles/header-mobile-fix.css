@@ -1,0 +1,82 @@
+/* Header Mobile Fix */
+
+@media screen and (max-width: 767px) {
+  /* Fix header background */
+  header,
+  .header,
+  nav,
+  .navbar,
+  .header-container,
+  [data-header] {
+    background-color: white !important;
+    background: white !important;
+    color: #374151 !important;
+    /* Removed border-bottom for cleaner look */
+  }
+  
+  /* Fix all header elements */
+  header *,
+  .header *,
+  nav *,
+  .navbar * {
+    background-color: transparent !important;
+    color: #374151 !important;
+  }
+  
+  /* Fix header links */
+  header a,
+  nav a,
+  .header a,
+  .navbar a {
+    color: #4b5563 !important;
+  }
+  
+  header a:hover,
+  nav a:hover {
+    color: #111827 !important;
+  }
+  
+  /* Fix logo */
+  header .logo,
+  header span,
+  .header-logo {
+    color: #111827 !important;
+  }
+  
+  /* Fix menu button */
+  button[aria-label*="menu"],
+  button[aria-label*="Menu"],
+  .menu-button,
+  .hamburger,
+  header button svg,
+  nav button svg {
+    color: #374151 !important;
+    stroke: #374151 !important;
+    fill: #374151 !important;
+  }
+  
+  /* Fix mobile menu */
+  .mobile-menu,
+  .drawer,
+  .sheet,
+  [role="dialog"] {
+    background-color: white !important;
+    color: #374151 !important;
+  }
+  
+  /* Fix auth buttons */
+  header .btn,
+  nav .btn,
+  header button,
+  nav button {
+    min-height: 44px !important;
+  }
+  
+  /* Primary buttons in header */
+  header .btn-primary,
+  header [class*="bg-gradient"],
+  nav .btn-primary {
+    background: linear-gradient(to right, #9333ea, #ec4899) !important;
+    color: white !important;
+  }
+}

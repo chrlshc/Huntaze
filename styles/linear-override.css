@@ -1,0 +1,200 @@
+/* Linear Style Override - Clean and Professional Dark Mode */
+
+/* Force clean backgrounds - no pure black */
+.dark-mode,
+.dark-mode body,
+.dark-mode .enterprise-page {
+  background-color: #0d0d0d !important; /* Dark gray, not black */
+}
+
+/* Remove all forced white/black text */
+.dark-mode * {
+  color: inherit;
+}
+
+/* Text hierarchy with good contrast */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: #fafafa !important; /* Almost white for headers */
+  font-weight: 600;
+}
+
+.dark-mode p,
+.dark-mode li,
+.dark-mode span {
+  color: #e4e4e7 !important; /* Light gray for readability */
+}
+
+.dark-mode .text-gray-600,
+.dark-mode .text-gray-500,
+.dark-mode .text-secondary {
+  color: #a1a1aa !important; /* Muted text */
+}
+
+/* Navigation - Floating glass effect */
+.dark-mode .enterprise-nav {
+  background: rgba(13, 13, 13, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sections with subtle differentiation */
+.dark-mode section {
+  border: none !important;
+}
+
+.dark-mode .hero-section {
+  background: linear-gradient(to bottom, #161616 0%, #0d0d0d 100%) !important;
+}
+
+.dark-mode .trust-bar {
+  background: rgba(139, 92, 246, 0.04) !important;
+  border-top: 1px solid rgba(139, 92, 246, 0.15) !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+.dark-mode .platform-capabilities {
+  background: #161616 !important;
+}
+
+.dark-mode .proof-numbers {
+  background: #0d0d0d !important;
+}
+
+.dark-mode .creator-pain-points {
+  background: #161616 !important;
+}
+
+.dark-mode .enterprise-ready {
+  background: #0d0d0d !important;
+}
+
+.dark-mode .roi-section {
+  background: linear-gradient(135deg, #161616 0%, rgba(139, 92, 246, 0.06) 100%) !important;
+  border-radius: 16px !important;
+  margin: 3rem auto !important;
+  max-width: 1200px !important;
+}
+
+.dark-mode .final-cta-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, rgba(139, 92, 246, 0.12) 50%, #1a1a1a 100%) !important;
+}
+
+/* Cards - Elevated with subtle borders */
+.dark-mode .card,
+.dark-mode .capability-card,
+.dark-mode .metric-card,
+.dark-mode .pain-point-card {
+  background: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark-mode .card:hover,
+.dark-mode .capability-card:hover {
+  background: #1f1f1f !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Buttons - Clean and modern */
+.dark-mode .bg-purple-600,
+.dark-mode .btn-primary {
+  background: #8b5cf6 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.dark-mode .bg-purple-600:hover,
+.dark-mode .btn-primary:hover {
+  background: #7c3aed !important;
+  transform: translateY(-1px);
+}
+
+.dark-mode .btn-secondary,
+.dark-mode .border {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fafafa !important;
+}
+
+.dark-mode .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Links - Subtle purple */
+.dark-mode a:not(.btn):not(.nav-link) {
+  color: #a78bfa !important;
+}
+
+.dark-mode a:not(.btn):not(.nav-link):hover {
+  color: #c4b5fd !important;
+}
+
+/* Inputs - Clean fields */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fafafa !important;
+}
+
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+  outline: none !important;
+}
+
+/* Remove any remaining pure black/white */
+.dark-mode .bg-black {
+  background: #0d0d0d !important;
+}
+
+.dark-mode .bg-white {
+  background: #1a1a1a !important;
+}
+
+.dark-mode .text-white {
+  color: #fafafa !important;
+}
+
+.dark-mode .text-black {
+  color: #e4e4e7 !important;
+}
+
+/* Footer - Slightly darker */
+.dark-mode footer,
+.dark-mode .footer-section {
+  background: #0a0a0a !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Dashboard elements */
+.dark-mode .dashboard-demo {
+  background: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Remove harsh shadows */
+.dark-mode * {
+  box-shadow: none !important;
+}
+
+.dark-mode .card:hover,
+.dark-mode .capability-card:hover,
+.dark-mode .btn-primary {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Smooth all transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}

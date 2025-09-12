@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { crmData } from '@/lib/services/crmData';
+import { getUserFromRequest } from '@/lib/auth/request';
 
 async function getUserId(request: NextRequest): Promise<string | null> {
-  const token = request.cookies.get('auth_token')?.value;
-  if (!token) return null;
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    return payload.userId as string;
-  } catch {
-    return null;
-  }
+  const user = await getUserFromRequest(request);
+  return user?.userId || null;
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
@@ -21,4 +14,3 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   if (!updated) return NextResponse.json({ error: 'Message not found' }, { status: 404 });
   return NextResponse.json({ message: updated });
 }
-

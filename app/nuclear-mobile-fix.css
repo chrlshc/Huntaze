@@ -1,0 +1,179 @@
+/* NUCLEAR OPTION - ABSOLUTE FINAL MOBILE FIX */
+
+@media screen and (max-width: 767px) {
+  /* Reset ALL backgrounds to white */
+  *,
+  *::before,
+  *::after {
+    background-color: transparent !important;
+    background-image: none !important;
+    background: transparent !important;
+  }
+  
+  /* Force white on key elements */
+  html {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+  
+  body {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+  
+  /* Main content areas */
+  main,
+  #main,
+  #__next,
+  #root,
+  .app,
+  .app-main,
+  .content {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+  
+  /* All sections and divs */
+  section,
+  article,
+  aside,
+  div,
+  header,
+  footer,
+  nav {
+    background-color: inherit !important;
+    background: inherit !important;
+  }
+  
+  /* Specific overrides */
+  .bg-black,
+  .bg-gray-950,
+  .bg-gray-900,
+  .bg-gray-800,
+  .dark,
+  [class*="bg-black"],
+  [class*="bg-gray-9"],
+  [class*="dark:bg"],
+  div[class*="bg-black"],
+  div[class*="bg-gray-9"],
+  section[class*="bg-black"],
+  section[class*="bg-gray-9"] {
+    background-color: white !important;
+    background: white !important;
+  }
+  
+  /* Text colors */
+  h1, h2, h3, h4, h5, h6,
+  .heading,
+  .title,
+  [class*="text-"][class*="xl"],
+  strong,
+  b {
+    color: #111827 !important;
+  }
+  
+  p,
+  span,
+  div,
+  li,
+  td,
+  th,
+  label {
+    color: #374151 !important;
+  }
+  
+  .text-white,
+  .text-gray-100,
+  .text-gray-200,
+  .text-gray-300,
+  .text-gray-400,
+  [class*="text-white"],
+  [class*="text-gray-1"],
+  [class*="text-gray-2"],
+  [class*="text-gray-3"],
+  [class*="text-gray-4"] {
+    color: #374151 !important;
+  }
+  
+  /* Links */
+  a:not(.btn):not([class*="button"]) {
+    color: #7c3aed !important;
+  }
+  
+  /* Preserve gradient buttons */
+  .btn-primary,
+  [class*="from-purple"][class*="to-pink"],
+  [class*="bg-gradient-to"] {
+    background: linear-gradient(to right, #9333ea, #ec4899) !important;
+    color: white !important;
+  }
+  
+  /* Navigation */
+  header,
+  nav,
+  .header,
+  .navbar {
+    background-color: white !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+  
+  /* Remove all effects */
+  * {
+    filter: none !important;
+    backdrop-filter: none !important;
+    mix-blend-mode: normal !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Cards */
+  .card,
+  .panel,
+  [class*="rounded"] {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  /* Forms */
+  input,
+  textarea,
+  select {
+    background-color: white !important;
+    border: 1px solid #d1d5db !important;
+    color: #111827 !important;
+  }
+}
+
+/* Even more specific overrides */
+html body,
+html.dark body,
+body.dark,
+body.antialiased {
+  @media screen and (max-width: 767px) {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+}
+
+/* Override inline styles */
+@media screen and (max-width: 767px) {
+  [style*="background-color: black"],
+  [style*="background-color: rgb(0"],
+  [style*="background-color: #000"],
+  [style*="background: black"],
+  [style*="background: rgb(0"],
+  [style*="background: #000"] {
+    background-color: white !important;
+    background: white !important;
+  }
+  
+  [style*="color: white"],
+  [style*="color: rgb(255"],
+  [style*="color: #fff"] {
+    color: #374151 !important;
+  }
+}

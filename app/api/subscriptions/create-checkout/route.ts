@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import Stripe from 'stripe';
+import { getUserFromRequest } from '@/lib/auth/request';
+import { rateLimit } from '@/lib/rate-limit';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2023-10-16',
@@ -8,17 +9,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    
-    if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
+    const limited = rateLimit(request, { windowMs: 60_000, max: 20 });
+    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
-    // Verify JWT token
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    const userId = payload.userId as string;
-    const email = payload.email as string;
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const userId = user.userId as string;
+    const email = (user.email || '') as string;
 
     const { planId } = await request.json();
 

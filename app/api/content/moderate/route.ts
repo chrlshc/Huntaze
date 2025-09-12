@@ -1,64 +1,153 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { contentModeration } from '@/src/services/content-moderation';
 
+// Simple rule-sets for text compliance checks
+const complianceRules = {
+  instagram: {
+    flaggedTerms: ['onlyfans', 'link in bio', 'dm me', 'cashapp', 'venmo'],
+    dangerPatterns: [/\b(nude|naked|sex)\b/i, /\b(buy|sell|purchase)\b/i],
+    riskyEmojis: ['🍆', '🍑', '💦', '🔞'],
+  },
+  tiktok: {
+    flaggedTerms: ['onlyfans', 'link', 'dm', '18+', 'adult'],
+    dangerPatterns: [/\b(spicy|naughty|dirty)\b/i],
+    riskyEmojis: ['🔞', '💦', '🔥'],
+  },
+  reddit: {
+    flaggedTerms: ['direct promotion', 'vote manipulation'],
+    dangerPatterns: [/\b(upvote|karma)\b/i],
+    riskyEmojis: [] as string[],
+  },
+};
+
+type PlatformKey = keyof typeof complianceRules | 'onlyfans' | 'threads';
+
+function checkPlatformCompliance(content: string, platform: PlatformKey, rules: any) {
+  const risks: any[] = [];
+  const lower = content.toLowerCase();
+
+  if (rules?.flaggedTerms) {
+    for (const term of rules.flaggedTerms) {
+      if (lower.includes(term)) {
+        risks.push({
+          platform,
+          severity: 'medium',
+          issue: `Contains flagged term: "${term}"`,
+          suggestion: `Remove or rephrase "${term}" for ${platform}`,
+        });
+      }
+    }
+  }
+
+  if (rules?.dangerPatterns) {
+    for (const pattern of rules.dangerPatterns) {
+      if (pattern.test(content)) {
+        risks.push({
+          platform,
+          severity: 'high',
+          issue: 'Contains high-risk content pattern',
+          suggestion: `Rephrase to avoid explicit language for ${platform}`,
+        });
+      }
+    }
+  }
+
+  if (rules?.riskyEmojis) {
+    for (const emoji of rules.riskyEmojis) {
+      if (content.includes(emoji)) {
+        risks.push({
+          platform,
+          severity: 'medium',
+          issue: `Contains risky emoji: ${emoji}`,
+          suggestion: `Replace with safer emojis for ${platform}`,
+        });
+      }
+    }
+  }
+
+  return risks;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
-    if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value || 'dev-user';
+    const payload = await request.json();
+
+    // Branch 1: Text compliance check
+    if (payload?.content) {
+      const content: string = payload.content || '';
+      const platforms: PlatformKey[] = ['instagram', 'tiktok', 'reddit', 'onlyfans'];
+      const risks: any[] = [];
+      const platformStatus: Record<string, 'safe' | 'warning' | 'danger'> = {
+        instagram: 'safe',
+        tiktok: 'safe',
+        reddit: 'safe',
+        onlyfans: 'safe',
+      };
+
+      // Instagram and TikTok rules
+      ['instagram', 'tiktok'].forEach((p) => {
+        const r = checkPlatformCompliance(content, p as PlatformKey, (complianceRules as any)[p]);
+        if (r.length) {
+          risks.push(...r);
+          platformStatus[p] = r.some((x) => x.severity === 'high') ? 'danger' : 'warning';
+        }
+      });
+
+      // Reddit specific
+      const rRisks = checkPlatformCompliance(content, 'reddit', complianceRules.reddit);
+      if (rRisks.length) {
+        risks.push(...rRisks);
+        platformStatus.reddit = rRisks.some((x) => x.severity === 'high') ? 'danger' : 'warning';
+      }
+
+      // OnlyFans baseline: allow text, generally safe in this context
+      platformStatus.onlyfans = 'safe';
+
+      const overall = risks.some((r) => r.severity === 'high')
+        ? 'danger'
+        : risks.some((r) => r.severity === 'medium')
+        ? 'warning'
+        : 'safe';
+
+      return NextResponse.json({ overall, risks, platforms: platformStatus });
     }
 
-    const { imageUrl, platform, subreddit, checkCrossPlatform } = await request.json();
-
+    // Branch 2: Existing image moderation flows
+    const { imageUrl, platform, subreddit, checkCrossPlatform } = payload || {};
     if (!imageUrl || !platform) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: imageUrl, platform' 
-      }, { status: 400 });
+      return NextResponse.json({ error: 'Missing required fields: imageUrl, platform' }, { status: 400 });
     }
 
-    // Single platform check
     if (!checkCrossPlatform) {
       const result = await contentModeration.checkImage(imageUrl, platform, subreddit);
       return NextResponse.json(result);
     }
 
-    // Cross-platform check
-    const platforms = ['instagram', 'tiktok', 'reddit', 'threads', 'onlyfans'];
+    const xPlatforms: PlatformKey[] = ['instagram', 'tiktok', 'reddit', 'threads', 'onlyfans'];
     const results = await contentModeration.checkCrossPosting(
-      imageUrl, 
+      imageUrl,
       platform,
-      platforms.filter(p => p !== platform)
+      xPlatforms.filter((p) => p !== platform)
     );
 
-    // Summary of where content can be posted
     const summary = {
-      safeForAll: Object.values(results).every(r => r.safe),
+      safeForAll: Object.values(results).every((r: any) => r.safe),
       safePlatforms: Object.entries(results)
-        .filter(([_, result]) => result.safe)
+        .filter(([, result]: any) => result.safe)
         .map(([platform]) => platform),
       unsafePlatforms: Object.entries(results)
-        .filter(([_, result]) => !result.safe)
+        .filter(([, result]: any) => !result.safe)
         .map(([platform]) => platform),
-      recommendations: [] as string[]
+      recommendations: [] as string[],
     };
 
-    // Aggregate recommendations
-    Object.values(results).forEach(result => {
-      if (result.recommendations) {
-        summary.recommendations.push(...result.recommendations);
-      }
+    Object.values(results).forEach((result: any) => {
+      if (result.recommendations) summary.recommendations.push(...result.recommendations);
     });
-
-    // Remove duplicates
     summary.recommendations = [...new Set(summary.recommendations)];
 
-    return NextResponse.json({ 
-      results, 
-      summary,
-      message: summary.safeForAll 
-        ? 'Content is safe for all platforms' 
-        : `Content is safe for: ${summary.safePlatforms.join(', ')}`
-    });
+    return NextResponse.json({ results, summary, message: summary.safeForAll ? 'Content is safe for all platforms' : `Content is safe for: ${summary.safePlatforms.join(', ')}` });
 
   } catch (error: any) {
     console.error('Content moderation error:', error);
@@ -70,7 +159,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }

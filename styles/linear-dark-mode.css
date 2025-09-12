@@ -1,0 +1,254 @@
+/* Linear-inspired Dark Mode System with Purple Accents */
+
+/* Color Tokens - Following Linear's approach with purple brand colors */
+:root {
+  /* Base Colors - Linear's sophisticated palette */
+  --linear-bg-primary: #1e1e1e; /* Linear's primary background */
+  --linear-bg-secondary: #252525; /* Elevated surfaces */
+  --linear-bg-tertiary: #2e2e2e; /* Higher elevation */
+  --linear-bg-elevated: #333333; /* Highest elevation */
+  
+  /* Purple Brand Colors - Discord/Twitch inspired */
+  --purple-brand: #9146ff; /* Primary purple */
+  --purple-400: #c084fc; /* Light purple for dark mode (WCAG AA on #1e1e1e) */
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-700: #7e22ce;
+  --purple-800: #6b21a8;
+  
+  /* Text Colors - Optimized for dark backgrounds */
+  --text-primary: #e0e0e0; /* Primary text */
+  --text-secondary: #cccccc; /* Secondary text */
+  --text-tertiary: #999999; /* Tertiary text */
+  --text-disabled: #666666; /* Disabled text */
+  
+  /* Borders and Dividers */
+  --border-default: #333333;
+  --border-hover: #404040;
+  --border-focus: #3b82f6;
+  
+  /* Elevation via white overlays (Linear's approach) */
+  --elevation-1: rgba(255, 255, 255, 0.05);
+  --elevation-2: rgba(255, 255, 255, 0.07);
+  --elevation-3: rgba(255, 255, 255, 0.08);
+  --elevation-4: rgba(255, 255, 255, 0.12);
+  --elevation-5: rgba(255, 255, 255, 0.16);
+}
+
+/* Dark Mode Class */
+.dark-mode {
+  background-color: var(--linear-bg-primary);
+  color: var(--text-primary);
+}
+
+/* Typography for Dark Mode */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: var(--text-primary);
+  font-weight: 600; /* Increased weight for dark backgrounds */
+  letter-spacing: 0.01em; /* Improved readability */
+}
+
+.dark-mode p,
+.dark-mode li {
+  color: var(--text-secondary);
+  line-height: 1.65; /* Increased line height */
+  font-weight: 400;
+}
+
+/* Component Patterns */
+
+/* Cards with elevation */
+.dark-mode .card {
+  background-color: var(--linear-bg-secondary);
+  border: 1px solid var(--border-default);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .card:hover {
+  background-color: var(--linear-bg-tertiary);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+/* Buttons - Primary with purple accent */
+.dark-mode .btn-primary {
+  background-color: var(--purple-600);
+  color: white;
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: var(--purple-700);
+  transform: translateY(-1px);
+}
+
+.dark-mode .btn-primary:active {
+  background-color: var(--purple-800);
+  transform: translateY(0);
+}
+
+/* Secondary buttons with transparency */
+.dark-mode .btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .btn-secondary:hover {
+  background-color: var(--elevation-1);
+  border-color: var(--border-hover);
+}
+
+/* Form inputs */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background-color: #1f2937;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: var(--text-disabled);
+}
+
+/* Navigation */
+.dark-mode nav {
+  background-color: var(--linear-bg-primary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.dark-mode .nav-item {
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.dark-mode .nav-item:hover {
+  color: var(--text-primary);
+  background-color: var(--elevation-1);
+}
+
+.dark-mode .nav-item.active {
+  color: var(--purple-400);
+  background-color: rgba(147, 70, 255, 0.1);
+}
+
+/* Code blocks */
+.dark-mode pre,
+.dark-mode code {
+  background-color: #0d0d0d;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+/* Tables */
+.dark-mode table {
+  border-color: var(--border-default);
+}
+
+.dark-mode th {
+  background-color: var(--linear-bg-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.dark-mode td {
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
+.dark-mode tr:hover {
+  background-color: var(--elevation-1);
+}
+
+/* Scrollbars */
+.dark-mode::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.dark-mode::-webkit-scrollbar-track {
+  background: var(--linear-bg-primary);
+}
+
+.dark-mode::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 6px;
+}
+
+.dark-mode::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
+}
+
+/* Accessibility - Focus styles */
+.dark-mode *:focus-visible {
+  outline: 2px solid var(--purple-400);
+  outline-offset: 2px;
+}
+
+/* Animation for theme transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Disable transitions during theme switch to prevent flashing */
+.theme-transitioning * {
+  transition: none !important;
+}
+
+/* Purple accent highlights */
+.dark-mode .highlight-purple {
+  color: var(--purple-400);
+}
+
+.dark-mode .bg-purple-accent {
+  background-color: rgba(147, 70, 255, 0.1);
+  border: 1px solid rgba(147, 70, 255, 0.2);
+}
+
+/* Links */
+.dark-mode a {
+  color: var(--purple-400);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.dark-mode a:hover {
+  color: var(--purple-500);
+  text-decoration: underline;
+}
+
+/* Shadows for elevated components */
+.dark-mode .elevated-1 {
+  background-color: var(--linear-bg-secondary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .elevated-2 {
+  background-color: var(--linear-bg-tertiary);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .elevated-3 {
+  background-color: var(--linear-bg-elevated);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+}

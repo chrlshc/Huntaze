@@ -1,21 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
 import { crmData } from '@/lib/services/crmData';
-
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const token = request.cookies.get('auth_token')?.value;
-  if (!token) return null;
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret');
-    const { payload } = await jwtVerify(token, secret);
-    return payload.userId as string;
-  } catch {
-    return null;
-  }
-}
+import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function GET(request: NextRequest) {
-  const userId = await getUserId(request);
+  const user = await getUserFromRequest(request);
+  const userId = user?.userId || null;
   if (!userId) return NextResponse.json({ alerts: 0 });
   // Simple heuristic for demo: 1 alert si conversations en attente; +1 si aucun nouveau fan 24h
   const convs = crmData.listConversations(userId);
@@ -34,4 +23,3 @@ export async function GET(request: NextRequest) {
   if (newFans === 0) alerts += 1;
   return NextResponse.json({ alerts });
 }
-

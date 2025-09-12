@@ -1,0 +1,38 @@
+/* Remove ALL borders and backgrounds from nav items */
+
+/* Target all nav links and buttons except Start for free */
+nav a:not([href="/get-started"]),
+nav button {
+  border: none !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Specifically target the bordered elements */
+nav .border,
+nav .border-gray-200,
+nav .border-gray-800,
+nav [class*="border-"] {
+  border: none !important;
+}
+
+/* Remove borders from all nav children except Start for free button */
+nav * {
+  border-color: transparent !important;
+}
+
+/* Keep Start for free button styled */
+nav a[href="/get-started"] {
+  /* This keeps its original styling */
+}
+
+/* Force remove borders on specific elements */
+nav button.flex.items-center,
+nav a[href="/pricing"],
+nav a[href="/auth"] {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

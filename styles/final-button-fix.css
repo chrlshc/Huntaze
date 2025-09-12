@@ -1,0 +1,44 @@
+/* Final Button Fix - Ensure secondary button is transparent with border */
+
+/* Override any previous styles on the second button */
+.hero-section .flex.gap-4 a:nth-child(2),
+.hero-section a[href="/case-studies"],
+.hero-section a.inline-flex:not(.bg-gray-900):not(.bg-white) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+
+.hero-section .flex.gap-4 a:nth-child(2):hover,
+.hero-section a[href="/case-studies"]:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: #ffffff !important;
+  transform: none !important;
+}
+
+/* Ensure first button stays white */
+.hero-section .flex.gap-4 a:first-child,
+.hero-section a[href="/get-started"],
+a[href="/get-started"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
+/* Remove any conflicting styles */
+.hero-section a.text-gray-700 {
+  color: #ffffff !important;
+}
+
+/* Make sure the arrow icon follows text color */
+.hero-section a svg {
+  color: currentColor !important;
+}

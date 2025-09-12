@@ -14,25 +14,25 @@ export default function Navigation() {
       <nav className="hidden md:flex items-center gap-8">
         <Link
           href="/pricing"
-          className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
         >
           Pricing
         </Link>
         <Link
           href="/#solutions"
-          className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
         >
           Features
         </Link>
         <Link
           href="/#testimonials"
-          className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
         >
           Success Stories
         </Link>
         <Link
           href="/#about"
-          className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
         >
           About
         </Link>
@@ -43,7 +43,7 @@ export default function Navigation() {
       
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden text-gray-700"
+        className="md:hidden text-text-primary"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="Toggle menu"
       >
@@ -52,32 +52,32 @@ export default function Navigation() {
       
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <nav className="md:hidden absolute top-full left-0 right-0 bg-white border-b shadow-lg">
+        <nav className="md:hidden absolute top-full left-0 right-0 bg-background-elevated border-b border-border shadow-lg">
           <div className="flex flex-col p-6 space-y-4">
             <Link
               href="/pricing"
-              className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+              className="text-text-primary hover:bg-primary/10 transition-colors font-medium px-2 py-1 rounded"
               onClick={() => setIsMenuOpen(false)}
             >
               Pricing
             </Link>
             <Link
               href="/#solutions"
-              className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+              className="text-text-primary hover:bg-primary/10 transition-colors font-medium px-2 py-1 rounded"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link
               href="/#testimonials"
-              className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+              className="text-text-primary hover:bg-primary/10 transition-colors font-medium px-2 py-1 rounded"
               onClick={() => setIsMenuOpen(false)}
             >
               Success Stories
             </Link>
             <Link
               href="/#about"
-              className="text-gray-700 hover:text-purple-600 transition-colors font-medium"
+              className="text-text-primary hover:bg-primary/10 transition-colors font-medium px-2 py-1 rounded"
               onClick={() => setIsMenuOpen(false)}
             >
               About

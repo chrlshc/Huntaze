@@ -265,9 +265,9 @@
    ETATS SPECIAUX
    ======================================== */
 
-/* Hover states */
+/* Hover states (no global dimming) */
 .dark *:hover {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 /* Focus states */

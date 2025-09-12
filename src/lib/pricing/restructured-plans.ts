@@ -7,6 +7,10 @@ export interface RestructuredPlan {
   targetRevenue: string;
   commission: number;
   revenueCap: number | null;
+  // Optional guardrails / terms
+  eligibilityCeilingGMV?: number; // Hard ceiling for plan eligibility (GMV/month)
+  minimumMonthly?: number; // Minimum monthly charge (e.g., enterprise 0% with floor)
+  annualCommitment?: boolean; // Requires annual commitment
   
   // Core Features (ALL PLANS)
   core: {
@@ -130,8 +134,9 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
     name: 'STARTER',
     price: 19,
     targetRevenue: '$500-2,500/mo',
-    commission: 7,
-    revenueCap: 2500,
+    commission: 9,
+    revenueCap: 2000, // Cap GMV used for fee calculation → max fee $180
+    eligibilityCeilingGMV: 2000, // Hard ceiling to avoid arbitrage vs Pro
     
     core: {
       messaging: {
@@ -171,8 +176,8 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
     name: 'PRO',
     price: 49, // Slightly increased
     targetRevenue: '$2,500-7,500/mo',
-    commission: 5,
-    revenueCap: 7500, // Increased cap
+    commission: 7,
+    revenueCap: 7500,
     
     core: {
       messaging: {
@@ -225,10 +230,10 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
   
   scale: {
     name: 'SCALE',
-    price: 99,
+    price: 79,
     targetRevenue: '$7,500-25,000/mo',
-    commission: 3,
-    revenueCap: 25000, // Increased cap
+    commission: 5,
+    revenueCap: 25000,
     
     core: {
       messaging: {
@@ -291,10 +296,12 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
   
   enterprise: {
     name: 'ENTERPRISE',
-    price: 299,
+    price: 399,
     targetRevenue: '$25,000+/mo',
-    commission: 1.5,
+    commission: 2, // 2% platform fee (annual)
     revenueCap: null,
+    minimumMonthly: 399,
+    annualCommitment: true,
     
     core: {
       messaging: {

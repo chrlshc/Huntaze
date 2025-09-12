@@ -1,0 +1,87 @@
+/* Purple Nebula Background Animations */
+
+/* Lighter background base
+   Disabled: forcing a global dark background was masking page content
+   on marketing pages. Keep it opt‑in via a class if needed.
+*/
+/* body {
+  background-color: #0a0a0f !important;
+} */
+
+@keyframes nebula-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes nebula-pulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
+.nebula-orb {
+  animation: nebula-float 20s ease-in-out infinite;
+}
+
+.nebula-orb-slow {
+  animation: nebula-float 30s ease-in-out infinite;
+}
+
+/* Smooth loading for all animations */
+* {
+  animation-fill-mode: both;
+}
+
+/* Ensure framer-motion animations work */
+[data-framer-appear-id] {
+  will-change: transform, opacity;
+}
+
+/* Performance optimizations */
+.blur-3xl {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Purple gradient text */
+.text-gradient-purple {
+  background: linear-gradient(to right, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.purple-glow {
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+}
+
+.pink-glow {
+  box-shadow: 0 0 40px rgba(236, 72, 153, 0.3);
+}
+
+/* Animated border gradient */
+@keyframes border-gradient {
+  0%, 100% {
+    border-color: rgba(168, 85, 247, 0.3);
+  }
+  50% {
+    border-color: rgba(236, 72, 153, 0.3);
+  }
+}
+
+.border-gradient-animate {
+  animation: border-gradient 3s ease-in-out infinite;
+}

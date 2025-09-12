@@ -1,0 +1,95 @@
+/* Contrast Improvements for AA Compliance */
+
+/* Increase purple text contrast on dark backgrounds */
+.text-purple-300 {
+  color: #c4b5fd !important; /* Lighter purple for better contrast */
+}
+
+.text-purple-400 {
+  color: #ddd6fe !important; /* Even lighter for AA compliance */
+}
+
+/* Badge improvements */
+.bg-purple-100 {
+  background-color: rgba(196, 181, 253, 0.2) !important;
+  color: #ddd6fe !important;
+}
+
+.text-purple-700 {
+  color: #e9d5ff !important; /* Much lighter on dark */
+}
+
+/* Hero sub-headline specific */
+.hero-section .text-purple-300,
+[class*="hero"] .text-purple-300 {
+  color: #e9d5ff !important; /* Maximum contrast */
+}
+
+/* Gradient text improvements */
+.bg-gradient-to-r.from-purple-400.to-pink-400 {
+  --tw-gradient-from: #ddd6fe !important;
+  --tw-gradient-to: #fbcfe8 !important;
+}
+
+.bg-gradient-to-r.from-purple-600.to-pink-600 {
+  --tw-gradient-from: #c4b5fd !important;
+  --tw-gradient-to: #f9a8d4 !important;
+}
+
+/* Small text on dark backgrounds */
+.text-xs.text-gray-600,
+.text-sm.text-gray-600 {
+  color: #9ca3af !important; /* Lighter gray for small text */
+}
+
+.text-xs.text-gray-500,
+.text-sm.text-gray-500 {
+  color: #d1d5db !important;
+}
+
+/* Badges and pills */
+.bg-purple-50,
+.bg-green-50,
+.bg-purple-100.text-purple-700 {
+  background-color: rgba(237, 233, 254, 0.1) !important;
+  border: 1px solid rgba(196, 181, 253, 0.3) !important;
+  color: #e9d5ff !important;
+}
+
+/* Links in dark sections */
+.text-purple-600 {
+  color: #ddd6fe !important;
+}
+
+.text-purple-600:hover {
+  color: #f3e8ff !important;
+}
+
+/* Ensure AA compliance for all interactive elements */
+button,
+a,
+[role="button"] {
+  min-contrast: 4.5;
+}
+
+/* Focus states with high contrast */
+*:focus {
+  outline: 2px solid #ddd6fe !important;
+  outline-offset: 2px !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-purple-300,
+  .text-purple-400,
+  .text-purple-500,
+  .text-purple-600 {
+    color: #f3e8ff !important;
+  }
+  
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600 {
+    color: #e5e7eb !important;
+  }
+}

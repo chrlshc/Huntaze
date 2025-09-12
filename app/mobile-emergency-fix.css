@@ -1,0 +1,186 @@
+/* EMERGENCY MOBILE FIX - HIGHEST PRIORITY */
+
+/* Force light theme on ALL mobile devices */
+@media screen and (max-width: 767px) {
+  /* Reset EVERYTHING */
+  *, *::before, *::after {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: inherit !important;
+  }
+  
+  /* HTML and BODY - absolute override */
+  html {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+  
+  body {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Main containers */
+  #__next,
+  #root,
+  .app,
+  main,
+  .main,
+  .content {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+  
+  /* All divs, sections, articles */
+  div:not([class*="gradient-to"]):not([style*="gradient"]),
+  section,
+  article,
+  aside,
+  nav,
+  header,
+  footer {
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+  
+  /* Headers */
+  h1, h2, h3, h4, h5, h6,
+  .heading,
+  .title,
+  [class*="text-"][class*="xl"] {
+    color: #111827 !important;
+  }
+  
+  /* Paragraphs and text */
+  p, span, li, td, th, label, a:not([class*="btn"]) {
+    color: #374151 !important;
+  }
+  
+  /* Fix specific black backgrounds */
+  [class*="bg-black"],
+  [class*="bg-gray-9"],
+  [style*="background-color: rgb(0"],
+  [style*="background-color: #000"],
+  [style*="background: rgb(0"],
+  [style*="background: #000"],
+  [style*="background-color:rgb(0"],
+  [style*="background:#000"] {
+    background-color: white !important;
+    background: white !important;
+  }
+  
+  /* Fix white text */
+  [class*="text-white"],
+  [class*="text-gray-1"],
+  [class*="text-gray-2"],
+  [class*="text-gray-3"],
+  [class*="text-gray-4"],
+  [style*="color: rgb(255"],
+  [style*="color: #fff"],
+  [style*="color:rgb(255"],
+  [style*="color:#fff"],
+  [style*="color: white"],
+  [style*="color:white"] {
+    color: #374151 !important;
+  }
+  
+  /* Navigation fix */
+  nav,
+  header,
+  .header,
+  .navbar,
+  .navigation {
+    background-color: white !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+  
+  nav * {
+    background-color: transparent !important;
+    color: #374151 !important;
+  }
+  
+  /* Buttons */
+  button,
+  .btn,
+  [role="button"],
+  a[class*="btn"] {
+    min-height: 48px !important;
+    padding: 12px 24px !important;
+  }
+  
+  /* Primary buttons preserve gradient */
+  [class*="from-purple"][class*="to-pink"],
+  [class*="bg-gradient"] {
+    background: linear-gradient(to right, #9333ea, #ec4899) !important;
+    color: white !important;
+  }
+  
+  /* Links */
+  a:not([class*="btn"]) {
+    color: #7c3aed !important;
+  }
+  
+  /* Cards and panels */
+  .card,
+  [class*="rounded"] {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  /* Remove all filters and effects */
+  * {
+    filter: none !important;
+    backdrop-filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+  
+  /* Fix gradient text */
+  .text-transparent {
+    -webkit-text-fill-color: #9333ea !important;
+    color: #9333ea !important;
+  }
+  
+  /* Force visible text */
+  * {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Menu button */
+  button[aria-label*="menu"] svg,
+  .menu-button svg,
+  .hamburger svg {
+    stroke: #374151 !important;
+    fill: #374151 !important;
+  }
+}
+
+/* Ultra high specificity overrides */
+html body,
+html body *,
+html body * *,
+html body * * *,
+html body * * * * {
+  @media screen and (max-width: 767px) {
+    background-image: none !important;
+  }
+}
+
+/* Nuclear option for body */
+@media screen and (max-width: 767px) {
+  body.antialiased,
+  body.bg-gray-950,
+  body.text-white,
+  body.dark,
+  body[class*="bg-black"],
+  body[class*="bg-gray-9"],
+  body[style*="background"] {
+    background-color: white !important;
+    background: white !important;
+    color: #111827 !important;
+  }
+}

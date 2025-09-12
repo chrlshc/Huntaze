@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { Check, X, Zap, TrendingUp, Globe, Users, Brain, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const GmvCalculator = dynamic(() => import('./components/GmvCalculator'), { ssr: false });
 
 export default function PricingV2() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
@@ -15,8 +18,8 @@ export default function PricingV2() {
       color: 'green',
       icon: <Zap className="w-6 h-6" />,
       targetRevenue: '$500-2,500/mo',
-      commission: '7%',
-      revenueCap: '$2,500',
+      commission: '9%',
+      revenueCap: '$2,000',
       features: {
         core: [
           '1,000 AI messages/month',
@@ -25,7 +28,8 @@ export default function PricingV2() {
           'Welcome messages',
           'PPV campaigns',
           'Revenue dashboard',
-          '30-day analytics'
+          '30-day analytics',
+          'Eligible up to $2,000 GMV/mo'
         ],
         advanced: [],
         notIncluded: [
@@ -44,7 +48,7 @@ export default function PricingV2() {
       badge: 'MOST POPULAR',
       icon: <TrendingUp className="w-6 h-6" />,
       targetRevenue: '$2,500-7,500/mo',
-      commission: '5%',
+      commission: '7%',
       revenueCap: '$7,500',
       features: {
         core: [
@@ -71,12 +75,12 @@ export default function PricingV2() {
     },
     {
       name: 'SCALE',
-      price: billingPeriod === 'monthly' ? 99 : 83,
-      yearlyPrice: 996,
+      price: billingPeriod === 'monthly' ? 79 : 66,
+      yearlyPrice: 792,
       color: 'blue',
       icon: <Users className="w-6 h-6" />,
       targetRevenue: '$7,500-25,000/mo',
-      commission: '3%',
+      commission: '5%',
       revenueCap: '$25,000',
       features: {
         core: [
@@ -105,13 +109,13 @@ export default function PricingV2() {
     },
     {
       name: 'ENTERPRISE',
-      price: 299,
-      yearlyPrice: 3588,
+      price: 399,
+      yearlyPrice: 4788,
       color: 'yellow',
       icon: <Brain className="w-6 h-6" />,
       targetRevenue: '$25,000+/mo',
-      commission: '1.5%',
-      revenueCap: 'No limit',
+      commission: '2% (annual commitment)',
+      revenueCap: '—',
       requiresQualification: true,
       features: {
         core: [
@@ -148,6 +152,9 @@ export default function PricingV2() {
             Every plan includes full OnlyFans automation. The difference? 
             AI power, message volume, and advanced features that match your growth stage.
           </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 max-w-3xl mx-auto">
+            No hidden fees. Payment processing (Stripe) not included (≈ 2.9% + $0.30/txn). Overage (plan policy): Starter $3/1k • Pro $15/1k • Scale $30/1k • Enterprise contractual.
+          </p>
 
           {/* Billing Toggle */}
           <div className="inline-flex items-center gap-4 bg-white dark:bg-gray-800 rounded-full p-1 shadow-md">
@@ -155,7 +162,7 @@ export default function PricingV2() {
               onClick={() => setBillingPeriod('monthly')}
               className={`px-6 py-2 rounded-full transition-all ${
                 billingPeriod === 'monthly'
-                  ? 'bg-purple-600 text-white'
+                  ? 'bg-primary text-primary-foreground'
                   : 'text-gray-600 dark:text-gray-400'
               }`}
             >
@@ -165,7 +172,7 @@ export default function PricingV2() {
               onClick={() => setBillingPeriod('yearly')}
               className={`px-6 py-2 rounded-full transition-all ${
                 billingPeriod === 'yearly'
-                  ? 'bg-purple-600 text-white'
+                  ? 'bg-primary text-primary-foreground'
                   : 'text-gray-600 dark:text-gray-400'
               }`}
             >
@@ -179,9 +186,9 @@ export default function PricingV2() {
           {plans.map((plan, index) => (
             <div
               key={plan.name}
-              className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 ${
-                plan.badge ? 'border-purple-500 scale-105' : 'border-gray-200 dark:border-gray-700'
-              } hover:border-purple-400 transition-all`}
+              className={`relative bg-background-elevated rounded-2xl shadow-xl border hover-lift-soft ${
+                plan.badge ? 'border-primary scale-105' : 'border-border'
+              } hover:border-primary/40 transition-all`}
             >
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold">
@@ -198,14 +205,28 @@ export default function PricingV2() {
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     {plan.name}
                   </h3>
-                  <div className="text-4xl font-black text-gray-900 dark:text-white">
-                    ${plan.price}
-                    <span className="text-lg font-normal text-gray-600 dark:text-gray-400">/mo</span>
-                  </div>
-                  {billingPeriod === 'yearly' && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      ${plan.yearlyPrice}/year
-                    </p>
+                  {plan.name === 'ENTERPRISE' ? (
+                    <>
+                      <div className="text-4xl font-black text-gray-900 dark:text-white">
+                        ${plan.price}
+                        <span className="text-lg font-normal text-gray-600 dark:text-gray-400">/mo</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        Billed annually (${plan.yearlyPrice}/year)
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-4xl font-black text-gray-900 dark:text-white">
+                        ${plan.price}
+                        <span className="text-lg font-normal text-gray-600 dark:text-gray-400">/mo</span>
+                      </div>
+                      {billingPeriod === 'yearly' && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          ${plan.yearlyPrice}/year
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -223,6 +244,12 @@ export default function PricingV2() {
                     <span className="text-gray-600 dark:text-gray-400">Revenue cap:</span>
                     <span className="font-semibold text-gray-900 dark:text-white">{plan.revenueCap}</span>
                   </div>
+                  {plan.name === 'ENTERPRISE' && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Billing:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">Annual only</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Features */}
@@ -277,11 +304,36 @@ export default function PricingV2() {
                   )}
                 </div>
 
+                {/* Notes (upgrade thresholds, caps, eligibility) */}
+                {plan.name === 'STARTER' && (
+                  <div className="mt-2 rounded-lg bg-gray-50 dark:bg-gray-900/50 p-3 text-xs text-gray-600 dark:text-gray-400">
+                    <p>• Cheaper than Pro below ~$1k GMV; Pro is cheaper above $1k.</p>
+                    <p>• Eligible up to $2,000 GMV/mo. Fees capped at $180/mo.</p>
+                  </div>
+                )}
+                {plan.name === 'PRO' && (
+                  <div className="mt-2 rounded-lg bg-gray-50 dark:bg-gray-900/50 p-3 text-xs text-gray-600 dark:text-gray-400">
+                    <p>• Cheaper than Starter above $1k GMV.</p>
+                    <p>• Platform fees capped at $525/mo.</p>
+                  </div>
+                )}
+                {plan.name === 'SCALE' && (
+                  <div className="mt-2 rounded-lg bg-gray-50 dark:bg-gray-900/50 p-3 text-xs text-gray-600 dark:text-gray-400">
+                    <p>• Platform fees capped at $1,250/mo.</p>
+                  </div>
+                )}
+                {plan.name === 'ENTERPRISE' && (
+                  <div className="mt-2 rounded-lg bg-gray-50 dark:bg-gray-900/50 p-3 text-xs text-gray-600 dark:text-gray-400">
+                    <p>• 2% platform fee with annual commitment.</p>
+                    <p>• Annual commitment. Minimum $399/mo.</p>
+                  </div>
+                )}
+
                 {/* CTA Button */}
                 <Link href={plan.requiresQualification ? '/apply' : '/join'}>
-                  <button className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                  <button className={`w-full py-3 rounded-xl font-semibold transition-all hover-lift-soft ${
                     plan.badge 
-                      ? 'bg-purple-600 text-white hover:bg-purple-700' 
+                      ? 'bg-primary text-primary-foreground hover:opacity-90' 
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}>
                     {plan.requiresQualification ? 'Apply Now' : 'Start Free Trial'}
@@ -290,6 +342,11 @@ export default function PricingV2() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* GMV Calculator */}
+        <div id="calculator">
+          <GmvCalculator />
         </div>
 
         {/* Key Differentiators */}
@@ -355,7 +412,7 @@ export default function PricingV2() {
               </button>
             </Link>
             <Link href="/roi-calculator">
-              <button className="px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2">
+              <button className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 hover-lift-soft transition-colors flex items-center gap-2">
                 Calculate Your ROI
                 <ArrowRight className="w-4 h-4" />
               </button>

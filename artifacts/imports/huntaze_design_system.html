@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huntaze Design System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Primary Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-600: #667eea;
+            --primary-700: #5a67d8;
+            --primary-800: #764ba2;
+            
+            /* Neutral Colors */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --bg-hover: #3a3a3a;
+            
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #707070;
+            
+            /* Status Colors */
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 64px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 50%;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 10px 40px rgba(102, 126, 234, 0.2);
+            --shadow-xl: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-lg);
+        }
+
+        .section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: var(--space-xl);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subsection-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: var(--space-lg);
+            color: var(--text-primary);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .component-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .component-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .color-swatch {
+            height: 100px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: flex-end;
+            padding: var(--space-md);
+            color: white;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.05);
+        }
+
+        .typography-sample {
+            margin-bottom: var(--space-lg);
+            padding: var(--space-lg);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+        }
+
+        .button-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-600);
+            border: 2px solid var(--primary-600);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--bg-primary);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-600);
+            background: var(--bg-hover);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: var(--bg-primary);
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: var(--bg-primary);
+        }
+
+        .badge-error {
+            background: var(--error);
+            color: white;
+        }
+
+        .spacing-demo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .spacing-box {
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--primary-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .icon-box {
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .icon-box:hover {
+            background: var(--bg-hover);
+            transform: scale(1.1);
+        }
+
+        .icon {
+            font-size: 24px;
+        }
+
+        .icon-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .animation-demo {
+            padding: var(--space-xl);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-slide {
+            animation: slideIn 0.5s ease;
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .shadow-demo {
+            display: flex;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .shadow-box {
+            width: 150px;
+            height: 100px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .notification {
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .notification-success {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 4px solid var(--success);
+        }
+
+        .notification-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--error);
+        }
+
+        .notification-warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+
+        .notification-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--info);
+        }
+
+        .tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid var(--bg-tertiary);
+            margin-bottom: var(--space-lg);
+        }
+
+        .tab {
+            padding: var(--space-md) var(--space-lg);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary-600);
+            border-bottom: 2px solid var(--primary-600);
+            margin-bottom: -2px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-600);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: var(--radius-full);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div style="text-align: center; padding: var(--space-3xl) 0; background: var(--primary-gradient); border-radius: var(--radius-xl); margin-bottom: var(--space-3xl);">
+            <h1 style="font-size: 48px; font-weight: 700; margin-bottom: var(--space-md);">Huntaze Design System</h1>
+            <p style="font-size: 20px; opacity: 0.9;">Complete UI/UX Guidelines & Component Library</p>
+        </div>
+
+        <!-- Brand Colors -->
+        <section class="section">
+            <h2 class="section-title">🎨 Brand Colors</h2>
+            
+            <h3 class="subsection-title">Primary Palette</h3>
+            <div class="color-palette">
+                <div class="color-swatch" style="background: linear-gradient(135deg, #667eea, #764ba2);">Gradient</div>
+                <div class="color-swatch" style="background: #667eea;">#667eea</div>
+                <div class="color-swatch" style="background: #5a67d8;">#5a67d8</div>
+                <div class="color-swatch" style="background: #764ba2;">#764ba2</div>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: var(--space-xl);">Neutral Palette</h3>
+            <div class="color-palette">
+                <div class="color-swatch" style="background: #0a0a0a;">#0a0a0a</div>
+                <div class="color-swatch" style="background: #1a1a1a;">#1a1a1a</div>
+                <div class="color-swatch" style="background: #2a2a2a;">#2a2a2a</div>
+                <div class="color-swatch" style="background: #3a3a3a;">#3a3a3a</div>
+                <div class="color-swatch" style="background: #a0a0a0; color: #0a0a0a;">#a0a0a0</div>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: var(--space-xl);">Status Colors</h3>
+            <div class="color-palette">
+                <div class="color-swatch" style="background: #4ade80; color: #0a0a0a;">Success</div>
+                <div class="color-swatch" style="background: #fbbf24; color: #0a0a0a;">Warning</div>
+                <div class="color-swatch" style="background: #ef4444;">Error</div>
+                <div class="color-swatch" style="background: #3b82f6;">Info</div>
+            </div>
+        </section>
+
+        <!-- Typography -->
+        <section class="section">
+            <h2 class="section-title">📝 Typography</h2>
+            
+            <div class="typography-sample">
+                <h1 style="font-size: 48px; font-weight: 700; margin-bottom: var(--space-md);">H1 - Display Heading</h1>
+                <h2 style="font-size: 36px; font-weight: 600; margin-bottom: var(--space-md);">H2 - Page Title</h2>
+                <h3 style="font-size: 28px; font-weight: 600; margin-bottom: var(--space-md);">H3 - Section Title</h3>
+                <h4 style="font-size: 24px; font-weight: 500; margin-bottom: var(--space-md);">H4 - Card Title</h4>
+                <p style="font-size: 16px; margin-bottom: var(--space-md);">Body Text - Regular paragraph text for content and descriptions.</p>
+                <p style="font-size: 14px; color: var(--text-secondary);">Small Text - Secondary information and captions.</p>
+            </div>
+        </section>
+
+        <!-- Buttons -->
+        <section class="section">
+            <h2 class="section-title">🔘 Buttons</h2>
+            
+            <h3 class="subsection-title">Button Variants</h3>
+            <div class="button-showcase">
+                <button class="btn btn-primary">Primary Button</button>
+                <button class="btn btn-secondary">Secondary Button</button>
+                <button class="btn btn-success">Success Button</button>
+                <button class="btn btn-danger">Danger Button</button>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: var(--space-xl);">Button Sizes</h3>
+            <div class="button-showcase">
+                <button class="btn btn-primary btn-sm">Small</button>
+                <button class="btn btn-primary">Medium</button>
+                <button class="btn btn-primary btn-lg">Large</button>
+            </div>
+        </section>
+
+        <!-- Forms -->
+        <section class="section">
+            <h2 class="section-title">📋 Form Elements</h2>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="form-group">
+                        <label class="form-label">Text Input</label>
+                        <input type="text" class="form-input" placeholder="Enter text...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Input</label>
+                        <input type="email" class="form-input" placeholder="email@example.com">
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="form-group">
+                        <label class="form-label">Select Dropdown</label>
+                        <select class="form-input">
+                            <option>Option 1</option>
+                            <option>Option 2</option>
+                            <option>Option 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Textarea</label>
+                        <textarea class="form-input" rows="3" placeholder="Enter message..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Components -->
+        <section class="section">
+            <h2 class="section-title">🧩 Components</h2>
+            
+            <h3 class="subsection-title">Cards</h3>
+            <div class="component-grid">
+                <div class="card">
+                    <h4 style="margin-bottom: var(--space-md);">Basic Card</h4>
+                    <p style="color: var(--text-secondary);">This is a basic card component with hover effects.</p>
+                </div>
+                <div class="card">
+                    <div class="badge badge-primary" style="margin-bottom: var(--space-md);">Featured</div>
+                    <h4 style="margin-bottom: var(--space-md);">Card with Badge</h4>
+                    <p style="color: var(--text-secondary);">Cards can include badges for status or labels.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: var(--space-xl);">Badges</h3>
+            <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                <span class="badge badge-primary">Primary</span>
+                <span class="badge badge-success">Success</span>
+                <span class="badge badge-warning">Warning</span>
+                <span class="badge badge-error">Error</span>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: var(--space-xl);">Progress Bars</h3>
+            <div style="space-y: var(--space-md);">
+                <div>
+                    <p style="margin-bottom: var(--space-sm); color: var(--text-secondary);">25% Complete</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 25%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: var(--space-lg);">
+                    <p style="margin-bottom: var(--space-sm); color: var(--text-secondary);">75% Complete</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: var(--space-xl);">Toggle Switches</h3>
+            <div style="display: flex; gap: var(--space-lg); align-items: center;">
+                <div class="toggle-switch" onclick="this.classList.toggle('active')">
+                    <div class="toggle-slider"></div>
+                </div>
+                <div class="toggle-switch active" onclick="this.classList.toggle('active')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications -->
+        <section class="section">
+            <h2 class="section-title">🔔 Notifications</h2>
+            
+            <div class="notification notification-success">
+                <span style="font-size: 20px;">✓</span>
+                <div>
+                    <strong>Success!</strong> Your changes have been saved.
+                </div>
+            </div>
+
+            <div class="notification notification-error">
+                <span style="font-size: 20px;">✕</span>
+                <div>
+                    <strong>Error!</strong> Something went wrong. Please try again.
+                </div>
+            </div>
+
+            <div class="notification notification-warning">
+                <span style="font-size: 20px;">⚠</span>
+                <div>
+                    <strong>Warning!</strong> This action cannot be undone.
+                </div>
+            </div>
+
+            <div class="notification notification-info">
+                <span style="font-size: 20px;">ℹ</span>
+                <div>
+                    <strong>Info:</strong> New features are available in your dashboard.
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacing -->
+        <section class="section">
+            <h2 class="section-title">📏 Spacing System</h2>
+            
+            <div class="spacing-demo">
+                <div class="spacing-box" style="width: 4px; height: 40px;">xs</div>
+                <div class="spacing-box" style="width: 8px; height: 40px;">sm</div>
+                <div class="spacing-box" style="width: 16px; height: 40px;">md</div>
+                <div class="spacing-box" style="width: 24px; height: 40px;">lg</div>
+                <div class="spacing-box" style="width: 32px; height: 40px;">xl</div>
+                <div class="spacing-box" style="width: 48px; height: 40px;">2xl</div>
+                <div class="spacing-box" style="width: 64px; height: 40px;">3xl</div>
+            </div>
+        </section>
+
+        <!-- Shadows -->
+        <section class="section">
+            <h2 class="section-title">🌑 Shadows</h2>
+            
+            <div class="shadow-demo">
+                <div class="shadow-box" style="box-shadow: var(--shadow-sm);">Small</div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-md);">Medium</div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-lg);">Large</div>
+                <div class="shadow-box" style="box-shadow: var(--shadow-xl);">X-Large</div>
+            </div>
+        </section>
+
+        <!-- Icons -->
+        <section class="section">
+            <h2 class="section-title">🎯 Icon Library</h2>
+            
+            <div class="icon-grid">
+                <div class="icon-box">
+                    <span class="icon">📊</span>
+                    <span class="icon-label">Analytics</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">💬</span>
+                    <span class="icon-label">Messages</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">👥</span>
+                    <span class="icon-label">Fans</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">💰</span>
+                    <span class="icon-label">Revenue</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">🤖</span>
+                    <span class="icon-label">AI</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">⚙️</span>
+                    <span class="icon-label">Settings</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">📈</span>
+                    <span class="icon-label">Growth</span>
+                </div>
+                <div class="icon-box">
+                    <span class="icon">🔔</span>
+                    <span class="icon-label">Notifications</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Animations -->
+        <section class="section">
+            <h2 class="section-title">✨ Animations</h2>
+            
+            <div class="component-grid">
+                <div class="animation-demo animate-pulse">
+                    <h4>Pulse Animation</h4>
+                    <p style="color: var(--text-secondary); margin-top: var(--space-md);">Subtle attention-grabbing effect</p>
+                </div>
+                <div class="animation-demo animate-slide">
+                    <h4>Slide Animation</h4>
+                    <p style="color: var(--text-secondary); margin-top: var(--space-md);">Smooth entrance effect</p>
+                </div>
+                <div class="animation-demo animate-fade">
+                    <h4>Fade Animation</h4>
+                    <p style="color: var(--text-secondary); margin-top: var(--space-md);">Gentle appearance effect</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <section class="section">
+            <h2 class="section-title">🗂 Navigation</h2>
+            
+            <div class="tabs">
+                <button class="tab active">Dashboard</button>
+                <button class="tab">Messages</button>
+                <button class="tab">Analytics</button>
+                <button class="tab">Settings</button>
+            </div>
+            <div style="padding: var(--space-lg); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                <p>Tab content goes here. Click tabs to see active state.</p>
+            </div>
+        </section>
+
+        <!-- Implementation Notes -->
+        <section class="section">
+            <h2 class="section-title">📖 Implementation Guidelines</h2>
+            
+            <div class="card">
+                <h3 style="margin-bottom: var(--space-lg);">CSS Variables</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+                    All design tokens are defined as CSS custom properties for easy theming and consistency.
+                </p>
+                <pre style="background: var(--bg-primary); padding: var(--space-lg); border-radius: var(--radius-md); overflow-x: auto;">
+<code style="color: var(--text-secondary);">:root {
+    --primary-600: #667eea;
+    --bg-primary: #0a0a0a;
+    --text-primary: #ffffff;
+    --space-md: 16px;
+    --radius-lg: 16px;
+}</code></pre>
+            </div>
+
+            <div class="card" style="margin-top: var(--space-lg);">
+                <h3 style="margin-bottom: var(--space-lg);">Responsive Design</h3>
+                <p style="color: var(--text-secondary);">
+                    All components are built mobile-first with breakpoints at:
+                </p>
+                <ul style="margin-top: var(--space-md); padding-left: var(--space-lg); color: var(--text-secondary);">
+                    <li>Mobile: < 640px</li>
+                    <li>Tablet: 640px - 1024px</li>
+                    <li>Desktop: > 1024px</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-top: var(--space-lg);">
+                <h3 style="margin-bottom: var(--space-lg);">Accessibility</h3>
+                <p style="color: var(--text-secondary);">
+                    Follow WCAG 2.1 AA standards:
+                </p>
+                <ul style="margin-top: var(--space-md); padding-left: var(--space-lg); color: var(--text-secondary);">
+                    <li>Minimum contrast ratio of 4.5:1 for normal text</li>
+                    <li>All interactive elements have focus states</li>
+                    <li>Semantic HTML structure</li>
+                    <li>ARIA labels where appropriate</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: var(--space-2xl); margin-top: var(--space-3xl); border-top: 1px solid var(--bg-tertiary);">
+            <p style="color: var(--text-secondary);">Huntaze Design System v1.0</p>
+            <p style="color: var(--text-secondary); margin-top: var(--space-sm);">Build bigger, earn smarter, grow further</p>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Copy color codes on click
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.addEventListener('click', function() {
+                const text = this.textContent;
+                navigator.clipboard.writeText(text);
+                
+                // Visual feedback
+                const original = this.textContent;
+                this.textContent = 'Copied!';
+                setTimeout(() => {
+                    this.textContent = original;
+                }, 1000);
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        entry.target.style.transition = 'all 0.6s ease';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

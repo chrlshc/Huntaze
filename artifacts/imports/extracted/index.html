@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huntaze - OnlyFans Management Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Huntaze</h2>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-section="application">Application</button>
+                <button class="nav-tab" data-section="pricing">Pricing</button>
+                <button class="nav-tab" data-section="onboarding">Onboarding</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Section Application Flow -->
+    <section id="application" class="flow-section active">
+        <div class="dashboard-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="user-profile">
+                        <div class="avatar">A</div>
+                        <div class="user-info">
+                            <span class="user-name">Anna Martin</span>
+                            <span class="user-role">Créatrice</span>
+                        </div>
+                    </div>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        Contacts
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Settings
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Header -->
+                <header class="dashboard-header">
+                    <div class="header-content">
+                        <h1>Dashboard</h1>
+                        <div class="header-actions">
+                            <button class="btn btn--outline btn--sm">
+                                <span>🔔</span>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>Revenus ce mois</h3>
+                        <div class="metric-value">€12,450</div>
+                        <div class="metric-change positive">+15%</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Taux de conversion</h3>
+                        <div class="metric-value">24.5%</div>
+                        <div class="metric-change positive">+3.2%</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Messages envoyés</h3>
+                        <div class="metric-value">1,247</div>
+                        <div class="metric-change positive">+8%</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Fans actifs</h3>
+                        <div class="metric-value">856</div>
+                        <div class="metric-change positive">+12%</div>
+                    </div>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h3>Automation DM</h3>
+                        <p>Messages automatisés intelligents</p>
+                        <button class="btn btn--primary">Configurer</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Analytics</h3>
+                        <p>Analyses détaillées de performance</p>
+                        <button class="btn btn--primary">Voir rapport</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Campaign Manager</h3>
+                        <p>Gestion des campagnes marketing</p>
+                        <button class="btn btn--primary">Créer campagne</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- Section Pricing Flow -->
+    <section id="pricing" class="flow-section">
+        <div class="pricing-container">
+            <div class="pricing-header">
+                <h1>Choisissez votre plan</h1>
+                <p>Commencez gratuitement, évoluez selon vos besoins</p>
+                
+                <!-- Toggle mensuel/annuel -->
+                <div class="pricing-toggle">
+                    <span class="toggle-label">Mensuel</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="yearlyToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Annuel <span class="discount-badge">-17%</span></span>
+                </div>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Plan Starter -->
+                <div class="pricing-card">
+                    <div class="plan-header">
+                        <h3>Starter</h3>
+                        <p>Parfait pour débuter</p>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-amount monthly">€29</span>
+                        <span class="price-amount yearly hidden">€24</span>
+                        <span class="price-period">/mois</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✓ Jusqu'à 3 comptes OnlyFans</li>
+                        <li>✓ 1000 messages automatisés/mois</li>
+                        <li>✓ Analytics de base</li>
+                        <li>✓ Support email</li>
+                        <li>✓ Templates de messages</li>
+                    </ul>
+                    <button class="btn btn--outline btn--full-width">Commencer</button>
+                </div>
+
+                <!-- Plan Pro -->
+                <div class="pricing-card recommended">
+                    <div class="recommended-badge">Recommandé</div>
+                    <div class="plan-header">
+                        <h3>Pro</h3>
+                        <p>Le plus populaire</p>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-amount monthly">€99</span>
+                        <span class="price-amount yearly hidden">€82</span>
+                        <span class="price-period">/mois</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✓ Comptes OnlyFans illimités</li>
+                        <li>✓ Messages automatisés illimités</li>
+                        <li>✓ Analytics avancées</li>
+                        <li>✓ Support prioritaire</li>
+                        <li>✓ A/B testing</li>
+                        <li>✓ Intégrations multiples</li>
+                        <li>✓ API access</li>
+                    </ul>
+                    <button class="btn btn--primary btn--full-width">Commencer l'essai</button>
+                </div>
+
+                <!-- Plan Enterprise -->
+                <div class="pricing-card">
+                    <div class="plan-header">
+                        <h3>Enterprise</h3>
+                        <p>Solution sur mesure</p>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-amount">Contact</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✓ Solution white-label</li>
+                        <li>✓ Support dédié</li>
+                        <li>✓ Formation personnalisée</li>
+                        <li>✓ Intégrations custom</li>
+                        <li>✓ SLA garanti</li>
+                    </ul>
+                    <button class="btn btn--outline btn--full-width">Nous contacter</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Onboarding Flow -->
+    <section id="onboarding" class="flow-section">
+        <div class="onboarding-container">
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-track">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-steps">
+                    <div class="step active">1</div>
+                    <div class="step">2</div>
+                    <div class="step">3</div>
+                    <div class="step">4</div>
+                    <div class="step">5</div>
+                </div>
+            </div>
+
+            <!-- Onboarding Steps -->
+            <div class="onboarding-content">
+                <!-- Step 1: Welcome -->
+                <div class="onboarding-step active" data-step="1">
+                    <div class="step-content">
+                        <div class="step-icon">🎉</div>
+                        <h1>Bienvenue sur Huntaze</h1>
+                        <p>La plateforme tout-en-un pour gérer votre business OnlyFans</p>
+                        <button class="btn btn--primary btn--lg">Commencer</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Profile -->
+                <div class="onboarding-step" data-step="2">
+                    <div class="step-content">
+                        <h2>Parlez-nous de vous</h2>
+                        <p>Sélectionnez votre profil</p>
+                        <div class="profile-options">
+                            <div class="profile-option" data-profile="creator">
+                                <div class="option-icon">👤</div>
+                                <h3>Créateur/Créatrice</h3>
+                                <p>Je gère mon propre compte OnlyFans</p>
+                            </div>
+                            <div class="profile-option" data-profile="agency">
+                                <div class="option-icon">🏢</div>
+                                <h3>Agence</h3>
+                                <p>Je gère plusieurs créateurs</p>
+                            </div>
+                            <div class="profile-option" data-profile="manager">
+                                <div class="option-icon">💼</div>
+                                <h3>Manager</h3>
+                                <p>Je travaille pour une agence</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Integrations -->
+                <div class="onboarding-step" data-step="3">
+                    <div class="step-content">
+                        <h2>Connectez vos plateformes</h2>
+                        <p>Intégrez vos comptes sociaux</p>
+                        <div class="integration-list">
+                            <div class="integration-item required">
+                                <div class="integration-info">
+                                    <span class="integration-name">OnlyFans</span>
+                                    <span class="required-badge">Requis</span>
+                                </div>
+                                <button class="btn btn--primary btn--sm">Connecter</button>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">Instagram</span>
+                                </div>
+                                <button class="btn btn--outline btn--sm">Connecter</button>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">TikTok</span>
+                                </div>
+                                <button class="btn btn--outline btn--sm">Connecter</button>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">Twitter</span>
+                                </div>
+                                <button class="btn btn--outline btn--sm">Connecter</button>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary continue-btn">Continuer</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Goals -->
+                <div class="onboarding-step" data-step="4">
+                    <div class="step-content">
+                        <h2>Définissez vos objectifs</h2>
+                        <p>Aidez-nous à personnaliser votre expérience</p>
+                        <div class="goals-grid">
+                            <div class="goal-option" data-goal="revenue">
+                                <span class="goal-icon">💰</span>
+                                <span class="goal-text">Augmenter les revenus</span>
+                            </div>
+                            <div class="goal-option" data-goal="automation">
+                                <span class="goal-icon">🤖</span>
+                                <span class="goal-text">Automatiser les messages</span>
+                            </div>
+                            <div class="goal-option" data-goal="engagement">
+                                <span class="goal-icon">❤️</span>
+                                <span class="goal-text">Améliorer l'engagement</span>
+                            </div>
+                            <div class="goal-option" data-goal="analytics">
+                                <span class="goal-icon">📊</span>
+                                <span class="goal-text">Analyser les performances</span>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary continue-btn">Continuer</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Preview -->
+                <div class="onboarding-step" data-step="5">
+                    <div class="step-content">
+                        <div class="step-icon">✅</div>
+                        <h2>Votre dashboard est prêt !</h2>
+                        <p>Découvrez votre tableau de bord personnalisé</p>
+                        <div class="dashboard-preview">
+                            <div class="preview-card">
+                                <h4>Dashboard personnalisé</h4>
+                                <p>Basé sur vos objectifs et votre profil</p>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary btn--lg">Accéder au dashboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="onboarding-nav">
+                <button class="btn btn--outline nav-back hidden">Retour</button>
+                <button class="btn btn--primary nav-next hidden">Suivant</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>

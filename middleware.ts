@@ -4,8 +4,16 @@ import type { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Get auth token
-  const authToken = request.cookies.get('auth_token')?.value;
+  // Local dev convenience: disable auth checks on localhost/non-production
+  const host = request.nextUrl.hostname;
+  const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
+  const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
+  if (DEV_MODE) {
+    return NextResponse.next();
+  }
+  
+  // Get auth token (prefer new cookie, keep legacy compatibility)
+  const authToken = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
   
   // Protected routes that require authentication
   const protectedRoutes = [
@@ -53,7 +61,8 @@ export async function middleware(request: NextRequest) {
         // Check onboarding status
         const response = await fetch(new URL('/api/users/onboarding-status', request.url), {
           headers: {
-            Cookie: `auth_token=${authToken}`,
+            // forward whichever cookie we have
+            Cookie: `${request.cookies.get('access_token') ? 'access_token' : 'auth_token'}=${authToken}`,
           },
         });
         

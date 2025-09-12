@@ -3,88 +3,159 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
-  LayoutDashboard,
+  Home,
+  TrendingUp,
+  Share2,
+  Bot,
   MessageSquare,
   Users,
-  BarChart3,
-  Plug,
+  Package,
   CreditCard,
   Settings,
+  Menu,
+  X,
+  BarChart3,
+  Zap,
+  Shield,
+  Image,
+  Calendar,
+  DollarSign,
+  Target,
+  Activity,
+  FileText,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 import { useSSE } from "@/hooks/useSSE";
 import { useSSECounter } from "@/src/hooks/useSSECounter";
 import { AnimatePresence, motion } from "framer-motion";
+import "./nav-styles.css";
 
 type BadgeConfig = { type: "unread" | "alerts"; url: string };
 type NavItem = {
   label: string;
-  href: string;
+  href?: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
   badge?: BadgeConfig;
+  children?: NavItem[];
 };
 
 const APP_PREFIXES = [
   "/dashboard",
+  "/analytics",
+  "/social",
+  "/ai",
   "/messages",
   "/fans",
-  "/analytics",
-  "/integrations",
-  "/settings",
-  "/platforms",
+  "/campaigns",
+  "/content",
   "/billing",
-  "/configure",
-  "/profile",
-  "/social",
+  "/settings"
 ];
 
-export const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
-  { label: "Home", items: [{ label: "Dashboard", href: "/dashboard", icon: LayoutDashboard }] },
+export const NAV_SECTIONS: NavItem[] = [
+  { 
+    label: "Home", 
+    href: "/dashboard", 
+    icon: Home 
+  },
   {
-    label: "Communication",
-    items: [
-      {
-        label: "Messages",
-        href: "/messages",
+    label: "Analytics",
+    icon: TrendingUp,
+    children: [
+      { label: "Overview", href: "/analytics", icon: BarChart3, badge: { type: "alerts", url: "/api/analytics/alerts-count" } },
+      { label: "Revenue", href: "/analytics/revenue", icon: DollarSign },
+      { label: "Engagement", href: "/analytics/engagement", icon: Activity },
+      { label: "RFM Analysis", href: "/analytics/rfm", icon: Target },
+      { label: "Reports", href: "/analytics/reports", icon: FileText }
+    ]
+  },
+  {
+    label: "Social Media",
+    icon: Share2,
+    children: [
+      { 
+        label: "OnlyFans", 
+        href: "/social/onlyfans", 
         icon: MessageSquare,
-        badge: { type: "unread", url: "/api/messages/unread-count" },
+        badge: { type: "unread", url: "/api/messages/unread-count" }
       },
-    ],
+      { label: "Instagram", href: "/social/instagram", icon: Image },
+      { label: "TikTok", href: "/social/tiktok", icon: Zap },
+      { label: "Twitter/X", href: "/social/twitter", icon: Share2 },
+      { label: "Schedule Posts", href: "/social/schedule", icon: Calendar }
+    ]
   },
-  { label: "Customers", items: [{ label: "Fans", href: "/fans", icon: Users }] },
   {
-    label: "Insights",
-    items: [
-      {
-        label: "Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        badge: { type: "alerts", url: "/api/analytics/alerts-count" },
-      },
-    ],
+    label: "AI Assistant",
+    icon: Bot,
+    children: [
+      { label: "Chat Automation", href: "/ai/chat", icon: MessageSquare },
+      { label: "Content Generator", href: "/ai/content", icon: FileText },
+      { label: "Training", href: "/ai/training", icon: Bot },
+      { label: "Quick Replies", href: "/ai/replies", icon: Zap }
+    ]
   },
-  { label: "Integrations", items: [{ label: "Apps", href: "/integrations", icon: Plug }] },
+  { 
+    label: "Fans", 
+    href: "/fans", 
+    icon: Users 
+  },
+  { 
+    label: "Campaigns", 
+    href: "/campaigns", 
+    icon: Target 
+  },
   {
-    label: "Settings",
-    items: [
-      { label: "Billing", href: "/billing", icon: CreditCard },
-      { label: "General", href: "/configure", icon: Settings },
-    ],
+    label: "Content",
+    icon: Package,
+    children: [
+      { label: "Media Library", href: "/content/library", icon: Image },
+      { label: "Moderation", href: "/content/moderation", icon: Shield },
+      { label: "Templates", href: "/content/templates", icon: FileText }
+    ]
   },
+  { 
+    label: "Billing", 
+    href: "/billing", 
+    icon: CreditCard 
+  },
+  { 
+    label: "Settings", 
+    href: "/settings", 
+    icon: Settings 
+  }
 ];
 
 export default function AppSidebar() {
   const pathname = usePathname();
   const isApp = useMemo(() => APP_PREFIXES.some((p) => pathname?.startsWith(p)), [pathname]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const drawerRef = useRef<HTMLDivElement>(null);
   const openBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Enable SSE (we're in app only) to update counters globally
+  // Enable SSE for real-time updates
   useSSE(true);
 
-  // Flag body so global CSS can indent main on desktop
+  // Auto-expand active sections
+  useEffect(() => {
+    const expanded: string[] = [];
+    NAV_SECTIONS.forEach(section => {
+      if (section.children) {
+        const hasActiveChild = section.children.some(child => 
+          pathname === child.href || pathname?.startsWith(child.href + "/")
+        );
+        if (hasActiveChild) {
+          expanded.push(section.label);
+        }
+      }
+    });
+    setExpandedItems(expanded);
+  }, [pathname]);
+
+  // Flag body for CSS
   useEffect(() => {
     if (!isApp) return;
     document.body.dataset.appShell = "true";
@@ -93,128 +164,149 @@ export default function AppSidebar() {
     };
   }, [isApp]);
 
-  // Mobile drawer a11y: ESC to close, focus trap, restore focus
+  // Mobile drawer a11y
   useEffect(() => {
     if (!drawerOpen) return;
     const prevFocused = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDrawerOpen(false);
-      if (e.key !== "Tab") return;
-      const root = drawerRef.current;
-      if (!root) return;
-      const focusables = root.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
-      if (focusables.length === 0) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      const active = document.activeElement as HTMLElement | null;
-      if (e.shiftKey) {
-        if (active === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (active === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
     };
     document.addEventListener("keydown", onKey);
-    // Scroll lock and initial focus
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const focusFirst = () => {
-      const root = drawerRef.current;
-      if (!root) return;
-      const first = root.querySelector<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
-      first?.focus();
-    };
-    setTimeout(focusFirst, 0);
-    // Hide main content from screen readers
-    const mainEl = document.querySelector('main');
-    const headerEl = document.querySelector('header');
-    const prevMainHidden = mainEl?.getAttribute('aria-hidden') || null;
-    const prevHeaderHidden = headerEl?.getAttribute('aria-hidden') || null;
-    mainEl?.setAttribute('aria-hidden', 'true');
-    headerEl?.setAttribute('aria-hidden', 'true');
+    
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
-      if (prevMainHidden === null) mainEl?.removeAttribute('aria-hidden'); else mainEl?.setAttribute('aria-hidden', prevMainHidden);
-      if (prevHeaderHidden === null) headerEl?.removeAttribute('aria-hidden'); else headerEl?.setAttribute('aria-hidden', prevHeaderHidden);
       (openBtnRef.current ?? prevFocused)?.focus();
     };
   }, [drawerOpen]);
 
   if (!isApp) return null;
 
-  const NavList = (
-    <nav className="mt-3" aria-label="App Navigation">
-      {NAV_SECTIONS.map((section) => (
-        <div key={section.label} className="mb-3">
-          <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-            {section.label}
-          </div>
-          <div className="space-y-1">
-            {section.items.map((item) => {
-              const active = pathname === item.href || pathname?.startsWith(item.href + "/");
-              const Icon = item.icon;
-              const count = item.badge
-                ? useSSECounter({
-                    url: item.badge.type === "unread" ? `${item.badge.url}?sse=1` : item.badge.url,
-                    eventName: item.badge.type === "unread" ? "unread" : "alerts",
-                  })
-                : 0;
-              return (
-                <Link key={item.href} href={item.href} className="block">
-                  <div
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                      active
-                        ? "bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
-                    }`}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    <Icon aria-hidden className={`w-5 h-5 ${active ? "text-purple-700" : "text-gray-500 dark:text-gray-400"}`} />
-                    <span className="font-medium truncate flex-1">{item.label}</span>
-                    {item.badge && count > 0 ? (
-                      <span
-                        className="ml-auto min-w-[18px] h-[18px] px-1 text-[10px] leading-[18px] text-white bg-red-500 rounded-full text-center"
-                        role="status"
-                        aria-label={`${count} ${item.badge.type === "unread" ? "nouveaux messages" : "alertes"}`}
-                        suppressHydrationWarning
-                      >
-                        {count > 99 ? "99+" : count}
-                      </span>
-                    ) : null}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+  const toggleExpanded = (label: string) => {
+    setExpandedItems(prev => 
+      prev.includes(label) 
+        ? prev.filter(item => item !== label)
+        : [...prev, label]
+    );
+  };
+
+  const renderNavItem = (item: NavItem, depth = 0) => {
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedItems.includes(item.label);
+    const Icon = item.icon;
+    
+    if (hasChildren) {
+      return (
+        <div key={item.label}>
+          <button
+            onClick={() => toggleExpanded(item.label)}
+            className={`nav-item w-full text-left ${depth > 0 ? 'pl-8' : ''}`}
+          >
+            <Icon aria-hidden className="nav-item-icon" />
+            <span className="nav-item-label">{item.label}</span>
+            <motion.div
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="ml-auto"
+            >
+              <ChevronRight className="w-4 h-4 text-content-tertiary" />
+            </motion.div>
+          </button>
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                {item.children?.map(child => renderNavItem(child, depth + 1))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      ))}
+      );
+    }
+
+    const active = pathname === item.href || pathname?.startsWith(item.href + "/");
+    const count = item.badge
+      ? useSSECounter({
+          url: item.badge.type === "unread" ? `${item.badge.url}?sse=1` : item.badge.url,
+          eventName: item.badge.type === "unread" ? "unread" : "alerts",
+        })
+      : 0;
+
+    return (
+      <Link key={item.label} href={item.href!}>
+        <div
+          className={`nav-item ${active ? "active" : ""} ${depth > 0 ? 'pl-8' : ''}`}
+          aria-current={active ? "page" : undefined}
+        >
+          <Icon aria-hidden className="nav-item-icon" />
+          <span className="nav-item-label">{item.label}</span>
+          {item.badge && count > 0 && (
+            <span
+              className={`nav-badge ${count > 0 ? "nav-badge-pulse" : ""}`}
+              role="status"
+              aria-label={`${count} ${item.badge.type === "unread" ? "new messages" : "alerts"}`}
+              suppressHydrationWarning
+            >
+              {count > 99 ? "99+" : count}
+            </span>
+          )}
+        </div>
+      </Link>
+    );
+  };
+
+  const NavList = (
+    <nav className="nav-content" aria-label="App Navigation">
+      <div className="nav-item-list">
+        {NAV_SECTIONS.map(item => renderNavItem(item))}
+      </div>
     </nav>
   );
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-72 z-40 flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <div className="h-16 px-4 flex items-center border-b border-gray-200 dark:border-gray-800">
-          <Link href="/dashboard" className="flex items-center gap-2" aria-label="Huntaze dashboard">
-            <Image src="/huntaze-logo.png" alt="Huntaze" width={120} height={32} className="h-8 w-auto" />
+      <aside className="app-sidebar">
+        <div className="app-sidebar-header">
+          <Link href="/dashboard" className="app-sidebar-logo" aria-label="Huntaze dashboard">
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-xl">H</span>
+            </div>
+            <span className="text-xl font-bold text-content-primary">Huntaze</span>
           </Link>
         </div>
-        <div className="flex-1 overflow-y-auto px-3 py-3">{NavList}</div>
-        <div className="p-3 border-top border-gray-200 dark:border-gray-800">
-          <Link
-            href="/campaigns/new"
-            className="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg transition-colors"
-          >
-            New Campaign
+        
+        {/* Search Bar */}
+        <div className="px-4 pb-4">
+          <div className="relative">
+            <input
+              type="search"
+              placeholder="Search"
+              className="w-full px-4 py-2 pl-10 bg-surface-light dark:bg-surface border border-border-light dark:border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <svg className="absolute left-3 top-2.5 w-4 h-4 text-content-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <div className="app-sidebar-content">{NavList}</div>
+        
+        {/* Sales Channel Section */}
+        <div className="p-4 border-t border-border-light dark:border-border">
+          <p className="text-xs font-semibold text-content-tertiary mb-2">SALES CHANNELS</p>
+          <Link href="/platforms/connect" className="flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors">
+            <div className="w-6 h-6 border-2 border-dashed border-primary/50 rounded-lg flex items-center justify-center">
+              <span className="text-primary text-xs">+</span>
+            </div>
+            <span>Add platform</span>
           </Link>
         </div>
       </aside>
@@ -223,21 +315,18 @@ export default function AppSidebar() {
       <button
         ref={openBtnRef}
         aria-label="Open menu"
-        className="lg:hidden fixed top-3 left-3 z-40 rounded-lg bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-800 backdrop-blur px-3 py-2 shadow"
+        className="mobile-drawer-trigger"
         onClick={() => setDrawerOpen(true)}
       >
-        <span className="sr-only">Open menu</span>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
+        <Menu className="w-5 h-5" />
       </button>
 
       {/* Mobile drawer */}
       <AnimatePresence>
-        {drawerOpen ? (
+        {drawerOpen && (
           <motion.div className="lg:hidden fixed inset-0 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div
-              className="absolute inset-0 bg-black/40"
+              className="mobile-drawer-overlay"
               onClick={() => setDrawerOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -252,25 +341,60 @@ export default function AppSidebar() {
               animate={{ x: 0 }}
               exit={{ x: -320 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="absolute inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-4 focus:outline-none"
+              className="mobile-drawer"
               tabIndex={-1}
             >
-              <div className="h-10 flex items-center justify-between">
-                <Image src="/huntaze-logo.png" alt="Huntaze" width={110} height={30} className="h-8 w-auto" />
+              <div className="mobile-drawer-header">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">H</span>
+                  </div>
+                  <span className="text-xl font-bold text-content-primary">Huntaze</span>
+                </div>
                 <button
                   aria-label="Close menu"
                   onClick={() => setDrawerOpen(false)}
-                  className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="mobile-drawer-close"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="mt-4">{NavList}</div>
+              
+              {/* Mobile Search */}
+              <div className="px-4 pb-4">
+                <div className="relative">
+                  <input
+                    type="search"
+                    placeholder="Search"
+                    className="w-full px-4 py-2 pl-10 bg-surface-light dark:bg-surface border border-border-light dark:border-border rounded-lg text-sm"
+                  />
+                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-content-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-3 py-4">
+                {NavList}
+              </div>
+              
+              {/* Mobile Sales Channels */}
+              <div className="p-4 border-t border-border-light dark:border-border">
+                <p className="text-xs font-semibold text-content-tertiary mb-2">SALES CHANNELS</p>
+                <Link 
+                  href="/platforms/connect" 
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  <div className="w-6 h-6 border-2 border-dashed border-primary/50 rounded-lg flex items-center justify-center">
+                    <span className="text-primary text-xs">+</span>
+                  </div>
+                  <span>Add platform</span>
+                </Link>
+              </div>
             </motion.aside>
           </motion.div>
-        ) : null}
+        )}
       </AnimatePresence>
     </>
   );

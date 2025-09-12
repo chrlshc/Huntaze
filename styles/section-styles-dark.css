@@ -1,0 +1,200 @@
+/* Section differentiation for Linear-style dark mode */
+
+/* Base section styling */
+.dark-mode section {
+  position: relative;
+  padding: 5rem 0;
+}
+
+/* Hero Section - Gradient background */
+.dark-mode .hero-section,
+.dark-mode section:first-of-type {
+  background: linear-gradient(180deg, 
+    #161616 0%, 
+    #0d0d0d 50%,
+    #0d0d0d 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Trust Bar - Subtle purple tint */
+.dark-mode .trust-bar {
+  background: linear-gradient(90deg,
+    rgba(139, 92, 246, 0.03) 0%,
+    rgba(139, 92, 246, 0.05) 50%,
+    rgba(139, 92, 246, 0.03) 100%
+  );
+  border-top: 1px solid rgba(139, 92, 246, 0.1);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  padding: 2rem 0;
+}
+
+/* Platform Capabilities - Elevated background */
+.dark-mode .platform-capabilities {
+  background: #161616;
+  position: relative;
+}
+
+.dark-mode .platform-capabilities::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+}
+
+/* Proof By Numbers - Dark with purple accent */
+.dark-mode .proof-numbers {
+  background: #0d0d0d;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark-mode .proof-numbers::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -25%;
+  width: 50%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Creator Pain Points - Alternating cards */
+.dark-mode .creator-pain-points {
+  background: #161616;
+}
+
+.dark-mode .pain-point-card:nth-child(odd) {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dark-mode .pain-point-card:nth-child(even) {
+  background: #1f1f1f;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+/* Enterprise Ready - Grid pattern background */
+.dark-mode .enterprise-ready {
+  background: #0d0d0d;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: -1px -1px;
+}
+
+/* ROI Calculator - Interactive section */
+.dark-mode .roi-section {
+  background: linear-gradient(135deg,
+    #161616 0%,
+    rgba(139, 92, 246, 0.02) 100%
+  );
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 24px;
+  margin: 2rem 0;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark-mode .roi-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Final CTA - Strong purple gradient */
+.dark-mode .final-cta-section {
+  background: linear-gradient(135deg,
+    #1a1a1a 0%,
+    rgba(139, 92, 246, 0.15) 50%,
+    #1a1a1a 100%
+  );
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  position: relative;
+}
+
+.dark-mode .final-cta-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(139, 92, 246, 0.3) 50%,
+    transparent 100%
+  );
+}
+
+/* Footer - Darkest section */
+.dark-mode .footer-section {
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Section spacing and transitions */
+.dark-mode section + section {
+  margin-top: -1px; /* Prevent double borders */
+}
+
+/* Hover effects for interactive sections */
+.dark-mode .interactive-section {
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .interactive-section:hover {
+  background-color: rgba(139, 92, 246, 0.02);
+}
+
+/* Floating elements with glass effect */
+.dark-mode .glass-card {
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Divider styles between sections */
+.dark-mode .section-divider {
+  height: 80px;
+  background: linear-gradient(180deg,
+    #0d0d0d 0%,
+    #161616 50%,
+    #0d0d0d 100%
+  );
+  position: relative;
+}
+
+.dark-mode .section-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(139, 92, 246, 0.2) 50%,
+    transparent 100%
+  );
+  transform: translateY(-50%);
+}
