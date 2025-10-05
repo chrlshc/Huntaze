@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://app.huntaze.com/api';
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -24,4 +24,3 @@ export async function GET(request: NextRequest) {
   // Redirect to target
   return NextResponse.redirect(to, { status: 302 });
 }
-

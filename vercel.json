@@ -2,8 +2,8 @@
   "framework": "nextjs",
   "cleanUrls": true,
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://api.huntaze.com",
-    "NEXT_PUBLIC_APP_URL": "https://huntaze.com"
+    "NEXT_PUBLIC_API_URL": "https://app.huntaze.com/api",
+    "NEXT_PUBLIC_APP_URL": "https://app.huntaze.com"
   },
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://api.huntaze.com/api/:path*" }
