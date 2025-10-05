@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mergeOnboarding } from '@/app/api/_store/onboarding';
+import { withMonitoring } from '@/lib/observability/bootstrap';
 
-export async function POST(request: NextRequest) {
+export const runtime = 'nodejs';
+
+async function handler(request: NextRequest) {
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value || 'dev-user';
     const body = await request.json();
@@ -26,3 +29,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export const POST = withMonitoring('onboarding.save-playbook-draft', handler as any);

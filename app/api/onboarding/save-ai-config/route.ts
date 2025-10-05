@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mergeOnboarding, markStep } from '@/app/api/_store/onboarding';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { withMonitoring } from '@/lib/observability/bootstrap';
 
-export async function POST(request: NextRequest) {
+export const runtime = 'nodejs';
+
+async function handler(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const config = await request.json();
 
@@ -9,9 +16,9 @@ export async function POST(request: NextRequest) {
     const requiredFields = ['tone', 'responseSpeed', 'contentTypes', 'personalityTraits'] as const;
     for (const field of requiredFields) {
       if (!config[field]) {
-        return NextResponse.json({ 
-          error: `Missing required field: ${field}` 
-        }, { status: 400 });
+        const r = NextResponse.json({ error: `Missing required field: ${field}`, requestId }, { status: 400 });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
       }
     }
 
@@ -40,13 +47,20 @@ export async function POST(request: NextRequest) {
     // 2. Train AI model with samples
     // 3. Configure automation rules
 
-    return NextResponse.json({ 
+    const r = NextResponse.json({ 
       success: true,
       message: 'AI configuration saved and training initiated',
-      estimatedTrainingTime: '2-3 minutes'
+      estimatedTrainingTime: '2-3 minutes',
+      requestId,
     });
-  } catch (error) {
-    console.error('Error saving AI config:', error);
-    return NextResponse.json({ error: 'Failed to save configuration' }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('onboarding_save_ai_config_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to save configuration', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
+
+export const POST = withMonitoring('onboarding.save-ai-config', handler as any);

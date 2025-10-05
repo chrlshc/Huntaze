@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mergeOnboarding } from '@/app/api/_store/onboarding';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { withMonitoring } from '@/lib/observability/bootstrap';
 
-export async function POST(request: NextRequest) {
+export const runtime = 'nodejs';
+
+async function handler(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const body = await request.json();
     const { selectedTests, niche } = body || {};
 
     if (!Array.isArray(selectedTests) || !niche) {
-      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+      const r = NextResponse.json({ error: 'Invalid payload', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value || 'dev-user';
@@ -21,10 +30,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Failed to save AB tests:', error);
-    return NextResponse.json({ error: 'Failed to save tests' }, { status: 500 });
+    const r = NextResponse.json({ success: true, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('onboarding_save_ab_tests_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to save tests', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
+export const POST = withMonitoring('onboarding.save-ab-tests', handler as any);
