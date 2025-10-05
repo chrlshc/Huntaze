@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
+import { withMonitoring } from '@/lib/observability/bootstrap'
+
+export const runtime = 'nodejs'
 
 // Mock ingestion of OnlyFans stats to drive auto-calibration rules
 // In production, this would read creator analytics and return structured KPIs
 
-export async function GET() {
+async function handler() {
   // Simple deterministic mock for now
   const mock = {
     ppvAnchor: 20, // typical historical PPV that converts well
@@ -19,3 +22,4 @@ export async function GET() {
   return NextResponse.json(mock)
 }
 
+export const GET = withMonitoring('onboarding.mock-ingest', handler as any)
