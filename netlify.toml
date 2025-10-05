@@ -3,8 +3,8 @@
   publish = ".next"
 
 [build.environment]
-  NEXT_PUBLIC_API_URL = "https://api.huntaze.com"
-  NEXT_PUBLIC_APP_URL = "https://huntaze.com"
+  NEXT_PUBLIC_API_URL = "https://app.huntaze.com/api"
+  NEXT_PUBLIC_APP_URL = "https://app.huntaze.com"
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = "pk_live_51RxE912KbmGn7DBK56bX8wioig3vLUAGDKmjRScketMFKJrRYjlXWG81WJAn97opJWPd1XZVaI9VhNDejoBbvLJF00AyA6grdI"
 
 [[plugins]]

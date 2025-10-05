@@ -10,7 +10,7 @@ async function handler(request: NextRequest) {
   const log = makeReqLogger({ requestId });
   try {
     const { platform, action } = await request.json();
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
 
     if (action === 'connect') {
       const platformRoutes: Record<string, string> = {
