@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { markCompleted } from '@/app/api/_store/onboarding';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { withMonitoring } from '@/lib/observability/bootstrap';
 
-export async function POST(request: NextRequest) {
+export const runtime = 'nodejs';
+
+async function handler(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   const authToken = cookies().get('auth_token')?.value || cookies().get('access_token')?.value;
   
   if (!authToken) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 
   try {
@@ -31,10 +40,10 @@ export async function POST(request: NextRequest) {
         });
         if (!resp.ok) {
           // Log but continue to set local cookie for frontend gating
-          console.warn('Backend onboarding update failed');
+          log.warn('onboarding_backend_update_failed');
         }
       } catch (e) {
-        console.log('Backend not reachable for onboarding completion');
+        log.warn('onboarding_backend_unreachable');
       }
     }
 
@@ -42,16 +51,21 @@ export async function POST(request: NextRequest) {
     try { markCompleted(authToken); } catch {}
 
     // Return a response that also sets the bypass cookie used by middleware
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true, requestId });
     response.cookies.set('onboarding_completed', 'true', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 30, // 30 days
     });
+    response.headers.set('X-Request-Id', requestId);
     return response;
-  } catch (error) {
-    console.error('Error completing onboarding:', error);
-    return NextResponse.json({ error: 'Failed to complete onboarding' }, { status: 500 });
+  } catch (error: any) {
+    log.error('onboarding_complete_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to complete onboarding', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
+
+export const POST = withMonitoring('onboarding.complete', handler as any);
