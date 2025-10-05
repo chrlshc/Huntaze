@@ -8,8 +8,8 @@ frontend:
     build:
       commands:
         # Set environment variables for build
-        - export NEXT_PUBLIC_APP_URL=https://huntaze.com
-        - export NEXT_PUBLIC_API_URL=https://api.huntaze.com/api
+        - export NEXT_PUBLIC_APP_URL=https://app.huntaze.com
+        - export NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
         # Speed up CI builds (skip lint + TS typecheck) and reduce noise
         - export NEXT_DISABLE_ESLINT=1
         - export NEXT_PRIVATE_SKIP_TYPECHECK=true
