@@ -67,6 +67,7 @@ export const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
     items: [
       { label: "Campaigns", href: "/campaigns", icon: Target },
       { label: "AI Automations", href: "/automations", icon: Zap },
+      { label: "Huntaze AI", href: "/dashboard/huntaze-ai", icon: Zap },
       {
         label: "Analytics",
         href: "/analytics",
