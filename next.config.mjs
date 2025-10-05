@@ -14,6 +14,8 @@ const nextConfig = {
   // Minimal rewrites
   async rewrites() {
     return [
+      // Stable alias: keep /app/huntaze-ai URL, serve dashboard chat
+      { source: '/app/huntaze-ai', destination: '/dashboard/huntaze-ai' },
       { source: '/terms', destination: '/terms-of-service' },
       { source: '/privacy', destination: '/privacy-policy' },
       // Align header links to existing pages
@@ -34,8 +36,8 @@ const nextConfig = {
   // CSS and build perf
   experimental: {
     optimizeCss: true,
-    // Optimize for Core Web Vitals (avoid wildcards to prevent bundling issues)
-    optimizePackageImports: ['framer-motion', 'lucide-react'],
+    // Disable optimizePackageImports to avoid dev chunk errors with RSC boundaries
+    // optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
   
   // Performance optimizations

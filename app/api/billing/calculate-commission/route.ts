@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth/request';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { withMonitoring } from '@/lib/observability/bootstrap';
+
+export const runtime = 'nodejs';
 
 // Commission structure based on pricing page
 const COMMISSION_TIERS = {
@@ -32,11 +37,26 @@ const COMMISSION_TIERS = {
   },
 };
 
-export async function POST(request: NextRequest) {
+async function handler(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    const userId = user.userId as string;
+    // Allow internal/system invocations (EventBridge/API Destination, Cron) using a shared key
+    const apiKey = request.headers.get('x-api-key');
+    const cronSecret = request.headers.get('x-cron-secret') || request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
+    const allowInternal = (apiKey && apiKey === process.env.EVENTBRIDGE_API_KEY) || (cronSecret && cronSecret === process.env.CRON_SECRET);
+
+    // Otherwise require an authenticated user
+    let userId: string | null = null;
+    if (!allowInternal) {
+      const user = await getUserFromRequest(request);
+      if (!user?.userId) {
+        const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
+      }
+      userId = user.userId as string;
+    }
 
     const { monthlyRevenue, subscriptionTier, accountAge } = await request.json();
 
@@ -52,7 +72,9 @@ export async function POST(request: NextRequest) {
     const tier = COMMISSION_TIERS[subscriptionTier as keyof typeof COMMISSION_TIERS];
     
     if (!tier) {
-      return NextResponse.json({ error: 'Invalid subscription tier' }, { status: 400 });
+      const r = NextResponse.json({ error: 'Invalid subscription tier', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     breakdown.basePrice = tier.basePrice;
@@ -63,7 +85,11 @@ export async function POST(request: NextRequest) {
       if (monthlyRevenue < tier.freeMonths.threshold) {
         breakdown.notes.push(`Free month (revenue < $${tier.freeMonths.threshold})`);
         breakdown.total = 0;
-        return NextResponse.json(breakdown);
+        {
+          const r = NextResponse.json({ ...breakdown, requestId });
+          r.headers.set('X-Request-Id', requestId);
+          return r;
+        }
       }
 
       // Apply grace period if within 90 days
@@ -101,9 +127,15 @@ export async function POST(request: NextRequest) {
     breakdown.commission = Math.round(commission * 100) / 100; // Round to cents
     breakdown.total = breakdown.basePrice + breakdown.commission;
 
-    return NextResponse.json(breakdown);
-  } catch (error) {
-    console.error('Commission calculation error:', error);
-    return NextResponse.json({ error: 'Failed to calculate commission' }, { status: 500 });
+    const r = NextResponse.json({ ...breakdown, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('commission_calculation_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to calculate commission', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
+
+export const POST = withMonitoring('billing.calculate-commission', handler as any);
