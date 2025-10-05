@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mergeOnboarding, markStep } from '@/app/api/_store/onboarding';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { withMonitoring } from '@/lib/observability/bootstrap';
 
-export async function POST(request: NextRequest) {
+export const runtime = 'nodejs';
+
+async function handler(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     // In dev mode, skip auth check
     const DEV_MODE = true;
@@ -29,12 +36,19 @@ export async function POST(request: NextRequest) {
     });
     markStep(token, 'profile');
 
-    return NextResponse.json({ 
+    const r = NextResponse.json({ 
       success: true,
-      message: 'Profile saved successfully'
+      message: 'Profile saved successfully',
+      requestId,
     });
-  } catch (error) {
-    console.error('Error saving profile:', error);
-    return NextResponse.json({ error: 'Failed to save profile' }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('onboarding_save_profile_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to save profile', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
+
+export const POST = withMonitoring('onboarding.save-profile', handler as any);

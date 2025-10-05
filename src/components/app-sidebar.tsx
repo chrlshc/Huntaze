@@ -91,7 +91,7 @@ export const NAV_SECTIONS: NavItem[] = [
     label: "AI Assistant",
     icon: Bot,
     children: [
-      { label: "Chat Automation", href: "/ai/chat", icon: MessageSquare },
+      { label: "Chat Automation", href: "/dashboard/huntaze-ai", icon: MessageSquare },
       { label: "Content Generator", href: "/ai/content", icon: FileText },
       { label: "Training", href: "/ai/training", icon: Bot },
       { label: "Quick Replies", href: "/ai/replies", icon: Zap }
