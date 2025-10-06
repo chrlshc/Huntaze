@@ -1,11 +1,11 @@
-// Authentication configuration
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://app.huntaze.com/api';
+// Authentication configuration: call our internal API route handlers
+const API_BASE = '/api';
 
 // OAuth URLs - Now handled by the backend
 export const getOAuthUrl = (provider: 'google') => {
   switch (provider) {
     case 'google':
-      return `${API_URL}/api/auth/google`;
+      return `${API_BASE}/auth/google`;
     
     default:
       throw new Error('Invalid provider');
