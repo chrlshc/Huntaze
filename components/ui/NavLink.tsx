@@ -10,7 +10,7 @@ export default function NavLink({ href, children }: { href: string; children: Re
 
   const cls = [
     "block rounded px-2 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2",
-    "ring-[rgb(var(--color-brand-600))] ring-offset-2 ring-offset-[rgb(var(--color-ring-offset))]",
+    "ring-[rgb(var(--color-brand-300))] ring-offset-2 ring-offset-[rgb(var(--color-ring-offset))]",
     // hover variants per sidebar skin
     "[data-sidebar-skin=white]:hover:bg-black/[0.04]",
     "[data-sidebar-skin=violet]:hover:bg-white/10",
@@ -27,4 +27,3 @@ export default function NavLink({ href, children }: { href: string; children: Re
     </Link>
   );
 }
-

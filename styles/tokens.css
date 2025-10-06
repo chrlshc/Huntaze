@@ -1,7 +1,9 @@
 :root {
-  /* Brand (temporary defaults; swap with exact logo hex when ready) */
-  --color-brand-600: 124 58 237;  /* #7C3AED */
-  --color-brand-700: 109 40 217;  /* #6D28D9 */
+  /* Brand (from logo palette) */
+  /* base logo ~ #26073F (R38 G7 B63) kept for reference */
+  --color-brand-300: 124 106 139; /* #7C6A8B */
+  --color-brand-600: 103 81 120;  /* #675178 */
+  --color-brand-700: 81 56 101;   /* #513865 */
 
   /* Surfaces */
   --color-header-bg: 12 12 12;      /* #0C0C0C */
@@ -38,4 +40,3 @@ html.dark {
   --color-ring-offset: 17 24 39;  
 }
 */
-
