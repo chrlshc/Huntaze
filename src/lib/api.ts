@@ -1,8 +1,6 @@
 // Using native fetch instead of axios
-// NEXT_PUBLIC_API_URL should be the full API base URL including /api if needed
-// For local: http://localhost:4000/api
-// For production: https://api.huntaze.com
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api').replace(/\/$/, '');
+// Always call our internal Next.js route handlers under /api to leverage cookies and avoid CORS
+const API_BASE_URL = '/api';
 
 class ApiClient {
   private baseURL: string;
@@ -12,16 +10,13 @@ class ApiClient {
   }
 
   private async request(path: string, options: RequestInit = {}) {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-
     const headers = {
       ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     } as Record<string, string>;
 
     try {
-      const response = await fetch(`${this.baseURL}${path}`, {
+      const response = await fetch(`${this.baseURL}${path.startsWith('/') ? '' : '/'}${path}`, {
         ...options,
         headers,
         credentials: 'include',

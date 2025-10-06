@@ -4,13 +4,14 @@ import { markCompleted } from '@/app/api/_store/onboarding';
 import crypto from 'crypto';
 import { makeReqLogger } from '@/lib/logger';
 import { withMonitoring } from '@/lib/observability/bootstrap';
+import { upstream } from '@/app/api/_lib/upstream';
 
 export const runtime = 'nodejs';
 
 async function handler(request: NextRequest) {
   const requestId = crypto.randomUUID();
   const log = makeReqLogger({ requestId });
-  const authToken = cookies().get('auth_token')?.value || cookies().get('access_token')?.value;
+  const authToken = cookies().get('access_token')?.value;
   
   if (!authToken) {
     const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
@@ -20,31 +21,23 @@ async function handler(request: NextRequest) {
 
   try {
     // Attempt to update onboarding status in backend if configured
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (apiUrl) {
-      try {
-        const resp = await fetch(`${apiUrl}/users/onboarding`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`,
-          },
-          body: JSON.stringify({
-            profileSetup: true,
-            businessSetup: true,
-            platformsSetup: true,
-            aiSetup: true,
-            planSetup: true,
-            completed: true
-          }),
-        });
-        if (!resp.ok) {
-          // Log but continue to set local cookie for frontend gating
-          log.warn('onboarding_backend_update_failed');
-        }
-      } catch (e) {
-        log.warn('onboarding_backend_unreachable');
+    try {
+      const resp = await upstream('/users/onboarding', {
+        method: 'PUT',
+        body: JSON.stringify({
+          profileSetup: true,
+          businessSetup: true,
+          platformsSetup: true,
+          aiSetup: true,
+          planSetup: true,
+          completed: true,
+        }),
+      });
+      if (!resp.ok) {
+        log.warn('onboarding_backend_update_failed');
       }
+    } catch (e) {
+      log.warn('onboarding_backend_unreachable');
     }
 
     // Update local in-memory status for demo/dev
@@ -55,7 +48,8 @@ async function handler(request: NextRequest) {
     response.cookies.set('onboarding_completed', 'true', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24 * 30, // 30 days
     });
     response.headers.set('X-Request-Id', requestId);
