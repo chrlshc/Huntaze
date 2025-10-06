@@ -1,24 +1,17 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://app.huntaze.com/api';
+// Route all client requests through our Next.js Route Handlers
+const API_URL = '/api';
 
 class ApiClient {
-  private token: string | null = null;
-
-  constructor() {
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('token');
-    }
-  }
+  constructor() {}
 
   private async request(endpoint: string, options: RequestInit = {}) {
     const headers = new Headers(options.headers as HeadersInit);
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
-    if (this.token && !headers.has('Authorization')) {
-      headers.set('Authorization', `Bearer ${this.token}`);
-    }
+    // Auth is handled by HttpOnly cookies; no client-side token header
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const response = await fetch(`${API_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`, {
       ...options,
       headers,
       credentials: 'include',
