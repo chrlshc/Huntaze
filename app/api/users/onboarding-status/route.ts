@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { upstream } from '@/app/api/_lib/upstream';
 import {
   getOnboarding,
   getOrInitStatus,
   mergeOnboarding,
 } from '@/app/api/_store/onboarding';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+// Use configured API base only; no localhost fallback
 
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -32,12 +33,7 @@ export async function GET(request: NextRequest) {
 
     // Try to fetch from backend
     try {
-      const resp = await fetch(`${API_URL}/users/onboarding-status`, {
-        headers: { Authorization: `Bearer ${token}` },
-        credentials: 'include',
-        cache: 'no-store',
-      });
-
+      const resp = await upstream('/users/onboarding-status', { method: 'GET' });
       if (resp.ok) {
         const data = await resp.json();
         mergeOnboarding(token, { status: data });
@@ -56,7 +52,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('access_token')?.value;
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -65,19 +61,12 @@ export async function PUT(request: NextRequest) {
 
     // Try to update backend first
     try {
-      const resp = await fetch(`${API_URL}/users/onboarding-status`, {
+      const resp = await upstream('/users/onboarding-status', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: 'include',
         body: JSON.stringify(payload),
       });
-
       if (resp.ok) {
         const data = await resp.json();
-        // Merge local snapshot
         mergeOnboarding(token, { status: { ...(getOnboarding(token)?.status || {}), ...payload } });
         return NextResponse.json(data, { status: resp.status });
       }
