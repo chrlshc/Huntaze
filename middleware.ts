@@ -3,20 +3,18 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
   // Local dev convenience: disable auth checks on localhost/non-production
   const host = request.nextUrl.hostname;
   const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
-  if (DEV_MODE) {
-    return NextResponse.next();
-  }
-  
-  // Get auth token (prefer new cookie, keep legacy compatibility)
-  const authToken = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
-  
-  // Protected routes that require authentication
-  const protectedRoutes = [
+  if (DEV_MODE) return NextResponse.next();
+
+  // Single auth cookie
+  const token = request.cookies.get('access_token')?.value;
+
+  // Gating based on protected prefixes
+  const protectedPrefixes = [
     '/dashboard',
     '/profile',
     '/settings',
@@ -27,75 +25,53 @@ export async function middleware(request: NextRequest) {
     '/fans',
     '/platforms',
     '/billing',
-    '/social'
+    '/social',
   ];
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  
-  // Onboarding route
-  const isOnboardingRoute = pathname.startsWith('/onboarding');
-  
-  // Auth routes (including OAuth callbacks)
-  const authRoutes = ['/auth', '/join'];
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
-  
-  // OAuth routes that should bypass onboarding check
-  const oauthRoutes = ['/auth/tiktok', '/auth/instagram', '/auth/reddit', '/auth/google'];
-  const isOAuthRoute = oauthRoutes.some(route => pathname.startsWith(route));
-  
-  // Test routes that should bypass onboarding check
-  const testRoutes = ['/test-', '/tiktok-diagnostic', '/debug-'];
-  const isTestRoute = testRoutes.some(route => pathname.includes(route));
-  
-  // If no auth token and trying to access protected route, redirect to auth
-  if (!authToken && (isProtectedRoute || isOnboardingRoute)) {
+
+  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
+  const isOnboarding = pathname.startsWith('/onboarding');
+  const isAuth = pathname.startsWith('/auth') || pathname.startsWith('/join');
+  const isOAuth = ['/auth/tiktok', '/auth/instagram', '/auth/reddit', '/auth/google'].some((r) => pathname.startsWith(r));
+  const isTest = pathname.includes('/test-') || pathname.includes('/tiktok-diagnostic') || pathname.includes('/debug-');
+
+  // Not authenticated → redirect to auth for protected/onboarding
+  if (!token && (isProtected || isOnboarding)) {
     return NextResponse.redirect(new URL('/auth', request.url));
   }
-  
-  // If authenticated and accessing protected routes (not onboarding, OAuth, or test routes)
-  if (authToken && isProtectedRoute && !isOAuthRoute && !isTestRoute) {
-    // Check if onboarding is bypassed
-    const onboardingCompleted = request.cookies.get('onboarding_completed')?.value;
-    
-    if (!onboardingCompleted) {
-      try {
-        // Check onboarding status
-        const response = await fetch(new URL('/api/users/onboarding-status', request.url), {
-          headers: {
-            // forward whichever cookie we have
-            Cookie: `${request.cookies.get('access_token') ? 'access_token' : 'auth_token'}=${authToken}`,
-          },
-        });
-        
-        if (response.ok) {
-          const status = await response.json();
-          
-          // If onboarding not completed, redirect to onboarding
-          if (!status.completed) {
-            return NextResponse.redirect(new URL('/onboarding/setup', request.url));
-          }
-        }
-      } catch (error) {
-        console.error('Failed to check onboarding status:', error);
-      }
+
+  // Authenticated → enforce onboarding cookie except OAuth/test routes
+  if (token && isProtected && !isOAuth && !isTest) {
+    const onboarded = request.cookies.get('onboarding_completed')?.value === 'true';
+    if (!onboarded) {
+      const to = new URL('/onboarding', request.url);
+      to.searchParams.set('next', pathname);
+      return NextResponse.redirect(to);
     }
   }
-  
-  // If authenticated and trying to access auth routes, redirect to dashboard
-  if (authToken && isAuthRoute && !isOAuthRoute) {
+
+  // Authenticated visiting auth routes → redirect to app
+  if (token && isAuth && !isOAuth) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-  
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - api routes
-     * - static files
-     * - public files
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|static).*)',
+    '/dashboard/:path*',
+    '/profile/:path*',
+    '/settings/:path*',
+    '/configure/:path*',
+    '/analytics/:path*',
+    '/messages/:path*',
+    '/campaigns/:path*',
+    '/fans/:path*',
+    '/platforms/:path*',
+    '/billing/:path*',
+    '/social/:path*',
+    '/onboarding/:path*',
+    '/auth/:path*',
+    '/join/:path*',
   ],
 };
