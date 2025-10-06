@@ -10,6 +10,26 @@ export async function middleware(request: NextRequest) {
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
   if (DEV_MODE) return NextResponse.next();
 
+  // Staging bypass: allow viewing app pages without auth on staging hosts
+  const isStagingHost = host.startsWith('staging.');
+  const bypassEnv = process.env.STAGING_AUTH_BYPASS === 'true';
+  const bypassCookie = request.cookies.get('staging_bypass')?.value === '1';
+  const bypassParam = request.nextUrl.searchParams.get('bypassstaging') === '1';
+  if (isStagingHost && (bypassEnv || bypassCookie || bypassParam)) {
+    if (bypassParam) {
+      const res = NextResponse.next();
+      res.cookies.set('staging_bypass', '1', {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
+      return res;
+    }
+    return NextResponse.next();
+  }
+
   // Single auth cookie
   const token = request.cookies.get('access_token')?.value;
 
