@@ -1,3 +1,4 @@
+import '../styles/tokens.css';
 import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
@@ -45,8 +46,13 @@ import MobileForceLightCSS from "@/components/MobileForceLightCSS";
 // import AppSidebar from "@/src/components/app-sidebar";
 
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+if (!APP_URL) {
+  throw new Error('NEXT_PUBLIC_APP_URL not configured');
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
+  metadataBase: new URL(APP_URL),
   title: "Huntaze - Double Your Revenue, Half the Work",
   description: "Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI.",
   keywords: "OnlyFans automation, creator growth, AI assistant, unified inbox, revenue analytics, productivity",

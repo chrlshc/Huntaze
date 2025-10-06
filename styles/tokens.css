@@ -1,0 +1,41 @@
+:root {
+  /* Brand (temporary defaults; swap with exact logo hex when ready) */
+  --color-brand-600: 124 58 237;  /* #7C3AED */
+  --color-brand-700: 109 40 217;  /* #6D28D9 */
+
+  /* Surfaces */
+  --color-header-bg: 12 12 12;      /* #0C0C0C */
+  --color-header-fg: 255 255 255;   /* #FFFFFF */
+  --color-content-bg: 255 255 255;  /* #FFFFFF */
+
+  /* Sidebar (default white) */
+  --color-sidebar-bg: 255 255 255;  /* #FFFFFF */
+  --color-sidebar-fg: 17 24 39;     /* #111827 */
+
+  /* Focus ring offset surface (light by default) */
+  --color-ring-offset: 255 255 255; /* #FFFFFF */
+}
+
+/* Optional: violet sidebar variant */
+[data-sidebar-skin="violet"] {
+  --color-sidebar-bg: var(--color-brand-700);
+  --color-sidebar-fg: 255 255 255;
+}
+
+/* Optional: when on a dark surface (e.g., header) */
+[data-surface="dark"] {
+  --color-ring-offset: 12 12 12;    /* #0C0C0C */
+}
+
+/* Dark scheme scaffolding (not enabled by default) */
+/*
+html.dark {
+  --color-header-bg: 12 12 12;
+  --color-header-fg: 255 255 255;
+  --color-content-bg: 17 24 39;   
+  --color-sidebar-bg: 31 41 55;   
+  --color-sidebar-fg: 255 255 255;
+  --color-ring-offset: 17 24 39;  
+}
+*/
+
