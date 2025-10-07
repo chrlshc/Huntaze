@@ -4,6 +4,7 @@ frontend:
     preBuild:
       commands:
         - nvm use 20 || echo "Using default Node"
+        - cd huntaze-new
         - npm ci
     build:
       commands:
@@ -16,13 +17,13 @@ frontend:
         - export NEXT_TELEMETRY_DISABLED=1
         - npm run build
   artifacts:
-    baseDirectory: .next
+    baseDirectory: huntaze-new/.next
     files:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
-      - .next/cache/**/*
+      - huntaze-new/node_modules/**/*
+      - huntaze-new/.next/cache/**/*
   customHeaders:
     - pattern: '**/*'
       headers:
