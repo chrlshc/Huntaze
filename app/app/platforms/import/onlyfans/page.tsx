@@ -1,2 +1,1 @@
-export { default } from '../../../../../platforms/import/onlyfans/page'
-
+export { default } from '../../../../platforms/import/onlyfans/page'
