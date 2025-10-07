@@ -83,7 +83,7 @@ export async function middleware(request: NextRequest) {
 
   // Authenticated visiting auth routes → redirect to app
   if (token && isAuth && !isOAuth) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/app/app/dashboard', request.url));
   }
 
   return NextResponse.next();
