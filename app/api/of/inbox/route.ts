@@ -52,6 +52,9 @@ const querySchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'OF inbox endpoint not available in production yet' }, { status: 501 });
+    }
     const session = await getServerSession();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
