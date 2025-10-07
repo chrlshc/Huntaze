@@ -1,2 +1,1 @@
-export { default } from '../../../../of-analytics/page'
-
+export { default } from '../../../of-analytics/page'

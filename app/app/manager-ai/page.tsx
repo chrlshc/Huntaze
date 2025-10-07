@@ -1,2 +1,1 @@
-export { default } from '../../../(app)/dashboard/huntaze-ai/page'
-
+export { default } from '../../(app)/dashboard/huntaze-ai/page'

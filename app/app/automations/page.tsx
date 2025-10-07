@@ -1,2 +1,1 @@
-export { default } from '../../../automations/page'
-
+export { default } from '../../automations/page'
