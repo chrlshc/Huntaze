@@ -10,14 +10,25 @@ export async function middleware(request: NextRequest) {
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
   if (DEV_MODE) return NextResponse.next();
 
-  // Staging: treat like production (no bypass)
+  // Staging: allow full bypass of auth gates for easier QA
+  // You can toggle by domain or env var on Amplify
+  const forwardedHost = request.headers.get('x-forwarded-host') || host;
+  const isStagingDomain =
+    forwardedHost === 'staging.huntaze.com' ||
+    (forwardedHost?.startsWith('staging.') && forwardedHost?.endsWith('.amplifyapp.com'));
+  const envBypass =
+    process.env.STAGING_BYPASS_AUTH === 'true' ||
+    process.env.NEXT_PUBLIC_STAGING_BYPASS_AUTH === 'true';
+  if (isStagingDomain || envBypass) {
+    return NextResponse.next();
+  }
 
   // Single auth cookie
   const token = request.cookies.get('access_token')?.value;
 
   // Gating based on protected prefixes
   const protectedPrefixes = [
-    '/app/app',
+    // canonical
     '/dashboard',
     '/profile',
     '/settings',
@@ -29,6 +40,25 @@ export async function middleware(request: NextRequest) {
     '/platforms',
     '/billing',
     '/social',
+    // legacy nested
+    '/app/app',
+    // alias under /app/*
+    '/app/dashboard',
+    '/app/profile',
+    '/app/settings',
+    '/app/configure',
+    '/app/analytics',
+    '/app/messages',
+    '/app/campaigns',
+    '/app/fans',
+    '/app/platforms',
+    '/app/billing',
+    '/app/social',
+    '/app/marketing',
+    '/app/manager-ai',
+    '/app/onlyfans',
+    '/app/content',
+    '/app/cinai',
   ];
 
   const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
@@ -62,8 +92,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/app/app',
-    '/app/app/:path*',
+    // canonical
     '/dashboard',
     '/dashboard/:path*',
     '/profile/:path*',
@@ -76,6 +105,27 @@ export const config = {
     '/platforms/:path*',
     '/billing/:path*',
     '/social/:path*',
+    // legacy nested
+    '/app/app',
+    '/app/app/:path*',
+    // alias under /app/*
+    '/app/dashboard',
+    '/app/dashboard/:path*',
+    '/app/profile/:path*',
+    '/app/settings/:path*',
+    '/app/configure/:path*',
+    '/app/analytics/:path*',
+    '/app/messages/:path*',
+    '/app/campaigns/:path*',
+    '/app/fans/:path*',
+    '/app/platforms/:path*',
+    '/app/billing/:path*',
+    '/app/social/:path*',
+    '/app/marketing/:path*',
+    '/app/manager-ai/:path*',
+    '/app/onlyfans/:path*',
+    '/app/content/:path*',
+    '/app/cinai/:path*',
     '/onboarding/:path*',
     '/auth/:path*',
     '/join/:path*',
