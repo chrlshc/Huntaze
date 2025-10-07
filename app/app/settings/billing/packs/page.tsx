@@ -1,2 +1,1 @@
-export { default } from '../../../../../billing/packs/page'
-
+export { default } from '../../../../billing/packs/page'
