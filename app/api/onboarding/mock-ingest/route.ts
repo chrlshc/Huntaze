@@ -7,6 +7,9 @@ export const runtime = 'nodejs'
 // In production, this would read creator analytics and return structured KPIs
 
 async function handler() {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available in production' }, { status: 404 })
+  }
   // Simple deterministic mock for now
   const mock = {
     ppvAnchor: 20, // typical historical PPV that converts well
