@@ -40,6 +40,9 @@ export async function middleware(request: NextRequest) {
     '/platforms',
     '/billing',
     '/social',
+    '/content',
+    '/cinai',
+    '/manager-ai',
     // legacy nested
     '/app/app',
     // alias under /app/*
@@ -104,6 +107,9 @@ export const config = {
     '/platforms/:path*',
     '/billing/:path*',
     '/social/:path*',
+    '/content/:path*',
+    '/cinai/:path*',
+    '/manager-ai/:path*',
     // legacy nested
     '/app/app',
     '/app/app/:path*',
