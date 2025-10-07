@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-
-// In-memory profile store keyed by auth token (dev/demo)
-const profiles = new Map<string, any>();
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://app.huntaze.com/api';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,13 +9,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Prefer in-memory if available
-    const existing = profiles.get(token);
-    if (existing) {
-      return NextResponse.json(existing);
-    }
-
-    // Try backend, fall back to default
+    // Try backend only (no local fallback)
     try {
       const resp = await fetch(`${API_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -27,18 +18,12 @@ export async function GET(request: NextRequest) {
       });
       if (resp.ok) {
         const data = await resp.json();
-        profiles.set(token, data);
         return NextResponse.json(data, { status: resp.status });
       }
-    } catch {}
-
-    const defaultProfile = {
-      displayName: '',
-      bio: '',
-      timezone: '',
-    };
-    profiles.set(token, defaultProfile);
-    return NextResponse.json(defaultProfile);
+      return NextResponse.json({ error: 'Upstream returned non-OK status' }, { status: 502 });
+    } catch {
+      return NextResponse.json({ error: 'Failed to fetch profile from upstream' }, { status: 502 });
+    }
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
   }
@@ -52,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const payload = await request.json();
-    // Try backend
+    // Try backend only
     try {
       const resp = await fetch(`${API_URL}/users/profile`, {
         method: 'POST',
@@ -65,13 +50,11 @@ export async function POST(request: NextRequest) {
       });
       if (resp.ok) {
         const data = await resp.json();
-        profiles.set(token, data);
         return NextResponse.json(data, { status: resp.status });
       }
+      return NextResponse.json({ error: 'Upstream returned non-OK status' }, { status: 502 });
     } catch {}
-
-    profiles.set(token, payload);
-    return NextResponse.json(payload);
+    return NextResponse.json({ error: 'Failed to update profile upstream' }, { status: 502 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
@@ -97,13 +80,11 @@ export async function PUT(request: NextRequest) {
       });
       if (resp.ok) {
         const data = await resp.json();
-        profiles.set(token, data);
         return NextResponse.json(data, { status: resp.status });
       }
+      return NextResponse.json({ error: 'Upstream returned non-OK status' }, { status: 502 });
     } catch {}
-
-    profiles.set(token, payload);
-    return NextResponse.json(payload);
+    return NextResponse.json({ error: 'Failed to update profile upstream' }, { status: 502 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
