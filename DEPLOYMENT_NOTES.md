@@ -41,3 +41,6 @@ Check these specific changes:
 - Traditional Agency badge is bright red
 - Platform logos are official (not generic icons)
 - Dark mode text is readable everywhere
+
+### Staging Rebuild
+- 2025-10-07: Trigger staging rebuild (dynamic dashboard, remove mocks)
