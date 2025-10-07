@@ -1,22 +1,16 @@
-"use client";
-import { useEffect, useState } from 'react';
+export const revalidate = 60;
+
 import { LineChart } from '@/components/charts/SimpleCharts';
 
-export default function AnalyticsRevenue() {
-  const [series, setSeries] = useState<{ labels: string[]; values: number[] } | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch('/api/analytics/overview', { cache: 'no-store' });
-        if (!r.ok) throw new Error(`Upstream ${r.status}`);
-        const j = await r.json();
-        setSeries(j.revenueSeries || { labels: [], values: [] });
-      } catch (e: any) { setErr(e?.message || 'Failed'); }
-    })();
-  }, []);
-  if (err) return <div className="text-sm text-red-600">{err}</div>;
-  if (!series) return <div className="text-sm text-slate-500">Loading…</div>;
+async function getSeries() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/analytics/overview`, { next: { revalidate: 60 } });
+  if (!res.ok) throw new Error(`Upstream ${res.status}`);
+  const j = await res.json();
+  return j.revenueSeries || { labels: [], values: [] };
+}
+
+export default async function AnalyticsRevenue() {
+  const series = await getSeries();
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-slate-900">Revenue</h2>
@@ -26,4 +20,3 @@ export default function AnalyticsRevenue() {
     </div>
   );
 }
-
