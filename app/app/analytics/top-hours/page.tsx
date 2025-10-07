@@ -1,24 +1,19 @@
-"use client";
-import { useEffect, useState } from 'react';
+export const revalidate = 60;
+
 import { BarChart } from '@/components/charts/SimpleCharts';
 
-export default function AnalyticsTopHours() {
-  const [data, setData] = useState<{ labels: string[]; values: number[] } | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch('/api/analytics/top-hours', { cache: 'no-store' });
-        if (!r.ok) throw new Error(`Upstream ${r.status}`);
-        const j = await r.json();
-        const labels = (j.hours || []).map((h:number)=>`${h}:00`);
-        const values = (j.counts || []) as number[];
-        setData({ labels, values });
-      } catch (e: any) { setErr(e?.message || 'Failed'); }
-    })();
-  }, []);
-  if (err) return <div className="text-sm text-red-600">{err}</div>;
-  if (!data) return <div className="text-sm text-slate-500">Loading…</div>;
+async function getTopHours() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/analytics/top-hours`, { next: { revalidate: 60 } });
+  if (!res.ok) throw new Error(`Upstream ${res.status}`);
+  const j = await res.json();
+  return {
+    labels: (j.hours || []).map((h:number)=>`${h}:00`),
+    values: (j.counts || []) as number[],
+  };
+}
+
+export default async function AnalyticsTopHours() {
+  const data = await getTopHours();
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-slate-900">Top Hours</h2>
@@ -28,4 +23,3 @@ export default function AnalyticsTopHours() {
     </div>
   );
 }
-
