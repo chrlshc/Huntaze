@@ -1,2 +1,1 @@
-export { default } from '../../../campaigns/page'
-
+export { default } from '../../campaigns/page'
