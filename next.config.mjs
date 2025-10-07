@@ -15,6 +15,8 @@ const nextConfig = {
   async rewrites() {
     return [
       // Stable alias: keep /app/huntaze-ai URL, serve dashboard chat
+      { source: '/app', destination: '/dashboard' },
+      { source: '/app/', destination: '/dashboard' },
       { source: '/app/huntaze-ai', destination: '/dashboard/huntaze-ai' },
       { source: '/terms', destination: '/terms-of-service' },
       { source: '/privacy', destination: '/privacy-policy' },
