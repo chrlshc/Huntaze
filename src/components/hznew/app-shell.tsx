@@ -2,23 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, LayoutDashboard, MessageSquare, Users, BarChart3, Settings, Heart, Megaphone, Plug, CalendarDays } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useState } from "react";
+import { APP_SECTIONS } from "@/config/app-sections";
 
 type NavItem = { href: string; label: string; icon: any };
-
-const NAV: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/messages", label: "Messages", icon: MessageSquare },
-  { href: "/fans", label: "Fans", icon: Users },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/campaigns", label: "Campaigns", icon: Megaphone },
-  { href: "/automations", label: "Automations", icon: Plug },
-  { href: "/schedule", label: "Schedule", icon: CalendarDays },
-  { href: "/onlyfans/dashboard", label: "OnlyFans", icon: Heart },
-  { href: "/platforms/connect", label: "Integrations", icon: Plug },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
+const NAV: NavItem[] = APP_SECTIONS.filter(s => s.enabled).map(s => ({ href: s.href, label: s.label, icon: s.icon }));
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -31,7 +20,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <button className="lg:hidden text-gray-300 hover:text-white" aria-label="Open menu" onClick={() => setOpen(true)}>
             <Menu className="h-5 w-5" />
           </button>
-          <Link href="/app" className="hidden md:inline-flex items-center gap-2">
+          <Link href="/app/app" className="hidden md:inline-flex items-center gap-2">
             <img src="/logo.svg" alt="Huntaze" className="h-6" />
           </Link>
         </div>
