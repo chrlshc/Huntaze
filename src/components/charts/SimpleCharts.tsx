@@ -1,6 +1,5 @@
 "use client";
 import 'chart.js/auto';
-import './setup';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 
 export function LineChart({ data, options }: { data: any; options?: any }) {
