@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { LineChart, BarChart, DonutChart } from '@/src/components/charts/SimpleCharts';
+import { LineChart, BarChart, DonutChart } from '@/components/charts/SimpleCharts';
 
 type Overview = {
   metrics?: {
@@ -98,4 +98,3 @@ export default function AnalyticsModern() {
     </div>
   );
 }
-
