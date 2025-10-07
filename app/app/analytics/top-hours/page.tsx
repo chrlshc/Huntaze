@@ -1,9 +1,9 @@
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 import { BarChart } from '@/components/charts/SimpleCharts';
 
 async function getTopHours() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/analytics/top-hours`, { next: { revalidate: 60 } });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/analytics/top-hours`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Upstream ${res.status}`);
   const j = await res.json();
   return {
