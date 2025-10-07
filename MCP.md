@@ -59,6 +59,7 @@ This MCP document captures the “single source of truth” for the app shell un
 - Out of shell
   - Tracking shortlinks: `/r/**`
   - Auth: `/auth/**`, `/join/**`, OAuth callbacks
+  - Marketing/Website: top-level pages like `/marketing`, `/how-it-works`, etc. remain outside `/app/app`. Do not create `/app/app/marketing`; use `/marketing`.
 
 ## Rewrites and Middleware
 

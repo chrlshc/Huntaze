@@ -42,8 +42,6 @@ const nextConfig = {
       { source: '/app/fans/:path*', destination: '/app/app/fans/:path*' },
       { source: '/app/manager-ai', destination: '/app/app/manager-ai' },
       { source: '/app/manager-ai/:path*', destination: '/app/app/manager-ai/:path*' },
-      { source: '/app/marketing', destination: '/app/app/marketing' },
-      { source: '/app/marketing/:path*', destination: '/app/app/marketing/:path*' },
       { source: '/app/messages', destination: '/app/app/messages' },
       { source: '/app/messages/:path*', destination: '/app/app/messages/:path*' },
       { source: '/app/onlyfans', destination: '/app/app/onlyfans' },
