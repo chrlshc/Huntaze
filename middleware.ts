@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   // Local dev convenience: disable auth checks on localhost/non-production
   const host = request.nextUrl.hostname;
@@ -10,23 +10,10 @@ export async function middleware(request: NextRequest) {
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
   if (DEV_MODE) return NextResponse.next();
 
-  // Staging bypass: allow viewing app pages without auth on staging hosts
-  const isStagingHost = host.startsWith('staging.');
-  const bypassEnv = process.env.STAGING_AUTH_BYPASS === 'true';
-  const bypassCookie = request.cookies.get('staging_bypass')?.value === '1';
-  const bypassParam = request.nextUrl.searchParams.get('bypassstaging') === '1';
-  if (isStagingHost && (bypassEnv || bypassCookie || bypassParam)) {
-    if (bypassParam) {
-      const res = NextResponse.next();
-      res.cookies.set('staging_bypass', '1', {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
-      return res;
-    }
+  // Staging: fully disable auth gating
+  const h = host.toLowerCase();
+  const isStagingHost = h === 'staging.huntaze.com' || h.startsWith('staging.') || (h.endsWith('.amplifyapp.com') && h.startsWith('staging.'));
+  if (isStagingHost) {
     return NextResponse.next();
   }
 
@@ -79,6 +66,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/app',
+    '/app/:path*',
+    '/dashboard',
     '/dashboard/:path*',
     '/profile/:path*',
     '/settings/:path*',
