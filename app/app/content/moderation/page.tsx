@@ -1,2 +1,1 @@
-export { default } from '../../../../content/moderation/page'
-
+export { default } from '../../../content/moderation/page'

@@ -1,2 +1,1 @@
-export { default } from '../../../fans/page'
-
+export { default } from '../../fans/page'

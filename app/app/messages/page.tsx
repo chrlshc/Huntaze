@@ -1,2 +1,1 @@
-export { default } from '../../../messages/page'
-
+export { default } from '../../messages/page'
