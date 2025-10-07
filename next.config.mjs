@@ -15,6 +15,9 @@ const nextConfig = {
   async redirects() {
     return [
       // No opinionated redirect for /app root (kept below as rewrite)
+      // Fix common typos
+      { source: '/marckeying', destination: '/marketing', permanent: false },
+      { source: '/marcketing', destination: '/marketing', permanent: false },
     ]
   },
   async rewrites() {
@@ -57,6 +60,22 @@ const nextConfig = {
       { source: '/app/settings/:path*', destination: '/app/app/settings/:path*' },
       { source: '/app/social', destination: '/app/app/social' },
       { source: '/app/social/:path*', destination: '/app/app/social/:path*' },
+
+      // Map top-level app routes to the AppShell versions for consistent UI (black header, white sidebar)
+      { source: '/dashboard', destination: '/app/app/dashboard' },
+      { source: '/dashboard/:path*', destination: '/app/app/dashboard/:path*' },
+      { source: '/messages', destination: '/app/app/messages' },
+      { source: '/messages/:path*', destination: '/app/app/messages/:path*' },
+      { source: '/fans', destination: '/app/app/fans' },
+      { source: '/fans/:path*', destination: '/app/app/fans/:path*' },
+      { source: '/analytics', destination: '/app/app/analytics' },
+      { source: '/analytics/:path*', destination: '/app/app/analytics/:path*' },
+      { source: '/settings', destination: '/app/app/settings' },
+      { source: '/settings/:path*', destination: '/app/app/settings/:path*' },
+      { source: '/platforms', destination: '/app/app/platforms' },
+      { source: '/platforms/:path*', destination: '/app/app/platforms/:path*' },
+      { source: '/onlyfans', destination: '/app/app/onlyfans' },
+      { source: '/onlyfans/:path*', destination: '/app/app/onlyfans/:path*' },
 
       // Stable alias kept
       { source: '/app/huntaze-ai', destination: '/dashboard/huntaze-ai' },
