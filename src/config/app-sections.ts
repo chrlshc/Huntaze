@@ -17,7 +17,7 @@ export type AppSection = {
 
 // Minimal, real features backed by auth/integrations
 export const APP_SECTIONS: AppSection[] = [
-  { label: 'Dashboard', href: '/app/app', icon: LayoutDashboard, enabled: true },
+  { label: 'Dashboard', href: '/app/app/dashboard', icon: LayoutDashboard, enabled: true },
   { label: 'Messages', href: '/app/app/messages', icon: MessageSquare, enabled: true },
   { label: 'Fans', href: '/app/app/fans', icon: Users, enabled: true },
   { label: 'Analytics', href: '/app/app/analytics', icon: BarChart3, enabled: true },
@@ -25,4 +25,3 @@ export const APP_SECTIONS: AppSection[] = [
   { label: 'Integrations', href: '/app/app/platforms/connect', icon: Plug, enabled: true },
   { label: 'Settings', href: '/app/app/settings/account', icon: Settings, enabled: true },
 ];
-
