@@ -1,2 +1,1 @@
-export { default } from '../../../../platforms/connect/page'
-
+export { default } from '../../../platforms/connect/page'

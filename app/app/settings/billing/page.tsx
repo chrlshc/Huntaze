@@ -1,2 +1,1 @@
-export { default } from '../../../../billing/page'
-
+export { default } from '../../../billing/page'
