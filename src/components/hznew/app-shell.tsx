@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, LayoutDashboard, MessageSquare, Users, BarChart3, Settings } from "lucide-react";
+import { Menu, LayoutDashboard, MessageSquare, Users, BarChart3, Settings, Heart, Megaphone, Plug, CalendarDays } from "lucide-react";
 import { useState } from "react";
 
 type NavItem = { href: string; label: string; icon: any };
@@ -12,6 +12,11 @@ const NAV: NavItem[] = [
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/fans", label: "Fans", icon: Users },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/campaigns", label: "Campaigns", icon: Megaphone },
+  { href: "/automations", label: "Automations", icon: Plug },
+  { href: "/schedule", label: "Schedule", icon: CalendarDays },
+  { href: "/onlyfans/dashboard", label: "OnlyFans", icon: Heart },
+  { href: "/platforms/connect", label: "Integrations", icon: Plug },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -74,4 +79,3 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
