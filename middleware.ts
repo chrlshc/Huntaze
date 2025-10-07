@@ -14,14 +14,6 @@ export async function middleware(request: NextRequest) {
   const h = host.toLowerCase();
   const isStagingHost = h === 'staging.huntaze.com' || h.startsWith('staging.') || (h.endsWith('.amplifyapp.com') && h.startsWith('staging.'));
   if (isStagingHost) {
-    // On staging, force /app and /dashboard to use the dynamic starter dashboard
-    const url = request.nextUrl.clone();
-    const p = url.pathname.replace(/\/?$/, ''); // strip trailing slash for matching
-
-    if (p === '/app' || p === '/dashboard') {
-      url.pathname = '/dashboard/page-old';
-      return NextResponse.rewrite(url);
-    }
     return NextResponse.next();
   }
 
