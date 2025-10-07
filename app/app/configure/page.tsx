@@ -1,2 +1,1 @@
-export { default } from '../../../configure/page'
-
+export { default } from '../../configure/page'
