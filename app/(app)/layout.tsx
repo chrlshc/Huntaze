@@ -1,15 +1,12 @@
 import React from 'react';
-import AppSidebar from '@/src/components/app-sidebar-unified';
+import AppShell from '@/src/components/hznew/app-shell';
 
 export default function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <>
-      {/* App shell sidebar (fixed on desktop, drawer on mobile) */}
-      <AppSidebar />
+    <AppShell>
       {children}
-    </>
+    </AppShell>
   );
 }
-
