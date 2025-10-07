@@ -14,9 +14,10 @@ const nextConfig = {
   // Minimal rewrites
   async rewrites() {
     return [
+      // App base to nested app shell (huntaze-new style)
+      { source: '/app', destination: '/app/app' },
+      { source: '/app/', destination: '/app/app' },
       // Stable alias: keep /app/huntaze-ai URL, serve dashboard chat
-      { source: '/app', destination: '/dashboard' },
-      { source: '/app/', destination: '/dashboard' },
       { source: '/app/huntaze-ai', destination: '/dashboard/huntaze-ai' },
       { source: '/terms', destination: '/terms-of-service' },
       { source: '/privacy', destination: '/privacy-policy' },
