@@ -139,8 +139,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="/styles/force-black-everywhere.css?v=dev" />
         {/* Remove white backgrounds from nav */}
         <link rel="stylesheet" href="/styles/remove-white-backgrounds.css?v=dev" />
-        {/* Theme normalization (brand + interactive states) - MUST be last */}
-        <link rel="stylesheet" href="/styles/theme-normalize.css?v=dev" />
+        {/* Theme normalization removed to avoid overriding marketing visuals */}
         {/* Mobile fixes script - must run early */}
         <script src="/mobile-fix.js" async />
         {forceDark && (
