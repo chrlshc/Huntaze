@@ -72,6 +72,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'OF thread endpoint not available in production yet' }, { status: 501 });
+    }
     const session = await getServerSession();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
