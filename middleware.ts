@@ -10,18 +10,14 @@ export async function middleware(request: NextRequest) {
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
   if (DEV_MODE) return NextResponse.next();
 
-  // Staging: fully disable auth gating
-  const h = host.toLowerCase();
-  const isStagingHost = h === 'staging.huntaze.com' || h.startsWith('staging.') || (h.endsWith('.amplifyapp.com') && h.startsWith('staging.'));
-  if (isStagingHost) {
-    return NextResponse.next();
-  }
+  // Staging: treat like production (no bypass)
 
   // Single auth cookie
   const token = request.cookies.get('access_token')?.value;
 
   // Gating based on protected prefixes
   const protectedPrefixes = [
+    '/app/app',
     '/dashboard',
     '/profile',
     '/settings',
@@ -66,8 +62,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/app',
-    '/app/:path*',
+    '/app/app',
+    '/app/app/:path*',
     '/dashboard',
     '/dashboard/:path*',
     '/profile/:path*',
