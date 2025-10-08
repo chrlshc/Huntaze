@@ -1,55 +1,61 @@
-# Guide de Déploiement AWS pour Huntaze
+# Huntaze AWS Deployment Guide
 
-Ce guide explique comment déployer le site Huntaze Premium sur AWS avec les nouvelles animations et fonctionnalités.
+> **Recommended path:** Use **AWS Amplify Hosting** for both staging and production.  
+> - Branch `staging` → Amplify *Staging* environment  
+> - Branch `main` (or `prod`) → Amplify *Production* environment  
+>
+> Deploy by pushing to the connected GitHub repository:
+> ```bash
+> git remote add amplify https://github.com/chrlshc/huntaze.git   # one time
+> git push amplify staging                                       # trigger Amplify Staging build
+> git push amplify main                                          # trigger Amplify Production build
+> ```
+> Keep environment variables in sync inside Amplify (see `aws-amplify-env-vars.txt`).  
+> The sections below describe the self-managed EC2/ECS pipeline, which remains as an advanced fallback.
 
-## 🚀 Déploiement Rapide
+This document explains how to deploy the Huntaze App Router build on AWS when you need full control of the infrastructure.
 
-### Option 1: Script Automatisé (Recommandé)
+---
+
+## 🚀 Quick Deployment (scripts)
+
+### Option 1 — Automated script (recommended for EC2)
 
 ```bash
-# 1. Configurer AWS CLI
-aws configure
-
-# 2. Rendre le script exécutable
+aws configure                       # set AWS credentials
 chmod +x deploy-simple-aws.sh
-
-# 3. Lancer le déploiement
 ./deploy-simple-aws.sh
 ```
 
-### Option 2: Déploiement Manuel
+The script provisions dependencies, builds the Next.js project, and restarts the PM2 process.
 
-#### Étape 1: Build local
+### Option 2 — Manual deployment
+
+#### 1. Build locally
 ```bash
-# Installer les dépendances
 npm install
-
-# Build de production
 npm run build
-
-# Build Docker
 docker build -t huntaze-site .
 ```
 
-#### Étape 2: Push vers ECR
+#### 2. Push the container to ECR
 ```bash
-# Se connecter à ECR
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin [ACCOUNT_ID].dkr.ecr.us-east-1.amazonaws.com
+aws ecr get-login-password --region us-east-1 \
+  | docker login --username AWS --password-stdin [ACCOUNT_ID].dkr.ecr.us-east-1.amazonaws.com
 
-# Créer le repository si nécessaire
-aws ecr create-repository --repository-name huntaze-site --region us-east-1
+aws ecr create-repository --repository-name huntaze-site --region us-east-1   # only once
 
-# Tag et push
 docker tag huntaze-site:latest [ACCOUNT_ID].dkr.ecr.us-east-1.amazonaws.com/huntaze-site:latest
 docker push [ACCOUNT_ID].dkr.ecr.us-east-1.amazonaws.com/huntaze-site:latest
 ```
 
-## 🏗️ Infrastructure AWS Complète
+---
 
-### Déployer avec CloudFormation
+## 🏗️ Full AWS Infrastructure (CloudFormation + ECS)
+
+### Deploy via CloudFormation
 
 ```bash
-# Créer la stack
 aws cloudformation create-stack \
   --stack-name huntaze-infrastructure \
   --template-body file://aws-infrastructure.yaml \
@@ -58,143 +64,117 @@ aws cloudformation create-stack \
     ParameterKey=CertificateArn,ParameterValue=arn:aws:acm:... \
   --capabilities CAPABILITY_IAM
 
-# Attendre la création
 aws cloudformation wait stack-create-complete \
   --stack-name huntaze-infrastructure
 ```
 
-### Ce qui est déployé:
-- ✅ VPC avec 2 sous-réseaux publics
-- ✅ Application Load Balancer (ALB)
-- ✅ Cluster ECS Fargate
-- ✅ Service ECS avec auto-scaling
-- ✅ Repository ECR
-- ✅ CloudWatch Logs
-- ✅ Certificat SSL (si fourni)
+**Stack output:**
+- VPC with two public subnets
+- Application Load Balancer (HTTPS)
+- ECS Fargate cluster + service
+- ECR repository
+- CloudWatch log groups
+- SSL certificate integration
 
-## 🔧 Configuration Post-Déploiement
+---
 
-### 1. Configurer le DNS
+## 🔧 Post-deployment configuration
 
-Pointez votre domaine vers l'ALB:
+### 1. DNS
+Point your domain to the ALB:
 ```
-huntaze.com → CNAME → [ALB-DNS-NAME].elb.amazonaws.com
+huntaze.com  ->  CNAME  ->  [ALB-DNS-NAME].elb.amazonaws.com
 ```
 
-### 2. Variables d'Environnement
-
-Ajoutez vos variables dans la Task Definition ECS:
+### 2. Environment variables (ECS task definition)
 ```json
 {
   "environment": [
-    {"name": "NODE_ENV", "value": "production"},
-    {"name": "DATABASE_URL", "value": "your-db-url"},
-    {"name": "NEXTAUTH_URL", "value": "https://huntaze.com"},
-    {"name": "NEXTAUTH_SECRET", "value": "your-secret"}
+    { "name": "NODE_ENV", "value": "production" },
+    { "name": "NEXT_PUBLIC_APP_URL", "value": "https://huntaze.com" },
+    { "name": "NEXT_PUBLIC_API_URL", "value": "https://api.huntaze.com" },
+    { "name": "NEXTAUTH_URL", "value": "https://huntaze.com" },
+    { "name": "NEXTAUTH_SECRET", "value": "..." }
   ]
 }
 ```
 
 ### 3. Monitoring
-
-- **CloudWatch Dashboard**: Métriques CPU, mémoire, requêtes
-- **X-Ray**: Tracing des performances
-- **CloudWatch Logs**: Logs centralisés
-
-## 📊 Optimisations de Performance
-
-### Images Docker Optimisées
-- Multi-stage build
-- Alpine Linux base
-- Compression des assets
-- Cache des dépendances
-
-### CDN CloudFront (Optionnel)
-```bash
-# Créer une distribution CloudFront
-aws cloudfront create-distribution \
-  --origin-domain-name [ALB-DNS-NAME].elb.amazonaws.com \
-  --default-root-object index.html
-```
-
-### Auto-Scaling
-- Min: 2 instances
-- Max: 10 instances
-- Target CPU: 70%
-- Scale-out: +2 instances
-- Scale-in: -1 instance
-
-## 🛡️ Sécurité
-
-### Best Practices Appliquées
-- ✅ HTTPS uniquement
-- ✅ Security headers
-- ✅ Principe du moindre privilège IAM
-- ✅ Secrets dans AWS Secrets Manager
-- ✅ VPC isolé
-- ✅ Security groups restrictifs
-
-### Backup & Disaster Recovery
-- Snapshots ECR automatiques
-- Multi-AZ deployment
-- CloudFormation pour infrastructure as code
-
-## 📈 Coûts Estimés (par mois)
-
-| Service | Usage | Coût Estimé |
-|---------|-------|-------------|
-| ECS Fargate | 2 tasks × 0.5 vCPU × 1GB | ~$30 |
-| ALB | 1 ALB + trafic | ~$25 |
-| ECR | 10 GB stockage | ~$1 |
-| CloudWatch | Logs + métriques | ~$10 |
-| **Total** | | **~$66/mois** |
-
-## 🔍 Dépannage
-
-### Vérifier le déploiement
-```bash
-# Status du service ECS
-aws ecs describe-services \
-  --cluster huntaze-cluster \
-  --services huntaze-service
-
-# Logs CloudWatch
-aws logs tail /ecs/huntaze --follow
-
-# Health check
-curl https://huntaze.com/api/health
-```
-
-### Problèmes Courants
-
-**Image pull error**
-```bash
-# Vérifier les permissions ECR
-aws ecr get-repository-policy --repository-name huntaze-site
-```
-
-**Service unhealthy**
-```bash
-# Augmenter le health check grace period
-aws ecs update-service \
-  --cluster huntaze-cluster \
-  --service huntaze-service \
-  --health-check-grace-period-seconds 120
-```
-
-**Out of memory**
-```bash
-# Augmenter la mémoire dans la task definition
-# Memory: 1024 → 2048
-```
-
-## 📞 Support
-
-Pour toute question sur le déploiement:
-- Documentation AWS ECS: https://docs.aws.amazon.com/ecs/
-- CloudFormation: https://docs.aws.amazon.com/cloudformation/
-- Support Huntaze: support@huntaze.com
+- **CloudWatch dashboards** for CPU, memory, request count
+- **CloudWatch Logs** for application output
+- **AWS X-Ray** if you need distributed tracing
 
 ---
 
-🎉 **Votre site Huntaze Premium est maintenant déployé sur AWS!**
+## 📊 Performance tips
+
+- Use the multi-stage Dockerfile to keep images lean.
+- Consider CloudFront in front of the ALB for global caching:
+  ```bash
+  aws cloudfront create-distribution \
+    --origin-domain-name [ALB-DNS-NAME].elb.amazonaws.com \
+    --default-root-object index.html
+  ```
+- Configure ECS auto scaling (min 2 tasks, max 10, target CPU 70%).
+
+---
+
+## 🛡️ Security checklist
+
+- Force HTTPS everywhere.
+- Apply least-privilege IAM roles for ECS tasks and CI/CD users.
+- Store secrets in AWS Secrets Manager or SSM Parameter Store.
+- Restrict Security Groups (only ALB is publicly accessible).
+- Schedule regular ECR image lifecycle policies and backups.
+
+---
+
+## 📈 Monthly cost estimate
+
+| Service         | Notes                         | Approx. cost |
+|-----------------|------------------------------|--------------|
+| ECS Fargate     | 2 tasks · 0.5 vCPU · 1 GB    | ~$30         |
+| Application LB  | 1 ALB + standard traffic     | ~$25         |
+| ECR             | 10 GB storage                | ~$1          |
+| CloudWatch      | Logs + metrics + dashboards  | ~$10         |
+| **Total**       |                              | **~$66/mo**  |
+
+---
+
+## 🔍 Troubleshooting
+
+### Check ECS service status
+```bash
+aws ecs describe-services --cluster huntaze-cluster --services huntaze-service
+aws logs tail /ecs/huntaze --follow
+```
+
+### Health check failures
+- Increase the ECS health-check grace period:
+  ```bash
+  aws ecs update-service \
+    --cluster huntaze-cluster \
+    --service huntaze-service \
+    --health-check-grace-period-seconds 120
+  ```
+- Verify `curl https://huntaze.com/api/health` returns `200`.
+
+### Image pull errors
+```bash
+aws ecr get-repository-policy --repository-name huntaze-site
+```
+
+### Out-of-memory restarts
+- Bump memory/CPU in the task definition (e.g., 2048 MB / 1 vCPU).
+
+---
+
+## 📞 Support resources
+
+- AWS Amplify Hosting: https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html  
+- AWS ECS / Fargate: https://docs.aws.amazon.com/ecs/  
+- Huntaze support: support@huntaze.com
+
+---
+
+🎉 **Your Huntaze build is live on AWS!** Use Amplify for branch-driven automation, and fall back to the scripts/infrastructure above when you need custom control.
