@@ -34,6 +34,19 @@
 
 /* Huntaze design utility layer */
 @layer components {
+  .container-default {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .page-stack {
+    @apply space-y-6;
+  }
+  .section-stack {
+    @apply space-y-4;
+  }
+  .actions-row {
+    @apply flex items-center gap-2;
+  }
+
   .surface {
     @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl;
   }
@@ -56,6 +69,15 @@
   .t-muted {
     @apply text-gray-500 dark:text-gray-400;
   }
+  .h1-hero {
+    @apply text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white;
+  }
+  .h2-page {
+    @apply text-2xl font-bold text-gray-900 dark:text-white;
+  }
+  .t-subtle {
+    @apply text-gray-600 dark:text-gray-400;
+  }
 
   .focus-ring {
     @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
@@ -72,6 +94,20 @@
   }
   .btn-ghost {
     @apply bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100;
+  }
+
+  .sidebar {
+    @apply w-64 hidden lg:block bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800;
+  }
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 focus-ring;
+  }
+  .nav-item[aria-current="page"] {
+    @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white;
+  }
+
+  .card {
+    @apply surface elevation-1 p-4;
   }
 
   .chip {

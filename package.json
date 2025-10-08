@@ -83,6 +83,8 @@
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/three": "^0.160.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.5.4",
     "js-yaml": "^4.1.0",
     "puppeteer": "^24.20.0"
   },
