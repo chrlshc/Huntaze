@@ -37,26 +37,26 @@ export default function LandingPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-900/80 bg-black/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-white">
+          <Link href="/" className="flex items-center gap-2 text-white focus-ring">
             <img src="/logo.svg" alt="Huntaze" className="h-8 w-auto" />
             <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">
               Huntaze
             </span>
           </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
+          <nav className="hidden items-center gap-3 text-sm font-medium text-gray-300 md:flex">
             {navigation.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-white">
+              <Link key={item.href} href={item.href} className="px-2 py-1 rounded-md hover:text-white focus-ring">
                 {item.label}
               </Link>
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <Link href="/auth" className="hidden text-sm font-medium text-gray-300 hover:text-white md:block">
+            <Link href="/auth" className="hidden text-sm font-medium text-gray-300 hover:text-white md:inline-flex focus-ring px-2 py-1 rounded-md">
               Sign in
             </Link>
             <Link
               href="/app"
-              className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900"
+              className="btn btn-primary"
             >
               Open App
             </Link>
@@ -81,13 +81,13 @@ export default function LandingPage() {
             <div className="flex flex-wrap justify-center gap-3">
               <Link
                 href="/app"
-                className="inline-flex items-center rounded-lg bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900"
+                className="btn btn-primary"
               >
                 Open the live workspace
               </Link>
               <Link
                 href="/app-preview"
-                className="inline-flex items-center rounded-lg border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
+                className="btn focus-ring border border-slate-300 bg-white text-slate-700 hover:bg-gray-100"
               >
                 Explore the product → 
               </Link>
@@ -191,13 +191,13 @@ export default function LandingPage() {
             <div className="mt-6 flex flex-wrap justify-center gap-4">
               <Link
                 href="/auth"
-                className="inline-flex items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-black shadow-sm transition hover:bg-gray-100"
+                className="btn focus-ring bg-white text-black hover:bg-gray-100"
               >
                 Start for free
               </Link>
               <Link
                 href="/app-preview"
-                className="inline-flex items-center rounded-lg border border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-white/60"
+                className="inline-flex items-center rounded-lg border border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-white/60 focus-ring"
               >
                 View live product →
               </Link>

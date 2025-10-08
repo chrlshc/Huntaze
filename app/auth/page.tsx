@@ -87,18 +87,18 @@ export default function AuthPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-900/80 bg-black/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-white">
+          <Link href="/" className="flex items-center gap-2 text-white focus-ring">
             <img src="/logo.svg" alt="Huntaze" className="h-8 w-auto" />
             <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">Huntaze</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
             {navLinks.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-white">
+              <Link key={item.href} href={item.href} className="hover:text-white px-2 py-1 rounded-md focus-ring">
                 {item.label}
               </Link>
             ))}
           </nav>
-          <Link href="/app-preview" className="text-sm font-medium text-gray-300 hover:text-white">
+          <Link href="/app-preview" className="text-sm font-medium text-gray-300 hover:text-white px-2 py-1 rounded-md focus-ring">
             View product
           </Link>
         </div>
@@ -126,7 +126,7 @@ export default function AuthPage() {
                   setStep('form');
                   setError('');
                 }}
-                className={`w-full rounded-lg border px-4 py-3 text-sm font-medium transition ${
+                className={`w-full rounded-lg border px-4 py-3 text-sm font-medium transition focus-ring ${
                   authMode === 'signup'
                     ? 'border-black bg-black text-white'
                     : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900'
@@ -140,7 +140,7 @@ export default function AuthPage() {
                   setStep('form');
                   setError('');
                 }}
-                className={`mt-3 w-full rounded-lg border px-4 py-3 text-sm font-medium transition ${
+                className={`mt-3 w-full rounded-lg border px-4 py-3 text-sm font-medium transition focus-ring ${
                   authMode === 'signin'
                     ? 'border-black bg-black text-white'
                     : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900'
@@ -159,7 +159,7 @@ export default function AuthPage() {
             <div className="mt-5">
               <button
                 onClick={continueWithGoogle}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900 focus-ring"
               >
                 <svg className="h-4 w-4" viewBox="0 0 533 544" aria-hidden>
                   <path fill="#4285F4" d="M533.5 278.4c0-17.4-1.6-34-4.6-50.2H272v95.1h146.9c-6.4 34.7-25.9 64.1-55.2 83.7v69.3h89c52.1-48 82.8-118.6 82.8-198z" />
@@ -226,7 +226,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-70 focus-ring"
                 >
                   {isLoading ? 'Processing…' : authMode === 'signup' ? 'Create account' : 'Sign in'}
                 </button>

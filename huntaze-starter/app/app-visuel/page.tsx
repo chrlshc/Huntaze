@@ -138,17 +138,17 @@ export default async function AppVisuel() {
               </span>
             </Link>
           </div>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
-            <Link className="hover:text-white" href="/marketing">
+          <nav className="hidden items-center gap-3 text-sm font-medium text-gray-300 md:flex">
+            <Link className="px-2 py-1 rounded-md hover:text-white focus-ring" href="/marketing">
               Marketing
             </Link>
-            <Link className="hover:text-white" href="/app/app/dashboard">
+            <Link className="px-2 py-1 rounded-md hover:text-white focus-ring" href="/app/app/dashboard">
               App
             </Link>
-            <Link className="hover:text-white" href="/pricing">
+            <Link className="px-2 py-1 rounded-md hover:text-white focus-ring" href="/pricing">
               Pricing
             </Link>
-            <Link className="hover:text-white" href="/auth">
+            <Link className="px-2 py-1 rounded-md hover:text-white focus-ring" href="/auth">
               Sign in
             </Link>
           </nav>
@@ -156,18 +156,18 @@ export default async function AppVisuel() {
       </header>
 
       <div className="relative flex pt-16">
-        <aside className="hidden w-64 shrink-0 border-r border-gray-200 bg-white lg:flex lg:flex-col">
-          <div className="border-b border-gray-200 px-5 py-6">
+        <aside className="hidden w-64 shrink-0 surface elevation-0 lg:flex lg:flex-col p-4">
+          <div className="pb-4 border-b border-gray-200 dark:border-gray-800">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500">Sections</p>
           </div>
-          <nav className="flex-1 space-y-1 px-3 py-4">
+          <nav className="flex-1 space-y-1 py-4">
             {NAV_ITEMS.map(({ id, label, description, icon: Icon }) => (
               <a
                 key={id}
                 href={`#${id}`}
-                className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+                className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:text-gray-200 focus-ring"
               >
-                <Icon className="h-4 w-4 text-gray-400 transition group-hover:text-purple-600" />
+                <Icon className="h-4 w-4 text-gray-400 transition group-hover:text-gray-900 dark:group-hover:text-white" />
                 <div className="flex flex-col">
                   <span>{label}</span>
                   <span className="text-xs font-normal text-gray-400">{description}</span>
@@ -208,7 +208,7 @@ export default async function AppVisuel() {
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                  <div className="surface elevation-1 p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Today’s Money</p>
@@ -216,7 +216,7 @@ export default async function AppVisuel() {
                           {bestFan ? formatCurrency((bestFan.valueCents ?? 0) / 100) : '$0'}
                         </p>
                       </div>
-                      <div className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
+                      <div className="chip bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
                         Pic temps réel
                       </div>
                     </div>
@@ -231,19 +231,19 @@ export default async function AppVisuel() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                  <div className="surface elevation-1 p-6">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Top horaires d’engagement</h3>
                     <p className="mt-6 text-2xl font-semibold text-gray-900 dark:text-white">{peakHoursLabel}</p>
                     <p className="mt-3 text-sm text-gray-600">
                       Les créneaux ci-dessus proviennent de l’analyse comportementale des fans (fan segmentation + smart relance).
                     </p>
-                    <Link href="/app/app/analytics" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700">
+                    <Link href="/app/app/analytics" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300 focus-ring">
                       Voir l’analyse complète
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   </div>
 
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                  <div className="surface elevation-1 p-6">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Alertes Smart Relance</h3>
                     {atRiskFans.length === 0 ? (
                       <p className="mt-6 text-sm text-gray-600">
@@ -262,14 +262,14 @@ export default async function AppVisuel() {
                         ))}
                       </ul>
                     )}
-                    <Link href="/app/app/messages" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700">
+                    <Link href="/app/app/messages" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300 focus-ring">
                       Ouvrir les relances
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="surface elevation-1 p-6">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Top fans (sur 30 jours)</h3>
                   {overview?.topFans?.length ? (
                     <ul className="mt-5 grid gap-4 md:grid-cols-2">
@@ -327,7 +327,7 @@ export default async function AppVisuel() {
                   <StatPill label="Churn détecté" value={segmentSummary.churned} badge="30+ jours inactifs" tone="danger" />
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="surface elevation-1 overflow-hidden">
                   <table className="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-800">
                     <thead className="bg-gray-50 dark:bg-gray-900">
                       <tr className="text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -360,9 +360,9 @@ export default async function AppVisuel() {
                             <td className="px-4 py-4">
                               <div className="flex flex-wrap gap-2">
                                 {(fan.tags ?? []).slice(0, 3).map((tag) => (
-                                  <span key={tag} className="rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700">
-                                    {tag}
-                                  </span>
+                                <span key={tag} className="chip bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
+                                  {tag}
+                                </span>
                                 ))}
                                 {!fan.tags?.length ? <span className="text-xs text-gray-400">—</span> : null}
                               </div>
@@ -374,7 +374,7 @@ export default async function AppVisuel() {
                   </table>
                 </div>
 
-                <div className="rounded-2xl border border-purple-200 bg-purple-50 p-6 text-sm text-purple-900 dark:border-purple-900/50 dark:bg-purple-950/50 dark:text-purple-100">
+                <div className="surface-muted elevation-0 p-6 text-sm text-gray-700 dark:text-gray-200">
                   <p className="font-semibold">Relances intelligentes</p>
                   <p className="mt-2">
                     Le module <span className="font-semibold">Smart Relance</span> surveille chaque fan et propose les actions prioritaires (VIP silencieux,
@@ -409,7 +409,7 @@ export default async function AppVisuel() {
                   values={(overview?.platformDistribution ?? []).map((item) => Math.round((item.share ?? 0) * 100))}
                 />
               </div>
-              <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+              <div className="surface elevation-1 mt-6 p-6 text-sm text-gray-700 dark:text-gray-300">
                 <p>
                   Toutes les métriques sont récupérées en direct depuis OnlyFans (via le navigateur automatisé) et consolidées par Huntaze pour mesurer la
                   conversion PPV, la rétention et l’impact des campagnes AI.
@@ -419,7 +419,7 @@ export default async function AppVisuel() {
 
             <Section id="integrations" title="Integrations" description="Connexion OnlyFans & Proxy sécurisé">
               <div className="space-y-6">
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="surface elevation-1 p-6">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">OnlyFans</p>
@@ -435,7 +435,7 @@ export default async function AppVisuel() {
                     </div>
                     <Link
                       href="/app/app/platforms/connect"
-                      className="inline-flex items-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-700"
+                      className="btn btn-primary"
                     >
                       Gérer la connexion
                     </Link>
@@ -446,7 +446,7 @@ export default async function AppVisuel() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <div className="surface elevation-1 p-6">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Autres plateformes</h3>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {[
@@ -505,13 +505,13 @@ function Section({ id, title, description, children }: { id: string; title: stri
 function KpiCard({ title, value, delta, emphasize }: { title: string; value: string; delta?: string; emphasize?: boolean }) {
   return (
     <div
-      className={`rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition dark:border-gray-800 dark:bg-gray-900 ${
-        emphasize ? 'ring-1 ring-purple-500/20' : ''
+      className={`surface elevation-1 p-6 transition ${
+        emphasize ? 'ring-1 ring-purple-200/40 dark:ring-purple-500/30' : ''
       }`}
     >
-      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{title}</p>
       <p className="mt-3 text-3xl font-semibold text-gray-900 dark:text-white">{value}</p>
-      {delta ? <p className="mt-2 text-xs font-medium text-green-600">{delta}</p> : null}
+      {delta ? <p className="mt-2 text-xs font-medium text-green-600 dark:text-green-400">{delta}</p> : null}
     </div>
   );
 }
@@ -533,8 +533,8 @@ function StatPill({
     tone === 'danger'
       ? 'bg-red-50 text-red-700 border-red-200'
       : highlight
-        ? 'bg-purple-50 text-purple-700 border-purple-200'
-        : 'bg-gray-50 text-gray-700 border-gray-200';
+        ? 'bg-white text-gray-900 border-gray-900/10 shadow-sm dark:bg-gray-900 dark:text-white dark:border-gray-700'
+        : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
   return (
     <div className={`rounded-2xl border px-4 py-4 text-sm font-medium ${toneClasses}`}>
       <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
@@ -546,7 +546,10 @@ function StatPill({
 
 function StatusPill({ label, active }: { label: string; active: boolean }) {
   return (
-    <div className={`flex items-center justify-between rounded-xl border px-3 py-2 text-xs font-medium ${active ? 'border-green-200 bg-green-50 text-green-700' : 'border-gray-200 bg-gray-50 text-gray-500'}`}>
+    <div className={`flex items-center justify-between rounded-xl border px-3 py-2 text-xs font-medium ${
+      active ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-900/20 dark:text-green-300'
+             : 'border-gray-200 bg-gray-50 text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
+    }`}>
       <span>{label}</span>
       <span>{active ? 'Connecté' : 'À connecter'}</span>
     </div>

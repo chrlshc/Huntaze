@@ -32,6 +32,69 @@
 /* Performance optimizations - removed to allow animations */
 /* Re-enable animations for better UX - performance impact minimal on modern devices */
 
+/* Huntaze design utility layer */
+@layer components {
+  .surface {
+    @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl;
+  }
+  .surface-muted {
+    @apply bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl;
+  }
+  .elevation-0 {
+    @apply shadow-none;
+  }
+  .elevation-1 {
+    @apply shadow-sm;
+  }
+  .elevation-2 {
+    @apply shadow-md;
+  }
+
+  .h-title {
+    @apply text-gray-900 dark:text-white font-bold;
+  }
+  .t-muted {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-ring;
+  }
+  .btn-primary {
+    @apply bg-purple-600 hover:bg-purple-700 text-white;
+  }
+  .btn-secondary {
+    @apply bg-gray-900 text-white hover:bg-gray-800 border border-gray-700 dark:bg-gray-800;
+  }
+  .btn-ghost {
+    @apply bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs;
+  }
+  .chip-ok {
+    @apply bg-green-100 text-green-700 border-green-300;
+  }
+  .chip-no {
+    @apply bg-red-100 text-red-700 border-red-300;
+  }
+
+  .kpi {
+    @apply surface elevation-1 p-4;
+  }
+  .kpi-h {
+    @apply text-xs t-muted;
+  }
+  .kpi-v {
+    @apply text-2xl font-extrabold text-gray-900 dark:text-white;
+  }
+}
+
 /* Keep gradient text visible but static */
 span.text-transparent {
   color: #d8b4fe !important; /* Light purple */
@@ -64,32 +127,6 @@ main .backdrop-blur-xl {
 }
 
 /* Fix white buttons on white background */
-button, a {
-  color: inherit;
-}
-
-/* Ensure CTA buttons are visible */
-button:not([class*="text-"]), 
-a:not([class*="text-"]) {
-  color: #ffffff;
-}
-
-/* Primary CTA style fix */
-.bg-white {
-  background-color: #a855f7 !important;
-  color: #ffffff !important;
-}
-
-.bg-white:hover {
-  background-color: #9333ea !important;
-}
-
-/* Secondary CTA style fix */
-.border-white {
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  color: #ffffff !important;
-}
-
 /* Huntaze Design System Tokens */
 :root {
   /* Primary Colors */
