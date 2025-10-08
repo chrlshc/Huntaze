@@ -1,5 +1,2 @@
-import { redirect } from 'next/navigation';
-
-export default function AppIndex() {
-  redirect('/app/app/dashboard');
-}
+export { dynamic } from '../app-visuel/page';
+export { default } from '../app-visuel/page';
