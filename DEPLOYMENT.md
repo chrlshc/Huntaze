@@ -1,5 +1,52 @@
 # Huntaze AWS Deployment Guide
 
+## ✅ Recommended: AWS Amplify Hosting (Staging & Production)
+
+Huntaze now deploys the App Router build through **AWS Amplify Hosting**. Each Amplify environment is connected to a Git branch:
+
+- `staging` branch → Amplify **Staging** environment (preview & QA)
+- `main` (or `prod`) branch → Amplify **Production** environment
+
+### 1. Configure environment variables
+
+In the Amplify console, open **App settings → Environment variables** for each environment and make sure the following variables are set:
+
+```
+NEXT_PUBLIC_APP_URL=https://staging.huntaze.com   # or https://huntaze.com in production
+NEXT_PUBLIC_API_URL=https://api.huntaze.com
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=…
+NEXT_PUBLIC_TIKTOK_REDIRECT_URI=…
+TIKTOK_CLIENT_KEY=…
+TIKTOK_CLIENT_SECRET=…
+TIKTOK_SANDBOX_MODE=true
+STAGING_BYPASS_AUTH=true          # optional, staging only
+```
+
+See `aws-amplify-env-vars.txt` for the latest list pulled from recent build logs.
+
+### 2. Push the desired branch
+
+Amplify watches the GitHub repository `github.com/chrlshc/huntaze`. From your local clone:
+
+```bash
+git remote add amplify https://github.com/chrlshc/huntaze.git  # once
+git push amplify staging                                      # deploy to Amplify Staging
+git push amplify main                                         # deploy to Amplify Production
+```
+
+Amplify will:
+1. Install dependencies (`npm ci`)
+2. Run `npm run build`
+3. Host the Next.js SSR build on the managed infrastructure
+
+### 3. Monitor builds
+
+- Open the Amplify console → *Front-end environments* → select **Staging** or **Production**
+- Check the build logs, verify status `SUCCEEDED`
+- Use “Redeploy this version” if you need to re-run a failed build without new commits
+
+> 💡 The sections below cover **legacy EC2/ECS scripts**. Keep them for fall-back or self-managed hosting, but Amplify is the current path for staging/production.
+
 ## 🚀 Quick Deployment
 
 ### Prerequisites
