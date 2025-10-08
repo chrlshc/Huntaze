@@ -132,9 +132,7 @@ export default async function AppVisuel() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2 text-white">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-lg font-bold text-black">
-                H
-              </div>
+              <img src="/logo.svg" alt="Huntaze" className="h-8 w-auto" />
               <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">
                 Huntaze AppVisuel
               </span>
