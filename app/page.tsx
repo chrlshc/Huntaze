@@ -38,9 +38,7 @@ export default function LandingPage() {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-900/80 bg-black/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 text-white">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-lg font-bold text-black">
-              H
-            </div>
+            <img src="/logo.svg" alt="Huntaze" className="h-8 w-auto" />
             <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">
               Huntaze
             </span>
@@ -58,7 +56,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/app"
-              className="inline-flex items-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-purple-700"
+              className="inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900"
             >
               Open App
             </Link>
@@ -69,8 +67,8 @@ export default function LandingPage() {
       <main className="pt-24 md:pt-28">
         <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-4 py-1 text-sm font-medium text-purple-700">
-              <span className="inline-flex h-2 w-2 rounded-full bg-purple-500" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1 text-sm font-medium text-slate-700">
+              <span className="inline-flex h-2 w-2 rounded-full bg-slate-900" />
               OnlyFans automation that feels human
             </div>
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
@@ -83,7 +81,7 @@ export default function LandingPage() {
             <div className="flex flex-wrap justify-center gap-3">
               <Link
                 href="/app"
-                className="inline-flex items-center rounded-lg bg-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-purple-700"
+                className="inline-flex items-center rounded-lg bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900"
               >
                 Open the live workspace
               </Link>
@@ -132,17 +130,17 @@ export default function LandingPage() {
                 </p>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-purple-500" />
-                    Daily “Today’s Money” plan so you know the next five actions to take.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-purple-500" />
-                    AI replies tuned on your voice, price points, and favorite emojis.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-purple-500" />
-                    Smart Relance sequences that revive VIPs and close open PPVs automatically.
-                  </li>
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-900" />
+                Daily “Today’s Money” plan so you know the next five actions to take.
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-900" />
+                AI replies tuned on your voice, price points, and favorite emojis.
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-900" />
+                Smart Relance sequences that revive VIPs and close open PPVs automatically.
+              </li>
                 </ul>
               </div>
               <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-6">
@@ -171,7 +169,7 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="grid gap-3">
-                <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-700">
+                <div className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800">
                   OnlyFans connection · Status: Live
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
@@ -183,7 +181,7 @@ export default function LandingPage() {
         </section>
 
         <section className="mx-auto mt-24 max-w-4xl px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-slate-200 bg-black px-8 py-10 text-center text-white shadow-[0_25px_120px_-40px_rgba(124,58,237,0.5)] md:px-14 md:py-16">
+          <div className="rounded-3xl border border-slate-200 bg-black px-8 py-10 text-center text-white shadow-[0_25px_120px_-40px_rgba(15,23,42,0.45)] md:px-14 md:py-16">
             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
               Ready to run Huntaze for your OnlyFans business?
             </h2>
@@ -211,9 +209,7 @@ export default function LandingPage() {
       <footer className="border-t border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 text-sm text-slate-500 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2 text-slate-600">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-sm font-semibold text-white">
-              H
-            </div>
+            <img src="/logo.svg" alt="Huntaze" className="h-7 w-auto" />
             <span>Huntaze · OnlyFans Revenue OS</span>
           </div>
           <div className="flex gap-4">
