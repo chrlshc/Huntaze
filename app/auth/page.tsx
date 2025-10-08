@@ -88,7 +88,7 @@ export default function AuthPage() {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-900/80 bg-black/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 text-white">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-lg font-bold text-black">H</div>
+            <img src="/logo.svg" alt="Huntaze" className="h-8 w-auto" />
             <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">Huntaze</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
@@ -128,8 +128,8 @@ export default function AuthPage() {
                 }}
                 className={`w-full rounded-lg border px-4 py-3 text-sm font-medium transition ${
                   authMode === 'signup'
-                    ? 'border-purple-500 bg-purple-50 text-purple-700'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-purple-200 hover:text-purple-600'
+                    ? 'border-black bg-black text-white'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900'
                 }`}
               >
                 {authMode === 'signup' ? 'Sign up with email' : 'Switch to sign up'}
@@ -142,8 +142,8 @@ export default function AuthPage() {
                 }}
                 className={`mt-3 w-full rounded-lg border px-4 py-3 text-sm font-medium transition ${
                   authMode === 'signin'
-                    ? 'border-purple-500 bg-purple-50 text-purple-700'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-purple-200 hover:text-purple-600'
+                    ? 'border-black bg-black text-white'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:text-slate-900'
                 }`}
               >
                 {authMode === 'signin' ? 'Continue with email' : 'Already have an account? Sign in'}
@@ -185,7 +185,7 @@ export default function AuthPage() {
                       onChange={(event) => setEmail(event.target.value)}
                       required
                       placeholder="you@example.com"
-                      className="h-12 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 shadow-sm transition focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="h-12 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
                     />
                     <Mail className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                   </div>
@@ -204,7 +204,7 @@ export default function AuthPage() {
                       required
                       minLength={authMode === 'signup' ? 8 : undefined}
                       placeholder="••••••••"
-                      className="h-12 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 shadow-sm transition focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="h-12 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 shadow-sm transition focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
                     />
                     <button
                       type="button"
@@ -226,7 +226,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {isLoading ? 'Processing…' : authMode === 'signup' ? 'Create account' : 'Sign in'}
                 </button>
@@ -257,12 +257,12 @@ export default function AuthPage() {
             <ul className="mt-6 space-y-3 text-sm text-slate-700">
               {valueProps.map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-purple-500" />
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-900" />
                   {item}
                 </li>
               ))}
             </ul>
-            <div className="mt-8 rounded-2xl border border-purple-200 bg-purple-50 p-6 text-sm text-purple-800">
+            <div className="mt-8 rounded-2xl border border-slate-300 bg-slate-100 p-6 text-sm text-slate-800">
               “We took the Shopify playbook—clear dashboards, daily action plans, reliable automation—and applied it to OnlyFans.
               No gimmicks. Just more revenue.” — Huntaze Revenue Team
             </div>
