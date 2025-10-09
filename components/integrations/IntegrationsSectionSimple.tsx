@@ -1,158 +1,253 @@
 'use client';
-import { useState, useMemo } from 'react';
-import Image from 'next/image';
 
-interface Integration {
+import { useMemo, useState } from "react";
+import { Search, Sparkles } from "lucide-react";
+import Link from "next/link";
+
+import { IntegrationCard, type IntegrationCardProps } from "./IntegrationCard";
+import { cn } from "@/lib/utils";
+
+type IntegrationCategory = {
   id: string;
   name: string;
-  logo: string;
-  category: string;
-  featured: boolean;
+  icon: string;
   description: string;
-}
+};
 
-const integrations: Integration[] = [
-  // Social & Communication
-  { id: '1', name: 'Instagram', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=instagram', category: 'social', featured: true, description: 'Social media platform' },
-  { id: '2', name: 'TikTok', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=tiktok', category: 'social', featured: true, description: 'Video platform' },
-  { id: '3', name: 'Twitter/X', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=twitter', category: 'social', featured: true, description: 'Social network' },
-  { id: '4', name: 'OnlyFans', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=onlyfans', category: 'social', featured: true, description: 'Content platform' },
-  { id: '5', name: 'Slack', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=slack', category: 'communication', featured: true, description: 'Team messaging' },
-  { id: '6', name: 'Discord', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=discord', category: 'communication', featured: false, description: 'Community platform' },
-  
-  // Analytics & Data
-  { id: '7', name: 'Google Analytics', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=ga', category: 'analytics', featured: true, description: 'Web analytics' },
-  { id: '8', name: 'Mixpanel', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=mixpanel', category: 'analytics', featured: false, description: 'Product analytics' },
-  
-  // Payment & Finance
-  { id: '10', name: 'Stripe', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=stripe', category: 'payment', featured: true, description: 'Payment processing' },
-  { id: '11', name: 'PayPal', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=paypal', category: 'payment', featured: false, description: 'Online payments' },
-  
-  // Productivity
-  { id: '13', name: 'Notion', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=notion', category: 'productivity', featured: true, description: 'Workspace & notes' },
-  { id: '14', name: 'Google Calendar', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=gcal', category: 'productivity', featured: true, description: 'Calendar & scheduling' },
-  
-  // Marketing
-  { id: '17', name: 'Mailchimp', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=mailchimp', category: 'marketing', featured: true, description: 'Email marketing' },
-  { id: '18', name: 'ConvertKit', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=convertkit', category: 'marketing', featured: false, description: 'Creator marketing' },
-  
-  // Storage
-  { id: '21', name: 'Google Drive', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=gdrive', category: 'storage', featured: true, description: 'Cloud storage' },
-  { id: '22', name: 'Dropbox', logo: 'https://api.dicebear.com/7.x/identicon/svg?seed=dropbox', category: 'storage', featured: false, description: 'File storage' },
+const integrationCatalogue: Array<IntegrationCardProps & { id: string; categoryId: string }> = [
+  {
+    id: "instagram",
+    name: "Instagram",
+    description: "Automate DMs, schedule story drops, and sync engagement insights directly into Huntaze.",
+    logo: "/logos/instagram.svg",
+    categoryId: "social",
+    status: "connected",
+    badges: [{ label: "Auto-DM", tone: "info" }],
+    accentColor: "#FFF1F4",
+    href: "/platforms/connect",
+  },
+  {
+    id: "tiktok",
+    name: "TikTok",
+    description: "Convert viral spikes into paying fans with automated funnels and real-time dashboards.",
+    logo: "/logos/tiktok.svg",
+    categoryId: "social",
+    status: "available",
+    badges: [{ label: "Beta", tone: "warning" }],
+    accentColor: "#F0FDFA",
+    href: "/auth/tiktok",
+  },
+  {
+    id: "onlyfans",
+    name: "OnlyFans",
+    description: "Two-way sync, content scheduling, and revenue analytics tailored to creator businesses.",
+    logo: "/logos/onlyfans.svg",
+    categoryId: "monetization",
+    status: "connected",
+    badges: [{ label: "Core", tone: "success" }],
+    accentColor: "#EBF8FF",
+    href: "/platforms/connect/onlyfans",
+  },
+  {
+    id: "fansly",
+    name: "Fansly",
+    description: "Mirror high-value automations across fansly to keep VIPs nurtured everywhere.",
+    logo: "/logos/fansly.svg",
+    categoryId: "monetization",
+    status: "available",
+    accentColor: "#F5F3FF",
+  },
+  {
+    id: "slack",
+    name: "Slack",
+    description: "Route VIP alerts, workflows, and revenue pings to the channels your team already lives in.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=slack&backgroundType=gradientLinear",
+    categoryId: "ops",
+    status: "available",
+    accentColor: "#FDF2F8",
+  },
+  {
+    id: "discord",
+    name: "Discord",
+    description: "Sync member roles and send renewal nudges without needing to hop across servers.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=discord&backgroundType=gradientLinear",
+    categoryId: "community",
+    status: "coming-soon",
+    accentColor: "#EEF2FF",
+    badges: [{ label: "Coming Soon", tone: "info" }],
+  },
+  {
+    id: "stripe",
+    name: "Stripe",
+    description: "Push payouts, refunds, and lifetime value segments straight into your command center.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=stripe&backgroundType=gradientLinear",
+    categoryId: "finance",
+    status: "available",
+    accentColor: "#E0F2FE",
+  },
+  {
+    id: "notion",
+    name: "Notion",
+    description: "Sync your creator playbooks and campaign templates—no copy-pasting across docs.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=notion&backgroundColor=b6e6bd",
+    categoryId: "ops",
+    status: "available",
+    accentColor: "#F8FAFC",
+  },
+  {
+    id: "google-analytics",
+    name: "Google Analytics",
+    description: "Overlay traffic surges with revenue spikes to see which funnel actually converts.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=ga&backgroundColor=fef9c3",
+    categoryId: "analytics",
+    status: "available",
+    accentColor: "#FFFBEB",
+  },
+  {
+    id: "mailchimp",
+    name: "Mailchimp",
+    description: "Trigger paywalled drops to your warm lists the moment content goes live.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=mailchimp&backgroundColor=fde68a",
+    categoryId: "marketing",
+    status: "coming-soon",
+    accentColor: "#FEF3C7",
+    badges: [{ label: "Waitlist", tone: "warning" }],
+  },
+  {
+    id: "convertkit",
+    name: "ConvertKit",
+    description: "Capture high-Intent leads and sync them into Huntaze nurtures automatically.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=convertkit&backgroundColor=f4e8ff",
+    categoryId: "marketing",
+    status: "available",
+    accentColor: "#F3E8FF",
+  },
+  {
+    id: "google-drive",
+    name: "Google Drive",
+    description: "Centralise content approvals and automation receipts in shared folders.",
+    logo: "https://api.dicebear.com/7.x/identicon/svg?seed=gdrive&backgroundColor=bae6fd",
+    categoryId: "ops",
+    status: "available",
+    accentColor: "#E0F2FE",
+  },
 ];
 
-const categories = [
-  { id: 'all', name: 'All', icon: '🔗' },
-  { id: 'social', name: 'Social Media', icon: '📱' },
-  { id: 'communication', name: 'Communication', icon: '💬' },
-  { id: 'analytics', name: 'Analytics', icon: '📊' },
-  { id: 'payment', name: 'Payments', icon: '💳' },
-  { id: 'productivity', name: 'Productivity', icon: '⚡' },
-  { id: 'marketing', name: 'Marketing', icon: '📣' },
-  { id: 'storage', name: 'Storage', icon: '☁️' }
+const categories: IntegrationCategory[] = [
+  { id: "all", name: "All integrations", icon: "🔗", description: "Every channel connected to Huntaze." },
+  { id: "social", name: "Social", icon: "📱", description: "Acquisition engines and viral loops." },
+  { id: "monetization", name: "Monetisation", icon: "💸", description: "Platforms that pay the bills." },
+  { id: "marketing", name: "Marketing", icon: "📣", description: "Build audiences and nurture fans." },
+  { id: "analytics", name: "Analytics", icon: "📊", description: "Understand what is working." },
+  { id: "community", name: "Community", icon: "💬", description: "Keep superfans engaged." },
+  { id: "ops", name: "Operations", icon: "⚙️", description: "Orchestrate the back office." },
+  { id: "finance", name: "Finance", icon: "💳", description: "Track payments and growth." },
 ];
 
 export function IntegrationsSectionSimple() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredIntegrations = useMemo(() => {
-    return integrations.filter(integration => {
-      const matchesCategory = selectedCategory === 'all' || integration.category === selectedCategory;
-      const matchesSearch = integration.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const search = searchTerm.trim().toLowerCase();
+
+    return integrationCatalogue.filter((integration) => {
+      const matchesCategory =
+        selectedCategory === "all" || integration.categoryId === selectedCategory;
+      const matchesSearch =
+        !search ||
+        integration.name.toLowerCase().includes(search) ||
+        integration.description.toLowerCase().includes(search) ||
+        (integration.categoryId && integration.categoryId.includes(search));
+
       return matchesCategory && matchesSearch;
     });
   }, [selectedCategory, searchTerm]);
 
   return (
-    <section className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-8 animate-fadeIn">
+    <section className="bg-background-primary py-24">
+      <div className="container-default">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface-muted px-4 py-1 text-xs font-semibold uppercase tracking-wide text-content-subtle">
+            <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+            Unified integrations
+          </span>
+          <h2 className="mt-4 text-3xl font-semibold text-content-primary sm:text-4xl">
+            Your creator stack, already connected
+          </h2>
+          <p className="mt-4 text-base text-content-secondary">
+            Pick the channels that move revenue, then automate the busy-work. Huntaze keeps data
+            flowing between social, monetisation, and ops with a consistent interface.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 max-w-xl">
           <div className="relative">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-content-subtle" />
             <input
-              type="text"
+              type="search"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search integrations..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              onChange={(event) => setSearchTerm(event.target.value)}
+              className="input-quiet pl-11"
+              placeholder="Search integrations or categories"
+              aria-label="Search integrations"
             />
           </div>
         </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap gap-3 justify-center mb-12 animate-slideUp delay-200">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 hover-scale ${
-                selectedCategory === category.id
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              <span>{category.icon}</span>
-              <span>{category.name}</span>
-              {selectedCategory === category.id && (
-                <span className="ml-1 bg-white/20 px-2 py-0.5 rounded-full text-xs">
-                  {filteredIntegrations.length}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          {categories.map((category) => {
+            const isActive = selectedCategory === category.id;
+            const count =
+              category.id === "all"
+                ? integrationCatalogue.length
+                : integrationCatalogue.filter((integration) => integration.categoryId === category.id)
+                    .length;
 
-        {/* Integration Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {filteredIntegrations.map((integration, index) => (
-            <div
-              key={integration.id}
-              className={`group relative animate-scaleIn delay-${Math.min((index + 1) * 100, 800)}`}
-            >
-              <div className="relative bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-xl transition-all duration-200 cursor-pointer hover-lift">
-                <div className="w-16 h-16 mx-auto mb-3 rounded-lg overflow-hidden grayscale group-hover:grayscale-0 transition-all">
-                  <Image 
-                    src={integration.logo}
-                    alt={integration.name}
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <h3 className="text-sm font-medium text-center text-gray-900">
-                  {integration.name}
-                </h3>
-                {integration.featured && (
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-purple-500 rounded-full" />
+            return (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setSelectedCategory(category.id)}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition focus-ring",
+                  isActive
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border-subtle bg-transparent text-content-secondary hover:border-border-strong hover:bg-surface-muted",
                 )}
-                
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                  {integration.description}
-                </div>
-              </div>
-            </div>
+              >
+                <span>{category.icon}</span>
+                <span>{category.name}</span>
+                <span
+                  className={cn(
+                    "rounded-full px-2 py-0.5 text-xs font-semibold",
+                    isActive ? "bg-primary text-primary-foreground" : "bg-surface-muted text-content-subtle",
+                  )}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {filteredIntegrations.map(({ id, ...integration }) => (
+            <IntegrationCard key={id} {...integration} />
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="mt-16 text-center animate-fadeIn delay-800">
-          <p className="text-lg text-gray-600 mb-6">
-            Don't see your favorite tool? 
+        <div className="mt-16 text-center">
+          <p className="text-sm text-content-secondary">
+            Need something custom? We ship new integrations alongside your roadmap.
           </p>
-          <a 
-            href="/contact" 
-            className="btn btn-secondary inline-flex items-center gap-2 hover-glow"
+          <Link
+            href="/support"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-primary-hover"
           >
-            Request Integration
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
+            Request an integration
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>
