@@ -5,9 +5,13 @@ export async function POST(request: NextRequest) {
     const { code } = await request.json();
     if (!code) return NextResponse.json({ error: 'Missing authorization code' }, { status: 400 });
 
-    const clientId = process.env.INSTAGRAM_CLIENT_ID || process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID || '';
-    const clientSecret = process.env.INSTAGRAM_CLIENT_SECRET || process.env.INSTAGRAM_APP_SECRET || '';
-    const redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || '';
+    const clientId = process.env.INSTAGRAM_CLIENT_ID || process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID;
+    const clientSecret = process.env.INSTAGRAM_CLIENT_SECRET || process.env.INSTAGRAM_APP_SECRET;
+    const redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI;
+
+    if (!clientId || !clientSecret || !redirectUri) {
+      return NextResponse.json({ error: 'Instagram OAuth not configured' }, { status: 400 });
+    }
 
     const tokenResp = await fetch('https://api.instagram.com/oauth/access_token', {
       method: 'POST',
@@ -66,4 +70,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
