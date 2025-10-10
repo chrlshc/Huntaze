@@ -241,6 +241,12 @@ export async function middleware(request: NextRequest) {
   const isOAuth = ['/auth/tiktok', '/auth/instagram', '/auth/reddit', '/auth/google'].some((r) => pathname.startsWith(r));
   const isTest = pathname.includes('/test-') || pathname.includes('/tiktok-diagnostic') || pathname.includes('/debug-');
 
+  // Pre-prod/staging bypass (no auth redirects)
+  const bypassByEnv = process.env.PREPROD_BYPASS_AUTH === 'true' || process.env.STAGING_BYPASS_AUTH === 'true';
+  const bypassByQuery = request.nextUrl.searchParams.get('bypassauth') === '1';
+  const bypassCookie = request.cookies.get('bypass_auth')?.value === '1';
+  const BYPASS_AUTH = bypassByEnv || bypassByQuery || bypassCookie;
+
   // Not authenticated → redirect to auth for protected/onboarding
   if (!token && isAppDomain && marketingFallbackPaths.has(normalisedPathname)) {
     const to = new URL(request.url);
@@ -248,7 +254,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(to, { status: 302 });
   }
 
-  if (!token && (isProtected || isOnboarding)) {
+  if (!BYPASS_AUTH && !token && (isProtected || isOnboarding)) {
     const authUrl = new URL('/auth', request.url);
     // Preserve intended destination so auth can bounce back
     const nextPath = request.nextUrl.pathname + (request.nextUrl.search || '');
@@ -260,7 +266,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Authenticated → enforce onboarding cookie except OAuth/test routes
-  if (token && isProtected && !isOAuth && !isTest) {
+  if (!BYPASS_AUTH && token && isProtected && !isOAuth && !isTest) {
     const onboarded = request.cookies.get('onboarding_completed')?.value === 'true';
     if (!onboarded) {
       const to = new URL('/onboarding', request.url);
@@ -270,7 +276,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Authenticated visiting auth routes → redirect to app
-  if (token && isAuth && !isOAuth) {
+  if (!BYPASS_AUTH && token && isAuth && !isOAuth) {
     return NextResponse.redirect(new URL('/dashboard/messages', request.url));
   }
 
@@ -321,6 +327,21 @@ export async function middleware(request: NextRequest) {
 
   if (request.method === 'GET') {
     response.headers.set(CSRF_HEADER_NAME, csrfToken ?? '');
+  }
+
+  // Persist bypass flag via cookie when provided in query
+  if (bypassByQuery) {
+    try {
+      const bypassOpts: any = {
+        httpOnly: false,
+        secure: secureCookies,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24,
+      };
+      if (cookieDomainCandidate) bypassOpts.domain = cookieDomainCandidate;
+      response.cookies.set('bypass_auth', '1', bypassOpts);
+    } catch {}
   }
 
   return response;
