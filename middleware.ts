@@ -249,7 +249,14 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!token && (isProtected || isOnboarding)) {
-    return NextResponse.redirect(new URL('/auth', request.url));
+    const authUrl = new URL('/auth', request.url);
+    // Preserve intended destination so auth can bounce back
+    const nextPath = request.nextUrl.pathname + (request.nextUrl.search || '');
+    authUrl.searchParams.set('to', nextPath);
+    if (request.nextUrl.pathname.startsWith('/platforms/connect/onlyfans')) {
+      authUrl.searchParams.set('provider', 'onlyfans');
+    }
+    return NextResponse.redirect(authUrl);
   }
 
   // Authenticated → enforce onboarding cookie except OAuth/test routes
