@@ -3,7 +3,7 @@ import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
 
-export default function AnalyticsPage() {
+export default function OnlyFansAssistedPage() {
   return (
     <div className="hz" data-theme="light">
       <div className="hz-app">
@@ -47,27 +47,27 @@ export default function AnalyticsPage() {
         {/* Content */}
         <main className="hz-main" role="main">
           <div className="hz-page">
-            <h1>Analytics</h1>
+            <h1>OnlyFans Assisted</h1>
 
             {(() => {
               const nodes: NodeDef[] = [
-                { id: 'hub', title: 'Analytics', x: 50, y: 42 },
-                { id: 'overview', title: 'Overview', statusUrl: '/api/analytics/overview', x: 18, y: 26 },
-                { id: 'acquisition', title: 'Acquisition', statusUrl: '/api/analytics/overview', x: 82, y: 26 },
-                { id: 'revenue', title: 'Revenue', statusUrl: '/api/analytics/overview', x: 50, y: 82 },
+                { id: 'hub', title: 'OnlyFans Assisted', x: 50, y: 42 },
+                { id: 'smart', title: 'Smart replies', statusUrl: '/api/integrations/onlyfans/status', x: 18, y: 26 },
+                { id: 'mass', title: 'Mass messaging', statusUrl: '/api/integrations/onlyfans/status', x: 82, y: 26 },
+                { id: 'compliance', title: 'Compliance', statusUrl: '/api/integrations/onlyfans/status', x: 50, y: 82 },
               ];
               const links: LinkDef[] = [
-                { from: 'hub', to: 'overview' },
-                { from: 'hub', to: 'acquisition' },
-                { from: 'hub', to: 'revenue' },
+                { from: 'hub', to: 'smart' },
+                { from: 'hub', to: 'mass' },
+                { from: 'hub', to: 'compliance' },
               ];
               return <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />;
             })()}
 
             <SectionExplainer
-              title="Trust the Numbers"
-              description="Analytics blends acquisition, engagement, and revenue views into a single workspace so you can turn channel performance into next steps faster."
-              actionLabel="Open performance reports"
+              title="Scale Creator Messaging"
+              description="OnlyFans Assisted handles smart replies, mass outreach, and compliance guardrails together so managers can focus on growth plays instead of manual follow-ups."
+              actionLabel="Customize assistant flows"
             />
 
             {/* Cards removed per request */}

@@ -3,7 +3,7 @@ import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
 
-export default function AnalyticsPage() {
+export default function CinAiPage() {
   return (
     <div className="hz" data-theme="light">
       <div className="hz-app">
@@ -47,27 +47,27 @@ export default function AnalyticsPage() {
         {/* Content */}
         <main className="hz-main" role="main">
           <div className="hz-page">
-            <h1>Analytics</h1>
+            <h1>CIN AI</h1>
 
             {(() => {
               const nodes: NodeDef[] = [
-                { id: 'hub', title: 'Analytics', x: 50, y: 42 },
-                { id: 'overview', title: 'Overview', statusUrl: '/api/analytics/overview', x: 18, y: 26 },
-                { id: 'acquisition', title: 'Acquisition', statusUrl: '/api/analytics/overview', x: 82, y: 26 },
-                { id: 'revenue', title: 'Revenue', statusUrl: '/api/analytics/overview', x: 50, y: 82 },
+                { id: 'hub', title: 'CIN AI', x: 50, y: 42 },
+                { id: 'inbox', title: 'Unified Inbox', statusUrl: '/api/cin/status', x: 18, y: 26 },
+                { id: 'replies', title: 'Suggested replies', statusUrl: '/api/cin/status', x: 82, y: 26 },
+                { id: 'automations', title: 'Automations', statusUrl: '/api/cin/status', x: 50, y: 82 },
               ];
               const links: LinkDef[] = [
-                { from: 'hub', to: 'overview' },
-                { from: 'hub', to: 'acquisition' },
-                { from: 'hub', to: 'revenue' },
+                { from: 'hub', to: 'inbox' },
+                { from: 'hub', to: 'replies' },
+                { from: 'hub', to: 'automations' },
               ];
               return <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />;
             })()}
 
             <SectionExplainer
-              title="Trust the Numbers"
-              description="Analytics blends acquisition, engagement, and revenue views into a single workspace so you can turn channel performance into next steps faster."
-              actionLabel="Open performance reports"
+              title="Keep Conversations Flowing"
+              description="CIN AI blends the unified inbox, suggested replies, and automations so teams can keep response times low while staying true to each creator's voice."
+              actionLabel="Tune conversation rules"
             />
 
             {/* Cards removed per request */}
