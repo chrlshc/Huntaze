@@ -16,7 +16,8 @@ import {
   Globe,
   Server,
   Key,
-  Eye
+  Eye,
+  ArrowRight
 } from 'lucide-react'
 
 interface Certification {

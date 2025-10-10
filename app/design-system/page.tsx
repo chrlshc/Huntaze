@@ -53,10 +53,18 @@ export default function DesignSystemPage() {
         <section className="mb-12">
           <h2 className="text-xl font-semibold mb-4">Status</h2>
           <div className="flex flex-wrap gap-3 text-sm">
-            <span className="rounded-full px-3 py-1" style={{ background: `rgba(var(--color-success-rgb, 33,128,141), 0.15)`, color: `var(--color-success)` }}>Success</span>
-            <span className="rounded-full px-3 py-1" style={{ background: `rgba(var(--color-warning-rgb, 168,75,47), 0.15)`, color: `var(--color-warning)` }}>Warning</span>
-            <span className="rounded-full px-3 py-1" style={{ background: `rgba(var(--color-error-rgb, 192,21,47), 0.15)`, color: `var(--color-error)` }}>Error</span>
-            <span className="rounded-full px-3 py-1" style={{ background: `rgba(var(--color-info-rgb, 98,108,113), 0.15)`, color: `var(--color-info)` }}>Info</span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/15 px-3 py-1 text-success">
+              Success
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/15 px-3 py-1 text-warning">
+              Warning
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-danger/30 bg-danger/15 px-3 py-1 text-danger">
+              Error
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-info/30 bg-info/15 px-3 py-1 text-info">
+              Info
+            </span>
           </div>
         </section>
 
@@ -74,4 +82,3 @@ export default function DesignSystemPage() {
     </div>
   );
 }
-
