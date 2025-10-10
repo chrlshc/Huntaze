@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    let email: string | undefined = undefined;
+    try {
+      const body = await request.json();
+      email = body?.email;
+    } catch {
+      // Ignore parse errors; allow empty body
+    }
     
     // In production, save to database
     // For now, just log it
