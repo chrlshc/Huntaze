@@ -7,6 +7,7 @@ frontend:
         - npm ci
     build:
       commands:
+        - if [ -f .env.production ]; then set -a; source .env.production; set +a; fi
         # Set environment variables for build
         - export NEXT_PUBLIC_APP_URL=https://app.huntaze.com
         - export NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
