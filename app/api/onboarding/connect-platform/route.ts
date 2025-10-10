@@ -17,7 +17,7 @@ async function handler(request: NextRequest) {
         instagram: `${baseUrl}/api/auth/instagram`,
         tiktok: `${baseUrl}/api/auth/tiktok`,
         reddit: `${baseUrl}/api/auth/reddit`,
-        onlyfans: `${baseUrl}/api/auth/onlyfans` // You'll need to implement this
+        onlyfans: `${baseUrl}/auth/onlyfans`
       };
 
       if (platformRoutes[platform]) {
