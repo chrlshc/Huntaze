@@ -12,7 +12,7 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com'),
   title: "Huntaze - Keep More of Your Creator Revenue",
   description: "Stop paying 50% to agencies. Automate fan conversations with AI while you keep control and earnings.",
   keywords: "OnlyFans automation, creator platform, AI chatbot, content creator tools, OnlyFans agency alternative",

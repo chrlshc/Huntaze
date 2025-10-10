@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Canonical entrypoint for "OnlyFans connect" auth flow.
-// We don't have an OAuth with OnlyFans yet, so route users to the
-// dedicated connect page under the app domain.
+// Always build absolute URL against app domain to avoid localhost leaks.
 export async function GET(request: NextRequest) {
-  const target = new URL('/platforms/connect/onlyfans', request.url);
+  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
+  const target = new URL('/platforms/connect/onlyfans', base);
   // Preserve optional plan or tracking params
   const sp = request.nextUrl.searchParams;
   sp.forEach((v, k) => {
@@ -12,4 +12,3 @@ export async function GET(request: NextRequest) {
   });
   return NextResponse.redirect(target, { status: 302 });
 }
-
