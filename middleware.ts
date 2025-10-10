@@ -46,6 +46,48 @@ const legacyAppRoutes: LegacyRoute[] = [
   { prefix: '/app', target: '/dashboard/messages' },
 ].sort((a, b) => b.prefix.length - a.prefix.length);
 
+function extractHost(value: string | null | undefined): string {
+  if (!value) return '';
+  const host = value.split(',')[0]?.trim() || '';
+  const [hostname] = host.split(':');
+  return (hostname || '').toLowerCase();
+}
+
+function getAppDomains(): string[] {
+  const domains = new Set<string>(['app.huntaze.com']);
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (envUrl) {
+    try {
+      const parsed = new URL(envUrl);
+      if (parsed.hostname) domains.add(parsed.hostname.toLowerCase());
+    } catch {
+      // ignore malformed URLs
+    }
+  }
+  return Array.from(domains);
+}
+
+function getRootDomains(): string[] {
+  const domains = new Set<string>(['huntaze.com', 'www.huntaze.com']);
+  const envUrl = process.env.NEXT_PUBLIC_MARKETING_URL || process.env.NEXT_PUBLIC_ROOT_URL;
+  if (envUrl) {
+    try {
+      const parsed = new URL(envUrl);
+      if (parsed.hostname) {
+        domains.add(parsed.hostname.toLowerCase());
+        if (parsed.hostname.startsWith('www.')) {
+          domains.add(parsed.hostname.slice(4));
+        } else {
+          domains.add(`www.${parsed.hostname}`);
+        }
+      }
+    } catch {
+      // ignore malformed URLs
+    }
+  }
+  return Array.from(domains);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   // Never intercept Next.js internals or static assets
@@ -65,10 +107,16 @@ export async function middleware(request: NextRequest) {
     pathname !== '/' && pathname.endsWith('/') ? pathname.replace(/\/+$/, '') : pathname;
 
   // Cross-domain routing: marketing vs app subdomain
-  const host = request.nextUrl.hostname;
-  const forwardedHost = request.headers.get('x-forwarded-host') || host;
-  const isRootDomain = forwardedHost === 'huntaze.com' || forwardedHost === 'www.huntaze.com';
-  const isAppDomain = forwardedHost === 'app.huntaze.com';
+  const urlHost = extractHost(request.nextUrl.hostname);
+  const headerHost = extractHost(request.headers.get('host')) || urlHost;
+  const forwardedHost = extractHost(request.headers.get('x-forwarded-host')) || headerHost;
+  const activeHost = forwardedHost || headerHost || urlHost;
+  const appDomains = getAppDomains();
+  const rootDomains = getRootDomains();
+  const primaryAppDomain = appDomains[0] || 'app.huntaze.com';
+  const primaryRootDomain = rootDomains.find((domain) => !domain.startsWith('www.')) || rootDomains[0] || 'huntaze.com';
+  const isRootDomain = rootDomains.includes(activeHost);
+  const isAppDomain = appDomains.includes(activeHost);
 
   const domainProtectedPrefixes = [
     '/dashboard',
@@ -89,7 +137,7 @@ export async function middleware(request: NextRequest) {
 
   if (isRootDomain && domainProtectedPrefixes.some((p) => normalisedPathname === p || normalisedPathname.startsWith(p + '/'))) {
     const target = new URL(request.url);
-    target.hostname = 'app.huntaze.com';
+    target.hostname = primaryAppDomain;
     return NextResponse.redirect(target, { status: 302 });
   }
 
@@ -115,7 +163,7 @@ export async function middleware(request: NextRequest) {
   );
   if (isAppDomain && !isAppPath) {
     const target = new URL(request.url);
-    target.hostname = 'huntaze.com';
+    target.hostname = primaryRootDomain;
     return NextResponse.redirect(target, { status: 302 });
   }
 
@@ -151,7 +199,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Local dev convenience: disable auth checks on localhost/non-production
-  const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
+  const isLocalhost = activeHost === 'localhost' || activeHost === '127.0.0.1' || activeHost === '0.0.0.0';
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
   if (DEV_MODE) return NextResponse.next();
 
