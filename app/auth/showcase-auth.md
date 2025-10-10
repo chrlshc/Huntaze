@@ -103,4 +103,4 @@ box-shadow: var(--shadow-md);
 ✅ **Accessibilité** : Focus states, labels, contrast ratios
 ✅ **Conversion** : Flow optimisé pour maximiser sign-ups
 
-La page auth est maintenant au niveau des standards SaaS modernes comme Linear, Stripe, et Vercel ! 🚀
+La page auth est maintenant au niveau des standards SaaS modernes comme Linear et Stripe ! 🚀
