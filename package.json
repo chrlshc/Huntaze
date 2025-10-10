@@ -23,8 +23,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.876.0",
+    "@aws-sdk/client-dynamodb": "^3.637.0",
+    "@aws-sdk/client-kms": "^3.637.0",
+    "@aws-sdk/client-sqs": "^3.637.0",
     "@aws-sdk/client-eventbridge": "^3.876.0",
     "@aws-sdk/client-ses": "^3.876.0",
+    "@aws-sdk/client-secrets-manager": "^3.876.0",
     "@hookform/resolvers": "^3.3.4",
     "@neondatabase/serverless": "^0.10.4",
     "@radix-ui/react-alert-dialog": "^1.1.15",
