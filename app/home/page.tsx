@@ -1,9 +1,9 @@
+import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
+import Image from 'next/image';
 import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
 import SectionExplainer from '@/components/hz/SectionExplainer';
-import Image from 'next/image';
-import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
 
-export default function AnalyticsPage() {
+export default function HomePage() {
   return (
     <div className="hz" data-theme="light">
       <div className="hz-app">
@@ -44,30 +44,48 @@ export default function AnalyticsPage() {
           </div>
         </header>
 
-        {/* Content */}
+        {/* Contenu */}
         <main className="hz-main" role="main">
           <div className="hz-page">
-            <h1>Analytics</h1>
+            <h1>Welcome to Huntaze</h1>
 
+            {/* 2 cartes “héros” */}
+            <section className="hz-grid-hero">
+              <article className="hz-card hz-card--hero">
+                <h2>Revenue Snapshot</h2>
+                <div className="hz-card__footer hz-actions">
+                  <a className="hz-button primary" href="#">Connect Analytics</a>
+                </div>
+              </article>
+
+              <article className="hz-card hz-card--hero">
+                <h2>Today's Priorities</h2>
+                <div className="hz-card__footer hz-actions">
+                  <a className="hz-button" href="#">Open Queue</a>
+                </div>
+              </article>
+            </section>
+
+            {/* Connected overview graph (varied layout) */}
             {(() => {
               const nodes: NodeDef[] = [
-                { id: 'hub', title: 'Analytics', x: 50, y: 42 },
-                { id: 'overview', title: 'Overview', statusUrl: '/api/analytics/overview', x: 18, y: 26 },
-                { id: 'acquisition', title: 'Acquisition', statusUrl: '/api/analytics/overview', x: 82, y: 26 },
-                { id: 'revenue', title: 'Revenue', statusUrl: '/api/analytics/overview', x: 50, y: 82 },
+                { id: 'hub', title: 'Home', x: 50, y: 42 },
+                { id: 'analytics', title: 'Analytics', statusUrl: '/api/analytics/overview', x: 18, y: 26, connectHref: '/analytics' },
+                { id: 'campaigns', title: 'Campaigns', x: 82, y: 26, connectHref: '#' },
+                { id: 'payments', title: 'Payments', x: 50, y: 82, connectHref: '#' },
               ];
               const links: LinkDef[] = [
-                { from: 'hub', to: 'overview' },
-                { from: 'hub', to: 'acquisition' },
-                { from: 'hub', to: 'revenue' },
+                { from: 'hub', to: 'analytics' },
+                { from: 'hub', to: 'campaigns' },
+                { from: 'hub', to: 'payments' },
               ];
               return <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />;
             })()}
 
             <SectionExplainer
-              title="Trust the Numbers"
-              description="Analytics blends acquisition, engagement, and revenue views into a single workspace so you can turn channel performance into next steps faster."
-              actionLabel="Open performance reports"
+              title="Start Here Each Morning"
+              description="Home gathers the revenue snapshot, priority queue, and connector health so you can spot blockers before diving deeper."
+              actionLabel="Review today's playbook"
             />
 
             {/* Cards removed per request */}
