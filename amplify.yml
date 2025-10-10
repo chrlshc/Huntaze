@@ -10,7 +10,10 @@ frontend:
         # Set environment variables for build
         - export NEXT_PUBLIC_APP_URL=https://app.huntaze.com
         - export NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
+        - export NEXT_PUBLIC_ROOT_URL=https://huntaze.com
+        - export NEXT_PUBLIC_MARKETING_URL=https://huntaze.com
         - export NEXT_PUBLIC_DOMAIN=.huntaze.com
+        - export JWT_SECRET=9tZUvb1Ky3Ciy+NKXIju8p5e3AdrC123OCsX0XOx9oQ=
         # Speed up CI builds (skip lint + TS typecheck) and reduce noise
         - export NEXT_DISABLE_ESLINT=1
         - export NEXT_PRIVATE_SKIP_TYPECHECK=true

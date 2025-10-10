@@ -1,18 +1,6 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
-
-// JWT secret handling
-function getSecret(): Uint8Array {
-  const secretStr = process.env.JWT_SECRET;
-  if (!secretStr) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('JWT_SECRET is not set in production');
-    }
-    // Fallback for local/dev only
-    return new TextEncoder().encode('dev-only-secret');
-  }
-  return new TextEncoder().encode(secretStr);
-}
+import { getJwtSecret } from '@/lib/auth/secret';
 
 // Token expiry times
 const ACCESS_TOKEN_EXPIRY = '1h';
@@ -32,7 +20,7 @@ export async function generateToken(payload: Omit<UserPayload, 'iat' | 'exp'>) {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(ACCESS_TOKEN_EXPIRY)
-    .sign(getSecret());
+    .sign(getJwtSecret());
   
   return token;
 }
@@ -43,7 +31,7 @@ export async function generateRefreshToken(payload: Omit<UserPayload, 'iat' | 'e
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(REFRESH_TOKEN_EXPIRY)
-    .sign(getSecret());
+    .sign(getJwtSecret());
   
   return token;
 }
@@ -51,7 +39,7 @@ export async function generateRefreshToken(payload: Omit<UserPayload, 'iat' | 'e
 // Verify JWT token
 export async function verifyToken(token: string): Promise<UserPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload as UserPayload;
   } catch (error) {
     console.error('JWT verification failed:', error);
@@ -106,7 +94,7 @@ export async function refreshAccessToken(): Promise<string | null> {
   }
 
   try {
-    const { payload } = await jwtVerify(refreshToken, getSecret());
+    const { payload } = await jwtVerify(refreshToken, getJwtSecret());
     const user = payload as UserPayload;
     // Re-issue a short-lived access token using payload from refresh
     const newAccess = await new SignJWT({
@@ -119,7 +107,7 @@ export async function refreshAccessToken(): Promise<string | null> {
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime(ACCESS_TOKEN_EXPIRY)
-      .sign(getSecret());
+      .sign(getJwtSecret());
 
     // Update cookies
     cookies().set('access_token', newAccess, {
