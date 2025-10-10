@@ -117,6 +117,14 @@ export async function middleware(request: NextRequest) {
   const primaryRootDomain = rootDomains.find((domain) => !domain.startsWith('www.')) || rootDomains[0] || 'huntaze.com';
   const isRootDomain = rootDomains.includes(activeHost);
   const isAppDomain = appDomains.includes(activeHost);
+  const marketingFallbackPaths = new Set([
+    '/analytics',
+    '/cinai',
+    '/home',
+    '/onlyfans',
+    '/onlyfans-assisted',
+    '/social-marketing',
+  ]);
 
   const domainProtectedPrefixes = [
     '/dashboard',
@@ -234,6 +242,12 @@ export async function middleware(request: NextRequest) {
   const isTest = pathname.includes('/test-') || pathname.includes('/tiktok-diagnostic') || pathname.includes('/debug-');
 
   // Not authenticated → redirect to auth for protected/onboarding
+  if (!token && isAppDomain && marketingFallbackPaths.has(normalisedPathname)) {
+    const to = new URL(request.url);
+    to.hostname = primaryRootDomain;
+    return NextResponse.redirect(to, { status: 302 });
+  }
+
   if (!token && (isProtected || isOnboarding)) {
     return NextResponse.redirect(new URL('/auth', request.url));
   }
