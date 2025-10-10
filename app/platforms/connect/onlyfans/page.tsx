@@ -2,16 +2,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ofIntegrationApi } from '@/src/lib/api';
 import ComplianceNotice from '@/components/compliance/ComplianceNotice';
 
 export default function OnlyFansConnectPage() {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
+  const [waitlistLoading, setWaitlistLoading] = useState(false);
 
   const connect = async () => {
     setError('');
@@ -43,7 +46,7 @@ export default function OnlyFansConnectPage() {
       <main className="max-w-xl mx-auto p-6">
         <ComplianceNotice platform="OnlyFans" />
         <div className="bg-white border border-gray-200 rounded-xl p-6">
-          <p className="text-sm text-gray-600 mb-4">Import CSV uniquement pour l'instant. La connexion directe est en développement. Utilisez l'export CSV d'OnlyFans pour importer vos données.</p>
+          <p className="text-sm text-gray-600 mb-4">Deux options aujourd'hui: importer un CSV officiel d'OnlyFans pour l'analytics, ou vous inscrire à la liste d’attente pour l'API officielle.</p>
           
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
             <div className="flex items-start gap-2">
@@ -89,6 +92,35 @@ export default function OnlyFansConnectPage() {
             </div>
             {notice && <div className="text-green-600 text-sm">{notice}</div>}
             {error && <div className="text-red-600 text-sm">{error}</div>}
+
+            <div className="flex items-center gap-3">
+              <Link href="/platforms/import/onlyfans" className="inline-flex items-center px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">
+                Import OF CSV
+              </Link>
+              <button
+                disabled={waitlistLoading}
+                onClick={async () => {
+                  try {
+                    setNotice('');
+                    setError('');
+                    setWaitlistLoading(true);
+                    await fetch('/api/waitlist/onlyfans', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({}),
+                    });
+                    setNotice('Inscrit à la liste d’attente API OnlyFans. Nous vous contacterons.');
+                  } catch (e: any) {
+                    setError(e?.message || 'Échec de l’inscription à la liste d’attente.');
+                  } finally {
+                    setWaitlistLoading(false);
+                  }
+                }}
+                className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+              >
+                {waitlistLoading ? 'Inscription…' : 'Rejoindre la waitlist API'}
+              </button>
+            </div>
             
             <div className="opacity-50 pointer-events-none">
               <p className="text-xs text-gray-500 mb-2">Connexion directe (bientôt disponible) :</p>
