@@ -27,6 +27,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GitHubActions-ECR
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
@@ -49,4 +50,3 @@ jobs:
           context: infra/fargate/browser-worker
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-
