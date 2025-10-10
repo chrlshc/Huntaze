@@ -6,7 +6,9 @@ export async function GET(request: NextRequest) {
   const redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || `${appBase}/auth/instagram/callback`;
   
   if (!clientId) {
-    return NextResponse.json({ error: 'Instagram app not configured' }, { status: 500 });
+    const fallback = new URL('/auth', request.url);
+    fallback.searchParams.set('error', 'instagram_unavailable');
+    return NextResponse.redirect(fallback);
   }
 
   // Instagram OAuth URL
