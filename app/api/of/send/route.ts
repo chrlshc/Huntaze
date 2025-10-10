@@ -3,6 +3,7 @@ import { getServerSession } from '@/lib/auth';
 import { z } from 'zod';
 import { DEFAULT_RATE_LIMITS } from '@/lib/types/onlyfans';
 import { queueDmMessage } from '@/lib/queue/of-queue';
+import { enqueueSend as enqueueSqs } from '@/lib/queue/of-sqs';
 
 // Request validation schema
 const sendMessageSchema = z.object({
@@ -52,27 +53,22 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Queue the message for browser automation
-    const messageId = await queueDmMessage(
-      userId,
-      validated.conversationId,
-      validated.content
-    );
-    
-    // Calculate estimated send time based on queue position
-    const estimatedDelay = Math.random() * 
-      (DEFAULT_RATE_LIMITS.dm.delayBetweenMessages.max - DEFAULT_RATE_LIMITS.dm.delayBetweenMessages.min) +
-      DEFAULT_RATE_LIMITS.dm.delayBetweenMessages.min;
-    
-    const estimatedSendTime = new Date(now.getTime() + estimatedDelay);
+    // Prod path: SQS → ECS Fargate
+    if (process.env.OF_SQS_SEND_QUEUE_URL) {
+      await enqueueSqs({
+        id: `job_${Date.now()}`,
+        userId,
+        conversationId: validated.conversationId,
+        content: validated.content,
+      });
+      return NextResponse.json({ ok: true, backend: 'sqs' });
+    }
 
-    // Return immediate response
-    return NextResponse.json({
-      success: true,
-      messageId,
-      status: 'queued',
-      estimatedSendTime
-    });
+    // Dev path: in‑memory queue → local browser worker
+    const messageId = await queueDmMessage(userId, validated.conversationId, validated.content);
+    const estimatedDelay = Math.random() * (DEFAULT_RATE_LIMITS.dm.delayBetweenMessages.max - DEFAULT_RATE_LIMITS.dm.delayBetweenMessages.min) + DEFAULT_RATE_LIMITS.dm.delayBetweenMessages.min;
+    const estimatedSendTime = new Date(now.getTime() + estimatedDelay);
+    return NextResponse.json({ success: true, messageId, status: 'queued', estimatedSendTime, backend: 'local' });
 
   } catch (error) {
     console.error('Error sending message:', error);
