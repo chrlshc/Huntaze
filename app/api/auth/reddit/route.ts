@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
+export const runtime = 'nodejs';
+
 export async function GET(request: NextRequest) {
   const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
   const clientId = process.env.REDDIT_CLIENT_ID;
