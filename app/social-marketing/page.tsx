@@ -3,7 +3,7 @@ import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
 
-export default function AnalyticsPage() {
+export default function SocialMarketingPage() {
   return (
     <div className="hz" data-theme="light">
       <div className="hz-app">
@@ -47,30 +47,31 @@ export default function AnalyticsPage() {
         {/* Content */}
         <main className="hz-main" role="main">
           <div className="hz-page">
-            <h1>Analytics</h1>
+            <h1>Social Marketing</h1>
 
+            {/* Connected visual graph */}
             {(() => {
               const nodes: NodeDef[] = [
-                { id: 'hub', title: 'Analytics', x: 50, y: 42 },
-                { id: 'overview', title: 'Overview', statusUrl: '/api/analytics/overview', x: 18, y: 26 },
-                { id: 'acquisition', title: 'Acquisition', statusUrl: '/api/analytics/overview', x: 82, y: 26 },
-                { id: 'revenue', title: 'Revenue', statusUrl: '/api/analytics/overview', x: 50, y: 82 },
+                { id: 'hub', title: 'Social Marketing', x: 50, y: 42 },
+                { id: 'instagram', title: 'Instagram', statusUrl: '/api/social/instagram/status', connectHref: '/auth/instagram', x: 18, y: 26 },
+                { id: 'tiktok', title: 'TikTok', statusUrl: '/api/social/tiktok/status', connectHref: '/auth/tiktok', x: 82, y: 26 },
+                { id: 'reddit', title: 'Reddit', statusUrl: '/api/social/reddit/status', connectHref: '/auth/reddit', x: 50, y: 82 },
               ];
               const links: LinkDef[] = [
-                { from: 'hub', to: 'overview' },
-                { from: 'hub', to: 'acquisition' },
-                { from: 'hub', to: 'revenue' },
+                { from: 'hub', to: 'instagram' },
+                { from: 'hub', to: 'tiktok' },
+                { from: 'hub', to: 'reddit' },
               ];
               return <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />;
             })()}
 
             <SectionExplainer
-              title="Trust the Numbers"
-              description="Analytics blends acquisition, engagement, and revenue views into a single workspace so you can turn channel performance into next steps faster."
-              actionLabel="Open performance reports"
+              title="Grow Reach Without Guesswork"
+              description="Social Marketing lines up Instagram, TikTok, and Reddit scheduling in one board so every launch stays paced with fresh content and status updates."
+              actionLabel="Plan my next campaign"
             />
 
-            {/* Cards removed per request */}
+            {/* Social media cards removed per request */}
           </div>
         </main>
       </div>
