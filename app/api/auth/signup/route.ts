@@ -1,85 +1,61 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SignJWT } from 'jose';
-import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+import { rateLimit } from '@/lib/rate-limit';
+import { generateToken, generateRefreshToken } from '@/lib/auth/jwt';
+
+export const runtime = 'nodejs';
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const limited = rateLimit(request, { windowMs: 60_000, max: 10 });
+    if (!limited.ok) return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 });
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters' },
-        { status: 400 }
-      );
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
     }
 
-    // TODO: Check if user already exists in database
-    // For now, we'll create a mock user
+    const { email, password } = parsed.data;
+    // In production: create user and hash password. Here: simulate user id
+    const userId = `usr_${Math.random().toString(36).slice(2, 10)}`;
+    const name = email.split('@')[0];
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const access = await generateToken({ userId, email, name, provider: 'email' });
+    const refresh = await generateRefreshToken({ userId, email, name, provider: 'email' });
 
-    // Create user object
-    const user = {
-      id: Math.random().toString(36).substring(7),
-      email,
-      name: email.split('@')[0], // Use email prefix as name
-      provider: 'email',
-      createdAt: new Date().toISOString(),
-    };
-
-    // TODO: Save user to database
-    console.log('New user signup:', { ...user, password: '[HASHED]' });
-
-    // Generate JWT
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-
-    const token = await new SignJWT({ 
-      userId: user.id,
-      email: user.email,
-      provider: 'email'
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('10y')
-      .sign(secret);
-
-    // Create response with redirect URL for onboarding
-    const response = NextResponse.json({ 
-      success: true,
-      redirect: '/onboarding/setup',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        provider: user.provider,
-      }
-    });
-
-    // Set auth cookie
-    response.cookies.set('auth_token', token, {
+    const res = NextResponse.json({ success: true, user: { id: userId, email, name } });
+    const baseCookie = {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+    };
+    res.cookies.set('access_token', access, { ...baseCookie, maxAge: 60 * 60 });
+    res.cookies.set('refresh_token', refresh, { ...baseCookie, maxAge: 60 * 60 * 24 * 7 });
+    res.cookies.set('auth_token', access, { ...baseCookie, maxAge: 60 * 60 });
+    res.cookies.set('onboarding_completed', 'false', {
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
+      maxAge: 60 * 60 * 24 * 30,
     });
-
-    return response;
-  } catch (error) {
-    console.error('Signup error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create account' },
-      { status: 500 }
-    );
+    return res;
+  } catch (e) {
+    console.error('Signup error:', e);
+    return NextResponse.json({ error: 'Failed to sign up' }, { status: 500 });
   }
 }
+
