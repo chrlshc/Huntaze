@@ -7,9 +7,11 @@ import ComplianceNotice from '@/components/compliance/ComplianceNotice';
 import { OnlyFansLogoIcon, InstagramLogoIcon, TikTokLogoIcon, RedditLogoIcon, ThreadsLogoIcon } from '@/src/components/platform-icons';
 
 const INSTAGRAM_APP_ID = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID || '618116867842215';
-const INSTAGRAM_REDIRECT_URI = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || 'https://huntaze.com/auth/instagram/callback';
+// Default to the app subdomain to avoid landing/app conflicts when env is missing
+const DEFAULT_APP_ORIGIN = (typeof window !== 'undefined' && window.location?.origin) || process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
+const INSTAGRAM_REDIRECT_URI = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || `${DEFAULT_APP_ORIGIN}/auth/instagram/callback`;
 const THREADS_APP_ID = process.env.NEXT_PUBLIC_THREADS_APP_ID || '';
-const THREADS_REDIRECT_URI = process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || 'https://huntaze.com/auth/threads/callback';
+const THREADS_REDIRECT_URI = process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || `${DEFAULT_APP_ORIGIN}/auth/threads/callback`;
 
 export default function ConnectPlatformsPage() {
   const [loading, setLoading] = useState(false);

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         code: code,
-        redirect_uri: process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI || 'https://huntaze.com/auth/reddit/callback'
+        redirect_uri: process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com'}/auth/reddit/callback`
       })
     });
 

@@ -69,6 +69,7 @@ export default function SocialMarketingPage() {
               title="Grow Reach Without Guesswork"
               description="Social Marketing lines up Instagram, TikTok, and Reddit scheduling in one board so every launch stays paced with fresh content and status updates."
               actionLabel="Plan my next campaign"
+              actionHref="/campaigns/new"
             />
 
             {/* Social media cards removed per request */}
