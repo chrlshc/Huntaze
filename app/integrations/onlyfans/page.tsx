@@ -3,5 +3,5 @@ import { redirect } from 'next/navigation'
 export const dynamic = 'force-static'
 
 export default function OnlyFansIntegrationAlias() {
-  redirect('/auth/onlyfans')
+  redirect('/platforms/connect/onlyfans')
 }
