@@ -14,7 +14,7 @@
 
 const INGEST_URL =
   process.env.DASHBOARD_INGEST_URL ||
-  'http://localhost:3000/api/onlyfans/dashboard/ingest';
+  `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com'}/api/onlyfans/dashboard/ingest`;
 const ACCOUNT_ID = process.env.DASHBOARD_ACCOUNT_ID || 'demo-account';
 const TOKEN = process.env.HUNTAZE_DASHBOARD_INGEST_TOKEN || '';
 
@@ -132,4 +132,3 @@ run().catch((error) => {
   console.error('Unexpected error:', error);
   process.exit(1);
 });
-
