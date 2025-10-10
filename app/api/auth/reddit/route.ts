@@ -4,6 +4,12 @@ import crypto from 'crypto';
 export async function GET(request: NextRequest) {
   const clientId = process.env.REDDIT_CLIENT_ID;
   const redirectUri = process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI;
+
+  if (!clientId || !redirectUri) {
+    const fallback = new URL('/auth', request.url);
+    fallback.searchParams.set('error', 'reddit_unavailable');
+    return NextResponse.redirect(fallback);
+  }
   
   // Generate state for CSRF protection
   const state = crypto.randomBytes(16).toString('hex');
