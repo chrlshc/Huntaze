@@ -49,6 +49,7 @@ export default function AuthPage() {
       instagram_unavailable: 'Instagram OAuth is not configured for this demo environment. Use email signup or try again later.',
       tiktok_unavailable: 'TikTok OAuth is not available right now. Please continue with email while we restore the integration.',
       reddit_unavailable: 'Reddit OAuth is not configured. Reach out to support if you need this provider enabled.',
+      google_unavailable: 'Google OAuth is not configured for this environment. Please continue with email.',
     };
     setProviderNotice(messages[providerError] || 'Authentication provider is currently unavailable. Please continue with email or try again later.');
     setStep('choice');

@@ -2,15 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
-  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI || `${appBase}/auth/google/callback`;
-  
+
   if (!GOOGLE_CLIENT_ID) {
-    return NextResponse.json({ error: 'Google OAuth not configured' }, { status: 500 });
+    const fallback = new URL('/auth', request.url);
+    fallback.searchParams.set('error', 'google_unavailable');
+    return NextResponse.redirect(fallback);
   }
 
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-  
   authUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID);
   authUrl.searchParams.set('redirect_uri', GOOGLE_REDIRECT_URI);
   authUrl.searchParams.set('response_type', 'code');
