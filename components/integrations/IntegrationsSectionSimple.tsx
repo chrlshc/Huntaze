@@ -46,7 +46,7 @@ const integrationCatalogue: Array<IntegrationCardProps & { id: string; categoryI
     status: "connected",
     badges: [{ label: "Core", tone: "success" }],
     accentColor: "#EBF8FF",
-    href: "/platforms/connect/onlyfans",
+    href: "/auth/onlyfans",
   },
   {
     id: "fansly",
