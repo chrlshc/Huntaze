@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
   const clientKey = process.env.TIKTOK_CLIENT_KEY || process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
-  const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI;
+  const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || `${appBase}/auth/tiktok/callback`;
   const scopes = process.env.TIKTOK_SCOPES || 'user.info.basic,video.upload';
 
   if (!clientKey || !redirectUri) {
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(fallback);
   }
   
-  const authUrl = `https://www.tiktok.com/auth/authorize/?client_key=${clientKey}&scope=${scopes}&response_type=code&redirect_uri=${redirectUri}`;
+  const authUrl = `https://www.tiktok.com/auth/authorize/?client_key=${clientKey}&scope=${scopes}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}`;
   
   return NextResponse.redirect(authUrl);
 }
