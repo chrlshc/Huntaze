@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     //   stats: stats
     // });
 
-    return NextResponse.json({ 
+    const res = NextResponse.json({ 
       success: true,
       user: {
         displayName: userInfo?.display_name,
@@ -95,6 +95,29 @@ export async function POST(request: NextRequest) {
         videoCount: stats?.video_count || 0
       }
     });
+    // Set auth cookies for downstream status checks and usage
+    const maxAge = 30 * 24 * 60 * 60; // 30 days
+    res.cookies.set('tiktok_access_token', tokenData.access_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+      path: '/',
+      maxAge,
+    });
+    if (userInfo) {
+      res.cookies.set('tiktok_user', JSON.stringify({
+        id: userInfo.open_id,
+        name: userInfo.display_name,
+        avatar: userInfo.avatar_url,
+      }), {
+        httpOnly: false,
+        sameSite: 'lax',
+        secure: true,
+        path: '/',
+        maxAge,
+      });
+    }
+    return res;
   } catch (error) {
     console.error('TikTok callback error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

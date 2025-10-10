@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ensure design tokens are available to pages/ */
+@import './design-system.css';
+
+body {
+  @apply min-h-screen antialiased;
+  background-color: var(--ds-surface-base);
+  color: var(--ds-text-primary);
+  font-family: var(--font-inter), Inter, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background-primary;
+}
+
+::selection {
+  background-color: rgba(107, 70, 255, 0.2);
+  color: var(--ds-text-on-brand);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: "cv02", "cv03", "cv04";
+  }
+
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .container-default {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-stack {
+    @apply space-y-6;
+  }
+
+  .section-stack {
+    @apply space-y-4;
+  }
+
+  .actions-row {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background-primary;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition duration-200 focus-ring disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover;
+  }
+
+  .btn-secondary {
+    @apply border border-border bg-surface-raised text-content-secondary shadow-sm hover:border-border-strong hover:bg-surface-muted;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-content-secondary hover:bg-surface-muted/70;
+  }
+
+  .btn-outline {
+    @apply border border-border bg-transparent text-content-secondary hover:border-border-strong hover:bg-surface-muted/70;
+  }
+
+  .btn-outline-dashed {
+    @apply border border-dashed border-border bg-transparent text-content-secondary hover:border-border-strong;
+  }
+
+  .surface {
+    @apply rounded-xl border border-border-subtle bg-surface-raised shadow-sm;
+  }
+
+  .surface-muted {
+    @apply rounded-xl border border-border-subtle bg-surface-muted;
+  }
+
+  .input-quiet {
+    @apply w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm text-content-primary placeholder:text-content-subtle transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+  }
+
+  .kpi {
+    @apply rounded-xl border border-border-subtle bg-surface-raised p-4 text-content-secondary shadow-sm;
+  }
+
+  .kpi-h {
+    @apply text-xs uppercase tracking-wide text-content-subtle;
+  }
+
+  .kpi-v {
+    @apply text-2xl font-semibold text-content-primary;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-border-subtle bg-surface-muted px-2 py-0.5 text-xs text-content-secondary;
+  }
+
+  .chip-ok {
+    @apply border-success/40 bg-success/15 text-success;
+  }
+
+  .chip-no {
+    @apply border-danger/40 bg-danger/15 text-danger;
+  }
+
+  .icon-button {
+    @apply grid h-9 w-9 place-items-center rounded-full border border-border-subtle bg-transparent text-content-secondary transition hover:border-primary hover:bg-primary/10 focus-ring;
+  }
+}

@@ -13,27 +13,20 @@
     stored = match ? match[1] : null;
   }
   
-  // Always default to dark mode
-  var theme = stored || 'dark';
+  // Force light mode (no dark mode)
+  var theme = 'light';
   
   // Apply immediately to prevent flash
   var html = document.documentElement;
   html.classList.add('theme-' + theme);
-  
-  if (theme === 'dark') {
-    html.classList.add('dark-mode');
-    html.style.backgroundColor = '#1e1e1e';
-    html.style.color = '#e0e0e0';
-  } else {
-    html.style.backgroundColor = '#ffffff';
-    html.style.color = '#111827';
-  }
+  html.style.backgroundColor = '#ffffff';
+  html.style.color = '#111827';
   
   // Store for consistency
   try {
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('theme', 'light');
   } catch (e) {
     // Fallback to cookie
-    document.cookie = 'theme=' + theme + ';max-age=31536000;path=/;SameSite=Strict';
+    document.cookie = 'theme=light;max-age=31536000;path=/;SameSite=Strict';
   }
 })();

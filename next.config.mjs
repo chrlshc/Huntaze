@@ -1,3 +1,33 @@
+const LEGACY_APP_SECTIONS = [
+  { prefix: '/messages', destination: '/dashboard/messages' },
+  { prefix: '/analytics', destination: '/dashboard/analytics' },
+  { prefix: '/fans', destination: '/dashboard/fans' },
+  { prefix: '/settings', destination: '/dashboard/settings' },
+  { prefix: '/profile', destination: '/dashboard/settings' },
+  { prefix: '/configure', destination: '/dashboard/settings' },
+  { prefix: '/billing', destination: '/dashboard/settings' },
+  { prefix: '/huntaze-ai', destination: '/dashboard/messages' },
+  { prefix: '/onlyfans', destination: '/dashboard/messages' },
+  { prefix: '/manager-ai', destination: '/dashboard/messages' },
+  { prefix: '/social', destination: '/dashboard/messages' },
+  { prefix: '/campaigns', destination: '/dashboard/messages' },
+  { prefix: '/automations', destination: '/dashboard/messages' },
+  { prefix: '/platforms', destination: '/dashboard/messages' },
+  { prefix: '/content', destination: '/dashboard/messages' },
+  { prefix: '/cinai', destination: '/dashboard/messages' },
+];
+
+const LEGACY_APP_REDIRECTS = [
+  ['/app', '/home'],
+  ['/app/', '/home'],
+  ...LEGACY_APP_SECTIONS.flatMap(({ prefix, destination }) => [
+    [`/app${prefix}`, destination],
+    [`/app${prefix}/:path*`, destination],
+    [`/app/app${prefix}`, destination],
+    [`/app/app${prefix}/:path*`, destination],
+  ]),
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Core
@@ -8,13 +38,55 @@ const nextConfig = {
 
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
-    return []
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const connectSources = ["'self'", 'https:', 'wss:', 'https://*.amazonaws.com'];
+    if (apiUrl) connectSources.push(apiUrl);
+
+    const csp = [
+      "default-src 'self'",
+      "base-uri 'self'",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https://*.amazonaws.com",
+      "object-src 'none'",
+      "frame-ancestors 'self'",
+      "frame-src 'self' https://js.stripe.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://connect.facebook.net",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      `connect-src ${connectSources.join(' ')}`,
+      'upgrade-insecure-requests',
+    ].join('; ');
+
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'Content-Security-Policy', value: csp },
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+          { key: 'Server', value: '' },
+          { key: 'X-Powered-By', value: '' },
+        ],
+      },
+    ];
   },
 
   // Redirects and rewrites
   async redirects() {
+    const legacyRedirects = LEGACY_APP_REDIRECTS.map(([source, destination]) => ({
+      source,
+      destination,
+      permanent: false,
+    }));
+
     return [
-      // No opinionated redirect for /app root (kept below as rewrite)
+      ...legacyRedirects,
+      // Rename: Social Planner -> Social Marketing
+      { source: '/social-planner', destination: '/social-marketing', permanent: false },
+      { source: '/social-planner/:path*', destination: '/social-marketing/:path*', permanent: false },
       // Fix common typos
       { source: '/marckeying', destination: '/marketing', permanent: false },
       { source: '/marcketing', destination: '/marketing', permanent: false },
@@ -22,78 +94,8 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      // App entry under /app (serves app/app/page.tsx → redirects to /app/app/dashboard)
-      { source: '/app', destination: '/app/app' },
-      { source: '/app/', destination: '/app/app' },
-
-      // Map real product sections under /app → /app/app
-      { source: '/app/analytics', destination: '/app/app/analytics' },
-      { source: '/app/analytics/:path*', destination: '/app/app/analytics/:path*' },
-      { source: '/app/automations', destination: '/app/app/automations' },
-      { source: '/app/automations/:path*', destination: '/app/app/automations/:path*' },
-      { source: '/app/campaigns', destination: '/app/app/campaigns' },
-      { source: '/app/campaigns/:path*', destination: '/app/app/campaigns/:path*' },
-      { source: '/app/cinai', destination: '/app/app/cinai' },
-      { source: '/app/cinai/:path*', destination: '/app/app/cinai/:path*' },
-      { source: '/app/configure', destination: '/app/app/configure' },
-      { source: '/app/configure/:path*', destination: '/app/app/configure/:path*' },
-      { source: '/app/content', destination: '/app/app/content' },
-      { source: '/app/content/:path*', destination: '/app/app/content/:path*' },
-      { source: '/app/dashboard', destination: '/app/app/dashboard' },
-      { source: '/app/dashboard/:path*', destination: '/app/app/dashboard/:path*' },
-      { source: '/app/fans', destination: '/app/app/fans' },
-      { source: '/app/fans/:path*', destination: '/app/app/fans/:path*' },
-      { source: '/app/manager-ai', destination: '/app/app/manager-ai' },
-      { source: '/app/manager-ai/:path*', destination: '/app/app/manager-ai/:path*' },
-      { source: '/app/messages', destination: '/app/app/messages' },
-      { source: '/app/messages/:path*', destination: '/app/app/messages/:path*' },
-      { source: '/app/onlyfans', destination: '/app/app/onlyfans' },
-      { source: '/app/onlyfans/:path*', destination: '/app/app/onlyfans/:path*' },
-      { source: '/app/platforms', destination: '/app/app/platforms' },
-      { source: '/app/platforms/:path*', destination: '/app/app/platforms/:path*' },
-      { source: '/app/profile', destination: '/app/app/profile' },
-      { source: '/app/profile/:path*', destination: '/app/app/profile/:path*' },
-      // billing lives at root app/billing/*
-      { source: '/app/billing', destination: '/billing' },
-      { source: '/app/billing/:path*', destination: '/billing/:path*' },
-      { source: '/app/settings', destination: '/app/app/settings' },
-      { source: '/app/settings/:path*', destination: '/app/app/settings/:path*' },
-      { source: '/app/social', destination: '/app/app/social' },
-      { source: '/app/social/:path*', destination: '/app/app/social/:path*' },
-
-      // Map top-level app routes to the AppShell versions for consistent UI (black header, white sidebar)
-      { source: '/dashboard', destination: '/app/app/dashboard' },
-      { source: '/dashboard/:path*', destination: '/app/app/dashboard/:path*' },
-      { source: '/messages', destination: '/app/app/messages' },
-      { source: '/messages/:path*', destination: '/app/app/messages/:path*' },
-      { source: '/fans', destination: '/app/app/fans' },
-      { source: '/fans/:path*', destination: '/app/app/fans/:path*' },
-      { source: '/analytics', destination: '/app/app/analytics' },
-      { source: '/analytics/:path*', destination: '/app/app/analytics/:path*' },
-      { source: '/configure', destination: '/app/app/configure' },
-      { source: '/configure/:path*', destination: '/app/app/configure/:path*' },
-      { source: '/content', destination: '/app/app/content' },
-      { source: '/content/:path*', destination: '/app/app/content/:path*' },
-      { source: '/social', destination: '/app/app/social' },
-      { source: '/social/:path*', destination: '/app/app/social/:path*' },
-      { source: '/campaigns', destination: '/app/app/campaigns' },
-      { source: '/campaigns/:path*', destination: '/app/app/campaigns/:path*' },
-      { source: '/cinai', destination: '/app/app/cinai' },
-      { source: '/cinai/:path*', destination: '/app/app/cinai/:path*' },
-      { source: '/manager-ai', destination: '/app/app/manager-ai' },
-      { source: '/manager-ai/:path*', destination: '/app/app/manager-ai/:path*' },
-      { source: '/settings', destination: '/app/app/settings' },
-      { source: '/settings/:path*', destination: '/app/app/settings/:path*' },
-      { source: '/platforms', destination: '/app/app/platforms' },
-      { source: '/platforms/:path*', destination: '/app/app/platforms/:path*' },
-      { source: '/onlyfans', destination: '/app/app/onlyfans' },
-      { source: '/onlyfans/:path*', destination: '/app/app/onlyfans/:path*' },
-      // Billing
-      { source: '/billing', destination: '/app/app/settings/billing' },
-      { source: '/billing/:path*', destination: '/app/app/settings/billing/:path*' },
-
       // Stable alias kept
-      { source: '/app/huntaze-ai', destination: '/dashboard/huntaze-ai' },
+      { source: '/app/huntaze-ai', destination: '/dashboard/messages' },
       { source: '/terms', destination: '/terms-of-service' },
       { source: '/privacy', destination: '/privacy-policy' },
       // Align header links to existing pages
@@ -113,7 +115,9 @@ const nextConfig = {
 
   // CSS and build perf
   experimental: {
-    optimizeCss: true,
+    // Disable CSS optimizer in dev to avoid rare 500s on static CSS routes
+    // Re-enable for prod builds if needed
+    optimizeCss: false,
     // Disable optimizePackageImports to avoid dev chunk errors with RSC boundaries
     // optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
@@ -139,9 +143,41 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
-      }
+      };
+
+      config.optimization = config.optimization || {};
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        cacheGroups: {
+          ...(config.optimization?.splitChunks?.cacheGroups || {}),
+          onlyfans: {
+            name: 'onlyfans-module',
+            test: /[\\/]features[\\/]onlyfans[\\/]/,
+            chunks: 'all',
+            priority: 15,
+          },
+          social: {
+            name: 'social-module',
+            test: /[\\/]features[\\/]social-media[\\/]/,
+            chunks: 'all',
+            priority: 15,
+          },
+        },
+      };
     }
-    return config
+
+    if (process.env.ANALYZE === 'true' && !isServer) {
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          openAnalyzer: false,
+          reportFilename: 'bundle-analysis.html',
+        }),
+      );
+    }
+
+    return config;
   },
 }
 

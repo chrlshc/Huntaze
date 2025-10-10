@@ -1,27 +1,140 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+import { rateLimit } from '@/lib/rate-limit';
+import { CSRF_HEADER_NAME, generateCSRFToken, getCSRFCookieName } from '@/lib/security/csrf';
+
+type LegacyRoute = {
+  prefix: string;
+  target: string;
+};
+
+const legacyAppRoutes: LegacyRoute[] = [
+  { prefix: '/app/app/messages', target: '/dashboard/messages' },
+  { prefix: '/app/app/analytics', target: '/dashboard/analytics' },
+  { prefix: '/app/app/fans', target: '/dashboard/fans' },
+  { prefix: '/app/app/settings', target: '/dashboard/settings' },
+  { prefix: '/app/app/profile', target: '/dashboard/settings' },
+  { prefix: '/app/app/configure', target: '/dashboard/settings' },
+  { prefix: '/app/app/billing', target: '/dashboard/settings' },
+  { prefix: '/app/app/huntaze-ai', target: '/dashboard/messages' },
+  { prefix: '/app/app/onlyfans', target: '/dashboard/messages' },
+  { prefix: '/app/app/manager-ai', target: '/dashboard/messages' },
+  { prefix: '/app/app/social', target: '/dashboard/messages' },
+  { prefix: '/app/app/campaigns', target: '/dashboard/messages' },
+  { prefix: '/app/app/automations', target: '/dashboard/messages' },
+  { prefix: '/app/app/platforms', target: '/dashboard/messages' },
+  { prefix: '/app/app/content', target: '/dashboard/messages' },
+  { prefix: '/app/app/cinai', target: '/dashboard/messages' },
+  { prefix: '/app/messages', target: '/dashboard/messages' },
+  { prefix: '/app/analytics', target: '/dashboard/analytics' },
+  { prefix: '/app/fans', target: '/dashboard/fans' },
+  { prefix: '/app/settings', target: '/dashboard/settings' },
+  { prefix: '/app/profile', target: '/dashboard/settings' },
+  { prefix: '/app/configure', target: '/dashboard/settings' },
+  { prefix: '/app/billing', target: '/dashboard/settings' },
+  { prefix: '/app/huntaze-ai', target: '/dashboard/messages' },
+  { prefix: '/app/onlyfans', target: '/dashboard/messages' },
+  { prefix: '/app/manager-ai', target: '/dashboard/messages' },
+  { prefix: '/app/social', target: '/dashboard/messages' },
+  { prefix: '/app/campaigns', target: '/dashboard/messages' },
+  { prefix: '/app/automations', target: '/dashboard/messages' },
+  { prefix: '/app/platforms', target: '/dashboard/messages' },
+  { prefix: '/app/content', target: '/dashboard/messages' },
+  { prefix: '/app/cinai', target: '/dashboard/messages' },
+  { prefix: '/app/app', target: '/dashboard/messages' },
+  { prefix: '/app', target: '/dashboard/messages' },
+].sort((a, b) => b.prefix.length - a.prefix.length);
+
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+  // Never intercept Next.js internals or static assets
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/manifest') ||
+    pathname.startsWith('/icons') ||
+    pathname.startsWith('/fonts') ||
+    pathname.startsWith('/images') ||
+    pathname.startsWith('/assets') ||
+    pathname.match(/\.[a-zA-Z0-9]+$/) // any file extension
+  ) {
+    return NextResponse.next();
+  }
+  const normalisedPathname =
+    pathname !== '/' && pathname.endsWith('/') ? pathname.replace(/\/+$/, '') : pathname;
+
+  // Cross-domain routing: marketing vs app subdomain
+  const host = request.nextUrl.hostname;
+  const forwardedHost = request.headers.get('x-forwarded-host') || host;
+  const isRootDomain = forwardedHost === 'huntaze.com' || forwardedHost === 'www.huntaze.com';
+  const isAppDomain = forwardedHost === 'app.huntaze.com';
+
+  const domainProtectedPrefixes = [
+    '/dashboard',
+    '/profile',
+    '/settings',
+    '/configure',
+    '/analytics',
+    '/messages',
+    '/campaigns',
+    '/fans',
+    '/platforms',
+    '/billing',
+    '/social',
+    '/content',
+    '/cinai',
+    '/manager-ai',
+  ];
+
+  if (isRootDomain && domainProtectedPrefixes.some((p) => normalisedPathname === p || normalisedPathname.startsWith(p + '/'))) {
+    const target = new URL(request.url);
+    target.hostname = 'app.huntaze.com';
+    return NextResponse.redirect(target, { status: 302 });
+  }
+
+  if (isAppDomain && normalisedPathname === '/') {
+    const to = new URL('/dashboard', request.url);
+    return NextResponse.redirect(to, { status: 302 });
+  }
+
+  const legacyMatch = legacyAppRoutes.find(
+    ({ prefix }) =>
+      normalisedPathname === prefix || normalisedPathname.startsWith(`${prefix}/`),
+  );
+
+  if (legacyMatch) {
+    const targetUrl = new URL(legacyMatch.target, request.url);
+    const searchString = searchParams.toString();
+    if (searchString) {
+      targetUrl.search = `?${searchString}`;
+    }
+    return NextResponse.redirect(targetUrl);
+  }
+
+  const isSensitiveApi =
+    pathname.startsWith('/api/onlyfans') ||
+    pathname.startsWith('/api/analytics') ||
+    pathname.startsWith('/api/cin');
+
+  let rateLimitRemaining: number | undefined;
+  if (isSensitiveApi) {
+    const { ok, remaining } = rateLimit(request, { windowMs: 60_000, max: 60 });
+    if (!ok) {
+      return new NextResponse('Too Many Requests', {
+        status: 429,
+        headers: { 'Retry-After': '60' },
+      });
+    }
+    rateLimitRemaining = remaining;
+  }
 
   // Local dev convenience: disable auth checks on localhost/non-production
-  const host = request.nextUrl.hostname;
   const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
   const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
   if (DEV_MODE) return NextResponse.next();
 
-  // Staging: allow full bypass of auth gates for easier QA
-  // You can toggle by domain or env var on Amplify
-  const forwardedHost = request.headers.get('x-forwarded-host') || host;
-  const isStagingDomain =
-    forwardedHost === 'staging.huntaze.com' ||
-    (forwardedHost?.startsWith('staging.') && forwardedHost?.endsWith('.amplifyapp.com'));
-  const envBypass =
-    process.env.STAGING_BYPASS_AUTH === 'true' ||
-    process.env.NEXT_PUBLIC_STAGING_BYPASS_AUTH === 'true';
-  if (isStagingDomain || envBypass) {
-    return NextResponse.next();
-  }
+  // Production: no staging bypass. All non-local hosts are gated by the rules below.
 
   // Single auth cookie
   const token = request.cookies.get('access_token')?.value;
@@ -43,24 +156,6 @@ export async function middleware(request: NextRequest) {
     '/content',
     '/cinai',
     '/manager-ai',
-    // legacy nested
-    '/app/app',
-    // alias under /app/*
-    '/app/dashboard',
-    '/app/profile',
-    '/app/settings',
-    '/app/configure',
-    '/app/analytics',
-    '/app/messages',
-    '/app/campaigns',
-    '/app/fans',
-    '/app/platforms',
-    '/app/billing',
-    '/app/social',
-    '/app/manager-ai',
-    '/app/onlyfans',
-    '/app/content',
-    '/app/cinai',
   ];
 
   const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
@@ -86,10 +181,48 @@ export async function middleware(request: NextRequest) {
 
   // Authenticated visiting auth routes → redirect to app
   if (token && isAuth && !isOAuth) {
-    return NextResponse.redirect(new URL('/app/app/dashboard', request.url));
+    return NextResponse.redirect(new URL('/dashboard/messages', request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  const cookieDomain = process.env.NEXT_PUBLIC_DOMAIN || host;
+  const secureCookies = process.env.NODE_ENV === 'production';
+
+  if (rateLimitRemaining !== undefined) {
+    response.headers.set('X-RateLimit-Remaining', String(rateLimitRemaining));
+    response.headers.set('X-RateLimit-Window', '60');
+  }
+
+  if (token) {
+    response.cookies.set('access_token', token, {
+      httpOnly: true,
+      secure: secureCookies,
+      sameSite: 'strict',
+      path: '/',
+      domain: cookieDomain,
+      maxAge: 60 * 60 * 24,
+    });
+  }
+
+  const csrfCookieName = getCSRFCookieName();
+  let csrfToken = request.cookies.get(csrfCookieName)?.value;
+  if (!csrfToken) {
+    csrfToken = generateCSRFToken();
+    response.cookies.set(csrfCookieName, csrfToken, {
+      httpOnly: true,
+      secure: secureCookies,
+      sameSite: 'strict',
+      path: '/',
+      domain: cookieDomain,
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  }
+
+  if (request.method === 'GET') {
+    response.headers.set(CSRF_HEADER_NAME, csrfToken ?? '');
+  }
+
+  return response;
 }
 
 export const config = {

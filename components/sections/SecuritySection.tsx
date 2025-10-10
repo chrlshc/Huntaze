@@ -62,9 +62,7 @@ export default function SecuritySection() {
   return (
     <section className="py-20 px-4 bg-black relative overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"%3E%3Cpath d="M 60 0 L 0 0 0 60" fill="none" stroke="white" stroke-width="1"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100%25" height="100%25" fill="url(%23grid)"/%3E%3C/svg%3E')] bg-center" />
-      </div>
+      <div className="absolute inset-0 opacity-5" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
@@ -204,7 +202,7 @@ export default function SecuritySection() {
             <ExternalLink className="w-4 h-4" />
           </a>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            99.99% uptime • Temps de réponse < 200ms • Infrastructure globale
+            99.99% uptime • Temps de réponse &lt; 200ms • Infrastructure globale
           </p>
         </motion.div>
       </div>

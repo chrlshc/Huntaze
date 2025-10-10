@@ -37,5 +37,6 @@ next-env.d.ts
 # logs
 *.log
 server-output.log
+reports/
 
 huntazee/
