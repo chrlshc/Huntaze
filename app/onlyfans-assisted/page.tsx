@@ -56,7 +56,7 @@ export default function OnlyFansAssistedPage() {
                   id: 'smart',
                   title: 'Smart replies',
                   statusUrl: '/api/integrations/onlyfans/status',
-                  connectHref: '/platforms/connect/onlyfans',
+                  connectHref: '/of-connect',
                   connectLabel: 'Connect OnlyFans',
                   x: 18,
                   y: 26,
@@ -65,7 +65,7 @@ export default function OnlyFansAssistedPage() {
                   id: 'mass',
                   title: 'Mass messaging',
                   statusUrl: '/api/integrations/onlyfans/status',
-                  connectHref: '/platforms/connect/onlyfans',
+                  connectHref: '/of-connect',
                   connectLabel: 'Connect OnlyFans',
                   x: 82,
                   y: 26,
@@ -74,7 +74,7 @@ export default function OnlyFansAssistedPage() {
                   id: 'compliance',
                   title: 'Compliance',
                   statusUrl: '/api/integrations/onlyfans/status',
-                  connectHref: '/platforms/connect/onlyfans',
+                  connectHref: '/of-connect',
                   connectLabel: 'Connect OnlyFans',
                   x: 50,
                   y: 82,
@@ -92,7 +92,7 @@ export default function OnlyFansAssistedPage() {
               title="Scale Creator Messaging"
               description="OnlyFans Assisted handles smart replies, mass outreach, and compliance guardrails together so managers can focus on growth plays instead of manual follow-ups."
               actionLabel="Customize assistant flows"
-              actionHref="/platforms/connect/onlyfans"
+              actionHref="/of-connect"
             />
 
             {/* Cards removed per request */}
