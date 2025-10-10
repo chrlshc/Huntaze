@@ -23,7 +23,12 @@ export default function ConnectPlatformsPage() {
       setLoading(true);
       setError('');
       setNotice('');
-      const resp = await fetch('/api/waitlist/onlyfans', { method: 'POST' });
+      // Send minimal JSON body so the API route can parse without error
+      const resp = await fetch('/api/waitlist/onlyfans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
       if (!resp.ok) throw new Error('Failed to join waitlist');
       setNotice('Joined the OnlyFans API waitlist. We will notify you.');
     } catch (e: any) {
