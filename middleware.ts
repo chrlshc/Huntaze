@@ -98,6 +98,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(to, { status: 302 });
   }
 
+  // On app.huntaze.com, redirect non-app marketing pages to root domain
+  const isAppPath = (
+    domainProtectedPrefixes.some((p) => normalisedPathname === p || normalisedPathname.startsWith(p + '/')) ||
+    normalisedPathname.startsWith('/auth') ||
+    normalisedPathname.startsWith('/join') ||
+    normalisedPathname.startsWith('/api') ||
+    normalisedPathname.startsWith('/_next') ||
+    normalisedPathname.startsWith('/favicon') ||
+    normalisedPathname.startsWith('/manifest') ||
+    normalisedPathname.startsWith('/icons') ||
+    normalisedPathname.startsWith('/fonts') ||
+    normalisedPathname.startsWith('/images') ||
+    normalisedPathname.startsWith('/assets') ||
+    /\.[a-zA-Z0-9]+$/.test(normalisedPathname)
+  );
+  if (isAppDomain && !isAppPath) {
+    const target = new URL(request.url);
+    target.hostname = 'huntaze.com';
+    return NextResponse.redirect(target, { status: 302 });
+  }
+
   const legacyMatch = legacyAppRoutes.find(
     ({ prefix }) =>
       normalisedPathname === prefix || normalisedPathname.startsWith(`${prefix}/`),
