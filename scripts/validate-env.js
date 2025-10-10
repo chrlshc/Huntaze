@@ -18,6 +18,15 @@ const warnIfMissing = [
   'STRIPE_WEBHOOK_SECRET',
 ];
 
+function normalizeHost(urlString) {
+  try {
+    const host = new URL(urlString).host.toLowerCase();
+    return host.startsWith('www.') ? host.slice(4) : host;
+  } catch {
+    return null;
+  }
+}
+
 function main() {
   const mode = process.env.NODE_ENV || 'development';
   const required = [...requiredCommon, ...(mode === 'production' ? requiredProd : [])];
@@ -48,6 +57,17 @@ function main() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (!appUrl && mode !== 'production') {
     console.warn('Warning: NEXT_PUBLIC_APP_URL not set. Using request origin for callbacks in dev.');
+  }
+  const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_URL || process.env.NEXT_PUBLIC_ROOT_URL;
+  if (appUrl && marketingUrl) {
+    const appHost = normalizeHost(appUrl);
+    const marketingHost = normalizeHost(marketingUrl);
+    if (appHost && marketingHost && appHost === marketingHost) {
+      console.error(
+        'Invalid configuration: NEXT_PUBLIC_APP_URL must point to the app subdomain (e.g. https://app.huntaze.com) and differ from the marketing domain.',
+      );
+      process.exit(1);
+    }
   }
 
   // TikTok redirect sanity check
