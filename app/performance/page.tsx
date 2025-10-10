@@ -210,8 +210,8 @@ export default function PerformancePage() {
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">🚀</div>
-                <h4 className="text-white font-semibold mb-1">Vercel Edge</h4>
-                <p className="text-white/60 text-sm">Global deployment</p>
+                <h4 className="text-white font-semibold mb-1">Global Edge Network</h4>
+                <p className="text-white/60 text-sm">Worldwide delivery</p>
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">🗄️</div>
@@ -316,4 +316,3 @@ export default function PerformancePage() {
     </>
   )
 }
-

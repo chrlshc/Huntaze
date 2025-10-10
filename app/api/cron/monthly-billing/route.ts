@@ -3,7 +3,7 @@ import { OnlyFansAPI, decryptApiKey } from '@/lib/integrations/onlyfans';
 import { CommissionTracker } from '@/lib/billing/commission-tracker';
 
 // This endpoint should be called monthly by a cron job
-// Use Vercel Cron, AWS EventBridge, or GitHub Actions
+// Trigger via scheduled job (e.g., AWS EventBridge or GitHub Actions)
 export async function POST(request: NextRequest) {
   try {
     // Verify cron secret
