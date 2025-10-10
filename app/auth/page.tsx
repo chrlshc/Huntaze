@@ -6,11 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import Image from 'next/image';
 
-const navLinks = [
-  { href: '/app', label: 'Product' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/support', label: 'Support' },
-];
+export const dynamic = 'force-dynamic';
 
 const valueProps = [
   'AI replies that sound exactly like you',
@@ -36,6 +32,12 @@ export default function AuthPage() {
   useEffect(() => {
     if (planParam) {
       sessionStorage.setItem('selectedPlan', planParam);
+    }
+    const to = searchParams.get('to');
+    const provider = searchParams.get('provider');
+    if (to) sessionStorage.setItem('redirect_after_auth', to);
+    if (provider === 'onlyfans') {
+      sessionStorage.setItem('redirect_after_auth', '/platforms/connect/onlyfans');
     }
   }, [planParam]);
 
@@ -76,11 +78,15 @@ export default function AuthPage() {
 
       const data = await response.json();
       const storedPlan = sessionStorage.getItem('selectedPlan');
+      const redirectAfter = sessionStorage.getItem('redirect_after_auth');
       if (storedPlan) {
         sessionStorage.removeItem('selectedPlan');
         router.push(`/onboarding/setup?step=payment&plan=${storedPlan}`);
+      } else if (redirectAfter) {
+        sessionStorage.removeItem('redirect_after_auth');
+        router.push(redirectAfter);
       } else {
-        router.push(data.redirect || '/app');
+        router.push(data.redirect || '/dashboard');
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');
@@ -105,20 +111,14 @@ export default function AuthPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-900/80 bg-black/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-white focus-ring">
-            <Image src="/logo.svg" alt="Huntaze" className="h-8 w-auto" width={120} height={32} priority />
-            <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">Huntaze</span>
+          <Link href="/dashboard" className="flex items-center gap-2 text-white focus-ring">
+            <Image src="/logos/huntaze.svg" alt="Huntaze" className="h-6 w-auto" width={120} height={24} priority />
+            <span className="hidden text-xs font-semibold uppercase tracking-[0.18em] md:block opacity-80">App</span>
           </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
-            {navLinks.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-white px-2 py-1 rounded-md focus-ring">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <Link href="/app-preview" className="text-sm font-medium text-gray-300 hover:text-white px-2 py-1 rounded-md focus-ring">
-            View product
-          </Link>
+          <div className="text-xs text-gray-300">
+            Secure sign‑in
+          </div>
+          <div />
         </div>
       </header>
 
@@ -193,6 +193,11 @@ export default function AuthPage() {
                 </svg>
                 Continue with Google
               </button>
+            </div>
+
+            <div className="mt-4 text-xs text-slate-500">
+              Looking to connect OnlyFans? After sign‑in go to
+              {' '}<Link href="/platforms/connect/onlyfans" className="underline underline-offset-2">Platforms → OnlyFans</Link>.
             </div>
 
             {step === 'form' && (
