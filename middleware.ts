@@ -268,8 +268,8 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
-  // Use the active host as cookie domain when NEXT_PUBLIC_DOMAIN is unset
-  const cookieDomain = process.env.NEXT_PUBLIC_DOMAIN || activeHost;
+  // Use the active host as cookie domain when NEXT_PUBLIC_DOMAIN is unset; if empty, skip setting domain
+  const cookieDomainCandidate = process.env.NEXT_PUBLIC_DOMAIN || activeHost || '';
   const secureCookies = process.env.NODE_ENV === 'production';
 
   if (rateLimitRemaining !== undefined) {
@@ -278,28 +278,38 @@ export async function middleware(request: NextRequest) {
   }
 
   if (token) {
-    response.cookies.set('access_token', token, {
-      httpOnly: true,
-      secure: secureCookies,
-      sameSite: 'strict',
-      path: '/',
-      domain: cookieDomain,
-      maxAge: 60 * 60 * 24,
-    });
+    try {
+      const baseCookie: any = {
+        httpOnly: true,
+        secure: secureCookies,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24,
+      };
+      if (cookieDomainCandidate) baseCookie.domain = cookieDomainCandidate;
+      response.cookies.set('access_token', token, baseCookie);
+    } catch {
+      // avoid throwing from middleware due to cookie serialization edge cases
+    }
   }
 
   const csrfCookieName = getCSRFCookieName();
   let csrfToken = request.cookies.get(csrfCookieName)?.value;
   if (!csrfToken) {
     csrfToken = generateCSRFToken();
-    response.cookies.set(csrfCookieName, csrfToken, {
-      httpOnly: true,
-      secure: secureCookies,
-      sameSite: 'strict',
-      path: '/',
-      domain: cookieDomain,
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    try {
+      const csrfOpts: any = {
+        httpOnly: true,
+        secure: secureCookies,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+      };
+      if (cookieDomainCandidate) csrfOpts.domain = cookieDomainCandidate;
+      response.cookies.set(csrfCookieName, csrfToken, csrfOpts);
+    } catch {
+      // avoid throwing from middleware
+    }
   }
 
   if (request.method === 'GET') {

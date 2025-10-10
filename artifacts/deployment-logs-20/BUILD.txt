@@ -1,0 +1,45 @@
+2025-10-10T17:14:46.829Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-10-10T17:14:47.259Z [INFO]: # Cloning repository: git@github.com:chrlshc/huntaze.git
+2025-10-10T17:14:56.486Z [INFO]: 
+2025-10-10T17:14:56.727Z [INFO]: Cloning into 'huntaze'...
+                                 Updating files:  28% (20585/72004)Updating files:  29% (20882/72004)Updating files:  30% (21602/72004)Updating files:  31% (22322/72004)Updating files:  32% (23042/72004)Updating files:  33% (23762/72004)Updating files:  34% (24482/72004)Updating files:  35% (25202/72004)Updating files:  36% (25922/72004)Updating files:  37% (26642/72004)Updating files:  38% (27362/72004)Updating files:  39% (28082/72004)Updating files:  40% (28802/72004)Updating files:  41% (29522/72004)Updating files:  42% (30242/72004)Updating files:  43% (30962/72004)Updating files:  44% (31682/72004)Updating files:  45% (32402/72004)Updating files:  45% (32503/72004)Updating files:  46% (33122/72004)Updating files:  47% (33842/72004)Updating files:  48% (34562/72004)Updating files:  49% (35282/72004)Updating files:  50% (36002/72004)Updating files:  51% (36723/72004)Updating files:  52% (37443/72004)Updating files:  53% (38163/72004)Updating files:  54% (38883/72004)Updating files:  55% (39603/72004)Updating files:  56% (40323/72004)Updating files:  57% (41043/72004)Updating files:  58% (41763/72004)Updating files:  59% (42483/72004)Updating files:  60% (43203/72004)Updating files:  61% (43923/72004)Updating files:  62% (44643/72004)Updating files:  63% (45363/72004)Updating files:  64% (46083/72004)Updating files:  65% (46803/72004)Updating files:  66% (47523/72004)Updating files:  66% (47942/72004)Updating files:  67% (48243/72004)Updating files:  68% (48963/72004)Updating files:  69% (49683/72004)Updating files:  70% (50403/72004)Updating files:  71% (51123/72004)Updating files:  72% (51843/72004)Updating files:  73% (52563/72004)Updating files:  74% (53283/72004)Updating files:  75% (54003/72004)Updating files:  76% (54724/72004)Updating files:  77% (55444/72004)Updating files:  78% (56164/72004)Updating files:  79% (56884/72004)Updating files:  80% (57604/72004)Updating files:  81% (58324/72004)Updating files:  82% (59044/72004)Updating files:  83% (59764/72004)Updating files:  84% (60484/72004)Updating files:  85% (61204/72004)Updating files:  86% (61924/72004)Updating files:  86% (62455/72004)Updating files:  87% (62644/72004)Updating files:  88% (63364/72004)Updating files:  89% (64084/72004)Updating files:  90% (64804/72004)Updating files:  91% (65524/72004)Updating files:  92% (66244/72004)Updating files:  93% (66964/72004)Updating files:  94% (67684/72004)Updating files:  95% (68404/72004)Updating files:  96% (69124/72004)Updating files:  97% (69844/72004)Updating files:  98% (70564/72004)Updating files:  99% (71284/72004)Updating files: 100% (72004/72004)Updating files: 100% (72004/72004), done.
+2025-10-10T17:14:56.727Z [INFO]: # Switching to commit: d2db60f23bed8fe6088987b838da43ba668a9c38
+2025-10-10T17:14:57.067Z [INFO]: Note: switching to 'd2db60f23bed8fe6088987b838da43ba668a9c38'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at d2db60f2 feat(auth): add /api/auth/register stub that sets auth cookies + onboarding flag; fix logout to clear access_token
+2025-10-10T17:14:57.125Z [INFO]: Successfully cleaned up Git credentials
+2025-10-10T17:14:57.126Z [INFO]: # Checking for Git submodules at: /codebuild/output/src3730964034/src/huntaze/.gitmodules
+2025-10-10T17:14:57.136Z [INFO]: # Retrieving environment cache...
+2025-10-10T17:14:57.189Z [WARNING]: ! Unable to write cache: {"code":"ERR_BAD_REQUEST","message":"Request failed with status code 404"})}
+2025-10-10T17:14:57.189Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-10-10T17:14:57.189Z [INFO]: SSM params {"Path":"/amplify/d4kw6vvcctg66/main/","WithDecryption":true}
+2025-10-10T17:14:57.250Z [WARNING]: !Failed to set up process.env.secrets
+2025-10-10T17:14:58.195Z [INFO]: # No package override configuration found.
+2025-10-10T17:14:58.199Z [INFO]: # Retrieving cache...
+2025-10-10T17:15:24.507Z [INFO]: # Extracting cache...
+2025-10-10T17:15:40.923Z [INFO]: # Extraction completed
+2025-10-10T17:15:41.146Z [INFO]: # Retrieved cache
+2025-10-10T17:15:46.463Z [INFO]: ## Starting Backend Build
+                                 ## Checking for associated backend environment...
+                                 ## No backend environment association found, continuing...
+                                 ## Completed Backend Build
+2025-10-10T17:15:46.468Z [INFO]: {"backendDuration": 0}
+                                 ## Starting Frontend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: nvm use 20 || echo "Using default Node"
+2025-10-10T17:15:54.430Z [INFO]: Now using node v20.19.4 (npm v10.8.2)
+2025-10-10T17:15:54.435Z [INFO]: # Executing command: npm ci
+2025-10-10T17:16:10.569Z [WARNING]: npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-10-10T17:16:10.991Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-10-10T17:16:11.205Z [WARNING]: npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-10-10T17:16:12.564Z [WARNING]: npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+2025-10-10T17:16:12.663Z [WARNING]: npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+2025-10-10T17:16:16.429Z [WARNING]: npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
