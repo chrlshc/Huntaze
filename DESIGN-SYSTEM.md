@@ -1,66 +1,102 @@
 Huntaze Design System — Pro Pass
+=================================
 
-This document summarizes the neutral, professional UI guidelines and tokens applied across Huntaze.
+This document tracks the source of truth for the Huntaze design system. The current implementation is driven by shared design tokens (`styles/design-system.css`, `config/design-tokens.mjs`) and Tailwind mappings (`tailwind.config.mjs`).
 
 ## Principles
 
-- Neutral surfaces: favor white/gray for clarity; use dark grays in dark mode.
-- Clear hierarchy: headers neutral, strong typography, restrained accents.
-- Solid buttons: no heavy gradients; use brand violet for primary, black for TikTok, orange for Reddit.
-- Subtle elevation: small, consistent shadows; avoid glow/tilt effects.
-- Accessibility: sufficient contrast and clear focus rings.
+- Ground everything in neutral surfaces. Light mode is clean white/blue-grey, dark mode is deep slate. Reserve color for intent.
+- Maintain a visible hierarchy. Headlines stay high-contrast, body copy shifts to secondary/subtle tokens.
+- Treat gradients, glow and glassmorphism as accents, not defaults. Primary actions use the brand violet, supporting actions stay muted.
+- Keep motion calm. Micro-interactions (lift, fade) are fine; avoid overshooting animations that distract from revenue context.
+- Accessibility is non-negotiable: 4.5:1 contrast for text, clear focus indicators, and obvious disabled states.
 
-## Tokens
+## Token Overview
 
-- Surfaces (light): `bg-white`, `bg-gray-50` with `border-gray-200`
-- Surfaces (dark): `dark:bg-gray-900`, `dark:bg-gray-800` with `dark:border-gray-800/700`
-- Text (body): `text-gray-700` (light), `dark:text-gray-400` (dark)
-- Headings: `text-gray-900`, `dark:text-white`
-- Accents: brand violet `bg-purple-600 hover:bg-purple-700`
-- Status: `bg-amber-400` (VIP), `bg-green-100 text-green-700` (success chips)
+Tokens exist in three layers:
 
-## Utilities
+1. **Primitives** — brand + neutral palettes, spacing, radii, shadows. Declared in `config/design-tokens.mjs`.
+2. **CSS Variables** — semantic aliases exposed as `--ds-*` in `styles/design-system.css`.
+3. **Tailwind Theme** — classes such as `bg-surface-muted`, `text-content-secondary`, `shadow-md`.
 
-- `.surface`: base card/background — `bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800`
-- `.surface-muted`: muted background — `bg-gray-50 dark:bg-gray-800 border gray-200/dark:gray-700`
-- `.elevation-0/1/2`: increase elevation (`none`, `shadow-sm`, `shadow-md`)
+Key palettes:
 
-Use these utilities to reduce repetitive Tailwind classes and keep styling consistent.
+- **Brand**: `brand-50 … brand-950` anchored on violet (#6B46FF core).
+- **Neutral**: `neutral-50 … neutral-950` for surfaces, text and borders.
+- **Semantic surfaces**: `surface-{base, muted, raised, overlay}`, plus inverted counterparts for dark mode.
+- **Text**: `content-{primary, secondary, subtle, inverted, inverted-subtle, on-brand}`.
+- **Borders**: `border-{subtle, default, strong, inverted}`.
+- **Status**: `success`, `warning`, `danger`, `info` available for badges and alerts.
 
-## Components
+Spacing, radii and shadows follow an 8px rhythm and are available via Tailwind (`space`, `rounded`, `shadow`) and tokens (`--ds-spacing-*`, `--ds-radius-*`, `--ds-shadow-*`).
 
-- Buttons: solid fills, rounded-lg; primary violet. Avoid gradients/shimmer/glow.
-- Cards: `.surface elevation-1`; headings strong, body text `text-gray-700`/`dark:text-gray-400`.
-- Badges: solid backgrounds; avoid multicolor gradients.
-- Lists/Tables: muted headers with `bg-gray-50` (dark: `bg-gray-900`).
+## Core Utilities
 
-## Platform Logos
+- `.surface` — primary card background; pairs with `shadow-sm`.
+- `.surface-muted` — secondary background for grouped content.
+- `.focus-ring` — apply shared focus treatment (`ring-primary`, offset on surfaces).
+- `.input-quiet` — base input styling; combine with `focus:ring-primary/20` for accessibility.
+- `.chip`, `.chip-ok`, `.chip-no` — pills for status, stepping parents `bg-surface-muted`.
 
-Use SVG components in `src/components/platform-icons.tsx` (OnlyFans, Instagram, TikTok, Reddit, Threads).
+## Buttons
 
-## Copy Guidelines
+Buttons now rely on the shared `<Button>` component (`components/ui/button.tsx`), which reads the Tailwind tokens. Supported variants:
 
-- Make traffic flow explicit: IG/TikTok/Reddit/Threads → drive traffic to OnlyFans; OF is revenue hub.
-- Keep headings short; prefer nouns/verbs; avoid exclamation overload.
+- `primary` (alias: `default`, `filled`) — brand violet, white text, subtle elevation.
+- `secondary` — neutral surface with border; ideal for secondary CTAs.
+- `outline` — transparent fill with a neutral border.
+- `ghost` — text-only with muted hover surface.
+- `tonal` (aliases: `subtle`, `muted`) — soft background for inline actions.
+- `gradient` — reserved for marketing hero CTAs (`bg-gradient-primary`).
+- `danger` — destructive actions (`bg-danger`, white label).
+- `link` — text link treatment with underline on hover.
+
+Sizes: `sm`, `md` (default), `lg`, `xl`, `pill`.
+
+Use Tailwind utility classes for layout customisations, but prefer the built-in variants for color and intent. Example:
+
+```tsx
+<Button variant="secondary" size="lg" className="w-full sm:w-auto">
+  Talk to sales
+</Button>
+```
+
+## Cards & Surfaces
+
+- Base cards: `className="surface shadow-sm"`.
+- Elevated state: apply `hover:shadow-md hover:-translate-y-0.5`.
+- Empty states: mix `surface-muted` with `border-dashed border-border-subtle`.
+- Integrations & feature highlights rely on the reusable `IntegrationCard` (see below) for consistency across marketing + product.
+
+## Reusable Integration Card
+
+`components/integrations/IntegrationCard.tsx` centralises the integration layout:
+
+- Props: `name`, `description`, `logo`, `status` (`connected | available | coming-soon`), `badges`, optional `href`.
+- Tokens: uses `surface` + border tokens, shared status chips, and focus handling.
+- When possible, feed logos from `/public/logos/*` to avoid random gradients across modules.
+- All integration grids (e.g. `IntegrationsSectionSimple`) now consume this component to avoid bespoke animations/styling.
+
+## Motion & Feedback
+
+- Default animation utilities live in `styles/simple-animations.css` (`animate-fadeIn`, `animate-scaleIn`, etc).
+- Use `.hover-lift` or `.shadow-hover` for subtle affordance.
+- Avoid stacking multiple animation layers; choose one motion per interaction.
+
+## Content & Voice
+
+- Signal the acquisition path: IG/TikTok/Reddit/Threads → Huntaze automations → OnlyFans revenue.
+- Keep headings in sentence casing, short verbs/nouns, no exclamation marks unless quoting user feedback.
+- Favour clarity over hype. Numbers should be sourced from analytics or flagged as illustrative.
+
+## Forms & Inputs
+
+- Base input: `.input-quiet`. Pair with helper text in `text-content-subtle`.
+- Error states: add `aria-invalid`, `aria-describedby`, swap border to `border-danger` and show inline `text-danger`.
+- Labels: `text-sm font-medium text-content-primary`; add `<span className="text-danger">*</span>` for required fields.
 
 ## Migration Notes
 
-- Gradients removed across marketing and app; if re-introduced, constrain to small, decorative accents only.
-- For remaining legacy screens, replace `bg-gradient-to*` with `.surface`/`.surface-muted` + `elevation-*`.
-
-## Interaction States
-
-- Default: neutral surface/border; cursor-pointer for clickables.
-- Hover: subtle `hover:bg-gray-50` (dark: `hover:bg-gray-800`) or elevation-2.
-- Focus: `.focus-ring` or `focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`.
-- Active: slight scale or `bg-gray-100` (dark `bg-gray-700`), never large motion.
-- Disabled: `opacity-50 cursor-not-allowed`; keep readable text.
-- Error (forms): add `.input-error` and error text `text-red-600`.
-
-## Forms
-
-- Inputs: use `.input-base`; apply `.input-error` on validation errors.
-- Labels: `text-sm font-medium text-gray-900 dark:text-white`; include required `*`.
-- Help text: `text-sm text-gray-500 dark:text-gray-400`.
-- Error text: `text-sm text-red-600` and `aria-invalid`, `aria-describedby`.
-- Accessibility: always associate `<label for>` + `id`, describe errors via `aria-describedby`.
+- Replace raw Tailwind colour literals (`bg-gray-900`, `text-white`) with token classes (`bg-surface-base`, `text-content-primary`) during touch-ups.
+- Legacy CSS files (`styles/*fix.css`) stay until their host pages are retired. Prefer new work live under the token system.
+- When introducing a new pattern, document it here and expose the primitive through Tailwind + CSS variables to keep parity.

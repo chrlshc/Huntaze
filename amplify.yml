@@ -10,11 +10,27 @@ frontend:
         # Set environment variables for build
         - export NEXT_PUBLIC_APP_URL=https://app.huntaze.com
         - export NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
+        - export NEXT_PUBLIC_DOMAIN=.huntaze.com
         # Speed up CI builds (skip lint + TS typecheck) and reduce noise
         - export NEXT_DISABLE_ESLINT=1
         - export NEXT_PRIVATE_SKIP_TYPECHECK=true
         - export NEXT_TELEMETRY_DISABLED=1
         - npm run build
+    postBuild:
+      commands:
+        # Optional API smoke tests on the built app (disabled by default)
+        # Enable by setting RUN_SMOKE=1 in Amplify environment variables
+        - |
+          if [ "$RUN_SMOKE" = "1" ]; then
+            echo "[smoke] Starting Next server for API tests..."
+            export PORT=3000
+            nohup npm start >/dev/null 2>&1 &
+            for i in {1..60}; do curl -fsS http://localhost:3000 >/dev/null && break || sleep 1; done
+            echo "[smoke] Running Playwright smoke tests..."
+            npx playwright test tests/smoke --reporter=line --timeout=30000 --workers=1
+          else
+            echo "[smoke] Skipped (set RUN_SMOKE=1 to enable)"
+          fi
   artifacts:
     baseDirectory: .next
     files:

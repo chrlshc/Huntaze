@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     //   expiresAt: new Date(Date.now() + tokenData.expires_in * 1000)
     // });
 
-    return NextResponse.json({ 
+    const res = NextResponse.json({ 
       success: true,
       user: {
         username: userData.name,
@@ -61,6 +61,22 @@ export async function POST(request: NextRequest) {
         created: new Date(userData.created_utc * 1000)
       }
     });
+    const maxAge = 30 * 24 * 60 * 60;
+    res.cookies.set('reddit_access_token', tokenData.access_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+      path: '/',
+      maxAge,
+    });
+    res.cookies.set('reddit_user', JSON.stringify({ name: userData.name }), {
+      httpOnly: false,
+      sameSite: 'lax',
+      secure: true,
+      path: '/',
+      maxAge,
+    });
+    return res;
   } catch (error) {
     console.error('Reddit callback error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
