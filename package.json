@@ -10,9 +10,17 @@
     "export": "node scripts/validate-env.js && next build && next export",
     "check:env": "node scripts/validate-env.js",
     "test:visual": "percy exec -- node scripts/percy-test.js",
-    "test:visual:ci": "PERCY_TOKEN=$PERCY_TOKEN percy exec -- node scripts/percy-test.js"
+    "test:visual:ci": "PERCY_TOKEN=$PERCY_TOKEN percy exec -- node scripts/percy-test.js",
+    "analyze": "ANALYZE=true npm run build",
+    "perf:audit": "npx --yes lighthouse http://localhost:3000 --output json --output-path ./reports/lighthouse.json",
+    "mcp:fs": "node tools/mcp/fs-server.mjs",
+    "mcp:http": "node tools/mcp/http-server.mjs",
+    "mcp:git": "node tools/mcp/git-server.mjs",
+    "mcp:env": "node tools/mcp/env-server.mjs",
+    "mcp:all": "node tools/mcp/combo-server.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.876.0",
     "@aws-sdk/client-eventbridge": "^3.876.0",
     "@aws-sdk/client-ses": "^3.876.0",
     "@hookform/resolvers": "^3.3.4",
@@ -67,6 +75,7 @@
     "react-hook-form": "^7.53.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
+    "react-window": "^1.8.11",
     "recharts": "^3.2.0",
     "stripe": "^14.25.0",
     "tailwind-merge": "^2.6.0",
@@ -74,17 +83,23 @@
     "three": "^0.160.0",
     "typescript": "^5",
     "web-vitals": "^5.1.0",
+    "webpack-bundle-analyzer": "^4.10.1",
     "zod": "^3.25.76",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@percy/cli": "^1.31.2",
     "@percy/puppeteer": "^2.0.2",
+    "@playwright/test": "^1.41.2",
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/three": "^0.160.0",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.5.4",
     "js-yaml": "^4.1.0",
-    "puppeteer": "^24.20.0"
+    "puppeteer": "^24.20.0",
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "fast-glob": "^3.3.2"
   },
   "overrides": {
     "three-mesh-bvh": "^0.8.0"

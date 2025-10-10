@@ -9,6 +9,46 @@ This MCP document captures the “single source of truth” for the app shell un
 - Replace dev mocks with thin upstream proxies where applicable.
 - Provide a minimal, modern analytics stack using Chart.js via `react-chartjs-2`.
 
+## MCP Essentiels (Priorités)
+
+- Auth et staging: appliquer le bypass sur staging et garder le gating en production via `middleware.ts`. Localhost n’est jamais gated.
+- Canonicalisation des URLs: maintenir les redirections/rewrites (`next.config.mjs`) pour aligner `/app` → shell et alias vers `/dashboard/*`.
+- Données live: utiliser les proxys `/api/*` sans cache (`no-store`) vers `${NEXT_PUBLIC_API_URL}`. Vérifier la config avec `npm run check:env` (exige `JWT_SECRET` en prod et alerte si l’URL n’a pas `/api`).
+- Limitation de débit: protéger les routes sensibles (`/api/onlyfans`, `/api/analytics`, `/api/cin`) via `rateLimit` dans le middleware.
+- Traçabilité: propager et journaliser `X-Request-Id`; le test smoke vérifie l’écho côté `/api/cin/chat`.
+- Tests: exécuter les smokes Playwright pendant le dev (`npx playwright test tests/smoke --base-url http://localhost:3000`) et les visuels Percy (`npm run test:visual`).
+- Sécurité: CSP/HSTS/Headers définis dans `next.config.mjs:headers()`. Ne pas exposer d’info serveur (`Server`, `X-Powered-By`).
+- Observabilité/perf: pages analytics dynamiques (`dynamic`, `no-store`) et découpes de bundles configurées dans `next.config.mjs`.
+
+## MCP Servers (Tools)
+
+Des serveurs MCP (stdio) sont fournis pour l’agent:
+
+- FS: `npm run mcp:fs` — lecture de fichiers (`fs.list_files`, `fs.read_file`, `fs.search_text`).
+- HTTP: `npm run mcp:http` — `http.get|post|head` avec allowlist (`MCP_HTTP_ALLOWLIST`).
+- Git: `npm run mcp:git` — `git.log`, `git.blame`, `git.show`.
+- Env: `npm run mcp:env` — `env.get`, `env.list` (clés `NEXT_PUBLIC_*` + `MCP_ENV_ALLOWLIST`).
+
+Installation: `npm i` (ajoute `@modelcontextprotocol/sdk`, `fast-glob`).
+
+Exemple (Claude Desktop `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "huntaze-fs": { "command": "node", "args": ["tools/mcp/fs-server.mjs"], "env": { "MCP_FS_ROOT": "." } },
+    "huntaze-http": { "command": "node", "args": ["tools/mcp/http-server.mjs"], "env": { "MCP_HTTP_ALLOWLIST": "https://app.huntaze.com,https://app.huntaze.com/api" } },
+    "huntaze-git": { "command": "node", "args": ["tools/mcp/git-server.mjs"] },
+    "huntaze-env": { "command": "node", "args": ["tools/mcp/env-server.mjs"], "env": { "MCP_ENV_ALLOWLIST": "PERCY_TOKEN" } }
+  }
+}
+```
+
+Serveur combiné (recommandé)
+
+- Lance tout-en-un: `npm run mcp:all`
+- HTTP allowlist par défaut: `https://app.huntaze.com` et `https://app.huntaze.com/api` (surchargable via `MCP_HTTP_ALLOWLIST`).
+
 ## URL Structure (wrappers/aliases → real screens)
 
 - Entry
