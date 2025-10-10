@@ -10,10 +10,11 @@ const puppeteer = require('puppeteer');
   await page.setViewport({ width: 1280, height: 720 });
   
   // Test homepage in different theme states
+  const BASE = process.env.PERCY_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
   const pages = [
-    { url: 'http://localhost:3000', name: 'Homepage' },
-    { url: 'http://localhost:3000/pricing', name: 'Pricing' },
-    { url: 'http://localhost:3000/dashboard', name: 'Dashboard' },
+    { url: `${BASE}`, name: 'Homepage' },
+    { url: `${BASE}/pricing`, name: 'Pricing' },
+    { url: `${BASE}/dashboard`, name: 'Dashboard' },
   ];
   
   for (const testPage of pages) {

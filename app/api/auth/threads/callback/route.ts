@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         client_id: process.env.THREADS_CLIENT_ID || process.env.INSTAGRAM_CLIENT_ID || '',
         client_secret: process.env.THREADS_CLIENT_SECRET || process.env.INSTAGRAM_CLIENT_SECRET || '',
         grant_type: 'authorization_code',
-        redirect_uri: process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || 'https://huntaze.com/auth/threads/callback',
+        redirect_uri: process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com'}/auth/threads/callback`,
         code: code
       })
     });

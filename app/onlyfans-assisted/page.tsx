@@ -52,9 +52,33 @@ export default function OnlyFansAssistedPage() {
             {(() => {
               const nodes: NodeDef[] = [
                 { id: 'hub', title: 'OnlyFans Assisted', x: 50, y: 42 },
-                { id: 'smart', title: 'Smart replies', statusUrl: '/api/integrations/onlyfans/status', x: 18, y: 26 },
-                { id: 'mass', title: 'Mass messaging', statusUrl: '/api/integrations/onlyfans/status', x: 82, y: 26 },
-                { id: 'compliance', title: 'Compliance', statusUrl: '/api/integrations/onlyfans/status', x: 50, y: 82 },
+                {
+                  id: 'smart',
+                  title: 'Smart replies',
+                  statusUrl: '/api/integrations/onlyfans/status',
+                  connectHref: '/platforms/connect/onlyfans',
+                  connectLabel: 'Connect OnlyFans',
+                  x: 18,
+                  y: 26,
+                },
+                {
+                  id: 'mass',
+                  title: 'Mass messaging',
+                  statusUrl: '/api/integrations/onlyfans/status',
+                  connectHref: '/platforms/connect/onlyfans',
+                  connectLabel: 'Connect OnlyFans',
+                  x: 82,
+                  y: 26,
+                },
+                {
+                  id: 'compliance',
+                  title: 'Compliance',
+                  statusUrl: '/api/integrations/onlyfans/status',
+                  connectHref: '/platforms/connect/onlyfans',
+                  connectLabel: 'Connect OnlyFans',
+                  x: 50,
+                  y: 82,
+                },
               ];
               const links: LinkDef[] = [
                 { from: 'hub', to: 'smart' },
@@ -68,6 +92,7 @@ export default function OnlyFansAssistedPage() {
               title="Scale Creator Messaging"
               description="OnlyFans Assisted handles smart replies, mass outreach, and compliance guardrails together so managers can focus on growth plays instead of manual follow-ups."
               actionLabel="Customize assistant flows"
+              actionHref="/platforms/connect/onlyfans"
             />
 
             {/* Cards removed per request */}

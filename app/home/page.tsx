@@ -54,14 +54,14 @@ export default function HomePage() {
               <article className="hz-card hz-card--hero">
                 <h2>Revenue Snapshot</h2>
                 <div className="hz-card__footer hz-actions">
-                  <a className="hz-button primary" href="#">Connect Analytics</a>
+                  <a className="hz-button primary" href="/analytics">Connect Analytics</a>
                 </div>
               </article>
 
               <article className="hz-card hz-card--hero">
                 <h2>Today's Priorities</h2>
                 <div className="hz-card__footer hz-actions">
-                  <a className="hz-button" href="#">Open Queue</a>
+                  <a className="hz-button" href="/dashboard/onlyfans">Open Queue</a>
                 </div>
               </article>
             </section>
@@ -71,8 +71,8 @@ export default function HomePage() {
               const nodes: NodeDef[] = [
                 { id: 'hub', title: 'Home', x: 50, y: 42 },
                 { id: 'analytics', title: 'Analytics', statusUrl: '/api/analytics/overview', x: 18, y: 26, connectHref: '/analytics' },
-                { id: 'campaigns', title: 'Campaigns', x: 82, y: 26, connectHref: '#' },
-                { id: 'payments', title: 'Payments', x: 50, y: 82, connectHref: '#' },
+                { id: 'campaigns', title: 'Campaigns', x: 82, y: 26, connectHref: '/campaigns' },
+                { id: 'payments', title: 'Payments', x: 50, y: 82, connectHref: '/billing' },
               ];
               const links: LinkDef[] = [
                 { from: 'hub', to: 'analytics' },
