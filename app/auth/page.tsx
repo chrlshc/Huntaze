@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Mail } from 'lucide-react';
+import Image from 'next/image';
 
 const navLinks = [
   { href: '/app', label: 'Product' },
@@ -30,12 +31,28 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState<'choice' | 'form'>('choice');
+  const [providerNotice, setProviderNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (planParam) {
       sessionStorage.setItem('selectedPlan', planParam);
     }
   }, [planParam]);
+
+  useEffect(() => {
+    const providerError = searchParams.get('error');
+    if (!providerError) {
+      setProviderNotice(null);
+      return;
+    }
+    const messages: Record<string, string> = {
+      instagram_unavailable: 'Instagram OAuth is not configured for this demo environment. Use email signup or try again later.',
+      tiktok_unavailable: 'TikTok OAuth is not available right now. Please continue with email while we restore the integration.',
+      reddit_unavailable: 'Reddit OAuth is not configured. Reach out to support if you need this provider enabled.',
+    };
+    setProviderNotice(messages[providerError] || 'Authentication provider is currently unavailable. Please continue with email or try again later.');
+    setStep('choice');
+  }, [searchParams, setStep]);
 
   const submitEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -88,7 +105,7 @@ export default function AuthPage() {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-900/80 bg-black/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 text-white focus-ring">
-            <img src="/logo.svg" alt="Huntaze" className="h-8 w-auto" />
+            <Image src="/logo.svg" alt="Huntaze" className="h-8 w-auto" width={120} height={32} priority />
             <span className="hidden text-sm font-semibold uppercase tracking-[0.18em] md:block">Huntaze</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium text-gray-300 md:flex">
@@ -118,6 +135,12 @@ export default function AuthPage() {
                 {planLabel ? `${planLabel} plan · ${trialCopy}` : trialCopy}
               </p>
             </div>
+
+            {providerNotice && (
+              <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                {providerNotice}
+              </div>
+            )}
 
             <div className="mt-6">
               <button
