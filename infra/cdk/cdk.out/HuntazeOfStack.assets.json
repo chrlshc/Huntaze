@@ -1,0 +1,51 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "404478b04aca0b9df9da53df98f0b88b223c12bacc4f263404baf6227d5bc13d": {
+      "displayName": "SendWorker/Code",
+      "source": {
+        "path": "asset.404478b04aca0b9df9da53df98f0b88b223c12bacc4f263404baf6227d5bc13d",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "317805897534-us-east-1-72c62345": {
+          "bucketName": "cdk-hnb659fds-assets-317805897534-us-east-1",
+          "objectKey": "404478b04aca0b9df9da53df98f0b88b223c12bacc4f263404baf6227d5bc13d.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-hnb659fds-file-publishing-role-317805897534-us-east-1"
+        }
+      }
+    },
+    "9b100b0381f12ccb8e203c7027567dfed3b3c09091df68914a2cc2b863568c14": {
+      "displayName": "SyncDispatcher/Code",
+      "source": {
+        "path": "asset.9b100b0381f12ccb8e203c7027567dfed3b3c09091df68914a2cc2b863568c14",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "317805897534-us-east-1-45358891": {
+          "bucketName": "cdk-hnb659fds-assets-317805897534-us-east-1",
+          "objectKey": "9b100b0381f12ccb8e203c7027567dfed3b3c09091df68914a2cc2b863568c14.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-hnb659fds-file-publishing-role-317805897534-us-east-1"
+        }
+      }
+    },
+    "025b3fdc8667e27010a77686e23edda622ddff1289028e1d9ed36e8baae83221": {
+      "displayName": "HuntazeOfStack Template",
+      "source": {
+        "path": "HuntazeOfStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "317805897534-us-east-1-331e20c3": {
+          "bucketName": "cdk-hnb659fds-assets-317805897534-us-east-1",
+          "objectKey": "025b3fdc8667e27010a77686e23edda622ddff1289028e1d9ed36e8baae83221.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-hnb659fds-file-publishing-role-317805897534-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
