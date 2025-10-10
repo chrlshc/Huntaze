@@ -141,6 +141,7 @@ export async function middleware(request: NextRequest) {
     '/content',
     '/cinai',
     '/manager-ai',
+    '/of-connect',
   ];
 
   if (isRootDomain && domainProtectedPrefixes.some((p) => normalisedPathname === p || normalisedPathname.startsWith(p + '/'))) {

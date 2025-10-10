@@ -167,7 +167,7 @@ function getMessagingNodes(): NodeDef[] {
       title: 'AI Replies',
       x: 20,
       y: 22,
-      connectHref: '/platforms/connect/onlyfans',
+      connectHref: '/of-connect',
       connectLabel: 'Connect OnlyFans',
     },
     {
@@ -175,7 +175,7 @@ function getMessagingNodes(): NodeDef[] {
       title: 'Campaign Engine',
       x: 80,
       y: 22,
-      connectHref: '/platforms/connect/onlyfans',
+      connectHref: '/of-connect',
       connectLabel: 'Connect OnlyFans',
     },
     {
@@ -183,7 +183,7 @@ function getMessagingNodes(): NodeDef[] {
       title: 'Compliance Review',
       x: 20,
       y: 75,
-      connectHref: '/platforms/connect/onlyfans',
+      connectHref: '/of-connect',
       connectLabel: 'Connect OnlyFans',
     },
     {
@@ -191,7 +191,7 @@ function getMessagingNodes(): NodeDef[] {
       title: 'Human Team',
       x: 80,
       y: 75,
-      connectHref: '/platforms/connect/onlyfans',
+      connectHref: '/of-connect',
       connectLabel: 'Connect OnlyFans',
     },
   ];
