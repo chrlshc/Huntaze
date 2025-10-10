@@ -21,9 +21,12 @@ export async function GET(
     const referer = request.headers.get('referer') || '';
     
     // Get geo data if available
-    const country = request.headers.get('x-vercel-ip-country') || 
-                   request.headers.get('cf-ipcountry') || 
-                   'unknown';
+    const country =
+      request.headers.get('cf-ipcountry') ||
+      request.headers.get('x-country-code') ||
+      request.headers.get('x-geo-country') ||
+      request.headers.get('x-forwarded-country') ||
+      'unknown';
 
     // Record the click in backend
     try {

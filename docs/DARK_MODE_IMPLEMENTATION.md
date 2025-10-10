@@ -2,7 +2,7 @@
 
 ## Overview
 
-This implementation provides a professional dark mode system inspired by industry leaders Linear, Vercel, and Stripe. It ensures WCAG AAA compliance while maintaining visual appeal and readability.
+This implementation provides a professional dark mode system inspired by industry leaders Linear and Stripe. It ensures WCAG AAA compliance while maintaining visual appeal and readability.
 
 ## Key Features
 
@@ -135,11 +135,6 @@ testContrastCompliance()
 - Similar dark gray backgrounds
 - Subtle borders for definition
 - Minimal use of shadows
-
-### Vercel
-- Off-white text colors
-- Glassmorphism effects
-- Strong contrast ratios
 
 ### Stripe
 - Professional color palette
