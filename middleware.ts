@@ -268,7 +268,8 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
-  const cookieDomain = process.env.NEXT_PUBLIC_DOMAIN || host;
+  // Use the active host as cookie domain when NEXT_PUBLIC_DOMAIN is unset
+  const cookieDomain = process.env.NEXT_PUBLIC_DOMAIN || activeHost;
   const secureCookies = process.env.NODE_ENV === 'production';
 
   if (rateLimitRemaining !== undefined) {
