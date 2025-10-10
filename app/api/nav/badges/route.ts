@@ -5,6 +5,17 @@ export const revalidate = 30;
 
 export async function GET() {
   try {
+    const DEMO = process.env.NEXT_PUBLIC_DEMO === 'true' || process.env.DEMO_MODE === 'true';
+    if (DEMO) {
+      return NextResponse.json({
+        'messages.unread': 4,
+        'fans.new': 12,
+        'campaigns.active': 2,
+        'integrations.missing': 0,
+        'analytics.alerts': 1,
+        demo: true,
+      })
+    }
     const cookieHeader = (await cookies()).toString();
     const opts = { headers: { cookie: cookieHeader }, cache: 'no-store' as const };
 

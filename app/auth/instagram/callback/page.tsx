@@ -28,12 +28,21 @@ export default function InstagramCallbackPage() {
       }
 
       try {
-        // For demo/dev, mark as connected via internal endpoint
-        await fetch('/api/platforms/instagram/connected');
+        const r = await fetch('/api/auth/instagram/callback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const js = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          setStatus('error');
+          setMessage(js?.error || 'Failed to exchange code');
+          return;
+        }
         setStatus('success');
         setMessage('Instagram connected');
         setTimeout(() => {
-          router.replace('/onboarding/setup?platform=instagram&status=connected');
+          router.replace('/social-marketing');
         }, 600);
       } catch (e) {
         setStatus('error');
@@ -79,4 +88,3 @@ export default function InstagramCallbackPage() {
     </div>
   );
 }
-
