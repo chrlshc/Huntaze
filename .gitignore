@@ -39,4 +39,8 @@ next-env.d.ts
 server-output.log
 reports/
 
+# playwright
+test-results/
+playwright-report/
+
 huntazee/

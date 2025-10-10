@@ -8,7 +8,7 @@ export default function ThreadsAuthPage() {
   
   const handleThreadsAuth = () => {
     const clientId = process.env.NEXT_PUBLIC_THREADS_CLIENT_ID || process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID;
-    const redirectUri = process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || 'https://huntaze.com/auth/threads/callback';
+    const redirectUri = process.env.NEXT_PUBLIC_THREADS_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://app.huntaze.com')}/auth/threads/callback`;
     const state = Math.random().toString(36).substring(7);
     
     // Save state for verification

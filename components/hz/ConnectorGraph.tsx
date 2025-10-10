@@ -165,7 +165,7 @@ function Node({ def, status, hideStatus, hideActions, cardWidth }: { def: NodeDe
         </div>
         {hideActions ? null : (
           <div className="hz-card__footer" style={{ marginTop: 8 }}>
-            <a className="hz-button primary" href={def.connectHref || "#"}>
+            <a className="hz-button primary" href={def.connectHref || '/platforms/connect'} aria-label={`Connect ${def.title}`}>
               {def.connectLabel ?? "Connect"}
             </a>
           </div>

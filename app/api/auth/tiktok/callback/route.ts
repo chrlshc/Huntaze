@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         client_secret: process.env.TIKTOK_CLIENT_SECRET || '',
         code: code,
         grant_type: 'authorization_code',
-        redirect_uri: process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || 'https://huntaze.com/auth/tiktok/callback',
+        redirect_uri: process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com'}/auth/tiktok/callback`,
         code_verifier: codeVerifier || ''
       })
     });
