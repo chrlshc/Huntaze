@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateToken, generateRefreshToken, setAuthCookies } from '../../../../lib/auth/jwt';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   // Resolve base app URL from env or request origin
