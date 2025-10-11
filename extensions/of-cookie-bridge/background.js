@@ -6,6 +6,8 @@ chrome.runtime.onMessage.addListener((msg, _, sendResponse) => {
     state.apiBase = (msg.apiBase || '').replace(/\/$/, '');
     state.token = msg.ingestToken;
     chrome.action.setBadgeText({ text: 'ON' });
+    // Trigger an immediate sweep so we ingest even if cookies didn't change
+    try { maybePushCookies(); } catch (e) {}
     sendResponse({ ok: true });
   }
 });
@@ -16,6 +18,30 @@ chrome.cookies.onChanged.addListener(({ cookie, removed }) => {
   if (!state.userId || !state.token || !state.apiBase) return;
   if (!state.timer) state.timer = setTimeout(pushAllCookies, 1000);
 });
+
+// Also sweep when an OnlyFans tab finishes loading or becomes active
+chrome.tabs?.onUpdated.addListener((tabId, info, tab) => {
+  try {
+    if (info.status === 'complete' && tab?.url && /https?:\/\/([^\/]+\.)?onlyfans\.com(\/|$)/i.test(tab.url)) {
+      maybePushCookies();
+    }
+  } catch {}
+});
+
+chrome.tabs?.onActivated.addListener(async ({ tabId }) => {
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    if (tab?.url && /https?:\/\/([^\/]+\.)?onlyfans\.com(\/|$)/i.test(tab.url)) {
+      maybePushCookies();
+    }
+  } catch {}
+});
+
+function maybePushCookies() {
+  // Use the same de-dupe path (lastHash) within pushAllCookies
+  // Queue with a small delay to coalesce bursts
+  if (!state.timer) state.timer = setTimeout(pushAllCookies, 500);
+}
 
 async function pushAllCookies() {
   state.timer = null;
@@ -49,4 +75,3 @@ async function sha256(str) {
   const digest = await crypto.subtle.digest('SHA-256', buf);
   return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
