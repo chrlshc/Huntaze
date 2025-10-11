@@ -1,220 +1,114 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
-import { authenticateWithOf, saveOfSession } from '@/lib/of/session-manager';
+import Link from 'next/link';
+
+type LoginPayload = {
+  email: string;
+  password: string;
+  otp?: string;
+};
 
 export default function OfConnectPage() {
-  const [step, setStep] = useState<'credentials' | '2fa' | 'success'>('credentials');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [twoFactorCode, setTwoFactorCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [form, setForm] = useState<LoginPayload>({ email: '', password: '', otp: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
 
-  const handleCredentialsSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
+    setSubmitting(true);
+    setStatus(null);
     try {
-      const result = await authenticateWithOf(username, password);
-      
-      if (result.success && result.cookies) {
-        // Save session
-        await saveOfSession('user123', result.cookies); // Replace with actual user ID
-        setStep('success');
-      } else if (result.requires2FA) {
-        setStep('2fa');
-      } else {
-        setError(result.error || 'Authentication failed');
-      }
-    } catch (error) {
-      setError('An error occurred during authentication');
+      const res = await fetch('/api/of/login/start', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email: form.email, password: form.password, otp: form.otp || undefined }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(j?.error || 'Login failed');
+      setStatus('✅ Login lancé. Si un OTP est requis, ajoutez-le et relancez.');
+    } catch (err: any) {
+      setStatus('❌ ' + (err?.message || 'Erreur inconnue'));
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
-  };
-
-  const handle2FASubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const result = await authenticateWithOf(username, password, twoFactorCode);
-      
-      if (result.success && result.cookies) {
-        // Save session
-        await saveOfSession('user123', result.cookies); // Replace with actual user ID
-        setStep('success');
-      } else {
-        setError(result.error || '2FA verification failed');
-      }
-    } catch (error) {
-      setError('An error occurred during 2FA verification');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-white">OF</span>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Connect OnlyFans
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Securely connect your OnlyFans account
-            </p>
+    <div className="mx-auto max-w-2xl px-6 py-10">
+      <h1 className="text-2xl font-semibold text-gray-900">Connect OnlyFans</h1>
+      <p className="mt-2 text-sm text-gray-600">
+        Deux options: connexion managée (recommandé) ou dépôt de cookies si vous avez déjà une session valide.
+      </p>
+
+      <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-medium text-gray-900">Connexion managée (ECS)</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Entrez vos identifiants. Nous lancerons un navigateur sécurisé côté serveur. Si OnlyFans demande un OTP,
+          renseignez-le et relancez pour finaliser la connexion.
+        </p>
+
+        <form onSubmit={onSubmit} className="mt-4 space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+              placeholder="you@example.com"
+            />
           </div>
-
-          {/* Security Notice */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <Lock className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-blue-900 dark:text-blue-200">
-                  Secure Connection
-                </p>
-                <p className="text-blue-800 dark:text-blue-300 mt-1">
-                  Your credentials are encrypted end-to-end and never stored in plain text.
-                </p>
-              </div>
-            </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Mot de passe</label>
+            <input
+              type="password"
+              required
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+              placeholder="••••••••"
+            />
           </div>
-
-          {/* Forms */}
-          {step === 'credentials' && (
-            <form onSubmit={handleCredentialsSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Username or Email
-                </label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your OF username"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your password"
-                />
-              </div>
-
-              {error && (
-                <div className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4" />
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading || !username || !password}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? 'Connecting...' : 'Connect Account'}
-              </button>
-            </form>
-          )}
-
-          {step === '2fa' && (
-            <form onSubmit={handle2FASubmit} className="space-y-4">
-              <div className="text-center mb-4">
-                <p className="text-gray-600 dark:text-gray-400">
-                  Please enter your 2FA code
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  2FA Code
-                </label>
-                <input
-                  type="text"
-                  value={twoFactorCode}
-                  onChange={(e) => setTwoFactorCode(e.target.value)}
-                  required
-                  maxLength={6}
-                  className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="000000"
-                />
-              </div>
-
-              {error && (
-                <div className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4" />
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading || twoFactorCode.length !== 6}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? 'Verifying...' : 'Verify Code'}
-              </button>
-            </form>
-          )}
-
-          {step === 'success' && (
-            <div className="text-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                Successfully Connected!
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Your OnlyFans account has been connected securely.
-              </p>
-              <a
-                href="/of-messages"
-                className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
-              >
-                Go to Messages
-              </a>
-            </div>
-          )}
-
-          {/* Demo Notice */}
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Demo: Use username "test" and password "test", then 2FA code "123456"
-            </p>
+          <div>
+            <label className="block text-xs font-medium text-gray-700">Code OTP (si demandé)</label>
+            <input
+              type="text"
+              value={form.otp}
+              onChange={(e) => setForm({ ...form, otp: e.target.value })}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+              placeholder="123456"
+            />
           </div>
-        </div>
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black disabled:opacity-50"
+            >
+              {submitting ? 'Connexion…' : 'Lancer la connexion'}
+            </button>
+          </div>
+          {status && <p className="text-sm text-gray-600">{status}</p>}
+        </form>
+      </section>
 
-        {/* Additional Info */}
-        <div className="mt-6 text-center">
-          <a
-            href="#"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 inline-flex items-center gap-1"
+      <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-medium text-gray-900">Déjà connecté ? Déposer des cookies</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Si vous avez un export Playwright de cookies <code>onlyfans.com</code>, déposez-les directement.
+        </p>
+        <div className="mt-3">
+          <Link
+            href="/of-connect/cookies"
+            className="text-sm font-medium text-emerald-700 hover:text-emerald-800"
           >
-            Learn about our security practices
-            <ExternalLink className="w-3 h-3" />
-          </a>
+            Aller à la page de dépôt →
+          </Link>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
+

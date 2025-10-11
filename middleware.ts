@@ -106,6 +106,12 @@ export async function middleware(request: NextRequest) {
   const normalisedPathname =
     pathname !== '/' && pathname.endsWith('/') ? pathname.replace(/\/+$/, '') : pathname;
 
+  // Legacy OnlyFans connect route → new canonical path
+  if (normalisedPathname.startsWith('/platforms/connect/onlyfans')) {
+    const to = new URL('/of-connect', request.url);
+    return NextResponse.redirect(to, { status: 302 });
+  }
+
   // Cross-domain routing: marketing vs app subdomain
   const urlHost = extractHost(request.nextUrl.hostname);
   const headerHost = extractHost(request.headers.get('host')) || urlHost;
@@ -260,7 +266,7 @@ export async function middleware(request: NextRequest) {
     // Preserve intended destination so auth can bounce back
     const nextPath = request.nextUrl.pathname + (request.nextUrl.search || '');
     authUrl.searchParams.set('to', nextPath);
-    if (request.nextUrl.pathname.startsWith('/platforms/connect/onlyfans')) {
+    if (request.nextUrl.pathname.startsWith('/of-connect')) {
       authUrl.searchParams.set('provider', 'onlyfans');
     }
     return NextResponse.redirect(authUrl);
