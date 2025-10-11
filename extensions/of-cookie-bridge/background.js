@@ -1,4 +1,5 @@
 const state = { userId: null, apiBase: null, token: null, timer: null, lastHash: null };
+const log = (...a) => console.info('[OF-Bridge]', ...a);
 
 chrome.runtime.onMessage.addListener((msg, _, sendResponse) => {
   if (msg.type === 'PAIR') {
@@ -6,6 +7,7 @@ chrome.runtime.onMessage.addListener((msg, _, sendResponse) => {
     state.apiBase = (msg.apiBase || '').replace(/\/$/, '');
     state.token = msg.ingestToken;
     chrome.action.setBadgeText({ text: 'ON' });
+    log('paired', { user: (state.userId || '').slice(0, 8), api: state.apiBase });
     // Trigger an immediate sweep so we ingest even if cookies didn't change
     try { maybePushCookies(); } catch (e) {}
     sendResponse({ ok: true });
@@ -61,12 +63,13 @@ async function pushAllCookies() {
   state.lastHash = hash;
 
   try {
-    await fetch(`${state.apiBase}/api/of/cookies/ingest`, {
+    const res = await fetch(`${state.apiBase}/api/of/cookies/ingest`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.token}` },
       body: payload,
       credentials: 'omit'
     });
+    log('POST /api/of/cookies/ingest ->', res.status);
   } catch (e) { console.error('cookie push failed', e); }
 }
 
