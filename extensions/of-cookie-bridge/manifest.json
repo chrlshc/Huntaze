@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "OF Cookie Bridge",
   "version": "0.1.0",
-  "permissions": ["cookies", "storage"],
+  "permissions": ["cookies", "storage", "tabs"],
   "host_permissions": [
     "https://onlyfans.com/*",
     "https://*.onlyfans.com/*",
@@ -18,4 +18,3 @@
   ],
   "action": { "default_title": "OF Cookie Bridge" }
 }
-
