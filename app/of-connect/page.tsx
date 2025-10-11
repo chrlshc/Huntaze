@@ -13,6 +13,8 @@ export default function OfConnectPage() {
   const [form, setForm] = useState<LoginPayload>({ email: '', password: '', otp: '' });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [retryMsg, setRetryMsg] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,6 +97,67 @@ export default function OfConnectPage() {
       </section>
 
       <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-medium text-gray-900">Connexion directe (ouvrir OnlyFans)</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Ouvre la page de connexion OnlyFans dans un nouvel onglet. Après connexion, revenez ici et déposez vos cookies,
+          ou utilisez la relance ECS ci‑dessous si vos identifiants sont déjà enregistrés.
+        </p>
+        <div className="mt-3 flex items-center gap-3">
+          <button
+            onClick={() => window.open('https://onlyfans.com/login', '_blank', 'noopener,noreferrer')}
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Ouvrir OnlyFans
+          </button>
+          <Link href="/of-connect/cookies" className="text-sm font-medium text-emerald-700 hover:text-emerald-800">
+            Déposer les cookies →
+          </Link>
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-medium text-gray-900">Relancer la connexion (ECS)</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Si vos identifiants sont déjà stockés de manière chiffrée, vous pouvez relancer la connexion serveur (sans
+          ressaisir votre mot de passe). Ajoutez un code OTP si OnlyFans l’exige.
+        </p>
+        <div className="mt-3 flex items-center gap-2">
+          <input
+            type="text"
+            value={form.otp}
+            onChange={(e) => setForm({ ...form, otp: e.target.value })}
+            placeholder="Code OTP (optionnel)"
+            className="w-48 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-400 focus:outline-none"
+          />
+          <button
+            disabled={retrying}
+            onClick={async () => {
+              setRetrying(true);
+              setRetryMsg(null);
+              try {
+                const res = await fetch('/api/of/login/retry', {
+                  method: 'POST',
+                  headers: { 'content-type': 'application/json' },
+                  body: JSON.stringify({ otp: form.otp || undefined }),
+                });
+                const j = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(j?.error || 'Relance échouée');
+                setRetryMsg('✅ Relance lancée. Suivez les logs et l’état de session.');
+              } catch (err: any) {
+                setRetryMsg('❌ ' + (err?.message || 'Erreur'));
+              } finally {
+                setRetrying(false);
+              }
+            }}
+            className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black disabled:opacity-50"
+          >
+            {retrying ? 'Relance…' : 'Relancer' }
+          </button>
+        </div>
+        {retryMsg && <p className="mt-2 text-sm text-gray-600">{retryMsg}</p>}
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-medium text-gray-900">Déjà connecté ? Déposer des cookies</h2>
         <p className="mt-1 text-sm text-gray-600">
           Si vous avez un export Playwright de cookies <code>onlyfans.com</code>, déposez-les directement.
@@ -111,4 +174,3 @@ export default function OfConnectPage() {
     </div>
   );
 }
-
