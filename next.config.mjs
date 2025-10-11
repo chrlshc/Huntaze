@@ -118,6 +118,8 @@ const nextConfig = {
     // Disable CSS optimizer in dev to avoid rare 500s on static CSS routes
     // Re-enable for prod builds if needed
     optimizeCss: false,
+    // Ensure heavy server-only deps aren't bundled (e.g., playwright-core)
+    serverComponentsExternalPackages: ['playwright-core', 'playwright'],
     // Disable optimizePackageImports to avoid dev chunk errors with RSC boundaries
     // optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
@@ -164,6 +166,14 @@ const nextConfig = {
           },
         },
       };
+    }
+
+    // Do not bundle Playwright packages on the server build; load at runtime
+    if (isServer) {
+      config.externals = config.externals || [];
+      const externals = Array.isArray(config.externals) ? config.externals : [config.externals];
+      externals.push('playwright-core', 'playwright');
+      config.externals = externals;
     }
 
     if (process.env.ANALYZE === 'true' && !isServer) {
