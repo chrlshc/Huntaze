@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "OF Cookie Bridge",
+  "version": "0.1.0",
+  "permissions": ["cookies", "storage"],
+  "host_permissions": [
+    "https://onlyfans.com/*",
+    "https://*.onlyfans.com/*",
+    "https://app.huntaze.com/*"
+  ],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "content_scripts": [
+    {
+      "matches": ["https://app.huntaze.com/*"],
+      "js": ["pairing.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": { "default_title": "OF Cookie Bridge" }
+}
+
