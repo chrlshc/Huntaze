@@ -1,2 +1,1 @@
-export { default } from '../../../../platforms/connect/onlyfans/page'
-
+export { default } from '../../../../of-connect/page'

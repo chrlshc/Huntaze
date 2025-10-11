@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // Always build absolute URL against app domain to avoid localhost leaks.
 export async function GET(request: NextRequest) {
   const base = process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
-  const target = new URL('/platforms/connect/onlyfans', base);
+  const target = new URL('/of-connect', base);
   // Preserve optional plan or tracking params
   const sp = request.nextUrl.searchParams;
   sp.forEach((v, k) => {

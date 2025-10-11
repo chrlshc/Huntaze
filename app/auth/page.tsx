@@ -37,7 +37,7 @@ export default function AuthPage() {
     const provider = searchParams.get('provider');
     if (to) sessionStorage.setItem('redirect_after_auth', to);
     if (provider === 'onlyfans') {
-      sessionStorage.setItem('redirect_after_auth', '/platforms/connect/onlyfans');
+      sessionStorage.setItem('redirect_after_auth', '/of-connect');
     }
   }, [planParam]);
 
@@ -197,7 +197,7 @@ export default function AuthPage() {
 
             <div className="mt-4 text-xs text-slate-500">
               Looking to connect OnlyFans? After sign‑in go to
-              {' '}<Link href="/platforms/connect/onlyfans" className="underline underline-offset-2">Platforms → OnlyFans</Link>.
+              {' '}<Link href="/of-connect" className="underline underline-offset-2">Connect OnlyFans</Link>.
             </div>
 
             {step === 'form' && (

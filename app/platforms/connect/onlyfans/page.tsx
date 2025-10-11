@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ofIntegrationApi } from '@/src/lib/api';
@@ -8,6 +8,21 @@ import ComplianceNotice from '@/components/compliance/ComplianceNotice';
 
 export default function OnlyFansConnectPage() {
   const router = useRouter();
+  // Redirect old route to the new canonical page
+  useEffect(() => {
+    router.replace('/of-connect');
+  }, [router]);
+
+  return (
+    <div className="mx-auto max-w-md p-6">
+      <p className="text-sm text-gray-600">Redirecting to the new OnlyFans connect flow…</p>
+      <p className="text-xs text-gray-500">
+        If you are not redirected automatically, <Link className="underline" href="/of-connect">click here</Link>.
+      </p>
+    </div>
+  );
+
+  // Legacy content below (kept for reference but unreachable after redirect)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
