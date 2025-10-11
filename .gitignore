@@ -1,5 +1,5 @@
 # dependencies
-/node_modules
+**/node_modules
 /.pnp
 .pnp.js
 
@@ -44,3 +44,5 @@ test-results/
 playwright-report/
 
 huntazee/
+infra/**/cdk.out
+infra/**/dist
