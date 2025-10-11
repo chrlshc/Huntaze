@@ -3,6 +3,7 @@ import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-
 import { KMSClient, DecryptCommand, EncryptCommand } from '@aws-sdk/client-kms';
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
+import fetch from 'node-fetch';
 
 const REGION = process.env.AWS_REGION || 'eu-west-3';
 const TABLE_SESSIONS = process.env.OF_DDB_SESSIONS_TABLE!;
@@ -20,6 +21,21 @@ const ddb = new DynamoDBClient({ region: REGION });
 const kms = new KMSClient({ region: REGION });
 const sm = new SecretsManagerClient({ region: REGION });
 const cw = new CloudWatchClient({ region: REGION });
+
+const APP_ORIGIN = process.env.APP_ORIGIN || process.env.NEXT_PUBLIC_APP_URL || '';
+const WORKER_TOKEN = process.env.WORKER_TOKEN || process.env.OF_WORKER_TOKEN || '';
+
+async function reportState(userId: string, state: string, errorCode?: string) {
+  try {
+    if (!APP_ORIGIN || !WORKER_TOKEN) return;
+    const url = new URL('/api/_internal/of/connect/report', APP_ORIGIN).toString();
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${WORKER_TOKEN}` },
+      body: JSON.stringify({ userId, state, errorCode }),
+    });
+  } catch {}
+}
 
 async function getCookies(userId: string) {
   const res = await ddb.send(new GetItemCommand({ TableName: TABLE_SESSIONS, Key: { userId: { S: userId } } }));
@@ -63,6 +79,7 @@ function stealthInit(context: BrowserContext) {
 }
 
 async function run() {
+  await reportState(USER_ID, 'LOGIN_STARTED');
   const cookies = await getCookies(USER_ID);
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
   const context = await browser.newContext({
@@ -89,6 +106,7 @@ async function run() {
       if (needsOtp > 0 && !OTP_CODE) {
         await setRequiresAction(USER_ID, true);
         await metric('LoginRequiresAction', 1);
+        await reportState(USER_ID, 'OTP_REQUIRED');
         throw new Error('OTP required');
       }
       if (needsOtp > 0 && OTP_CODE) {
@@ -110,6 +128,7 @@ async function run() {
         },
       }));
       await metric('LoginSuccess', 1);
+      await reportState(USER_ID, 'CONNECTED');
       return;
     }
 
@@ -165,5 +184,6 @@ async function run() {
 run().catch((e) => {
   console.error(JSON.stringify({ error: e?.message || String(e) }));
   metric('MessagesFailed', 1).catch(() => {});
+  if (USER_ID) reportState(USER_ID, 'FAILED', e?.message || String(e)).catch(() => {});
   process.exitCode = 1;
 });
