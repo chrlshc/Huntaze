@@ -17,6 +17,8 @@ const COMMON_ENV = {
   OF_DDB_SESSIONS_TABLE: SESSIONS_TABLE,
   OF_DDB_MESSAGES_TABLE: MESSAGES_TABLE,
   OF_KMS_KEY_ID: KMS_KEY_ID,
+  APP_ORIGIN: process.env.APP_ORIGIN || process.env.NEXT_PUBLIC_APP_URL || '',
+  WORKER_TOKEN: process.env.WORKER_TOKEN || process.env.OF_WORKER_TOKEN || '',
 };
 
 type SendJob = { type?: 'send'; id: string; userId: string; conversationId: string; content: { text: string } };

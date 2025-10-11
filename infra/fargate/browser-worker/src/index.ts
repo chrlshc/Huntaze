@@ -3,7 +3,6 @@ import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-
 import { KMSClient, DecryptCommand, EncryptCommand } from '@aws-sdk/client-kms';
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
-import fetch from 'node-fetch';
 
 const REGION = process.env.AWS_REGION || 'eu-west-3';
 const TABLE_SESSIONS = process.env.OF_DDB_SESSIONS_TABLE!;

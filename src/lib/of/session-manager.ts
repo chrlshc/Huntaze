@@ -3,6 +3,7 @@
 
 import crypto from 'crypto';
 import type { OfSession } from '@/lib/types/onlyfans';
+import { getDecryptedCookies as awsGetDecrypted } from './aws-session-store';
 
 // Browser cookie format from Playwright
 export interface BrowserCookie {
@@ -95,6 +96,16 @@ export class SessionManager {
   
   // Get browser cookies for Playwright
   async getBrowserCookies(userId: string): Promise<BrowserCookie[] | null> {
+    // Optional AWS backend
+    if (process.env.OF_SESSIONS_BACKEND === 'aws') {
+      try {
+        const json = await awsGetDecrypted(userId);
+        if (!json) return [];
+        return JSON.parse(json) as BrowserCookie[];
+      } catch {
+        return [];
+      }
+    }
     const cookieString = await this.getDecryptedCookies(userId);
     if (!cookieString) return null;
     
