@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import DebugLogin from './DebugLogin';
 
 type LinkState = 'PENDING' | 'LOGIN_STARTED' | 'OTP_REQUIRED' | 'FACEID_REQUIRED' | 'CONNECTED' | 'FAILED';
 type Status = { state: LinkState; updatedAt?: string; errorCode?: string } | null;
@@ -47,7 +48,7 @@ export default function Client() {
           This page now reflects server status only. Manual cookie upload remains available below.
         </p>
       </section>
-      
+
       <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-medium text-gray-900">Manual cookie upload (optional)</h2>
         <p className="mt-1 text-sm text-gray-600">Upload a Playwright cookie array for <code>onlyfans.com</code> if you already have one.</p>
@@ -55,6 +56,8 @@ export default function Client() {
           <Link href="/of-connect/cookies" className="text-sm font-medium text-emerald-700 hover:text-emerald-800">Go to cookie upload →</Link>
         </div>
       </section>
+
+      <DebugLogin />
     </div>
   );
 }
