@@ -35,7 +35,8 @@ function getAppOrigin(): string | null {
 function corsHeaders(origin: string | null) {
   const appOrigin = getAppOrigin();
   const extOrigin = process.env.EXTENSION_ORIGIN || null; // e.g., chrome-extension://<id>
-  const allow = origin && (origin === appOrigin || origin === extOrigin) ? origin : appOrigin || '*';
+  const isExt = !!origin && origin.startsWith('chrome-extension://');
+  const allow = isExt ? origin : (origin && (origin === appOrigin || (extOrigin && origin === extOrigin)) ? origin : appOrigin || '*');
   return {
     'Access-Control-Allow-Origin': allow || '*',
     'Access-Control-Allow-Methods': 'POST,OPTIONS',
@@ -86,4 +87,3 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ ok: true }, { status: 200, headers });
 }
-

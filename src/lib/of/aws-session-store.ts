@@ -46,3 +46,14 @@ export async function getDecryptedCookies(userId: string): Promise<string | null
   return Buffer.from(dec.Plaintext as Uint8Array).toString('utf-8');
 }
 
+export async function getSessionMeta(userId: string): Promise<{ updatedAt: string | null; requiresAction: boolean | null }>
+{
+  const res = await ddb.send(new GetItemCommand({
+    TableName: TABLE,
+    Key: { userId: { S: userId } },
+    ProjectionExpression: 'updatedAt, requiresAction',
+  }));
+  const updatedAt = res.Item?.updatedAt?.S ?? null;
+  const requiresAction = typeof res.Item?.requiresAction?.BOOL === 'boolean' ? !!res.Item!.requiresAction!.BOOL : null;
+  return { updatedAt, requiresAction };
+}
