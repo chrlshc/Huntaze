@@ -37,7 +37,8 @@ export async function putEncryptedCookies(userId: string, cookiesJson: string) {
 export async function getDecryptedCookies(userId: string): Promise<string | null> {
   const res = await ddb.send(new GetItemCommand({
     TableName: TABLE,
-    Key: { userId: { S: userId } }
+    Key: { userId: { S: userId } },
+    ConsistentRead: true,
   }));
   const b64 = res.Item?.cookiesCipherB64?.S;
   if (!b64) return null;

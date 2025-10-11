@@ -31,6 +31,7 @@ export async function getOfLinkStatus(userId: string): Promise<{ state: OfLinkSt
   const res = await ddb.send(new GetItemCommand({
     TableName: TABLE,
     Key: { userId: { S: userId } },
+    ConsistentRead: true,
   }));
   const item = res.Item;
   if (!item) return null;
