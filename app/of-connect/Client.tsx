@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-type Status = { count: number; lastIngestAt?: string | null; requiresAction?: boolean | null } | null;
+type LinkState = 'PENDING' | 'LOGIN_STARTED' | 'OTP_REQUIRED' | 'FACEID_REQUIRED' | 'CONNECTED' | 'FAILED';
+type Status = { state: LinkState; updatedAt?: string; errorCode?: string } | null;
 
 export default function Client() {
   const [status, setStatus] = useState<Status>(null);
@@ -12,11 +13,11 @@ export default function Client() {
     let mounted = true;
     async function tick() {
       try {
-        const res = await fetch('/api/of/cookies/status', { cache: 'no-store' });
+        const res = await fetch('/api/of/connect/status', { cache: 'no-store' });
         if (!res.ok) throw new Error('status');
         const j = await res.json();
         if (mounted) {
-          setStatus({ count: j.count || 0, lastIngestAt: j.lastIngestAt || null, requiresAction: j.requiresAction ?? null });
+          setStatus(j);
           setLoading(false);
         }
       } catch {
@@ -38,16 +39,25 @@ export default function Client() {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">Connection status</h2>
           <span className="text-xs text-gray-500">
-            {loading ? 'Checking…' : status?.count ? `Cookies: ${status.count}${status.lastIngestAt ? ` • Updated ${new Date(status.lastIngestAt).toLocaleTimeString()}` : ''}` : 'Waiting for cookies…'}
+            {loading ? 'Checking…' : status?.state ? status.state : 'Waiting…'}
+            {status?.updatedAt ? ` • ${new Date(status.updatedAt).toLocaleTimeString()}` : ''}
           </span>
         </div>
-        <h2 className="text-lg font-medium text-gray-900">Browser bridge (recommended)</h2>
-        <ol className="mt-2 list-decimal pl-5 text-sm text-gray-700 space-y-1">
-          <li>Install the OF Cookie Bridge extension (Developer mode).</li>
-          <li>Click “Open OnlyFans” and sign in.</li>
-          <li>Return here — your cookies will sync automatically.</li>
-        </ol>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <h2 className="text-lg font-medium text-gray-900">Managed login (server)</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Start a secure server‑side login. If OnlyFans requires OTP or Face ID, we’ll show it here.
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <button
+            onClick={async () => {
+              setLoading(true);
+              await fetch('/api/of/login/retry', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({}) }).catch(()=>{});
+              setLoading(false);
+            }}
+            className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black"
+          >
+            Retry (ECS)
+          </button>
           <a
             href="https://onlyfans.com/"
             target="_blank"
@@ -56,32 +66,24 @@ export default function Client() {
           >
             Open OnlyFans
           </a>
-          <a
-            href="/extensions/of-cookie-bridge"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-sm font-medium text-gray-700 underline underline-offset-2"
-          >
-            Install extension
-          </a>
         </div>
-        <p className="mt-3 text-xs text-gray-500">
-          Note: the extension badge should show “ON” when paired with this page.
-        </p>
+        {status?.state === 'OTP_REQUIRED' && (
+          <div className="mt-3 flex items-center gap-2 text-sm text-amber-700">
+            OTP required — enter it and retry.
+          </div>
+        )}
+        {status?.state === 'FACEID_REQUIRED' && (
+          <div className="mt-3 text-sm text-amber-700">
+            Face ID re‑verification required in OnlyFans. Complete it in your OF tab, then click Retry.
+          </div>
+        )}
       </section>
-
+      
       <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-medium text-gray-900">Manual fallback</h2>
-        <p className="mt-1 text-sm text-gray-600">
-          If you cannot install the extension, you can upload a Playwright cookie array for <code>onlyfans.com</code>.
-        </p>
+        <h2 className="text-lg font-medium text-gray-900">Manual cookie upload (optional)</h2>
+        <p className="mt-1 text-sm text-gray-600">Upload a Playwright cookie array for <code>onlyfans.com</code> if you already have one.</p>
         <div className="mt-3">
-          <Link
-            href="/of-connect/cookies"
-            className="text-sm font-medium text-emerald-700 hover:text-emerald-800"
-          >
-            Go to cookie upload →
-          </Link>
+          <Link href="/of-connect/cookies" className="text-sm font-medium text-emerald-700 hover:text-emerald-800">Go to cookie upload →</Link>
         </div>
       </section>
     </div>
