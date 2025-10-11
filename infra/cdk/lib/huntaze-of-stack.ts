@@ -122,6 +122,9 @@ export class HuntazeOfStack extends Stack {
         WORKER_TOKEN: process.env.WORKER_TOKEN || process.env.OF_WORKER_TOKEN || '',
       }
     });
+    // Allow the send worker Lambda to read/write session state (mutex, flags)
+    sessions.grantReadWriteData(sendWorker);
+    messages.grantReadWriteData(sendWorker);
     const { SqsEventSource } = require('aws-cdk-lib/aws-lambda-event-sources');
     sendWorker.addEventSource(new SqsEventSource(sendQueue, {
       batchSize: 10,
