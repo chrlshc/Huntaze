@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getServerSession } from '@/lib/auth';
 import { enqueueLogin } from '@/lib/queue/of-sqs';
+import { setOfLinkStatus } from '@/lib/of/link-store';
 
 const schema = z.object({
   otp: z.string().optional(),
@@ -15,6 +16,7 @@ export async function POST(req: NextRequest) {
     const effectiveUserId = userId || (session as any)?.user?.id;
     if (!effectiveUserId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    await setOfLinkStatus(effectiveUserId, { state: 'LOGIN_STARTED' });
     await enqueueLogin({ userId: effectiveUserId, otp });
     return NextResponse.json({ ok: true });
   } catch (e: any) {
@@ -22,4 +24,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
-
