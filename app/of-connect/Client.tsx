@@ -43,32 +43,9 @@ export default function Client() {
             {status?.updatedAt ? ` • ${new Date(status.updatedAt).toLocaleTimeString()}` : ''}
           </span>
         </div>
-        <h2 className="text-lg font-medium text-gray-900">Managed login (server)</h2>
         <p className="mt-1 text-sm text-gray-600">
-          Start a secure server‑side login. If OnlyFans requires OTP or Face ID, we’ll show it here.
+          This page now reflects server status only. Manual cookie upload remains available below.
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <button
-            onClick={async () => {
-              setLoading(true);
-              await fetch('/api/of/login/retry', { method: 'POST', headers: { 'content-type': 'application/json' } }).catch(()=>{});
-              setLoading(false);
-            }}
-            className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black"
-          >
-            {loading ? 'Retrying…' : 'Retry (ECS)'}
-          </button>
-        </div>
-        {status?.state === 'OTP_REQUIRED' && (
-          <div className="mt-3 flex items-center gap-2 text-sm text-amber-700">
-            OTP required — enter it and retry.
-          </div>
-        )}
-        {status?.state === 'FACEID_REQUIRED' && (
-          <div className="mt-3 text-sm text-amber-700">
-            Face ID re‑verification required in OnlyFans. Complete it in your OF tab, then click Retry.
-          </div>
-        )}
       </section>
       
       <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
