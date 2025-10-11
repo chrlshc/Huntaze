@@ -28,6 +28,7 @@ export async function putEncryptedCookies(userId: string, cookiesJson: string) {
       userId: { S: userId },
       cookiesCipherB64: { S: b64 },
       requiresAction: { BOOL: false },
+      linkState: { S: 'CONNECTED' },
       updatedAt: { S: new Date().toISOString() },
     }
   }));

@@ -118,6 +118,8 @@ export class HuntazeOfStack extends Stack {
         OF_DDB_SESSIONS_TABLE: sessions.tableName,
         OF_DDB_MESSAGES_TABLE: messages.tableName,
         OF_KMS_KEY_ID: key.keyArn,
+        APP_ORIGIN: process.env.APP_ORIGIN || process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com',
+        WORKER_TOKEN: process.env.WORKER_TOKEN || process.env.OF_WORKER_TOKEN || '',
       }
     });
     const { SqsEventSource } = require('aws-cdk-lib/aws-lambda-event-sources');
@@ -140,6 +142,8 @@ export class HuntazeOfStack extends Stack {
         OF_DDB_SESSIONS_TABLE: sessions.tableName,
         OF_DDB_MESSAGES_TABLE: messages.tableName,
         OF_KMS_KEY_ID: key.keyArn,
+        APP_ORIGIN: process.env.APP_ORIGIN || process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com',
+        WORKER_TOKEN: process.env.WORKER_TOKEN || process.env.OF_WORKER_TOKEN || '',
       }
     });
     sessions.grantReadData(syncDispatcher);

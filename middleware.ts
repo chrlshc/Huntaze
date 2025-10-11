@@ -90,6 +90,10 @@ function getRootDomains(): string[] {
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+  // Allow internal worker reports without auth gating; protected by WORKER_TOKEN
+  if (pathname.startsWith('/api/_internal/of/connect/report')) {
+    return NextResponse.next();
+  }
   // Never intercept Next.js internals or static assets
   if (
     pathname.startsWith('/_next') ||
