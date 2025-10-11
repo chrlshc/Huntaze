@@ -1,8 +1,32 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+type Status = { count: number; lastIngestAt?: string | null; requiresAction?: boolean | null } | null;
 
 export default function Client() {
+  const [status, setStatus] = useState<Status>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    let mounted = true;
+    async function tick() {
+      try {
+        const res = await fetch('/api/of/cookies/status', { cache: 'no-store' });
+        if (!res.ok) throw new Error('status');
+        const j = await res.json();
+        if (mounted) {
+          setStatus({ count: j.count || 0, lastIngestAt: j.lastIngestAt || null, requiresAction: j.requiresAction ?? null });
+          setLoading(false);
+        }
+      } catch {
+        if (mounted) setLoading(false);
+      }
+    }
+    tick();
+    const id = setInterval(tick, 5000);
+    return () => { mounted = false; clearInterval(id); };
+  }, []);
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-2xl font-semibold text-gray-900">Connect OnlyFans</h1>
@@ -11,6 +35,12 @@ export default function Client() {
       </p>
 
       <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-gray-900">Connection status</h2>
+          <span className="text-xs text-gray-500">
+            {loading ? 'Checking…' : status?.count ? `Cookies: ${status.count}${status.lastIngestAt ? ` • Updated ${new Date(status.lastIngestAt).toLocaleTimeString()}` : ''}` : 'Waiting for cookies…'}
+          </span>
+        </div>
         <h2 className="text-lg font-medium text-gray-900">Browser bridge (recommended)</h2>
         <ol className="mt-2 list-decimal pl-5 text-sm text-gray-700 space-y-1">
           <li>Install the OF Cookie Bridge extension (Developer mode).</li>
