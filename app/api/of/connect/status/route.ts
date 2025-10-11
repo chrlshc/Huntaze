@@ -10,7 +10,15 @@ export async function GET(req: NextRequest) {
 
   // Prioritise explicit link state when present
   const explicit = await getOfLinkStatus(userId).catch(() => null);
-  if (explicit) return NextResponse.json(explicit);
+  if (explicit) {
+    return NextResponse.json(explicit, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
+  }
 
   // Fallback heuristic from session cookies in DDB
   const cookies = await getDecryptedCookies(userId).catch(() => null);
@@ -18,11 +26,24 @@ export async function GET(req: NextRequest) {
     try {
       const arr = JSON.parse(cookies);
       if (Array.isArray(arr) && arr.length > 0) {
-        return NextResponse.json({ state: 'CONNECTED' as OfLinkState });
+        return NextResponse.json({ state: 'CONNECTED' as OfLinkState }, {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+            Pragma: 'no-cache',
+            Expires: '0',
+          },
+        });
       }
     } catch {}
   }
 
-  return NextResponse.json({ state: 'PENDING' as OfLinkState });
+  return NextResponse.json({ state: 'PENDING' as OfLinkState }, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
+  });
 }
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;

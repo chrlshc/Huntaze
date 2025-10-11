@@ -1,4 +1,4 @@
-import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 
 const REGION = process.env.OF_AWS_REGION || process.env.AWS_REGION || 'us-east-1';
 const TABLE = process.env.OF_DDB_SESSIONS_TABLE || 'HuntazeOfSessions';
@@ -8,14 +8,22 @@ const ddb = new DynamoDBClient({ region: REGION });
 export type OfLinkState = 'PENDING' | 'LOGIN_STARTED' | 'OTP_REQUIRED' | 'FACEID_REQUIRED' | 'CONNECTED' | 'FAILED';
 
 export async function setOfLinkStatus(userId: string, opts: { state: OfLinkState; errorCode?: string | null }) {
-  await ddb.send(new PutItemCommand({
+  const now = new Date().toISOString();
+  const hasError = typeof opts.errorCode === 'string' && opts.errorCode.length > 0;
+  const updateExpr = hasError
+    ? 'SET linkState = :s, updatedAt = :ts, errorCode = :e'
+    : 'SET linkState = :s, updatedAt = :ts';
+  const exprVals: any = {
+    ':s': { S: opts.state },
+    ':ts': { S: now },
+  };
+  if (hasError) exprVals[':e'] = { S: String(opts.errorCode) };
+
+  await ddb.send(new UpdateItemCommand({
     TableName: TABLE,
-    Item: {
-      userId: { S: userId },
-      linkState: { S: opts.state },
-      ...(opts.errorCode ? { errorCode: { S: String(opts.errorCode) } } : {}),
-      updatedAt: { S: new Date().toISOString() },
-    },
+    Key: { userId: { S: userId } },
+    UpdateExpression: updateExpr,
+    ExpressionAttributeValues: exprVals,
   }));
 }
 
@@ -34,4 +42,3 @@ export async function getOfLinkStatus(userId: string): Promise<{ state: OfLinkSt
     errorCode: item.errorCode?.S,
   };
 }
-

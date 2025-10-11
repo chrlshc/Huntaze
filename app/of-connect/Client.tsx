@@ -51,21 +51,13 @@ export default function Client() {
           <button
             onClick={async () => {
               setLoading(true);
-              await fetch('/api/of/login/retry', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({}) }).catch(()=>{});
+              await fetch('/api/of/login/retry', { method: 'POST', headers: { 'content-type': 'application/json' } }).catch(()=>{});
               setLoading(false);
             }}
             className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black"
           >
-            Retry (ECS)
+            {loading ? 'Retrying…' : 'Retry (ECS)'}
           </button>
-          <a
-            href="https://onlyfans.com/"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            Open OnlyFans
-          </a>
         </div>
         {status?.state === 'OTP_REQUIRED' && (
           <div className="mt-3 flex items-center gap-2 text-sm text-amber-700">
