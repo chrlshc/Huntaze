@@ -1,0 +1,23 @@
+version: 0.2
+env:
+  variables:
+    NPM_CONFIG_AUDIT: "false"
+    NPM_CONFIG_FUND: "false"
+    NPM_CONFIG_PROGRESS: "false"
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - node -v && npm -v
+      - npm ci --prefix infra/cdk --no-audit --no-fund
+  build:
+    commands:
+      - npm run build --prefix infra/cdk
+      - echo "USE_ECR_IMAGE=$USE_ECR_IMAGE ECR_REPOSITORY=$ECR_REPOSITORY ECR_IMAGE_TAG=$ECR_IMAGE_TAG"
+      - export PATH="$PATH:$(pwd)/infra/cdk/node_modules/.bin"
+      - npm exec --prefix infra/cdk -- cdk -a "node ./infra/cdk/dist/bin/huntaze-of.js" synth -o dist
+artifacts:
+  files:
+    - dist/**/*
+    - scripts/of-load-test.js
