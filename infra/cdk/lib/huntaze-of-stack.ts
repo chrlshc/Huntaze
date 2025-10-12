@@ -227,7 +227,7 @@ export class HuntazeOfStack extends Stack {
     });
     memHighAlarm.addAlarmAction(new cloudwatch_actions.SnsAction(alertsTopic));
 
-    const dashboard = new cloudwatch.Dashboard(this, 'OFWorkerDashboard', { dashboardName: 'Huntaze-OFWorker' });
+    const dashboard = new cloudwatch.Dashboard(this, 'OFWorkerDashboard', { dashboardName: `${cdk.Stack.of(this).stackName}-OFWorker` });
     dashboard.addWidgets(
       new cloudwatch.GraphWidget({
         title: 'Login Success/Failure (per 5m)',
