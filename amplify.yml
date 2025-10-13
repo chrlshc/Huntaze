@@ -52,3 +52,7 @@ frontend:
           value: 'nosniff'
         - key: 'X-XSS-Protection'
           value: '1; mode=block'
+    - pattern: '/.well-known/apple-app-site-association'
+      headers:
+        - key: 'Content-Type'
+          value: 'application/json'
