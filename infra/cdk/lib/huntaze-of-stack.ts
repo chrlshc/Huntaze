@@ -17,6 +17,8 @@ import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as cloudwatch_actions from 'aws-cdk-lib/aws-cloudwatch-actions';
 import * as path from 'path';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as cr from 'aws-cdk-lib/custom-resources';
 
 export class HuntazeOfStack extends Stack {
   constructor(scope: cdk.App, id: string, props?: StackProps) {
@@ -58,10 +60,21 @@ export class HuntazeOfStack extends Stack {
       retentionPeriod: Duration.days(4)
     });
 
-    const vpc = new ec2.Vpc(this, 'OfVpc', { natGateways: 1, maxAzs: 2 });
-    const taskSg = new ec2.SecurityGroup(this, 'OfTaskSg', { vpc, description: 'Egress-only', allowAllOutbound: true });
+    // Keep legacy VPC but ensure no NAT Gateway is created (cost-safe)
+    const vpc = new ec2.Vpc(this, 'OfVpc', { natGateways: 0, maxAzs: 2 });
 
-    const cluster = new ecs.Cluster(this, 'OfCluster', { vpc });
+    // New cost-safe VPC for workers (public-only, no NAT)
+    const workerVpc = new ec2.Vpc(this, 'WorkerVpc', {
+      ipAddresses: ec2.IpAddresses.cidr('10.2.0.0/16'),
+      natGateways: 0,
+      maxAzs: 2,
+      subnetConfiguration: [
+        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, cidrMask: 20 },
+      ],
+    });
+    const taskSg = new ec2.SecurityGroup(this, 'OfTaskSg', { vpc: workerVpc, description: 'Egress-only', allowAllOutbound: true });
+
+    const cluster = new ecs.Cluster(this, 'OfCluster', { vpc: workerVpc });
     const useRegistryImage = (process.env.USE_REGISTRY_IMAGE === '1' || process.env.USE_REGISTRY_IMAGE === 'true');
     const useEcrImage = (process.env.USE_ECR_IMAGE === '1' || process.env.USE_ECR_IMAGE === 'true');
     const taskDef = new ecs.FargateTaskDefinition(this, 'BrowserWorkerTask', {
@@ -152,7 +165,8 @@ export class HuntazeOfStack extends Stack {
       environment: {
         OF_ECS_CLUSTER_ARN: cluster.clusterArn,
         OF_ECS_TASKDEF_ARN: taskDef.taskDefinitionArn,
-        OF_VPC_SUBNETS: vpc.privateSubnets.map(s => s.subnetId).join(','),
+        // Use public subnets of WorkerVpc (assignPublicIp ENABLED in dispatcher)
+        OF_VPC_SUBNETS: workerVpc.publicSubnets.map(s => s.subnetId).join(','),
         OF_TASK_SG_ID: taskSg.securityGroupId,
         OF_DDB_SESSIONS_TABLE: sessions.tableName,
         OF_DDB_MESSAGES_TABLE: messages.tableName,
@@ -186,7 +200,7 @@ export class HuntazeOfStack extends Stack {
       environment: {
         OF_ECS_CLUSTER_ARN: cluster.clusterArn,
         OF_ECS_TASKDEF_ARN: taskDef.taskDefinitionArn,
-        OF_VPC_SUBNETS: vpc.privateSubnets.map(s => s.subnetId).join(','),
+        OF_VPC_SUBNETS: workerVpc.publicSubnets.map(s => s.subnetId).join(','),
         OF_TASK_SG_ID: taskSg.securityGroupId,
         OF_DDB_SESSIONS_TABLE: sessions.tableName,
         OF_DDB_MESSAGES_TABLE: messages.tableName,
@@ -197,10 +211,14 @@ export class HuntazeOfStack extends Stack {
     });
     sessions.grantReadData(syncDispatcher);
     syncDispatcher.addToRolePolicy(new iam.PolicyStatement({ actions: ['ecs:RunTask','iam:PassRole'], resources: ['*'] }));
-    new events.Rule(this, 'InboxSyncRule', {
-      schedule: events.Schedule.rate(Duration.minutes(5)),
-      targets: [new targets.LambdaFunction(syncDispatcher)]
-    });
+    // Feature flag: disable periodic inbox sync by default; enable with `-c enableInboxSync=true`
+    const enableInboxSync = this.node.tryGetContext('enableInboxSync') === 'true';
+    if (enableInboxSync) {
+      new events.Rule(this, 'InboxSyncRule', {
+        schedule: events.Schedule.rate(Duration.minutes(5)),
+        targets: [new targets.LambdaFunction(syncDispatcher)]
+      });
+    }
 
     // Alarms and Dashboard for OFWorker custom metrics
     const alertsTopicArn = process.env.ALERTS_SNS_TOPIC_ARN || `arn:aws:sns:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:alerts`;
@@ -260,6 +278,20 @@ export class HuntazeOfStack extends Stack {
     new cdk.CfnOutput(this, 'ClusterArn', { value: cluster.clusterArn });
     new cdk.CfnOutput(this, 'TaskDefArn', { value: taskDef.taskDefinitionArn });
     new cdk.CfnOutput(this, 'TaskSecurityGroup', { value: taskSg.securityGroupId });
-    new cdk.CfnOutput(this, 'SubnetsPrivate', { value: vpc.privateSubnets.map(s => s.subnetId).join(',') });
+    new cdk.CfnOutput(this, 'WorkerSubnetsPublic', { value: workerVpc.publicSubnets.map(s => s.subnetId).join(',') });
+
+    // Persist commonly-needed values to SSM Parameter Store for CI/load tests
+    // Use AwsCustomResource with Overwrite=true to avoid failures if parameters already exist.
+    const putParam = (id: string, name: string, value: string) =>
+      new cr.AwsCustomResource(this, id, {
+        onCreate: { service: 'SSM', action: 'putParameter', parameters: { Name: name, Type: 'String', Value: value, Overwrite: true }, physicalResourceId: cr.PhysicalResourceId.of(`${name}:v1`) },
+        onUpdate: { service: 'SSM', action: 'putParameter', parameters: { Name: name, Type: 'String', Value: value, Overwrite: true }, physicalResourceId: cr.PhysicalResourceId.of(`${name}:v1`) },
+        policy: cr.AwsCustomResourcePolicy.fromSdkCalls({ resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE }),
+      });
+    putParam('OfClusterArnParam', '/huntaze/of/clusterArn', cluster.clusterArn);
+    putParam('OfTaskDefArnParam', '/huntaze/of/taskDefArn', taskDef.taskDefinitionArn);
+    putParam('OfSubnetsParam', '/huntaze/of/subnets', workerVpc.publicSubnets.map(s => s.subnetId).join(','));
+    putParam('OfSecurityGroupParam', '/huntaze/of/securityGroup', taskSg.securityGroupId);
+    putParam('OfUserIdsParam', '/huntaze/of/userIds', process.env.OF_LOADTEST_USER_IDS || 'user1,user2');
   }
 }

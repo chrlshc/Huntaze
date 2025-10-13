@@ -60,7 +60,7 @@ async function runOne({ cluster, taskDef, subnets, securityGroup, action, userId
     count: 1,
     launchType: 'FARGATE',
     networkConfiguration: {
-      awsvpcConfiguration: { assignPublicIp: 'DISABLED', subnets, securityGroups: [securityGroup] },
+      awsvpcConfiguration: { assignPublicIp: 'ENABLED', subnets, securityGroups: [securityGroup] },
     },
     overrides: {
       containerOverrides: [{ name: 'of-browser-worker', environment: env }],

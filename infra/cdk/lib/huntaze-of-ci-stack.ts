@@ -15,7 +15,7 @@ export class HuntazeOfCiStack extends Stack {
     // CodeCommit repo for the worker + infra code
     const repoName = process.env.OF_CC_REPO || 'huntaze-of-worker';
     const existingRepoName = process.env.OF_CC_REPO_EXISTING;
-    const srcType = (process.env.OF_PIPELINE_SOURCE || 'CodeCommit').toLowerCase();
+    const srcType = (process.env.OF_PIPELINE_SOURCE || 'S3').toLowerCase();
     let repo: codecommit.IRepository | undefined;
     let srcBucket: s3.Bucket | undefined;
     let srcKey: string | undefined;
@@ -66,7 +66,14 @@ export class HuntazeOfCiStack extends Stack {
               'npm run build --prefix infra/cdk',
               'echo "USE_ECR_IMAGE=$USE_ECR_IMAGE ECR_REPOSITORY=$ECR_REPOSITORY ECR_IMAGE_TAG=$ECR_IMAGE_TAG"',
               'export PATH="$PATH:$(pwd)/infra/cdk/node_modules/.bin"',
-              'npm exec --prefix infra/cdk -- cdk -a "node ./infra/cdk/dist/bin/huntaze-of.js" synth -o dist',
+              'export CDK_QUALIFIER=ofq1abcde',
+              'export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-us-east-1}"',
+              'export AWS_REGION="$AWS_DEFAULT_REGION"',
+              'export CDK_DEFAULT_REGION="$AWS_DEFAULT_REGION"',
+              'export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)',
+              'STACKS=main,ci npm exec --prefix infra/cdk -- cdk -a "node ./infra/cdk/dist/bin/huntaze-of.js" synth -o dist',
+              'npm exec --prefix infra/cdk -- cdk-assets -p dist/manifest.json publish',
+              'npm exec --prefix infra/cdk -- cdk-assets -p dist/HuntazeOfStack.assets.json publish',
             ],
           },
         },
@@ -76,6 +83,35 @@ export class HuntazeOfCiStack extends Stack {
       }),
       timeout: Duration.minutes(30),
     });
+
+    // Allow context lookups during synth (e.g., AZs for VPC)
+    buildProject.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['ec2:DescribeAvailabilityZones'],
+      resources: ['*'],
+    }));
+
+    // Allow publishing CDK assets by assuming bootstrap roles (file/image publishing roles)
+    buildProject.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['sts:AssumeRole'],
+      resources: [
+        'arn:aws:iam::*:role/cdk-ofq1abcde-*',
+        'arn:aws:iam::*:role/cdk-hnb659fds-*'
+      ],
+    }));
+
+    // Direct S3 access to default bootstrap file asset bucket (hnb659fds) for publishing without role assumption
+    buildProject.addToRolePolicy(new iam.PolicyStatement({
+      actions: [
+        's3:PutObject',
+        's3:GetObject',
+        's3:ListBucket',
+        's3:GetBucketLocation'
+      ],
+      resources: [
+        'arn:aws:s3:::cdk-hnb659fds-assets-*',
+        'arn:aws:s3:::cdk-hnb659fds-assets-*/*'
+      ],
+    }));
 
     // CodeBuild for load testing stage
     const loadEnv = {
@@ -96,26 +132,7 @@ export class HuntazeOfCiStack extends Stack {
         computeType: codebuild.ComputeType.SMALL,
         environmentVariables: loadEnv,
       },
-      buildSpec: codebuild.BuildSpec.fromObject({
-        version: '0.2',
-        phases: {
-          install: {
-            'runtime-versions': { nodejs: 20 },
-            commands: [ 'npm install --no-audit --no-fund' ],
-          },
-          build: {
-            commands: [
-              'node scripts/of-load-test.js --action ${ACTION} --count ${COUNT} --concurrency ${CONCURRENCY} --cluster ${CLUSTER_ARN} --task-def ${TASK_DEF_ARN} --subnets ${SUBNETS} --security-group ${SECURITY_GROUP} --user-ids ${USER_IDS} || true'
-            ],
-          },
-        },
-        reports: {
-          LoadTestReport: {
-            'base-directory': 'reports',
-            files: [ '**/*' ],
-          },
-        },
-      }),
+      buildSpec: codebuild.BuildSpec.fromSourceFilename('buildspec-loadtest.yml'),
       timeout: Duration.minutes(60),
     });
 
@@ -137,6 +154,7 @@ export class HuntazeOfCiStack extends Stack {
     const pipeline = new codepipeline.Pipeline(this, 'OfPipeline', {
       pipelineName: 'HuntazeOfWorker-Pipeline',
       restartExecutionOnUpdate: true,
+      pipelineType: codepipeline.PipelineType.V2,
     });
 
     if (srcType === 'codecommit') {
