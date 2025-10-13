@@ -1,4 +1,5 @@
 import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
+import OFConnectBanner from '@/components/OFConnectBanner';
 import { BridgeLauncher } from "@/components/of/BridgeLauncher";
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
@@ -50,16 +51,8 @@ export default function OnlyFansAssistedPage() {
           <div className="hz-page">
             <h1>OnlyFans Assisted</h1>
 
-            {/* Direct connect CTA aligned with app visuals */}
-            <div className="hz-card" style={{ marginTop: 12 }}>
-              <div className="hz-card__body">
-                <div className="hz-card__title">Connect your OnlyFans account</div>
-                <p className="hz-muted">Start a secure server-side login. Use the iOS/desktop bridge or the native app deep link.</p>
-                <div style={{ marginTop: 8 }}>
-                  <BridgeLauncher compact variant="hz" />
-                </div>
-              </div>
-            </div>
+            {/* PWA install + iOS A2HS banner under top bar */}
+            <OFConnectBanner />
 
             {(() => {
               const nodes: NodeDef[] = [
