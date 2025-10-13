@@ -10,7 +10,7 @@ async function fetchToken(): Promise<TokenResp> {
   return res.json();
 }
 
-export function BridgeLauncher({ compact = false }: { compact?: boolean }) {
+export function BridgeLauncher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'hz' }) {
   const [busy, setBusy] = useState<"ios" | "desktop" | "native" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -84,12 +84,23 @@ export function BridgeLauncher({ compact = false }: { compact?: boolean }) {
     }
   };
 
+  const btn = (kind: 'ios' | 'desktop' | 'native') => {
+    if (variant === 'hz') {
+      const base = 'hz-button';
+      const primary = kind === 'native' ? ' primary' : '';
+      return base + primary;
+    }
+    // default (tailwind)
+    const tw = 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50';
+    return tw;
+  };
+
   if (compact) {
     return (
       <div className="flex items-center gap-2">
-        <button onClick={handleIos} disabled={!!busy} className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50">iOS bridge</button>
-        <button onClick={handleDesktop} disabled={!!busy} className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50">Desktop bridge</button>
-        <button onClick={handleNative} disabled={!!busy} className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50">Open in app</button>
+        <button onClick={handleIos} disabled={!!busy} className={btn('ios')}>iOS bridge</button>
+        <button onClick={handleDesktop} disabled={!!busy} className={btn('desktop')}>Desktop bridge</button>
+        <button onClick={handleNative} disabled={!!busy} className={btn('native')}>Open in app</button>
         {err && <span className="ml-2 text-xs text-rose-600">{err}</span>}
       </div>
     );
@@ -100,15 +111,31 @@ export function BridgeLauncher({ compact = false }: { compact?: boolean }) {
       <div className="text-sm font-medium text-slate-900">Alternate login bridges</div>
       <p className="mt-1 text-sm text-slate-600">Use the iOS mini-app or the desktop helper to capture OnlyFans session cookies securely.</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <button onClick={handleIos} disabled={!!busy} className="inline-flex items-center rounded-lg bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-50">
-          {busy === "ios" ? "Opening…" : "Open iOS bridge"}
-        </button>
-        <button onClick={handleDesktop} disabled={!!busy} className="inline-flex items-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-black disabled:opacity-50">
-          {busy === "desktop" ? "Opening…" : "Open desktop bridge"}
-        </button>
-        <button onClick={handleNative} disabled={!!busy} className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
-          {busy === "native" ? "Opening…" : "Open in app"}
-        </button>
+        {variant === 'hz' ? (
+          <>
+            <button onClick={handleIos} disabled={!!busy} className="hz-button">
+              {busy === 'ios' ? 'Opening…' : 'Open iOS bridge'}
+            </button>
+            <button onClick={handleDesktop} disabled={!!busy} className="hz-button">
+              {busy === 'desktop' ? 'Opening…' : 'Open desktop bridge'}
+            </button>
+            <button onClick={handleNative} disabled={!!busy} className="hz-button primary">
+              {busy === 'native' ? 'Opening…' : 'Open in app'}
+            </button>
+          </>
+        ) : (
+          <>
+            <button onClick={handleIos} disabled={!!busy} className="inline-flex items-center rounded-lg bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-50">
+              {busy === "ios" ? "Opening…" : "Open iOS bridge"}
+            </button>
+            <button onClick={handleDesktop} disabled={!!busy} className="inline-flex items-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-black disabled:opacity-50">
+              {busy === "desktop" ? "Opening…" : "Open desktop bridge"}
+            </button>
+            <button onClick={handleNative} disabled={!!busy} className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
+              {busy === "native" ? "Opening…" : "Open in app"}
+            </button>
+          </>
+        )}
       </div>
       {err && <div className="mt-2 text-xs text-rose-600">{err}</div>}
     </div>
