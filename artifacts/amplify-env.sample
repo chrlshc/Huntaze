@@ -1,0 +1,53 @@
+# Copy these into Amplify Hosting → App settings → Environment variables
+# Values here are placeholders; fill with your actual production secrets.
+
+# Core
+NODE_ENV=production
+JWT_SECRET=
+DATA_ENCRYPTION_KEY=
+
+# App URLs
+NEXT_PUBLIC_APP_URL=https://app.huntaze.com
+NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
+
+# Payments & Email
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+SES_FROM_EMAIL=no-reply@huntaze.com
+AWS_REGION=us-east-1
+
+# OAuth / Social
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXT_PUBLIC_INSTAGRAM_APP_ID=
+INSTAGRAM_CLIENT_ID=
+INSTAGRAM_CLIENT_SECRET=
+INSTAGRAM_APP_SECRET=
+NEXT_PUBLIC_TIKTOK_CLIENT_KEY=
+TIKTOK_CLIENT_KEY=
+TIKTOK_CLIENT_SECRET=
+REDDIT_CLIENT_ID=
+REDDIT_CLIENT_SECRET=
+THREADS_APP_SECRET=
+NEXT_PUBLIC_THREADS_APP_ID=
+
+# Cron secrets
+CRON_SECRET=
+
+# Storage (if required at runtime)
+S3_MEDIA_BUCKET=huntaze-media
+S3_VAULT_BUCKET=huntaze-vault
+S3_EXPORTS_BUCKET=huntaze-exports
+S3_ANALYTICS_BUCKET=huntaze-analytics
+
+# OnlyFans AWS backend (optional for scale)
+OF_SESSIONS_BACKEND=aws
+OF_AWS_REGION=us-east-1
+OF_SQS_SEND_QUEUE_URL=
+OF_DDB_SESSIONS_TABLE=
+OF_DDB_MESSAGES_TABLE=
+OF_DDB_THREADS_TABLE=
+OF_KMS_KEY_ID=
+OF_BRIDGE_SECRET=
+
