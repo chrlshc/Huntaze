@@ -67,6 +67,11 @@ Add these in Amplify (or ECS Task Definition) – do not commit secrets:
   - `OF_KMS_KEY_ID=<from CDK outputs>`
   - Optional: `OF_BRIDGE_SECRET=<random strong secret>`
 
+Quick sync (CLI, optional)
+- Prepare a file like `artifacts/amplify-env.sample` with your values.
+- Set via CLI (does not print secrets):
+  - `AWS_PROFILE=huntaze-sso bash scripts/amplify-set-env.sh -a <AMPLIFY_APP_ID> -b <BRANCH> -f artifacts/amplify-env.sample`
+
 ## 5) OnlyFans Features – App Integration
 - Connect flow: `GET /of-connect` and `/of-connect/cookies` accept cookie ingestion for assisted mode.
 - Dashboard: `/dashboard/onlyfans` shows summary cards, action list, and status.
@@ -85,6 +90,8 @@ If using the worker pipeline for inbox sync/send:
 - ECS/ECR (alternative):
   - `export AWS_PROFILE=huntaze-sso`
   - `./deploy-simple-aws.sh` to build, push ECR, and update ECS service.
+  - To apply env vars to an ECS service container:
+    - `AWS_REGION=us-east-1 AWS_PROFILE=huntaze-sso node scripts/ecs-set-env.mjs --cluster <CLUSTER> --service <SERVICE> --container <CONTAINER_NAME> --env-file artifacts/amplify-env.sample`
 
 ## 8) Post‑Deploy Checks
 - `https://app.huntaze.com/api/health` returns 200
@@ -96,4 +103,3 @@ If using the worker pipeline for inbox sync/send:
 - Do not paste AWS keys in chat or commit `.env.production` with secrets.
 - Move all secrets from files into Amplify Environment variables or Secrets Manager.
 - Rotate any credentials that were shared or committed.
-
