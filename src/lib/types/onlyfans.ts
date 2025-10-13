@@ -266,3 +266,21 @@ export interface CampaignMetrics {
     count: number;
   }>;
 }
+
+// SQS Job payloads (initial union — extend as backend evolves)
+export type AbMeta = { campaignId?: string; variantId?: 'A' | 'B' | 'C' };
+export type SendMeta = { source: 'HITL' | 'AUTO' | 'MMP_FOLLOWUP'; segmentId?: string; priceSuggestionCents?: number };
+export type TextBody = { kind: 'text'; text: string };
+export type MediaBody = { kind: 'media'; mediaVaultId: string; caption?: string };
+export type PostPayload = { text?: string; mediaVaultIds?: string[]; priceLockCents?: number; pin?: boolean };
+export type StoryPayload = { text?: string; mediaVaultIds?: string[] };
+
+export type OfJob =
+  | { type: 'LOGIN_START'; userId: string; sessionId: string; idempotencyKey?: string }
+  | { type: 'INBOX_SYNC'; userId: string; sessionId: string; limit?: number; cursor?: string; force?: boolean; idempotencyKey?: string }
+  | { type: 'SEND_DM'; userId: string; threadId: string; body: TextBody | MediaBody; ab?: AbMeta; meta?: SendMeta; idempotencyKey: string }
+  | { type: 'SEND_PPV'; userId: string; threadId: string; body: MediaBody; ppv: { priceCents: number; caption?: string }; ab?: AbMeta; meta?: SendMeta; idempotencyKey: string }
+  | { type: 'CAMPAIGN_LAUNCH'; userId: string; campaignId: string }
+  | { type: 'CAMPAIGN_BATCH_SEND'; userId: string; campaignId: string; recipientFanIds: string[]; throttlePerMin: number; ab?: AbMeta; idempotencyKey: string }
+  | { type: 'POST_SCHEDULE'; userId: string; post: PostPayload; scheduledAt: string; idempotencyKey: string }
+  | { type: 'STORY_SCHEDULE'; userId: string; story: StoryPayload; scheduledAt: string; idempotencyKey: string };

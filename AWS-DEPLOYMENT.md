@@ -141,6 +141,103 @@ huntaze.com  ->  CNAME  ->  [ALB-DNS-NAME].elb.amazonaws.com
 
 ---
 
+## CDK assets via CodeBuild (single-account)
+
+Goal: allow our CodeBuild project to publish CDK assets to the bootstrap S3/ECR by assuming CDK bootstrap roles.
+
+Prereqs
+- Environment bootstrapped with the default qualifier `hnb659fds` in your region (e.g., `us-east-1`).
+- Bootstrap resources present:
+  - Bucket: `cdk-hnb659fds-assets-<acct>-<region>`
+  - Roles: `cdk-hnb659fds-{lookup|file-publishing|image-publishing|deploy}-role-<acct>-<region>`
+
+IAM for the CodeBuild service role
+- Attach this inline policy (actor side) so the build can assume the bootstrap roles:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "sts:AssumeRole",
+    "Resource": [
+      "arn:aws:iam::<acct>:role/cdk-hnb659fds-lookup-role-<acct>-<region>",
+      "arn:aws:iam::<acct>:role/cdk-hnb659fds-file-publishing-role-<acct>-<region>",
+      "arn:aws:iam::<acct>:role/cdk-hnb659fds-image-publishing-role-<acct>-<region>",
+      "arn:aws:iam::<acct>:role/cdk-hnb659fds-deploy-role-<acct>-<region>"
+    ]
+  }]
+}
+```
+
+- If your bootstrap roles use restricted trust, add your CodeBuild role ARN to each role’s AssumeRolePolicy. Preferred: update the bootstrap template and re-run `cdk bootstrap --template` so it persists.
+
+Build steps (excerpt)
+```bash
+# synth → publish (manifest-driven)
+npm exec --prefix infra/cdk -- cdk -a "node ./infra/cdk/dist/bin/huntaze-of.js" synth -o dist
+npm exec --prefix infra/cdk -- cdk-assets -p dist/manifest.json publish
+```
+
+Troubleshooting
+- "Bucket exists, but we don’t have access" during publish:
+  - Ensure the build actually assumed the file-publishing role. If falling back to direct S3, allow bucket-level reads on the bootstrap bucket:
+    - `s3:GetBucketAcl`, `s3:GetEncryptionConfiguration` on `arn:aws:s3:::cdk-hnb659fds-assets-<acct>-<region>`
+    - Optional inline policy example:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "CdkAssetsBucketMetaRead",
+    "Effect": "Allow",
+    "Action": ["s3:GetBucketAcl", "s3:GetEncryptionConfiguration"],
+    "Resource": "arn:aws:s3:::cdk-hnb659fds-assets-<acct>-<region>"
+  }]
+}
+```
+
+Example attach:
+```bash
+aws iam put-role-policy \
+  --role-name <CB_ROLE> \
+  --policy-name AllowCdkAssetsBucketMeta \
+  --policy-document file://AllowCdkAssetsBucketMeta.json
+```
+- `NoSuchBucket`/`NoSuchKey` in deploy:
+  - Ensure you published using the same `dist/manifest.json` that produced the template and in the same account/region/qualifier.
+
+Sanity checks
+```bash
+# 1) You can assume a bootstrap role (example: file publishing)
+aws sts assume-role \
+  --role-arn arn:aws:iam::<acct>:role/cdk-hnb659fds-file-publishing-role-<acct>-<region> \
+  --role-session-name smoke >/dev/null && echo "Assume OK"
+
+# 2) Re-run publish with verbose output
+npm exec --prefix infra/cdk -- cdk-assets -v -p dist/manifest.json publish
+```
+
+## SSM parameters for CI LoadTest
+
+The infra stack now writes these values to SSM Parameter Store so the CodeBuild LoadTest stage can provision successfully:
+
+- `/huntaze/of/clusterArn` – ECS cluster ARN
+- `/huntaze/of/taskDefArn` – Fargate task definition ARN
+- `/huntaze/of/subnets` – comma‑separated public subnet IDs (Worker VPC)
+- `/huntaze/of/securityGroup` – worker task security group ID
+- `/huntaze/of/userIds` – comma‑separated user IDs for login tests (default empty)
+
+Before running the LoadTest stage with `ACTION=login`, set real IDs:
+
+```bash
+aws ssm put-parameter \
+  --name /huntaze/of/userIds \
+  --type String \
+  --overwrite \
+  --value "user1,user2,user3,user4,user5"
+```
+
 ## 🔍 Troubleshooting
 
 ### Check ECS service status

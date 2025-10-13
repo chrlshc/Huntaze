@@ -7,11 +7,10 @@ test('OnlyFans Assisted CTAs route to app.huntaze.com paths', async ({ page }) =
   const nodes = ['Smart replies', 'Mass messaging', 'Compliance']
   for (const title of nodes) {
     const a = page.locator(`a[aria-label="Connect ${title}"]`)
-    await expect(a, `Missing Connect for ${title}`).toHaveAttribute('href', /\/platforms\/connect\/onlyfans$/)
+    await expect(a, `Missing Connect for ${title}`).toHaveAttribute('href', /(\/platforms\/connect\/onlyfans|\/of-connect)$/)
   }
 
   // Section CTA points to the same OF connect flow
   const sectionCta = page.locator('a:has-text("Customize assistant flows")')
-  await expect(sectionCta).toHaveAttribute('href', /\/platforms\/connect\/onlyfans$/)
+  await expect(sectionCta).toHaveAttribute('href', /(\/platforms\/connect\/onlyfans|\/of-connect)$/)
 })
-

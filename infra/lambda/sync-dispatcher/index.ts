@@ -14,6 +14,9 @@ const COMMON_ENV = {
   OF_DDB_SESSIONS_TABLE: process.env.OF_DDB_SESSIONS_TABLE!,
   OF_DDB_MESSAGES_TABLE: process.env.OF_DDB_MESSAGES_TABLE!,
   OF_KMS_KEY_ID: process.env.OF_KMS_KEY_ID!,
+  ...(process.env.TRACE_S3_BUCKET ? { TRACE_S3_BUCKET: process.env.TRACE_S3_BUCKET } : {}),
+  ...(process.env.TRACE_S3_PREFIX ? { TRACE_S3_PREFIX: process.env.TRACE_S3_PREFIX } : {}),
+  ...(process.env.TRACE_KMS_KEY ? { TRACE_KMS_KEY: process.env.TRACE_KMS_KEY } : {}),
 };
 
 export const handler = async () => {
@@ -46,4 +49,3 @@ export const handler = async () => {
     }));
   }
 };
-

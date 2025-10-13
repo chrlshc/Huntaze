@@ -11,7 +11,9 @@ const sendMessageSchema = z.object({
   content: z.object({
     text: z.string().min(1).max(1000),
     media: z.array(z.string().url()).optional()
-  })
+  }),
+  ppv: z.object({ price: z.number().min(1), previewText: z.string().optional() }).optional(),
+  idempotencyKey: z.string().optional(),
 });
 
 // Simple in-memory rate limiter (replace with Redis in production)
