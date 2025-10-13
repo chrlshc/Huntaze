@@ -177,6 +177,42 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
             <Send className="w-5 h-5" />
           </button>
         </div>
+        <div className="mt-2 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const res = await fetch('/api/ofm/ai/draft', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    fanMessage: messages?.[messages.length - 1]?.content?.text || '',
+                    fanData: { name: 'Fan', rfmSegment: 'CASUAL', lastActive: new Date().toISOString(), totalSpent: 0, messageCount: messages?.length || 0 },
+                    persona: { name: 'Default', style_guide: 'Friendly and concise', tone_keywords: ['friendly','warm'] },
+                    conversationId,
+                  }),
+                });
+                const data = await res.json();
+                if (data?.draft_message) setMessage(data.draft_message);
+              } catch {}
+            }}
+            className="inline-flex items-center rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+          >
+            AI draft
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await fetch('/api/ofm/ai/escalate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId }) });
+                alert('Conversation escalated');
+              } catch {}
+            }}
+            className="inline-flex items-center rounded-lg border border-rose-300 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50"
+          >
+            Escalate
+          </button>
+        </div>
         
         {/* Rate limit warning */}
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">

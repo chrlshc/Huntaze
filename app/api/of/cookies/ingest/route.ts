@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyIngestToken } from '@/lib/bridgeTokens';
+import { isBridgeTokenUsed, markBridgeTokenUsed } from '@/lib/bridgeTokenStore';
 import { putEncryptedCookies } from '@/lib/of/aws-session-store';
 import { enqueueLogin } from '@/lib/queue/of-sqs';
 
@@ -60,6 +61,9 @@ export async function POST(req: NextRequest) {
   const token = authz.startsWith('Bearer ') ? authz.slice(7) : '';
   const verified = token ? await verifyIngestToken(token) : null;
   if (!verified) return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers });
+  if (isBridgeTokenUsed(verified.jti)) {
+    return NextResponse.json({ error: 'Token already used' }, { status: 409, headers });
+  }
 
   const json = await req.json().catch(() => null);
   const parsed = BodySchema.safeParse(json);
@@ -84,6 +88,9 @@ export async function POST(req: NextRequest) {
   } catch {
     // ignore if queue not configured
   }
+
+  // Mark token as used (one-shot) after success
+  try { markBridgeTokenUsed(verified.jti, verified.exp); } catch {}
 
   return NextResponse.json({ ok: true }, { status: 200, headers });
 }

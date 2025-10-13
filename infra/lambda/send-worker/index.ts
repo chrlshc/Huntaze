@@ -12,6 +12,9 @@ const SECURITY_GROUP = process.env.OF_TASK_SG_ID!;
 const SESSIONS_TABLE = process.env.OF_DDB_SESSIONS_TABLE!;
 const MESSAGES_TABLE = process.env.OF_DDB_MESSAGES_TABLE!;
 const KMS_KEY_ID = process.env.OF_KMS_KEY_ID!;
+const TRACE_S3_BUCKET = process.env.TRACE_S3_BUCKET || '';
+const TRACE_S3_PREFIX = process.env.TRACE_S3_PREFIX || '';
+const TRACE_KMS_KEY = process.env.TRACE_KMS_KEY || '';
 
 const COMMON_ENV = {
   OF_DDB_SESSIONS_TABLE: SESSIONS_TABLE,
@@ -19,6 +22,9 @@ const COMMON_ENV = {
   OF_KMS_KEY_ID: KMS_KEY_ID,
   APP_ORIGIN: process.env.APP_ORIGIN || process.env.NEXT_PUBLIC_APP_URL || '',
   WORKER_TOKEN: process.env.WORKER_TOKEN || process.env.OF_WORKER_TOKEN || '',
+  ...(TRACE_S3_BUCKET ? { TRACE_S3_BUCKET } : {}),
+  ...(TRACE_S3_PREFIX ? { TRACE_S3_PREFIX } : {}),
+  ...(TRACE_KMS_KEY ? { TRACE_KMS_KEY } : {}),
 };
 
 type SendJob = { type?: 'send'; id: string; userId: string; conversationId: string; content: { text: string } };
@@ -78,7 +84,7 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
           launchType: 'FARGATE',
           networkConfiguration: {
             awsvpcConfiguration: {
-              assignPublicIp: 'DISABLED',
+              assignPublicIp: 'ENABLED',
               subnets: SUBNETS,
               securityGroups: [SECURITY_GROUP],
             },
@@ -106,7 +112,7 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
           launchType: 'FARGATE',
           networkConfiguration: {
             awsvpcConfiguration: {
-              assignPublicIp: 'DISABLED',
+              assignPublicIp: 'ENABLED',
               subnets: SUBNETS,
               securityGroups: [SECURITY_GROUP],
             },
