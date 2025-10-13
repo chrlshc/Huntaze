@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-
-type BIPEvent = any; // BeforeInstallPromptEvent (Chromium only)
 
 export default function ConnectOfLanding() {
   const sp = useSearchParams();
 
   const token = sp.get("token") || "";
   const user = sp.get("user") || "";
+  const auto = sp.get("auto") === "1";
 
   const [opened, setOpened] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
-  const bipRef = useRef<BIPEvent | null>(null);
 
   const deepLink = useMemo(() => {
     try {
@@ -41,51 +38,25 @@ export default function ConnectOfLanding() {
     setIsStandalone(!!standalone);
   }, []);
 
-  // Capture install prompt (Chromium / Android)
-  useEffect(() => {
-    const onBIP = (e: Event) => {
-      e.preventDefault();
-      bipRef.current = e as BIPEvent;
-      setCanInstall(true);
-    };
-    window.addEventListener("beforeinstallprompt", onBIP as any);
-    return () => window.removeEventListener("beforeinstallprompt", onBIP as any);
-  }, []);
-
-  // iOS PWA: auto deep-link (no auto fallback). Stay on this page if it doesn't open.
+  // iOS PWA: auto deep-link only if explicitly requested via ?auto=1
   useEffect(() => {
     if (!token) return;
-    if (isIOS && isStandalone) {
+    if (auto && isIOS && isStandalone && deepLink) {
       try {
-        if (deepLink) {
-          window.location.href = deepLink;
-          setOpened(true);
-        }
+        window.location.href = deepLink;
+        setOpened(true);
       } catch {
         // ignore; user stays on this page
       }
     }
-  }, [isIOS, isStandalone, deepLink, token, user]);
-
-  const onInstallClick = async () => {
-    const evt = bipRef.current;
-    if (evt?.prompt) {
-      const r = await evt.prompt();
-      // r.outcome could be 'accepted' | 'dismissed'
-      setCanInstall(false);
-      bipRef.current = null;
-    }
-  };
+  }, [auto, isIOS, isStandalone, deepLink, token]);
 
   const openInApp = () => {
-    if (deepLink) {
-      window.location.href = deepLink;
-    }
+    if (deepLink) window.location.href = deepLink;
   };
 
   return (
     <div className="hz" data-theme="light">
-      {/* Prevent indexing to avoid leaking tokens in URLs */}
       <meta name="robots" content="noindex,nofollow" />
       <main className="hz-main">
         <div className="hz-page" style={{ maxWidth: 720 }}>
@@ -95,31 +66,6 @@ export default function ConnectOfLanding() {
             <div className="hz-card__body">
               <div className="hz-muted">Token</div>
               <code className="hz-code">{token ? `${token.slice(0, 6)}…${token.slice(-6)}` : "—"}</code>
-
-              {/* PWA install block when not standalone */}
-              {!isStandalone && (
-                <div style={{ marginTop: 12 }}>
-                  <h3 className="hz-card__title">Install the app</h3>
-                  {/* Android / Chromium */}
-                  {!isIOS && canInstall && (
-                    <button onClick={onInstallClick} className="hz-button primary" style={{ marginTop: 8 }}>
-                      Install app
-                    </button>
-                  )}
-                  {/* iOS guide */}
-                  {isIOS && (
-                    <div className="hz-text-sm" style={{ marginTop: 8 }}>
-                      <p>On iPhone, add to Home Screen:</p>
-                      <ol className="hz-list hz-list--ordered">
-                        <li>Tap the Share button.</li>
-                        <li>Select <strong>Add to Home Screen</strong>.</li>
-                        <li>Open from the new Huntaze icon.</li>
-                      </ol>
-                      <p className="hz-muted">iOS does not support the native PWA install prompt.</p>
-                    </div>
-                  )}
-                </div>
-              )}
 
               <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 <button onClick={openInApp} className="hz-button">Open in app</button>
