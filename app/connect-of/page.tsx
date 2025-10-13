@@ -96,54 +96,51 @@ export default function ConnectOfLanding() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="hz" data-theme="light">
       {/* Prevent indexing to avoid leaking tokens in URLs */}
       <meta name="robots" content="noindex,nofollow" />
-      <section className="mx-auto max-w-xl px-4 pb-16 pt-12">
-        <h1 className="text-xl font-semibold text-slate-900">Huntaze Connect</h1>
-        <p className="mt-1 text-slate-600">
-          If the app didn’t open automatically, you can install the app or continue with the web flow.
-        </p>
+      <main className="hz-main">
+        <div className="hz-page" style={{ maxWidth: 720 }}>
+          <h1>Huntaze Connect</h1>
 
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="text-sm text-slate-700">Token</div>
-          <code className="mt-1 block truncate rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-900">
-            {token ? `${token.slice(0, 6)}…${token.slice(-6)}` : "—"}
-          </code>
+          <div className="hz-card" style={{ marginTop: 12 }}>
+            <div className="hz-card__body">
+              <div className="hz-muted">Token</div>
+              <code className="hz-code">{token ? `${token.slice(0, 6)}…${token.slice(-6)}` : "—"}</code>
 
-          {/* PWA install block when not standalone */}
-          {!isStandalone && (
-            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
-              <div className="text-sm font-medium text-slate-800">Install the app</div>
-              {/* Android / Chromium */}
-              {!isIOS && canInstall && (
-                <button onClick={onInstallClick} className="mt-2 inline-flex items-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-black">
-                  Install app
-                </button>
-              )}
-              {/* iOS guide */}
-              {isIOS && (
-                <div className="mt-2 text-sm text-slate-700">
-                  <p>On iPhone, add to Home Screen:</p>
-                  <ol className="ml-5 list-decimal space-y-1">
-                    <li>Tap the Share button.</li>
-                    <li>Select <strong>Add to Home Screen</strong>.</li>
-                    <li>Open from the new Huntaze icon.</li>
-                  </ol>
-                  <p className="mt-1 text-xs text-slate-500">iOS does not support the native PWA install prompt.</p>
+              {/* PWA install block when not standalone */}
+              {!isStandalone && (
+                <div style={{ marginTop: 12 }}>
+                  <h3 className="hz-card__title">Install the app</h3>
+                  {/* Android / Chromium */}
+                  {!isIOS && canInstall && (
+                    <button onClick={onInstallClick} className="hz-button primary" style={{ marginTop: 8 }}>
+                      Install app
+                    </button>
+                  )}
+                  {/* iOS guide */}
+                  {isIOS && (
+                    <div className="hz-text-sm" style={{ marginTop: 8 }}>
+                      <p>On iPhone, add to Home Screen:</p>
+                      <ol className="hz-list hz-list--ordered">
+                        <li>Tap the Share button.</li>
+                        <li>Select <strong>Add to Home Screen</strong>.</li>
+                        <li>Open from the new Huntaze icon.</li>
+                      </ol>
+                      <p className="hz-muted">iOS does not support the native PWA install prompt.</p>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          )}
 
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <button onClick={openInApp} className="inline-flex items-center rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">
-              Open in app
-            </button>
-            {!opened && <span className="text-xs text-slate-500">If nothing happens, install the app then try again.</span>}
+              <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <button onClick={openInApp} className="hz-button">Open in app</button>
+                {!opened && <span className="hz-muted">If nothing happens, install the app then try again.</span>}
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-    </main>
+      </main>
+    </div>
   );
 }

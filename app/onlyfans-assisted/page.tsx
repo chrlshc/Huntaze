@@ -1,4 +1,5 @@
 import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
+import { BridgeLauncher } from "@/components/of/BridgeLauncher";
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
@@ -49,6 +50,17 @@ export default function OnlyFansAssistedPage() {
           <div className="hz-page">
             <h1>OnlyFans Assisted</h1>
 
+            {/* Direct connect CTA aligned with app visuals */}
+            <div className="hz-card" style={{ marginTop: 12 }}>
+              <div className="hz-card__body">
+                <div className="hz-card__title">Connect your OnlyFans account</div>
+                <p className="hz-muted">Start a secure server-side login. Use the iOS/desktop bridge or the native app deep link.</p>
+                <div style={{ marginTop: 8 }}>
+                  <BridgeLauncher compact variant="hz" />
+                </div>
+              </div>
+            </div>
+
             {(() => {
               const nodes: NodeDef[] = [
                 { id: 'hub', title: 'OnlyFans Assisted', x: 50, y: 42 },
@@ -85,7 +97,7 @@ export default function OnlyFansAssistedPage() {
                 { from: 'hub', to: 'mass' },
                 { from: 'hub', to: 'compliance' },
               ];
-              return <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />;
+              return <ConnectorGraph nodes={nodes} links={links} hideStatus={false} cardWidth={220} />;
             })()}
 
             <SectionExplainer
