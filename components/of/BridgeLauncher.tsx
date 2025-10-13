@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type TokenResp = { ingestToken: string; userId: string; apiBase?: string };
 
 async function fetchToken(): Promise<TokenResp> {
-  const res = await fetch("/api/of/ingest-token", { method: "POST" });
+  const res = await fetch("/api/of/ingest-token", { method: "POST", credentials: 'include' as RequestCredentials });
   if (!res.ok) throw new Error("Unable to create ingest token");
   return res.json();
 }
@@ -13,11 +13,31 @@ async function fetchToken(): Promise<TokenResp> {
 export function BridgeLauncher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'hz' }) {
   const [busy, setBusy] = useState<"ios" | "desktop" | "native" | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [authed, setAuthed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const r = await fetch('/api/auth/status', { cache: 'no-store', credentials: 'include' as RequestCredentials });
+        const j = await r.json().catch(() => ({}));
+        if (!alive) return;
+        setAuthed(j?.authenticated === true);
+      } catch {
+        if (!alive) return;
+        setAuthed(null);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   const handleIos = async () => {
     setBusy("ios");
     setErr(null);
     try {
+      if (authed === false) {
+        throw new Error("Sign in required");
+      }
       const { ingestToken, userId, apiBase } = await fetchToken();
       const base = apiBase || window.location.origin;
       const u = new URL("/connect-of", base);
@@ -36,6 +56,9 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
     setBusy("desktop");
     setErr(null);
     try {
+      if (authed === false) {
+        throw new Error("Sign in required");
+      }
       const { ingestToken, userId } = await fetchToken();
       const deeplink = new URL("huntaze-desktop://connect", "http://dummy");
       deeplink.searchParams.set("token", ingestToken);
@@ -62,6 +85,9 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
     setBusy("native");
     setErr(null);
     try {
+      if (authed === false) {
+        throw new Error("Sign in required");
+      }
       const { ingestToken, userId } = await fetchToken();
       const deep = new URL("huntaze://connect", "http://dummy");
       deep.searchParams.set("token", ingestToken);
@@ -78,7 +104,12 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
         } catch {}
       }, 2000);
     } catch (e: any) {
-      setErr(e?.message || "Failed to open native app");
+      const msg = e?.message || "Failed to open native app";
+      if (msg === 'Sign in required') {
+        setErr("Sign in required");
+      } else {
+        setErr(msg);
+      }
     } finally {
       setBusy(null);
     }
@@ -101,7 +132,14 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
         <button onClick={handleIos} disabled={!!busy} className={btn('ios')}>iOS bridge</button>
         <button onClick={handleDesktop} disabled={!!busy} className={btn('desktop')}>Desktop bridge</button>
         <button onClick={handleNative} disabled={!!busy} className={btn('native')}>Open in app</button>
-        {err && <span className="ml-2 text-xs text-rose-600">{err}</span>}
+        {err && (
+          <span className="ml-2 text-xs text-rose-600">
+            {err}{" "}
+            {err === 'Sign in required' && (
+              <a href="/auth/login" className="underline text-rose-700">Sign in</a>
+            )}
+          </span>
+        )}
       </div>
     );
   }
@@ -122,6 +160,14 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
             <button onClick={handleNative} disabled={!!busy} className="hz-button primary">
               {busy === 'native' ? 'Opening…' : 'Open in app'}
             </button>
+            {err && (
+              <div className="hz-muted" style={{ marginLeft: 8 }}>
+                {err}{" "}
+                {err === 'Sign in required' && (
+                  <a href="/auth/login" className="hz-link">Sign in</a>
+                )}
+              </div>
+            )}
           </>
         ) : (
           <>
@@ -134,6 +180,14 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
             <button onClick={handleNative} disabled={!!busy} className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
               {busy === "native" ? "Opening…" : "Open in app"}
             </button>
+            {err && (
+              <span className="text-xs text-rose-600">
+                {err}{" "}
+                {err === 'Sign in required' && (
+                  <a href="/auth/login" className="underline">Sign in</a>
+                )}
+              </span>
+            )}
           </>
         )}
       </div>
