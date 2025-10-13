@@ -35,16 +35,8 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
     setBusy("ios");
     setErr(null);
     try {
-      if (authed === false) {
-        throw new Error("Sign in required");
-      }
-      const { ingestToken, userId, apiBase } = await fetchToken();
-      const base = apiBase || window.location.origin;
-      const u = new URL("/connect-of", base);
-      u.searchParams.set("token", ingestToken);
-      u.searchParams.set("user", userId);
-      // Universal Link – iOS will open the app if installed
-      window.location.href = u.toString();
+      // With AASA removed, use the web flow directly
+      window.location.assign('/of-connect');
     } catch (e: any) {
       setErr(e?.message || "Failed to open iOS bridge");
     } finally {
@@ -65,12 +57,10 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
       deeplink.searchParams.set("user", userId);
       // Attempt to open Electron app via custom protocol
       window.location.href = deeplink.toString().replace("http://dummy", "");
-      // Optional fallback after a short delay: show instructions page
+      // Optional fallback after a short delay: go to web connect
       setTimeout(() => {
         try {
-          const fallback = new URL("/connect-of", window.location.origin);
-          fallback.searchParams.set("token", ingestToken);
-          fallback.searchParams.set("user", userId);
+          const fallback = new URL("/of-connect", window.location.origin);
           window.location.assign(fallback.toString());
         } catch {}
       }, 1500);
@@ -94,13 +84,10 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
       deep.searchParams.set("user", userId);
       // Try to open native app via custom scheme
       window.location.href = deep.toString().replace("http://dummy", "");
-      // Fallback to web bridge after 2s
+      // Fallback to web connect after 2s
       setTimeout(() => {
         try {
-          const fallback = new URL("/connect-of", window.location.origin);
-          fallback.searchParams.set("token", ingestToken);
-          fallback.searchParams.set("user", userId);
-          fallback.searchParams.set("auto", "1");
+          const fallback = new URL("/of-connect", window.location.origin);
           window.location.assign(fallback.toString());
         } catch {}
       }, 2000);
@@ -137,7 +124,7 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
           <span className="ml-2 text-xs text-rose-600">
             {err}{" "}
             {err === 'Sign in required' && (
-              <a href="/auth/login" className="underline text-rose-700">Sign in</a>
+              <a href="/auth/login?next=/of-connect" className="underline text-rose-700">Sign in</a>
             )}
           </span>
         )}
@@ -165,7 +152,7 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
               <div className="hz-muted" style={{ marginLeft: 8 }}>
                 {err}{" "}
                 {err === 'Sign in required' && (
-                  <a href="/auth/login" className="hz-link">Sign in</a>
+                  <a href="/auth/login?next=/of-connect" className="hz-link">Sign in</a>
                 )}
               </div>
             )}
@@ -185,7 +172,7 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
               <span className="text-xs text-rose-600">
                 {err}{" "}
                 {err === 'Sign in required' && (
-                  <a href="/auth/login" className="underline">Sign in</a>
+                  <a href="/auth/login?next=/of-connect" className="underline">Sign in</a>
                 )}
               </span>
             )}
