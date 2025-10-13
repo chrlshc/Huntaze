@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { createIngestToken } from '@/lib/bridgeTokens';
+import crypto from 'crypto';
 
 function getApiBase(): string {
   const base = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_APP_ORIGIN || '';
@@ -15,8 +16,15 @@ function getApiBase(): string {
 
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req).catch(() => null);
-  const userId = user?.userId as string | undefined;
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  let userId = user?.userId as string | undefined;
+  const bridgePublic = (process.env.BRIDGE_PUBLIC === '1') || (process.env.NEXT_PUBLIC_BRIDGE_PUBLIC === '1' || process.env.NEXT_PUBLIC_BRIDGE_PUBLIC === 'true');
+  if (!userId) {
+    if (bridgePublic) {
+      userId = `anon-${crypto.randomBytes(4).toString('hex')}`;
+    } else {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
 
   const ingestToken = await createIngestToken({ userId, ttlSeconds: 300 });
   const apiBase = getApiBase();
