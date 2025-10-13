@@ -1,35 +1,22 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 type TokenResp = { ingestToken: string; userId: string; apiBase?: string };
 
 async function fetchToken(): Promise<TokenResp> {
   const res = await fetch("/api/of/ingest-token", { method: "POST", credentials: 'include' as RequestCredentials });
-  if (!res.ok) throw new Error("Unable to create ingest token");
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('Sign in required');
+    const t = await res.text().catch(() => '');
+    throw new Error(t || "Unable to create ingest token");
+  }
   return res.json();
 }
 
 export function BridgeLauncher({ compact = false, variant = 'default' }: { compact?: boolean; variant?: 'default' | 'hz' }) {
   const [busy, setBusy] = useState<"ios" | "desktop" | "native" | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [authed, setAuthed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const r = await fetch('/api/auth/status', { cache: 'no-store', credentials: 'include' as RequestCredentials });
-        const j = await r.json().catch(() => ({}));
-        if (!alive) return;
-        setAuthed(j?.authenticated === true);
-      } catch {
-        if (!alive) return;
-        setAuthed(null);
-      }
-    })();
-    return () => { alive = false; };
-  }, []);
 
   const handleIos = async () => {
     setBusy("ios");
@@ -48,9 +35,6 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
     setBusy("desktop");
     setErr(null);
     try {
-      if (authed === false) {
-        throw new Error("Sign in required");
-      }
       const { ingestToken, userId } = await fetchToken();
       const deeplink = new URL("huntaze-desktop://connect", "http://dummy");
       deeplink.searchParams.set("token", ingestToken);
@@ -75,9 +59,6 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
     setBusy("native");
     setErr(null);
     try {
-      if (authed === false) {
-        throw new Error("Sign in required");
-      }
       const { ingestToken, userId } = await fetchToken();
       const deep = new URL("huntaze://connect", "http://dummy");
       deep.searchParams.set("token", ingestToken);
