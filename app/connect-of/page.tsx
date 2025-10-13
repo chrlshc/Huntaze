@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type BIPEvent = any; // BeforeInstallPromptEvent (Chromium only)
 
 export default function ConnectOfLanding() {
-  const router = useRouter();
   const sp = useSearchParams();
 
   const token = sp.get("token") || "";
@@ -53,31 +52,20 @@ export default function ConnectOfLanding() {
     return () => window.removeEventListener("beforeinstallprompt", onBIP as any);
   }, []);
 
-  // iOS PWA: auto deep-link + silent fallback to /of-connect
+  // iOS PWA: auto deep-link (no auto fallback). Stay on this page if it doesn't open.
   useEffect(() => {
     if (!token) return;
     if (isIOS && isStandalone) {
-      const timer = setTimeout(() => {
-        try {
-          const u = new URL("/of-connect", window.location.origin);
-          u.searchParams.set("token", token);
-          u.searchParams.set("user", user);
-          router.replace(u.toString());
-        } catch {
-          router.replace("/of-connect");
-        }
-      }, 2000);
       try {
         if (deepLink) {
           window.location.href = deepLink;
           setOpened(true);
         }
       } catch {
-        // ignore, fallback will trigger
+        // ignore; user stays on this page
       }
-      return () => clearTimeout(timer);
     }
-  }, [isIOS, isStandalone, deepLink, token, user, router]);
+  }, [isIOS, isStandalone, deepLink, token, user]);
 
   const onInstallClick = async () => {
     const evt = bipRef.current;
