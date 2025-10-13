@@ -100,6 +100,7 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
           const fallback = new URL("/connect-of", window.location.origin);
           fallback.searchParams.set("token", ingestToken);
           fallback.searchParams.set("user", userId);
+          fallback.searchParams.set("auto", "1");
           window.location.assign(fallback.toString());
         } catch {}
       }, 2000);
