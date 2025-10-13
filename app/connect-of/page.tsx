@@ -20,7 +20,20 @@ export default function ConnectOfLanding() {
   }, [token, user]);
 
   useEffect(() => {
-    // Attempt to open custom scheme as a convenience if the page is reached via browser fallback
+    // Only attempt auto deep-link on iOS when running as an installed PWA.
+    // On desktop/corporate environments, custom schemes may be blocked and show an interstitial.
+    try {
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (typeof navigator !== 'undefined' && (navigator as any).platform === 'MacIntel' && (navigator as any).maxTouchPoints > 1);
+      const isStandalone = typeof window !== 'undefined' && (
+        window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true
+      );
+      if (!(isIOS && isStandalone)) return;
+    } catch {
+      // If detection fails, skip auto open
+      return;
+    }
+
     const t = setTimeout(() => {
       if (deepLink) {
         try { window.location.href = deepLink; setOpened(true); } catch {}
@@ -44,8 +57,9 @@ export default function ConnectOfLanding() {
           <code className="mt-1 block truncate rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-900">
             {token ? `${token.slice(0, 6)}…${token.slice(-6)}` : '—'}
           </code>
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             <a href={deepLink} className="inline-flex items-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-black">Open in app</a>
+            <a href="/of-connect" className="inline-flex items-center rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50">Continue on web</a>
             {!opened && <span className="text-xs text-slate-500">If nothing happens, install the app then try again.</span>}
           </div>
         </div>
