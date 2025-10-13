@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { BridgeLauncher } from "@/components/of/BridgeLauncher";
 
 // Lightweight icons (no external deps)
 function Pill({ children, color = "slate" }: { children: React.ReactNode; color?: "slate" | "green" | "amber" | "red" | "blue" }) {
@@ -113,6 +114,9 @@ export default function Client() {
             <p className="mt-1 text-slate-600">
               Secure, server-side login. Your session is created on the server (HttpOnly cookies) and never exposed to the browser.
             </p>
+            <div className="mt-3">
+              <BridgeLauncher compact />
+            </div>
           </div>
           <Pill color={statusMeta.color}>
             {statusMeta.label}

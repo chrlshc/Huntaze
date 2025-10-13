@@ -36,8 +36,19 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("source-map-support/register");
 const cdk = __importStar(require("aws-cdk-lib"));
-const huntaze_of_stack_1 = require("../lib/huntaze-of-stack");
+// Use dynamic requires to avoid constructing unused stacks at synth time
 const app = new cdk.App();
-new huntaze_of_stack_1.HuntazeOfStack(app, 'HuntazeOfStack', {
-    env: { region: process.env.CDK_DEFAULT_REGION, account: process.env.CDK_DEFAULT_ACCOUNT }
-});
+const stacks = (process.env.STACKS || 'main,ci').split(',').map(s => s.trim());
+const resolvedRegion = process.env.CDK_DEFAULT_REGION || process.env.AWS_REGION || 'us-east-1';
+const resolvedAccount = process.env.CDK_DEFAULT_ACCOUNT || process.env.AWS_ACCOUNT_ID;
+const env = { region: resolvedRegion, account: resolvedAccount };
+const qualifier = process.env.CDK_QUALIFIER || 'ofq1abcde';
+const synthesizer = new cdk.DefaultStackSynthesizer({ qualifier });
+if (stacks.includes('main')) {
+    const { HuntazeOfStack } = require('../lib/huntaze-of-stack');
+    new HuntazeOfStack(app, 'HuntazeOfStack', { env, synthesizer });
+}
+if (stacks.includes('ci')) {
+    const { HuntazeOfCiStack } = require('../lib/huntaze-of-ci-stack');
+    new HuntazeOfCiStack(app, 'HuntazeOfCiStack', { env, synthesizer });
+}

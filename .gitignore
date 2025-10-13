@@ -46,3 +46,9 @@ playwright-report/
 huntazee/
 infra/**/cdk.out
 infra/**/dist
+
+# infra/build artifacts (do not commit)
+artifacts/
+cdk.out/
+dist/
+traces/

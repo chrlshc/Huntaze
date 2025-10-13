@@ -6,7 +6,7 @@
       "properties": {
         "file": "HuntazeOfStack.assets.json",
         "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version"
       }
     },
     "HuntazeOfStack": {
@@ -16,18 +16,18 @@
         "templateFile": "HuntazeOfStack.template.json",
         "terminationProtection": false,
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-hnb659fds-deploy-role-317805897534-us-east-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-hnb659fds-cfn-exec-role-317805897534-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-317805897534-us-east-1/025b3fdc8667e27010a77686e23edda622ddff1289028e1d9ed36e8baae83221.json",
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-deploy-role-317805897534-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-cfn-exec-role-317805897534-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-ofq1abcde-assets-317805897534-us-east-1/cb3ff27353ab677565b44cf297641fa9a2656b6c87612e35c51d57c67da0e554.json",
         "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version",
         "additionalDependencies": [
           "HuntazeOfStack.assets"
         ],
         "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-hnb659fds-lookup-role-317805897534-us-east-1",
+          "arn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-lookup-role-317805897534-us-east-1",
           "requiresBootstrapStackVersion": 8,
-          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version"
         }
       },
       "dependencies": [
@@ -322,6 +322,24 @@
             "data": "InboxSyncRuleAllowEventRuleHuntazeOfStackSyncDispatcher4ECC64872C8958B7"
           }
         ],
+        "/HuntazeOfStack/OFLoginFailuresGt5/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OFLoginFailuresGt5EA77F159"
+          }
+        ],
+        "/HuntazeOfStack/OFMemoryUsageHigh/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OFMemoryUsageHighF483F82E"
+          }
+        ],
+        "/HuntazeOfStack/OFWorkerDashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OFWorkerDashboard030EE0B0"
+          }
+        ],
         "/HuntazeOfStack/SendQueueUrl": [
           {
             "type": "aws:cdk:logicalId",
@@ -396,6 +414,268 @@
         ]
       },
       "displayName": "HuntazeOfStack"
+    },
+    "HuntazeOfCiStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "HuntazeOfCiStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version"
+      }
+    },
+    "HuntazeOfCiStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://317805897534/us-east-1",
+      "properties": {
+        "templateFile": "HuntazeOfCiStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-deploy-role-317805897534-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-cfn-exec-role-317805897534-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-ofq1abcde-assets-317805897534-us-east-1/3635fe8d1485333491c81c63e2dac16fc4ff120c99800c7116864e110d4cd1e9.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version",
+        "additionalDependencies": [
+          "HuntazeOfCiStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-lookup-role-317805897534-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version"
+        }
+      },
+      "dependencies": [
+        "HuntazeOfCiStack.assets"
+      ],
+      "metadata": {
+        "/HuntazeOfCiStack/OfSourceBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSourceBucketE857DCA2"
+          }
+        ],
+        "/HuntazeOfCiStack/OfSourceBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSourceBucketPolicy9B036C7F"
+          }
+        ],
+        "/HuntazeOfCiStack/OfSourceBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSourceBucketAutoDeleteObjectsCustomResource9156859D"
+          }
+        ],
+        "/HuntazeOfCiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/HuntazeOfCiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/HuntazeOfCiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/HuntazeOfCiStack/SourceBucketName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SourceBucketName"
+          }
+        ],
+        "/HuntazeOfCiStack/SourceObjectKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SourceObjectKey"
+          }
+        ],
+        "/HuntazeOfCiStack/BuildProject/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BuildProjectRoleAA92C755"
+          }
+        ],
+        "/HuntazeOfCiStack/BuildProject/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BuildProjectRoleDefaultPolicy3E9F248C"
+          }
+        ],
+        "/HuntazeOfCiStack/BuildProject/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BuildProject097C5DB7"
+          }
+        ],
+        "/HuntazeOfCiStack/LoadTestProject/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoadTestProjectRole5F86753B"
+          }
+        ],
+        "/HuntazeOfCiStack/LoadTestProject/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoadTestProjectRoleDefaultPolicy0C14758D"
+          }
+        ],
+        "/HuntazeOfCiStack/LoadTestProject/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LoadTestProjectC440606A"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "V1 pipeline type is implicitly selected when `pipelineType` is not set. If you want to use V2 type, set `PipelineType.V2`. [ack: @aws-cdk/aws-codepipeline:unspecifiedPipelineType]",
+            "trace": [
+              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
+              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
+              "new Pipeline2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/aws-codepipeline/lib/pipeline.js:1:8128)",
+              "new Pipeline2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
+              "new HuntazeOfCiStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-ci-stack.js:179:26)",
+              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:53:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
+              "Object..js (node:internal/modules/cjs/loader:1895:10)",
+              "Module.load (node:internal/modules/cjs/loader:1465:32)",
+              "Function._load (node:internal/modules/cjs/loader:1282:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+              "node:internal/main/run_main_module:36:49"
+            ]
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucketEncryptionKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineArtifactsBucketEncryptionKeyBB729B5D"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucketEncryptionKeyAlias/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineArtifactsBucketEncryptionKeyAliasB322F15C"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineArtifactsBucket2E105862"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineArtifactsBucketPolicyAE6EF7D4"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineRole4A08BF54"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineRoleDefaultPolicy66EF7E95"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipeline1E7E8073"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Source/S3Source/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineSourceS3SourceCodePipelineActionRole8FB71C13"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Source/S3Source/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineSourceS3SourceCodePipelineActionRoleDefaultPolicy70455C83"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Build/Synth/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineBuildSynthCodePipelineActionRole21927505"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/Build/Synth/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineBuildSynthCodePipelineActionRoleDefaultPolicy665B70D5"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineDeployInfraCFNDeployCodePipelineActionRoleF8A2A5AD"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineDeployInfraCFNDeployCodePipelineActionRoleDefaultPolicyDF4E6FDE"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineDeployInfraCFNDeployRole238FDB16"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineDeployInfraCFNDeployRoleDefaultPolicyE30D741F"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/LoadTest/RunLoadTest/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineLoadTestRunLoadTestCodePipelineActionRoleD2160A43"
+          }
+        ],
+        "/HuntazeOfCiStack/OfPipeline/LoadTest/RunLoadTest/CodePipelineActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfPipelineLoadTestRunLoadTestCodePipelineActionRoleDefaultPolicyFF1269C1"
+          }
+        ],
+        "/HuntazeOfCiStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/HuntazeOfCiStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/HuntazeOfCiStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "HuntazeOfCiStack"
     },
     "Tree": {
       "type": "cdk:tree",
