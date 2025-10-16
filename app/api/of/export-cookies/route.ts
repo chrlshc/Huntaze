@@ -2,7 +2,7 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth/request';
-import { sessionManager } from '@/src/lib/of/session-manager';
+import { sessionManager } from '@/lib/of/session-manager';
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,4 +26,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
-
