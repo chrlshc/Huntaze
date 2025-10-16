@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { AzureContentSafetyService } from '@/services/azure-content-safety';
 
 export interface ModerationResult {
   safe: boolean;
@@ -118,9 +119,18 @@ const PLATFORM_RULES: Record<string, PlatformRules> = {
 
 export class ContentModerationService {
   private mockMode: boolean;
+  private azure?: AzureContentSafetyService;
   
   constructor(mockMode: boolean = false) {
     this.mockMode = mockMode;
+    // Initialize Azure Content Safety if configured
+    try {
+      if (process.env.AZURE_CONTENT_SAFETY_ENDPOINT && process.env.AZURE_CONTENT_SAFETY_ENABLED !== 'false') {
+        this.azure = new AzureContentSafetyService();
+      }
+    } catch {
+      this.azure = undefined;
+    }
   }
 
   /**
@@ -206,12 +216,18 @@ export class ContentModerationService {
    * Analyze image using vision API (mock or real)
    */
   private async analyzeImage(imageUrl: string | Buffer): Promise<ContentLabel[]> {
-    if (this.mockMode) {
-      return this.mockAnalysis(imageUrl);
+    // Azure Content Safety path (Buffer only for now)
+    if (!this.mockMode && this.azure && Buffer.isBuffer(imageUrl)) {
+      try {
+        const labels = await this.azure.analyzeImageToLabels(imageUrl);
+        // Fallback to mock if Azure returns nothing
+        if (labels.length > 0) return labels;
+      } catch (e) {
+        console.warn('Azure Content Safety failed, falling back to mock:', (e as Error).message);
+      }
     }
-    
-    // In production, integrate with AWS Rekognition or Google Vision
-    // For now, return mock data
+
+    // Default: mock analysis (deterministic by URL)
     return this.mockAnalysis(imageUrl);
   }
 

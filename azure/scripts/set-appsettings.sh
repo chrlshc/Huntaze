@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${SUBSCRIPTION_ID:=}"
+: "${RESOURCE_GROUP:=huntaze-ai-rg}"
+: "${FUNC_APP:=huntaze-func-app}"
+
+# Required service settings
+: "${AZURE_OPENAI_ENDPOINT:?set}"
+: "${AZURE_OPENAI_DEPLOYMENT:?set}"
+: "${AZURE_OPENAI_API_VERSION:=2024-08-01-preview}"
+: "${CONTENT_SAFETY_ENDPOINT:?set}"
+: "${CONTENT_SAFETY_KEY:?set}"
+: "${TEXT_ANALYTICS_ENDPOINT:?set}"
+: "${TEXT_ANALYTICS_KEY:?set}"
+
+[[ -n "$SUBSCRIPTION_ID" ]] && az account set --subscription "$SUBSCRIPTION_ID"
+
+az functionapp config appsettings set -n "$FUNC_APP" -g "$RESOURCE_GROUP" --settings \
+  AZURE_OPENAI_ENDPOINT="$AZURE_OPENAI_ENDPOINT" AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" AZURE_OPENAI_DEPLOYMENT="$AZURE_OPENAI_DEPLOYMENT" \
+  CONTENT_SAFETY_ENDPOINT="$CONTENT_SAFETY_ENDPOINT" CONTENT_SAFETY_KEY="$CONTENT_SAFETY_KEY" \
+  TEXT_ANALYTICS_ENDPOINT="$TEXT_ANALYTICS_ENDPOINT" TEXT_ANALYTICS_KEY="$TEXT_ANALYTICS_KEY"
+
+echo "App settings updated on $FUNC_APP"
+

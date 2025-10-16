@@ -3,6 +3,7 @@ const requiredCommon = [];
 
 const requiredProd = [
   'JWT_SECRET', // used for jose signing/verification in server runtime
+  'AUTOGEN_HMAC_SECRET',
 ];
 
 const warnIfMissing = [
@@ -42,6 +43,14 @@ function main() {
     console.warn(`Warning: optional env vars not set: ${softMissing.join(', ')}`);
   }
 
+  // Warn for recommended runtime envs
+  const rec = [];
+  if (!process.env.AGENTS_API_URL && !process.env.AUTOGEN_SERVICE_URL) rec.push('AGENTS_API_URL');
+  if (!process.env.AUTOGEN_SERVICE_URL && !process.env.AGENTS_API_URL) rec.push('AUTOGEN_SERVICE_URL');
+  if (!process.env.OF_SQS_URL) rec.push('OF_SQS_URL');
+  if (!process.env.AWS_REGION) rec.push('AWS_REGION');
+  if (rec.length) console.warn(`Recommendation: set these env vars: ${rec.join(', ')}`);
+
   // Extra sanity checks for API URLs
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   if (apiUrl) {
@@ -80,6 +89,25 @@ function main() {
         console.warn(`Warning: TikTok redirect host (${r.host}) does not match app URL host (${a.host}). Update NEXT_PUBLIC_TIKTOK_REDIRECT_URI to ${a.origin}/auth/tiktok/callback`);
       }
     } catch {}
+  }
+
+  // LLM provider sanity checks
+  const provider = (process.env.LLM_PROVIDER || '').toLowerCase();
+  if (mode === 'production') {
+    if (provider === 'azure') {
+      const need = ['AZURE_OPENAI_ENDPOINT', 'AZURE_OPENAI_DEPLOYMENT'];
+      const miss = need.filter((k) => !process.env[k] || String(process.env[k]).trim() === '');
+      if (miss.length) {
+        console.error(`Missing Azure OpenAI configuration: ${miss.join(', ')}`);
+        process.exit(1);
+      }
+    }
+    if (provider === 'openai') {
+      if (!process.env.OPENAI_API_KEY) {
+        console.error('Missing OPENAI_API_KEY for LLM_PROVIDER=openai');
+        process.exit(1);
+      }
+    }
   }
 }
 

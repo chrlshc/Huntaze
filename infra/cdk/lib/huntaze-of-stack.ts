@@ -54,10 +54,21 @@ export class HuntazeOfStack extends Stack {
       encryption: dynamo.TableEncryption.AWS_MANAGED,
     });
 
+    // Dead-letter queue (FIFO to match main queue)
+    const dlq = new sqs.Queue(this, 'OfSendDLQ', {
+      queueName: 'HuntazeOfSendDLQ.fifo',
+      fifo: true,
+      retentionPeriod: Duration.days(14)
+    });
+
     const sendQueue = new sqs.Queue(this, 'OfSendQueue', {
-      queueName: 'HuntazeOfSendQueue',
+      queueName: 'HuntazeOfSendQueue.fifo',
+      fifo: true,
       visibilityTimeout: Duration.seconds(120),
-      retentionPeriod: Duration.days(4)
+      retentionPeriod: Duration.days(4),
+      deadLetterQueue: { queue: dlq, maxReceiveCount: 5 },
+      // Let the producer control dedup with MessageDeduplicationId
+      contentBasedDeduplication: false,
     });
 
     // Keep legacy VPC but ensure no NAT Gateway is created (cost-safe)

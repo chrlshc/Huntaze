@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-deploy-role-317805897534-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-cfn-exec-role-317805897534-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-ofq1abcde-assets-317805897534-us-east-1/cb3ff27353ab677565b44cf297641fa9a2656b6c87612e35c51d57c67da0e554.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-ofq1abcde-assets-317805897534-us-east-1/1722a306f604be633296d5a808f151dd57165902ca42695a44d60e2676ce62a3.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version",
         "additionalDependencies": [
@@ -88,6 +88,12 @@
             "data": "ThreadsE6A0B71E"
           }
         ],
+        "/HuntazeOfStack/OfSendDLQ/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSendDLQ3171FB88"
+          }
+        ],
         "/HuntazeOfStack/OfSendQueue/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -124,18 +130,6 @@
             "data": "OfVpcPublicSubnet1DefaultRoute088B3E22"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PublicSubnet1/EIP": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfVpcPublicSubnet1EIPF1D63041"
-          }
-        ],
-        "/HuntazeOfStack/OfVpc/PublicSubnet1/NATGateway": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfVpcPublicSubnet1NATGateway763B4778"
-          }
-        ],
         "/HuntazeOfStack/OfVpc/PublicSubnet2/Subnet": [
           {
             "type": "aws:cdk:logicalId",
@@ -160,52 +154,40 @@
             "data": "OfVpcPublicSubnet2DefaultRoute28473A7F"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet1/Subnet": [
+        "/HuntazeOfStack/OfVpc/IsolatedSubnet1/Subnet": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet1SubnetF2C8B46B"
+            "data": "OfVpcIsolatedSubnet1SubnetDE7EBE8D"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet1/RouteTable": [
+        "/HuntazeOfStack/OfVpc/IsolatedSubnet1/RouteTable": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet1RouteTableD283FA7B"
+            "data": "OfVpcIsolatedSubnet1RouteTableF61C6F05"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet1/RouteTableAssociation": [
+        "/HuntazeOfStack/OfVpc/IsolatedSubnet1/RouteTableAssociation": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet1RouteTableAssociation68EB4B69"
+            "data": "OfVpcIsolatedSubnet1RouteTableAssociation19A1E049"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet1/DefaultRoute": [
+        "/HuntazeOfStack/OfVpc/IsolatedSubnet2/Subnet": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet1DefaultRouteC9FBB582"
+            "data": "OfVpcIsolatedSubnet2SubnetA6804EFB"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet2/Subnet": [
+        "/HuntazeOfStack/OfVpc/IsolatedSubnet2/RouteTable": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet2SubnetDC65F836"
+            "data": "OfVpcIsolatedSubnet2RouteTableB27C36B1"
           }
         ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet2/RouteTable": [
+        "/HuntazeOfStack/OfVpc/IsolatedSubnet2/RouteTableAssociation": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet2RouteTable84F8F037"
-          }
-        ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet2/RouteTableAssociation": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet2RouteTableAssociation60E094AD"
-          }
-        ],
-        "/HuntazeOfStack/OfVpc/PrivateSubnet2/DefaultRoute": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfVpcPrivateSubnet2DefaultRoute47BB9347"
+            "data": "OfVpcIsolatedSubnet2RouteTableAssociation758BE3DE"
           }
         ],
         "/HuntazeOfStack/OfVpc/IGW": [
@@ -218,6 +200,72 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "OfVpcVPCGWAC29B99A"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcA12AC6F9"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet1Subnet549B8620"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet1RouteTable64D1002B"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet1RouteTableAssociation1C13947A"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet1DefaultRoute52FDC25E"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet2Subnet4C3F610E"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet2RouteTableAB97C578"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet2RouteTableAssociation7CE29543"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/PublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcPublicSubnet2DefaultRoute7351E087"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcIGWC2B94A1A"
+          }
+        ],
+        "/HuntazeOfStack/WorkerVpc/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "WorkerVpcVPCGWDDC7E69B"
           }
         ],
         "/HuntazeOfStack/OfTaskSg/Resource": [
@@ -310,18 +358,6 @@
             "data": "SyncDispatcher467CB492"
           }
         ],
-        "/HuntazeOfStack/InboxSyncRule/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "InboxSyncRuleB3752CD5"
-          }
-        ],
-        "/HuntazeOfStack/InboxSyncRule/AllowEventRuleHuntazeOfStackSyncDispatcher4ECC6487": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "InboxSyncRuleAllowEventRuleHuntazeOfStackSyncDispatcher4ECC64872C8958B7"
-          }
-        ],
         "/HuntazeOfStack/OFLoginFailuresGt5/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -388,10 +424,239 @@
             "data": "TaskSecurityGroup"
           }
         ],
-        "/HuntazeOfStack/SubnetsPrivate": [
+        "/HuntazeOfStack/WorkerSubnetsPublic": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "SubnetsPrivate"
+            "data": "WorkerSubnetsPublic"
+          }
+        ],
+        "/HuntazeOfStack/OfClusterArnParam": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version. [ack: @aws-cdk/custom-resources:installLatestAwsSdkNotSpecified]",
+            "trace": [
+              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
+              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:5991)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
+              "putParam (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:312:47)",
+              "new HuntazeOfStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:317:9)",
+              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:49:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
+              "Object..js (node:internal/modules/cjs/loader:1895:10)",
+              "Module.load (node:internal/modules/cjs/loader:1465:32)",
+              "Function._load (node:internal/modules/cjs/loader:1282:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+              "node:internal/main/run_main_module:36:49"
+            ]
+          }
+        ],
+        "/HuntazeOfStack/OfClusterArnParam/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfClusterArnParamAAB995B9"
+          }
+        ],
+        "/HuntazeOfStack/OfClusterArnParam/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfClusterArnParamCustomResourcePolicy5D44E118"
+          }
+        ],
+        "/HuntazeOfStack/AWS679f53fac002430cb0da5b7982bd2287": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          }
+        ],
+        "/HuntazeOfStack/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ],
+        "/HuntazeOfStack/AWS679f53fac002430cb0da5b7982bd2287/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd22872D164C4C"
+          }
+        ],
+        "/HuntazeOfStack/OfTaskDefArnParam": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version. [ack: @aws-cdk/custom-resources:installLatestAwsSdkNotSpecified]",
+            "trace": [
+              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
+              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:5991)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
+              "putParam (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:312:47)",
+              "new HuntazeOfStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:318:9)",
+              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:49:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
+              "Object..js (node:internal/modules/cjs/loader:1895:10)",
+              "Module.load (node:internal/modules/cjs/loader:1465:32)",
+              "Function._load (node:internal/modules/cjs/loader:1282:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+              "node:internal/main/run_main_module:36:49"
+            ]
+          }
+        ],
+        "/HuntazeOfStack/OfTaskDefArnParam/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfTaskDefArnParam59A7515D"
+          }
+        ],
+        "/HuntazeOfStack/OfTaskDefArnParam/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfTaskDefArnParamCustomResourcePolicyF19A890D"
+          }
+        ],
+        "/HuntazeOfStack/OfSubnetsParam": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version. [ack: @aws-cdk/custom-resources:installLatestAwsSdkNotSpecified]",
+            "trace": [
+              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
+              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:5991)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
+              "putParam (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:312:47)",
+              "new HuntazeOfStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:319:9)",
+              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:49:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
+              "Object..js (node:internal/modules/cjs/loader:1895:10)",
+              "Module.load (node:internal/modules/cjs/loader:1465:32)",
+              "Function._load (node:internal/modules/cjs/loader:1282:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+              "node:internal/main/run_main_module:36:49"
+            ]
+          }
+        ],
+        "/HuntazeOfStack/OfSubnetsParam/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSubnetsParam6B828580"
+          }
+        ],
+        "/HuntazeOfStack/OfSubnetsParam/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSubnetsParamCustomResourcePolicyF65BD5EA"
+          }
+        ],
+        "/HuntazeOfStack/OfSecurityGroupParam": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version. [ack: @aws-cdk/custom-resources:installLatestAwsSdkNotSpecified]",
+            "trace": [
+              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
+              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:5991)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
+              "putParam (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:312:47)",
+              "new HuntazeOfStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:320:9)",
+              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:49:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
+              "Object..js (node:internal/modules/cjs/loader:1895:10)",
+              "Module.load (node:internal/modules/cjs/loader:1465:32)",
+              "Function._load (node:internal/modules/cjs/loader:1282:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+              "node:internal/main/run_main_module:36:49"
+            ]
+          }
+        ],
+        "/HuntazeOfStack/OfSecurityGroupParam/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSecurityGroupParamFDC6B900"
+          }
+        ],
+        "/HuntazeOfStack/OfSecurityGroupParam/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfSecurityGroupParamCustomResourcePolicyC29242D7"
+          }
+        ],
+        "/HuntazeOfStack/OfUserIdsParam": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version. [ack: @aws-cdk/custom-resources:installLatestAwsSdkNotSpecified]",
+            "trace": [
+              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
+              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:5991)",
+              "new AwsCustomResource2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
+              "putParam (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:312:47)",
+              "new HuntazeOfStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-stack.js:321:9)",
+              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:49:5)",
+              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
+              "Object..js (node:internal/modules/cjs/loader:1895:10)",
+              "Module.load (node:internal/modules/cjs/loader:1465:32)",
+              "Function._load (node:internal/modules/cjs/loader:1282:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
+              "node:internal/main/run_main_module:36:49"
+            ]
+          }
+        ],
+        "/HuntazeOfStack/OfUserIdsParam/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfUserIdsParam660C3368"
+          }
+        ],
+        "/HuntazeOfStack/OfUserIdsParam/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OfUserIdsParamCustomResourcePolicy9103C6C0"
           }
         ],
         "/HuntazeOfStack/CDKMetadata/Default": [
@@ -414,268 +679,6 @@
         ]
       },
       "displayName": "HuntazeOfStack"
-    },
-    "HuntazeOfCiStack.assets": {
-      "type": "cdk:asset-manifest",
-      "properties": {
-        "file": "HuntazeOfCiStack.assets.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version"
-      }
-    },
-    "HuntazeOfCiStack": {
-      "type": "aws:cloudformation:stack",
-      "environment": "aws://317805897534/us-east-1",
-      "properties": {
-        "templateFile": "HuntazeOfCiStack.template.json",
-        "terminationProtection": false,
-        "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-deploy-role-317805897534-us-east-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-cfn-exec-role-317805897534-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-ofq1abcde-assets-317805897534-us-east-1/3635fe8d1485333491c81c63e2dac16fc4ff120c99800c7116864e110d4cd1e9.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version",
-        "additionalDependencies": [
-          "HuntazeOfCiStack.assets"
-        ],
-        "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::317805897534:role/cdk-ofq1abcde-lookup-role-317805897534-us-east-1",
-          "requiresBootstrapStackVersion": 8,
-          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/ofq1abcde/version"
-        }
-      },
-      "dependencies": [
-        "HuntazeOfCiStack.assets"
-      ],
-      "metadata": {
-        "/HuntazeOfCiStack/OfSourceBucket/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfSourceBucketE857DCA2"
-          }
-        ],
-        "/HuntazeOfCiStack/OfSourceBucket/Policy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfSourceBucketPolicy9B036C7F"
-          }
-        ],
-        "/HuntazeOfCiStack/OfSourceBucket/AutoDeleteObjectsCustomResource/Default": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfSourceBucketAutoDeleteObjectsCustomResource9156859D"
-          }
-        ],
-        "/HuntazeOfCiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
-          {
-            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
-            "data": true
-          }
-        ],
-        "/HuntazeOfCiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
-          }
-        ],
-        "/HuntazeOfCiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
-          }
-        ],
-        "/HuntazeOfCiStack/SourceBucketName": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SourceBucketName"
-          }
-        ],
-        "/HuntazeOfCiStack/SourceObjectKey": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SourceObjectKey"
-          }
-        ],
-        "/HuntazeOfCiStack/BuildProject/Role/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BuildProjectRoleAA92C755"
-          }
-        ],
-        "/HuntazeOfCiStack/BuildProject/Role/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BuildProjectRoleDefaultPolicy3E9F248C"
-          }
-        ],
-        "/HuntazeOfCiStack/BuildProject/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BuildProject097C5DB7"
-          }
-        ],
-        "/HuntazeOfCiStack/LoadTestProject/Role/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "LoadTestProjectRole5F86753B"
-          }
-        ],
-        "/HuntazeOfCiStack/LoadTestProject/Role/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "LoadTestProjectRoleDefaultPolicy0C14758D"
-          }
-        ],
-        "/HuntazeOfCiStack/LoadTestProject/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "LoadTestProjectC440606A"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline": [
-          {
-            "type": "aws:cdk:warning",
-            "data": "V1 pipeline type is implicitly selected when `pipelineType` is not set. If you want to use V2 type, set `PipelineType.V2`. [ack: @aws-cdk/aws-codepipeline:unspecifiedPipelineType]",
-            "trace": [
-              "Annotations.addMessage (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1978)",
-              "Annotations.addWarningV2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/annotations.js:1:896)",
-              "new Pipeline2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/aws-codepipeline/lib/pipeline.js:1:8128)",
-              "new Pipeline2 (/Users/765h/Huntaze/infra/cdk/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:488)",
-              "new HuntazeOfCiStack (/Users/765h/Huntaze/infra/cdk/dist/lib/huntaze-of-ci-stack.js:179:26)",
-              "Object.<anonymous> (/Users/765h/Huntaze/infra/cdk/dist/bin/huntaze-of.js:53:5)",
-              "Module._compile (node:internal/modules/cjs/loader:1730:14)",
-              "Object..js (node:internal/modules/cjs/loader:1895:10)",
-              "Module.load (node:internal/modules/cjs/loader:1465:32)",
-              "Function._load (node:internal/modules/cjs/loader:1282:12)",
-              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)",
-              "node:internal/main/run_main_module:36:49"
-            ]
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucketEncryptionKey/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineArtifactsBucketEncryptionKeyBB729B5D"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucketEncryptionKeyAlias/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineArtifactsBucketEncryptionKeyAliasB322F15C"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucket/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineArtifactsBucket2E105862"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/ArtifactsBucket/Policy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineArtifactsBucketPolicyAE6EF7D4"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Role/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineRole4A08BF54"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Role/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineRoleDefaultPolicy66EF7E95"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipeline1E7E8073"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Source/S3Source/CodePipelineActionRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineSourceS3SourceCodePipelineActionRole8FB71C13"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Source/S3Source/CodePipelineActionRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineSourceS3SourceCodePipelineActionRoleDefaultPolicy70455C83"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Build/Synth/CodePipelineActionRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineBuildSynthCodePipelineActionRole21927505"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/Build/Synth/CodePipelineActionRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineBuildSynthCodePipelineActionRoleDefaultPolicy665B70D5"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/CodePipelineActionRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineDeployInfraCFNDeployCodePipelineActionRoleF8A2A5AD"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/CodePipelineActionRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineDeployInfraCFNDeployCodePipelineActionRoleDefaultPolicyDF4E6FDE"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/Role/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineDeployInfraCFNDeployRole238FDB16"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/DeployInfra/CFN_Deploy/Role/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineDeployInfraCFNDeployRoleDefaultPolicyE30D741F"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/LoadTest/RunLoadTest/CodePipelineActionRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineLoadTestRunLoadTestCodePipelineActionRoleD2160A43"
-          }
-        ],
-        "/HuntazeOfCiStack/OfPipeline/LoadTest/RunLoadTest/CodePipelineActionRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "OfPipelineLoadTestRunLoadTestCodePipelineActionRoleDefaultPolicyFF1269C1"
-          }
-        ],
-        "/HuntazeOfCiStack/CDKMetadata/Default": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CDKMetadata"
-          }
-        ],
-        "/HuntazeOfCiStack/BootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BootstrapVersion"
-          }
-        ],
-        "/HuntazeOfCiStack/CheckBootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CheckBootstrapVersion"
-          }
-        ]
-      },
-      "displayName": "HuntazeOfCiStack"
     },
     "Tree": {
       "type": "cdk:tree",

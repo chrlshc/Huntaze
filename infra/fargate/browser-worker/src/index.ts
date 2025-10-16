@@ -14,8 +14,14 @@ const TABLE_THREADS = process.env.OF_DDB_THREADS_TABLE!;
 const KMS_KEY_ID = process.env.OF_KMS_KEY_ID!;
 const ACTION = process.env.ACTION || 'login'; // 'login' | 'send' | 'inbox'
 const USER_ID = process.env.USER_ID!;
+const JOB_ID = process.env.JOB_ID || '';
 const CONVERSATION_ID = process.env.CONVERSATION_ID;
 const CONTENT_TEXT = process.env.CONTENT_TEXT;
+// Optional PPV fields (when provided by dispatcher)
+const PPV_PRICE_CENTS = process.env.PPV_PRICE_CENTS ? Number(process.env.PPV_PRICE_CENTS) : undefined;
+const PPV_CAPTION = process.env.PPV_CAPTION;
+const PPV_MEDIA_URL = process.env.PPV_MEDIA_URL;
+const PPV_VARIANT = process.env.PPV_VARIANT as ('A'|'B'|'C'|undefined);
 const CREDS_SECRET_ID = process.env.OF_CREDS_SECRET_ID;
 const OTP_CODE = process.env.OTP_CODE;
 
@@ -310,6 +316,7 @@ async function run() {
   try {
     console.info('[ENV] ACTION=', process.env.ACTION);
     console.info('[ENV] USER_ID=', process.env.USER_ID);
+    console.info('[ENV] JOB_ID=', JOB_ID || '');
     console.info('[ENV] CREDS_SECRET=', process.env.OF_CREDS_SECRET_ID || '');
   } catch {}
   const PROXY_SERVER = process.env.PROXY_SERVER || process.env.PROXY_HOST;
@@ -637,22 +644,39 @@ async function run() {
       await page.goto('https://onlyfans.com/my/messages', { waitUntil: 'domcontentloaded', timeout: 30000 });
       await page.waitForTimeout(2000 + Math.random() * 3000);
       // TODO: cibler la conversation par CONVERSATION_ID
-      await page.fill('textarea', CONTENT_TEXT);
-      await page.click('button:has-text("Send")');
+      // If PPV fields are present, attempt a PPV-style send (best effort)
+      const isPpv = typeof PPV_PRICE_CENTS === 'number' && !Number.isNaN(PPV_PRICE_CENTS);
+      try {
+        // Basic compose; PPV handling UI is site-dependent. We always send the text.
+        const text = (PPV_CAPTION && PPV_CAPTION.length > 0) ? PPV_CAPTION : CONTENT_TEXT;
+        await page.fill('textarea', text);
+        // Future: attach media and set price when reliable selectors are confirmed
+        if (isPpv) {
+          console.log(JSON.stringify({ type: 'ppv-meta', jobId: JOB_ID, priceCents: PPV_PRICE_CENTS, variant: PPV_VARIANT, mediaUrl: PPV_MEDIA_URL }));
+        }
+        await page.click('button:has-text("Send")');
+      } catch (ppvErr) {
+        console.warn('send.compose.failed', ppvErr);
+      }
       await page.waitForTimeout(2000 + Math.random() * 3000);
 
       await ddb.send(new PutItemCommand({
         TableName: TABLE_MESSAGES,
         Item: {
-          id: { S: `of_${Date.now()}` },
+          id: { S: JOB_ID || `of_${Date.now()}` },
           userId: { S: USER_ID },
           conversationId: { S: CONVERSATION_ID },
           status: { S: 'sent' },
-          content: { S: CONTENT_TEXT },
+          content: { S: (PPV_CAPTION && PPV_CAPTION.length > 0) ? PPV_CAPTION : (CONTENT_TEXT || '') },
+          ...(isPpv ? { ppv: { M: {
+            priceCents: { N: String(PPV_PRICE_CENTS) },
+            ...(PPV_VARIANT ? { variant: { S: String(PPV_VARIANT) } } : {}),
+            ...(PPV_MEDIA_URL ? { mediaUrl: { S: String(PPV_MEDIA_URL) } } : {}),
+          } } } : {}),
           ts: { N: String(Date.now()) }
         }
       }));
-      console.log(JSON.stringify({ type: 'send', ok: true }));
+      console.log(JSON.stringify({ type: 'send', ok: true, jobId: JOB_ID || null, mode: isPpv ? 'ppv' : 'text' }));
       await metric('MessagesSent', 1);
       return;
     }

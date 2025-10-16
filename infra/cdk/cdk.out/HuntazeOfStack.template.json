@@ -139,11 +139,35 @@
     "aws:cdk:path": "HuntazeOfStack/Threads/Resource"
    }
   },
+  "OfSendDLQ3171FB88": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "FifoQueue": true,
+    "MessageRetentionPeriod": 1209600,
+    "QueueName": "HuntazeOfSendDLQ.fifo"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfSendDLQ/Resource"
+   }
+  },
   "OfSendQueue3961ABF3": {
    "Type": "AWS::SQS::Queue",
    "Properties": {
+    "ContentBasedDeduplication": false,
+    "FifoQueue": true,
     "MessageRetentionPeriod": 345600,
-    "QueueName": "HuntazeOfSendQueue",
+    "QueueName": "HuntazeOfSendQueue.fifo",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "OfSendDLQ3171FB88",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 5
+    },
     "VisibilityTimeout": 120
    },
    "UpdateReplacePolicy": "Delete",
@@ -247,48 +271,6 @@
     "aws:cdk:path": "HuntazeOfStack/OfVpc/PublicSubnet1/DefaultRoute"
    }
   },
-  "OfVpcPublicSubnet1EIPF1D63041": {
-   "Type": "AWS::EC2::EIP",
-   "Properties": {
-    "Domain": "vpc",
-    "Tags": [
-     {
-      "Key": "Name",
-      "Value": "HuntazeOfStack/OfVpc/PublicSubnet1"
-     }
-    ]
-   },
-   "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PublicSubnet1/EIP"
-   }
-  },
-  "OfVpcPublicSubnet1NATGateway763B4778": {
-   "Type": "AWS::EC2::NatGateway",
-   "Properties": {
-    "AllocationId": {
-     "Fn::GetAtt": [
-      "OfVpcPublicSubnet1EIPF1D63041",
-      "AllocationId"
-     ]
-    },
-    "SubnetId": {
-     "Ref": "OfVpcPublicSubnet1Subnet14897662"
-    },
-    "Tags": [
-     {
-      "Key": "Name",
-      "Value": "HuntazeOfStack/OfVpc/PublicSubnet1"
-     }
-    ]
-   },
-   "DependsOn": [
-    "OfVpcPublicSubnet1DefaultRoute088B3E22",
-    "OfVpcPublicSubnet1RouteTableAssociation6ECB1953"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PublicSubnet1/NATGateway"
-   }
-  },
   "OfVpcPublicSubnet2SubnetD37B0406": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
@@ -366,7 +348,7 @@
     "aws:cdk:path": "HuntazeOfStack/OfVpc/PublicSubnet2/DefaultRoute"
    }
   },
-  "OfVpcPrivateSubnet1SubnetF2C8B46B": {
+  "OfVpcIsolatedSubnet1SubnetDE7EBE8D": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": "us-east-1a",
@@ -375,15 +357,15 @@
     "Tags": [
      {
       "Key": "aws-cdk:subnet-name",
-      "Value": "Private"
+      "Value": "Isolated"
      },
      {
       "Key": "aws-cdk:subnet-type",
-      "Value": "Private"
+      "Value": "Isolated"
      },
      {
       "Key": "Name",
-      "Value": "HuntazeOfStack/OfVpc/PrivateSubnet1"
+      "Value": "HuntazeOfStack/OfVpc/IsolatedSubnet1"
      }
     ],
     "VpcId": {
@@ -391,16 +373,16 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet1/Subnet"
+    "aws:cdk:path": "HuntazeOfStack/OfVpc/IsolatedSubnet1/Subnet"
    }
   },
-  "OfVpcPrivateSubnet1RouteTableD283FA7B": {
+  "OfVpcIsolatedSubnet1RouteTableF61C6F05": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
      {
       "Key": "Name",
-      "Value": "HuntazeOfStack/OfVpc/PrivateSubnet1"
+      "Value": "HuntazeOfStack/OfVpc/IsolatedSubnet1"
      }
     ],
     "VpcId": {
@@ -408,39 +390,24 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet1/RouteTable"
+    "aws:cdk:path": "HuntazeOfStack/OfVpc/IsolatedSubnet1/RouteTable"
    }
   },
-  "OfVpcPrivateSubnet1RouteTableAssociation68EB4B69": {
+  "OfVpcIsolatedSubnet1RouteTableAssociation19A1E049": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "OfVpcPrivateSubnet1RouteTableD283FA7B"
+     "Ref": "OfVpcIsolatedSubnet1RouteTableF61C6F05"
     },
     "SubnetId": {
-     "Ref": "OfVpcPrivateSubnet1SubnetF2C8B46B"
+     "Ref": "OfVpcIsolatedSubnet1SubnetDE7EBE8D"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet1/RouteTableAssociation"
+    "aws:cdk:path": "HuntazeOfStack/OfVpc/IsolatedSubnet1/RouteTableAssociation"
    }
   },
-  "OfVpcPrivateSubnet1DefaultRouteC9FBB582": {
-   "Type": "AWS::EC2::Route",
-   "Properties": {
-    "DestinationCidrBlock": "0.0.0.0/0",
-    "NatGatewayId": {
-     "Ref": "OfVpcPublicSubnet1NATGateway763B4778"
-    },
-    "RouteTableId": {
-     "Ref": "OfVpcPrivateSubnet1RouteTableD283FA7B"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet1/DefaultRoute"
-   }
-  },
-  "OfVpcPrivateSubnet2SubnetDC65F836": {
+  "OfVpcIsolatedSubnet2SubnetA6804EFB": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": "us-east-1b",
@@ -449,15 +416,15 @@
     "Tags": [
      {
       "Key": "aws-cdk:subnet-name",
-      "Value": "Private"
+      "Value": "Isolated"
      },
      {
       "Key": "aws-cdk:subnet-type",
-      "Value": "Private"
+      "Value": "Isolated"
      },
      {
       "Key": "Name",
-      "Value": "HuntazeOfStack/OfVpc/PrivateSubnet2"
+      "Value": "HuntazeOfStack/OfVpc/IsolatedSubnet2"
      }
     ],
     "VpcId": {
@@ -465,16 +432,16 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet2/Subnet"
+    "aws:cdk:path": "HuntazeOfStack/OfVpc/IsolatedSubnet2/Subnet"
    }
   },
-  "OfVpcPrivateSubnet2RouteTable84F8F037": {
+  "OfVpcIsolatedSubnet2RouteTableB27C36B1": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
      {
       "Key": "Name",
-      "Value": "HuntazeOfStack/OfVpc/PrivateSubnet2"
+      "Value": "HuntazeOfStack/OfVpc/IsolatedSubnet2"
      }
     ],
     "VpcId": {
@@ -482,36 +449,21 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet2/RouteTable"
+    "aws:cdk:path": "HuntazeOfStack/OfVpc/IsolatedSubnet2/RouteTable"
    }
   },
-  "OfVpcPrivateSubnet2RouteTableAssociation60E094AD": {
+  "OfVpcIsolatedSubnet2RouteTableAssociation758BE3DE": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "OfVpcPrivateSubnet2RouteTable84F8F037"
+     "Ref": "OfVpcIsolatedSubnet2RouteTableB27C36B1"
     },
     "SubnetId": {
-     "Ref": "OfVpcPrivateSubnet2SubnetDC65F836"
+     "Ref": "OfVpcIsolatedSubnet2SubnetA6804EFB"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet2/RouteTableAssociation"
-   }
-  },
-  "OfVpcPrivateSubnet2DefaultRoute47BB9347": {
-   "Type": "AWS::EC2::Route",
-   "Properties": {
-    "DestinationCidrBlock": "0.0.0.0/0",
-    "NatGatewayId": {
-     "Ref": "OfVpcPublicSubnet1NATGateway763B4778"
-    },
-    "RouteTableId": {
-     "Ref": "OfVpcPrivateSubnet2RouteTable84F8F037"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/OfVpc/PrivateSubnet2/DefaultRoute"
+    "aws:cdk:path": "HuntazeOfStack/OfVpc/IsolatedSubnet2/RouteTableAssociation"
    }
   },
   "OfVpcIGW32ABBEF6": {
@@ -542,6 +494,206 @@
     "aws:cdk:path": "HuntazeOfStack/OfVpc/VPCGW"
    }
   },
+  "WorkerVpcA12AC6F9": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.2.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "HuntazeOfStack/WorkerVpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/Resource"
+   }
+  },
+  "WorkerVpcPublicSubnet1Subnet549B8620": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.2.0.0/20",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "HuntazeOfStack/WorkerVpc/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "WorkerVpcA12AC6F9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet1/Subnet"
+   }
+  },
+  "WorkerVpcPublicSubnet1RouteTable64D1002B": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "HuntazeOfStack/WorkerVpc/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "WorkerVpcA12AC6F9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet1/RouteTable"
+   }
+  },
+  "WorkerVpcPublicSubnet1RouteTableAssociation1C13947A": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "WorkerVpcPublicSubnet1RouteTable64D1002B"
+    },
+    "SubnetId": {
+     "Ref": "WorkerVpcPublicSubnet1Subnet549B8620"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "WorkerVpcPublicSubnet1DefaultRoute52FDC25E": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "WorkerVpcIGWC2B94A1A"
+    },
+    "RouteTableId": {
+     "Ref": "WorkerVpcPublicSubnet1RouteTable64D1002B"
+    }
+   },
+   "DependsOn": [
+    "WorkerVpcVPCGWDDC7E69B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet1/DefaultRoute"
+   }
+  },
+  "WorkerVpcPublicSubnet2Subnet4C3F610E": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.2.16.0/20",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "HuntazeOfStack/WorkerVpc/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "WorkerVpcA12AC6F9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet2/Subnet"
+   }
+  },
+  "WorkerVpcPublicSubnet2RouteTableAB97C578": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "HuntazeOfStack/WorkerVpc/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "WorkerVpcA12AC6F9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet2/RouteTable"
+   }
+  },
+  "WorkerVpcPublicSubnet2RouteTableAssociation7CE29543": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "WorkerVpcPublicSubnet2RouteTableAB97C578"
+    },
+    "SubnetId": {
+     "Ref": "WorkerVpcPublicSubnet2Subnet4C3F610E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "WorkerVpcPublicSubnet2DefaultRoute7351E087": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "WorkerVpcIGWC2B94A1A"
+    },
+    "RouteTableId": {
+     "Ref": "WorkerVpcPublicSubnet2RouteTableAB97C578"
+    }
+   },
+   "DependsOn": [
+    "WorkerVpcVPCGWDDC7E69B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/PublicSubnet2/DefaultRoute"
+   }
+  },
+  "WorkerVpcIGWC2B94A1A": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "HuntazeOfStack/WorkerVpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/IGW"
+   }
+  },
+  "WorkerVpcVPCGWDDC7E69B": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "WorkerVpcIGWC2B94A1A"
+    },
+    "VpcId": {
+     "Ref": "WorkerVpcA12AC6F9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/WorkerVpc/VPCGW"
+   }
+  },
   "OfTaskSgC92CC608": {
    "Type": "AWS::EC2::SecurityGroup",
    "Properties": {
@@ -554,7 +706,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "OfVpcE0BFA4EC"
+     "Ref": "WorkerVpcA12AC6F9"
     }
    },
    "Metadata": {
@@ -715,6 +867,11 @@
    "Properties": {
     "ContainerDefinitions": [
      {
+      "Command": [
+       "node",
+       "-e",
+       "console.log('Browser worker placeholder image (no app code)'); setTimeout(()=>{}, 3600000);"
+      ],
       "Environment": [
        {
         "Name": "OF_DDB_SESSIONS_TABLE",
@@ -745,9 +902,7 @@
        }
       ],
       "Essential": true,
-      "Image": {
-       "Fn::Sub": "317805897534.dkr.ecr.us-east-1.${AWS::URLSuffix}/cdk-ofq1abcde-container-assets-317805897534-us-east-1:3a125a58a1bd4fe706fef4a15784b01a4a2dcf6ec26159bb7c4459de94ad1b89"
-      },
+      "Image": "mcr.microsoft.com/playwright:v1.56.0-jammy",
       "LogConfiguration": {
        "LogDriver": "awslogs",
        "Options": {
@@ -835,31 +990,6 @@
    "Properties": {
     "PolicyDocument": {
      "Statement": [
-      {
-       "Action": [
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:GetDownloadUrlForLayer",
-        "ecr:BatchGetImage"
-       ],
-       "Effect": "Allow",
-       "Resource": {
-        "Fn::Join": [
-         "",
-         [
-          "arn:",
-          {
-           "Ref": "AWS::Partition"
-          },
-          ":ecr:us-east-1:317805897534:repository/cdk-ofq1abcde-container-assets-317805897534-us-east-1"
-         ]
-        ]
-       }
-      },
-      {
-       "Action": "ecr:GetAuthorizationToken",
-       "Effect": "Allow",
-       "Resource": "*"
-      },
       {
        "Action": [
         "logs:CreateLogStream",
@@ -1037,7 +1167,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-ofq1abcde-assets-317805897534-us-east-1",
-     "S3Key": "bd4c13d72a6dbf02dde6cc8c54fd92e7bac75980919a90b15b6301f7be531ebd.zip"
+     "S3Key": "a9fdc0073b4ef6bcbfcd590bba00c3cd0668bcc4d0dd36c51014560113f5ae72.zip"
     },
     "Environment": {
      "Variables": {
@@ -1055,11 +1185,11 @@
         "",
         [
          {
-          "Ref": "OfVpcPrivateSubnet1SubnetF2C8B46B"
+          "Ref": "WorkerVpcPublicSubnet1Subnet549B8620"
          },
          ",",
          {
-          "Ref": "OfVpcPrivateSubnet2SubnetDC65F836"
+          "Ref": "WorkerVpcPublicSubnet2Subnet4C3F610E"
          }
         ]
        ]
@@ -1103,7 +1233,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "HuntazeOfStack/SendWorker/Resource",
-    "aws:asset:path": "/Users/765h/Huntaze/infra/cdk",
+    "aws:asset:path": "asset.a9fdc0073b4ef6bcbfcd590bba00c3cd0668bcc4d0dd36c51014560113f5ae72",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -1222,7 +1352,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-ofq1abcde-assets-317805897534-us-east-1",
-     "S3Key": "85962eb3d17a30ae60661b87699ea6829fd80488a3231831ebc84708624f92af.zip"
+     "S3Key": "89e27704bd605f9db98b916335432563acc4ab85767df02c4058fb72368bbe00.zip"
     },
     "Environment": {
      "Variables": {
@@ -1240,11 +1370,11 @@
         "",
         [
          {
-          "Ref": "OfVpcPrivateSubnet1SubnetF2C8B46B"
+          "Ref": "WorkerVpcPublicSubnet1Subnet549B8620"
          },
          ",",
          {
-          "Ref": "OfVpcPrivateSubnet2SubnetDC65F836"
+          "Ref": "WorkerVpcPublicSubnet2Subnet4C3F610E"
          }
         ]
        ]
@@ -1288,52 +1418,9 @@
    ],
    "Metadata": {
     "aws:cdk:path": "HuntazeOfStack/SyncDispatcher/Resource",
-    "aws:asset:path": "/Users/765h/Huntaze/infra/cdk",
+    "aws:asset:path": "asset.89e27704bd605f9db98b916335432563acc4ab85767df02c4058fb72368bbe00",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
-   }
-  },
-  "InboxSyncRuleB3752CD5": {
-   "Type": "AWS::Events::Rule",
-   "Properties": {
-    "ScheduleExpression": "rate(5 minutes)",
-    "State": "ENABLED",
-    "Targets": [
-     {
-      "Arn": {
-       "Fn::GetAtt": [
-        "SyncDispatcher467CB492",
-        "Arn"
-       ]
-      },
-      "Id": "Target0"
-     }
-    ]
-   },
-   "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/InboxSyncRule/Resource"
-   }
-  },
-  "InboxSyncRuleAllowEventRuleHuntazeOfStackSyncDispatcher4ECC64872C8958B7": {
-   "Type": "AWS::Lambda::Permission",
-   "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "SyncDispatcher467CB492",
-      "Arn"
-     ]
-    },
-    "Principal": "events.amazonaws.com",
-    "SourceArn": {
-     "Fn::GetAtt": [
-      "InboxSyncRuleB3752CD5",
-      "Arn"
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "HuntazeOfStack/InboxSyncRule/AllowEventRuleHuntazeOfStackSyncDispatcher4ECC6487"
    }
   },
   "OFLoginFailuresGt5EA77F159": {
@@ -1407,10 +1494,409 @@
     "aws:cdk:path": "HuntazeOfStack/OFWorkerDashboard/Resource"
    }
   },
+  "OfClusterArnParamAAB995B9": {
+   "Type": "Custom::AWS",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+      "Arn"
+     ]
+    },
+    "Create": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/clusterArn\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Fn::GetAtt": [
+         "OfClusterA7E617DB",
+         "Arn"
+        ]
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/clusterArn:v1\"}}"
+      ]
+     ]
+    },
+    "Update": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/clusterArn\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Fn::GetAtt": [
+         "OfClusterA7E617DB",
+         "Arn"
+        ]
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/clusterArn:v1\"}}"
+      ]
+     ]
+    },
+    "InstallLatestAwsSdk": true
+   },
+   "DependsOn": [
+    "OfClusterArnParamCustomResourcePolicy5D44E118"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfClusterArnParam/Resource/Default"
+   }
+  },
+  "OfClusterArnParamCustomResourcePolicy5D44E118": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ssm:PutParameter",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "OfClusterArnParamCustomResourcePolicy5D44E118",
+    "Roles": [
+     {
+      "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfClusterArnParam/CustomResourcePolicy/Resource"
+   }
+  },
+  "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource"
+   }
+  },
+  "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-ofq1abcde-assets-317805897534-us-east-1",
+     "S3Key": "34a66902956b031404ef497526f619b900363fe7fd65ff02b1de4c30fe10c034.zip"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 120
+   },
+   "DependsOn": [
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/AWS679f53fac002430cb0da5b7982bd2287/Resource",
+    "aws:asset:path": "asset.34a66902956b031404ef497526f619b900363fe7fd65ff02b1de4c30fe10c034",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "OfTaskDefArnParam59A7515D": {
+   "Type": "Custom::AWS",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+      "Arn"
+     ]
+    },
+    "Create": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/taskDefArn\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Ref": "BrowserWorkerTask01044B0A"
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/taskDefArn:v1\"}}"
+      ]
+     ]
+    },
+    "Update": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/taskDefArn\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Ref": "BrowserWorkerTask01044B0A"
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/taskDefArn:v1\"}}"
+      ]
+     ]
+    },
+    "InstallLatestAwsSdk": true
+   },
+   "DependsOn": [
+    "OfTaskDefArnParamCustomResourcePolicyF19A890D"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfTaskDefArnParam/Resource/Default"
+   }
+  },
+  "OfTaskDefArnParamCustomResourcePolicyF19A890D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ssm:PutParameter",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "OfTaskDefArnParamCustomResourcePolicyF19A890D",
+    "Roles": [
+     {
+      "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfTaskDefArnParam/CustomResourcePolicy/Resource"
+   }
+  },
+  "OfSubnetsParam6B828580": {
+   "Type": "Custom::AWS",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+      "Arn"
+     ]
+    },
+    "Create": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/subnets\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Ref": "WorkerVpcPublicSubnet1Subnet549B8620"
+       },
+       ",",
+       {
+        "Ref": "WorkerVpcPublicSubnet2Subnet4C3F610E"
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/subnets:v1\"}}"
+      ]
+     ]
+    },
+    "Update": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/subnets\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Ref": "WorkerVpcPublicSubnet1Subnet549B8620"
+       },
+       ",",
+       {
+        "Ref": "WorkerVpcPublicSubnet2Subnet4C3F610E"
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/subnets:v1\"}}"
+      ]
+     ]
+    },
+    "InstallLatestAwsSdk": true
+   },
+   "DependsOn": [
+    "OfSubnetsParamCustomResourcePolicyF65BD5EA"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfSubnetsParam/Resource/Default"
+   }
+  },
+  "OfSubnetsParamCustomResourcePolicyF65BD5EA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ssm:PutParameter",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "OfSubnetsParamCustomResourcePolicyF65BD5EA",
+    "Roles": [
+     {
+      "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfSubnetsParam/CustomResourcePolicy/Resource"
+   }
+  },
+  "OfSecurityGroupParamFDC6B900": {
+   "Type": "Custom::AWS",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+      "Arn"
+     ]
+    },
+    "Create": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/securityGroup\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Fn::GetAtt": [
+         "OfTaskSgC92CC608",
+         "GroupId"
+        ]
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/securityGroup:v1\"}}"
+      ]
+     ]
+    },
+    "Update": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/securityGroup\",\"Type\":\"String\",\"Value\":\"",
+       {
+        "Fn::GetAtt": [
+         "OfTaskSgC92CC608",
+         "GroupId"
+        ]
+       },
+       "\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/securityGroup:v1\"}}"
+      ]
+     ]
+    },
+    "InstallLatestAwsSdk": true
+   },
+   "DependsOn": [
+    "OfSecurityGroupParamCustomResourcePolicyC29242D7"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfSecurityGroupParam/Resource/Default"
+   }
+  },
+  "OfSecurityGroupParamCustomResourcePolicyC29242D7": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ssm:PutParameter",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "OfSecurityGroupParamCustomResourcePolicyC29242D7",
+    "Roles": [
+     {
+      "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfSecurityGroupParam/CustomResourcePolicy/Resource"
+   }
+  },
+  "OfUserIdsParam660C3368": {
+   "Type": "Custom::AWS",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+      "Arn"
+     ]
+    },
+    "Create": "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/userIds\",\"Type\":\"String\",\"Value\":\"user1,user2\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/userIds:v1\"}}",
+    "Update": "{\"service\":\"SSM\",\"action\":\"putParameter\",\"parameters\":{\"Name\":\"/huntaze/of/userIds\",\"Type\":\"String\",\"Value\":\"user1,user2\",\"Overwrite\":true},\"physicalResourceId\":{\"id\":\"/huntaze/of/userIds:v1\"}}",
+    "InstallLatestAwsSdk": true
+   },
+   "DependsOn": [
+    "OfUserIdsParamCustomResourcePolicy9103C6C0"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfUserIdsParam/Resource/Default"
+   }
+  },
+  "OfUserIdsParamCustomResourcePolicy9103C6C0": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ssm:PutParameter",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "OfUserIdsParamCustomResourcePolicy9103C6C0",
+    "Roles": [
+     {
+      "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "HuntazeOfStack/OfUserIdsParam/CustomResourcePolicy/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21Sy27bMBD8ltxpNlGAAj06dhIYbVNVDnI1VtRapiWRKndpQyD07wUpWw6KnnZ29jUjMZPZwzd5fwdnWqiqWbS6lGHLoBoBZ9qFpiMZvuMgVnsTw7LVQDFJYBTVYKCzVSnDO5QtxkoCo6A/JMNvjz6RCYwCVSbDR68i9ZGvRO7LVqutLw1y5G6osJ5x3jnxN25JZJUG1tbMzRE8b/IY3oBfgfEMg8idPgHjbfHGMDqDc8Ok5JItmUEdOjQstqi80zy8Ouv7pOEzEa2QDKvWE6OL5St8AVdDlEnNGvfa6KvIfxlrGLRBd+NGoaGTobCT6RRz22qVVE5oFK2tSYYftp6VXXEU5XZAhExybVWDbtNBHb8WcqzJAntLmq0bnoBQtNCVFeyMrfBI8i2FF29UEkiP11XTPD3KJ68a5E+jMqz2Zp54PqHhrfVO4U/oe23q9E/+y+boOk2UXGPsIBkKfzHu0wMyJN9tr1W6p1rrqzOwOsiwbMF10yOMYA10KC24KlJzMo6iQEpnRTKwZagvx3957j2PIhqXR/pyyjL58FXe3x1J64XzhnWHspjiXxhbfhQjAwAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22S3W7bMAyFn6X3KtemwIBduulaDPvL4qK3AS0zjhJZ8kQqQSD43QcpiVMUu+LhJ1HnSNAMZvdf4O4GD3yr292tNQ2kWlDvFB54lXY9Q/pORzVfu1wqa5BzU8So2qPD3rcNpFdsLOWVIkbFfxnSn0ixwCJGRXoG6W3QGb0t5moRG2t0HRtHktlVLX0Ums488SurmL02KMa7abNaBLNHoesZ35xQcCQvKHTA49n03FUiqDc9OVE16RiMHF+Cj0Oxew9yaoY0t5GFQl6+yGcMHeZEvHuitXHmkucj8U7QOApXNiqDPaSlP92v1IW3RpeUJzUq6zuG9MN3U7KLHpXFvmlx5XxLW4ZfpTxHp4sjP6yQmYShykXxAzxGvSN5RKbzKKT52k0TX/fkpPYxaPqJw2Bcl+3+Q2vjOkvir6MXMSp2DK9+MLrYaOtje0DRG0iVxdCf/k0WT8ibxmNoM5qacVRL4uKmSu5asDsn+R1liKJ0ZPH9Kpy3MVQHnhc2TX5s1+6iR5VfC7b8aT+bwf1nuLvZsjG3IToxPcHyVP8BYhQVsRQDAAA="
    },
    "Metadata": {
     "aws:cdk:path": "HuntazeOfStack/CDKMetadata/Default"
@@ -1467,17 +1953,17 @@
     ]
    }
   },
-  "SubnetsPrivate": {
+  "WorkerSubnetsPublic": {
    "Value": {
     "Fn::Join": [
      "",
      [
       {
-       "Ref": "OfVpcPrivateSubnet1SubnetF2C8B46B"
+       "Ref": "WorkerVpcPublicSubnet1Subnet549B8620"
       },
       ",",
       {
-       "Ref": "OfVpcPrivateSubnet2SubnetDC65F836"
+       "Ref": "WorkerVpcPublicSubnet2Subnet4C3F610E"
       }
      ]
     ]

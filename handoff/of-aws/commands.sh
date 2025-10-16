@@ -9,6 +9,43 @@ ACCOUNT=317805897534
 REPO_URI=${ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/huntaze/of-browser-worker
 IMAGE_TAG=main
 
+# Network presets (cost-aware)
+# Modes:
+#   private-2az  (default): two private subnets across AZs, NAT required (may cause inter-AZ DT if single NAT)
+#   private-1a            : single private subnet in 1a, NAT required but avoids inter-AZ DT
+#   public-1a             : single public subnet in 1a, assignPublicIp=ENABLED (no NAT for tasks)
+#   public-1d             : single public subnet in 1d, assignPublicIp=ENABLED (no NAT for tasks)
+# Provide your own subnet IDs below as needed.
+OF_NETWORK_MODE=${OF_NETWORK_MODE:-private-1a}
+
+# Existing private subnets (current default). Keep as-is unless you change mode.
+PRIVATE_SUBNETS_2AZ=${PRIVATE_SUBNETS_2AZ:-"subnet-014b23eb1375b769f,subnet-01a73352bd6799a61"}
+# If you want to pin to 1a only, set the 1a subnet ID here:
+PRIVATE_SUBNET_1A=${PRIVATE_SUBNET_1A:-"subnet-014b23eb1375b769f"}
+# If you want public mode, set your 1a PUBLIC subnet here:
+PUBLIC_SUBNET_1A=${PUBLIC_SUBNET_1A:-"subnet-REPLACE_PUBLIC_1a"}
+# If you want public mode in 1d, set your 1d PUBLIC subnet here:
+PUBLIC_SUBNET_1D=${PUBLIC_SUBNET_1D:-"subnet-REPLACE_PUBLIC_1d"}
+
+case "$OF_NETWORK_MODE" in
+  private-1a)
+    SUBNETS="$PRIVATE_SUBNET_1A"
+    ASSIGN_PUBLIC_IP=DISABLED
+    ;;
+  public-1a)
+    SUBNETS="$PUBLIC_SUBNET_1A"
+    ASSIGN_PUBLIC_IP=ENABLED
+    ;;
+  public-1d)
+    SUBNETS="$PUBLIC_SUBNET_1D"
+    ASSIGN_PUBLIC_IP=ENABLED
+    ;;
+  private-2az|*)
+    SUBNETS="$PRIVATE_SUBNETS_2AZ"
+    ASSIGN_PUBLIC_IP=DISABLED
+    ;;
+esac
+
 if [ -z "${WORKER_TOKEN:-}" ]; then
   echo "\n[ERROR] WORKER_TOKEN is not set. Export it first, e.g.:"
   echo "  export WORKER_TOKEN=your-super-secret-token"
@@ -29,7 +66,6 @@ docker push ${REPO_URI}:${IMAGE_TAG}
 echo "4) Smoke run (ECS task, ACTION=inbox)"
 CLUSTER_ARN="arn:aws:ecs:us-east-1:317805897534:cluster/HuntazeOfStack-OfClusterA7E617DB-KCjV1djdLFpy"
 TASK_DEF_ARN="arn:aws:ecs:us-east-1:317805897534:task-definition/HuntazeOfStackBrowserWorkerTaskCED33274:2"
-SUBNETS="subnet-014b23eb1375b769f,subnet-01a73352bd6799a61"
 SG_ID="sg-09703d6419b6ddb45"
 
 aws ecs run-task \
@@ -37,7 +73,7 @@ aws ecs run-task \
   --task-definition "${TASK_DEF_ARN}" \
   --count 1 \
   --launch-type FARGATE \
-  --network-configuration "awsvpcConfiguration={subnets=[${SUBNETS}],securityGroups=[${SG_ID}],assignPublicIp=DISABLED}" \
+  --network-configuration "awsvpcConfiguration={subnets=[${SUBNETS}],securityGroups=[${SG_ID}],assignPublicIp=${ASSIGN_PUBLIC_IP}}" \
   --overrides '{
     "containerOverrides": [{
       "name": "of-browser-worker",

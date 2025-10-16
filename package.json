@@ -19,9 +19,16 @@
     "mcp:http": "node tools/mcp/http-server.mjs",
     "mcp:git": "node tools/mcp/git-server.mjs",
     "mcp:env": "node tools/mcp/env-server.mjs",
-    "mcp:all": "node tools/mcp/combo-server.mjs"
+    "mcp:all": "node tools/mcp/combo-server.mjs",
+    "test:azure:llm": "node scripts/test-azure-llm.js",
+    "test:azure:content": "node scripts/test-azure-content-safety.js"
   },
   "dependencies": {
+    "@azure/identity": "^4.5.0",
+    "@azure/keyvault-secrets": "^4.9.0",
+    "@azure/monitor-opentelemetry": "^1.6.0",
+    "@azure-rest/ai-content-safety": "^1.0.0",
+    "openai": "^4.59.0",
     "@aws-sdk/client-ecs": "^3.876.0",
     "@aws-sdk/client-cloudwatch": "^3.876.0",
     "@aws-sdk/client-dynamodb": "^3.637.0",

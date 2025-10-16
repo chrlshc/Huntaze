@@ -1,0 +1,21 @@
+export const env = {
+  AZURE_OPENAI_ENDPOINT: process.env.AZURE_OPENAI_ENDPOINT!,
+  AZURE_OPENAI_API_VERSION: process.env.AZURE_OPENAI_API_VERSION ?? "2024-08-01-preview",
+  AZURE_OPENAI_API_KEY: process.env.AZURE_OPENAI_API_KEY,
+  AZURE_OPENAI_DEPLOYMENT: process.env.AZURE_OPENAI_DEPLOYMENT!,
+  CONTENT_SAFETY_ENDPOINT: process.env.CONTENT_SAFETY_ENDPOINT!,
+  CONTENT_SAFETY_KEY: process.env.CONTENT_SAFETY_KEY!,
+  COSMOS_ENDPOINT: process.env.COSMOS_ENDPOINT!,
+  COSMOS_KEY: process.env.COSMOS_KEY!,
+  COSMOS_DB: process.env.COSMOS_DB ?? "huntaze",
+  COSMOS_CONTAINERS: {
+    fans: process.env.COSMOS_CONTAINER_FANS ?? "fans",
+    transactions: process.env.COSMOS_CONTAINER_TX ?? "transactions",
+    messages: process.env.COSMOS_CONTAINER_MSG ?? "messages",
+    segments: process.env.COSMOS_CONTAINER_SEG ?? "segments",
+  },
+  TEXT_ANALYTICS_ENDPOINT: process.env.TEXT_ANALYTICS_ENDPOINT!,
+  TEXT_ANALYTICS_KEY: process.env.TEXT_ANALYTICS_KEY!,
+  SERVICE_BUS_FQNS: process.env.SERVICE_BUS_FQNS,
+  SERVICE_BUS_QUEUE_TRIAGE: process.env.SERVICE_BUS_QUEUE_TRIAGE ?? "triage.events",
+};

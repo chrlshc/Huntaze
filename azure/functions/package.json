@@ -1,0 +1,30 @@
+{
+  "name": "huntaze-functions",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/functionApp.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "func start --typescript",
+    "dev": "tsx watch src/functionApp.ts"
+  },
+  "dependencies": {
+    "@azure/ai-text-analytics": "^5.1.0",
+    "@azure/core-auth": "^1.7.2",
+    "@azure/cosmos": "^4.2.1",
+    "@azure/functions": "^4.0.0",
+    "@azure/identity": "^4.4.0",
+    "@azure-rest/ai-content-safety": "^1.0.1",
+    "@azure/service-bus": "^7.9.5",
+    "openai": "^4.60.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.5"
+  }
+}

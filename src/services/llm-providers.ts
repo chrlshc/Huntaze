@@ -276,8 +276,110 @@ export function getLLMProvider(providerName?: string): LLMProvider {
       return new ClaudeProvider(apiKey);
     case 'openai':
       return new OpenAIProvider(apiKey);
+    case 'azure':
+      return new AzureProvider();
     default:
       // Return Claude as default
       return new ClaudeProvider(apiKey);
+  }
+}
+
+// Azure OpenAI Provider (openai v4 SDK with AzureOpenAI)
+// Uses Entra ID (DefaultAzureCredential) via azureADTokenProvider when possible.
+// Falls back to env API key if provided.
+class AzureProvider extends ClaudeProvider {
+  name = 'Azure OpenAI';
+
+  private clientPromise: Promise<any> | null = null;
+
+  private getClient(): Promise<any> {
+    if (this.clientPromise) return this.clientPromise;
+
+    this.clientPromise = (async () => {
+      const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+      const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2024-04-01-preview';
+      const deployment = process.env.AZURE_OPENAI_DEPLOYMENT;
+      if (!endpoint || !deployment) {
+        throw new Error('AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_DEPLOYMENT are required for Azure provider');
+      }
+
+      // Dynamic import to avoid hard dependency when Azure not enabled
+      const { AzureOpenAI } = await import('openai');
+      let client: any;
+      try {
+        const { DefaultAzureCredential, getBearerTokenProvider } = await import('@azure/identity');
+        const credential = new DefaultAzureCredential();
+        const azureADTokenProvider = getBearerTokenProvider(
+          credential,
+          'https://cognitiveservices.azure.com/.default'
+        );
+        client = new AzureOpenAI({
+          endpoint,
+          azureADTokenProvider,
+          apiVersion,
+          deployment,
+        } as any);
+      } catch (_e) {
+        // Fallback to API key if Entra ID not configured
+        const apiKey = process.env.AZURE_OPENAI_API_KEY;
+        if (!apiKey) throw _e;
+        client = new AzureOpenAI({
+          endpoint,
+          apiKey,
+          apiVersion,
+          deployment,
+        } as any);
+      }
+      return { client, deployment };
+    })();
+
+    return this.clientPromise;
+  }
+
+  async generateDraft(params: LLMDraftParams): Promise<LLMDraftResponse> {
+    const { client } = await this.getClient();
+    const systemPrompt = this.buildSystemPrompt(params.persona);
+    const userPrompt = this.buildUserPrompt(params);
+
+    // Even with AzureOpenAI client configured with deployment, must specify model
+    const model = process.env.AZURE_OPENAI_DEPLOYMENT!;
+
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      const start = Date.now();
+      try {
+        const resp = await client.chat.completions.create({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          max_tokens: 300,
+          temperature: 0.7,
+        });
+        const ms = Date.now() - start;
+        // Optional: hook into OTel here if desired
+        const text: string = resp?.choices?.[0]?.message?.content ?? '';
+        if (!text) return this.fallbackResponse(params);
+        return this.parseClaudeResponse(text, params);
+      } catch (error: any) {
+        const ms = Date.now() - start;
+        const status = error?.status || error?.code || 'unknown';
+        // Retry on throttling/transient
+        if (attempt < maxAttempts && (status === 429 || status === '429' || status === 'ETIMEDOUT' || status === 'ECONNRESET')) {
+          const backoff = Math.min(1000 * Math.pow(2, attempt - 1), 4000) + Math.floor(Math.random() * 250);
+          await new Promise(r => setTimeout(r, backoff));
+          continue;
+        }
+        console.error('Azure OpenAI error:', status, 'after', ms, 'ms');
+        return this.fallbackResponse(params);
+      }
+    }
+    return this.fallbackResponse(params);
+  }
+
+  async validateContent(content: string, guardrails: ContentGuardrails): Promise<ValidationResult> {
+    // Reuse existing guardrails
+    return super.validateContent(content, guardrails);
   }
 }

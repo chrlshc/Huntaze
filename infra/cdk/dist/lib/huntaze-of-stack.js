@@ -84,10 +84,20 @@ class HuntazeOfStack extends aws_cdk_lib_1.Stack {
             removalPolicy: aws_cdk_lib_1.RemovalPolicy.RETAIN,
             encryption: dynamo.TableEncryption.AWS_MANAGED,
         });
+        // Dead-letter queue (FIFO to match main queue)
+        const dlq = new sqs.Queue(this, 'OfSendDLQ', {
+            queueName: 'HuntazeOfSendDLQ.fifo',
+            fifo: true,
+            retentionPeriod: aws_cdk_lib_1.Duration.days(14)
+        });
         const sendQueue = new sqs.Queue(this, 'OfSendQueue', {
-            queueName: 'HuntazeOfSendQueue',
+            queueName: 'HuntazeOfSendQueue.fifo',
+            fifo: true,
             visibilityTimeout: aws_cdk_lib_1.Duration.seconds(120),
-            retentionPeriod: aws_cdk_lib_1.Duration.days(4)
+            retentionPeriod: aws_cdk_lib_1.Duration.days(4),
+            deadLetterQueue: { queue: dlq, maxReceiveCount: 5 },
+            // Let the producer control dedup with MessageDeduplicationId
+            contentBasedDeduplication: false,
         });
         // Keep legacy VPC but ensure no NAT Gateway is created (cost-safe)
         const vpc = new ec2.Vpc(this, 'OfVpc', { natGateways: 0, maxAzs: 2 });

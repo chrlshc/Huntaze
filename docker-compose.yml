@@ -15,11 +15,33 @@ services:
     ports:
       - "3003:3000"  # Different port to avoid conflicts
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "curl", "-f", "http://huntaze-site:3000/api/health"]
       interval: 30s
       timeout: 10s
       start_period: 30s
       retries: 3
+    networks:
+      - huntaze-network
+
+  # AutoGen microservice (FastAPI)
+  autogen-service:
+    build:
+      context: ./autogen-service
+      dockerfile: Dockerfile
+    container_name: autogen-service
+    restart: unless-stopped
+    environment:
+      LLM_PROXY_URL: https://app.huntaze.com/api/internal/llm
+      NEXTJS_WEBHOOK_URL: https://app.huntaze.com/api/internal/autogen/events
+      AUTOGEN_HMAC_SECRET: ${AUTOGEN_HMAC_SECRET:-change-me}
+      DDB_REGION: ${AWS_REGION:-us-east-1}
+      DDB_TABLE_SESSIONS: ai_sessions
+      DDB_TABLE_MESSAGES: ai_session_messages
+      DDB_TABLE_ARTIFACTS: ai_session_artifacts
+    depends_on:
+      - huntaze-site
+    ports:
+      - "8000:8000"
     networks:
       - huntaze-network
 
