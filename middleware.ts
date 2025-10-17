@@ -1,77 +1,93 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Local dev convenience: disable auth checks on localhost/non-production
-  const host = request.nextUrl.hostname;
-  const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
-  const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
-  if (DEV_MODE) return NextResponse.next();
-
-  // Single auth cookie
-  const token = request.cookies.get('access_token')?.value;
-
-  // Gating based on protected prefixes
-  const protectedPrefixes = [
-    '/dashboard',
-    '/profile',
-    '/settings',
-    '/configure',
-    '/analytics',
-    '/messages',
-    '/campaigns',
-    '/fans',
-    '/platforms',
-    '/billing',
-    '/social',
-  ];
-
-  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
-  const isOnboarding = pathname.startsWith('/onboarding');
-  const isAuth = pathname.startsWith('/auth') || pathname.startsWith('/join');
-  const isOAuth = ['/auth/tiktok', '/auth/instagram', '/auth/reddit', '/auth/google'].some((r) => pathname.startsWith(r));
-  const isTest = pathname.includes('/test-') || pathname.includes('/tiktok-diagnostic') || pathname.includes('/debug-');
-
-  // Not authenticated → redirect to auth for protected/onboarding
-  if (!token && (isProtected || isOnboarding)) {
-    return NextResponse.redirect(new URL('/auth', request.url));
-  }
-
-  // Authenticated → enforce onboarding cookie except OAuth/test routes
-  if (token && isProtected && !isOAuth && !isTest) {
-    const onboarded = request.cookies.get('onboarding_completed')?.value === 'true';
-    if (!onboarded) {
-      const to = new URL('/onboarding', request.url);
-      to.searchParams.set('next', pathname);
-      return NextResponse.redirect(to);
-    }
-  }
-
-  // Authenticated visiting auth routes → redirect to app
-  if (token && isAuth && !isOAuth) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  return NextResponse.next();
-}
+import { NextResponse, NextRequest } from 'next/server'
+import { resolveRateLimit } from '@/src/lib/rateLimits'
+// Optional Edge-compatible rate limiting via Upstash. Enabled when env present.
+let upstashReady = Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+let upstashMod: { Redis: any; Ratelimit: any } | null = null
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/profile/:path*',
-    '/settings/:path*',
-    '/configure/:path*',
-    '/analytics/:path*',
-    '/messages/:path*',
-    '/campaigns/:path*',
-    '/fans/:path*',
-    '/platforms/:path*',
-    '/billing/:path*',
-    '/social/:path*',
-    '/onboarding/:path*',
-    '/auth/:path*',
-    '/join/:path*',
-  ],
-};
+  matcher: ['/debug/:path*', '/api/debug/:path*'],
+}
+
+function ctEq(a: string, b: string) { // constant-time compare
+  if (a.length !== b.length) return false
+  let r = 0
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return r === 0
+}
+
+function okBearerOrHeader(req: NextRequest) {
+  const hdr = req.headers.get('authorization')
+  const xhdr = req.headers.get('x-debug-token')
+  const token = process.env.DEBUG_TOKEN || ''
+  if (hdr?.startsWith('Bearer ') && token) return ctEq(hdr.slice(7), token)
+  if (xhdr && token) return ctEq(xhdr, token)
+  return false
+}
+
+function okBasic(req: NextRequest) {
+  const hdr = req.headers.get('authorization')
+  const user = process.env.DEBUG_USER || ''
+  const pass = process.env.DEBUG_PASS || ''
+  if (!hdr?.startsWith('Basic ') || !user || !pass) return false
+  try {
+    const decoded = (globalThis as any).atob ? (globalThis as any).atob(hdr.slice(6)) : ''
+    const idx = decoded.indexOf(':')
+    const u = idx >= 0 ? decoded.slice(0, idx) : decoded
+    const p = idx >= 0 ? decoded.slice(idx + 1) : ''
+    return ctEq(u || '', user) && ctEq(p || '', pass)
+  } catch {
+    return false
+  }
+}
+
+export default async function middleware(req: NextRequest) {
+  const pathname = new URL(req.url).pathname
+
+  // Edge rate-limit if Upstash configured and we have a config for this path
+  const cfg = resolveRateLimit(pathname)
+  if (upstashReady && cfg) {
+    try {
+      if (!upstashMod) {
+        const { Redis } = (await import('@upstash/redis')) as any
+        const { Ratelimit } = (await import('@upstash/ratelimit')) as any
+        upstashMod = { Redis, Ratelimit }
+      }
+      const redis = upstashMod!.Redis.fromEnv()
+      // Create per-request limiters so we can vary rates by path/identity
+      const tokenLimiter = new upstashMod!.Ratelimit({ redis, limiter: upstashMod!.Ratelimit.fixedWindow(cfg.tokenRpm, '1 m') })
+      const ipLimiter = new upstashMod!.Ratelimit({ redis, limiter: upstashMod!.Ratelimit.fixedWindow(cfg.ipRpm, '1 m') })
+
+      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+      const bearer = req.headers.get('authorization')?.startsWith('Bearer ')
+        ? req.headers.get('authorization')!.slice(7)
+        : ''
+      const id = bearer ? `tok:${pathname}:${bearer}` : `ip:${pathname}:${ip}`
+      const rl = bearer ? tokenLimiter : ipLimiter
+      const result = await rl.limit(id)
+      if (!result?.success) {
+        const retryAfter = Math.max(0, Math.floor((result?.reset || 0) - Date.now() / 1000))
+        return new NextResponse('Too Many Requests', {
+          status: 429,
+          headers: {
+            'Retry-After': String(retryAfter),
+            'X-RateLimit-Limit': String(cfg ? (bearer ? cfg.tokenRpm : cfg.ipRpm) : ''),
+            'X-RateLimit-Remaining': '0',
+            'Cache-Control': 'no-store',
+          },
+        })
+      }
+    } catch {}
+  }
+
+  const authed = okBasic(req) || okBearerOrHeader(req)
+  if (authed) {
+    const res = NextResponse.next()
+    // Extra safety: advise no indexing for any debug paths
+    res.headers.set('X-Robots-Tag', 'noindex')
+    return res
+  }
+
+  // For browser UX, trigger Basic Auth prompt
+  const headers = new Headers({ 'WWW-Authenticate': 'Basic realm="Debug"' })
+  return new NextResponse('Unauthorized', { status: 401, headers })
+}

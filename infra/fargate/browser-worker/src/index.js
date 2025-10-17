@@ -4,14 +4,18 @@
  * - Logs ppv-meta BEFORE typing and a final send log
  */
 const { chromium } = require('playwright');
-const { DynamoDBClient, GetItemCommand } = require('@aws-sdk/client-dynamodb');
-const { KMSClient, DecryptCommand } = require('@aws-sdk/client-kms');
+const { DynamoDBClient, GetItemCommand, PutItemCommand } = require('@aws-sdk/client-dynamodb');
+const { KMSClient, DecryptCommand, EncryptCommand } = require('@aws-sdk/client-kms');
+const { SecretsManagerClient, GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager');
 
 const ACTION = process.env.ACTION || 'send';
+const ALLOW_UNAUTH = (process.env.ALLOW_UNAUTH || '').toLowerCase() === 'true' || process.env.ALLOW_UNAUTH === '1';
 const USER_ID = process.env.USER_ID || '';
 const CONTENT_TEXT = process.env.CONTENT_TEXT || '';
 const AWS_REGION = process.env.OF_AWS_REGION || process.env.AWS_REGION || 'us-east-1';
 const TABLE = process.env.OF_DDB_SESSIONS_TABLE || 'HuntazeOfSessions';
+const LOGIN_SECRET = process.env.OF_LOGIN_SECRET_NAME || 'of/creds/huntaze';
+const KMS_KEY_ID = process.env.OF_KMS_KEY_ID; // required for encrypt on login
 
 const PPV_PRICE_CENTS = process.env.PPV_PRICE_CENTS ? Number(process.env.PPV_PRICE_CENTS) : undefined;
 const PPV_VARIANT = process.env.PPV_VARIANT;
@@ -20,6 +24,7 @@ const JOB_ID = process.env.JOB_ID || '';
 
 const ddb = new DynamoDBClient({ region: AWS_REGION });
 const kms = new KMSClient({ region: AWS_REGION });
+const secrets = new SecretsManagerClient({ region: AWS_REGION });
 
 async function getCookies(userId) {
   const out = await ddb.send(new GetItemCommand({ TableName: TABLE, Key: { userId: { S: String(userId) } } }));
@@ -60,9 +65,68 @@ async function run() {
       console.warn('cookies.load.failed', e?.message || e);
     }
 
+    if (ACTION === 'login') {
+      if (!KMS_KEY_ID) throw new Error('OF_KMS_KEY_ID required for login encryption');
+      // Read creds from Secrets Manager
+      let email, password;
+      try {
+        const sec = await secrets.send(new GetSecretValueCommand({ SecretId: LOGIN_SECRET }));
+        const str = sec.SecretString || Buffer.from(sec.SecretBinary).toString('utf-8');
+        const obj = JSON.parse(str);
+        email = obj.email || obj.username;
+        password = obj.password;
+      } catch (e) {
+        throw new Error(`secrets.fetch.failed: ${e?.message || e}`);
+      }
+
+      // Navigate and perform login
+      await page.goto('https://onlyfans.com/login', { waitUntil: 'domcontentloaded', timeout: 45000 });
+      try { await page.waitForLoadState('networkidle', { timeout: 10000 }); } catch {}
+      try {
+        // Fill credentials using robust selectors
+        const emailInput = page.locator('input[type="email"], input[name*="email" i], input[autocomplete="username"]').first();
+        const pwdInput = page.locator('input[type="password"], input[autocomplete="current-password"]').first();
+        await emailInput.waitFor({ state: 'visible', timeout: 15000 });
+        await emailInput.fill(email, { timeout: 15000 });
+        await pwdInput.fill(password, { timeout: 15000 });
+        const loginBtn = page.getByRole('button', { name: /log in|login|connexion|se connecter/i }).first();
+        try { await loginBtn.click({ timeout: 8000 }); } catch { await pwdInput.press('Enter').catch(() => {}); }
+      } catch (e) {
+        console.warn('login.ui.failed', e?.message || e);
+      }
+
+      // Wait for authenticated state
+      let ok = false;
+      for (let i = 0; i < 4; i++) {
+        await page.waitForTimeout(2000 + Math.random()*800);
+        if (await ensureConnected(page, context)) { ok = true; break; }
+      }
+      if (!ok) throw new Error('LOGIN_FAILED');
+
+      // Persist cookies to DDB (encrypted with KMS)
+      const cookies = await context.cookies();
+      const onlyfansCookies = cookies.filter(c => (c.domain || '').includes('onlyfans.com'));
+      const plaintext = Buffer.from(JSON.stringify(onlyfansCookies));
+      const enc = await kms.send(new EncryptCommand({ KeyId: KMS_KEY_ID, Plaintext: plaintext }));
+      const b64 = Buffer.from(enc.CiphertextBlob).toString('base64');
+      await ddb.send(new PutItemCommand({
+        TableName: TABLE,
+        Item: {
+          userId: { S: String(USER_ID) },
+          cookiesCipherB64: { S: b64 },
+          updatedAt: { N: String(Date.now()) }
+        }
+      }));
+      console.log(JSON.stringify({ type: 'login', ok: true, userId: USER_ID, cookies: onlyfansCookies.length }));
+      return;
+    }
+
     if (ACTION === 'send') {
       if (!CONTENT_TEXT) throw new Error('Missing CONTENT_TEXT');
-      if (!(await ensureConnected(page, context))) throw new Error('LOGIN_REQUIRED');
+      if (!(await ensureConnected(page, context))) {
+        if (!ALLOW_UNAUTH) throw new Error('LOGIN_REQUIRED');
+        console.warn('login.skip', 'ALLOW_UNAUTH=true');
+      }
 
       await page.goto('https://onlyfans.com/my/messages', { waitUntil: 'domcontentloaded', timeout: 45000 });
       try { await page.waitForLoadState('networkidle', { timeout: 10000 }); } catch {}
@@ -115,4 +179,3 @@ run().catch((e) => {
   console.error(JSON.stringify({ error: e?.message || String(e) }));
   process.exitCode = 1;
 });
-
