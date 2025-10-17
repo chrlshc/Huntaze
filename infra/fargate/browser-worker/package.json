@@ -1,0 +1,11 @@
+{
+  "name": "of-browser-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.637.0",
+    "@aws-sdk/client-kms": "^3.637.0"
+  }
+}
+
