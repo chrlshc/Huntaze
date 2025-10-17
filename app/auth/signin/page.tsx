@@ -1,3 +1,5 @@
-'use client';
+import AuthPage from '../page';
 
-export { default } from '../page';
+export default function SignInPage() {
+  return <AuthPage />;
+}

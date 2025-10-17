@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireUser, HttpError } from '@/lib/server-auth';
 
 export async function GET(request: NextRequest) {
-  const clientKey = process.env.TIKTOK_CLIENT_KEY;
-  const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI;
-  const scopes = process.env.TIKTOK_SCOPES || 'user.info.basic,video.upload';
-  
-  const authUrl = `https://www.tiktok.com/auth/authorize/?client_key=${clientKey}&scope=${scopes}&response_type=code&redirect_uri=${redirectUri}`;
-  
-  return NextResponse.redirect(authUrl);
+  // Delegate to the client page which generates a proper PKCE S256 challenge
+  const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+  try {
+    await requireUser();
+  } catch (e) {
+    const status = e instanceof HttpError ? e.status : 401;
+    return NextResponse.json({ error: 'Unauthorized' }, { status });
+  }
+  return NextResponse.redirect(`${appBase}/auth/tiktok`);
 }

@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Minimal Stripe -> EventBridge -> Lambda handler + IAM for Huntaze
+
+Parameters:
+  FunctionName:
+    Type: String
+    Default: stripe-events-handler
+  UsersTableName:
+    Type: String
+    Default: huntaze-users
+  LambdaTimeout:
+    Type: Number
+    Default: 30
+
+Resources:
+  StripeEventsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ddb-access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                Resource:
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UsersTableName}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UsersTableName}/index/ByStripeCustomerId
+
+  StripeEventsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref FunctionName
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt StripeEventsRole.Arn
+      Timeout: !Ref LambdaTimeout
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTableName
+      Code:
+        ZipFile: |
+          const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+          const { DynamoDBDocumentClient, UpdateCommand, QueryCommand } = require("@aws-sdk/lib-dynamodb");
+          const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }));
+          const TABLE = process.env.USERS_TABLE;
+
+          async function lookupUserByCustomerId(customerId) {
+            try {
+              const out = await ddb.send(new QueryCommand({
+                TableName: TABLE,
+                IndexName: "ByStripeCustomerId",
+                KeyConditionExpression: "stripeCustomerId = :c",
+                ExpressionAttributeValues: { ":c": customerId },
+                ProjectionExpression: "userId",
+                Limit: 1
+              }));
+              return (out.Items && out.Items[0] && out.Items[0].userId) || null;
+            } catch (e) {
+              console.log("GSI lookup failed (maybe index missing)", e?.message);
+              return null;
+            }
+          }
+
+          exports.handler = async (event) => {
+            const type = event["detail-type"] || (event.detail && event.detail.type);
+            const obj = (event.detail && event.detail.data && event.detail.data.object) || {};
+            let userId = (obj.metadata && obj.metadata.userId) || null;
+            const customerId = obj.customer || obj.customer_id || null;
+
+            if (!userId && customerId) userId = await lookupUserByCustomerId(String(customerId));
+            if (!userId) return { ok: true, reason: "no userId" };
+
+            if (String(type).startsWith("customer.subscription.")) {
+              const subId = obj.id;
+              const status = obj.status || "unknown";
+              const tier = (obj.items && obj.items.data && (obj.items.data[0].price.nickname || obj.items.data[0].price.id)) || "unknown";
+              await ddb.send(new UpdateCommand({
+                TableName: TABLE,
+                Key: { userId },
+                UpdateExpression: "SET subscriptionStatus = :s, subscriptionTier = :t, stripeSubscriptionId = :sub, stripeCustomerId = if_not_exists(stripeCustomerId, :c)",
+                ExpressionAttributeValues: { ":s": status, ":t": tier, ":sub": subId || "unknown", ":c": customerId || "unknown" }
+              }));
+            }
+
+            if (type === "checkout.session.completed" && customerId) {
+              await ddb.send(new UpdateCommand({
+                TableName: TABLE,
+                Key: { userId },
+                UpdateExpression: "SET stripeCustomerId = :c",
+                ExpressionAttributeValues: { ":c": customerId }
+              }));
+            }
+            return { ok: true };
+          };
+
+Outputs:
+  LambdaArn:
+    Value: !GetAtt StripeEventsFunction.Arn
+

@@ -24,13 +24,17 @@ import {
   Target,
   Activity,
   FileText,
-  ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Bell,
+  LogOut,
+  UserRound
 } from "lucide-react";
 import { useSSE } from "@/hooks/useSSE";
 import { useSSECounter } from "@/src/hooks/useSSECounter";
 import { AnimatePresence, motion } from "framer-motion";
 import "./nav-styles.css";
+import { useAuth } from "@/components/providers/AuthProvider";
+import Avatar from "./avatar";
 
 type BadgeConfig = { type: "unread" | "alerts"; url: string };
 type NavItem = {
@@ -43,87 +47,97 @@ type NavItem = {
 
 const APP_PREFIXES = [
   "/dashboard",
-  "/analytics",
-  "/social",
+  "/onlyfans",
   "/ai",
+  "/content",
+  "/growth",
+  "/analytics",
+  "/manager-ai",
+  "/billing",
+  "/settings",
   "/messages",
   "/fans",
-  "/campaigns",
-  "/content",
-  "/billing",
-  "/settings"
+  "/campaigns"
 ];
 
 export const NAV_SECTIONS: NavItem[] = [
   { 
     label: "Home", 
-    href: "/dashboard", 
+    href: "/app/home", 
     icon: Home 
   },
-  {
-    label: "Analytics",
-    icon: TrendingUp,
-    children: [
-      { label: "Overview", href: "/analytics", icon: BarChart3, badge: { type: "alerts", url: "/api/analytics/alerts-count" } },
-      { label: "Revenue", href: "/analytics/revenue", icon: DollarSign },
-      { label: "Engagement", href: "/analytics/engagement", icon: Activity },
-      { label: "RFM Analysis", href: "/analytics/rfm", icon: Target },
-      { label: "Reports", href: "/analytics/reports", icon: FileText }
-    ]
+  { 
+    label: "Manager AI (CIN)", 
+    href: "/app/manager-ai", 
+    icon: Bot,
+    badge: { type: "alerts", url: "/api/cin/status?badge=true" }
   },
   {
-    label: "Social Media",
-    icon: Share2,
+    label: "OnlyFans Hub",
+    icon: MessageSquare,
     children: [
+      { label: "Command Center", href: "/app/onlyfans-hub/command-center", icon: Shield },
       { 
-        label: "OnlyFans", 
-        href: "/social/onlyfans", 
+        label: "Inbox (AI Messages)", 
+        href: "/app/onlyfans-hub/inbox", 
         icon: MessageSquare,
         badge: { type: "unread", url: "/api/messages/unread-count" }
       },
-      { label: "Instagram", href: "/social/instagram", icon: Image },
-      { label: "TikTok", href: "/social/tiktok", icon: Zap },
-      { label: "Twitter/X", href: "/social/twitter", icon: Share2 },
-      { label: "Schedule Posts", href: "/social/schedule", icon: Calendar }
+      { label: "Fan CRM", href: "/app/onlyfans-hub/fan-crm", icon: Users },
+      { label: "PPV Campaigns", href: "/app/onlyfans-hub/ppv-campaigns", icon: Target }
     ]
   },
   {
-    label: "AI Assistant",
+    label: "AI Studio",
     icon: Bot,
     children: [
-      { label: "Chat Automation", href: "/dashboard/huntaze-ai", icon: MessageSquare },
-      { label: "Content Generator", href: "/ai/content", icon: FileText },
-      { label: "Training", href: "/ai/training", icon: Bot },
-      { label: "Quick Replies", href: "/ai/replies", icon: Zap }
+      { label: "Ghostwriter Pro", href: "/app/ai-studio/ghostwriter-pro", icon: FileText },
+      { label: "Content Creator", href: "/app/ai-studio/content-creator", icon: Image },
+      { label: "Sales Copywriter", href: "/app/ai-studio/sales-copywriter", icon: DollarSign },
+      { label: "Strategy Coach", href: "/app/ai-studio/strategy-coach", icon: Target },
+      { label: "Predictive Insights", href: "/app/ai-studio/predictive-insights", icon: TrendingUp },
+      { label: "Smart Scheduler", href: "/app/ai-studio/smart-scheduler", icon: Calendar }
     ]
-  },
-  { 
-    label: "Fans", 
-    href: "/fans", 
-    icon: Users 
-  },
-  { 
-    label: "Campaigns", 
-    href: "/campaigns", 
-    icon: Target 
   },
   {
     label: "Content",
     icon: Package,
     children: [
-      { label: "Media Library", href: "/content/library", icon: Image },
-      { label: "Moderation", href: "/content/moderation", icon: Shield },
-      { label: "Templates", href: "/content/templates", icon: FileText }
+      { label: "Media Library", href: "/app/content/media-library", icon: Image },
+      { label: "Editor Pro", href: "/app/content/editor-pro", icon: FileText },
+      { label: "Templates", href: "/app/content/templates", icon: Package },
+      { label: "Scheduler", href: "/app/content/scheduler", icon: Calendar }
+    ]
+  },
+  {
+    label: "Growth",
+    icon: TrendingUp,
+    children: [
+      { label: "Campaigns", href: "/app/growth/campaigns", icon: Target },
+      { label: "Automations", href: "/app/growth/automations", icon: Zap },
+      { label: "Social Media", href: "/app/growth/social-media", icon: Share2 }
+    ]
+  },
+  {
+    label: "Analytics",
+    icon: BarChart3,
+    children: [
+      { label: "Overview", href: "/app/analytics/overview", icon: Activity, badge: { type: "alerts", url: "/api/analytics/alerts-count" } },
+      { label: "Revenue", href: "/app/analytics/revenue", icon: DollarSign },
+      { label: "Fan Analytics", href: "/app/analytics/fan-analytics", icon: Users },
+      { label: "Content Performance", href: "/app/analytics/content-performance", icon: Package },
+      { label: "Conversion Funnels", href: "/app/analytics/conversion-funnels", icon: Target },
+      { label: "Custom Reports", href: "/app/analytics/custom-reports", icon: FileText }
     ]
   },
   { 
     label: "Billing", 
-    href: "/billing", 
+    href: "/app/billing", 
     icon: CreditCard 
   },
   { 
     label: "Settings", 
-    href: "/settings", 
+    href: "/app/settings", 
     icon: Settings 
   }
 ];
@@ -135,6 +149,7 @@ export default function AppSidebar() {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const drawerRef = useRef<HTMLDivElement>(null);
   const openBtnRef = useRef<HTMLButtonElement>(null);
+  const { user, signOut } = useAuth();
 
   // Enable SSE for real-time updates
   useSSE(true);
@@ -190,6 +205,18 @@ export default function AppSidebar() {
         ? prev.filter(item => item !== label)
         : [...prev, label]
     );
+  };
+
+  const handleNavigate = () => setDrawerOpen(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Sign out failed", error);
+    } finally {
+      setDrawerOpen(false);
+    }
   };
 
   const renderNavItem = (item: NavItem, depth = 0) => {
@@ -360,18 +387,62 @@ export default function AppSidebar() {
                 </button>
               </div>
               
-              {/* Mobile Search */}
-              <div className="px-4 pb-4">
-                <div className="relative">
-                  <input
-                    type="search"
-                    placeholder="Search"
-                    className="w-full px-4 py-2 pl-10 bg-surface-light dark:bg-surface border border-border-light dark:border-border rounded-lg text-sm"
+              <div className="px-4 pb-4 border-b border-border-light dark:border-border space-y-4">
+                <div className="flex items-center gap-3">
+                  <Avatar
+                    name={user?.username || "Huntaze User"}
+                    size="sm"
+                    className="shadow-sm"
                   />
-                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-content-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-content-primary truncate">
+                      {user?.username || "Guest user"}
+                    </p>
+                    <p className="text-xs text-content-secondary truncate">
+                      {user?.email || "Tailor your workspace"}
+                    </p>
+                  </div>
+                  <Link
+                    href="/settings"
+                    onClick={handleNavigate}
+                    className="p-2 rounded-lg text-content-secondary hover:text-content-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover transition-colors"
+                    aria-label="Open account settings"
+                  >
+                    <UserRound className="w-5 h-5" aria-hidden />
+                  </Link>
                 </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <input
+                      type="search"
+                      placeholder="Search"
+                      className="w-full px-4 py-2 pl-10 bg-surface-light dark:bg-surface border border-border-light dark:border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                    <svg className="absolute left-3 top-2.5 w-4 h-4 text-content-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <MobileQuickActions onNavigate={handleNavigate} />
+                </div>
+
+                {user ? (
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-content-secondary border border-border-light dark:border-border rounded-lg hover:bg-danger/10 hover:text-danger transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" aria-hidden />
+                    Sign out
+                  </button>
+                ) : (
+                  <Link
+                    href="/auth"
+                    onClick={handleNavigate}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/10 transition-colors"
+                  >
+                    Join Huntaze
+                  </Link>
+                )}
               </div>
 
               <div className="flex-1 overflow-y-auto px-3 py-4">
@@ -397,5 +468,60 @@ export default function AppSidebar() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+type QuickActionIcon = NavItem["icon"];
+
+type MobileQuickActionProps = {
+  href: string;
+  label: string;
+  Icon: QuickActionIcon;
+  count?: number;
+  onNavigate: () => void;
+};
+
+function MobileQuickActions({ onNavigate }: { onNavigate: () => void }) {
+  const alertCount = useSSECounter({ url: "/api/analytics/alerts-count", eventName: "alerts" });
+  const unreadMessages = useSSECounter({ url: "/api/messages/unread-count?sse=1", eventName: "unread" });
+
+  return (
+    <div className="flex items-center gap-2">
+      <MobileQuickAction
+        href="/analytics"
+        label="View analytics alerts"
+        Icon={Bell}
+        count={alertCount}
+        onNavigate={onNavigate}
+      />
+      <MobileQuickAction
+        href="/messages"
+        label="Open messages inbox"
+        Icon={MessageSquare}
+        count={unreadMessages}
+        onNavigate={onNavigate}
+      />
+    </div>
+  );
+}
+
+function MobileQuickAction({ href, label, Icon, count, onNavigate }: MobileQuickActionProps) {
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      className="relative flex items-center justify-center w-11 h-11 rounded-xl border border-border-light dark:border-border bg-surface-light dark:bg-surface transition-colors hover:bg-surface-hover-light dark:hover:bg-surface-hover"
+      aria-label={label}
+    >
+      <Icon className="w-5 h-5 text-content-primary" aria-hidden />
+      {typeof count === "number" && count > 0 ? (
+        <span
+          className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 text-[10px] leading-[18px] text-white bg-red-500 rounded-full text-center font-semibold"
+          suppressHydrationWarning
+        >
+          {count > 9 ? "9+" : count}
+        </span>
+      ) : null}
+    </Link>
   );
 }

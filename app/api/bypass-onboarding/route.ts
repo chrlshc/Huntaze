@@ -1,7 +1,13 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 export async function GET(request: Request) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const { searchParams } = new URL(request.url);
     const goto = searchParams.get("goto") || "onboarding";
@@ -35,10 +41,13 @@ export async function GET(request: Request) {
 
     const redirectUrl = redirectMap[goto] || "/dashboard";
     
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
-  } catch (error) {
-    console.error("Bypass error:", error);
-    // Fallback redirect
-    return NextResponse.redirect(new URL("/onboarding/setup", request.url));
+    const res = NextResponse.redirect(new URL(redirectUrl, request.url));
+    res.headers.set('X-Request-Id', requestId);
+    return res;
+  } catch (error: any) {
+    log.error('bypass_onboarding_failed', { error: error?.message || 'unknown_error' });
+    const res = NextResponse.redirect(new URL("/onboarding/setup", request.url));
+    res.headers.set('X-Request-Id', requestId);
+    return res;
   }
 }

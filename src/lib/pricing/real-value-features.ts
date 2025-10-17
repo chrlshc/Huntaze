@@ -141,7 +141,7 @@ export const VALUE_DRIVING_FEATURES = {
   enterprise: {
     everything: "All Scale features PLUS:",
     premium: [
-      "Two AIs working together (GPT-4o + Claude)",
+      "Enterprise Azure OpenAI stack (GPT-4o)",
       "Custom AI personality training",
       "White glove onboarding",
       "Dedicated success manager",
@@ -184,7 +184,7 @@ export const FEATURES_TO_KILL = [
 export const ACTUAL_DIFFERENTIATORS = {
   huntaze: {
     messaging: "AI that actually converts (2-3x industry average)",
-    technology: "GPT-4 + Claude (competitors use GPT-3.5)",
+    technology: "Azure OpenAI GPT-4 family (competitors use GPT-3.5)",
     pricing: "Pay commission on success, not flat fees",
     focus: "Built specifically for adult creators"
   },

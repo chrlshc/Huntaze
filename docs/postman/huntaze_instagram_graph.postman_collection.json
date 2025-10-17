@@ -1,0 +1,74 @@
+{
+  "info": {
+    "_postman_id": "d0d2a3de-2f5d-4cf8-8d20-hz-ig",
+    "name": "Huntaze — Instagram Graph (Pages/IG User/Snapshot)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Graph API flows: pages list, ig_business_account lookup, IG User snapshot, long-lived exchange."
+  },
+  "item": [
+    {
+      "name": "Pages (me/accounts)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://graph.facebook.com/{{IG_GRAPH_VERSION}}/me/accounts?access_token={{IG_USER_ACCESS_TOKEN}}",
+          "protocol": "https",
+          "host": ["graph","facebook","com"],
+          "path": ["{{IG_GRAPH_VERSION}}","me","accounts"],
+          "query": [{"key":"access_token","value":"{{IG_USER_ACCESS_TOKEN}}"}]
+        }
+      }
+    },
+    {
+      "name": "Page → instagram_business_account",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://graph.facebook.com/{{IG_GRAPH_VERSION}}/{{IG_PAGE_ID}}?fields=instagram_business_account&access_token={{IG_PAGE_ACCESS_TOKEN}}",
+          "protocol": "https",
+          "host": ["graph","facebook","com"],
+          "path": ["{{IG_GRAPH_VERSION}}","{{IG_PAGE_ID}}"],
+          "query": [
+            {"key":"fields","value":"instagram_business_account"},
+            {"key":"access_token","value":"{{IG_PAGE_ACCESS_TOKEN}}"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "IG User snapshot",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://graph.facebook.com/{{IG_GRAPH_VERSION}}/{{IG_GRAPH_USER_ID}}?fields=followers_count,media_count,username&access_token={{IG_GRAPH_ACCESS_TOKEN}}",
+          "protocol": "https",
+          "host": ["graph","facebook","com"],
+          "path": ["{{IG_GRAPH_VERSION}}","{{IG_GRAPH_USER_ID}}"],
+          "query": [
+            {"key":"fields","value":"followers_count,media_count,username"},
+            {"key":"access_token","value":"{{IG_GRAPH_ACCESS_TOKEN}}"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Exchange → long-lived user token (~60d)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://graph.facebook.com/{{IG_GRAPH_VERSION}}/oauth/access_token?grant_type=fb_exchange_token&client_id={{IG_APP_ID}}&client_secret={{IG_APP_SECRET}}&fb_exchange_token={{IG_USER_ACCESS_TOKEN}}",
+          "protocol": "https",
+          "host": ["graph","facebook","com"],
+          "path": ["{{IG_GRAPH_VERSION}}","oauth","access_token"],
+          "query": [
+            {"key":"grant_type","value":"fb_exchange_token"},
+            {"key":"client_id","value":"{{IG_APP_ID}}"},
+            {"key":"client_secret","value":"{{IG_APP_SECRET}}"},
+            {"key":"fb_exchange_token","value":"{{IG_USER_ACCESS_TOKEN}}"}
+          ]
+        }
+      }
+    }
+  ]
+}
+

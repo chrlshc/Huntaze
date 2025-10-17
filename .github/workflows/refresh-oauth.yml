@@ -1,0 +1,25 @@
+name: Fallback OAuth Refresh
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # toutes les 30 min
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_URL: ${{ secrets.APP_URL }}           # ex: https://huntaze.com
+  CRON_SECRET: ${{ secrets.CRON_SECRET }}   # même valeur que côté app
+
+jobs:
+  ping:
+    if: ${{ vars.ENABLE_FALLBACK_CRON == 'true' }}   # toggle via Repo > Settings > Variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call refresh endpoint (GET)
+        run: |
+          set -euo pipefail
+          curl -fsSL -X GET "$APP_URL/api/cron/refresh-oauth" \
+            -H "x-cron-secret: $CRON_SECRET"
+

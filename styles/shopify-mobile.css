@@ -1,0 +1,273 @@
+/* Shopify Mobile Design System */
+
+/* Remove all dark mode for mobile */
+@media (max-width: 768px) {
+  .dark,
+  [data-theme="dark"] {
+    background: #f7f7f7 !important;
+  }
+  
+  .dark *,
+  [data-theme="dark"] * {
+    background-color: initial !important;
+    color: #1a1a1a !important;
+    border-color: #e5e5e5 !important;
+  }
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 768px) {
+  /* Base colors */
+  body {
+    background-color: #f7f7f7 !important;
+    color: #1a1a1a !important;
+  }
+  
+  /* Remove all shadows on mobile */
+  * {
+    box-shadow: none !important;
+  }
+  
+  /* Cards and surfaces */
+  .bg-white,
+  .bg-surface,
+  .bg-surface-elevated,
+  .bg-surface-elevated-light {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e5e5 !important;
+  }
+  
+  /* Headers and navigation */
+  header,
+  nav {
+    background-color: #ffffff !important;
+    border-color: #e5e5e5 !important;
+  }
+  
+  /* Buttons */
+  button {
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  
+  button:active {
+    transform: scale(0.98);
+  }
+  
+  /* Primary button */
+  .bg-black,
+  .bg-gray-900 {
+    background-color: #008060 !important;
+    color: #ffffff !important;
+  }
+  
+  /* Secondary button */
+  .border-gray-300 {
+    background-color: #ffffff !important;
+    border-color: #d4d4d4 !important;
+    color: #1a1a1a !important;
+  }
+  
+  /* Text colors */
+  .text-white {
+    color: #1a1a1a !important;
+  }
+  
+  .text-gray-500,
+  .text-gray-600,
+  .text-content-secondary {
+    color: #737373 !important;
+  }
+  
+  .text-gray-900,
+  .text-content-primary {
+    color: #1a1a1a !important;
+  }
+  
+  /* Metric cards */
+  .metric-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e5e5 !important;
+    border-radius: 8px !important;
+  }
+  
+  .metric-card-highlight {
+    background: #008060 !important;
+    color: #ffffff !important;
+  }
+  
+  .metric-card-highlight .metric-label {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  /* Status colors */
+  .text-green-600,
+  .text-success {
+    color: #008060 !important;
+  }
+  
+  .bg-green-600,
+  .bg-success {
+    background-color: #008060 !important;
+  }
+  
+  /* Remove purple/violet */
+  .bg-purple-500,
+  .bg-purple-600,
+  .text-purple-500,
+  .text-purple-600 {
+    background-color: #008060 !important;
+    color: #ffffff !important;
+  }
+  
+  /* Input fields */
+  input,
+  textarea,
+  select {
+    background: #f7f7f7 !important;
+    border: 1px solid #d4d4d4 !important;
+    color: #1a1a1a !important;
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    background: #ffffff !important;
+    border-color: #008060 !important;
+    outline: none !important;
+  }
+  
+  /* Bottom navigation specific */
+  .pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+  
+  /* Touch feedback */
+  .active\:scale-\[0\.98\]:active {
+    transform: scale(0.98);
+  }
+  
+  /* List items */
+  .divide-y > * + * {
+    border-top: 1px solid #e5e5e5 !important;
+  }
+  
+  /* Badges */
+  .bg-red-500 {
+    background-color: #ef4444 !important;
+  }
+  
+  .bg-green-100 {
+    background-color: #d1fae5 !important;
+  }
+  
+  .text-green-700 {
+    color: #065f46 !important;
+  }
+  
+  /* Search bar */
+  .bg-gray-100 {
+    background-color: #f3f4f6 !important;
+  }
+  
+  .bg-gray-50 {
+    background-color: #f9fafb !important;
+  }
+  
+  /* Mobile-optimized spacing */
+  .p-4 {
+    padding: 1rem !important;
+  }
+  
+  .p-6 {
+    padding: 1.5rem !important;
+  }
+  
+  .gap-4 {
+    gap: 1rem !important;
+  }
+  
+  .gap-6 {
+    gap: 1.5rem !important;
+  }
+  
+  /* Remove rounded corners that are too aggressive */
+  .rounded-xl {
+    border-radius: 8px !important;
+  }
+  
+  .rounded-lg {
+    border-radius: 6px !important;
+  }
+  
+  /* Typography */
+  .text-2xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  .text-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  /* Loading states */
+  .animate-pulse {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  
+  /* Shopify green accent */
+  .border-green-500,
+  .border-primary {
+    border-color: #008060 !important;
+  }
+  
+  .ring-green-500 {
+    --tw-ring-color: #008060 !important;
+  }
+  
+  /* Fix overlays */
+  .bg-black\/50 {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Product grid */
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  /* Safe area for iOS */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Sticky elements */
+  .sticky {
+    position: sticky !important;
+    position: -webkit-sticky !important;
+  }
+  
+  /* Mobile toast */
+  .toast {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "start": "-PT6H",
+  "periodOverride": "inherit",
+  "widgets": [
+    {
+      "type": "metric",
+      "x": 0, "y": 0, "width": 12, "height": 6,
+      "properties": {
+        "region": "us-east-1",
+        "title": "API Gateway 5XX (production)",
+        "metrics": [
+          [ "AWS/ApiGateway", "5XXError", "ApiName", "Huntaze-API-production", "Stage", "production", { "stat": "Sum", "period": 60 } ]
+        ],
+        "yAxis": { "left": { "min": 0 } },
+        "view": "timeSeries",
+        "stacked": false
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12, "y": 0, "width": 12, "height": 6,
+      "properties": {
+        "region": "us-east-1",
+        "title": "Lambda Errors (huntaze*)",
+        "metrics": [
+          [ "AWS/Lambda", "Errors", "FunctionName", "huntaze", { "stat": "Sum", "period": 60 } ],
+          [ "AWS/Lambda", "Errors", "FunctionName", "huntaze-image-processor-production", { "stat": "Sum", "period": 60 } ]
+        ],
+        "yAxis": { "left": { "min": 0 } },
+        "view": "timeSeries",
+        "stacked": false
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0, "y": 6, "width": 12, "height": 6,
+      "properties": {
+        "region": "us-east-1",
+        "title": "SQS DLQ Depth (AI notifications DLQ)",
+        "metrics": [
+          [ "AWS/SQS", "ApproximateNumberOfMessagesVisible", "QueueName", "huntaze-ai-notifications-AiNotificationsDLQ-FQV6vR3sqNc0", { "stat": "Maximum", "period": 60 } ]
+        ],
+        "yAxis": { "left": { "min": 0 } },
+        "view": "timeSeries"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12, "y": 6, "width": 12, "height": 6,
+      "properties": {
+        "region": "us-east-1",
+        "title": "RDS CPU (%)",
+        "metrics": [
+          [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "huntaze-postgres-production", { "stat": "Average", "period": 300 } ]
+        ],
+        "yAxis": { "left": { "min": 0, "max": 100 } },
+        "view": "timeSeries"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0, "y": 12, "width": 12, "height": 6,
+      "properties": {
+        "region": "us-east-1",
+        "title": "RDS Free Storage (bytes)",
+        "metrics": [
+          [ "AWS/RDS", "FreeStorageSpace", "DBInstanceIdentifier", "huntaze-postgres-production", { "stat": "Average", "period": 300 } ]
+        ],
+        "yAxis": { "left": { "min": 0 } },
+        "stat": "Average",
+        "view": "timeSeries"
+      }
+    }
+  ]
+}

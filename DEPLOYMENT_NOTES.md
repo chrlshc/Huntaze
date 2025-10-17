@@ -24,7 +24,7 @@
    - ✅ `/features/content-scheduler` - Content Scheduler with Calendar, Analytics, AI
 
 5. **Components**
-   - ✅ FAQ Section (Shopify style)
+   - ✅ FAQ Section (Huntaze style)
    - ✅ Fixed creator testimonials overflow
    - ✅ Removed unprofessional animations
    - ✅ Added 7-day free trial badges

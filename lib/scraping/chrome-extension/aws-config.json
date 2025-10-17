@@ -1,0 +1,29 @@
+{
+  "service": "OnlyFans",
+  "aws": {
+    "region": "us-west-1",
+    "accountId": "317805897534",
+    "websocket": {
+      "url": "wss://p6ng3p6f49.execute-api.us-west-1.amazonaws.com/production",
+      "apiId": "p6ng3p6f49"
+    },
+    "tables": {
+      "scrapedData": "huntaze-onlyfans-scraped-data",
+      "connections": "huntaze-onlyfans-connections"
+    },
+    "lambdas": {
+      "processor": "huntaze-onlyfans-processor",
+      "connect": "huntaze-onlyfans-ws-connect",
+      "disconnect": "huntaze-onlyfans-ws-disconnect",
+      "default": "huntaze-onlyfans-ws-default"
+    }
+  },
+  "features": {
+    "realTimeSync": true,
+    "autoScrape": true,
+    "aiAnalysis": true,
+    "smartNotifications": true
+  },
+  "environment": "production",
+  "deployed": "2025-09-24"
+}

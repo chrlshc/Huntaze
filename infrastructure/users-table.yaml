@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Users table for Huntaze app (PK userId). Includes GSI for Stripe mapping.
+
+Parameters:
+  UsersTableName:
+    Type: String
+    Default: huntaze-users
+    Description: DynamoDB table name
+
+Resources:
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Ref UsersTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: stripeCustomerId
+          AttributeType: S
+        - AttributeName: subscriptionStatus
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+        - AttributeName: onlyfansUserId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ByStripeCustomerId
+          KeySchema:
+            - AttributeName: stripeCustomerId
+              KeyType: HASH
+          Projection:
+            ProjectionType: KEYS_ONLY
+        - IndexName: ActiveSubscribers
+          KeySchema:
+            - AttributeName: subscriptionStatus
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+        - IndexName: ByOnlyfansUserId
+          KeySchema:
+            - AttributeName: onlyfansUserId
+              KeyType: HASH
+          Projection:
+            ProjectionType: KEYS_ONLY
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: app
+          Value: huntaze
+        - Key: env
+          Value: production
+
+Outputs:
+  UsersTableName:
+    Value: !Ref UsersTableName
+    Export:
+      Name: Huntaze-UsersTable-Name
+  UsersTableArn:
+    Value: !GetAtt UsersTable.Arn
+    Export:
+      Name: Huntaze-UsersTable-Arn
+  UsersTableStripeGSI:
+    Value: ByStripeCustomerId
+  UsersTableActiveSubscribersGSI:
+    Value: ActiveSubscribers
+  UsersTableOnlyfansGSI:
+    Value: ByOnlyfansUserId

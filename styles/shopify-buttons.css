@@ -1,0 +1,299 @@
+/* Shopify-style button system - Fixed sizing */
+
+:root {
+  /* Button sizing - Constrained to prevent oversizing */
+  --button-padding-xs: 0 0.75rem;
+  --button-padding-sm: 0 1rem;
+  --button-padding-md: 0 1rem;
+  --button-padding-lg: 0 1.25rem;
+  
+  --button-height-xs: 1.75rem;  /* 28px */
+  --button-height-sm: 2rem;     /* 32px */
+  --button-height-md: 2.25rem;  /* 36px */
+  --button-height-lg: 2.75rem;  /* 44px - max for accessibility */
+  
+  /* Typography - Smaller sizes */
+  --button-font-size-xs: 0.75rem;   /* 12px */
+  --button-font-size-sm: 0.8125rem; /* 13px */
+  --button-font-size-md: 0.875rem;  /* 14px */
+  --button-font-size-lg: 0.9375rem; /* 15px */
+  
+  --button-font-weight: 500;
+  --button-line-height: 1.2;
+  
+  /* Spacing */
+  --button-gap: 0.375rem; /* Reduced from 0.5rem */
+  --button-group-gap: 0.5rem;
+  
+  /* Borders */
+  --button-border-radius: 0.375rem;
+  --button-border-width: 1px;
+  
+  /* Shadows */
+  --button-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --button-shadow-hover: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --button-transition: all 150ms ease-in-out;
+}
+
+/* Base button reset */
+.button,
+button,
+[role="button"] {
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+/* Shopify button base with constraints */
+.shopify-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: var(--button-height-md);
+  padding: var(--button-padding-md);
+  font-size: var(--button-font-size-md);
+  font-weight: var(--button-font-weight);
+  line-height: var(--button-line-height);
+  border-radius: var(--button-border-radius);
+  border: var(--button-border-width) solid transparent;
+  transition: var(--button-transition);
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  gap: var(--button-gap);
+  min-width: fit-content;
+  box-sizing: border-box;
+  /* Prevent oversizing */
+  max-height: 2.75rem; /* 44px max */
+  overflow: hidden;
+}
+
+/* Shopify button variants */
+.shopify-btn--primary {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+  box-shadow: var(--button-shadow);
+}
+
+.shopify-btn--primary:hover:not(:disabled) {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+  box-shadow: var(--button-shadow-hover);
+}
+
+.shopify-btn--secondary {
+  background-color: transparent;
+  color: #000;
+  border-color: #d1d1d1;
+}
+
+.shopify-btn--secondary:hover:not(:disabled) {
+  background-color: #f7f7f7;
+  border-color: #b8b8b8;
+}
+
+.shopify-btn--tertiary {
+  background-color: transparent;
+  color: #000;
+  border-color: transparent;
+}
+
+.shopify-btn--tertiary:hover:not(:disabled) {
+  background-color: #f7f7f7;
+}
+
+/* Dark theme variants */
+.dark .shopify-btn--primary {
+  background-color: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.dark .shopify-btn--primary:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #f0f0f0;
+}
+
+.dark .shopify-btn--secondary {
+  background-color: transparent;
+  color: #fff;
+  border-color: #525252;
+}
+
+.dark .shopify-btn--secondary:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: #737373;
+}
+
+/* Button sizes */
+.shopify-btn--xs {
+  height: var(--button-height-xs);
+  padding: var(--button-padding-xs);
+  font-size: var(--button-font-size-xs);
+}
+
+.shopify-btn--sm {
+  height: var(--button-height-sm);
+  padding: var(--button-padding-sm);
+  font-size: var(--button-font-size-sm);
+}
+
+.shopify-btn--lg {
+  height: var(--button-height-lg);
+  padding: var(--button-padding-lg);
+  font-size: var(--button-font-size-lg);
+}
+
+/* Full width button */
+.shopify-btn--full {
+  width: 100%;
+}
+
+/* Button states */
+.shopify-btn:focus-visible {
+  outline: 2px solid #005bd3;
+  outline-offset: 2px;
+}
+
+.shopify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shopify-btn--loading {
+  color: transparent;
+}
+
+.shopify-btn--loading::after {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: button-spinner 0.65s linear infinite;
+}
+
+/* Button group */
+.shopify-btn-group {
+  display: inline-flex;
+  gap: var(--button-group-gap);
+  align-items: center;
+}
+
+.shopify-btn-group--vertical {
+  flex-direction: column;
+}
+
+.shopify-btn-group--tight {
+  gap: 0.25rem;
+}
+
+/* Icon support */
+.shopify-btn__icon {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+}
+
+.shopify-btn__icon--start {
+  margin-inline-end: var(--button-gap);
+}
+
+.shopify-btn__icon--end {
+  margin-inline-start: var(--button-gap);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .shopify-btn {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+  
+  .shopify-btn-group--stack-mobile {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .shopify-btn-group--stack-mobile .shopify-btn {
+    width: 100%;
+  }
+}
+
+/* Animations */
+@keyframes button-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Legacy button compatibility */
+.btn-primary,
+.huntaze-button,
+.cta-pill-outline {
+  @extend .shopify-btn;
+  @extend .shopify-btn--primary;
+}
+
+.btn-secondary {
+  @extend .shopify-btn;
+  @extend .shopify-btn--secondary;
+}
+
+.btn-dark {
+  @extend .shopify-btn;
+  @extend .shopify-btn--primary;
+}
+
+/* Button alignment fixes */
+.button-container,
+.btn-container,
+.actions {
+  display: flex;
+  gap: var(--button-group-gap);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Fix button sizing in forms */
+form button,
+.form-actions button {
+  height: var(--button-height-md);
+  padding: var(--button-padding-md);
+}
+
+/* Fix button alignment in nav */
+nav button,
+.nav-item button,
+header button {
+  height: var(--button-height-sm);
+  padding: var(--button-padding-sm);
+}
+
+/* Consistent hover states */
+button:hover,
+.button:hover,
+a[role="button"]:hover {
+  transform: translateY(0);
+  transition: var(--button-transition);
+}
+
+/* Remove conflicting styles */
+button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+}

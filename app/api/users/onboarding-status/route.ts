@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 import { cookies } from 'next/headers';
 import {
   getOnboarding,
@@ -9,10 +11,14 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function GET(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // If cookie says completed, reflect it in local store snapshot
@@ -27,7 +33,9 @@ export async function GET(request: NextRequest) {
     // Return stored snapshot if exists
     const snapshot = getOnboarding(token);
     if (snapshot?.status) {
-      return NextResponse.json(snapshot.status);
+      const r = NextResponse.json({ ...snapshot.status, requestId });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Try to fetch from backend
@@ -43,22 +51,30 @@ export async function GET(request: NextRequest) {
         mergeOnboarding(token, { status: data });
         return NextResponse.json(data, { status: resp.status });
       }
-    } catch (backendError) {
-      console.log('Backend not available, using default onboarding status');
+    } catch (backendError: any) {
+      log.warn('onboarding_backend_unavailable', { error: backendError?.message || 'unavailable' });
     }
 
     const status = getOrInitStatus(token);
-    return NextResponse.json(status);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch onboarding status' }, { status: 500 });
+    const r = NextResponse.json({ ...status, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    const r = NextResponse.json({ error: 'Failed to fetch onboarding status', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 export async function PUT(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const payload = await request.json();
@@ -79,16 +95,22 @@ export async function PUT(request: NextRequest) {
         const data = await resp.json();
         // Merge local snapshot
         mergeOnboarding(token, { status: { ...(getOnboarding(token)?.status || {}), ...payload } });
-        return NextResponse.json(data, { status: resp.status });
+        const r = NextResponse.json({ ...data, requestId }, { status: resp.status });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
       }
-    } catch (backendError) {
-      console.log('Backend not available, updating local status only');
+    } catch (backendError: any) {
+      log.warn('onboarding_backend_unavailable', { error: backendError?.message || 'unavailable' });
     }
 
     // Update local store for demo; merge to keep unspecified keys
     const merged = mergeOnboarding(token, { status: { ...(getOnboarding(token)?.status || {}), ...payload } });
-    return NextResponse.json(merged.status);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update onboarding status' }, { status: 500 });
+    const r = NextResponse.json({ ...merged.status, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    const r = NextResponse.json({ error: 'Failed to update onboarding status', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

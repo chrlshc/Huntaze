@@ -98,6 +98,15 @@ export default {
         'xl': 'var(--shadow-xl)',
         'soft': 'var(--shadow-soft)',
       },
+      maxHeight: {
+        'btn': '2.75rem', // 44px max for buttons
+        'btn-sm': '2rem', // 32px for small buttons
+        'btn-lg': '3rem', // 48px for large buttons
+      },
+      padding: {
+        'btn-x': '1rem',    // Standard horizontal button padding
+        'btn-y': '0.5rem',  // Standard vertical button padding
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'fade-up': 'fadeUp 0.5s ease-out',

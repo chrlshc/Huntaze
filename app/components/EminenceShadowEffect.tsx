@@ -17,12 +17,12 @@ export default function EminenceShadowEffect() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Palette de couleurs Eminence in Shadow
+    // Eminence in Shadow color palette
     const colors = {
       primary: '#8A2BE2',     // Violet
-      secondary: '#C724B1',   // Rose néon
+      secondary: '#C724B1',   // Neon pink
       tertiary: '#FF1493',    // Deep pink
-      glow: '#E0B0FF',       // Lavande clair
+      glow: '#E0B0FF',       // Light lavender
       dark: '#4B0082'        // Indigo
     };
 

@@ -1,0 +1,48 @@
+name: English-only guard
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  english:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: huntaze-starter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run build
+      - name: Franc sweep (English-only)
+        run: npm run ci:check-english
+      - name: ESLint (English rules)
+        run: npm run lint:en
+      - name: Playwright — lang checks
+        run: npm run test:lang
+
+  lighthouse:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: huntaze-starter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm start &
+      - run: npx wait-on http://localhost:3000
+      - name: Lighthouse / (a11y+SEO)
+        run: |
+          npx lighthouse http://localhost:3000 --quiet --chrome-flags="--headless" --only-categories=accessibility,seo --budget-path=../.lighthousebudget.json || true
+          npx lighthouse http://localhost:3000/analytics --quiet --chrome-flags="--headless" --only-categories=accessibility,seo --budget-path=../.lighthousebudget.json || true
+          npx lighthouse http://localhost:3000/marketing/planner --quiet --chrome-flags="--headless" --only-categories=accessibility,seo --budget-path=../.lighthousebudget.json || true

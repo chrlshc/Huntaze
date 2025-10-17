@@ -16,38 +16,38 @@ export default function SecuritySection() {
   const securityFeatures = [
     {
       icon: Lock,
-      title: "Chiffrement de bout en bout",
-      description: "TLS 1.3+ en transit, AES-256 au repos",
+      title: 'End-to-end encryption',
+      description: 'TLS 1.3+ in transit, AES-256 at rest',
       badge: "Enterprise Grade"
     },
     {
       icon: Shield,
-      title: "Conformité RGPD/CCPA",
-      description: "Suppression sur demande, droit à l'oubli",
+      title: 'GDPR/CCPA compliance',
+      description: 'Deletion on request, right to be forgotten',
       badge: "100% Compliant"
     },
     {
       icon: Database,
-      title: "Isolation des données",
-      description: "Aucun entraînement croisé entre comptes",
+      title: 'Data isolation',
+      description: 'No cross-account training',
       badge: "Data Privacy"
     },
     {
       icon: Key,
-      title: "Authentification 2FA",
-      description: "Protection renforcée avec journal d'audit",
+      title: '2FA authentication',
+      description: 'Enhanced protection with audit logging',
       badge: "Secure Access"
     },
     {
       icon: FileCheck,
-      title: "Hébergement certifié",
-      description: "Infrastructure SOC 2 Type II / ISO 27001",
+      title: 'Certified hosting',
+      description: 'SOC 2 Type II / ISO 27001 infrastructure',
       badge: "Certified"
     },
     {
       icon: Activity,
-      title: "Monitoring 24/7",
-      description: "99.99% uptime garanti, status page public",
+      title: '24/7 monitoring',
+      description: '99.99% uptime guaranteed, public status page',
       badge: "Always On"
     }
   ];
@@ -77,15 +77,15 @@ export default function SecuritySection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full border border-green-500/20 mb-6">
             <Shield className="w-5 h-5 text-green-500" />
-            <span className="text-sm font-medium text-green-400">Sécurité Enterprise</span>
+            <span className="text-sm font-medium text-green-400">Enterprise security</span>
           </div>
           
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Vos données sont sacrées
+            Your data stays sacred
           </h2>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Protection militaire pour vos contenus et conversations. 
-            Conforme aux standards les plus stricts de l'industrie.
+            Military-grade protection for your content and conversations.
+            Compliant with the industry's strictest standards.
           </p>
         </motion.div>
 
@@ -135,10 +135,10 @@ export default function SecuritySection() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-2xl font-bold text-white mb-2">
-                Certifications & Conformités
+                Certifications & compliance
               </h3>
               <p className="text-gray-400">
-                Audité et certifié par les organismes leaders du secteur
+                Audited and certified by industry-leading bodies
               </p>
             </div>
 
@@ -173,15 +173,15 @@ export default function SecuritySection() {
         >
           <div className="flex items-center gap-3 p-4 bg-gray-900/30 rounded-lg">
             <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-            <span className="text-sm text-gray-300">Aucune donnée vendue à des tiers</span>
+            <span className="text-sm text-gray-300">No data sold to third parties</span>
           </div>
           <div className="flex items-center gap-3 p-4 bg-gray-900/30 rounded-lg">
             <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-            <span className="text-sm text-gray-300">Suppression définitive en 24h</span>
+            <span className="text-sm text-gray-300">Permanent deletion within 24 hours</span>
           </div>
           <div className="flex items-center gap-3 p-4 bg-gray-900/30 rounded-lg">
             <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-            <span className="text-sm text-gray-300">Audit de sécurité mensuel</span>
+            <span className="text-sm text-gray-300">Monthly security audit</span>
           </div>
         </motion.div>
 
@@ -200,11 +200,11 @@ export default function SecuritySection() {
             className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors"
           >
             <Activity className="w-5 h-5" />
-            <span className="font-medium">Voir notre status page en temps réel</span>
+            <span className="font-medium">See our live status page</span>
             <ExternalLink className="w-4 h-4" />
           </a>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            99.99% uptime • Temps de réponse < 200ms • Infrastructure globale
+            99.99% uptime • Response time < 200ms • Global infrastructure
           </p>
         </motion.div>
       </div>

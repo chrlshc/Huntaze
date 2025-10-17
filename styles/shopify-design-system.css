@@ -1,0 +1,259 @@
+/* ============================================
+   SHOPIFY DESIGN SYSTEM FOR HUNTAZE
+   ============================================ */
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ============================================
+   1. CSS VARIABLES & DESIGN TOKENS
+   ============================================ */
+:root {
+  /* Primary Colors */
+  --shopify-green: #008060;
+  --shopify-green-dark: #004c3f;
+  --shopify-green-light: #00b297;
+  --shopify-green-lighter: #e3f2ec;
+  
+  /* Grays - Shopify Scale */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  
+  /* Status Colors */
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #fbbf24;
+  --warning-light: #fef3c7;
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+}
+
+/* ============================================
+   2. BASE STYLES
+   ============================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--gray-900);
+  background-color: var(--gray-50);
+}
+
+/* ============================================
+   3. TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--gray-900);
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1rem; }
+h5 { font-size: 0.875rem; }
+h6 { font-size: 0.75rem; }
+
+/* ============================================
+   4. REMOVE DARK MODE OVERRIDES
+   ============================================ */
+.dark {
+  /* Disable all dark mode styles */
+  background-color: var(--gray-50) !important;
+  color: var(--gray-900) !important;
+}
+
+.dark * {
+  background-color: initial !important;
+  color: inherit !important;
+  border-color: var(--gray-200) !important;
+}
+
+/* Force light theme everywhere */
+[data-theme="dark"] {
+  background-color: white !important;
+  color: var(--gray-900) !important;
+}
+
+/* ============================================
+   5. LAYOUT FIXES
+   ============================================ */
+
+/* Remove aggressive shadows */
+* {
+  box-shadow: none !important;
+}
+
+/* Shopify-style subtle shadows only where needed */
+.shopify-shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.shopify-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Fix borders */
+.border {
+  border-width: 1px !important;
+  border-color: var(--gray-200) !important;
+}
+
+/* ============================================
+   6. COMPONENT OVERRIDES
+   ============================================ */
+
+/* Cards */
+.bg-surface-elevated,
+.bg-surface-elevated-light {
+  background-color: white !important;
+  border: 1px solid var(--gray-200) !important;
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  font-weight: 500;
+}
+
+/* Remove purple/violet colors */
+.bg-purple-500,
+.bg-purple-600,
+.text-purple-500,
+.text-purple-600 {
+  background-color: var(--shopify-green) !important;
+  color: white !important;
+}
+
+/* Fix metric cards */
+.metric-card {
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  box-shadow: none !important;
+}
+
+.metric-card:hover {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.metric-card-highlight {
+  background: var(--gray-900) !important;
+  color: white !important;
+}
+
+/* ============================================
+   7. SPACING SYSTEM
+   ============================================ */
+.p-4 { padding: var(--spacing-md) !important; }
+.p-6 { padding: var(--spacing-lg) !important; }
+.p-8 { padding: var(--spacing-xl) !important; }
+
+.gap-4 { gap: var(--spacing-md) !important; }
+.gap-6 { gap: var(--spacing-lg) !important; }
+.gap-8 { gap: var(--spacing-xl) !important; }
+
+.space-y-4 > * + * { margin-top: var(--spacing-md) !important; }
+.space-y-6 > * + * { margin-top: var(--spacing-lg) !important; }
+.space-y-8 > * + * { margin-top: var(--spacing-xl) !important; }
+
+/* ============================================
+   8. FORM STYLES
+   ============================================ */
+input,
+textarea,
+select {
+  background: white !important;
+  border: 1px solid var(--gray-300) !important;
+  color: var(--gray-900) !important;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: var(--gray-400) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border-color: var(--shopify-green) !important;
+  box-shadow: 0 0 0 3px rgba(0, 128, 96, 0.1) !important;
+}
+
+/* ============================================
+   9. NAVIGATION FIXES
+   ============================================ */
+nav,
+aside {
+  background: white !important;
+  border-right: 1px solid var(--gray-200) !important;
+}
+
+nav a,
+aside a {
+  color: var(--gray-600) !important;
+}
+
+nav a:hover,
+aside a:hover {
+  background: var(--gray-50) !important;
+  color: var(--gray-900) !important;
+}
+
+nav a.active,
+aside a.active {
+  background: var(--gray-100) !important;
+  color: var(--gray-900) !important;
+}
+
+/* ============================================
+   10. UTILITY CLASSES
+   ============================================ */
+.text-gray { color: var(--gray-600) !important; }
+.text-dark { color: var(--gray-900) !important; }
+.bg-white { background-color: white !important; }
+.bg-light { background-color: var(--gray-50) !important; }
+
+/* Hide all decorative overlays */
+*::before,
+*::after {
+  display: none !important;
+}

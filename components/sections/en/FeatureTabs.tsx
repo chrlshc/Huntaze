@@ -10,7 +10,7 @@ type FeatureKey = 'inbox' | 'analytics' | 'payments' | 'ai' | 'security' | 'coll
 const FEATURES: Record<FeatureKey, { title: string; desc: string; bullets: string[]; icon: any; color: string }[]> = {
   inbox: [{
     title: 'Unified Inbox',
-    desc: 'Instagram, TikTok and OnlyFans in one place. Reply 2× faster and never miss a sale.',
+    desc: 'Instagram, TikTok and OnlyFans in one place. Reply 2x faster and never miss a sale.',
     bullets: [
       'Auto‑prioritization of high‑value conversations',
       'One‑click AI snippets and templates',

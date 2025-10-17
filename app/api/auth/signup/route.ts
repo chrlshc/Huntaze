@@ -1,85 +1,104 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SignJWT } from 'jose';
-import bcrypt from 'bcryptjs';
+import { signUp } from 'aws-amplify/auth';
+import { applyRateLimit } from '@/lib/rate-limit';
+import { z } from 'zod';
+import { configureAmplify } from '@/lib/amplify-config';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { redactObj } from '@/lib/log-sanitize';
+
+// Initialize Amplify
+configureAmplify();
+
+// Validation schema
+const signUpSchema = z.object({
+  email: z.string().email(),
+  password: z.string()
+    .min(14, 'Password must be at least 14 characters')
+    .regex(/[A-Z]/, 'Password must contain uppercase letter')
+    .regex(/[a-z]/, 'Password must contain lowercase letter') 
+    .regex(/[0-9]/, 'Password must contain number')
+    .regex(/[^A-Za-z0-9]/, 'Password must contain special character'),
+  marketingConsent: z.boolean().optional(),
+  timezone: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const { pathname } = new URL(request.url);
+  const log = makeReqLogger({ requestId, route: pathname, method: request.method });
   try {
-    const { email, password } = await request.json();
+    // Rate limiting - 3 signups per hour
+    const rateLimitResponse = applyRateLimit(request, 3, 60 * 60 * 1000, 'strict');
+    if (rateLimitResponse) return rateLimitResponse;
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+    const body = await request.json();
+    
+    // Validate request
+    const validationResult = signUpSchema.safeParse(body);
+    if (!validationResult.success) {
+      const r = NextResponse.json({ error: 'Validation failed', details: validationResult.error.flatten(), requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters' },
-        { status: 400 }
-      );
-    }
+    const { email, password, marketingConsent, timezone } = validationResult.data;
 
-    // TODO: Check if user already exists in database
-    // For now, we'll create a mock user
+    try {
+      // Create user in Cognito
+      const { isSignUpComplete, userId, nextStep } = await signUp({
+        username: email,
+        password,
+        attributes: {
+          email,
+          locale: request.headers.get('Accept-Language')?.split(',')[0] || 'en',
+          zoneinfo: timezone || 'America/New_York',
+          'custom:marketing_consent': marketingConsent ? 'true' : 'false',
+        }
+      });
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+      // Log signup event
+      log.info('auth_signup_success', redactObj({ email, userId }));
 
-    // Create user object
-    const user = {
-      id: Math.random().toString(36).substring(7),
-      email,
-      name: email.split('@')[0], // Use email prefix as name
-      provider: 'email',
-      createdAt: new Date().toISOString(),
-    };
+      const r = NextResponse.json({
+        success: true,
+        userId: userId,
+        nextStep: nextStep.signUpStep,
+        message: 'Please check your email for verification code',
+        requestId,
+      }, { 
+        status: 201,
+        headers: {
+          'X-User-Id': userId || '',
+          'X-Request-Id': requestId,
+        }
+      });
+      return r;
 
-    // TODO: Save user to database
-    console.log('New user signup:', { ...user, password: '[HASHED]' });
-
-    // Generate JWT
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-
-    const token = await new SignJWT({ 
-      userId: user.id,
-      email: user.email,
-      provider: 'email'
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('10y')
-      .sign(secret);
-
-    // Create response with redirect URL for onboarding
-    const response = NextResponse.json({ 
-      success: true,
-      redirect: '/onboarding/setup',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        provider: user.provider,
+    } catch (cognitoError: any) {
+      log.error('auth_signup_cognito_error', { error: cognitoError?.message || 'unknown_error' });
+      
+      // Handle specific Cognito errors
+      if (cognitoError.name === 'UsernameExistsException') {
+        const r = NextResponse.json({ error: 'User already exists', requestId }, { status: 409 });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
       }
-    });
+      
+      if (cognitoError.name === 'InvalidPasswordException') {
+        const r = NextResponse.json({ error: 'Password does not meet requirements', requestId }, { status: 400 });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
+      }
 
-    // Set auth cookie
-    response.cookies.set('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
-    });
+      throw cognitoError;
+    }
 
-    return response;
-  } catch (error) {
-    console.error('Signup error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create account' },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    log.error('auth_signup_failed', { error: error?.message || 'unknown_error' });
+    
+    const r = NextResponse.json({ error: 'Failed to create account', message: process.env.NODE_ENV === 'development' ? String(error) : undefined, requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

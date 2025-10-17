@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getStripe } from '@/lib/stripe'
 
 export async function POST(req: Request) {
   try {
     const sig = req.headers.get('stripe-signature') || ''
     const buf = Buffer.from(await req.arrayBuffer())
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' })
+    const stripeClient = await getStripe()
 
     let evt: Stripe.Event
     try {
-      evt = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET || '')
+      evt = stripeClient.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET || '')
     } catch {
       return new NextResponse('Invalid signature', { status: 400 })
     }
@@ -23,4 +24,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: e?.message || 'Webhook error' }, { status: 500 })
   }
 }
-

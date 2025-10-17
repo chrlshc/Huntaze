@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Huntaze Core SQS Queues (AI processing, analytics, webhooks, email)
+
+Parameters:
+  MessageRetentionSeconds:
+    Type: Number
+    Default: 1209600
+    Description: Message retention in seconds for DLQs (max 1209600 = 14 days)
+  VisibilityTimeoutSeconds:
+    Type: Number
+    Default: 120
+    Description: Default visibility timeout for core queues
+  ReceiveWaitTimeSeconds:
+    Type: Number
+    Default: 20
+    Description: Long polling wait time seconds for core queues
+
+Mappings:
+  Names:
+    Core:
+      AiProcessing: "huntaze-ai-processing"
+      Analytics: "huntaze-analytics"
+      Webhooks: "huntaze-webhooks"
+      Email: "huntaze-email"
+
+Resources:
+  # =============================
+  # AI Processing Queue + DLQ
+  # =============================
+  AiProcessingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join ['', [ !FindInMap [Names, Core, AiProcessing], '-dlq' ]]
+      MessageRetentionPeriod: !Ref MessageRetentionSeconds
+      SqsManagedSseEnabled: true
+
+  AiProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !FindInMap [Names, Core, AiProcessing]
+      VisibilityTimeout: !Ref VisibilityTimeoutSeconds
+      ReceiveMessageWaitTimeSeconds: !Ref ReceiveWaitTimeSeconds
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AiProcessingDLQ.Arn
+        maxReceiveCount: 5
+
+  # =============================
+  # Analytics Queue + DLQ
+  # =============================
+  AnalyticsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join ['', [ !FindInMap [Names, Core, Analytics], '-dlq' ]]
+      MessageRetentionPeriod: !Ref MessageRetentionSeconds
+      SqsManagedSseEnabled: true
+
+  AnalyticsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !FindInMap [Names, Core, Analytics]
+      VisibilityTimeout: 300
+      ReceiveMessageWaitTimeSeconds: !Ref ReceiveWaitTimeSeconds
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AnalyticsDLQ.Arn
+        maxReceiveCount: 5
+
+  # =============================
+  # Webhooks Queue + DLQ
+  # =============================
+  WebhooksDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join ['', [ !FindInMap [Names, Core, Webhooks], '-dlq' ]]
+      MessageRetentionPeriod: !Ref MessageRetentionSeconds
+      SqsManagedSseEnabled: true
+
+  WebhooksQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !FindInMap [Names, Core, Webhooks]
+      VisibilityTimeout: !Ref VisibilityTimeoutSeconds
+      ReceiveMessageWaitTimeSeconds: !Ref ReceiveWaitTimeSeconds
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt WebhooksDLQ.Arn
+        maxReceiveCount: 5
+
+  # =============================
+  # Email Queue + DLQ
+  # =============================
+  EmailDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Join ['', [ !FindInMap [Names, Core, Email], '-dlq' ]]
+      MessageRetentionPeriod: !Ref MessageRetentionSeconds
+      SqsManagedSseEnabled: true
+
+  EmailQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !FindInMap [Names, Core, Email]
+      VisibilityTimeout: 60
+      ReceiveMessageWaitTimeSeconds: !Ref ReceiveWaitTimeSeconds
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt EmailDLQ.Arn
+        maxReceiveCount: 5
+
+Outputs:
+  AiProcessingQueueUrl:
+    Value: !Ref AiProcessingQueue
+    Description: URL for AI Processing queue
+  AnalyticsQueueUrl:
+    Value: !Ref AnalyticsQueue
+    Description: URL for Analytics queue
+  WebhooksQueueUrl:
+    Value: !Ref WebhooksQueue
+    Description: URL for Webhooks queue
+  EmailQueueUrl:
+    Value: !Ref EmailQueue
+    Description: URL for Email queue

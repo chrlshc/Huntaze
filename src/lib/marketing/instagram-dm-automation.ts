@@ -1,5 +1,5 @@
 // Instagram DM Automation - Convert IG followers to OF subscribers
-// Sans dire "OnlyFans" pour éviter les bans
+// Avoid saying "OnlyFans" to keep the account safe
 
 
 export interface IGDMStrategy {
@@ -31,7 +31,7 @@ export const IG_DM_TEMPLATES: Record<string, IGDMStrategy> = {
     response: "Hey babe! Thanks for the follow 😘 I post my exclusive content on my VIP page - link in my bio if you want to see more of me 💕",
     followUpDelay: 24,
     followUpMessage: "Hope you're having an amazing day! Did you check out my special page yet? I just posted something HOT 🔥",
-    includeLink: false // IG détecte les liens
+    includeLink: false // IG flags links quickly
   },
   
   // Pricing questions (NEVER share prices on IG!)

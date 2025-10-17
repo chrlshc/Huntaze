@@ -1,0 +1,542 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze Core Infrastructure - Redis, PostgreSQL, API Gateway'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [development, staging, production]
+  CostCenter:
+    Type: String
+    Default: HUNTAZE
+  Owner:
+    Type: String
+    Default: Platform
+  OpsAlertEmail:
+    Type: String
+    Default: ops@example.com
+    Description: Email to subscribe to ops SNS alerts (used in prod only)
+  DBUsername:
+    Type: String
+    Default: huntazeadmin
+    Description: PostgreSQL admin username
+  DBPassword:
+    Type: String
+    NoEcho: true
+    Description: PostgreSQL admin password (min 8 chars)
+    MinLength: 8
+  DBIdentifier:
+    Type: String
+    Default: huntaze-postgres-production
+    Description: RDS DBInstanceIdentifier to create (must be unique in region)
+  
+Conditions:
+  IsProd: !Equals [!Ref Environment, "production"]
+    
+Resources:
+  # VPC for RDS and ElastiCache
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-VPC-${Environment}'
+
+  # Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-IGW-${Environment}'
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # Public Subnet 1
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Public-1-${Environment}'
+
+  # Public Subnet 2 (for RDS Multi-AZ)
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Public-2-${Environment}'
+
+  # Private Subnet 1
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Private-1-${Environment}'
+
+  # Private Subnet 2
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Private-2-${Environment}'
+
+  # Route Table for Public Subnets
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Public-RT-${Environment}'
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  # Security Group for ElastiCache
+  CacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ElastiCache Redis
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !Ref AppSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Cache-SG-${Environment}'
+
+  # Security Group for RDS
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS PostgreSQL
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref AppSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-DB-SG-${Environment}'
+
+  # Security Group for Applications
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for applications
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-App-SG-${Environment}'
+
+  # ElastiCache Subnet Group
+  CacheSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Subnet group for ElastiCache
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  # ElastiCache Redis Cluster
+  RedisCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      CacheNodeType: cache.t3.micro
+      Engine: redis
+      NumCacheNodes: 1
+      CacheSubnetGroupName: !Ref CacheSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref CacheSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Redis-${Environment}'
+
+  # RDS Subnet Group
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-DB-SubnetGroup-${Environment}'
+
+  # RDS PostgreSQL Instance
+  PostgresDB:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DBIdentifier
+      DBName: huntaze
+      Engine: postgres
+      EngineVersion: '15.4'
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      StorageType: gp3
+      MultiAZ: true
+      PubliclyAccessible: false
+      AutoMinorVersionUpgrade: true
+      EnablePerformanceInsights: true
+      MonitoringInterval: 60
+      MonitoringRoleArn: !GetAtt RdsEnhancedMonitoringRole.Arn
+      MaxAllocatedStorage: 100
+      CopyTagsToSnapshot: true
+      StorageEncrypted: true
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup
+      BackupRetentionPeriod: 7
+      PreferredBackupWindow: "03:00-04:00"
+      PreferredMaintenanceWindow: "Mon:04:00-Mon:05:00"
+      EnableCloudwatchLogsExports:
+        - postgresql
+      DeletionProtection: true
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-PostgreSQL-${Environment}'
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: CostCenter
+          Value: !Ref CostCenter
+        - Key: Owner
+          Value: !Ref Owner
+
+  # IAM role required for RDS Enhanced Monitoring
+  RdsEnhancedMonitoringRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: monitoring.rds.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole
+
+  # API Gateway
+  ApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub 'Huntaze-API-${Environment}'
+      Description: Huntaze API Gateway with rate limiting
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Stage
+  ApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: !Ref Environment
+      RestApiId: !Ref ApiGateway
+      DeploymentId: !Ref ApiDeployment
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingBurstLimit: 5000
+          ThrottlingRateLimit: 2000
+          MetricsEnabled: true
+      TracingEnabled: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","status":"$context.status","latency":"$context.responseLatency"}'
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: 
+      - ProxyMethod
+    Properties:
+      RestApiId: !Ref ApiGateway
+      Description: Initial deployment
+
+  # API Gateway Access Logs
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 30
+
+  # API Gateway execution logging role and account binding (enables execution logs/metrics)
+  ApiGwLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ApiGwAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGwLogsRole.Arn
+
+  # WAFv2 for API Gateway (regional)
+  RestApiWaf:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub "${Environment}-restapi-waf"
+      Scope: REGIONAL
+      DefaultAction: { Allow: {} }
+      VisibilityConfig:
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub "${Environment}-restapi-waf"
+        SampledRequestsEnabled: true
+      Rules:
+        - Name: AWSManagedCommon
+          Priority: 1
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+          OverrideAction: { None: {} }
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: common
+            SampledRequestsEnabled: true
+        - Name: RateLimit
+          Priority: 2
+          Statement:
+            RateBasedStatement:
+              Limit: 2000
+              AggregateKeyType: IP
+          Action: { Block: {} }
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: ratelimit
+            SampledRequestsEnabled: true
+
+  RestApiWafAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !Sub 'arn:aws:apigateway:${AWS::Region}::/restapis/${ApiGateway}/stages/${ApiStage}'
+      WebACLArn: !GetAtt RestApiWaf.Arn
+
+  # Ops SNS Topic for alarms/budgets
+  OpsAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${Environment}-ops-alerts'
+      Subscription:
+        - !If
+          - IsProd
+          - Protocol: email
+            Endpoint: !Ref OpsAlertEmail
+          - Ref: AWS::NoValue
+
+  OpsAlertsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [ !Ref OpsAlertsTopic ]
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCWPublish
+            Effect: Allow
+            Principal:
+              Service: cloudwatch.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref OpsAlertsTopic
+          - Sid: AllowBudgetsPublish
+            Effect: Allow
+            Principal:
+              Service: budgets.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref OpsAlertsTopic
+
+  # Budget example (100 USD)
+  MonthlyBudget100:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${Environment}-monthly-100'
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit: { Amount: 100, Unit: USD }
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: SNS
+              Address: !Ref OpsAlertsTopic
+
+  # API Gateway Resource (Proxy)
+  ProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: '{proxy+}'
+
+  # API Gateway Method
+  ProxyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !Ref ProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: HTTP_PROXY
+        IntegrationHttpMethod: ANY
+        Uri: !Sub 'https://${Environment}.huntaze.com/{proxy}'
+        PassthroughBehavior: WHEN_NO_MATCH
+        IntegrationResponses:
+          - StatusCode: 200
+
+  # Usage Plan for API Rate Limiting
+  ApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    DependsOn: ApiStage
+    Properties:
+      UsagePlanName: !Sub 'Huntaze-Usage-Plan-${Environment}'
+      Description: Rate limiting for Huntaze API
+      ApiStages:
+        - ApiId: !Ref ApiGateway
+          Stage: !Ref Environment
+      Throttle:
+        BurstLimit: 10000
+        RateLimit: 5000
+      Quota:
+        Limit: 1000000
+        Period: DAY
+
+  # Secrets Manager for DB Password
+  DBSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub 'huntaze-db-credentials-${Environment}'
+      Description: PostgreSQL database credentials
+      SecretString: !Sub |
+        {
+          "username": "${DBUsername}",
+          "password": "${DBPassword}",
+          "engine": "postgres",
+          "host": "${PostgresDB.Endpoint.Address}",
+          "port": ${PostgresDB.Endpoint.Port},
+          "dbname": "huntaze"
+        }
+
+Outputs:
+  RedisEndpoint:
+    Description: Redis cluster endpoint
+    Value: !GetAtt RedisCluster.RedisEndpoint.Address
+    Export:
+      Name: !Sub '${AWS::StackName}-RedisEndpoint'
+
+  RedisPort:
+    Description: Redis cluster port
+    Value: !GetAtt RedisCluster.RedisEndpoint.Port
+    Export:
+      Name: !Sub '${AWS::StackName}-RedisPort'
+
+  PostgresEndpoint:
+    Description: PostgreSQL endpoint
+    Value: !GetAtt PostgresDB.Endpoint.Address
+    Export:
+      Name: !Sub '${AWS::StackName}-PostgresEndpoint'
+
+  PostgresPort:
+    Description: PostgreSQL port
+    Value: !GetAtt PostgresDB.Endpoint.Port
+    Export:
+      Name: !Sub '${AWS::StackName}-PostgresPort'
+
+  ApiGatewayUrl:
+    Description: API Gateway URL
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayUrl'
+
+  DBSecretArn:
+    Description: ARN of the database credentials secret
+    Value: !Ref DBSecret
+    Export:
+      Name: !Sub '${AWS::StackName}-DBSecretArn'
+
+  VPCId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub '${AWS::StackName}-VPCId'
+
+  AppSecurityGroupId:
+    Description: Application Security Group ID
+    Value: !Ref AppSecurityGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-AppSecurityGroup'
+
+  OpsAlertsTopicArn:
+    Description: ARN of the Ops SNS topic for alarms/budgets
+    Value: !Ref OpsAlertsTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-OpsAlertsTopicArn'

@@ -148,7 +148,7 @@ export const PLAN_LIMITS: Record<string, AILimits> = {
     messagesPerDay: Infinity,
     responseSpeed: 'instant', // < 0.5 sec
     
-    aiModel: 'premium', // Claude 3 Opus / GPT-4 Latest
+    aiModel: 'premium', // Azure OpenAI GPT-4 Latest
     contextMemory: 100, // Remember entire conversation
     personalityDepth: 'ultra',
     

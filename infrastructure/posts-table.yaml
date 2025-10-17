@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Huntaze Posts pipeline tables (posts + idempotency pubkeys)
+
+Parameters:
+  TableName:
+    Type: String
+    Default: huntaze-posts
+  PubKeysTableName:
+    Type: String
+    Default: huntaze-pubkeys
+  Environment:
+    Type: String
+    Default: production
+
+Resources:
+  PostsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: userId, AttributeType: S }
+        - { AttributeName: postId, AttributeType: S }
+        - { AttributeName: status, AttributeType: S }
+        - { AttributeName: scheduledAt, AttributeType: S }
+        - { AttributeName: createdAt, AttributeType: S }
+        - { AttributeName: platform, AttributeType: S }
+        - { AttributeName: statusUpdatedAt, AttributeType: S }
+      KeySchema:
+        - { AttributeName: userId, KeyType: HASH }
+        - { AttributeName: postId, KeyType: RANGE }
+      GlobalSecondaryIndexes:
+        - IndexName: ByStatusScheduledAt
+          KeySchema:
+            - { AttributeName: status, KeyType: HASH }
+            - { AttributeName: scheduledAt, KeyType: RANGE }
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes: [ userId, postId ]
+        - IndexName: ByUserCreatedAt
+          KeySchema:
+            - { AttributeName: userId, KeyType: HASH }
+            - { AttributeName: createdAt, KeyType: RANGE }
+          Projection:
+            ProjectionType: ALL
+        - IndexName: ByPlatformStatus
+          KeySchema:
+            - { AttributeName: platform, KeyType: HASH }
+            - { AttributeName: statusUpdatedAt, KeyType: RANGE }
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes: [ userId, postId ]
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - { Key: env, Value: !Ref Environment }
+        - { Key: app, Value: huntaze }
+
+  PubKeysTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Ref PubKeysTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: pk, AttributeType: S }
+      KeySchema:
+        - { AttributeName: pk, KeyType: HASH }
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - { Key: env, Value: !Ref Environment }
+        - { Key: app, Value: huntaze }
+
+Outputs:
+  PostsTableName:
+    Value: !Ref PostsTable
+  PubKeysTableName:
+    Value: !Ref PubKeysTable
+

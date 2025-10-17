@@ -1,0 +1,171 @@
+{
+  "info": {
+    "_postman_id": "b6b9f2cf-6d44-4a47-9a11-hz-tiktok",
+    "name": "Huntaze — TikTok (OAuth v2, Snapshot, Posting)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Authorize → Token/Refresh → Snapshot + Content Posting (init/upload/direct post/status)."
+  },
+  "item": [
+    {
+      "name": "OAuth v2",
+      "item": [
+        {
+          "name": "Authorize (PKCE-friendly; open in browser)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://www.tiktok.com/v2/auth/authorize?client_key={{TIKTOK_CLIENT_KEY}}&response_type=code&scope={{TIKTOK_SCOPES}}&redirect_uri={{NEXT_PUBLIC_TIKTOK_REDIRECT_URI}}&state={{STATE}}&code_challenge={{TIKTOK_CODE_CHALLENGE}}&code_challenge_method=S256",
+              "protocol": "https",
+              "host": ["www","tiktok","com"],
+              "path": ["v2","auth","authorize"],
+              "query": [
+                {"key":"client_key","value":"{{TIKTOK_CLIENT_KEY}}"},
+                {"key":"response_type","value":"code"},
+                {"key":"scope","value":"{{TIKTOK_SCOPES}}"},
+                {"key":"redirect_uri","value":"{{NEXT_PUBLIC_TIKTOK_REDIRECT_URI}}"},
+                {"key":"state","value":"{{STATE}}"},
+                {"key":"code_challenge","value":"{{TIKTOK_CODE_CHALLENGE}}"},
+                {"key":"code_challenge_method","value":"S256"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Exchange code → tokens",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Content-Type","value":"application/x-www-form-urlencoded"}],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key":"client_key","value":"{{TIKTOK_CLIENT_KEY}}"},
+                {"key":"client_secret","value":"{{TIKTOK_CLIENT_SECRET}}"},
+                {"key":"code","value":"{{TIKTOK_AUTH_CODE}}"},
+                {"key":"grant_type","value":"authorization_code"},
+                {"key":"redirect_uri","value":"{{NEXT_PUBLIC_TIKTOK_REDIRECT_URI}}"},
+                {"key":"code_verifier","value":"{{TIKTOK_CODE_VERIFIER}}"}
+              ]
+            },
+            "url": "https://open.tiktokapis.com/v2/oauth/token/"
+          }
+        },
+        {
+          "name": "Refresh access_token",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Content-Type","value":"application/x-www-form-urlencoded"}],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key":"client_key","value":"{{TIKTOK_CLIENT_KEY}}"},
+                {"key":"client_secret","value":"{{TIKTOK_CLIENT_SECRET}}"},
+                {"key":"grant_type","value":"refresh_token"},
+                {"key":"refresh_token","value":"{{TIKTOK_REFRESH_TOKEN}}"}
+              ]
+            },
+            "url": "https://open.tiktokapis.com/v2/oauth/token/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Snapshot",
+      "item": [
+        {
+          "name": "GET /v2/user/info (fields)",
+          "request": {
+            "method": "GET",
+            "header": [{"key":"Authorization","value":"Bearer {{TIKTOK_ACCESS_TOKEN}}"}],
+            "url": {
+              "raw": "https://open.tiktokapis.com/v2/user/info/?fields=open_id,union_id,display_name,avatar_url,profile_deep_link,follower_count,likes_count,video_count",
+              "protocol": "https",
+              "host": ["open","tiktokapis","com"],
+              "path": ["v2","user","info",""],
+              "query": [{"key":"fields","value":"open_id,union_id,display_name,avatar_url,profile_deep_link,follower_count,likes_count,video_count"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "TikTok Content Posting",
+      "item": [
+        {
+          "name": "creator_info/query (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Authorization","value":"Bearer {{TIKTOK_ACCESS_TOKEN}}"},
+              {"key":"Content-Type","value":"application/json; charset=UTF-8"}
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "https://open.tiktokapis.com/v2/post/publish/creator_info/query/",
+            "description": "Check creator capabilities/permissions for posting."
+          }
+        },
+        {
+          "name": "direct post — init (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Authorization","value":"Bearer {{TIKTOK_ACCESS_TOKEN}}"},
+              {"key":"Content-Type","value":"application/json; charset=UTF-8"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"post_info\": {\n    \"title\": \"caption with #hashtags and @mentions\",\n    \"privacy_level\": \"SELF_ONLY\",\n    \"disable_duet\": false,\n    \"disable_comment\": false,\n    \"disable_stitch\": false,\n    \"video_cover_timestamp_ms\": 1000\n  },\n  \"source_info\": {\n    \"source\": \"FILE_UPLOAD\",\n    \"video_size\": 50000123,\n    \"chunk_size\": 10000000,\n    \"total_chunk_count\": 5\n  }\n}"
+            },
+            "url": "https://open.tiktokapis.com/v2/post/publish/video/init/",
+            "description": "Init publish; alternatively set source=PULL_FROM_URL with video_url (verified domain)."
+          }
+        },
+        {
+          "name": "inbox upload — init (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Authorization","value":"Bearer {{TIKTOK_ACCESS_TOKEN}}"},
+              {"key":"Content-Type","value":"application/json; charset=UTF-8"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source_info\": {\n    \"source\": \"FILE_UPLOAD\",\n    \"video_size\": 30567100,\n    \"chunk_size\": 30567100,\n    \"total_chunk_count\": 1\n  }\n}"
+            },
+            "url": "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/",
+            "description": "Upload to inbox/drafts; user completes in app."
+          }
+        },
+        {
+          "name": "upload chunk (PUT {{UPLOAD_URL}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key":"Content-Type","value":"video/mp4"},
+              {"key":"Content-Range","value":"bytes 0-9999999/50000123"}
+            ],
+            "body": { "mode": "file", "file": { "src": "" } },
+            "url": "{{UPLOAD_URL}}",
+            "description": "Use upload_url from init response. Adjust Content-Range for chunking."
+          }
+        },
+        {
+          "name": "status fetch (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Authorization","value":"Bearer {{TIKTOK_ACCESS_TOKEN}}"},
+              {"key":"Content-Type","value":"application/json; charset=UTF-8"}
+            ],
+            "body": { "mode": "raw", "raw": "{ \n  \"publish_id\": \"{{PUBLISH_ID}}\"\n}" },
+            "url": "https://open.tiktokapis.com/v2/post/publish/status/fetch/"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "STATE", "value": "dev-{{timestamp}}" },
+    { "key": "TIKTOK_SCOPES", "value": "user.info.basic,user.info.stats,video.list,video.publish" },
+    { "key": "PUBLISH_ID", "value": "" }
+  ]
+}

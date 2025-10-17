@@ -338,7 +338,7 @@ export const presets: Record<NicheId, NichePreset> = {
       day3: "Shooting new content in my favorite cemetery... the atmosphere is perfect for what I have in mind 💀 Interested in the results?",
       day4: 'Your support feeds my dark soul 🖤 I\'m creating something exclusively twisted... What darkness calls to you? 🌙',
       day5: "Black lace and moonlight... the perfect combination for tonight's shoot. My shadows are calling your name 👻",
-      day6: 'Weekend séance with my inner circle... the spirits have whispered some very interesting requests 🔮 Want to hear them?',
+      day6: 'Weekend session with my inner circle... the spirits have whispered some very interesting requests 🔮 Want to hear them?',
       day7: 'One week in the coven! 🖤 You\'ve proven yourself worthy... Ready to join my inner circle of darkness? 🌑',
     },
     cadence: { postsPerWeek: 4, storiesPerWeek: 8, dmCheckinsPerDay: 2 },
@@ -437,4 +437,3 @@ export const presets: Record<NicheId, NichePreset> = {
     confidence: 'medium',
   },
 };
-

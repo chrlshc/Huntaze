@@ -1,0 +1,36 @@
+name: CFN Execute ChangeSet
+
+on:
+  workflow_dispatch:
+    inputs:
+      stack:
+        description: 'Stack name (e.g., huntaze-core-prod)'
+        required: true
+      changeset:
+        description: 'ChangeSet name (exact string from the summary)'
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Execute ChangeSet
+        run: |
+          aws cloudformation execute-change-set \
+            --stack-name "${{ github.event.inputs.stack }}" \
+            --change-set-name "${{ github.event.inputs.changeset }}"
+          aws cloudformation wait stack-update-complete \
+            --stack-name "${{ github.event.inputs.stack }}"
+          echo "✅ Executed and completed: ${{ github.event.inputs.stack }}"
+

@@ -127,14 +127,14 @@ function IPhoneModel({ scrollProgress }: IPhoneModelProps) {
           >
             <div className="glass-card p-3 min-w-[200px]">
               <div className="text-white font-bold text-sm">
-                {currentApp === 0 && 'OnlyFans Analytics'}
+                {currentApp === 0 && 'OnlyFans analytics'}
                 {currentApp === 1 && 'Instagram DM AI'}
-                {currentApp === 2 && 'TikTok Creator Hub'}
+                {currentApp === 2 && 'TikTok creator hub'}
               </div>
               <div className="text-gray-300 text-xs mt-1">
-                {currentApp === 0 && '+312% revenus'}
-                {currentApp === 1 && '500+ messages/heure'}
-                {currentApp === 2 && 'Engagement temps réel'}
+                {currentApp === 0 && '+312% revenue'}
+                {currentApp === 1 && '500+ messages/hour'}
+                {currentApp === 2 && 'Real-time engagement'}
               </div>
             </div>
           </motion.div>
@@ -178,8 +178,8 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
 
   const platforms = [
     { name: 'OnlyFans', color: '#00AFF0', icon: '💎', metric: '312% ↑' },
-    { name: 'Instagram', color: '#E4405F', icon: '📸', metric: '500 msg/h' },
-    { name: 'TikTok', color: '#000000', icon: '🎵', metric: '95% rétention' }
+    { name: 'Instagram', color: '#E4405F', icon: '📸', metric: '500 msg/hr' },
+    { name: 'TikTok', color: '#000000', icon: '🎵', metric: '95% retention' }
   ];
   
   const currentPlatform = Math.floor(scrollProgress * 3) % 3;
@@ -197,15 +197,15 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
           >
             <h2 className="text-5xl lg:text-6xl font-bold">
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                Une interface,
+                One interface,
                 <br />
-                tous vos réseaux
+                all your networks
               </span>
             </h2>
             
             <p className="text-xl text-gray-300">
-              Gérez OnlyFans, Instagram et TikTok en un seul endroit. 
-              L'IA s'adapte automatiquement à chaque plateforme.
+              Manage OnlyFans, Instagram, and TikTok from a single place.
+              The AI adapts automatically to each platform.
             </p>
 
             {/* Platform selector */}
@@ -247,7 +247,7 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                   >
-                    {['PPV automatisé', 'Tips tracking', 'Mass messages', 'Analytics avancés'].map((feature) => (
+                    {['Automated PPV', 'Tip tracking', 'Mass messages', 'Advanced analytics'].map((feature) => (
                       <FeatureItem key={feature} text={feature} />
                     ))}
                   </motion.div>
@@ -351,7 +351,7 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
         transition={{ delay: 1 }}
       >
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-gray-400">Scrollez pour découvrir</p>
+          <p className="text-sm text-gray-400">Scroll to explore</p>
           <motion.div
             className="w-6 h-10 border-2 border-white/20 rounded-full p-1"
             animate={{ y: [0, 5, 0] }}

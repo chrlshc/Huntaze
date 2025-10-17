@@ -1,19 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { getStripe } from '@/lib/stripe';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { rateLimit } from '@/lib/rate-limit';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
-
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const limited = rateLimit(request, { windowMs: 60_000, max: 20 });
-    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    if (!limited.ok) {
+      const r = NextResponse.json({ error: 'Rate limit exceeded', requestId }, { status: 429 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
+    }
 
     const user = await getUserFromRequest(request);
-    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    if (!user?.userId) {
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
+    }
     const userId = user.userId as string;
     const email = (user.email || '') as string;
 
@@ -41,7 +49,8 @@ export async function POST(request: NextRequest) {
     // Create Stripe checkout session (idempotent)
     const idempotencyKey = `checkout_${userId}_${planId}`;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
-    const session = await stripe.checkout.sessions.create({
+    const stripeClient = await getStripe();
+    const session = await stripeClient.checkout.sessions.create({
       customer_email: email,
       payment_method_types: ['card'],
       line_items: [
@@ -60,15 +69,13 @@ export async function POST(request: NextRequest) {
       subscription_data: trialDays != null ? { trial_period_days: trialDays } : undefined,
     }, { idempotencyKey });
 
-    return NextResponse.json({ 
-      url: session.url,
-      sessionId: session.id,
-    });
+    const r = NextResponse.json({ url: session.url, sessionId: session.id, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   } catch (error: any) {
-    console.error('Stripe checkout error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    log.error('stripe_checkout_create_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: error.message || 'Failed to create checkout session', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

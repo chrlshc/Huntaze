@@ -1,5 +1,5 @@
 // OnlyFans Subscription Tiers & Loyalty System
-// Prix recommandé: MAX 10$ pour maximiser les conversions
+// Recommended price: MAX $10 to maximise conversions
 
 import { db } from '@/lib/db';
 
@@ -13,12 +13,12 @@ export interface SubscriptionTier {
   minFans?: number; // Minimum fans to unlock
 }
 
-// RECOMMANDATION PRIX: 4.99$ - 9.99$ MAX
+// RECOMMENDED PRICE: $4.99 – $9.99 MAX
 export const RECOMMENDED_TIERS: SubscriptionTier[] = [
   {
     id: 'basic',
     name: 'Basic Fan',
-    price: 4.99, // Prix d'entrée attractif
+    price: 4.99, // Attractive entry price
     benefits: [
       'Access to all posts',
       'Chat with me',
@@ -45,7 +45,7 @@ export const RECOMMENDED_TIERS: SubscriptionTier[] = [
   {
     id: 'elite',
     name: 'Elite Circle',
-    price: 9.99, // MAX recommandé
+    price: 9.99, // Recommended max
     benefits: [
       'Everything in VIP',
       '40% off all PPV',

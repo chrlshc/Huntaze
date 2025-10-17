@@ -12,7 +12,7 @@ export default function PerfectShadowEffect() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Classe pour créer les lignes d'ombre néon AUTOUR du contenu
+    // Helper to create neon shadow lines around the content
     class ShadowLinesEffect {
       shadowLines: any[] = [];
       floatingOrbs: any[] = [];
@@ -24,9 +24,9 @@ export default function PerfectShadowEffect() {
       // Palette de couleurs Shadow
       colors = {
         primary: '#8A2BE2',     // Violet
-        secondary: '#C724B1',   // Rose néon
+        secondary: '#C724B1',   // Neon pink
         tertiary: '#FF1493',    // Deep pink
-        glow: '#E0B0FF',       // Lavande clair
+        glow: '#E0B0FF',       // Light lavender
         dark: '#4B0082'        // Indigo
       };
       
@@ -43,7 +43,7 @@ export default function PerfectShadowEffect() {
           this.mouseY = e.clientY;
         });
         
-        // Créer les lignes d'ombre flottantes
+        // Create floating shadow lines
         this.createShadowLines();
         this.createFloatingOrbs();
         this.createEnergyBeams();
@@ -55,7 +55,7 @@ export default function PerfectShadowEffect() {
       }
       
       createShadowLines() {
-        // Créer des lignes qui flottent AUTOUR du contenu central
+        // Create lines that float around the central content
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         const radius = 300;
@@ -63,18 +63,18 @@ export default function PerfectShadowEffect() {
         for (let i = 0; i < 8; i++) {
           const angle = (Math.PI * 2 / 8) * i;
           this.shadowLines.push({
-            // Position de départ en cercle autour du centre
+            // Starting position arranged in a circle around the center
             startX: centerX + Math.cos(angle) * radius,
             startY: centerY + Math.sin(angle) * radius,
-            // Position de fin
+            // End position
             endX: centerX + Math.cos(angle + 0.5) * (radius + 100),
             endY: centerY + Math.sin(angle + 0.5) * (radius + 100),
-            // Points de contrôle pour courbe de Bézier
+            // Bezier control points
             cp1x: centerX + Math.cos(angle + 0.2) * (radius + 50),
             cp1y: centerY + Math.sin(angle + 0.2) * (radius + 50),
             cp2x: centerX + Math.cos(angle + 0.3) * (radius + 80),
             cp2y: centerY + Math.sin(angle + 0.3) * (radius + 80),
-            // Propriétés d'animation
+            // Animation properties
             angle: angle,
             speed: 0.002 + Math.random() * 0.003,
             width: 2 + Math.random() * 2,
@@ -86,7 +86,7 @@ export default function PerfectShadowEffect() {
       }
       
       createFloatingOrbs() {
-        // Créer des orbes qui flottent autour
+        // Create orbs that float around
         for (let i = 0; i < 6; i++) {
           this.floatingOrbs.push({
             x: Math.random() * canvas.width,
@@ -102,7 +102,7 @@ export default function PerfectShadowEffect() {
       }
       
       createEnergyBeams() {
-        // Créer des faisceaux d'énergie qui apparaissent périodiquement
+        // Create energy beams that appear periodically
         for (let i = 0; i < 3; i++) {
           this.energyBeams.push({
             active: false,
@@ -143,13 +143,13 @@ export default function PerfectShadowEffect() {
         line.cp2x = centerX + Math.cos(animatedAngle + 0.3) * (currentRadius + 80);
         line.cp2y = centerY + Math.sin(animatedAngle + 0.3) * (currentRadius + 80);
         
-        // Pulse d'opacité
+        // Opacity pulse
         const pulse = Math.sin(this.time * 0.002 + line.offset) * 0.2 + 0.8;
         
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
         
-        // Dessiner plusieurs couches pour l'effet néon
+        // Draw multiple layers for the neon effect
         for (let i = 4; i >= 0; i--) {
           ctx.beginPath();
           ctx.moveTo(line.startX, line.startY);
@@ -222,14 +222,14 @@ export default function PerfectShadowEffect() {
       }
       
       triggerEnergyBeam() {
-        // Déclencher un faisceau d'énergie aléatoirement
+        // Trigger an energy beam at random
         if (Math.random() > 0.98) {
           const beam = this.energyBeams.find((b: any) => !b.active);
           if (beam) {
             beam.active = true;
             beam.progress = 0;
             
-            // Position aléatoire sur les bords
+            // Random position along the edges
             const side = Math.floor(Math.random() * 4);
             switch(side) {
               case 0: // Haut
@@ -277,7 +277,7 @@ export default function PerfectShadowEffect() {
         const currentX = beam.startX + (beam.endX - beam.startX) * beam.progress;
         const currentY = beam.startY + (beam.endY - beam.startY) * beam.progress;
         
-        // Traînée du faisceau
+        // Beam trail
         const trailLength = 100;
         const trailX = currentX - (beam.endX - beam.startX) * (trailLength / canvas.width);
         const trailY = currentY - (beam.endY - beam.startY) * (trailLength / canvas.height);
@@ -298,7 +298,7 @@ export default function PerfectShadowEffect() {
         ctx.shadowBlur = 20;
         ctx.stroke();
         
-        // Point lumineux à l'extrémité
+        // Light point at the tip
         ctx.beginPath();
         ctx.arc(currentX, currentY, beam.width * 2, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
@@ -316,7 +316,7 @@ export default function PerfectShadowEffect() {
         this.shadowLines.forEach(line => this.drawShadowLine(line));
         this.floatingOrbs.forEach(orb => this.drawFloatingOrb(orb));
         
-        // Déclencher et dessiner les faisceaux d'énergie
+        // Trigger and draw the energy beams
         this.triggerEnergyBeam();
         this.energyBeams.forEach(beam => this.drawEnergyBeam(beam));
         

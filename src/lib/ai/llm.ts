@@ -1,27 +1,21 @@
 import { decideTier, type PolicyInput, type ModelTier } from './routing-policy'
 import { guardTierForPlan } from './routing-guard'
 import { callOpenAI } from './providers/openai'
-import { callAnthropic } from './providers/anthropic'
 import { logCost } from './cost-logger'
 
 export type ChatMsg = { role: 'system' | 'user' | 'assistant'; content: string }
-type Provider = 'openai' | 'anthropic'
+type Provider = 'openai'
 
 const CHAIN: Record<ModelTier, { provider: Provider; model: string }[]> = {
   premium: [
     { provider: 'openai', model: 'gpt-4o' },
-    { provider: 'anthropic', model: 'claude-3-5-sonnet' },
     { provider: 'openai', model: 'gpt-4o-mini' },
   ],
   standard: [
-    { provider: 'anthropic', model: 'claude-3-5-sonnet' },
     { provider: 'openai', model: 'gpt-4o-mini' },
-    { provider: 'anthropic', model: 'claude-3-haiku' },
   ],
   economy: [
-    { provider: 'anthropic', model: 'claude-3-haiku' },
     { provider: 'openai', model: 'gpt-4o-mini' },
-    { provider: 'anthropic', model: 'claude-3-5-sonnet' },
   ],
 }
 
@@ -44,8 +38,7 @@ export async function generateWithPlan(opts: {
   let lastErr: any
   for (const step of chain) {
     try {
-      const call = step.provider === 'openai' ? callOpenAI : callAnthropic
-      const res = await call({
+      const res = await callOpenAI({
         model: step.model,
         messages: opts.messages,
         temperature: opts.temperature ?? 0.6,
@@ -78,4 +71,3 @@ export async function generateWithPlan(opts: {
   clearTimeout(to)
   throw lastErr ?? new Error('All providers failed')
 }
-

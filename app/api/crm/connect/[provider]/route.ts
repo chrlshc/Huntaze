@@ -1,21 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 import { crmConnections, CrmProviderId } from '@/lib/services/crmConnections';
 import { getUserFromRequest } from '@/lib/auth/request';
 
 export async function POST(request: NextRequest, { params }: { params: { provider: string } }) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const user = await getUserFromRequest(request);
-    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    if (!user?.userId) {
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
+    }
     const userId = user.userId as string;
 
     const provider = (params.provider || '').toLowerCase() as CrmProviderId;
     if (!['inflow', 'supercreator'].includes(provider)) {
-      return NextResponse.json({ error: 'Unknown provider' }, { status: 400 });
+      const r = NextResponse.json({ error: 'Unknown provider', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const { apiKey } = await request.json();
     if (!apiKey || typeof apiKey !== 'string') {
-      return NextResponse.json({ error: 'apiKey is required' }, { status: 400 });
+      const r = NextResponse.json({ error: 'apiKey is required', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // TODO: Validate the API key by calling provider API once docs are available
@@ -37,23 +49,36 @@ export async function POST(request: NextRequest, { params }: { params: { provide
     if (idx >= 0) existing[idx] = record; else existing.push(record);
     crmConnections.set(userId, existing);
 
-    return NextResponse.json({ ok: true, connection: { ...record } });
-  } catch (error) {
-    console.error('CRM connect error:', error);
-    return NextResponse.json({ error: 'Failed to connect CRM' }, { status: 500 });
+    const r = NextResponse.json({ ok: true, connection: { ...record }, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('crm_connect_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to connect CRM', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 export async function GET(request: NextRequest, { params }: { params: { provider: string } }) {
+  const requestId = crypto.randomUUID();
   try {
     const user = await getUserFromRequest(request);
-    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    if (!user?.userId) {
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
+    }
     const userId = user.userId as string;
 
     const provider = (params.provider || '').toLowerCase() as CrmProviderId;
     const existing = (crmConnections.get(userId) || []).find((c) => c.provider === provider);
-    return NextResponse.json({ connection: existing || null });
+    const r = NextResponse.json({ connection: existing || null, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to get CRM connection' }, { status: 500 });
+    const r = NextResponse.json({ error: 'Failed to get CRM connection', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

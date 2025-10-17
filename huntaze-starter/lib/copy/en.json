@@ -1,0 +1,21 @@
+{
+  "auth.expired": "Your connection expired. Please reconnect to continue.",
+  "auth.needPermission": "Allow access to publish on this platform.",
+  "composer.invalidImage": "This file isn’t a supported image. Choose a JPG or PNG.",
+  "composer.textTooLong": "Text is too long. Shorten it to publish.",
+  "composer.tooLarge": "This file is too large. Compress it or choose a shorter clip.",
+  "composer.unreadableVideo": "We couldn’t read this video. Try an MP4.",
+  "composer.uploadInterrupted": "Upload interrupted. Please try again.",
+  "of.massMessage.planReady": "Your plan is ready. Copy the message and send it in OnlyFans.",
+  "of.smartReplies": "Here are 3 ready-to-use replies: friendly, direct, and upsell. Copy the one you prefer.",
+  "planner.empty": "Schedule your posts. Soon, we’ll recommend optimal times based on recent performance.",
+  "planner.scheduledOk": "Scheduled. Your post will publish at the selected time.",
+  "planner.scheduledPast": "That time has already passed. Pick another time.",
+  "publish.ig.fileInaccessible": "We couldn’t access the file. Re-upload it or try again.",
+  "publish.ig.ok": "Published on Instagram.",
+  "publish.ig.videoTooLong": "Your video couldn’t be processed. Choose a shorter clip.",
+  "publish.reddit.noSubreddit": "Choose a subreddit before posting.",
+  "publish.reddit.ok": "Published on r/{subreddit}.",
+  "publish.tiktok.inbox": "Video sent to TikTok. Finish posting from your TikTok inbox.",
+  "publish.tiktok.uploadFailed": "Upload didn’t finish. Try again."
+}

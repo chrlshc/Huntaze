@@ -20,7 +20,7 @@ This file maps the strategic plan to concrete, staged changes in this codebase.
 
 - AI Draft (human-in-the-loop):
   - EXISTING: `/api/ofm/ai/draft` placeholder.
-  - TODO: Plug real LLM (Claude/OpenAI/Azure) behind env guard + moderation.
+  - TODO: Plug real LLM (Azure OpenAI) behind env guard + moderation.
 
 ## Phase 2 (3–6 months)
 
@@ -43,4 +43,3 @@ This file maps the strategic plan to concrete, staged changes in this codebase.
 
 - TikTok OAuth callback fixed (POST `user/info`).
 - Compliance: OF operations are read-only; no password collection.
-

@@ -26,6 +26,12 @@ yarn-error.log*
 .env*.local
 .env
 .env.production
+.env.*
+!.env.example
+!**/.env.example
+!**/.env.local.example
+.env.local.backup*
+deployment/prod-env.sh
 
 # vercel
 .vercel
@@ -37,3 +43,5 @@ next-env.d.ts
 # logs
 *.log
 server-output.log
+
+/generated/prisma

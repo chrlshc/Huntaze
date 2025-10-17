@@ -785,7 +785,7 @@ export default function OnboardingSetupPage() {
                           <div className="space-y-4">
                             <div className="border border-border-light rounded-lg p-4">
                               <div className="flex items-center justify-between mb-2">
-                                <div className="font-semibold">Cadence {(customPlaybook.cadence ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Modifié</span> : null)}</div>
+                                <div className="font-semibold">Cadence {(customPlaybook.cadence ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Updated</span> : null)}</div>
                                 <button
                                   type="button"
                                   className="text-[11px] text-blue-600 hover:underline"
@@ -875,7 +875,7 @@ export default function OnboardingSetupPage() {
                             </div>
                             <div className="border border-border-light rounded-lg p-4">
                               <div className="flex items-center justify-between mb-2">
-                                <div className="font-semibold">Upsell Menu {(customPlaybook.upsellMenu ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Modifié</span> : null)}</div>
+                                <div className="font-semibold">Upsell Menu {(customPlaybook.upsellMenu ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Updated</span> : null)}</div>
                                 <button
                                   type="button"
                                   className="text-[11px] text-blue-600 hover:underline"
@@ -1264,7 +1264,7 @@ export default function OnboardingSetupPage() {
                 if (!p) return '';
                 const a = (formData.aiPersonality.traits || []).slice().sort().join('|');
                 const b = (p.traits || []).slice().sort().join('|');
-                return a !== b ? ' • Modifié' : '';
+                return a !== b ? ' • Updated' : '';
               })()}</label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -1313,7 +1313,7 @@ export default function OnboardingSetupPage() {
                 label={`Suggested monthly price ($/month)${(() => {
                   const p = (formData.niche && (presets as any)[formData.niche]) || null;
                   if (!p) return '';
-                  return String(formData.monthlyPrice || '').trim() !== String(p.price || '').trim() ? ' • Modifié' : '';
+                  return String(formData.monthlyPrice || '').trim() !== String(p.price || '').trim() ? ' • Updated' : '';
                 })()}`}
                 value={String(formData.monthlyPrice || '')}
                 onSave={(newPrice) => {

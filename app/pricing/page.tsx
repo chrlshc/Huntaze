@@ -100,20 +100,20 @@ export default function PricingPage() {
             <div className="inline-flex items-center gap-4 p-1 bg-gray-100 dark:bg-gray-900 rounded-full">
               <button
                 onClick={() => setBillingCycle("monthly")}
-                className={`px-6 py-3 rounded-full font-medium transition-all ${
+                className={`shopify-btn shopify-btn--sm ${
                   billingCycle === "monthly"
-                    ? "bg-white dark:bg-black text-gray-900 dark:text-white shadow-lg"
-                    : "text-gray-600 dark:text-gray-400"
+                    ? "shopify-btn--primary"
+                    : "shopify-btn--tertiary"
                 }`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle("yearly")}
-                className={`px-6 py-3 rounded-full font-medium transition-all ${
+                className={`shopify-btn shopify-btn--sm ${
                   billingCycle === "yearly"
-                    ? "bg-white dark:bg-black text-gray-900 dark:text-white shadow-lg"
-                    : "text-gray-600 dark:text-gray-400"
+                    ? "shopify-btn--primary"
+                    : "shopify-btn--tertiary"
                 }`}
               >
                 Yearly
@@ -182,17 +182,16 @@ export default function PricingPage() {
                   </div>
 
                   {/* CTA Button */}
-                  <Button
-                    size="lg"
-                    className={`w-full mb-8 ${
+                  <button
+                    className={`shopify-btn shopify-btn--lg shopify-btn--full mb-8 ${
                       plan.popular
                         ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                        : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900"
+                        : "shopify-btn--primary"
                     }`}
                     onClick={() => events.planSelect({ plan: plan.name, billing: billingCycle })}
                   >
                     {plan.cta}
-                  </Button>
+                  </button>
 
                   {/* Features */}
                   <ul className="space-y-4">

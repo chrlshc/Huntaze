@@ -15,7 +15,7 @@ export default function LinearLikeHero() {
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const reduce = useReducedMotion()
 
-  // Désactive le tilt sur écrans tactiles (évite les artefacts)
+  // Disable tilt on touch devices (avoids artefacts)
   const [isCoarse, setIsCoarse] = useState(false)
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -29,7 +29,7 @@ export default function LinearLikeHero() {
     offset: ['start start', 'end start'],
   })
 
-  // --- Tilt 3D piloté par le pointeur --------------------------------------
+  // --- Pointer-driven 3D tilt --------------------------------------
   const rxSpring = useSpring(0, { stiffness: 160, damping: 18 })
   const rySpring = useSpring(0, { stiffness: 160, damping: 18 })
 
@@ -39,7 +39,7 @@ export default function LinearLikeHero() {
     const r = el.getBoundingClientRect()
     const px = (e.clientX - r.left) / r.width // 0..1
     const py = (e.clientY - r.top) / r.height // 0..1
-    const MAX = 10 // degrés
+    const MAX = 10 // degrees
     rySpring.set((0.5 - px) * MAX)  // rotateY
     rxSpring.set((py - 0.5) * MAX)  // rotateX
   }
@@ -49,7 +49,7 @@ export default function LinearLikeHero() {
   }
 
   // --- Parallaxe au scroll + rotation douce --------------------------------
-  const baseRotateZ = -8 // angle "skew" façon Linear
+  const baseRotateZ = -8 // skew angle inspired by Linear
   const rxScroll = useTransform(scrollYProgress, [0, 1], [0, -4])
   const ryScroll = useTransform(scrollYProgress, [0, 1], [0, 4])
   const rx = useTransform(() => (reduce || isCoarse ? 0 : rxSpring.get() + rxScroll.get()))
@@ -68,11 +68,11 @@ export default function LinearLikeHero() {
       className="relative min-h-[220vh] bg-[#0b0d10] text-[#e7e9ee]"
       aria-label="Hero section"
     >
-      {/* Arrière-plan : halos radiaux + noise subtil */}
+      {/* Background: radial halos plus subtle noise */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 h-[60rem] w-[60rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.25),transparent_70%)] blur-3xl" />
         <div className="absolute bottom-[-20rem] right-[-10rem] h-[40rem] w-[40rem] rounded-full bg-[radial-gradient(closest-side,rgba(236,72,153,0.2),transparent_70%)] blur-3xl" />
-        {/* texture "grain" générée en SVG (très légère) */}
+        {/* Lightweight SVG-generated grain texture */}
         <div
           className="absolute inset-0 opacity-[0.06] mix-blend-overlay"
           style={{
@@ -137,7 +137,7 @@ export default function LinearLikeHero() {
             </motion.div>
           </div>
 
-          {/* Scène 3D - Huntaze Mockup */}
+          {/* 3D scene - Huntaze mockup */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -202,7 +202,7 @@ export default function LinearLikeHero() {
               </div>
             </div>
 
-            {/* Anneau subtil façon "device frame" */}
+            {/* Subtle ring that mimics a device frame */}
             <div aria-hidden className="absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/10" />
 
             {/* Cartes flottantes (parallaxe + profondeur) */}

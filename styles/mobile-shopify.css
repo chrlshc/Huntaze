@@ -1,0 +1,386 @@
+/* Shopify-style Mobile Optimizations */
+
+/* iOS Safe Areas */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Touch targets - Minimum 44px for iOS */
+button,
+a,
+[role="button"],
+[role="link"],
+input[type="checkbox"],
+input[type="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Remove tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text selection on UI elements */
+button,
+nav,
+header,
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth scrolling with momentum */
+.scroll-smooth {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars on mobile */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile-specific animations */
+@media (max-width: 768px) {
+  /* Faster animations on mobile */
+  * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+  
+  /* Disable hover states on touch devices */
+  @media (hover: none) {
+    *:hover {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+}
+
+/* Bottom sheet styling */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 1rem 1rem 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 90vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dark .bottom-sheet {
+  background: #1a1a1a;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.bottom-sheet.open {
+  transform: translateY(0);
+}
+
+/* Pull indicator */
+.bottom-sheet::before {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.5rem;
+  height: 0.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+}
+
+.dark .bottom-sheet::before {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile card press states */
+.mobile-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+  position: fixed;
+  bottom: 5rem;
+  right: 1rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .fab {
+  background: #fff;
+  color: #000;
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
+/* Mobile-optimized forms */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+textarea,
+select {
+  font-size: 16px; /* Prevents zoom on iOS */
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #f9fafb;
+  transition: all 0.2s;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Focus states for mobile */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #000;
+  background: #fff;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #fff;
+  background: #000;
+}
+
+/* Mobile navigation transitions */
+.nav-enter {
+  animation: nav-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes nav-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Skeleton loading for mobile */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    #2a2a2a 25%,
+    #1a1a1a 50%,
+    #2a2a2a 75%
+  );
+  background-size: 200% 100%;
+}
+
+/* Mobile-specific utility classes */
+@media (max-width: 768px) {
+  .mobile\:hidden {
+    display: none !important;
+  }
+  
+  .mobile\:block {
+    display: block !important;
+  }
+  
+  .mobile\:text-sm {
+    font-size: 0.875rem !important;
+  }
+  
+  .mobile\:px-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  .mobile\:py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+}
+
+/* Gesture indicators */
+.swipe-hint {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipe-hint::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 0.125rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  animation: swipe-hint 2s infinite;
+}
+
+@keyframes swipe-hint {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-50%) translateX(-0.5rem);
+    opacity: 1;
+  }
+}
+
+/* Pull to refresh styles */
+.pull-to-refresh {
+  position: relative;
+}
+
+.pull-indicator {
+  position: absolute;
+  top: -3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2rem;
+  height: 2rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pull-indicator.visible {
+  opacity: 1;
+}
+
+/* Mobile toast notifications */
+.toast {
+  position: fixed;
+  bottom: 5rem;
+  left: 1rem;
+  right: 1rem;
+  background: #000;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(calc(100% + 2rem));
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+}
+
+.dark .toast {
+  background: #fff;
+  color: #000;
+}
+
+.toast.show {
+  transform: translateY(0);
+}
+
+/* Optimized touch ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.dark .ripple::before {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ripple:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Mobile-optimized shadows */
+@media (max-width: 768px) {
+  .shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  
+  .shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .shadow-lg {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+}

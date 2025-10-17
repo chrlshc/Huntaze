@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Scheduled EventBridge rule that posts monthly billing data to the Huntaze cron endpoint.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [development, staging, production]
+    Description: Deployment environment name used for tagging resources.
+  CronSecret:
+    Type: String
+    NoEcho: true
+    Description: Value forwarded in the x-cron-secret header when invoking the Huntaze monthly billing endpoint.
+  CronEndpoint:
+    Type: String
+    Default: https://huntaze.com/api/cron/monthly-billing
+    Description: Fully qualified HTTPS endpoint that receives the monthly billing webhook.
+  ScheduleExpression:
+    Type: String
+    Default: cron(0 2 1 * ? *)
+    Description: "EventBridge schedule expression (default: first day of month at 02:00 UTC)."
+
+Resources:
+  MonthlyBillingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'monthly-billing-dlq-${Environment}'
+
+  MonthlyBillingConnection:
+    Type: AWS::Events::Connection
+    Properties:
+      AuthorizationType: API_KEY
+      AuthParameters:
+        ApiKeyAuthParameters:
+          ApiKeyName: x-cron-secret
+          ApiKeyValue: !Ref CronSecret
+      Description: !Sub 'Connection for Huntaze monthly billing cron (${Environment})'
+      Name: !Sub 'huntaze-monthly-billing-${Environment}'
+
+  MonthlyBillingDestination:
+    Type: AWS::Events::ApiDestination
+    Properties:
+      ConnectionArn: !GetAtt MonthlyBillingConnection.Arn
+      Description: !Sub 'API destination for Huntaze monthly billing cron (${Environment})'
+      HttpMethod: POST
+      InvocationEndpoint: !Ref CronEndpoint
+      InvocationRateLimitPerSecond: 5
+      Name: !Sub 'huntaze-monthly-billing-destination-${Environment}'
+
+  MonthlyBillingInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      Description: !Sub 'IAM role that allows EventBridge to call Huntaze monthly billing destination (${Environment})'
+      Policies:
+        - PolicyName: !Sub 'huntaze-monthly-billing-invoke-${Environment}'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: events:InvokeApiDestination
+                Resource: !GetAtt MonthlyBillingDestination.Arn
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  MonthlyBillingRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: !Sub 'Triggers Huntaze monthly billing webhook (${Environment})'
+      Name: !Sub 'huntaze-monthly-billing-${Environment}'
+      ScheduleExpression: !Ref ScheduleExpression
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt MonthlyBillingDestination.Arn
+          Id: MonthlyBillingDestinationTarget
+          RoleArn: !GetAtt MonthlyBillingInvokeRole.Arn
+          RetryPolicy:
+            MaximumRetryAttempts: 185
+            MaximumEventAgeInSeconds: 86400
+          DeadLetterConfig:
+            Arn: !GetAtt MonthlyBillingDLQ.Arn
+
+Outputs:
+  RuleName:
+    Description: Name of the EventBridge rule that runs the monthly billing job.
+    Value: !Ref MonthlyBillingRule
+  ApiDestinationArn:
+    Description: ARN of the API destination that points to the Huntaze monthly billing webhook.
+    Value: !GetAtt MonthlyBillingDestination.Arn

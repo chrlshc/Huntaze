@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze Core Infrastructure - Simple version using default VPC'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [development, staging, production]
+
+Resources:
+  # Security Group for ElastiCache
+  CacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ElastiCache Redis
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: 172.31.0.0/16  # Default VPC CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Cache-SG-${Environment}'
+
+  # Security Group for RDS
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS PostgreSQL
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 172.31.0.0/16  # Default VPC CIDR
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0  # Allow external for dev (remove in prod)
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-DB-SG-${Environment}'
+
+  # ElastiCache Redis Parameter Group
+  RedisParameterGroup:
+    Type: AWS::ElastiCache::ParameterGroup
+    Properties:
+      CacheParameterGroupFamily: redis7
+      Description: Redis parameter group for Huntaze
+
+  # ElastiCache Redis
+  RedisCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      CacheNodeType: cache.t3.micro
+      Engine: redis
+      NumCacheNodes: 1
+      CacheParameterGroupName: !Ref RedisParameterGroup
+      VpcSecurityGroupIds:
+        - !Ref CacheSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-Redis-${Environment}'
+
+  # RDS PostgreSQL
+  PostgresDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub 'huntaze-postgres-${Environment}'
+      DBName: huntaze
+      Engine: postgres
+      EngineVersion: '15.4'
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      StorageType: gp3
+      StorageEncrypted: true
+      MasterUsername: huntazeadmin
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:huntaze-db-password-${Environment}:SecretString:password}}'
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup
+      BackupRetentionPeriod: 7
+      PreferredBackupWindow: "03:00-04:00"
+      PreferredMaintenanceWindow: "Mon:04:00-Mon:05:00"
+      PubliclyAccessible: true  # For dev access (disable in prod)
+      DeletionProtection: false  # For easy cleanup
+      Tags:
+        - Key: Name
+          Value: !Sub 'Huntaze-PostgreSQL-${Environment}'
+
+  # API Gateway
+  ApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub 'Huntaze-API-${Environment}'
+      Description: Huntaze API Gateway with rate limiting
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # Proxy Resource
+  ProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: '{proxy+}'
+
+  # Proxy Method
+  ProxyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !Ref ProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: HTTP_PROXY
+        IntegrationHttpMethod: ANY
+        Uri: 'https://huntaze.com/{proxy}'
+        IntegrationResponses:
+          - StatusCode: 200
+      MethodResponses:
+        - StatusCode: 200
+
+  # API Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ProxyMethod
+    Properties:
+      RestApiId: !Ref ApiGateway
+      StageName: !Ref Environment
+
+  # Usage Plan
+  ApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: !Sub 'Huntaze-Usage-${Environment}'
+      ApiStages:
+        - ApiId: !Ref ApiGateway
+          Stage: !Ref Environment
+      Throttle:
+        BurstLimit: 10000
+        RateLimit: 5000
+      Quota:
+        Limit: 1000000
+        Period: DAY
+
+Outputs:
+  RedisEndpoint:
+    Value: !GetAtt RedisCluster.RedisEndpoint.Address
+    Export:
+      Name: !Sub '${AWS::StackName}-RedisEndpoint'
+
+  PostgresEndpoint:
+    Value: !GetAtt PostgresDB.Endpoint.Address
+    Export:
+      Name: !Sub '${AWS::StackName}-PostgresEndpoint'
+
+  ApiGatewayUrl:
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayUrl'

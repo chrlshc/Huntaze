@@ -65,7 +65,7 @@ export default function AITechnologyPage() {
                 </div>
                 <div className="bg-gray-900/50 rounded-lg p-3 border border-yellow-500/30">
                   <p className="text-sm text-yellow-400">Enterprise</p>
-                  <p className="font-bold">GPT-4o + Claude 3 Opus</p>
+                  <p className="font-bold">Azure OpenAI GPT-4o</p>
                 </div>
               </div>
             </div>

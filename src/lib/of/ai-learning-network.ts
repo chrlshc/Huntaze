@@ -1,9 +1,9 @@
-// AI Learning Network - Système d'apprentissage collectif et évolution exponentielle
-// Les IA apprennent les unes des autres et évoluent ensemble
+// AI Learning Network – collective learning system with exponential evolution
+// The AIs learn from one another and evolve together
 
 import { EventEmitter } from 'events';
 
-// TYPES DE CONNAISSANCES PARTAGÉES
+// TYPES OF SHARED KNOWLEDGE
 export interface SharedKnowledge {
   id: string;
   type: 'pattern' | 'strategy' | 'risk' | 'optimization' | 'discovery';
@@ -24,7 +24,7 @@ export interface SharedKnowledge {
   };
 }
 
-// RÉSEAU NEURONAL COLLECTIF
+// COLLECTIVE NEURAL NETWORK
 export class CollectiveIntelligenceNetwork extends EventEmitter {
   private knowledgeBase: Map<string, SharedKnowledge> = new Map();
   private connectionMatrix: Map<string, Set<string>> = new Map(); // AI connections
@@ -35,7 +35,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     description: string;
   }> = [];
   
-  // PARTAGE DE CONNAISSANCES
+  // KNOWLEDGE SHARING
   shareKnowledge(knowledge: SharedKnowledge) {
     const existing = this.knowledgeBase.get(knowledge.id);
     
@@ -57,7 +57,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     this.trackEvolution(knowledge);
   }
   
-  // ÉVOLUTION DES CONNAISSANCES
+  // KNOWLEDGE EVOLUTION
   private evolveKnowledge(
     existing: SharedKnowledge, 
     newData: SharedKnowledge
@@ -85,7 +85,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     return evolved;
   }
   
-  // FUSION DE DONNÉES
+  // DATA MERGING
   private mergeData(existing: any, newData: any): any {
     // Intelligent merging based on data type
     if (typeof existing === 'object' && typeof newData === 'object') {
@@ -105,7 +105,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     return successCount / totalUsage;
   }
   
-  // PROPAGATION INTELLIGENTE
+  // INTELLIGENT PROPAGATION
   private propagateKnowledge(knowledge: SharedKnowledge) {
     const connections = this.connectionMatrix.get(knowledge.source) || new Set();
     
@@ -133,7 +133,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     );
   }
   
-  // RECHERCHE INTELLIGENTE
+  // INTELLIGENT SEARCH
   searchKnowledge(query: {
     type?: string;
     category?: string;
@@ -161,7 +161,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     });
   }
   
-  // APPRENTISSAGE CROSS-AI
+  // CROSS-AI LEARNING
   crossLearn(aiId1: string, aiId2: string): Array<SharedKnowledge> {
     const knowledge1 = Array.from(this.knowledgeBase.values())
       .filter(k => k.source === aiId1);
@@ -234,7 +234,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     }
   }
   
-  // MÉTRIQUES D'INTELLIGENCE COLLECTIVE
+  // COLLECTIVE INTELLIGENCE METRICS
   getCollectiveMetrics(): {
     totalKnowledge: number;
     averageConfidence: number;
@@ -291,7 +291,7 @@ export class CollectiveIntelligenceNetwork extends EventEmitter {
     return recentEvolutions.length / 60; // Evolutions per minute
   }
   
-  // PRÉDICTION D'ÉVOLUTION
+  // EVOLUTION PREDICTION
   predictNextEvolution(): {
     area: string;
     probability: number;

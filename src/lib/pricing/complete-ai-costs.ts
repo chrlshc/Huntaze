@@ -65,7 +65,7 @@ export const COMPLETE_AI_COSTS: Record<string, CompleteAICosts> = {
     features: {
       ofMessaging: {
         volume: 1000,
-        models: ['GPT-4', 'Claude Haiku'],
+        models: ['Azure OpenAI (GPT-4)'],
         cost: 4.54
       },
       socialMedia: {
@@ -111,7 +111,7 @@ export const COMPLETE_AI_COSTS: Record<string, CompleteAICosts> = {
     features: {
       ofMessaging: {
         volume: 5000,
-        models: ['GPT-4-turbo', 'Claude Haiku'],
+        models: ['Azure OpenAI (GPT-4-turbo)'],
         cost: 7.69
       },
       socialMedia: {
@@ -131,7 +131,7 @@ export const COMPLETE_AI_COSTS: Record<string, CompleteAICosts> = {
       analytics: {
         reports: 12,
         predictions: true,
-        models: ['GPT-4', 'Claude Haiku'],
+        models: ['Azure OpenAI (GPT-4)'],
         cost: 3.75
       },
       images: {
@@ -157,27 +157,27 @@ export const COMPLETE_AI_COSTS: Record<string, CompleteAICosts> = {
     features: {
       ofMessaging: {
         volume: 25000,
-        models: ['GPT-4-turbo', 'Claude Sonnet'],
+        models: ['Azure OpenAI (GPT-4-turbo)'],
         cost: 48.75
       },
       socialMedia: {
         platforms: ['All 10 platforms'],
         postsPerMonth: 500,
         captionsPerMonth: 2000,
-        models: ['GPT-4-turbo', 'Claude Haiku'],
+        models: ['Azure OpenAI (GPT-4-turbo)'],
         cost: 25.50
       },
       contentAI: {
         ideas: 200,
         scripts: 100,
         hooks: 500,
-        models: ['GPT-4-turbo', 'Claude Sonnet'],
+        models: ['Azure OpenAI (GPT-4-turbo)'],
         cost: 24.00
       },
       analytics: {
         reports: 30,
         predictions: true,
-        models: ['GPT-4-turbo', 'Claude Sonnet'],
+        models: ['Azure OpenAI (GPT-4-turbo)'],
         cost: 18.00
       },
       images: {
@@ -203,27 +203,27 @@ export const COMPLETE_AI_COSTS: Record<string, CompleteAICosts> = {
     features: {
       ofMessaging: {
         volume: 50000, // Realistic for big creators
-        models: ['GPT-4o', 'Claude Opus'],
+        models: ['Azure OpenAI (GPT-4o)'],
         cost: 150.00
       },
       socialMedia: {
         platforms: ['Unlimited'],
         postsPerMonth: 2000,
         captionsPerMonth: 10000,
-        models: ['GPT-4o', 'Claude Opus'],
+        models: ['Azure OpenAI (GPT-4o)'],
         cost: 180.00
       },
       contentAI: {
         ideas: 1000,
         scripts: 500,
         hooks: 2000,
-        models: ['GPT-4o', 'Claude Opus'],
+        models: ['Azure OpenAI (GPT-4o)'],
         cost: 105.00
       },
       analytics: {
         reports: 100,
         predictions: true,
-        models: ['GPT-4o', 'Claude Opus'],
+        models: ['Azure OpenAI (GPT-4o)'],
         cost: 75.00
       },
       images: {

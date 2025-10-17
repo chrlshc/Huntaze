@@ -6,29 +6,54 @@ import { Music } from 'lucide-react';
 export default function TikTokAuthPage() {
   const [showInfo, setShowInfo] = useState(false);
   
-  const handleTikTokAuth = () => {
+  const handleTikTokAuth = async () => {
     const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY || 'YOUR_CLIENT_KEY';
-    const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || 'https://huntaze.com/auth/tiktok/callback';
+    const appBase = process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
+    const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || `${appBase}/auth/tiktok/callback`;
     const state = Math.random().toString(36).substring(7);
-    const codeVerifier = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    
+    const codeVerifier = generateCodeVerifier();
+
     // Save state and verifier for verification
     sessionStorage.setItem('tiktok_oauth_state', state);
     sessionStorage.setItem('tiktok_code_verifier', codeVerifier);
-    
-    // TikTok OAuth URL
+
+    const codeChallenge = await pkceS256(codeVerifier);
+
+    // TikTok OAuth URL (v2)
     const authUrl = `https://www.tiktok.com/v2/auth/authorize?${new URLSearchParams({
       client_key: clientKey,
       response_type: 'code',
-      scope: 'user.info.basic,user.info.stats,video.list',
+      scope: 'user.info.basic,user.info.stats,video.list,video.upload,video.publish',
       redirect_uri: redirectUri,
       state: state,
-      code_challenge: codeVerifier,
-      code_challenge_method: 'plain'
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
     })}`;
-    
+
     window.location.href = authUrl;
   };
+
+  function generateCodeVerifier() {
+    const arr = new Uint8Array(32);
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
+      window.crypto.getRandomValues(arr);
+    } else {
+      for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
+    }
+    return base64UrlEncode(arr);
+  }
+
+  async function pkceS256(verifier: string): Promise<string> {
+    const data = new TextEncoder().encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return base64UrlEncode(new Uint8Array(digest));
+  }
+
+  function base64UrlEncode(bytes: Uint8Array): string {
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-red-500 to-black">

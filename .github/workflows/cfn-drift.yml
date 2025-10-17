@@ -1,0 +1,35 @@
+name: CFN Drift Check
+on:
+  workflow_dispatch:
+    inputs:
+      stacks:
+        description: "Comma-separated stacks (e.g., huntaze-core-prod,huntaze-media-prod,huntaze-ai-simple-prod)"
+        required: true
+permissions:
+  id-token: write
+  contents: read
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Detect & summarize drift
+        run: |
+          IFS=',' read -ra STACKS <<< "${{ github.event.inputs.stacks }}"
+          for S in "${STACKS[@]}"; do
+            echo "::group::Detect drift for $S"
+            ID=$(aws cloudformation detect-stack-drift --stack-name "$S" --query 'StackDriftDetectionId' --output text)
+            aws cloudformation wait stack-drift-detection-complete --stack-drift-detection-id "$ID"
+            aws cloudformation describe-stack-drift-detection-status --stack-drift-detection-id "$ID" \
+              --query '{stack:`'"$S"'`, status:DetectionStatus, drift:StackDriftStatus, resources:StackResourceDriftStatus}' \
+              --output table | tee -a $GITHUB_STEP_SUMMARY
+            echo "::endgroup::"
+          done
+

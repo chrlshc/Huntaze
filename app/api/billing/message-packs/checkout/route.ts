@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' })
+import { getStripe } from '@/lib/stripe'
 
 const PRICES = {
   pack25k: process.env.STRIPE_PRICE_MSGPACK_25K,
@@ -17,7 +15,8 @@ export async function POST(req: Request) {
     const customer = process.env.DEMO_STRIPE_CUSTOMER_ID
     if (!customer) return NextResponse.json({ error: 'Missing demo customer' }, { status: 400 })
 
-    const session = await stripe.checkout.sessions.create({
+    const stripeClient = await getStripe()
+    const session = await stripeClient.checkout.sessions.create({
       mode: 'payment',
       customer,
       line_items: [{ price: priceId, quantity: 1 }],
@@ -29,4 +28,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: e?.message || 'Checkout failed' }, { status: 500 })
   }
 }
-

@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: DynamoDB table for monthly OnlyFans aggregates per user (PK=USER#<id>, SK=EARNINGS#YYYY-MM)
+
+Parameters:
+  TableName:
+    Type: String
+    Default: huntaze-of-aggregates
+    Description: DynamoDB table name for OF monthly aggregates
+
+Resources:
+  OfAggregatesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: app
+          Value: huntaze
+
+Outputs:
+  OfAggregatesTableName:
+    Value: !Ref TableName
+    Export:
+      Name: Huntaze-OfAggregates-Name
+  OfAggregatesTableArn:
+    Value: !GetAtt OfAggregatesTable.Arn
+    Export:
+      Name: Huntaze-OfAggregates-Arn
+

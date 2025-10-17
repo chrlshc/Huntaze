@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Play, CheckCircle, TrendingUp, Calendar, DollarSign, Star, ExternalLink } from 'lucide-react';
 import { LineChart, Line, Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-// import CountUp from 'react-countup'; // Désactivé pour les performances
+// import CountUp from 'react-countup'; // Disabled for performance
 
 const stories = [
   {

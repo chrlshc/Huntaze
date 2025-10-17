@@ -3,7 +3,7 @@
 type CostEvent = {
   when: Date
   plan: 'starter' | 'pro' | 'scale' | 'enterprise'
-  provider: 'openai' | 'anthropic'
+  provider: 'openai'
   model: string
   tier: 'economy' | 'standard' | 'premium'
   tokensIn: number
@@ -20,8 +20,7 @@ const MEM: CostEvent[] = []
 const DOLLARS_PER_1K: Record<string, { in: number; out: number }> = {
   'gpt-4o': { in: 0.0025, out: 0.005 },
   'gpt-4o-mini': { in: 0.00015, out: 0.0006 },
-  'claude-3-5-sonnet': { in: 0.003, out: 0.015 },
-  'claude-3-haiku': { in: 0.00025, out: 0.00125 },
+  // Azure-only stack; remove Anthropic models
 }
 
 export async function logCost(evt: CostEvent) {

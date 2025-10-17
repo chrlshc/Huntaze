@@ -1,7 +1,7 @@
 'use client';
 
 export default function PlatformLogos() {
-  // Logos SVG monochromes style Stripe/Shopify
+  // Monochrome SVG logos inspired by Stripe/Shopify styling
   const platforms = [
     {
       name: 'OnlyFans',
@@ -45,7 +45,7 @@ export default function PlatformLogos() {
       <div className="flex items-center justify-center gap-12">
         {platforms.map((platform, index) => (
           <div key={platform.name} className="relative group">
-            {/* Logo avec hover effect */}
+            {/* Logo with hover effect */}
             <div className={`
               transition-all duration-300
               ${index % 2 === 0 ? 'text-gray-600' : 'text-gray-500'}

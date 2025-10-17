@@ -1,0 +1,344 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'WebSocket API Gateway for real-time notifications'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - production
+
+Resources:
+  # WebSocket API Gateway
+  WebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'huntaze-websocket-${Environment}'
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: '$request.body.action'
+
+  # Lambda functions for WebSocket handling
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'huntaze-ws-connections-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: connectionId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: connectionId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Connect Lambda
+  ConnectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'huntaze-ws-connect-${Environment}'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamodb = new AWS.DynamoDB.DocumentClient();
+          const jwt = require('jsonwebtoken');
+          
+          exports.handler = async (event) => {
+            const connectionId = event.requestContext.connectionId;
+            const token = event.queryStringParameters?.token;
+            
+            try {
+              // Verify JWT token
+              const decoded = jwt.verify(token, process.env.JWT_SECRET);
+              
+              // Store connection
+              await dynamodb.put({
+                TableName: process.env.CONNECTIONS_TABLE,
+                Item: {
+                  connectionId,
+                  userId: decoded.userId,
+                  connectedAt: new Date().toISOString()
+                }
+              }).promise();
+              
+              return { statusCode: 200, body: 'Connected' };
+            } catch (error) {
+              return { statusCode: 401, body: 'Unauthorized' };
+            }
+          };
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: !Ref ConnectionsTable
+          JWT_SECRET: '{{resolve:secretsmanager:huntaze-jwt-secret}}'
+      Role: !GetAtt LambdaExecutionRole.Arn
+
+  # Disconnect Lambda
+  DisconnectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'huntaze-ws-disconnect-${Environment}'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamodb = new AWS.DynamoDB.DocumentClient();
+          
+          exports.handler = async (event) => {
+            const connectionId = event.requestContext.connectionId;
+            
+            await dynamodb.delete({
+              TableName: process.env.CONNECTIONS_TABLE,
+              Key: { connectionId }
+            }).promise();
+            
+            return { statusCode: 200, body: 'Disconnected' };
+          };
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: !Ref ConnectionsTable
+      Role: !GetAtt LambdaExecutionRole.Arn
+
+  # Message Lambda
+  MessageFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'huntaze-ws-message-${Environment}'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamodb = new AWS.DynamoDB.DocumentClient();
+          
+          exports.handler = async (event) => {
+            const connectionId = event.requestContext.connectionId;
+            const data = JSON.parse(event.body);
+            
+            // Handle different message types
+            switch (data.action) {
+              case 'ping':
+                return { 
+                  statusCode: 200, 
+                  body: JSON.stringify({ action: 'pong', timestamp: new Date() })
+                };
+              
+              case 'subscribe':
+                // Handle subscription to events
+                return { statusCode: 200, body: 'Subscribed' };
+                
+              default:
+                return { statusCode: 400, body: 'Unknown action' };
+            }
+          };
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: !Ref ConnectionsTable
+      Role: !GetAtt LambdaExecutionRole.Arn
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource:
+                  - !GetAtt ConnectionsTable.Arn
+                  - !Sub '${ConnectionsTable.Arn}/index/*'
+        - PolicyName: WebSocketManagement
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - execute-api:ManageConnections
+                Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*'
+
+  # Routes
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Sub 'integrations/${ConnectIntegration}'
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Sub 'integrations/${DisconnectIntegration}'
+
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $default
+      AuthorizationType: NONE
+      OperationName: DefaultRoute
+      Target: !Sub 'integrations/${MessageIntegration}'
+
+  # Integrations
+  ConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConnectFunction.Arn}/invocations'
+
+  DisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DisconnectFunction.Arn}/invocations'
+
+  MessageIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MessageFunction.Arn}/invocations'
+
+  # Lambda Permissions
+  ConnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ConnectFunction
+      Principal: apigateway.amazonaws.com
+
+  DisconnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DisconnectFunction
+      Principal: apigateway.amazonaws.com
+
+  MessagePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref MessageFunction
+      Principal: apigateway.amazonaws.com
+
+  # Deployment
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - ConnectRoute
+      - DisconnectRoute
+      - DefaultRoute
+    Properties:
+      ApiId: !Ref WebSocketApi
+
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: !Ref Environment
+      ApiId: !Ref WebSocketApi
+      DeploymentId: !Ref Deployment
+
+  # Lambda for sending messages to clients
+  SendMessageFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'huntaze-send-notification-${Environment}'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamodb = new AWS.DynamoDB.DocumentClient();
+          
+          exports.handler = async (event) => {
+            const { userId, message } = event;
+            const endpoint = process.env.WEBSOCKET_ENDPOINT;
+            const apiGateway = new AWS.ApiGatewayManagementApi({
+              endpoint: endpoint
+            });
+            
+            // Get all connections for this user
+            const connections = await dynamodb.query({
+              TableName: process.env.CONNECTIONS_TABLE,
+              IndexName: 'userId-index',
+              KeyConditionExpression: 'userId = :userId',
+              ExpressionAttributeValues: {
+                ':userId': userId
+              }
+            }).promise();
+            
+            // Send message to all connections
+            const promises = connections.Items.map(async (connection) => {
+              try {
+                await apiGateway.postToConnection({
+                  ConnectionId: connection.connectionId,
+                  Data: JSON.stringify(message)
+                }).promise();
+              } catch (error) {
+                if (error.statusCode === 410) {
+                  // Connection no longer exists, remove it
+                  await dynamodb.delete({
+                    TableName: process.env.CONNECTIONS_TABLE,
+                    Key: { connectionId: connection.connectionId }
+                  }).promise();
+                }
+              }
+            });
+            
+            await Promise.all(promises);
+            return { statusCode: 200, body: 'Messages sent' };
+          };
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: !Ref ConnectionsTable
+          WEBSOCKET_ENDPOINT: !Sub '${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+      Role: !GetAtt LambdaExecutionRole.Arn
+
+Outputs:
+  WebSocketURL:
+    Description: WebSocket URL
+    Value: !Sub 'wss://${WebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  
+  ConnectionsTableName:
+    Description: DynamoDB table for connections
+    Value: !Ref ConnectionsTable
+  
+  SendMessageFunctionArn:
+    Description: ARN of the function to send messages
+    Value: !GetAtt SendMessageFunction.Arn

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { generateToken, generateRefreshToken, setAuthCookies } from '@/lib/auth/jwt';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     // Create a mock user for development
     const mockUser = {
@@ -39,14 +43,20 @@ export async function GET(request: NextRequest) {
       : '/onboarding/setup';
 
     const base = new URL(request.url);
-    return NextResponse.redirect(new URL(redirectUrl, `${base.protocol}//${base.host}`));
-  } catch (error) {
-    console.error('Bypass auth error:', error);
-    return NextResponse.json({ error: 'Failed to bypass auth' }, { status: 500 });
+    const res = NextResponse.redirect(new URL(redirectUrl, `${base.protocol}//${base.host}`));
+    res.headers.set('X-Request-Id', requestId);
+    return res;
+  } catch (error: any) {
+    log.error('dev_bypass_auth_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to bypass auth', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     // For POST, allow choosing where to go
     const mockUser = {
@@ -73,9 +83,13 @@ export async function POST(request: NextRequest) {
 
     // Always go to dashboard for POST
     const base = new URL(request.url);
-    return NextResponse.redirect(new URL('/dashboard', `${base.protocol}//${base.host}`));
-  } catch (error) {
-    console.error('Bypass auth error:', error);
-    return NextResponse.json({ error: 'Failed to bypass auth' }, { status: 500 });
+    const res = NextResponse.redirect(new URL('/dashboard', `${base.protocol}//${base.host}`));
+    res.headers.set('X-Request-Id', requestId);
+    return res;
+  } catch (error: any) {
+    log.error('dev_bypass_auth_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to bypass auth', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

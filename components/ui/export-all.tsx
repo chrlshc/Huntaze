@@ -1,6 +1,13 @@
 import React from 'react';
 
 // Export simple placeholder components
+// ScrollArea component
+export const ScrollArea = ({ children, className = "" }: any) => (
+  <div className={`overflow-auto ${className}`} style={{ maxHeight: "100%", height: "100%" }}>
+    {children}
+  </div>
+)
+
 export const Card = ({ children, className = "" }: any) => <div className={`rounded-lg border p-4 ${className}`}>{children}</div>
 export const CardHeader = ({ children, className = "" }: any) => <div className={`pb-4 ${className}`}>{children}</div>
 export const CardTitle = ({ children, className = "" }: any) => <h3 className={`text-lg font-semibold ${className}`}>{children}</h3>
@@ -42,10 +49,40 @@ export const Switch = ({ checked = false, onCheckedChange, className = "", ...pr
   </label>
 )
 
-export const Button = ({ children, className = "", variant = "default", ...props }: any) => {
-  const variantClasses = variant === "outline" ? "btn-outline" : "btn-primary";
-  return <button className={`px-4 py-2 rounded-md ${variantClasses} ${className}`} {...props}>{children}</button>
-}
+export const Button = ({
+  children,
+  className = "",
+  variant = "default",
+  size = "md",
+  ...props
+}: any) => {
+  const variantClasses: Record<string, string> = {
+    default: 'bg-slate-900 text-white hover:bg-black',
+    outline: 'border border-slate-900 text-slate-900 hover:bg-slate-100',
+    ghost: 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+    secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+  };
+
+  const sizeClasses: Record<string, string> = {
+    sm: 'h-9 px-3 text-sm',
+    md: 'h-10 px-4 text-sm',
+    lg: 'h-11 px-5 text-base'
+  };
+
+  const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+
+  const resolvedVariant = variantClasses[variant] ?? variantClasses.default;
+  const resolvedSize = sizeClasses[size] ?? sizeClasses.md;
+
+  return (
+    <button
+      className={`${baseClasses} ${resolvedVariant} ${resolvedSize} ${className}`.trim()}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 export const Badge = ({ children, className = "", variant = "default" }: any) => {
   const variantClasses = variant === "destructive" ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800";

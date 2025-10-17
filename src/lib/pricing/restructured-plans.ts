@@ -141,7 +141,7 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
     core: {
       messaging: {
         messagesPerMonth: 1000,
-        aiModels: ['GPT-4', 'Claude Haiku'],
+        aiModels: ['Azure OpenAI GPT-4'],
         features: [
           'Basic AI responses 24/7',
           'Simple fan segmentation',
@@ -182,7 +182,7 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
     core: {
       messaging: {
         messagesPerMonth: 5000,
-        aiModels: ['GPT-4-Turbo', 'Claude Haiku'],
+        aiModels: ['Azure OpenAI GPT-4-Turbo'],
         features: [
           'Smart AI responses with personality',
           'Advanced fan segmentation',
@@ -238,7 +238,7 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
     core: {
       messaging: {
         messagesPerMonth: 25000,
-        aiModels: ['GPT-4-Turbo', 'Claude Sonnet'],
+        aiModels: ['Azure OpenAI GPT-4-Turbo'],
         features: [
           'Predictive AI responses',
           'Hyper-segmentation',
@@ -306,7 +306,7 @@ export const RESTRUCTURED_PLANS: Record<string, RestructuredPlan> = {
     core: {
       messaging: {
         messagesPerMonth: -1, // Unlimited
-        aiModels: ['GPT-4o', 'Claude Opus'],
+        aiModels: ['Azure OpenAI GPT-4o'],
         features: [
           'Perfect AI mimicry',
           'Quantum segmentation',
@@ -408,8 +408,8 @@ export const PLAN_VALUE_PROPS = {
   enterprise: {
     headline: "The Ultimate AI Arsenal",
     subhead: "For industry leaders",
-    whyChoose: [
-      "Two AIs working together",
+      whyChoose: [
+      "Enterprise Azure OpenAI stack",
       "Unlimited everything",
       "White glove service",
       "Crush the competition"

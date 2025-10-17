@@ -137,29 +137,33 @@ export default function HeroWithMockup() {
       </motion.div>
 
       <style jsx>{`
-        /* Structure générale */
+        /* Base structure */
         .hero {
           position: relative;
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+          min-height: 620px;
+          display: grid;
+          gap: 3rem;
+          align-items: start;
           justify-content: center;
-          padding: 10rem 2rem 4rem 2rem;
+          padding: 6rem 1.5rem 4rem;
           background: #000;
           color: #fff;
           overflow: hidden;
         }
 
         .hero-content {
-          text-align: left;
+          text-align: center;
           z-index: 2;
           width: 100%;
+          max-width: 900px;
+          margin: 0 auto;
         }
 
         .actions {
           display: flex;
           align-items: center;
+          justify-content: center;
+          gap: 1rem;
         }
 
         .btn,
@@ -313,7 +317,7 @@ export default function HeroWithMockup() {
           pointer-events: none;
         }
         
-        /* Background avec profondeur supplémentaire */
+        /* Background with extra depth */
         .app-interface::before, .browser-content::before {
           content: '';
           position: absolute;
@@ -477,7 +481,7 @@ export default function HeroWithMockup() {
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         
-        /* Glassmorphisme renforcé pour toutes les stats */
+        /* Stronger glassmorphism for every stat */
         .stat-card, [class*="stat"], .stats div {
           background: rgba(255, 255, 255, 0.15) !important;
           backdrop-filter: blur(20px);
@@ -538,11 +542,11 @@ export default function HeroWithMockup() {
 
         /* Mobile First - Default styles for mobile */
         .hero {
-          padding: 6rem 1rem 2rem 1rem;
+          padding: 5.5rem 1.25rem 2.5rem;
         }
         
         .hero-content h1 {
-          font-size: 2.5rem;
+          font-size: 2.4rem;
         }
         
         .hero-content p {
@@ -562,13 +566,13 @@ export default function HeroWithMockup() {
         }
         
         .hero-visual {
-          height: 400px;
-          margin-top: 2rem;
+          height: 360px;
+          margin-top: 1.5rem;
         }
         
         .browser-mockup {
           width: 100%;
-          max-width: 380px;
+          max-width: 360px;
           transform: none !important;
           animation: none !important;
         }
@@ -576,15 +580,15 @@ export default function HeroWithMockup() {
         /* Tablet and up */
         @media (min-width: 768px) {
           .hero {
-            padding: 8rem 2rem 3rem 2rem;
+            padding: 6.75rem 2.25rem 3.75rem;
           }
           
           .hero-content h1 {
-            font-size: clamp(3rem, 6vw, 4.5rem);
+            font-size: clamp(3rem, 5.5vw, 4.25rem);
           }
           
           .hero-content p {
-            font-size: 1.375rem;
+            font-size: 1.3rem;
           }
           
           .actions {
@@ -597,7 +601,7 @@ export default function HeroWithMockup() {
           }
           
           .hero-visual {
-            height: 500px;
+            height: 440px;
           }
           
           .browser-mockup {
@@ -623,37 +627,43 @@ export default function HeroWithMockup() {
         /* Desktop and up */
         @media (min-width: 1024px) {
           .hero {
-            padding: 10rem 2rem 4rem 2rem;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            align-items: center;
+            padding: 7.5rem 3.5rem 4.5rem;
           }
           
           .hero-content {
-            max-width: 1200px;
-            margin-bottom: 6rem;
+            max-width: none;
+            text-align: left;
+            grid-column: 1 / span 5;
+            margin: 0;
           }
           
           .hero-content h1 {
             font-size: clamp(3.5rem, 8vw, 5.5rem);
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.75rem;
           }
           
           .hero-content p {
-            font-size: 1.5rem;
-            margin-bottom: 3.5rem;
-            max-width: 750px;
+            font-size: 1.35rem;
+            margin-bottom: 2.5rem;
+            max-width: 520px;
           }
           
           .actions {
-            gap: 2.5rem;
-            margin-top: 3rem;
+            gap: 1.75rem;
+            justify-content: flex-start;
+            margin-top: 0;
           }
           
           .hero-visual {
-            height: 600px;
-            max-width: 1400px;
+            grid-column: 7 / span 6;
+            height: 520px;
+            max-width: none;
           }
           
           .browser-mockup {
-            width: 1600px;
+            width: 1200px;
           }
           
           .stats-grid {

@@ -30,10 +30,10 @@ export default function FallingLines() {
     // Configuration
     const maxLines = 8;
     const colors = [
-      '#8b5cf6',  // Violet principal
-      '#a78bfa',  // Violet clair
-      '#7c3aed',  // Violet foncé
-      '#c4a5fd',  // Lavande
+      '#8b5cf6',  // Primary purple
+      '#a78bfa',  // Light purple
+      '#7c3aed',  // Deep purple
+      '#c4a5fd',  // Lavender
       '#9333ea'   // Purple
     ];
 

@@ -111,16 +111,16 @@ export default function RegisterPage() {
       {/* Success metrics */}
         <div className="grid grid-cols-3 gap-4 mb-8 text-center">
           <div>
-            <div className="text-xl font-bold text-purple-600">Creators</div>
-            <div className="text-xs text-gray-500">Onboarded</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">Creators</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Onboarded</div>
           </div>
           <div>
-            <div className="text-xl font-bold text-purple-600">Revenue</div>
-            <div className="text-xs text-gray-500">Analytics</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">Revenue</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Analytics</div>
           </div>
           <div>
-            <div className="text-xl font-bold text-purple-600">Growth</div>
-            <div className="text-xs text-gray-500">Insights</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-gray-100">Growth</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">Insights</div>
           </div>
         </div>
 
@@ -144,7 +144,7 @@ export default function RegisterPage() {
             required
             value={formData.name}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-gray-700 dark:text-white"
             placeholder="Your creator name"
           />
         </div>
@@ -160,8 +160,7 @@ export default function RegisterPage() {
             required
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-            placeholder="you@example.com"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
 
@@ -176,8 +175,7 @@ export default function RegisterPage() {
             required
             value={formData.password}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-            placeholder="••••••••"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-gray-700 dark:text-white"
             minLength={8}
           />
         </div>
@@ -193,8 +191,7 @@ export default function RegisterPage() {
             required
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
-            placeholder="••••••••"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-gray-700 dark:text-white"
             minLength={8}
           />
         </div>
@@ -207,15 +204,15 @@ export default function RegisterPage() {
             required
             checked={formData.acceptTerms}
             onChange={handleChange}
-            className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+            className="h-4 w-4 text-slate-900 focus:ring-slate-500 border-gray-300 rounded"
           />
           <label htmlFor="acceptTerms" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
             I agree to the{' '}
-            <Link href="https://huntaze.com/terms" className="text-purple-600 hover:text-purple-500">
+            <Link href="https://huntaze.com/terms" className="text-slate-900 hover:text-slate-700">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="https://huntaze.com/privacy" className="text-purple-600 hover:text-purple-500">
+            <Link href="https://huntaze.com/privacy" className="text-slate-900 hover:text-slate-700">
               Privacy Policy
             </Link>
           </label>
@@ -224,7 +221,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Creating account...' : 'Get early access'}
         </button>
@@ -234,7 +231,7 @@ export default function RegisterPage() {
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{' '}
-          <Link href="/login" className="font-medium text-purple-600 hover:text-purple-500">
+          <Link href="/login" className="font-medium text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300">
             Sign in
           </Link>
         </p>

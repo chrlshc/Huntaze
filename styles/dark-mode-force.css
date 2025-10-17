@@ -1,10 +1,10 @@
-/* Force Dark Mode - Assure que TOUT est en noir/blanc */
+/* Force Dark Mode - Ensure everything stays black/white */
 
 /* ========================================
    FORCE TOUS LES FONDS EN NOIR
    ======================================== */
 
-/* Force le fond principal en noir pur */
+/* Force the main background to pure black */
 .dark,
 .dark body,
 .dark .min-h-screen,
@@ -19,7 +19,7 @@
   background-color: #000000 !important;
 }
 
-/* Force tous les éléments avec des fonds colorés en noir */
+/* Force elements with colored backgrounds to black */
 .dark .bg-white,
 .dark .bg-gray-50,
 .dark .bg-gray-100,
@@ -31,7 +31,7 @@
   background-color: #000000 !important;
 }
 
-/* Sections et containers */
+/* Sections and containers */
 .dark .container,
 .dark .container-width,
 .dark .max-w-7xl,
@@ -44,7 +44,7 @@
   background-color: #000000 !important;
 }
 
-/* Cards et surfaces élevées - légèrement plus clair */
+/* Cards and elevated surfaces - slightly lighter */
 .dark .card,
 .dark .premium-card,
 .dark .elevated-card,
@@ -57,7 +57,7 @@
   border-color: #1A1A1A !important;
 }
 
-/* Modals et overlays */
+/* Modals and overlays */
 .dark .modal,
 .dark .dialog,
 .dark .modal-content,
@@ -69,13 +69,13 @@
    FORCE TOUS LES TEXTES EN BLANC
    ======================================== */
 
-/* Tous les textes en blanc */
+/* All text in white */
 .dark,
 .dark * {
   color: #FFFFFF !important;
 }
 
-/* Headers et titres */
+/* Headers and titles */
 .dark h1,
 .dark h2,
 .dark h3,
@@ -85,7 +85,7 @@
   color: #FFFFFF !important;
 }
 
-/* Paragraphes et textes */
+/* Paragraphs and body text */
 .dark p,
 .dark span,
 .dark div,
@@ -97,7 +97,7 @@
   color: #FFFFFF !important;
 }
 
-/* Force les textes gris en blanc */
+/* Force gray text to white */
 .dark .text-gray-900,
 .dark .text-gray-800,
 .dark .text-gray-700,
@@ -121,7 +121,7 @@
   opacity: 0.9;
 }
 
-/* Textes secondaires - légèrement transparents */
+/* Secondary text - slightly transparent */
 .dark .text-muted,
 .dark .text-secondary,
 .dark .text-sm,
@@ -134,7 +134,7 @@
    BOUTONS ET INTERACTIFS
    ======================================== */
 
-/* Boutons primaires */
+/* Primary buttons */
 .dark .btn-primary,
 .dark .btn-gradient,
 .dark button[class*="bg-purple"],
@@ -149,7 +149,7 @@
   background: #E0E0E0 !important;
 }
 
-/* Boutons secondaires */
+/* Secondary buttons */
 .dark .btn-secondary,
 .dark .btn-outline,
 .dark button[class*="border"] {
@@ -225,7 +225,7 @@
    GRADIENTS ET EFFETS SPECIAUX
    ======================================== */
 
-/* Supprime les gradients colorés */
+/* Remove colored gradients */
 .dark .bg-gradient-to-br,
 .dark .bg-gradient-to-r,
 .dark .bg-gradient-to-b,
@@ -235,7 +235,7 @@
   background: #000000 !important;
 }
 
-/* Gradient texte en blanc */
+/* Force gradient text to white */
 .dark .gradient-text,
 .dark .gradient-text-premium,
 .dark .text-gradient {
@@ -250,13 +250,13 @@
    IMAGES ET ICONES
    ======================================== */
 
-/* Inverse les icônes pour qu'elles soient visibles */
+/* Invert icons so they stay visible */
 .dark svg {
   color: #FFFFFF !important;
   fill: currentColor;
 }
 
-/* Images avec fond blanc - ajoute un contour */
+/* Images with white backgrounds - add a border */
 .dark img {
   border: 1px solid #1A1A1A;
 }
@@ -283,10 +283,10 @@
 }
 
 /* ========================================
-   EXCEPTIONS (si nécessaire)
+   EXCEPTIONS (if needed)
    ======================================== */
 
-/* Badges et alerts - peuvent garder des couleurs */
+/* Badges and alerts can keep color accents */
 .dark .bg-green-100,
 .dark .bg-red-100,
 .dark .bg-yellow-100,
@@ -337,13 +337,13 @@
    IMPORTANT: ORDRE DE CASCADE
    ======================================== */
 
-/* S'assure que ces styles ont la priorité maximale */
+/* Ensure these styles carry the highest priority */
 html.dark,
 html[data-theme="dark"] {
   color-scheme: dark;
 }
 
-/* Force le recalcul du style */
+/* Force style recalculation */
 .dark {
   will-change: background-color, color;
 }

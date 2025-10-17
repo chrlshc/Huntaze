@@ -1,8 +1,5 @@
 import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
+import { getStripe } from '@/lib/stripe';
 
 interface CreatorEarnings {
   userId: string;
@@ -33,7 +30,8 @@ export class CommissionTracker {
     
     try {
       // Get user's Stripe subscription
-      const subscriptions = await stripe.subscriptions.list({
+      const stripeClient = await getStripe();
+      const subscriptions = await stripeClient.subscriptions.list({
         limit: 1,
         // In production, lookup by user's stripe customer ID
       });
@@ -47,7 +45,10 @@ export class CommissionTracker {
       // Calculate commission
       const response = await fetch('/api/billing/calculate-commission', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.EVENTBRIDGE_API_KEY || '',
+        },
         body: JSON.stringify({
           monthlyRevenue: earnings.monthlyRevenue,
           subscriptionTier: this.getTierFromSubscription(subscription),
@@ -80,7 +81,8 @@ export class CommissionTracker {
   static async createCommissionCharge(charge: CommissionCharge) {
     try {
       // Option 1: Use Invoice Items for next invoice
-      const invoiceItem = await stripe.invoiceItems.create({
+      const stripeClient = await getStripe();
+      const invoiceItem = await stripeClient.invoiceItems.create({
         customer: await this.getCustomerId(charge.userId),
         amount: Math.round(charge.amount * 100), // Convert to cents
         currency: 'usd',
@@ -88,7 +90,7 @@ export class CommissionTracker {
       });
 
       // Option 2: Create immediate charge (uncomment if preferred)
-      // const paymentIntent = await stripe.paymentIntents.create({
+      // const paymentIntent = await stripeClient.paymentIntents.create({
       //   amount: Math.round(charge.amount * 100),
       //   currency: 'usd',
       //   customer: await this.getCustomerId(charge.userId),
@@ -134,8 +136,16 @@ export class CommissionTracker {
    * Get Stripe customer ID for user (would query database in production)
    */
   private static async getCustomerId(userId: string): Promise<string> {
-    // TODO: Query customer ID from database
-    // For now, throw error
-    throw new Error('Customer ID lookup not implemented');
+    // Lookup Stripe customer ID from USERS_TABLE (DynamoDB)
+    const { DynamoDBClient } = await import('@aws-sdk/client-dynamodb');
+    const { DynamoDBDocumentClient, GetCommand } = await import('@aws-sdk/lib-dynamodb');
+    const REGION = process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1';
+    const TABLE = process.env.USERS_TABLE || '';
+    if (!TABLE) throw new Error('USERS_TABLE not configured');
+    const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: REGION }));
+    const out = await ddb.send(new GetCommand({ TableName: TABLE, Key: { userId } }));
+    const customerId = (out.Item as any)?.stripeCustomerId;
+    if (!customerId) throw new Error('Stripe customerId not found for user');
+    return String(customerId);
   }
 }

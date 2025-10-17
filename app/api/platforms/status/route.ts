@@ -11,8 +11,14 @@ export async function GET(request: NextRequest) {
 
     const onlyFans = (platformConnections.get(userId) || []).some(c => c.platform === 'onlyfans' && c.isActive);
     const tiktok = Boolean(request.cookies.get('tiktok_access_token'));
-    const instagram = request.cookies.get('instagram_connected')?.value === 'yes';
-    const reddit = request.cookies.get('reddit_connected')?.value === 'yes';
+    const instagram = Boolean(
+      request.cookies.get('instagram_access_token') ||
+      (request.cookies.get('instagram_connected')?.value === 'yes')
+    );
+    const reddit = Boolean(
+      request.cookies.get('reddit_access_token') ||
+      (request.cookies.get('reddit_connected')?.value === 'yes')
+    );
     const inflow = (crmConnections.get(userId) || []).some(c => c.provider === 'inflow' && c.isActive);
     const supercreator = (crmConnections.get(userId) || []).some(c => c.provider === 'supercreator' && c.isActive);
 

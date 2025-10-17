@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudWatch Alarms for Huntaze SQS Queues (depth, age, DLQ)
+
+Parameters:
+  QueueName:
+    Type: String
+    Default: huntaze-ai-processing
+    Description: Primary SQS queue name
+  DLQName:
+    Type: String
+    Default: huntaze-ai-processing-dlq
+    Description: DLQ name
+  AlarmNamespace:
+    Type: String
+    Default: AWS/SQS
+  DepthThreshold:
+    Type: Number
+    Default: 50
+    Description: Visible messages threshold
+  AgeThresholdSeconds:
+    Type: Number
+    Default: 300
+    Description: Oldest message age threshold (seconds)
+
+Resources:
+  QueueDepthAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'Huntaze-${QueueName}-Depth-High'
+      Namespace: !Ref AlarmNamespace
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !Ref QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: !Ref DepthThreshold
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+
+  QueueAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'Huntaze-${QueueName}-Age-High'
+      Namespace: !Ref AlarmNamespace
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
+          Value: !Ref QueueName
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: !Ref AgeThresholdSeconds
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+
+  DLQDepthAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'Huntaze-${DLQName}-Depth-High'
+      Namespace: !Ref AlarmNamespace
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !Ref DLQName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+
+Outputs:
+  QueueDepthAlarmName:
+    Value: !Ref QueueDepthAlarm
+  QueueAgeAlarmName:
+    Value: !Ref QueueAgeAlarm
+  DLQDepthAlarmName:
+    Value: !Ref DLQDepthAlarm
+

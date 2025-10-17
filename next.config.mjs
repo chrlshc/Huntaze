@@ -6,9 +6,62 @@ const nextConfig = {
   compress: true,
   output: 'standalone',
 
-  // Let Amplify set edge/static headers; avoid duplication here
+  // Security headers configuration
   async headers() {
-    return []
+    const ContentSecurityPolicy = `
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https: blob:;
+      font-src 'self' data:;
+      connect-src 'self' https://cognito-idp.*.amazonaws.com https://*.amazoncognito.com https://*.huntaze.com wss://*.huntaze.com;
+      frame-src 'self' https://*.amazoncognito.com;
+      frame-ancestors 'none';
+      base-uri 'self';
+      form-action 'self';
+      object-src 'none';
+      upgrade-insecure-requests;
+    `.replace(/\s{2,}/g, ' ').trim()
+
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          // Security headers
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=()'
+          },
+          // Start with CSP in report-only mode
+          {
+            key: process.env.NODE_ENV === 'production' 
+              ? 'Content-Security-Policy' 
+              : 'Content-Security-Policy-Report-Only',
+            value: ContentSecurityPolicy
+          }
+        ]
+      }
+    ]
   },
 
   // Minimal rewrites
@@ -55,6 +108,14 @@ const nextConfig = {
 
   // Client bundle fallbacks
   webpack: (config, { isServer }) => {
+    config.resolve = config.resolve || {}
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'node:https': 'https',
+      'node:http': 'http',
+      'node:url': 'url',
+    }
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,

@@ -1,0 +1,8 @@
+{
+  "name": "huntaze-jwt-authorizer",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "aws-jwt-verify": "^5.1.0"
+  }
+}

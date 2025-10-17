@@ -33,10 +33,25 @@
 
 **Schedule**: `cron(0 2 1 * ? *)` (1st of the month at 2:00 AM UTC)
 
-**Target**:
-- Type: Lambda function
-- Function: `huntaze-calculate-commissions`
-- Or API destination: `https://huntaze.com/api/cron/monthly-billing`
+**Target Options**:
+- **Recommended (API Destination)** – deploy the CloudFormation template at `infrastructure/eventbridge-monthly-billing.yaml`:
+  1. Choose your cron secret (must match `CRON_SECRET` used by `/api/cron/monthly-billing`).
+  2. Deploy with the AWS CLI:
+     ```bash
+     aws cloudformation deploy \
+       --template-file infrastructure/eventbridge-monthly-billing.yaml \
+       --stack-name huntaze-monthly-billing \
+       --capabilities CAPABILITY_NAMED_IAM \
+       --parameter-overrides \
+         Environment=production \
+         CronSecret=YOUR_SECURE_SECRET \
+         CronEndpoint=https://huntaze.com/api/cron/monthly-billing
+     ```
+  3. The stack provisions:
+     - an EventBridge connection that injects `x-cron-secret`.
+     - an API destination pointing to the Next.js cron route.
+     - a scheduled rule (`cron(0 2 1 * ? *)`) that invokes the destination monthly.
+- **Alternative (Lambda)** – point the rule to the `huntaze-calculate-commissions` Lambda if you maintain one.
 
 ## 3. Lambda for Monthly Billing (Optional)
 

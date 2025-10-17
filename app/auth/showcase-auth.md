@@ -1,80 +1,80 @@
-# 🎨 Nouvelle Page Auth avec Design System Huntaze
+# 🎨 New Auth Page with the Huntaze Design System
 
-## ✨ Transformations Appliquées
+## ✨ Applied Transformations
 
-### 🎯 Design Split-Screen Premium
-- **Gauche** : Formulaire d'authentification épuré
-- **Droite** : Section features avec gradient Huntaze (desktop uniquement)
-- **Mobile-first** : Design responsive qui s'adapte parfaitement
+### 🎯 Premium Split-Screen Design
+- **Left**: Clean authentication form
+- **Right**: Feature section with the Huntaze gradient (desktop only)
+- **Mobile-first**: Responsive layout that adapts seamlessly
 
-### 🎨 Éléments du Design System
+### 🎨 Design System Elements
 
 1. **Logo Huntaze**
    - Gradient premium avec effet hover lift
    - Shadow elevation pour profondeur
 
-2. **Formulaire Moderne**
-   - Input fields avec icônes intégrées
-   - Bouton "Show/Hide password" animé
-   - États d'erreur avec animation shake
-   - Loading spinner custom
+2. **Modern Form**
+   - Input fields with integrated icons
+   - Animated "Show/Hide password" button
+   - Error states with a subtle shake animation
+   - Custom loading spinner
 
-3. **Boutons Unifiés**
-   - `btn-primary` : Gradient Huntaze avec hover effect
-   - `btn-secondary` : Style neutral pour actions secondaires
-   - `btn-outline` : Pour OAuth (Google, etc.)
+3. **Unified Buttons**
+   - `btn-primary`: Huntaze gradient with a hover effect
+   - `btn-secondary`: Neutral styling for secondary actions
+   - `btn-outline`: OAuth buttons (Google, etc.)
 
-4. **Dark Mode Natif**
-   - Détection automatique des préférences système
-   - Transitions douces entre les modes
-   - Contraste optimisé pour lisibilité
+4. **Native Dark Mode**
+   - Automatically follows the system preference
+   - Smooth transitions between themes
+   - Contrast tuned for readability
 
-### 🚀 Fonctionnalités UX
+### 🚀 UX Features
 
-1. **Flow Email-First**
-   - Affichage progressif du champ password
-   - Validation en temps réel
-   - Messages contextuels selon le plan sélectionné
+1. **Email-First Flow**
+   - Progressive reveal of the password field
+   - Real-time validation
+   - Contextual messaging based on the selected plan
 
 2. **Social Proof**
-   - Avatars des créateurs
+   - Creator avatars
    - "$50M+ managed revenue"
    - "10,000+ creators"
 
 3. **Features Highlights**
-   - Checklist visuelle des bénéfices
-   - Icons avec backdrop blur effect
-   - Animations subtiles au hover
+   - Visual checklist of benefits
+   - Icons with a backdrop blur effect
+   - Subtle hover animations
 
 ### 📱 Responsive Design
 
 **Mobile (<768px)**
-- Form centré pleine largeur
-- Pas de section features (économie d'espace)
-- Touch-friendly buttons (48px height)
+- Centered full-width form
+- No feature section to save space
+- Touch-friendly buttons (48px tall)
 
 **Tablet (768px-1023px)**
-- Layout similaire au mobile avec plus d'espace
+- Layout similar to mobile with more breathing room
 
 **Desktop (≥1024px)**
 - Split screen 50/50
-- Section features avec gradient animé
-- Patterns de fond subtils
+- Feature section with an animated gradient
+- Subtle background patterns
 
-### 🎭 États et Interactions
+### 🎭 States and Interactions
 
 1. **Loading State**
-   - Spinner animé dans le bouton
-   - Disabled state pendant processing
+   - Animated spinner inside the button
+   - Disabled state while processing
 
 2. **Error Handling**
-   - Shake animation sur erreur
-   - Background rouge subtil
-   - Message clair et actionnable
+   - Shake animation on error
+   - Subtle red background
+   - Clear, actionable messaging
 
 3. **Success Flow**
-   - Redirection intelligente selon plan
-   - Session storage pour persistance
+   - Smart redirect based on the plan
+   - Session storage for persistence
 
 ## 🔧 Technical Implementation
 
@@ -96,11 +96,11 @@ box-shadow: var(--shadow-md);
 }
 ```
 
-## 📊 Résultats
+## 📊 Results
 
-✅ **Cohérence** : Design unifié avec le reste de l'app
-✅ **Performance** : CSS optimisé, pas de JS inutile
-✅ **Accessibilité** : Focus states, labels, contrast ratios
-✅ **Conversion** : Flow optimisé pour maximiser sign-ups
+✅ **Consistency**: Unified design with the rest of the app
+✅ **Performance**: Optimized CSS with no unnecessary JS
+✅ **Accessibility**: Focus states, labels, and healthy contrast ratios
+✅ **Conversion**: Flow optimised to maximise sign-ups
 
-La page auth est maintenant au niveau des standards SaaS modernes comme Linear, Stripe, et Vercel ! 🚀
+The auth page now matches modern SaaS standards like Linear, Stripe, and Vercel! 🚀

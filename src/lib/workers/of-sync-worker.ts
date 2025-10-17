@@ -2,6 +2,7 @@
 // Periodically syncs OnlyFans inbox to local database
 
 import { sessionManager } from '@/lib/of/session-manager';
+import { makeReqLogger } from '@/lib/logger';
 import type { OfConversation, OfMessage } from '@/lib/types/onlyfans';
 
 export interface SyncStats {
@@ -25,13 +26,13 @@ class OfSyncWorker {
   // Start sync worker
   start(intervalMs: number = 5 * 60 * 1000): void { // 5 minutes default
     if (this.isRunning) {
-      console.log('Sync worker already running');
+      makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).info('of_sync_worker_already_running');
       return;
     }
 
     this.isRunning = true;
     this.stats.isRunning = true;
-    console.log('Starting OF sync worker...');
+    makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).info('of_sync_worker_start');
 
     // Run immediately
     this.syncAll();
@@ -54,12 +55,14 @@ class OfSyncWorker {
       this.intervalId = undefined;
     }
     
-    console.log('OF sync worker stopped');
+    makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).info('of_sync_worker_stopped');
   }
 
   // Sync all users
   private async syncAll(): Promise<void> {
-    console.log('Starting sync cycle...');
+    if (Math.random() < 0.05) {
+      makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).info('of_sync_cycle_started');
+    }
     this.stats.lastSyncAt = new Date();
 
     try {
@@ -71,9 +74,9 @@ class OfSyncWorker {
         await this.syncUser(userId);
       }
 
-      console.log(`Sync complete. Conversations: ${this.stats.conversationsSynced}, Messages: ${this.stats.messagesSynced}`);
-    } catch (error) {
-      console.error('Sync cycle error:', error);
+      makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).info('of_sync_cycle_completed', { conversations: this.stats.conversationsSynced, messages: this.stats.messagesSynced });
+    } catch (error: any) {
+      makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).error('of_sync_cycle_failed', { error: error?.message || 'unknown_error' });
       this.stats.errors++;
     }
   }
@@ -83,13 +86,13 @@ class OfSyncWorker {
     try {
       const session = await sessionManager.getSession(userId);
       if (!session || !session.isActive) {
-        console.log(`Skipping sync for user ${userId} - no active session`);
+        makeReqLogger({ userId, route: 'of_sync_worker', method: 'CRON' }).info('of_sync_skip_no_session');
         return;
       }
 
       // Check if session is stale
       if (sessionManager.isSessionStale(session)) {
-        console.log(`Session stale for user ${userId} - marking for re-auth`);
+        makeReqLogger({ userId, route: 'of_sync_worker', method: 'CRON' }).warn('of_session_stale_mark_reauth');
         await sessionManager.updateSessionStatus(userId, {
           requiresAction: true,
           isActive: false
@@ -100,7 +103,7 @@ class OfSyncWorker {
       // Get decrypted cookies
       const cookies = await sessionManager.getDecryptedCookies(userId);
       if (!cookies) {
-        console.error(`Failed to decrypt cookies for user ${userId}`);
+        makeReqLogger({ userId, route: 'of_sync_worker', method: 'CRON' }).error('of_decrypt_cookies_failed');
         return;
       }
 
@@ -112,8 +115,8 @@ class OfSyncWorker {
         lastSyncAt: new Date()
       });
 
-    } catch (error) {
-      console.error(`Error syncing user ${userId}:`, error);
+    } catch (error: any) {
+      makeReqLogger({ userId, route: 'of_sync_worker', method: 'CRON' }).error('of_sync_user_failed', { error: error?.message || 'unknown_error' });
       this.stats.errors++;
     }
   }
@@ -123,7 +126,7 @@ class OfSyncWorker {
     // TODO: Implement actual OF API calls
     // For now, mock the sync process
     
-    console.log(`Syncing inbox for user ${userId}`);
+    makeReqLogger({ userId, route: 'of_sync_worker', method: 'CRON' }).info('of_sync_inbox_started');
 
     // Mock: Get conversations from OF
     const conversations = await this.fetchOfConversations(cookies);
@@ -224,14 +227,16 @@ class OfSyncWorker {
   private async saveConversation(userId: string, conversation: OfConversation): Promise<void> {
     // TODO: Implement actual database save
     // Check for duplicates, update if exists
-    console.log(`Saving conversation ${conversation.id} for user ${userId}`);
+    makeReqLogger({ userId, route: 'of_sync_worker', method: 'CRON' }).info('of_save_conversation', { conversationId: conversation.id });
   }
 
   // Save message to database
   private async saveMessage(conversationId: string, message: OfMessage): Promise<void> {
     // TODO: Implement actual database save
     // Check for duplicates based on platformMessageId
-    console.log(`Saving message ${message.id} for conversation ${conversationId}`);
+    if (Math.random() < 0.05) {
+      makeReqLogger({ route: 'of_sync_worker', method: 'CRON' }).info('of_save_message', { messageId: message.id, conversationId });
+    }
   }
 
   // Simulate network delay

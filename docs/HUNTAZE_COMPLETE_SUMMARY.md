@@ -7,9 +7,9 @@ Huntaze est la première plateforme d'automatisation OnlyFans qui combine IA con
 
 ### Modèles AI par Plan
 - **STARTER**: GPT-4 (+15-20% conversion)
-- **PRO**: GPT-4-Turbo + Claude Haiku (+35-40% conversion)  
-- **SCALE**: GPT-4-Turbo + Claude Sonnet (+55-65% conversion)
-- **ENTERPRISE**: GPT-4o + Claude Opus (+75-90% conversion)
+- **PRO**: Azure OpenAI GPT-4-Turbo (+35-40% conversion)  
+- **SCALE**: Azure OpenAI GPT-4-Turbo (predictive) (+55-65% conversion)
+- **ENTERPRISE**: Azure OpenAI GPT-4o (+75-90% conversion)
 
 ### Apprentissage du Style Personnel
 - Analyse vocabulaire, emojis, typos, longueur messages
@@ -210,7 +210,7 @@ Liste quotidienne intelligente basée sur:
 
 ## 🎯 Différenciateurs Clés
 
-1. **AI Multi-Modèle**: Seule plateforme avec GPT-4 + Claude combo
+1. **AI Azure OpenAI**: Stack unifiée GPT-4 (Azure OpenAI)
 2. **Commission Progressive**: Plus tu gagnes, moins tu payes
 3. **Growth Hacking Intégré**: Pas juste OF, tout l'écosystème
 4. **Compliance First**: Protection contre bans/shadowbans

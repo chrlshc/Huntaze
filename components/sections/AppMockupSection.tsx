@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 
 export default function AppMockupSection() {
   return (
-    <section className="relative bg-black py-20 px-4 overflow-hidden">
+    <section className="relative bg-black py-14 sm:py-16 md:py-20 px-4 overflow-hidden">
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <motion.div 
@@ -13,7 +13,7 @@ export default function AppMockupSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
             Your AI-powered command center
@@ -44,7 +44,7 @@ export default function AppMockupSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="relative mx-auto max-w-6xl"
+          className="relative mx-auto max-w-5xl"
         >
           <div className="browser-mockup">
             {/* Browser Chrome */}
@@ -203,6 +203,9 @@ export default function AppMockupSection() {
             0 25px 50px rgba(0, 0, 0, 0.5),
             0 0 0 1px rgba(255, 255, 255, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.1);
+          width: 100%;
+          max-width: 1080px;
+          margin: 0 auto;
         }
 
         .browser-toolbar {
@@ -242,7 +245,7 @@ export default function AppMockupSection() {
 
         .app-content {
           background: #0f1117;
-          height: 600px;
+          height: 520px;
           display: flex;
         }
 

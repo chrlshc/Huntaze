@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Huntaze API Gateway throttling, usage plans and JWT authorizer configuration for pre-beta hardening.
+
+Parameters:
+  RestApiId:
+    Type: String
+    Description: API Gateway REST API identifier (e.g. a1b2c3d4e5).
+  RestApiStage:
+    Type: String
+    Description: Stage name to attach to the usage plan (e.g. prod).
+  UsagePlanName:
+    Type: String
+    Default: huntaze-prebeta-plan
+    Description: Name of the usage plan that enforces throttling limits.
+  PerUserRateLimit:
+    Type: Number
+    Default: 100
+    Description: Per API key request rate limit (requests per minute).
+  PerUserBurstLimit:
+    Type: Number
+    Default: 25
+    Description: Per API key burst limit.
+  GlobalRateLimit:
+    Type: Number
+    Default: 1000
+    Description: Global usage plan rate limit (requests per minute).
+  GlobalBurstLimit:
+    Type: Number
+    Default: 200
+    Description: Global usage plan burst limit.
+  ApiKeyName:
+    Type: String
+    Default: huntaze-prebeta-client
+    Description: Friendly name for the generated API key.
+  AuthorizerName:
+    Type: String
+    Default: huntaze-jwt-authorizer
+    Description: Name of the Lambda JWT authorizer.
+  LambdaAuthorizerArn:
+    Type: String
+    Description: ARN of the Lambda function that validates JWT tokens.
+  JwtAudience:
+    Type: String
+    Description: Expected JWT audience claim.
+  JwtIssuer:
+    Type: String
+    Description: Expected JWT issuer.
+
+Resources:
+  JwtAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: !Ref AuthorizerName
+      Type: REQUEST
+      RestApiId: !Ref RestApiId
+      AuthorizerResultTtlInSeconds: 300
+      IdentitySource: "method.request.header.Authorization"
+      AuthorizerUri: !Sub
+        - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+        - { LambdaArn: !Ref LambdaAuthorizerArn }
+      AuthorizerCredentials: !GetAtt AuthorizerInvokeRole.Arn
+      IdentityValidationExpression: ^Bearer\s+[-A-Za-z0-9\._~\+/]+=*$
+
+  AuthorizerInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub huntaze-apigateway-authorizer-${RestApiId}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Ref LambdaAuthorizerArn
+
+  UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: !Ref UsagePlanName
+      Description: Huntaze pre-beta rate limiting (100 rpm/user, 1000 rpm global).
+      Throttle:
+        RateLimit: !Ref GlobalRateLimit
+        BurstLimit: !Ref GlobalBurstLimit
+      ApiStages:
+        - ApiId: !Ref RestApiId
+          Stage: !Ref RestApiStage
+
+  UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref UsagePlan
+
+  ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Ref ApiKeyName
+      Enabled: true
+      GenerateDistinctId: true
+      StageKeys:
+        - RestApiId: !Ref RestApiId
+          StageName: !Ref RestApiStage
+      Tags:
+        - Key: app
+          Value: huntaze
+        - Key: environment
+          Value: pre-beta
+
+Outputs:
+  ApiKeyValue:
+    Description: Generated API key value (store securely!).
+    Value: !Ref ApiKey
+  UsagePlanId:
+    Value: !Ref UsagePlan
+  AuthorizerId:
+    Value: !Ref JwtAuthorizer

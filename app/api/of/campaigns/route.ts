@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from '@/lib/auth';
 import { z } from 'zod';
 import type { OfMassMessageCampaign, CreateCampaignRequest } from '@/lib/types/onlyfans';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 // Campaign validation schema
 const createCampaignSchema = z.object({
@@ -28,10 +30,14 @@ const campaigns: OfMassMessageCampaign[] = [];
 
 // GET - List campaigns
 export async function GET(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const url = new URL(request.url);
@@ -46,22 +52,31 @@ export async function GET(request: NextRequest) {
     // Sort by creation date desc
     filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       campaigns: filtered,
-      total: filtered.length
+      total: filtered.length,
+      requestId,
     });
-  } catch (error) {
-    console.error('Error listing campaigns:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('campaign_list_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 // POST - Create campaign
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const body = await request.json();
@@ -90,19 +105,24 @@ export async function POST(request: NextRequest) {
 
     campaigns.push(campaign);
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       success: true,
-      campaign
+      campaign,
+      requestId,
     }, { status: 201 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
-  } catch (error) {
-    console.error('Error creating campaign:', error);
+  } catch (error: any) {
+    log.error('campaign_create_failed', { error: error?.message || 'unknown_error' });
     
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid request', details: error.errors }, { status: 400 });
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 

@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudWatch dashboard for posting pipeline (SQS + Lambda)
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+
+Resources:
+  PostingDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub 'Huntaze-Posting-${Environment}'
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {"type":"metric","x":0,"y":0,"width":12,"height":6,
+             "properties": {"title":"SQS Age - Publishers","metrics":[
+               ["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","publisher-twitter-${Environment}"],
+               ["AWS/SQS","ApproximateAgeOfOldestMessage","QueueName","publisher-instagram-${Environment}"]
+             ],"stat":"Maximum","period":300,"region":"${AWS::Region}","view":"timeSeries"}},
+            {"type":"metric","x":12,"y":0,"width":12,"height":6,
+             "properties": {"title":"SQS Visible - Publishers","metrics":[
+               ["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","publisher-twitter-${Environment}"],
+               ["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","publisher-instagram-${Environment}"]
+             ],"stat":"Sum","period":300,"region":"${AWS::Region}","view":"timeSeries"}},
+            {"type":"metric","x":0,"y":6,"width":12,"height":6,
+             "properties": {"title":"Lambda Errors","metrics":[
+               ["AWS/Lambda","Errors","FunctionName","publisher-twitter"],
+               ["AWS/Lambda","Errors","FunctionName","publisher-instagram"]
+             ],"stat":"Sum","period":300,"region":"${AWS::Region}","view":"timeSeries"}},
+            {"type":"metric","x":12,"y":6,"width":12,"height":6,
+             "properties": {"title":"Lambda Duration p95","metrics":[
+               ["AWS/Lambda","Duration","FunctionName","publisher-twitter",{"stat":"p95"}],
+               ["AWS/Lambda","Duration","FunctionName","publisher-instagram",{"stat":"p95"}]
+             ],"period":300,"region":"${AWS::Region}","view":"timeSeries"}}
+          ]
+        }
+
+Outputs:
+  DashboardName:
+    Value: !Ref PostingDashboard
+

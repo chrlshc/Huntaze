@@ -1,0 +1,19 @@
+[Unit]
+Description=Huntaze AI Queue Worker
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/huntaze
+Environment=HUNTAZE_API_BASE=https://your-app-domain
+Environment=INTERVAL_SECONDS=5
+Environment=AWS_REGION=us-east-1
+ExecStart=/bin/bash scripts/ai-queue-worker.sh
+Restart=always
+RestartSec=2
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
+

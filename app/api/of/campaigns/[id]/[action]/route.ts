@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 import { getServerSession } from '@/lib/auth';
 
 // Mock campaigns (shared - in production use DB)
@@ -9,16 +11,22 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string; action: string } }
 ) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const { id, action } = params;
     
     if (!['launch', 'pause', 'resume', 'cancel'].includes(action)) {
-      return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+      const r = NextResponse.json({ error: 'Invalid action', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const campaign = campaigns.find(c => c.id === id && c.userId === session.user!.id);
@@ -71,16 +79,21 @@ export async function POST(
     campaign.updatedAt = new Date();
 
     // TODO: Trigger appropriate worker actions based on state change
-    console.log(`Campaign ${id} action: ${action}`);
+    log.info('campaign_action', { id, action });
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       success: true,
       campaign,
-      message: `Campaign ${action} successful`
+      message: `Campaign ${action} successful`,
+      requestId,
     });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
-  } catch (error) {
-    console.error('Error updating campaign:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (error: any) {
+    log.error('campaign_update_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

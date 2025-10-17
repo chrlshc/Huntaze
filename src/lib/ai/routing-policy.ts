@@ -47,8 +47,8 @@ export function modelForTier(tier: ModelTier) {
     case 'premium':
       return { provider: 'openai' as const, model: 'gpt-4o' }
     case 'standard':
-      return { provider: 'anthropic' as const, model: 'claude-3-5-sonnet' }
+      return { provider: 'openai' as const, model: 'gpt-4o-mini' }
     case 'economy':
-      return { provider: 'anthropic' as const, model: 'claude-3-haiku' }
+      return { provider: 'openai' as const, model: 'gpt-4o-mini' }
   }
 }

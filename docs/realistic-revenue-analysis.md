@@ -66,7 +66,7 @@ Revenu moyen:
 ```
 Pour 100 créateurs:
 - Infrastructure AWS/GCP: $2,000
-- APIs IA (Claude + GPT): $3,500
+- APIs IA (Azure OpenAI): $3,500
 - Support client (2 personnes): $8,000
 - Développeur maintenance: $10,000
 - Marketing continu: $5,000

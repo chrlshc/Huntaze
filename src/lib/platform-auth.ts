@@ -10,22 +10,18 @@ export type OAuthConfig = {
 
 export const PLATFORM_OAUTH_CONFIGS: Record<string, OAuthConfig> = {
   instagram: {
-    clientId: process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID || '',
-    redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/instagram/callback`,
+    clientId: process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID || process.env.INSTAGRAM_CLIENT_ID || '',
+    redirectUri: process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/auth/instagram/callback`,
     scopes: [
-      'instagram_basic',
-      'instagram_content_publish',
-      'instagram_manage_comments',
-      'instagram_manage_insights',
-      'pages_read_engagement',
-      'pages_manage_posts'
+      'user_profile',
+      'user_media'
     ],
-    authUrl: 'https://www.instagram.com/oauth/authorize',
-    tokenUrl: 'https://graph.instagram.com/oauth/access_token'
+    authUrl: 'https://api.instagram.com/oauth/authorize',
+    tokenUrl: 'https://api.instagram.com/oauth/access_token'
   },
   tiktok: {
-    clientId: process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY || '',
-    redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/tiktok/callback`,
+    clientId: process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY || process.env.TIKTOK_CLIENT_KEY || '',
+    redirectUri: process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/auth/tiktok/callback`,
     scopes: [
       'user.info.basic',
       'video.list',
@@ -36,8 +32,8 @@ export const PLATFORM_OAUTH_CONFIGS: Record<string, OAuthConfig> = {
     tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token'
   },
   reddit: {
-    clientId: process.env.NEXT_PUBLIC_REDDIT_CLIENT_ID || '',
-    redirectUri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reddit/callback`,
+    clientId: process.env.NEXT_PUBLIC_REDDIT_CLIENT_ID || process.env.REDDIT_CLIENT_ID || '',
+    redirectUri: process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/auth/reddit/callback`,
     scopes: [
       'identity',
       'submit',

@@ -17,3 +17,5 @@ export const getOAuthUrl = (provider: 'google') => {
 export async function getServerSession(): Promise<{ user?: { id: string; email: string } } | null> {
   return null;
 }
+
+export const authOptions = {} as any;

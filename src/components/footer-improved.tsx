@@ -167,15 +167,15 @@ export default function FooterImproved() {
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">Bonnes pratiques de sécurité</span>
+              <span className="text-sm text-gray-400">Security best practices</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">Chiffrement AES‑256‑GCM</span>
+              <span className="text-sm text-gray-400">AES‑256‑GCM encryption</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-gray-400">Haute disponibilité</span>
+              <span className="text-sm text-gray-400">High availability</span>
             </div>
           </div>
         </div>

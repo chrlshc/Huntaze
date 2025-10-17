@@ -6,6 +6,7 @@ import { DEFAULT_RATE_LIMITS } from '@/lib/types/onlyfans';
 import { sessionManager } from '@/lib/of/session-manager';
 import { sendOfMessage, browserWorkerPool } from './of-browser-worker';
 import { proxyManager } from '@/lib/of/proxy-manager';
+import { makeReqLogger } from '@/lib/logger';
 
 export interface WorkerStats {
   processed: number;
@@ -34,13 +35,14 @@ class OfSendWorker {
   // Start the worker
   start(intervalMs: number = 5000): void {
     if (this.isRunning) {
-      console.log('Worker already running');
+      const log = makeReqLogger({ route: 'of_send_worker', method: 'JOB' });
+      log.info('of_send_worker_already_running');
       return;
     }
 
     this.isRunning = true;
     this.stats.isRunning = true;
-    console.log('Starting OF send worker...');
+    makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).info('of_send_worker_start');
 
     this.intervalId = setInterval(async () => {
       await this.processBatch();
@@ -62,7 +64,7 @@ class OfSendWorker {
       this.intervalId = undefined;
     }
     
-    console.log('OF send worker stopped');
+    makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).info('of_send_worker_stopped');
   }
 
   // Process a batch of messages
@@ -72,7 +74,9 @@ class OfSendWorker {
       
       if (messages.length === 0) return;
       
-      console.log(`Processing ${messages.length} messages...`);
+      if (Math.random() < 0.05) {
+        makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).info('of_send_processing_batch', { count: messages.length });
+      }
       this.stats.lastRunAt = new Date();
 
       // Process messages in parallel with concurrency limit
@@ -89,7 +93,7 @@ class OfSendWorker {
         } else {
           this.stats.failed++;
           const error = result.status === 'rejected' ? result.reason : 'Unknown error';
-          console.error(`Message ${messages[index].id} failed:`, error);
+          makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).error('of_send_message_failed', { id: messages[index].id, error: String(error) });
         }
       });
 
@@ -101,8 +105,8 @@ class OfSendWorker {
       // Check campaign error thresholds
       await this.checkCampaignErrors(messages);
 
-    } catch (error) {
-      console.error('Worker batch processing error:', error);
+    } catch (error: any) {
+      makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).error('of_send_batch_failed', { error: error?.message || 'unknown_error' });
     }
   }
 
@@ -157,7 +161,7 @@ class OfSendWorker {
 
   // Send DM message using browser automation
   private async sendDm(userId: string, data: DmMessage, proxy?: any): Promise<boolean> {
-    console.log(`Sending DM to conversation ${data.conversationId}:`, data.content.text);
+    makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).info('of_send_dm_started', { conversationId: data.conversationId });
     
     try {
       const result = await sendOfMessage(
@@ -171,13 +175,13 @@ class OfSendWorker {
       );
       
       if (result.success) {
-        console.log(`DM sent successfully: ${result.messageId}`);
+        makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).info('of_send_dm_completed', { messageId: result.messageId });
         return true;
       } else {
         throw new Error(result.error || 'Failed to send DM');
       }
     } catch (error: any) {
-      console.error('DM send error:', error);
+      makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).error('of_send_dm_failed', { error: String(error) });
       
       // Check if it's an authentication error
       if (error.message?.includes('Authentication required')) {
@@ -193,7 +197,7 @@ class OfSendWorker {
 
   // Send campaign message using browser automation
   private async sendCampaignMessage(userId: string, data: CampaignMessage, proxy?: any): Promise<boolean> {
-    console.log(`Sending campaign message to ${data.platformUserId}`);
+    makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).info('of_send_campaign_started', { platformUserId: data.platformUserId, campaignId: data.campaignId });
     
     try {
       // For campaigns, we send to the user's conversation
@@ -209,7 +213,7 @@ class OfSendWorker {
       );
       
       if (result.success) {
-        console.log(`Campaign message sent successfully: ${result.messageId}`);
+        makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).info('of_send_campaign_completed', { messageId: result.messageId, campaignId: data.campaignId });
         
         // Update campaign recipient status
         await this.updateCampaignRecipient(data.campaignId, data.recipientId, 'sent');
@@ -219,7 +223,7 @@ class OfSendWorker {
         throw new Error(result.error || 'Failed to send campaign message');
       }
     } catch (error: any) {
-      console.error('Campaign send error:', error);
+      makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).error('of_send_campaign_failed', { error: String(error), campaignId: data.campaignId });
       
       // Update recipient status as failed
       await this.updateCampaignRecipient(data.campaignId, data.recipientId, 'failed', error.message);
@@ -236,7 +240,9 @@ class OfSendWorker {
     error?: string
   ): Promise<void> {
     // TODO: Update in database
-    console.log(`Updated recipient ${recipientId} for campaign ${campaignId}: ${status}`);
+    if (Math.random() < 0.05) {
+      makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).info('of_campaign_recipient_updated', { recipientId, campaignId, status, error });
+    }
   }
 
   // Check campaign error thresholds
@@ -258,7 +264,7 @@ class OfSendWorker {
       const errorRate = total > 0 ? errors / total : 0;
       
       if (errorRate > DEFAULT_RATE_LIMITS.campaign.errorThreshold) {
-        console.error(`Campaign ${campaignId} error rate ${errorRate * 100}% exceeds threshold. Stopping.`);
+        makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).error('of_campaign_error_threshold_exceeded', { campaignId, errorRate });
         this.stopCampaign(campaignId);
       }
     });
@@ -273,22 +279,22 @@ class OfSendWorker {
   // Kill switch methods
   stopUser(userId: string): void {
     this.killSwitches.set(userId, true);
-    console.log(`Stopped automation for user ${userId}`);
+    makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).info('of_automation_stopped');
   }
 
   resumeUser(userId: string): void {
     this.killSwitches.delete(userId);
-    console.log(`Resumed automation for user ${userId}`);
+    makeReqLogger({ userId, route: 'of_send_worker', method: 'JOB' }).info('of_automation_resumed');
   }
 
   stopCampaign(campaignId: string): void {
     this.campaignKillSwitches.set(campaignId, true);
-    console.log(`Stopped campaign ${campaignId}`);
+    makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).info('of_campaign_stopped', { campaignId });
   }
 
   resumeCampaign(campaignId: string): void {
     this.campaignKillSwitches.delete(campaignId);
-    console.log(`Resumed campaign ${campaignId}`);
+    makeReqLogger({ route: 'of_send_worker', method: 'JOB' }).info('of_campaign_resumed', { campaignId });
   }
 
   // Get worker statistics

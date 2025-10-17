@@ -5,7 +5,7 @@ export default function DesignSystemPage() {
     <div className="min-h-screen bg-background-primary text-text-primary">
       <div className="max-w-6xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-6">Huntaze Design System</h1>
-        <p className="text-text-secondary mb-10">Aperçu rapide des composants clés, pilotés par les tokens.</p>
+        <p className="text-text-secondary mb-10">Quick overview of the key components powered by design tokens.</p>
 
         {/* Buttons */}
         <section className="mb-12">
@@ -24,7 +24,7 @@ export default function DesignSystemPage() {
             {[1,2,3].map((i) => (
               <div key={i} className="rounded-xl border border-border-subtle bg-background-elevated p-6 hover-lift-soft transition">
                 <h3 className="font-semibold mb-2">Card {i}</h3>
-                <p className="text-text-secondary text-sm">Surface elevée, bordure subtile, lisible en dark et light.</p>
+                <p className="text-text-secondary text-sm">Elevated surface, subtle border, readable in both dark and light themes.</p>
               </div>
             ))}
           </div>
@@ -74,4 +74,3 @@ export default function DesignSystemPage() {
     </div>
   );
 }
-

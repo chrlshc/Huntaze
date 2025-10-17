@@ -37,7 +37,7 @@ export const PLATFORM_STRATEGIES: Record<string, PlatformStrategy> = {
     bestTimes: [12, 17, 19, 21], // Lunch, after work, evening
     bannedWords: [
       'onlyfans', 'OF', 'nude', 'naked', 'sex', 'porn', 'dick', 'pussy',
-      'cum', 'fuck', 'link in bio' // IG détecte ça!
+      'cum', 'fuck', 'link in bio' // IG flags this instantly
     ],
     safeTags: [
       '#model', '#fitnessgirl', '#lingerie', '#boudoir', '#exclusive',

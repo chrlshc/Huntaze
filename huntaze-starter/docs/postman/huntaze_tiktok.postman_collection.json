@@ -1,0 +1,15 @@
+{
+  "info": { "name": "Huntaze TikTok", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "item": [
+    {
+      "name": "Exchange Code",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{base_url}}/api/auth/tiktok/callback", "host": ["{{base_url}}"], "path": ["api", "auth", "tiktok", "callback"] },
+        "body": { "mode": "raw", "raw": "{\n  \"code\": \"<CODE>\"\n}" }
+      }
+    }
+  ]
+}
+

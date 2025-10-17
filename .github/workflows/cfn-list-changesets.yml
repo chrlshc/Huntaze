@@ -1,0 +1,20 @@
+name: CFN List ChangeSets
+on: { workflow_dispatch: {} }
+permissions: { id-token: write, contents: read }
+env: { AWS_REGION: us-east-1 }
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: List latest names
+        run: |
+          for S in huntaze-core-prod huntaze-media-prod huntaze-ai-simple-prod; do
+            N=$(aws cloudformation list-change-sets --stack-name "$S" --region $AWS_REGION \
+                 --query 'Summaries|sort_by(@,&CreationTime)[-1].ChangeSetName' --output text || true)
+            echo "$S → ${N:-<none>}" | tee -a $GITHUB_STEP_SUMMARY
+          done
+

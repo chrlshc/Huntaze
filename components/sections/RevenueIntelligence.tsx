@@ -2,7 +2,7 @@
 import { DollarSign, Users, MessageSquare, TrendingUp, Calendar, Activity } from 'lucide-react';
 import PhoneMockup from '@/components/mockups/PhoneMockup';
 import { useState } from 'react';
-// import CountUp from 'react-countup'; // Désactivé pour les performances
+// import CountUp from 'react-countup'; // Disabled for performance
 
 const DashboardInterface = () => {
   const [revenue, setRevenue] = useState(47832);
@@ -11,7 +11,7 @@ const DashboardInterface = () => {
   const [conversionRate, setConversionRate] = useState(18.7);
   const [selectedPeriod, setSelectedPeriod] = useState('all');
   
-  // Animation désactivée pour les performances
+  // Animation disabled for performance
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     setRevenue(prev => prev + Math.floor(Math.random() * 100) + 50);

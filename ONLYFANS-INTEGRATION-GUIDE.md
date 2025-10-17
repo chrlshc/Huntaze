@@ -76,8 +76,11 @@ JWT_SECRET=your_jwt_secret_here
 ENCRYPTION_KEY=your_32_byte_hex_key
 ENCRYPTION_IV=your_16_byte_hex_iv
 
-# OpenAI Configuration
-OPENAI_API_KEY=your_openai_api_key
+# Azure OpenAI Configuration
+AZURE_OPENAI_API_KEY=your_azure_openai_key
+AZURE_OPENAI_ENDPOINT=https://huntaze-ai.openai.azure.com
+AZURE_OPENAI_DEPLOYMENT_NAME=your_primary_deployment
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
 
 # Redis Configuration
 REDIS_URL=redis://localhost:6379
@@ -185,9 +188,9 @@ Body: {
    - Ensure Redis is running: `redis-cli ping`
    - Check REDIS_URL in .env.onlyfans
 
-2. **OpenAI API Error**
-   - Verify OPENAI_API_KEY is set
-   - Check API quota and billing
+2. **Azure OpenAI Error**
+   - Verify AZURE_OPENAI_API_KEY / AZURE_OPENAI_ENDPOINT are definies
+   - Confirm that the deployment name exists in Azure and that the key has access
 
 3. **404 Errors**
    - Run `npm run build`

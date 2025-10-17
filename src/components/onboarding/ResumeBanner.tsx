@@ -11,10 +11,10 @@ export default function ResumeBanner() {
   return (
     <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 px-4 py-3 flex items-center justify-between">
       <div className="text-sm">
-        Terminez votre configuration pour débloquer toutes les fonctionnalités.
+        Finish your setup to unlock every feature.
       </div>
       <Link href="/onboarding/setup" className="text-sm font-semibold underline">
-        Reprendre l’onboarding
+        Resume onboarding
       </Link>
     </div>
   );

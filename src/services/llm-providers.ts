@@ -1,3 +1,7 @@
+import type OpenAI from 'openai';
+import { getAzureOpenAI, getDefaultAzureDeployment } from '@/lib/ai/azure-openai';
+import { makeReqLogger } from '@/lib/logger';
+
 export interface LLMProvider {
   name: string;
   generateDraft(params: LLMDraftParams): Promise<LLMDraftResponse>;
@@ -60,14 +64,15 @@ export interface ValidationResult {
   suggestions?: string[];
 }
 
-// Claude Provider
-export class ClaudeProvider implements LLMProvider {
-  name = 'Claude 3.5 Sonnet';
-  private apiKey: string;
-  private apiUrl = 'https://api.anthropic.com/v1/messages';
+// Azure OpenAI Provider
+export class AzureProvider implements LLMProvider {
+  name = 'Azure OpenAI (GPT-4o)';
+  private clientPromise: Promise<OpenAI>;
+  private readonly model: string;
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
+  constructor() {
+    this.model = process.env.AZURE_OPENAI_CHAT_DEPLOYMENT || getDefaultAzureDeployment();
+    this.clientPromise = getAzureOpenAI();
   }
 
   async generateDraft(params: LLMDraftParams): Promise<LLMDraftResponse> {
@@ -75,33 +80,26 @@ export class ClaudeProvider implements LLMProvider {
     const userPrompt = this.buildUserPrompt(params);
 
     try {
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 300,
-          temperature: 0.7,
-          system: systemPrompt,
-          messages: [{
-            role: 'user',
-            content: userPrompt
-          }]
-        })
+      const client = await this.clientPromise;
+      const response = await client.chat.completions.create({
+        model: this.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        max_tokens: 300,
+        temperature: 0.7,
       });
 
-      if (!response.ok) {
-        throw new Error(`Claude API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return this.parseClaudeResponse(data.content[0].text, params);
-    } catch (error) {
-      console.error('Claude API error:', error);
+      const text = response.choices?.[0]?.message?.content || '';
+      return this.parseAzureResponse(text, params);
+    } catch (error: any) {
+      const log = makeReqLogger({});
+      log.error('llm_request_failed', {
+        provider: 'azure',
+        model: this.model,
+        error: error?.message || 'Azure OpenAI error',
+      });
       return this.fallbackResponse(params);
     }
   }
@@ -141,7 +139,7 @@ export class ClaudeProvider implements LLMProvider {
     };
   }
 
-  private buildSystemPrompt(persona: any): string {
+  protected buildSystemPrompt(persona: any): string {
     return `You are ${persona.name}, a content creator. Your communication style:
 ${persona.style_guide}
 
@@ -156,7 +154,7 @@ Guidelines:
 - Use emojis sparingly and appropriately`;
   }
 
-  private buildUserPrompt(params: LLMDraftParams): string {
+  protected buildUserPrompt(params: LLMDraftParams): string {
     const { fanMessage, fanData } = params;
     
     return `Fan "${fanData.name}" (${fanData.rfmSegment} segment) says: "${fanMessage}"
@@ -174,7 +172,7 @@ Craft an appropriate response that:
 4. ${fanData.propensityScore && fanData.propensityScore > 0.7 ? 'Includes subtle upsell opportunity' : 'Focuses on engagement'}`;
   }
 
-  private parseClaudeResponse(response: string, params: LLMDraftParams): LLMDraftResponse {
+  protected parseAzureResponse(response: string, params: LLMDraftParams): LLMDraftResponse {
     // Extract and analyze the response
     const draft = response.trim();
     const hasUpsell = /premium|exclusive|special|private|custom|personal/i.test(draft);
@@ -182,7 +180,7 @@ Craft an appropriate response that:
     return {
       draft,
       confidence: 0.85,
-      reasoning: `Generated response for ${params.fanData.rfmSegment} segment fan with Claude 3.5 Sonnet`,
+      reasoning: `Generated response for ${params.fanData.rfmSegment} segment fan with Azure OpenAI`,
       upsell_opportunity: hasUpsell && (params.fanData.propensityScore ?? 0) > 0.6,
       recommended_ppv_price: hasUpsell ? this.calculatePPVPrice(params.fanData) : undefined,
       persona_elements_used: params.persona.tone_keywords.filter(kw => 
@@ -244,40 +242,8 @@ Craft an appropriate response that:
   }
 }
 
-// OpenAI Provider
-export class OpenAIProvider extends ClaudeProvider {
-  name = 'GPT-4';
-  private openAIApiKey: string;
-  private openAIApiUrl = 'https://api.openai.com/v1/chat/completions';
-
-  constructor(apiKey: string) {
-    super('');
-    this.openAIApiKey = apiKey;
-  }
-
-  async generateDraft(params: LLMDraftParams): Promise<LLMDraftResponse> {
-    // Similar implementation to Claude but using OpenAI API
-    // For brevity, returning fallback for now
-    return this.fallbackResponse(params);
-  }
-
-  async validateContent(content: string, guardrails: ContentGuardrails): Promise<ValidationResult> {
-    return super.validateContent(content, guardrails);
-  }
-}
-
 // Factory function to get provider
 export function getLLMProvider(providerName?: string): LLMProvider {
-  const provider = providerName || process.env.LLM_PROVIDER || 'claude';
-  const apiKey = process.env[`${provider.toUpperCase()}_API_KEY`] || '';
-
-  switch (provider.toLowerCase()) {
-    case 'claude':
-      return new ClaudeProvider(apiKey);
-    case 'openai':
-      return new OpenAIProvider(apiKey);
-    default:
-      // Return Claude as default
-      return new ClaudeProvider(apiKey);
-  }
+  // Use Azure OpenAI as the unified provider
+  return new AzureProvider();
 }

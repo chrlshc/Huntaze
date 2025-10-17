@@ -1,0 +1,17 @@
+{
+  "name": "byo-ip-runner-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "backend": "node backend/server.js",
+    "agent": "node agent/index.js"
+  },
+  "dependencies": {
+    "playwright": "^1.50.0",
+    "ws": "^8.18.0",
+    "aws-sdk": "^2.1570.0",
+    "luxon": "^3.5.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

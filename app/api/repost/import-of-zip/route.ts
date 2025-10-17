@@ -1,20 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseOnlyFansZip, parseOnlyFansCSV } from '@/src/utils/of-import-parser';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const token = request.cookies.get('auth_token')?.value;
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      const r = NextResponse.json({ error: 'No file provided', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     let importData: any;
@@ -127,21 +135,24 @@ export async function POST(request: NextRequest) {
             }
           })
         });
-      } catch (e) {
-        console.error('Failed to update OF connection status:', e);
+      } catch (e: any) {
+        log.warn('of_connection_status_update_failed', { error: e?.message || 'unknown_error' });
       }
     }
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       imported: data.imported || 0,
       message: 'Successfully imported OnlyFans data',
-      details: importData.metadata
+      details: importData.metadata,
+      requestId,
     });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
     
   } catch (error: any) {
-    console.error('Import error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Failed to import OnlyFans data' 
-    }, { status: 500 });
+    log.error('repost_import_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: error.message || 'Failed to import OnlyFans data', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

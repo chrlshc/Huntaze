@@ -1,0 +1,39 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AuthToken",
+      "Effect": "Allow",
+      "Action": ["ecr:GetAuthorizationToken"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "RepoCreateDescribe",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:CreateRepository",
+        "ecr:DescribeRepositories",
+        "ecr:PutImageScanningConfiguration",
+        "ecr:PutLifecyclePolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "PushPullSpecificRepo",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:CompleteLayerUpload",
+        "ecr:DescribeImages",
+        "ecr:InitiateLayerUpload",
+        "ecr:PutImage",
+        "ecr:UploadLayerPart",
+        "ecr:GetRepositoryPolicy",
+        "ecr:SetRepositoryPolicy"
+      ],
+      "Resource": "arn:aws:ecr:REGION:ACCOUNT_ID:repository/of-worker"
+    }
+  ]
+}
+

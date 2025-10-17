@@ -54,10 +54,10 @@ const LiveDashboard: React.FC = () => {
   const [revenue, setRevenue] = useState(48234);
   const [messages, setMessages] = useState<Message[]>([]);
   const [metrics, setMetrics] = useState<LiveMetric[]>([
-    { label: 'Revenus Mensuels', value: 48234, change: 12.5, icon: '💰', color: 'from-green-400 to-emerald-500' },
-    { label: 'Créateurs Actifs', value: 10847, change: 3.2, icon: '👥', color: 'from-blue-400 to-cyan-500' },
-    { label: 'Messages/Heure', value: 523, change: 18.7, icon: '💬', color: 'from-purple-400 to-pink-500' },
-    { label: 'Taux Rétention', value: 95.4, change: 2.1, icon: '🎯', color: 'from-orange-400 to-red-500' }
+    { label: 'Monthly revenue', value: 48234, change: 12.5, icon: '💰', color: 'from-green-400 to-emerald-500' },
+    { label: 'Active creators', value: 10847, change: 3.2, icon: '👥', color: 'from-blue-400 to-cyan-500' },
+    { label: 'Messages/hour', value: 523, change: 18.7, icon: '💬', color: 'from-purple-400 to-pink-500' },
+    { label: 'Retention rate', value: 95.4, change: 2.1, icon: '🎯', color: 'from-orange-400 to-red-500' }
   ]);
   
   const messageIdRef = useRef(0);
@@ -74,7 +74,7 @@ const LiveDashboard: React.FC = () => {
       // Update metrics
       setMetrics(prev => prev.map(metric => ({
         ...metric,
-        value: metric.value + (Math.random() * 10 - 5) * (metric.label === 'Taux Rétention' ? 0.1 : 1),
+        value: metric.value + (Math.random() * 10 - 5) * (metric.label === 'Retention rate' ? 0.1 : 1),
         change: metric.change + (Math.random() * 2 - 1)
       })));
 
@@ -108,7 +108,7 @@ const LiveDashboard: React.FC = () => {
   const revenueChartData = {
     labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
     datasets: [{
-      label: 'Revenus',
+      label: 'Revenue',
       data: [32000, 35000, 38000, 42000, 45000, 48000, revenue],
       borderColor: 'rgb(147, 51, 234)',
       backgroundColor: 'rgba(147, 51, 234, 0.1)',
@@ -153,7 +153,7 @@ const LiveDashboard: React.FC = () => {
         },
         ticks: { 
           color: 'rgba(255,255,255,0.5)',
-          callback: (value: any) => '€' + value.toLocaleString()
+          callback: (value: any) => '€' + Number(value).toLocaleString('en-US')
         }
       }
     }
@@ -176,11 +176,11 @@ const LiveDashboard: React.FC = () => {
         >
           <h2 className="text-5xl lg:text-6xl font-bold mb-4">
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Dashboard en temps réel
+              Real-time dashboard
             </span>
           </h2>
           <p className="text-xl text-gray-300">
-            Surveillez vos performances 24/7 avec des métriques en direct
+            Monitor performance 24/7 with live metrics
           </p>
         </motion.div>
 
@@ -191,14 +191,14 @@ const LiveDashboard: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="glass-card p-8 mb-8 text-center"
         >
-          <h3 className="text-lg text-gray-400 mb-2">Revenus Totaux Aujourd'hui</h3>
+          <h3 className="text-lg text-gray-400 mb-2">Total revenue today</h3>
           <motion.div
             key={revenue}
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             className="text-6xl lg:text-7xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent"
           >
-            €{revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            €{revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </motion.div>
         </motion.div>
 
@@ -232,9 +232,9 @@ const LiveDashboard: React.FC = () => {
                 animate={{ scale: 1 }}
                 className={`text-2xl font-bold bg-gradient-to-r ${metric.color} bg-clip-text text-transparent`}
               >
-                {metric.label === 'Taux Rétention' 
+                {metric.label === 'Retention rate' 
                   ? `${metric.value.toFixed(1)}%`
-                  : metric.value.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
+                  : metric.value.toLocaleString('en-US', { maximumFractionDigits: 0 })
                 }
               </motion.div>
               <div className="text-sm text-gray-400 mt-1">{metric.label}</div>
@@ -247,7 +247,7 @@ const LiveDashboard: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="glass-card p-6 h-[500px] overflow-hidden">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-white">Messages Live</h3>
+                <h3 className="text-xl font-bold text-white">Live messages</h3>
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
               </div>
               
@@ -303,7 +303,7 @@ const LiveDashboard: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               className="glass-card p-6"
             >
-              <h3 className="text-xl font-bold text-white mb-4">Évolution des Revenus</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Revenue trend</h3>
               <div className="h-64">
                 <Line data={revenueChartData} options={chartOptions} />
               </div>
@@ -316,7 +316,7 @@ const LiveDashboard: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 className="glass-card p-6"
               >
-                <h3 className="text-lg font-bold text-white mb-4">Répartition Plateformes</h3>
+                <h3 className="text-lg font-bold text-white mb-4">Platform distribution</h3>
                 <div className="h-48">
                   <Doughnut 
                     data={platformDistribution}
@@ -340,22 +340,22 @@ const LiveDashboard: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 className="glass-card p-6"
               >
-                <h3 className="text-lg font-bold text-white mb-4">Insights IA</h3>
+                <h3 className="text-lg font-bold text-white mb-4">AI insights</h3>
                 <div className="space-y-3">
                   <AIInsight 
                     type="success"
-                    text="Pic d'activité prévu dans 2h"
-                    action="Programmer du contenu"
+                    text="Peak activity expected in 2h"
+                    action="Schedule content"
                   />
                   <AIInsight 
                     type="warning"
-                    text="23 fans premium en ligne"
-                    action="Engager maintenant"
+                    text="23 premium fans online"
+                    action="Engage now"
                   />
                   <AIInsight 
                     type="info"
-                    text="PPV optimal: €15-20"
-                    action="Ajuster les prix"
+                    text="Optimal PPV: €15-20"
+                    action="Adjust pricing"
                   />
                 </div>
               </motion.div>
@@ -409,23 +409,23 @@ const AIInsight: React.FC<{ type: 'success' | 'warning' | 'info'; text: string; 
 // Helper functions
 function getRandomMessage(): string {
   const messages = [
-    "Nouveau tip reçu! 💰",
-    "J'adore ton contenu!",
-    "Peux-tu faire une vidéo personnalisée?",
-    "Abonnement renouvelé ✨",
-    "Merci pour le PPV!",
-    "Tu es incroyable! 🔥",
-    "Quand est ta prochaine live?",
-    "Message privé débloqué"
+    'New tip received! 💰',
+    'Love your content!',
+    'Can you do a custom video?',
+    'Subscription renewed ✨',
+    'Thanks for the PPV!',
+    "You're incredible! 🔥",
+    'When is your next live?',
+    'Private message unlocked'
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
 
 function getRelativeTime(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-  if (seconds < 60) return 'À l\'instant';
-  if (seconds < 3600) return `Il y a ${Math.floor(seconds / 60)}min`;
-  return `Il y a ${Math.floor(seconds / 3600)}h`;
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+  return `${Math.floor(seconds / 3600)} h ago`;
 }
 
 export default LiveDashboard;

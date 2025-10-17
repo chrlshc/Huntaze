@@ -52,6 +52,7 @@ export async function sendMail(opts: MailOptions): Promise<{ ok: true } | { ok: 
         },
         Source: from,
         ReplyToAddresses: opts.replyTo ? [opts.replyTo] : undefined,
+        // Attach Configuration Set automatically when present (production metrics: bounces/complaints, etc.)
         ConfigurationSetName: configSet || undefined,
       });
       await client.send(params);

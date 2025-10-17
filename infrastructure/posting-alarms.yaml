@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Alarms for posting pipeline SQS queues (AgeOfOldestMessage, DLQ depth)
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+
+Resources:
+  InstagramAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'SQS-publisher-instagram-${Environment}-AgeOfOldestMessage>5m'
+      Namespace: 'AWS/SQS'
+      MetricName: 'ApproximateAgeOfOldestMessage'
+      Dimensions:
+        - Name: QueueName
+          Value: !Sub 'publisher-instagram-${Environment}'
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 300
+      EvaluationPeriods: 5
+      Period: 60
+      Statistic: Maximum
+      TreatMissingData: notBreaching
+
+  InstagramDlqDepth:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'SQS-publisher-instagram-dlq-${Environment}-Visible>0'
+      Namespace: 'AWS/SQS'
+      MetricName: 'ApproximateNumberOfMessagesVisible'
+      Dimensions:
+        - Name: QueueName
+          Value: !Sub 'publisher-instagram-dlq-${Environment}'
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      EvaluationPeriods: 1
+      Period: 60
+      Statistic: Sum
+      TreatMissingData: notBreaching
+
+  TikTokAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'SQS-publisher-tiktok-${Environment}-AgeOfOldestMessage>5m'
+      Namespace: 'AWS/SQS'
+      MetricName: 'ApproximateAgeOfOldestMessage'
+      Dimensions:
+        - Name: QueueName
+          Value: !Sub 'publisher-tiktok-${Environment}'
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 300
+      EvaluationPeriods: 5
+      Period: 60
+      Statistic: Maximum
+      TreatMissingData: notBreaching
+
+  TikTokDlqDepth:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'SQS-publisher-tiktok-dlq-${Environment}-Visible>0'
+      Namespace: 'AWS/SQS'
+      MetricName: 'ApproximateNumberOfMessagesVisible'
+      Dimensions:
+        - Name: QueueName
+          Value: !Sub 'publisher-tiktok-dlq-${Environment}'
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      EvaluationPeriods: 1
+      Period: 60
+      Statistic: Sum
+      TreatMissingData: notBreaching
+
+  RedditAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'SQS-publisher-reddit-${Environment}-AgeOfOldestMessage>5m'
+      Namespace: 'AWS/SQS'
+      MetricName: 'ApproximateAgeOfOldestMessage'
+      Dimensions:
+        - Name: QueueName
+          Value: !Sub 'publisher-reddit-${Environment}'
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 300
+      EvaluationPeriods: 5
+      Period: 60
+      Statistic: Maximum
+      TreatMissingData: notBreaching
+
+  RedditDlqDepth:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'SQS-publisher-reddit-dlq-${Environment}-Visible>0'
+      Namespace: 'AWS/SQS'
+      MetricName: 'ApproximateNumberOfMessagesVisible'
+      Dimensions:
+        - Name: QueueName
+          Value: !Sub 'publisher-reddit-dlq-${Environment}'
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 0
+      EvaluationPeriods: 1
+      Period: 60
+      Statistic: Sum
+      TreatMissingData: notBreaching
+

@@ -4,15 +4,15 @@ import { useEffect, useRef } from "react";
 
 type Props = {
   className?: string;
-  /** 0.5 (léger) – 1 (par défaut) – 2 (dense) */
+  /** 0.5 (light) – 1 (default) – 2 (dense) */
   intensity?: number;
-  /** Couleur principale */
+  /** Primary color */
   color?: string;
 };
 
 type Path = {
   pts: { x: number; y: number }[];
-  len: number; // longueur totale du chemin
+  len: number; // total path length
 };
 
 export default function NeonCircuit({
@@ -37,7 +37,7 @@ export default function NeonCircuit({
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    // Cap DPI pour la perf (mobile compris)
+    // Clamp DPI for performance (mobile included)
     const getDPR = () => Math.min(window.devicePixelRatio || 1, 1.75);
 
     const isMobile = () => window.innerWidth < 768;
@@ -56,7 +56,7 @@ export default function NeonCircuit({
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      buildPaths(); // régénère la géométrie en fonction de la taille
+      buildPaths(); // rebuild geometry based on the current size
     }
 
     function buildPaths() {
@@ -74,23 +74,23 @@ export default function NeonCircuit({
       for (let i = 0; i < cols; i++) {
         const x =
           (i / (cols - 1)) * width +
-          rand(-width * 0.015, width * 0.015); // léger jitter
+          rand(-width * 0.015, width * 0.015); // slight jitter
         xs.push(x);
       }
 
-      // Pour chaque colonne, on fabrique un chemin vertical "en dents de scie"
+      // For each column generate a vertical zig-zag path
       for (let c = 0; c < cols; c++) {
         const pts: { x: number; y: number }[] = [];
         let x = xs[c];
         for (let r = 0; r <= rows; r++) {
           const y = (r / rows) * height;
-          // Petites ruptures latérales pour rappeler les facettes de la scène
+          // Small lateral breaks to echo the scene facets
           if (r > 0 && Math.random() < 0.35) {
             x += (Math.random() < 0.5 ? -1 : 1) * rand(8, 28);
           }
           pts.push({ x, y });
         }
-        // Longueur du chemin
+        // Path length
         let L = 0;
         for (let i = 0; i < pts.length - 1; i++) {
           const a = pts[i],
@@ -99,7 +99,7 @@ export default function NeonCircuit({
         }
         paths.push({ pts, len: L });
 
-        // Parfois, un chemin "double" très proche pour densifier visuellement
+        // Occasionally duplicate a nearby path to increase density
         if (Math.random() < 0.3) {
           const offset = rand(3, 8) * (Math.random() < 0.5 ? -1 : 1);
           const pts2 = pts.map((p) => ({ x: p.x + offset, y: p.y }));
@@ -123,7 +123,7 @@ export default function NeonCircuit({
     }
 
     function drawSweep(t: number) {
-      // Balayage diagonal façon "scanneur"
+      // Diagonal sweep in a scanner style
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       ctx.translate(width / 2, height / 2);
@@ -132,7 +132,7 @@ export default function NeonCircuit({
       const h = height * 1.8;
 
       const g = ctx.createLinearGradient(-w, 0, w, 0);
-      // position du faisceau qui se déplace lentement
+      // Position of the beam moving slowly
       const x = ((t * 0.06) % 2) * 1 - 0.5; // -0.5 -> 1.5
       const center = (x + 0.5) * 1.0; // 0 -> 1
 
@@ -158,11 +158,11 @@ export default function NeonCircuit({
 
       const t = (time - t0) / 1000;
 
-      // léger voile foncé pour la "persistence" + éviter le clear 100% (look plus doux)
+      // Light dark veil for persistence and to avoid a harsh full clear
       ctx.fillStyle = "rgba(5, 2, 15, 0.28)";
       ctx.fillRect(0, 0, width, height);
 
-      // Base : traits statiques subtils
+      // Base: subtle static strokes
       ctx.save();
       ctx.lineWidth = 1;
       ctx.lineJoin = "round";
@@ -170,7 +170,7 @@ export default function NeonCircuit({
       ctx.shadowColor = color;
       ctx.shadowBlur = 12;
 
-      // micro scintillement
+      // Small flicker
       const flicker =
         0.6 + 0.4 * Math.abs(Math.sin(t * 0.8 + Math.cos(t * 0.3)));
       ctx.globalAlpha = 0.18 * flicker;
@@ -181,7 +181,7 @@ export default function NeonCircuit({
       for (const p of paths) strokePath(p);
       ctx.restore();
 
-      // Pulses qui glissent le long de certains chemins
+      // Pulses sliding along certain paths
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       ctx.lineJoin = "round";
@@ -190,9 +190,9 @@ export default function NeonCircuit({
         if (i % 2 !== 0) continue; // 1/2 des chemins seulement
         const p = paths[i];
 
-        // Paramètres par chemin (légère variation)
+        // Path-specific parameters (slight variation)
         const pulseLen = Math.max(24, Math.min(80, p.len * 0.08));
-        const gap = p.len + pulseLen * 2; // garantit un seul dash par cycle
+        const gap = p.len + pulseLen * 2; // ensures a single dash per cycle
         const speed = 40 + (i % 7) * 12; // px/s
         const phase = (i * 137) % gap;
         const offset = -((t * speed + phase) % gap);
@@ -203,20 +203,20 @@ export default function NeonCircuit({
         ctx.lineWidth = 2.2;
         ctx.shadowColor = "#d8b4fe";
         ctx.shadowBlur = 24;
-        ctx.strokeStyle = "#d8b4fe"; // violet clair
+        ctx.strokeStyle = "#d8b4fe"; // light violet
         ctx.globalAlpha = 0.85;
 
         strokePath(p);
       }
       ctx.restore();
 
-      // Balayage diagonal
+      // Diagonal sweep
       drawSweep(t);
 
       raf = requestAnimationFrame(draw);
     }
 
-    // Pause si le canvas sort du viewport
+    // Pause if the canvas leaves the viewport
     const io = new IntersectionObserver(
       (entries) => {
         const inView = entries[0]?.isIntersecting ?? true;
@@ -235,11 +235,11 @@ export default function NeonCircuit({
     resize();
     window.addEventListener("resize", resize);
 
-    // si l'utilisateur préfère moins d'animations : rendu statique
+    // Render a static frame when the user prefers reduced motion
     if (!prefersReducedMotion) {
       raf = requestAnimationFrame(draw);
     } else {
-      // frame statique
+      // Static frame
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "rgba(5, 2, 15, 1)";
       ctx.fillRect(0, 0, width, height);

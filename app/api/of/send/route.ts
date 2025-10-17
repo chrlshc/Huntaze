@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 import { getServerSession } from '@/lib/auth';
 import { z } from 'zod';
 import { DEFAULT_RATE_LIMITS } from '@/lib/types/onlyfans';
@@ -17,10 +19,14 @@ const sendMessageSchema = z.object({
 const rateLimitMap = new Map<string, { count: number; resetAt: Date }>();
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const body = await request.json();
@@ -34,10 +40,9 @@ export async function POST(request: NextRequest) {
     if (userRateLimit) {
       if (userRateLimit.resetAt > now) {
         if (userRateLimit.count >= DEFAULT_RATE_LIMITS.dm.messagesPerMinute) {
-          return NextResponse.json(
-            { error: 'Rate limit exceeded. Please wait before sending another message.' },
-            { status: 429 }
-          );
+          const r = NextResponse.json({ error: 'Rate limit exceeded. Please wait before sending another message.', requestId }, { status: 429 });
+          r.headers.set('X-Request-Id', requestId);
+          return r;
         }
         userRateLimit.count++;
       } else {
@@ -67,20 +72,25 @@ export async function POST(request: NextRequest) {
     const estimatedSendTime = new Date(now.getTime() + estimatedDelay);
 
     // Return immediate response
-    return NextResponse.json({
+    const r = NextResponse.json({
       success: true,
       messageId,
       status: 'queued',
-      estimatedSendTime
+      estimatedSendTime,
+      requestId,
     });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
-  } catch (error) {
-    console.error('Error sending message:', error);
+  } catch (error: any) {
+    log.error('of_send_failed', { error: error?.message || 'unknown_error' });
     
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid request', details: error.errors }, { status: 400 });
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

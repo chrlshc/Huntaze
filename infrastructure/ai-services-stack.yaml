@@ -1,0 +1,268 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze AI Services Stack - Comprehend, Personalize, Textract, SNS'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [development, staging, production]
+  CostCenter:
+    Type: String
+    Default: HUNTAZE
+  Owner:
+    Type: String
+    Default: Platform
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, "production"]
+
+Resources:
+  # SNS Topics for Casino Notifications
+  NewFanTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-NewFan-${Environment}'
+      DisplayName: 'New Fan Notifications'
+      
+  NewMessageTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-NewMessage-${Environment}'
+      DisplayName: 'New Message Notifications'
+      
+  NewTipTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-NewTip-${Environment}'
+      DisplayName: 'New Tip Notifications'
+      
+  MilestoneTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-Milestone-${Environment}'
+      DisplayName: 'Milestone Notifications'
+
+  # SQS Queue for Delayed Notifications
+  NotificationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'huntaze-notifications-${Environment}'
+      VisibilityTimeout: 300
+      MessageRetentionPeriod: 1209600  # 14 days
+      ReceiveMessageWaitTimeSeconds: 20  # Long polling
+      SqsManagedSseEnabled: true
+
+  # DLQ for Failed Notifications
+  NotificationDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'huntaze-notifications-dlq-${Environment}'
+      SqsManagedSseEnabled: true
+
+  # Lambda for Processing Notifications
+  NotificationProcessor:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'huntaze-notification-processor-${Environment}'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt AIServicesRole.Arn
+      Code:
+        ZipFile: |
+          const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns');
+          const sns = new SNSClient();
+          
+          exports.handler = async (event) => {
+            for (const record of event.Records) {
+              const notification = JSON.parse(record.body);
+              // Process delayed notification
+              await sns.send(new PublishCommand({
+                TopicArn: process.env[`TOPIC_${notification.type.toUpperCase()}`],
+                Message: JSON.stringify(notification),
+                MessageStructure: 'json'
+              }));
+            }
+            return { statusCode: 200 };
+          };
+      Environment:
+        Variables:
+          TOPIC_NEW_FAN: !Ref NewFanTopic
+          TOPIC_NEW_MESSAGE: !Ref NewMessageTopic
+          TOPIC_NEW_TIP: !Ref NewTipTopic
+          TOPIC_MILESTONE: !Ref MilestoneTopic
+      Timeout: 60
+      MemorySize: 256
+      TracingConfig:
+        Mode: Active
+      ReservedConcurrentExecutions: 10
+      Environment:
+        Variables:
+          LOG_LEVEL: info
+
+  # Event Source Mapping for SQS
+  NotificationQueueEventSource:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt NotificationQueue.Arn
+      FunctionName: !Ref NotificationProcessor
+      BatchSize: 10
+
+  # DynamoDB for Notification Analytics
+  NotificationMetrics:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub 'NotificationMetrics-${Environment}'
+      AttributeDefinitions:
+        - AttributeName: notificationId
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: notificationId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: timestamp-index
+          KeySchema:
+            - AttributeName: timestamp
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # S3 Bucket for Document Processing
+  DocumentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'huntaze-documents-${Environment}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteProcessedDocuments
+            Status: Enabled
+            ExpirationInDays: 7
+            Prefix: processed/
+
+  # IAM Role for AI Services
+  AIServicesRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - ec2.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: AIServicesPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - comprehend:DetectSentiment
+                  - comprehend:DetectEntities
+                  - comprehend:DetectKeyPhrases
+                  - comprehend:DetectDominantLanguage
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - textract:AnalyzeDocument
+                  - textract:DetectDocumentText
+                  - textract:AnalyzeID
+                  - textract:AnalyzeExpense
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - personalize:GetRecommendations
+                  - personalize:GetPersonalizedRanking
+                  - personalize-runtime:GetRecommendations
+                  - personalize-runtime:GetPersonalizedRanking
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                  - sns:Subscribe
+                Resource: 
+                  - !Ref NewFanTopic
+                  - !Ref NewMessageTopic
+                  - !Ref NewTipTopic
+                  - !Ref MilestoneTopic
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                Resource: 
+                  - !GetAtt NotificationQueue.Arn
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Sub '${DocumentBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource: !GetAtt NotificationMetrics.Arn
+
+
+Outputs:
+  NewFanTopicArn:
+    Value: !Ref NewFanTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-NewFanTopic'
+      
+  NewMessageTopicArn:
+    Value: !Ref NewMessageTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-NewMessageTopic'
+      
+  NewTipTopicArn:
+    Value: !Ref NewTipTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-NewTipTopic'
+      
+  MilestoneTopicArn:
+    Value: !Ref MilestoneTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-MilestoneTopic'
+      
+  NotificationQueueUrl:
+    Value: !Ref NotificationQueue
+    Export:
+      Name: !Sub '${AWS::StackName}-NotificationQueue'
+      
+  DocumentBucketName:
+    Value: !Ref DocumentBucket
+    Export:
+      Name: !Sub '${AWS::StackName}-DocumentBucket'
+      
+  AIServicesRoleArn:
+    Value: !GetAtt AIServicesRole.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-AIServicesRole'

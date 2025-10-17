@@ -7,6 +7,9 @@
 /* Import mobile overrides after Tailwind */
 @import '../styles/mobile-tailwind-override.css';
 
+/* Import Radix UI fixes after Tailwind */
+@import '../styles/radix-ui-fixes.css';
+
 /* Import Professional Dark Mode System */
 /* Temporarily disable dark-mode system to prevent full-page black background issues */
 /* @import '../styles/dark-mode-professional.css'; */
@@ -28,6 +31,21 @@
 
 /* Import Fullpage Sections */
 @import '../styles/fullpage-sections.css';
+
+/* Import Shopify button system */
+@import '../styles/shopify-buttons.css';
+
+/* Import button fixes for centering and sizing */
+@import '../styles/button-fixes.css';
+
+/* Import text density reduction */
+@import '../styles/text-density-reduction.css';
+
+/* Import breathing room improvements */
+@import '../styles/breathing-room.css';
+
+/* Import Shopify-style metrics */
+@import '../styles/shopify-metrics.css';
 
 /* Performance optimizations - removed to allow animations */
 /* Re-enable animations for better UX - performance impact minimal on modern devices */
@@ -68,21 +86,9 @@ button, a {
   color: inherit;
 }
 
-/* Ensure CTA buttons are visible */
-button:not([class*="text-"]), 
-a:not([class*="text-"]) {
-  color: #ffffff;
-}
-
-/* Primary CTA style fix */
-.bg-white {
-  background-color: #a855f7 !important;
-  color: #ffffff !important;
-}
-
-.bg-white:hover {
-  background-color: #9333ea !important;
-}
+/* Remove legacy overrides that forced purple backgrounds on .bg-white
+   and white text on all links/buttons without text-* classes. These rules
+   caused neutral surfaces to render incorrectly. */
 
 /* Secondary CTA style fix */
 .border-white {
@@ -434,7 +440,7 @@ html {
   }
 }
 
-/* Utilitaire pour les sections situées sous le header fixe */
+/* Utility for sections positioned below the fixed header */
 .pt-header-safe {
   padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
 }

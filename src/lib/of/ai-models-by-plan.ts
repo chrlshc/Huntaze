@@ -88,8 +88,8 @@ export const AI_MODELS_BY_PLAN: Record<string, AIModelConfig> = {
         contextWindow: 128000
       },
       fallback: {
-        name: 'Claude Haiku',
-        model: 'claude-3-haiku',
+        name: 'GPT-4o mini',
+        model: 'gpt-4o-mini',
         when: 'High volume periods'
       }
     },
@@ -116,8 +116,8 @@ export const AI_MODELS_BY_PLAN: Record<string, AIModelConfig> = {
     plan: 'scale',
     models: {
       primary: {
-        name: 'GPT-4-Turbo + Claude Sonnet',
-        model: 'gpt-4-turbo + claude-3-sonnet',
+        name: 'Azure OpenAI GPT-4-Turbo',
+        model: 'gpt-4-turbo',
         capabilities: [
           'Predictive responses',
           'Perfect timing',
@@ -154,8 +154,8 @@ export const AI_MODELS_BY_PLAN: Record<string, AIModelConfig> = {
     plan: 'enterprise',
     models: {
       primary: {
-        name: 'GPT-4o + Claude Opus',
-        model: 'gpt-4o + claude-3-opus',
+        name: 'Azure OpenAI GPT-4o',
+        model: 'gpt-4o',
         capabilities: [
           'Perfect personality match',
           'Voice cloning ready',
@@ -185,7 +185,7 @@ export const AI_MODELS_BY_PLAN: Record<string, AIModelConfig> = {
     examples: {
       basicMessage: "[Perfectly matches creator's style, indistinguishable from human]",
       salesMessage: "[AI analyzes fan's entire history, mood, purchase patterns, time zone, and creates perfect message with 80%+ conversion rate]",
-      differenceFromLower: "Two AIs collaborate: GPT-4o handles conversation, Claude Opus handles sales optimization"
+      differenceFromLower: "Advanced Azure OpenAI stack with enterprise tuning and optimization"
     }
   }
 };

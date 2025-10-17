@@ -382,11 +382,11 @@ export default function PricingClient({ plans }: PricingClientProps) {
           <div className="elevated-card rounded-xl p-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Compliance & Safety</h3>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">
-              <li>L'IA fournit des suggestions de réponses. Vous approuvez avant envoi.</li>
-              <li>Intégration OnlyFans en lecture seule (CSV uniquement pour l'instant).</li>
-              <li>Respectez les conditions de chaque plateforme. Huntaze n'est affilié à aucune plateforme.</li>
-              <li>Aucune garantie de zéro bannissement - nous aidons à réduire les risques.</li>
-              <li>Les coûts d'API IA (OpenAI/Claude) sont facturés séparément.</li>
+              <li>AI provides suggested replies. You approve before sending.</li>
+              <li>OnlyFans integration is read-only for now (CSV import only).</li>
+              <li>Follow each platform's terms. Huntaze has no platform affiliations.</li>
+              <li>No zero-ban guarantee — we help reduce risk.</li>
+              <li>AI API costs (Azure OpenAI) are billed separately.</li>
             </ul>
           </div>
         </div>

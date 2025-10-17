@@ -53,7 +53,7 @@ export default function PricingV2() {
       features: {
         core: [
           '5,000 AI messages/month',
-          'GPT-4-Turbo + Claude AI',
+          'Azure OpenAI GPT-4-Turbo',
           'Advanced segmentation',
           'Smart relances',
           'Multi-language (10 languages)',
@@ -85,7 +85,7 @@ export default function PricingV2() {
       features: {
         core: [
           '25,000 AI messages/month',
-          'Predictive AI (GPT-4-Turbo + Claude)',
+          'Predictive AI (Azure OpenAI GPT-4-Turbo)',
           'Hyper-segmentation',
           'Multi-language (100+ languages)',
           'A/B testing messages',
@@ -120,7 +120,7 @@ export default function PricingV2() {
       features: {
         core: [
           'Unlimited AI messages',
-          'GPT-4o + Claude Opus (best AI)',
+          'Azure OpenAI GPT-4o (best AI)',
           'Perfect fan mimicry',
           'All languages + dialects',
           'Custom AI personality',
@@ -361,11 +361,10 @@ export default function PricingV2() {
                 <Brain className="w-8 h-8 text-purple-600" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
-                Multi-Model AI
+                Azure OpenAI Stack
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                We use GPT-4, Claude, and more. Each plan gets different AI power, 
-                not just different message limits.
+                We use Azure OpenAI (GPT-4o family). Each plan gets the right AI power, not just different message limits.
               </p>
             </div>
             

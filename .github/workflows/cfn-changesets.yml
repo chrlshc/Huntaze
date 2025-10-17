@@ -1,0 +1,130 @@
+name: CFN ChangeSets (prod us-east-1)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**/*.yaml'
+
+permissions:
+  id-token: write   # OIDC
+  contents: read
+
+concurrency:
+  group: cfn-changesets
+  cancel-in-progress: true
+
+env:
+  AWS_REGION: us-east-1
+  ENVIRONMENT: production
+  COST_CENTER: HUNTAZE
+  OWNER: Platform
+  OPS_ALERT_EMAIL: ops@exemple.com  # ajuste si besoin
+
+jobs:
+  changesets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install tooling
+        run: |
+          pip install cfn-lint yamllint
+          cfn-lint --version
+          yamllint --version
+
+      - name: Lint templates
+        run: |
+          yamllint -d "{extends: default, rules: {line-length: {max: 140}}}" infrastructure/
+          cfn-lint -i W3002,W3003,W4002 \
+            -t infrastructure/core-infrastructure.yaml \
+               infrastructure/huntaze-media-stack.yaml \
+               infrastructure/ai-services-simple.yaml
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}   # → crée ce secret avec l'ARN du rôle IAM OIDC
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create ChangeSets (core/media/ai)
+        id: cs
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y && sudo apt-get install -y jq
+          SUFFIX=$(date +'%Y%m%d-%H%M%S')
+
+          urlencode() { python3 - <<'PY' "$1"; exit
+import urllib.parse, sys
+print(urllib.parse.quote(sys.argv[1], safe=''))
+PY
+          }
+
+          create_cs () {
+            local stack="$1"; shift
+            local template="$1"; shift
+            local name="${stack}-${SUFFIX}"
+            local params=("$@")
+
+            echo "::group::Creating changeset ${name} for ${stack}"
+            CS_ARN=$(aws cloudformation create-change-set \
+              --stack-name "$stack" \
+              --change-set-name "$name" \
+              --change-set-type UPDATE \
+              --template-body "file://${template}" \
+              --capabilities CAPABILITY_NAMED_IAM \
+              --parameters "${params[@]}" \
+              --query 'Id' --output text)
+
+            # Si pas de diff, le waiter échoue => on ignore pour pouvoir décrire quand même
+            aws cloudformation wait change-set-create-complete --change-set-name "$CS_ARN" || true
+
+            DESC=$(aws cloudformation describe-change-set --change-set-name "$CS_ARN")
+            STATUS=$(echo "$DESC" | jq -r '.Status')
+            REASON=$(echo "$DESC" | jq -r '.StatusReason // ""')
+            STACK_ID=$(echo "$DESC" | jq -r '.StackId')
+            CHANGE_SET_ID=$(echo "$DESC" | jq -r '.ChangeSetId')
+
+            STACK_Q=$(urlencode "$STACK_ID")
+            CS_Q=$(urlencode "$CHANGE_SET_ID")
+            CONSOLE_URL="https://console.aws.amazon.com/cloudformation/home?region=${AWS_REGION}#/stacks/changesets/changes?stackId=${STACK_Q}&changeSetId=${CS_Q}"
+
+            echo "- **${stack}** — status: \`${STATUS}\` ${REASON:+— ${REASON}}" >> "$GITHUB_STEP_SUMMARY"
+            echo "  • ${CONSOLE_URL}" >> "$GITHUB_STEP_SUMMARY"
+            echo "::endgroup::"
+          }
+
+          # core
+          create_cs "huntaze-core-prod" "infrastructure/core-infrastructure.yaml" \
+            ParameterKey=Environment,ParameterValue=${ENVIRONMENT} \
+            ParameterKey=CostCenter,ParameterValue=${COST_CENTER} \
+            ParameterKey=Owner,ParameterValue=${OWNER} \
+            ParameterKey=OpsAlertEmail,ParameterValue=${OPS_ALERT_EMAIL}
+
+          # récupérer l'ARN du topic Ops exporté par la stack core
+          OPS_ARN=$(aws cloudformation list-exports \
+            --query "Exports[?Name=='huntaze-core-prod-OpsAlertsTopicArn'].Value" \
+            --output text)
+          echo "OPS_ARN=${OPS_ARN}" >> $GITHUB_ENV
+
+          # media
+          create_cs "huntaze-media-prod" "infrastructure/huntaze-media-stack.yaml" \
+            ParameterKey=Environment,ParameterValue=${ENVIRONMENT} \
+            ParameterKey=CostCenter,ParameterValue=${COST_CENTER} \
+            ParameterKey=Owner,ParameterValue=${OWNER} \
+            ParameterKey=OpsAlertsTopicArn,ParameterValue=${OPS_ARN}
+
+          # ai (simple)
+          create_cs "huntaze-ai-simple-prod" "infrastructure/ai-services-simple.yaml" \
+            ParameterKey=Environment,ParameterValue=${ENVIRONMENT} \
+            ParameterKey=CostCenter,ParameterValue=${COST_CENTER} \
+            ParameterKey=Owner,ParameterValue=${OWNER}
+

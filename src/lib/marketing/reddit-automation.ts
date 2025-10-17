@@ -1,5 +1,5 @@
-// Reddit Marketing Automation - Le canal sous-estimé pour OF
-// Respect des règles site-wide + règles par subreddit
+// Reddit marketing automation – the underrated channel for OF
+// Respects site-wide rules plus subreddit-specific guidelines
 
 import { 
   REDDIT_TEMPLATES, 

@@ -2,6 +2,7 @@
 // STUBBED VERSION FOR DEPLOYMENT - TODO: Implement when Playwright is available
 
 import type { OfMessage } from '@/lib/types/onlyfans';
+import { makeReqLogger } from '@/lib/logger';
 
 export interface SendResult {
   success: boolean;
@@ -14,7 +15,7 @@ export async function sendOfMessage(
   accountId: string,
   message: OfMessage
 ): Promise<SendResult> {
-  console.log('Stubbed: Sending message via browser worker', { accountId, message });
+  makeReqLogger({ userId: accountId, route: 'of_browser_worker', method: 'JOB' }).info('of_browser_send_stubbed');
   
   // TODO: Implement actual browser automation when Playwright is available
   return {
@@ -26,6 +27,6 @@ export async function sendOfMessage(
 // Stub browser worker pool
 export const browserWorkerPool = {
   closeAll: async () => {
-    console.log('Stubbed: Closing all browser workers');
+    makeReqLogger({ route: 'of_browser_worker', method: 'JOB' }).info('of_browser_close_all');
   }
 };

@@ -83,7 +83,7 @@ export default function AIComparison() {
                 </td>
                 <td className="text-center p-6">
                   <p className="font-medium">Premium</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Claude 3/GPT-4+</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Azure OpenAI (GPT-4+)</p>
                 </td>
               </tr>
 

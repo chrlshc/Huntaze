@@ -1,0 +1,330 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze Production Authentication Infrastructure - AWS Cognito with SES'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: 'prod'
+    AllowedValues: ['dev', 'staging', 'prod']
+    Description: 'Deployment environment'
+  
+  DomainName:
+    Type: String
+    Description: 'Your application domain (e.g., app.huntaze.com)'
+  
+  CallbackURLs:
+    Type: CommaDelimitedList
+    Default: 'https://app.huntaze.com/auth/callback,https://staging.huntaze.com/auth/callback,http://localhost:3000/auth/callback'
+    Description: 'Comma-separated list of allowed callback URLs'
+  
+  LogoutURLs:
+    Type: CommaDelimitedList
+    Default: 'https://app.huntaze.com/auth/logout,https://staging.huntaze.com/auth/logout,http://localhost:3000/auth/logout'
+    Description: 'Comma-separated list of allowed logout URLs'
+  
+  AllowedWebOrigins:
+    Type: CommaDelimitedList
+    Default: 'https://app.huntaze.com,https://staging.huntaze.com,http://localhost:3000'
+    Description: 'Comma-separated list of allowed web origins'
+  
+  PasswordMinLength:
+    Type: Number
+    Default: 14
+    MinValue: 8
+    MaxValue: 256
+    Description: 'Minimum password length'
+  
+  MfaConfiguration:
+    Type: String
+    Default: 'OPTIONAL'
+    AllowedValues: ['OFF', 'ON', 'OPTIONAL']
+    Description: 'Multi-factor authentication configuration'
+
+Resources:
+  # Main User Pool
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-${Environment}'
+      
+      # Account recovery settings
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: 'verified_email'
+            Priority: 1
+      
+      # Admin settings
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+        UnusedAccountValidityDays: 7
+        InviteMessageTemplate:
+          EmailMessage: |
+            Welcome to Huntaze! Your temporary password is {####}
+            Please sign in and change your password at: {##Verify-URL##}
+          EmailSubject: 'Welcome to Huntaze - Account Activation'
+      
+      # Auto-verified attributes
+      AutoVerifiedAttributes:
+        - email
+      
+      # Device tracking
+      DeviceConfiguration:
+        ChallengeRequiredOnNewDevice: false
+        DeviceOnlyRememberedOnUserPrompt: true
+      
+      # Email configuration
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+        # Uncomment below when using SES
+        # EmailSendingAccount: DEVELOPER
+        # SourceArn: !Sub 'arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/noreply@${DomainName}'
+        # From: !Sub 'Huntaze <noreply@${DomainName}>'
+        # ReplyToEmailAddress: !Sub 'support@${DomainName}'
+      
+      EmailVerificationMessage: |
+        Welcome to Huntaze! Your verification code is {####}
+        
+        Please enter this code to verify your email address.
+        This code expires in 24 hours.
+        
+        If you didn't request this code, please ignore this email.
+      
+      EmailVerificationSubject: 'Huntaze - Verify your email'
+      
+      # MFA Configuration
+      MfaConfiguration: !Ref MfaConfiguration
+      EnabledMfas:
+        - SOFTWARE_TOKEN_MFA
+        - SMS_MFA
+      
+      # Password policy
+      Policies:
+        PasswordPolicy:
+          MinimumLength: !Ref PasswordMinLength
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          # Password history (Plus tier feature)
+          # PasswordHistorySize: 24
+          TemporaryPasswordValidityDays: 3
+      
+      # Schema attributes
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+          StringAttributeConstraints:
+            MinLength: '5'
+            MaxLength: '254'
+        - Name: given_name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MinLength: '1'
+            MaxLength: '100'
+        - Name: family_name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MinLength: '1'
+            MaxLength: '100'
+        - Name: preferred_username
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MinLength: '3'
+            MaxLength: '30'
+      
+      # SMS Configuration (for MFA)
+      SmsConfiguration:
+        ExternalId: !Sub '${AWS::StackName}-external-${Environment}'
+        SnsCallerArn: !GetAtt CognitoSNSRole.Arn
+      
+      # Triggers (optional - uncomment to enable)
+      # LambdaConfig:
+      #   PreSignUp: !GetAtt PreSignUpLambda.Arn
+      #   PostConfirmation: !GetAtt PostConfirmationLambda.Arn
+      #   PreAuthentication: !GetAtt PreAuthenticationLambda.Arn
+      
+      # Security features
+      UserAttributeUpdateSettings:
+        AttributesRequireVerificationBeforeUpdate:
+          - email
+      
+      UserPoolAddOns:
+        # Change to ENFORCED for Plus tier security features
+        AdvancedSecurityMode: 'OFF'
+      
+      UsernameAttributes:
+        - email
+      
+      UsernameConfiguration:
+        CaseSensitive: false
+      
+      # Verification
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: |
+          Your Huntaze verification code is {####}
+          
+          Enter this code to complete your signup.
+          This code expires in 24 hours.
+        EmailSubject: 'Huntaze - Verification code'
+      
+      # Tags
+      UserPoolTags:
+        Environment: !Ref Environment
+        Application: 'Huntaze'
+        ManagedBy: 'CloudFormation'
+
+  # SNS Role for SMS
+  CognitoSNSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CognitoSNSPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: '*'
+
+  # App Client
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub '${AWS::StackName}-web-client-${Environment}'
+      UserPoolId: !Ref UserPool
+      
+      # Token configuration
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+      
+      # Auth flows
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+      
+      # OAuth configuration
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      
+      # URLs
+      CallbackURLs: !Ref CallbackURLs
+      LogoutURLs: !Ref LogoutURLs
+      
+      # Security settings
+      GenerateSecret: false  # For SPA/public clients
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      EnablePropagateAdditionalUserContextData: false
+      
+      # Attribute read/write permissions
+      ReadAttributes:
+        - email
+        - email_verified
+        - given_name
+        - family_name
+        - preferred_username
+        - sub
+      WriteAttributes:
+        - email
+        - given_name
+        - family_name
+        - preferred_username
+
+  # User Pool Domain
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub '${AWS::StackName}-auth-${Environment}'
+      UserPoolId: !Ref UserPool
+
+  # Risk Configuration (if using Plus tier)
+  # RiskConfiguration:
+  #   Type: AWS::Cognito::UserPoolRiskConfigurationAttachment
+  #   Properties:
+  #     UserPoolId: !Ref UserPool
+  #     ClientId: !Ref UserPoolClient
+  #     CompromisedCredentialsRiskConfiguration:
+  #       Actions:
+  #         EventAction: BLOCK
+  #       EventFilter:
+  #         - SIGN_IN
+  #         - PASSWORD_CHANGE
+  #         - SIGN_UP
+  #     AccountTakeoverRiskConfiguration:
+  #       Actions:
+  #         HighAction:
+  #           EventAction: MFA_REQUIRED
+  #           Notify: true
+  #         MediumAction:
+  #           EventAction: MFA_IF_CONFIGURED
+  #           Notify: true
+  #         LowAction:
+  #           EventAction: NO_ACTION
+  #       NotifyConfiguration:
+  #         From: !Sub 'security@${DomainName}'
+  #         ReplyTo: !Sub 'security@${DomainName}'
+  #         SourceArn: !Sub 'arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/security@${DomainName}'
+
+Outputs:
+  UserPoolId:
+    Value: !Ref UserPool
+    Description: 'User Pool ID'
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolId'
+  
+  UserPoolArn:
+    Value: !GetAtt UserPool.Arn
+    Description: 'User Pool ARN'
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolArn'
+  
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+    Description: 'User Pool Client ID'
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolClientId'
+  
+  UserPoolDomain:
+    Value: !Sub 'https://${UserPoolDomain}.auth.${AWS::Region}.amazoncognito.com'
+    Description: 'Cognito Hosted UI Domain'
+    Export:
+      Name: !Sub '${AWS::StackName}-UserPoolDomain'
+  
+  CognitoIssuer:
+    Value: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}'
+    Description: 'OIDC Issuer URL'
+    Export:
+      Name: !Sub '${AWS::StackName}-CognitoIssuer'

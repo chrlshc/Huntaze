@@ -12,6 +12,7 @@ export default function RedditCallbackPage() {
   useEffect(() => {
     const run = async () => {
       const code = searchParams.get('code');
+      const state = searchParams.get('state');
       const error = searchParams.get('error');
 
       if (error) {
@@ -26,8 +27,17 @@ export default function RedditCallbackPage() {
       }
 
       try {
-        // For demo/dev, mark as connected via internal endpoint
-        await fetch('/api/platforms/reddit/connected');
+        const resp = await fetch('/api/auth/reddit/callback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, state }),
+        });
+        if (!resp.ok) {
+          const data = await resp.json().catch(() => ({}));
+          setStatus('error');
+          setMessage(data.error || 'Failed to connect Reddit');
+          return;
+        }
         setStatus('success');
         setMessage('Reddit connected');
         setTimeout(() => {
@@ -77,4 +87,3 @@ export default function RedditCallbackPage() {
     </div>
   );
 }
-

@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Stripe -> EventBridge partner bus rule + Lambda target + DLQ (optional create bus)
+
+Parameters:
+  PartnerBusName:
+    Type: String
+    Description: Name of the partner event bus (e.g., aws.partner/stripe.com/...) must match the partner source
+  PartnerEventSourceName:
+    Type: String
+    Description: Partner event source name (same as PartnerBusName)
+  CreateBus:
+    Type: String
+    AllowedValues: ['true','false']
+    Default: 'false'
+    Description: Whether to create the partner bus resource in this stack
+  RuleName:
+    Type: String
+    Default: stripe-billing-v1
+  LambdaArn:
+    Type: String
+    Description: ARN of the Lambda target to process Stripe events
+  DLQName:
+    Type: String
+    Default: stripe-events-dlq
+  UsersTableName:
+    Type: String
+    Description: Name of the DynamoDB Users table (for policy scope)
+
+Conditions:
+  CreateBusCond: !Equals [ !Ref CreateBus, 'true' ]
+
+Resources:
+  PartnerBus:
+    Type: AWS::Events::EventBus
+    Condition: CreateBusCond
+    Properties:
+      Name: !Ref PartnerBusName
+      EventSourceName: !Ref PartnerEventSourceName
+
+  StripeDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref DLQName
+      MessageRetentionPeriod: 1209600 # 14 days
+
+  StripeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Ref RuleName
+      EventBusName: !Ref PartnerBusName
+      State: ENABLED
+      EventPattern:
+        detail-type:
+          - checkout.session.completed
+          - customer.subscription.created
+          - customer.subscription.updated
+          - customer.subscription.deleted
+          - invoice.payment_succeeded
+          - invoice.payment_failed
+      Targets:
+        - Id: LambdaTarget
+          Arn: !Ref LambdaArn
+          DeadLetterConfig:
+            Arn: !GetAtt StripeDLQ.Arn
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaArn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt StripeRule.Arn
+
+Outputs:
+  RuleArn:
+    Value: !GetAtt StripeRule.Arn
+  DLQArn:
+    Value: !GetAtt StripeDLQ.Arn
+

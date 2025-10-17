@@ -12,6 +12,7 @@ export default function InstagramCallbackPage() {
   useEffect(() => {
     const run = async () => {
       const code = searchParams.get('code');
+      const state = searchParams.get('state');
       const error = searchParams.get('error');
       const errorDesc = searchParams.get('error_description');
 
@@ -28,8 +29,17 @@ export default function InstagramCallbackPage() {
       }
 
       try {
-        // For demo/dev, mark as connected via internal endpoint
-        await fetch('/api/platforms/instagram/connected');
+        const resp = await fetch('/api/auth/instagram/callback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, state }),
+        });
+        if (!resp.ok) {
+          const data = await resp.json().catch(() => ({}));
+          setStatus('error');
+          setMessage(data.error || 'Failed to connect Instagram');
+          return;
+        }
         setStatus('success');
         setMessage('Instagram connected');
         setTimeout(() => {
@@ -79,4 +89,3 @@ export default function InstagramCallbackPage() {
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
-// Reddit Compliance Engine - Éviter les bans et maximiser l'approbation
-// Conforme aux règles site-wide + TikTok H2 2025 + Instagram Link Sticker
+// Reddit compliance engine – avoid bans and maximise approvals
+// Keeps pace with site-wide rules plus TikTok H2 2025 and Instagram Link Sticker policies
 
 export interface ComplianceCheck {
   platform: 'tiktok' | 'instagram' | 'reddit';

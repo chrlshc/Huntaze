@@ -1,0 +1,247 @@
+/* Shopify-style metrics system */
+
+/* Metric cards base */
+.metric-card {
+  position: relative;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.dark .metric-card {
+  background: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.metric-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.dark .metric-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Metric value styling */
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum';
+  color: #000;
+}
+
+.dark .metric-value {
+  color: #fff;
+}
+
+/* Large numbers get smaller */
+.metric-value-large {
+  font-size: 1.75rem;
+}
+
+.metric-value-xl {
+  font-size: 2.5rem;
+}
+
+/* Metric label */
+.metric-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.dark .metric-label {
+  color: #999;
+}
+
+/* Trend indicators */
+.metric-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.metric-trend-up {
+  color: #10b981;
+}
+
+.metric-trend-down {
+  color: #ef4444;
+}
+
+.metric-trend-neutral {
+  color: #6b7280;
+}
+
+/* Trend pill style */
+.metric-trend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.metric-trend-pill.up {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.metric-trend-pill.down {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Metric card variants */
+.metric-card-highlight {
+  background: #000;
+  color: #fff;
+  border: none;
+}
+
+.dark .metric-card-highlight {
+  background: #fff;
+  color: #000;
+}
+
+.metric-card-highlight .metric-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dark .metric-card-highlight .metric-label {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Subtle background pattern */
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  transform: rotate(45deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.metric-card:hover::before {
+  opacity: 1;
+}
+
+/* Comparison metrics */
+.metric-compare {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.dark .metric-compare {
+  background: #111;
+}
+
+.metric-compare-divider {
+  width: 1px;
+  height: 2rem;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dark .metric-compare-divider {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Inline metrics */
+.metric-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.metric-inline-label {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-inline-value {
+  font-weight: 600;
+  font-feature-settings: 'tnum';
+}
+
+/* Progress metrics */
+.metric-progress {
+  position: relative;
+  height: 0.25rem;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.dark .metric-progress {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.metric-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: #000;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .metric-progress-bar {
+  background: #fff;
+}
+
+/* Hover state number animation */
+@keyframes metric-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.metric-card:hover .metric-value {
+  animation: metric-pulse 0.3s ease-in-out;
+}
+
+/* Loading state */
+.metric-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.dark .metric-skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #1a1a1a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}

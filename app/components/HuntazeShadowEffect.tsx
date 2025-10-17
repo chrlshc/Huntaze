@@ -16,12 +16,12 @@ export default function HuntazeShadowEffect() {
       lines: any[] = [];
       time = 0;
       
-      // Couleurs Huntaze
+      // Huntaze colors
       colors = {
-        purple: '#9333EA',      // Purple principal Huntaze
-        pink: '#EC4899',        // Pink Huntaze
-        purpleLight: '#A855F7', // Purple plus clair
-        pinkLight: '#F472B6',   // Pink plus clair
+        purple: '#9333EA',      // Core Huntaze purple
+        pink: '#EC4899',        // Huntaze pink
+        purpleLight: '#A855F7', // Lighter purple
+        pinkLight: '#F472B6',   // Lighter pink
         white: '#FFFFFF'
       };
       
@@ -34,7 +34,7 @@ export default function HuntazeShadowEffect() {
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
         
-        // Créer des VRAIES LIGNES droites qui tournent
+        // Create actual straight lines that rotate
         this.createLines();
       }
       
@@ -48,7 +48,7 @@ export default function HuntazeShadowEffect() {
         const centerY = canvas.height / 2;
         const radius = 350;
         
-        // Créer 12 lignes droites
+        // Create 12 straight lines
         for (let i = 0; i < 12; i++) {
           const angle = (Math.PI * 2 / 12) * i;
           this.lines.push({
@@ -68,23 +68,23 @@ export default function HuntazeShadowEffect() {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         
-        // Rotation de la ligne
+        // Rotate the line
         const currentAngle = line.angle + this.time * line.speed;
         
-        // Points de début et fin de la ligne DROITE
+        // Start and end points of the straight line
         const startX = centerX + Math.cos(currentAngle) * line.radius;
         const startY = centerY + Math.sin(currentAngle) * line.radius;
         const endX = centerX + Math.cos(currentAngle) * (line.radius + line.length);
         const endY = centerY + Math.sin(currentAngle) * (line.radius + line.length);
         
-        // Pulse d'opacité
+        // Opacity pulse
         const pulse = Math.sin(this.time * 0.002 + line.angle) * 0.3 + 0.7;
         
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
         
-        // Dessiner le glow en plusieurs passes
-        // Glow large
+        // Draw the glow in multiple passes
+        // Wide glow
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
@@ -95,7 +95,7 @@ export default function HuntazeShadowEffect() {
         ctx.shadowBlur = 30;
         ctx.stroke();
         
-        // Glow moyen
+        // Medium glow
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
@@ -106,7 +106,7 @@ export default function HuntazeShadowEffect() {
         ctx.shadowBlur = 20;
         ctx.stroke();
         
-        // Ligne principale
+        // Main line
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
@@ -117,7 +117,7 @@ export default function HuntazeShadowEffect() {
         ctx.shadowBlur = 10;
         ctx.stroke();
         
-        // Centre blanc brillant
+        // Bright white core
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
@@ -131,20 +131,20 @@ export default function HuntazeShadowEffect() {
       }
       
       animate = () => {
-        // Fond légèrement transparent pour créer un effet de traînée
+        // Slightly transparent background to create a trailing effect
         ctx.fillStyle = 'rgba(11, 6, 20, 0.1)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         this.time++;
         
-        // Dessiner toutes les lignes
+        // Draw all lines
         this.lines.forEach(line => this.drawLine(line));
         
         requestAnimationFrame(this.animate);
       }
     }
 
-    // Initialiser l'effet
+    // Initialize the effect
     new HuntazeLines();
 
     return () => {
@@ -154,7 +154,7 @@ export default function HuntazeShadowEffect() {
 
   return (
     <div className="fixed inset-0 pointer-events-none">
-      {/* Fond dark Huntaze */}
+      {/* Huntaze dark background */}
       <div 
         className="absolute inset-0"
         style={{
@@ -162,7 +162,7 @@ export default function HuntazeShadowEffect() {
         }}
       />
       
-      {/* Canvas pour les lignes */}
+      {/* Canvas for the lines */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 z-10"

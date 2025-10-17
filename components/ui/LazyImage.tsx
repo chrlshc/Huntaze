@@ -54,7 +54,7 @@ export default function LazyImage({
     };
   }, [priority]);
 
-  // Convertir en WebP si pas déjà
+  // Convert to WebP if needed
   const optimizedSrc = src.endsWith('.webp') ? src : src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
 
   return (

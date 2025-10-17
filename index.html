@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Huntaze – Dashboard</title>
+    <!-- Font Awesome (icônes) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkfP1R7S2Q3FhYtqLwPp2H5WfZ8Q4G5hp8rY9b3FvYvN4v1+X+QOa9Q7A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!--
+      Squelette d'application SaaS (layout + pages)
+      - Navigation latérale
+      - Header (titre, recherche, avatar)
+      - Pages affichées/masquées via classes
+      - Composants Modal + Notification
+    -->
+
+    <div class="app">
+      <!-- Sidebar navigation -->
+      <aside class="sidebar" aria-label="Sidebar navigation">
+        <div class="brand">
+          <span class="brand-name">Huntaze</span>
+        </div>
+        <nav class="nav">
+          <ul>
+            <li>
+              <a class="nav-link active" href="#" data-target="page-dashboard">
+                <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-section">Plans</li>
+            <li>
+              <a class="nav-link" href="#" data-target="page-marketing-q2">
+                <i class="fa-solid fa-bullhorn" aria-hidden="true"></i>
+                <span>Marketing Q2</span>
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="#" data-target="page-marketing-q3">
+                <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+                <span>Marketing Q3</span>
+              </a>
+            </li>
+            <li class="nav-section">Operations</li>
+            <li>
+              <a class="nav-link" href="#" data-target="page-funnels">
+                <i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
+                <span>Funnels</span>
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="#" data-target="page-inbox">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>
+                <span>Inbox</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Contenu principal -->
+      <div class="content">
+        <!-- Header -->
+        <header class="topbar">
+          <div class="title-group">
+            <nav class="breadcrumbs" aria-label="Breadcrumbs">
+              <ol>
+                <li><a href="#" data-target="page-dashboard" class="crumb">Home</a></li>
+                <li><span class="crumb">Analytics</span></li>
+                <li aria-current="page"><span class="crumb">Dashboard</span></li>
+              </ol>
+            </nav>
+            <h1 id="page-title" class="topbar-title">Dashboard</h1>
+          </div>
+          <div class="topbar-actions">
+            <label class="search" aria-label="Search">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              <input id="search-input" type="search" placeholder="Search…" />
+            </label>
+            <button id="notify-demo" class="icon-button" title="Test notification">
+              <i class="fa-regular fa-bell"></i>
+            </button>
+            <button id="btn-skeleton" class="btn subtle" title="Skeleton preview">
+              <i class="fa-regular fa-eye"></i> Preview
+            </button>
+            <button class="btn primary">
+              <i class="fa-solid fa-plus"></i> New campaign
+            </button>
+            <div class="avatar" role="img" aria-label="User profile">H</div>
+          </div>
+        </header>
+
+        <main class="main">
+          <!-- Page: Dashboard -->
+          <section id="page-dashboard" class="page active" aria-labelledby="title-dashboard">
+            <h2 id="title-dashboard" class="sr-only">Dashboard</h2>
+
+            <!-- Page toolbar -->
+            <div class="toolbar">
+              <div class="segmented" role="tablist" aria-label="Timeframe">
+                <input type="radio" id="tf-7" name="timeframe" value="7" checked />
+                <label for="tf-7">7d</label>
+                <input type="radio" id="tf-30" name="timeframe" value="30" />
+                <label for="tf-30">30d</label>
+                <input type="radio" id="tf-90" name="timeframe" value="90" />
+                <label for="tf-90">90d</label>
+              </div>
+              <div class="button-group">
+                <button id="btn-export" class="btn"><i class="fa-solid fa-download"></i> Export</button>
+                <button id="btn-refresh" class="btn"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+              </div>
+            </div>
+
+            <!-- Cartes de métriques -->
+            <div class="grid metrics">
+              <div class="card metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-user-group"></i></div>
+                <div class="metric-label">Active creators</div>
+                <div class="metric-value" id="metric-creators">1 248</div>
+                <div class="metric-trend up">+5.1% vs 30d</div>
+                <canvas id="spark-creators" class="spark" height="36" aria-hidden="true"></canvas>
+              </div>
+              <div class="card metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                <div class="metric-label">Messages sent</div>
+                <div class="metric-value" id="metric-messages">89 420</div>
+                <div class="metric-trend up">+3.4% vs 30d</div>
+                <canvas id="spark-messages" class="spark" height="36" aria-hidden="true"></canvas>
+              </div>
+              <div class="card metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-percent"></i></div>
+                <div class="metric-label">Conversion rate</div>
+                <div class="metric-value" id="metric-conv">4,7%</div>
+                <div class="metric-trend down">-0.3 pt</div>
+                <canvas id="spark-conv" class="spark" height="36" aria-hidden="true"></canvas>
+              </div>
+              <div class="card metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-euro-sign"></i></div>
+                <div class="metric-label">Revenue</div>
+                <div class="metric-value" id="metric-revenue">€ 58,930</div>
+                <div class="metric-trend up">+7.8% vs 30d</div>
+                <canvas id="spark-revenue" class="spark" height="36" aria-hidden="true"></canvas>
+              </div>
+            </div>
+
+            <!-- Graphiques -->
+            <div class="grid charts">
+              <div class="card">
+                <div class="card-header">
+                  <h3>Monthly performance</h3>
+                </div>
+                <div class="card-body">
+                  <canvas id="chart-performance" height="120" aria-label="Line chart: Monthly performance" role="img"></canvas>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <h3>Platform distribution</h3>
+                </div>
+                <div class="card-body">
+                  <canvas id="chart-platforms" height="120" aria-label="Donut chart: Platform distribution" role="img"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Page: Marketing Q2 -->
+          <section id="page-marketing-q2" class="page" aria-labelledby="title-marketing-q2">
+            <h2 id="title-marketing-q2" class="sr-only">Marketing Q2</h2>
+
+            <div class="toolbar">
+              <div class="segmented" role="tablist" aria-label="Filter status" data-scope="q2">
+                <input type="radio" id="q2-all" name="q2-status" value="all" checked />
+                <label for="q2-all">All</label>
+                <input type="radio" id="q2-active" name="q2-status" value="active" />
+                <label for="q2-active">Active</label>
+                <input type="radio" id="q2-planned" name="q2-status" value="planned" />
+                <label for="q2-planned">Planned</label>
+                <input type="radio" id="q2-progress" name="q2-status" value="in-progress" />
+                <label for="q2-progress">In progress</label>
+              </div>
+            </div>
+
+            <div class="grid features">
+              <div class="card feature-card" data-status="active">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-rocket"></i><h3>Promo launch</h3></div>
+                  <span class="badge success">Active</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Targeted coupons</li>
+                  <li>A/B landing pages</li>
+                  <li>UTM tracking</li>
+                </ul>
+              </div>
+
+              <div class="card feature-card" data-status="planned">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-envelope-open-text"></i><h3>Email sequences</h3></div>
+                  <span class="badge warning">Planned</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Responsive templates</li>
+                  <li>Dynamic segments</li>
+                  <li>Open/click tracking</li>
+                </ul>
+              </div>
+
+              <div class="card feature-card" data-status="in-progress">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Creative assets</h3></div>
+                  <span class="badge info">In progress</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Social media kit</li>
+                  <li>Video library</li>
+                  <li>Brand guidelines</li>
+                </ul>
+              </div>
+
+              <!-- Pricing (slider) -->
+              <div class="card feature-card">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-tags"></i><h3>Pricing</h3></div>
+                  <span class="badge info">Interactive</span>
+                </div>
+                <div class="card-body">
+                  <div class="pricing-control">
+                    <label for="pricing-slider">Monthly price</label>
+                    <input id="pricing-slider" type="range" min="10" max="200" step="5" value="49" />
+                    <div class="pricing-value"><span id="pricing-value">49</span> € / month</div>
+                    <small class="muted">Estimated annual plan: <span id="pricing-annual">490</span> € / year</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Page: Marketing Q3 -->
+          <section id="page-marketing-q3" class="page" aria-labelledby="title-marketing-q3">
+            <h2 id="title-marketing-q3" class="sr-only">Marketing Q3</h2>
+
+            <div class="toolbar">
+              <div class="segmented" role="tablist" aria-label="Filter status" data-scope="q3">
+                <input type="radio" id="q3-all" name="q3-status" value="all" checked />
+                <label for="q3-all">All</label>
+                <input type="radio" id="q3-active" name="q3-status" value="active" />
+                <label for="q3-active">Active</label>
+                <input type="radio" id="q3-planned" name="q3-status" value="planned" />
+                <label for="q3-planned">Planned</label>
+                <input type="radio" id="q3-progress" name="q3-status" value="in-progress" />
+                <label for="q3-progress">In progress</label>
+              </div>
+            </div>
+
+            <div class="grid features">
+              <div class="card feature-card" data-status="active">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-bullseye"></i><h3>Targeted campaigns</h3></div>
+                  <span class="badge success">Active</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Lookalike audiences</li>
+                  <li>Auto budget</li>
+                  <li>Attribution</li>
+                </ul>
+              </div>
+
+              <div class="card feature-card" data-status="in-progress">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-flask"></i><h3>Experiments</h3></div>
+                  <span class="badge info">In progress</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Multivariate tests</li>
+                  <li>Preview</li>
+                  <li>Reports</li>
+                </ul>
+              </div>
+
+              <!-- Bar chart example -->
+              <div class="card">
+                <div class="card-header">
+                  <h3>Campaign performance</h3>
+                </div>
+                <div class="card-body">
+                  <canvas id="chart-campaigns" height="120" aria-label="Bar chart: Campaign performance" role="img"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Page: Funnels -->
+          <section id="page-funnels" class="page" aria-labelledby="title-funnels">
+            <h2 id="title-funnels" class="sr-only">Funnels</h2>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Funnel builder</h3>
+              </div>
+              <div class="card-body">
+                <div class="pipeline" aria-label="Funnel stages">
+                  <div class="chip"><i class="fa-brands fa-tiktok" aria-hidden="true"></i>TikTok</div>
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                  <div class="chip"><i class="fa-brands fa-instagram" aria-hidden="true"></i>Instagram</div>
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                  <div class="chip"><i class="fa-solid fa-star" aria-hidden="true"></i>OnlyFans</div>
+                </div>
+
+                <div class="grid form-grid">
+                  <div class="form-control">
+                    <label for="instagram-handle">Instagram handle</label>
+                    <input id="instagram-handle" type="text" placeholder="@your_handle" />
+                  </div>
+                  <div class="form-control">
+                    <label for="onlyfans-handle">OnlyFans handle</label>
+                    <input id="onlyfans-handle" type="text" placeholder="@your_handle" />
+                  </div>
+                </div>
+
+                <button id="btn-generate-link" class="btn primary">
+                  <i class="fa-solid fa-link" aria-hidden="true"></i> Generate tracked link
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Templates</h3>
+              </div>
+              <div class="card-body">
+                <div class="grid templates">
+                  <div class="template-card">
+                    <div class="template-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Discovery</div>
+                    <p class="muted">Top of funnel</p>
+                    <button class="btn subtle" data-template="discover">Use</button>
+                  </div>
+                  <div class="template-card">
+                    <div class="template-title"><i class="fa-solid fa-repeat"></i> Retargeting</div>
+                    <p class="muted">Mid funnel</p>
+                    <button class="btn subtle" data-template="retarget">Use</button>
+                  </div>
+                  <div class="template-card">
+                    <div class="template-title"><i class="fa-solid fa-gem"></i> VIP</div>
+                    <p class="muted">Bottom of funnel</p>
+                    <button class="btn subtle" data-template="vip">Use</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Page: Inbox -->
+          <section id="page-inbox" class="page" aria-labelledby="title-inbox">
+            <h2 id="title-inbox" class="sr-only">Inbox</h2>
+
+            <div class="grid inbox-grid">
+              <!-- Connexion OnlyFans -->
+              <div class="card connect-card">
+                <div class="card-header">
+                  <h3>Connect to OnlyFans</h3>
+                </div>
+                <div class="card-body">
+                  <p>Connect your account to sync messages and subscribers.</p>
+                  <div class="actions-row">
+                    <button id="connect-onlyfans" class="btn primary">
+                      <i class="fa-solid fa-plug" aria-hidden="true"></i>
+                      Connect
+                    </button>
+                    <span id="connect-status" class="status muted">Not connected</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aperçus fonctionnalités -->
+              <div class="card feature-preview">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-comments"></i><h3>Centralized messaging</h3></div>
+                  <span class="badge info">Preview</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Unified inbox for all platforms</li>
+                  <li>Filters and labels</li>
+                </ul>
+              </div>
+
+              <div class="card feature-preview">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-robot"></i><h3>Auto replies</h3></div>
+                  <span class="badge warning">Soon</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Schedules and keywords</li>
+                  <li>Adjustable tone</li>
+                </ul>
+              </div>
+
+              <div class="card feature-preview">
+                <div class="card-header">
+                  <div class="title-with-icon"><i class="fa-solid fa-chart-simple"></i><h3>Analytics</h3></div>
+                  <span class="badge success">Active</span>
+                </div>
+                <ul class="feature-list">
+                  <li>Weekly reports</li>
+                  <li>Export CSV</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>Guide (3 steps)</h3>
+              </div>
+              <div class="card-body">
+                <ol class="steps">
+                  <li>Connect your account</li>
+                  <li>Import your contacts</li>
+                  <li>Start your campaigns</li>
+                </ol>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Modal component -->
+    <div id="modal-overlay" class="overlay" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <h3 id="modal-title">Modal title</h3>
+          <button id="modal-close" class="icon-button" aria-label="Close modal">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div id="modal-body" class="modal-body"></div>
+        <div class="modal-footer">
+          <button id="modal-cancel" class="btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications" class="notifications" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Chart.js (for charts) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha256-KXyI74LXqKc8hRvvF1fFzVs2Z6f0A3nSx7aHyM7H2JI=" crossorigin="anonymous"></script>
+    <!-- App -->
+    <script src="app.js"></script>
+  </body>
+  <!--
+    Notes:
+    - The UI is intentionally neutral (black/white/gray) with limited accents.
+    - Pages are handled via the SaaSApp class in app.js.
+    - Modal and Notification components are reusable.
+  -->
+</html>

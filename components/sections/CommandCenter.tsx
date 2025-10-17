@@ -2,7 +2,7 @@
 import { Sparkles, MessageSquare, Heart, DollarSign, Send, Zap, Crown, Star, Brain, Activity, TrendingUp, Clock } from 'lucide-react';
 import PhoneMockup from '@/components/mockups/PhoneMockup';
 import { useState, useEffect } from 'react';
-// import CountUp from 'react-countup'; // Désactivé pour les performances
+// import CountUp from 'react-countup'; // Disabled for performance
 
 // Tailwind cannot parse dynamic class names reliably; map colors to static classes
 const colorClasses: Record<string, { bg: string; text: string; hoverBorder: string; border: string; glow: string }> = {

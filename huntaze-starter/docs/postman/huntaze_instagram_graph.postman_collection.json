@@ -1,0 +1,15 @@
+{
+  "info": { "name": "Huntaze Instagram Graph", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "item": [
+    {
+      "name": "Basic Display Callback",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{base_url}}/api/auth/instagram/callback", "host": ["{{base_url}}"], "path": ["api", "auth", "instagram", "callback"] },
+        "body": { "mode": "raw", "raw": "{\n  \"code\": \"<CODE>\"\n}" }
+      }
+    }
+  ]
+}
+

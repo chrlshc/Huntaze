@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from '@/lib/auth';
 import type { CampaignMetrics } from '@/lib/types/onlyfans';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 // Mock campaigns (shared with campaigns/route.ts - in production use DB)
 const campaigns: any[] = [];
@@ -10,10 +12,14 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const campaign = campaigns.find(c => c.id === params.id && c.userId === session.user!.id);
@@ -42,12 +48,17 @@ export async function GET(
       ] : undefined
     };
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       campaign,
-      metrics
+      metrics,
+      requestId,
     });
-  } catch (error) {
-    console.error('Error fetching campaign:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('campaign_fetch_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

@@ -13,21 +13,20 @@ export default function HeroTextOnly() {
 
         {/* Headline */}
         <h1 className="h1-mobile">
-          <span className="block">DOUBLEZ VOS REVENUS</span>
-          <span className="block">ONLYFANS EN 30 JOURS</span>
+          <span className="block">DOUBLE YOUR REVENUE</span>
+          <span className="block">ON ONLYFANS IN 30 DAYS</span>
         </h1>
 
         {/* Subtext */}
         <p className="body-mobile mt-[40px] max-w-[36ch]">
-          La plateforme IA qui automatise vos conversations et booste vos gains.
+          The AI platform that automates conversations and grows your earnings.
         </p>
 
         {/* CTA */}
         <div className="mt-[60px] max-w-md">
-          <Link href="/auth" className="cta-full">COMMENCER GRATUITEMENT</Link>
+          <Link href="/auth" className="cta-full">START FOR FREE</Link>
         </div>
       </div>
     </section>
   );
 }
-

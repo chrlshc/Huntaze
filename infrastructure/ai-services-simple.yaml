@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze AI Services - Simplified SNS Topics First'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+  CostCenter:
+    Type: String
+    Default: HUNTAZE
+  Owner:
+    Type: String
+    Default: Platform
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, "production"]
+
+Resources:
+  # SNS Topics for Casino Notifications
+  NewFanTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-NewFan-${Environment}'
+      DisplayName: 'New Fan Notifications'
+      
+  NewMessageTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-NewMessage-${Environment}'
+      DisplayName: 'New Message Notifications'
+      
+  NewTipTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-NewTip-${Environment}'
+      DisplayName: 'New Tip Notifications'
+      
+  MilestoneTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'Huntaze-Milestone-${Environment}'
+      DisplayName: 'Milestone Notifications'
+
+  # SQS Queue for Delayed Notifications
+  NotificationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'huntaze-notifications-${Environment}'
+      VisibilityTimeout: 300
+      MessageRetentionPeriod: 1209600
+      ReceiveMessageWaitTimeSeconds: 20
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AiNotificationsDLQ.Arn
+        maxReceiveCount: 5
+      SqsManagedSseEnabled: true
+
+  AiNotificationsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      SqsManagedSseEnabled: true
+
+  # DynamoDB for tracking
+  NotificationMetrics:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub 'NotificationMetrics-${Environment}'
+      AttributeDefinitions:
+        - AttributeName: notificationId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: notificationId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+Outputs:
+  NewFanTopicArn:
+    Value: !Ref NewFanTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-NewFanTopic'
+      
+  NewMessageTopicArn:
+    Value: !Ref NewMessageTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-NewMessageTopic'
+      
+  NewTipTopicArn:
+    Value: !Ref NewTipTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-NewTipTopic'
+      
+  MilestoneTopicArn:
+    Value: !Ref MilestoneTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-MilestoneTopic'
+      
+  NotificationQueueUrl:
+    Value: !Ref NotificationQueue
+    Export:
+      Name: !Sub '${AWS::StackName}-NotificationQueue'

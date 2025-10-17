@@ -1,0 +1,169 @@
+/* Chat Interface Styles */
+
+/* Smooth scrolling for chat messages */
+.chat-messages {
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Message animations */
+@keyframes message-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-enter {
+  animation: message-slide-in 0.3s ease-out;
+}
+
+/* Typing indicator dots */
+@keyframes typing-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.typing-dot {
+  animation: typing-bounce 1.4s infinite;
+}
+
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Chat input styling */
+.chat-input {
+  transition: all 0.2s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.chat-input::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-input::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.dark .chat-input::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Message content styling */
+.message-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.message-content pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .message-content pre {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.message-content code {
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.875em;
+}
+
+.dark .message-content code {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Message hover effects */
+.message-wrapper {
+  transition: all 0.2s ease;
+}
+
+.message-wrapper:hover .message-actions {
+  opacity: 1;
+}
+
+.message-actions {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Custom scrollbar for chat container */
+.chat-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.dark .chat-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05) 25%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .chat-input {
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  .message-content {
+    font-size: 0.875rem;
+  }
+}

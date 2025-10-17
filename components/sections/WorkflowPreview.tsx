@@ -9,24 +9,24 @@ export default function WorkflowPreview() {
 
   const steps = [
     {
-      title: "Fan envoie un message",
-      description: "« Hey babe, tu fais quoi ? »",
-      icon: "💬"
+      title: 'Fan sends a message',
+      description: '“Hey babe, what are you up to?”',
+      icon: '💬'
     },
     {
-      title: "IA analyse et répond",
-      description: "Réponse personnalisée en 0.3s",
-      icon: "🤖"
+      title: 'AI analyzes and replies',
+      description: 'Personalized reply in 0.3s',
+      icon: '🤖'
     },
     {
-      title: "Détection d'opportunité",
-      description: "Fan intéressé → prix suggéré",
-      icon: "💰"
+      title: 'Opportunity detection',
+      description: 'Interested fan → suggested price',
+      icon: '💰'
     },
     {
-      title: "Conversion automatique",
-      description: "+€45 de revenu généré",
-      icon: "✨"
+      title: 'Automatic conversion',
+      description: '+€45 revenue generated',
+      icon: '✨'
     }
   ];
 
@@ -36,10 +36,10 @@ export default function WorkflowPreview() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h3 className="text-2xl font-bold text-white mb-2">
-            Comment ça marche en 10 secondes
+            How it works in 10 seconds
           </h3>
           <p className="text-gray-400">
-            Workflow réel d'une conversation automatisée
+            Real workflow of an automated conversation
           </p>
         </div>
         <button
@@ -106,7 +106,7 @@ export default function WorkflowPreview() {
                     className="mt-3 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20"
                   >
                     <p className="text-sm text-purple-300">
-                      "Salut chéri! Je prépare du contenu exclusif... 😘 Tu veux voir?"
+                      "Hey love! I'm prepping exclusive content... 😘 Want a peek?"
                     </p>
                   </motion.div>
                 )}
@@ -124,11 +124,11 @@ export default function WorkflowPreview() {
         className="mt-8 p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20"
       >
         <div className="flex items-center justify-between">
-          <span className="text-gray-400">Temps total</span>
-          <span className="text-white font-bold">8.7 secondes</span>
+          <span className="text-gray-400">Total time</span>
+          <span className="text-white font-bold">8.7 seconds</span>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-gray-400">Revenu généré</span>
+          <span className="text-gray-400">Revenue generated</span>
           <span className="text-green-400 font-bold">+€45</span>
         </div>
       </motion.div>

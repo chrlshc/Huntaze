@@ -84,16 +84,16 @@ export default function FinalCTA() {
 
         {/* Pricing Teaser */}
         <div className="mt-16 text-center">
-          {/* Offre spéciale sans timer */}
+          {/* Special offer without a countdown */}
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-full border border-purple-500/20 mb-4">
-            <span className="text-purple-400 font-semibold">Offre limitée</span>
-            <span className="text-gray-300">-50% le premier mois</span>
+            <span className="text-purple-400 font-semibold">Limited offer</span>
+            <span className="text-gray-300">-50% for the first month</span>
           </div>
-          <p className="text-gray-400 mb-4">Tarification simple et transparente</p>
+          <p className="text-gray-400 mb-4">Simple, transparent pricing</p>
           <div className="flex justify-center gap-4 text-sm text-gray-400">
-            <span>• Starter: €49/mois</span>
-            <span>• Pro: €99/mois</span>
-            <span>• Scale: €299/mois</span>
+            <span>• Starter: €49/mo</span>
+            <span>• Pro: €99/mo</span>
+            <span>• Scale: €299/mo</span>
           </div>
           <Link 
             href="/pricing"

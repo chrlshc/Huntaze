@@ -9,6 +9,7 @@
   
   /* Standard dimensions */
   --mobile-header-height: 56px;
+  --mobile-header-with-search: 96px; /* Header with permanent search */
   --mobile-header-small: 44px; /* For devices < 375px */
   --mobile-header-large: 64px; /* For devices > 414px */
   
@@ -89,9 +90,18 @@
   z-index: 50;
 }
 
+/* Header with search */
+.mobile-header-with-search {
+  height: var(--mobile-header-with-search);
+}
+
 /* Compensate for fixed header */
 body {
   padding-top: calc(var(--mobile-header-height) + var(--safe-area-top));
+}
+
+body.has-search-header {
+  padding-top: calc(var(--mobile-header-with-search) + var(--safe-area-top));
 }
 
 /* Touch-friendly buttons */
@@ -208,6 +218,42 @@ body {
 .no-edge-swipe {
   margin-left: var(--edge-dead-zone);
   margin-right: var(--edge-dead-zone);
+}
+
+/* Permanent mobile search styles */
+.mobile-search-permanent {
+  position: sticky;
+  top: var(--mobile-header-height);
+  background: var(--bg-primary);
+  z-index: 40;
+  padding: var(--spacing-xs) var(--content-padding);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--spacing-lg);
+  border-radius: 20px;
+  background: var(--bg-secondary);
+  border: none;
+  font-size: var(--text-sm);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.mobile-search-input:focus {
+  background: var(--bg-tertiary);
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.mobile-search-icon {
+  position: absolute;
+  left: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-secondary);
 }
 
 /* Mobile-first utilities */

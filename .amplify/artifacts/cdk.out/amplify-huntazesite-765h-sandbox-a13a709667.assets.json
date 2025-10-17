@@ -1,0 +1,20 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "4ca8b13da6c129ea1378193fc8e147299572fe27a5aaf36a1904e53e9f57a746": {
+      "displayName": "amplify-huntazesite-765h-sandbox-a13a709667 Template",
+      "source": {
+        "path": "amplify-huntazesite-765h-sandbox-a13a709667.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-c52addce": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "4ca8b13da6c129ea1378193fc8e147299572fe27a5aaf36a1904e53e9f57a746.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

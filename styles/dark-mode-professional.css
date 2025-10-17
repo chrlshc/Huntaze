@@ -19,11 +19,11 @@
   --text-tertiary: #8C8C99;
   --text-disabled: #ADADB8;
   
-  /* Accent Colors - Professional Purple */
-  --accent-primary: #9333EA;
-  --accent-hover: #7E22CE;
-  --accent-active: #6B21A8;
-  --accent-muted: #F3E8FF;
+  /* Accent Colors - Professional neutral */
+  --accent-primary: #0f172a;
+  --accent-hover: #020617;
+  --accent-active: #020617;
+  --accent-muted: #e2e8f0;
   
   /* Status Colors */
   --success: #10B981;
@@ -62,10 +62,10 @@
   --text-disabled: #4B5563;
   
   /* Accent Colors - Desaturated for dark backgrounds */
-  --accent-primary: #A855F7;
-  --accent-hover: #C084FC;
-  --accent-active: #9333EA;
-  --accent-muted: rgba(168, 85, 247, 0.1);
+  --accent-primary: #e2e8f0;
+  --accent-hover: #f8fafc;
+  --accent-active: #cbd5e1;
+  --accent-muted: rgba(148, 163, 184, 0.16);
   
   /* Status Colors - Adjusted for dark mode */
   --success: #34D399;
@@ -156,12 +156,12 @@
 .dark .btn-primary {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
   color: var(--background-primary);
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dark .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35);
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6);
   transform: translateY(-2px);
 }
 
@@ -259,7 +259,7 @@
    ======================================== */
 
 .dark .gradient-text-premium {
-  background: linear-gradient(135deg, #C084FC 0%, #F0ABFC 50%, #E0AAFF 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #94a3b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -311,7 +311,7 @@
 }
 
 .dark .shadow-glow {
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+  box-shadow: 0 0 30px rgba(15, 23, 42, 0.25);
 }
 
 /* ========================================
@@ -357,7 +357,7 @@
     --text-primary: #FFFFFF;
     --text-secondary: #E5E5E5;
     --border-default: rgba(255, 255, 255, 0.3);
-    --accent-primary: #C084FC;
+    --accent-primary: #f8fafc;
   }
 }
 

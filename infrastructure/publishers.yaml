@@ -1,0 +1,251 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambda workers for content publishing (Twitter, Instagram) with SQS event sources
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+  PostsTableName:
+    Type: String
+    Default: huntaze-posts
+  PubKeysTableName:
+    Type: String
+    Default: huntaze-pubkeys
+  TokensTableName:
+    Type: String
+    Default: huntaze-oauth-tokens
+  UploadBucketName:
+    Type: String
+    Default: huntaze-media-vault-production
+
+Resources:
+  TwitterPublisherRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: TwitterPublisherAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [ sqs:ReceiveMessage, sqs:DeleteMessage, sqs:GetQueueAttributes ]
+                Resource: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-twitter-${Environment}'
+              - Effect: Allow
+                Action: [ dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem ]
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PostsTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PubKeysTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TokensTableName}'
+              - Effect: Allow
+                Action: [ logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents ]
+                Resource: '*'
+
+  InstagramPublisherRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: InstagramPublisherAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [ s3:GetObject ]
+                Resource: !Sub 'arn:aws:s3:::${UploadBucketName}/*'
+              - Effect: Allow
+                Action: [ sqs:ReceiveMessage, sqs:DeleteMessage, sqs:GetQueueAttributes ]
+                Resource: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-instagram-${Environment}'
+              - Effect: Allow
+                Action: [ dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem ]
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PostsTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PubKeysTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TokensTableName}'
+              - Effect: Allow
+                Action: [ logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents ]
+                Resource: '*'
+
+  TwitterPublisher:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: publisher-twitter
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Code: { ZipFile: "exports.handler=async()=>({ok:true})" }
+      Timeout: 30
+      MemorySize: 256
+      Role: !GetAtt TwitterPublisherRole.Arn
+      Environment:
+        Variables:
+          POSTS_TABLE: !Ref PostsTableName
+          PUBKEYS_TABLE: !Ref PubKeysTableName
+          TOKENS_TABLE: !Ref TokensTableName
+          ENABLE_PUBLISH: 'false'
+
+  InstagramPublisher:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: publisher-instagram
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Code: { ZipFile: "exports.handler=async()=>({ok:true})" }
+      Timeout: 60
+      MemorySize: 512
+      Role: !GetAtt InstagramPublisherRole.Arn
+      Environment:
+        Variables:
+          POSTS_TABLE: !Ref PostsTableName
+          PUBKEYS_TABLE: !Ref PubKeysTableName
+          TOKENS_TABLE: !Ref TokensTableName
+          ENABLE_PUBLISH: 'false'
+
+  TwitterMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-twitter-${Environment}'
+      FunctionName: !Ref TwitterPublisher
+      BatchSize: 5
+      MaximumBatchingWindowInSeconds: 10
+      ScalingConfig: { MaximumConcurrency: 10 }
+      Enabled: false
+
+  InstagramMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-instagram-${Environment}'
+      FunctionName: !Ref InstagramPublisher
+      BatchSize: 3
+      MaximumBatchingWindowInSeconds: 10
+      ScalingConfig: { MaximumConcurrency: 10 }
+
+  TikTokPublisherRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: TikTokPublisherAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [ s3:GetObject ]
+                Resource: !Sub 'arn:aws:s3:::${UploadBucketName}/*'
+              - Effect: Allow
+                Action: [ sqs:ReceiveMessage, sqs:DeleteMessage, sqs:GetQueueAttributes ]
+                Resource: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-tiktok-${Environment}'
+              - Effect: Allow
+                Action: [ dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem ]
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PostsTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PubKeysTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TokensTableName}'
+
+  RedditPublisherRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: RedditPublisherAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [ sqs:ReceiveMessage, sqs:DeleteMessage, sqs:GetQueueAttributes ]
+                Resource: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-reddit-${Environment}'
+              - Effect: Allow
+                Action: [ dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem ]
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PostsTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PubKeysTableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TokensTableName}'
+
+  TikTokPublisher:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: publisher-tiktok
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Code: { ZipFile: "exports.handler=async()=>({ok:true})" }
+      Timeout: 60
+      MemorySize: 512
+      Role: !GetAtt TikTokPublisherRole.Arn
+      Environment:
+        Variables:
+          POSTS_TABLE: !Ref PostsTableName
+          PUBKEYS_TABLE: !Ref PubKeysTableName
+          TOKENS_TABLE: !Ref TokensTableName
+          ENABLE_PUBLISH: 'false'
+
+  RedditPublisher:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: publisher-reddit
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Code: { ZipFile: "exports.handler=async()=>({ok:true})" }
+      Timeout: 60
+      MemorySize: 256
+      Role: !GetAtt RedditPublisherRole.Arn
+      Environment:
+        Variables:
+          POSTS_TABLE: !Ref PostsTableName
+          PUBKEYS_TABLE: !Ref PubKeysTableName
+          TOKENS_TABLE: !Ref TokensTableName
+          ENABLE_PUBLISH: 'false'
+
+  TikTokMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-tiktok-${Environment}'
+      FunctionName: !Ref TikTokPublisher
+      BatchSize: 3
+      MaximumBatchingWindowInSeconds: 10
+      ScalingConfig: { MaximumConcurrency: 10 }
+
+  RedditMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:publisher-reddit-${Environment}'
+      FunctionName: !Ref RedditPublisher
+      BatchSize: 5
+      MaximumBatchingWindowInSeconds: 10
+      ScalingConfig: { MaximumConcurrency: 10 }
+
+Outputs:
+  TwitterPublisherName:
+    Value: !Ref TwitterPublisher
+  InstagramPublisherName:
+    Value: !Ref InstagramPublisher
+  TikTokPublisherName:
+    Value: !Ref TikTokPublisher
+  RedditPublisherName:
+    Value: !Ref RedditPublisher

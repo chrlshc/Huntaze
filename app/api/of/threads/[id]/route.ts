@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from '@/lib/auth';
 import type { OfMessage } from '@/lib/types/onlyfans';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 // Mock messages for now
 const mockMessages: Record<string, OfMessage[]> = {
@@ -71,10 +73,14 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const conversationId = params.id;
@@ -87,19 +93,24 @@ export async function GET(
     const unreadMessages = messages.filter(m => !m.isFromCreator && !m.readAt);
     if (unreadMessages.length > 0) {
       // TODO: Update read status in database
-      console.log(`Marking ${unreadMessages.length} messages as read`);
+      log.info('of_mark_messages_read', { count: unreadMessages.length });
     }
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       conversationId,
       messages,
       metadata: {
         totalMessages: messages.length,
         unreadCount: unreadMessages.length
-      }
+      },
+      requestId,
     });
-  } catch (error) {
-    console.error('Error fetching thread:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('of_thread_fetch_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

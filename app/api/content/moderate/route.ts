@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { contentModeration } from '@/src/services/content-moderation';
+import { makeReqLogger } from '@/lib/logger';
 
 // Simple rule-sets for text compliance checks
 const complianceRules = {
@@ -69,6 +71,7 @@ function checkPlatformCompliance(content: string, platform: PlatformKey, rules: 
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value || 'dev-user';
     const payload = await request.json();
@@ -110,7 +113,9 @@ export async function POST(request: NextRequest) {
         ? 'warning'
         : 'safe';
 
-      return NextResponse.json({ overall, risks, platforms: platformStatus });
+      const r = NextResponse.json({ overall, risks, platforms: platformStatus, requestId });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Branch 2: Existing image moderation flows
@@ -121,7 +126,9 @@ export async function POST(request: NextRequest) {
 
     if (!checkCrossPlatform) {
       const result = await contentModeration.checkImage(imageUrl, platform, subreddit);
-      return NextResponse.json(result);
+      const r = NextResponse.json({ ...result, requestId });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const xPlatforms: PlatformKey[] = ['instagram', 'tiktok', 'reddit', 'threads', 'onlyfans'];
@@ -147,17 +154,23 @@ export async function POST(request: NextRequest) {
     });
     summary.recommendations = [...new Set(summary.recommendations)];
 
-    return NextResponse.json({ results, summary, message: summary.safeForAll ? 'Content is safe for all platforms' : `Content is safe for: ${summary.safePlatforms.join(', ')}` });
+    const r = NextResponse.json({ results, summary, message: summary.safeForAll ? 'Content is safe for all platforms' : `Content is safe for: ${summary.safePlatforms.join(', ')}`, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
   } catch (error: any) {
-    console.error('Content moderation error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Failed to moderate content' 
+    const log = makeReqLogger({ requestId });
+    log.error('moderation_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ 
+      error: error.message || 'Failed to moderate content', requestId 
     }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 export async function PUT(request: NextRequest) {
+  const requestId = crypto.randomUUID();
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
@@ -195,12 +208,17 @@ export async function PUT(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ results, stats });
+    const r = NextResponse.json({ results, stats, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
   } catch (error: any) {
-    console.error('Batch moderation error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Failed to moderate batch' 
+    const log = makeReqLogger({ requestId });
+    log.error('moderation_batch_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ 
+      error: error.message || 'Failed to moderate batch', requestId 
     }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

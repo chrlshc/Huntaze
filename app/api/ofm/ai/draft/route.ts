@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getLLMProvider } from '@/src/services/llm-providers';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const body = await request.json();
@@ -21,9 +27,9 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!fanMessage || !fanData || !persona) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: fanMessage, fanData, persona' 
-      }, { status: 400 });
+      const r = NextResponse.json({ error: 'Missing required fields: fanMessage, fanData, persona', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Get LLM provider
@@ -82,18 +88,20 @@ export async function POST(request: NextRequest) {
           llmProvider: provider.name
         })
       });
-    } catch (error) {
-      console.error('Failed to log AI draft:', error);
+    } catch (error: any) {
+      log.warn('ai_draft_log_failed', { error: error?.message || 'unknown_error' });
       // Don't fail the request if logging fails
     }
 
-    return NextResponse.json(response);
+    const r = NextResponse.json({ ...response, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
   } catch (error: any) {
-    console.error('AI draft error:', error);
+    log.error('ai_draft_failed', { error: error?.message || 'unknown_error' });
     
     // Fallback response on error
-    return NextResponse.json({
+    const r = NextResponse.json({
       action: 'ESCALATE',
       confidence_score: 0,
       draft_message: '',
@@ -104,7 +112,10 @@ export async function POST(request: NextRequest) {
       recommended_ppv_price: null,
       validated: false,
       timestamp: new Date().toISOString(),
-      reason: error.message || 'Failed to generate AI draft'
+      reason: error.message || 'Failed to generate AI draft',
+      requestId,
     }, { status: 200 }); // Return 200 even on error to not break client
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

@@ -1,0 +1,77 @@
+name: CFN Orchestrate Execute (core→media→ai)
+
+on:
+  workflow_dispatch:
+    inputs:
+      core_stack:      { description: "Core stack name",  required: true,  default: "huntaze-core-prod" }
+      core_changeset:  { description: "Core ChangeSet name",  required: true }
+      media_stack:     { description: "Media stack name", required: true,  default: "huntaze-media-prod" }
+      media_changeset: { description: "Media ChangeSet name", required: true }
+      ai_stack:        { description: "AI stack name",    required: true,  default: "huntaze-ai-simple-prod" }
+      ai_changeset:    { description: "AI ChangeSet name", required: true }
+      pause_seconds:   { description: "Pause between stages (sec)", required: false, default: "30" }
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  exec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install jq
+        run: sudo apt-get update -y && sudo apt-get install -y jq
+
+      - name: Execute ChangeSets in order
+        shell: bash
+        run: |
+          set -euo pipefail
+          exe() {
+            local stack="$1"; local csname="$2"
+            echo "::group::Prepare $stack ($csname)"
+            # Find the full ARN matching the ChangeSet name
+            CS_ARN=$(aws cloudformation list-change-sets --stack-name "$stack" \
+              --query "Summaries[?ChangeSetName=='${csname}'].ChangeSetId | [0]" --output text)
+            if [ -z "${CS_ARN}" ] || [ "${CS_ARN}" = "None" ]; then
+              echo "::error ::ChangeSet ${csname} not found for stack ${stack}"; exit 1
+            fi
+
+            DESC=$(aws cloudformation describe-change-set --change-set-name "$CS_ARN")
+            STATUS=$(echo "$DESC" | jq -r '.Status')
+            REASON=$(echo "$DESC" | jq -r '.StatusReason // ""')
+            CHANGES=$(echo "$DESC" | jq -r '.Changes | length')
+
+            echo "Status: $STATUS — Changes: $CHANGES"
+            if [[ "$STATUS" != "CREATE_COMPLETE" && "$STATUS" != "AVAILABLE" ]]; then
+              echo "::error ::ChangeSet not executable: $STATUS — $REASON"; exit 1
+            fi
+            if [ "$CHANGES" -eq 0 ]; then
+              echo "ℹ️ No-op changeset, skipping execute."
+              echo "::endgroup::"
+              return 0
+            fi
+
+            echo "::group::Execute $stack"
+            aws cloudformation execute-change-set --change-set-name "$CS_ARN" --stack-name "$stack"
+            aws cloudformation wait stack-update-complete --stack-name "$stack"
+            echo "✅ Completed: $stack"
+            echo "::endgroup::"
+          }
+
+          exe "${{ github.event.inputs.core_stack }}"  "${{ github.event.inputs.core_changeset }}"
+          sleep "${{ github.event.inputs.pause_seconds }}"
+
+          exe "${{ github.event.inputs.media_stack }}" "${{ github.event.inputs.media_changeset }}"
+          sleep "${{ github.event.inputs.pause_seconds }}"
+
+          exe "${{ github.event.inputs.ai_stack }}"    "${{ github.event.inputs.ai_changeset }}"
+          echo "✅ All done"
+

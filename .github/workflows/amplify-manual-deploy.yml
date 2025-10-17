@@ -1,0 +1,67 @@
+name: Amplify Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_id:
+        description: "Amplify App ID (e.g., d123abc456def)"
+        required: true
+        type: string
+      branch:
+        description: "Branch to update/deploy"
+        required: true
+        default: "main"
+        type: string
+      deploy:
+        description: "Trigger deploy after updating env vars"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  update-and-optional-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      - name: Update Amplify branch environment variables (no deploy)
+        env:
+          APP_ID: ${{ inputs.app_id }}
+          BRANCH: ${{ inputs.branch }}
+          NEXT_PUBLIC_AWS_REGION: ${{ secrets.NEXT_PUBLIC_AWS_REGION }}
+          NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_ID }}
+          NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_CLIENT_ID }}
+          NEXT_PUBLIC_COGNITO_DOMAIN: ${{ secrets.NEXT_PUBLIC_COGNITO_DOMAIN }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          set -euo pipefail
+          # Build key=value map for Amplify CLI
+          ENV_MAP="NEXT_PUBLIC_AWS_REGION=${NEXT_PUBLIC_AWS_REGION},NEXT_PUBLIC_USER_POOL_ID=${NEXT_PUBLIC_USER_POOL_ID},NEXT_PUBLIC_USER_POOL_CLIENT_ID=${NEXT_PUBLIC_USER_POOL_CLIENT_ID},NEXT_PUBLIC_COGNITO_DOMAIN=${NEXT_PUBLIC_COGNITO_DOMAIN},NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL},NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL},JWT_SECRET=${JWT_SECRET}"
+          echo "Updating env vars on app=$APP_ID branch=$BRANCH"
+          aws amplify update-branch \
+            --app-id "$APP_ID" \
+            --branch-name "$BRANCH" \
+            --environment-variables "$ENV_MAP"
+
+      - name: Optionally trigger Amplify deploy (RELEASE)
+        if: ${{ inputs.deploy }}
+        env:
+          APP_ID: ${{ inputs.app_id }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          set -euo pipefail
+          echo "Starting Amplify deploy job on app=$APP_ID branch=$BRANCH"
+          aws amplify start-job --app-id "$APP_ID" --branch-name "$BRANCH" --job-type RELEASE
+

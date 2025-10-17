@@ -1,14 +1,14 @@
-// Reddit Templates - 12 modèles de titres par niche (EN only) + 12 premiers commentaires UTM-ready
-// Compatible avec le reddit-automation.ts parser
+// Reddit templates – 12 title variations per niche (EN only) + 12 first comments ready with UTM tags
+// Compatible with the reddit-automation.ts parser
 
 export interface RedditTemplate {
   niche: string;
   titles: string[];
   firstComments: string[];
-  tags: string[]; // Pour matcher avec le bon subreddit
+  tags: string[]; // Used to match the correct subreddit
 }
 
-// 12 NICHES PRINCIPALES ONLYFANS
+// 12 core OnlyFans niches
 export const REDDIT_TEMPLATES: RedditTemplate[] = [
   {
     niche: 'amateur',

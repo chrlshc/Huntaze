@@ -21,22 +21,22 @@ export interface MessageTemplate {
   audienceId: string;
   platform: 'instagram' | 'onlyfans';
   language: 'en';
-  subject?: string; // Pour OF mass DM
+  subject?: string; // For OnlyFans mass DM
   message: string;
   mediaHint?: string;
   timing: {
     preferredHour: number[];
-    preferredDays?: number[]; // 0=dimanche, 6=samedi
+    preferredDays?: number[]; // 0=Sunday, 6=Saturday
   };
-  variables?: string[]; // Variables à remplacer
+  variables?: string[]; // Variables to substitute
 }
 
-// 3 AUDIENCES PRÊTES À L'EMPLOI
+// 3 READY-TO-USE AUDIENCES
 export const SMART_AUDIENCES: SmartAudience[] = [
   {
     id: 'win_back_30_days',
-    name: 'Win-Back 30 Jours',
-    description: 'Fans qui étaient actifs mais n\'ont pas interagi depuis 30+ jours',
+    name: 'Win-Back 30 Days',
+    description: 'Fans who were active but have not engaged in 30+ days',
     criteria: {
       lastSeen: { operator: 'gt', days: 30 },
       totalSpent: { operator: 'gt', amount: 20 },
@@ -47,8 +47,8 @@ export const SMART_AUDIENCES: SmartAudience[] = [
   },
   {
     id: 'upgrade_nudge_vip',
-    name: 'Upgrade Nudge VIP',
-    description: 'Fans réguliers proches du statut VIP, actifs récemment',
+    name: 'VIP Upgrade Nudge',
+    description: 'Regular fans close to VIP status and recently active',
     criteria: {
       lastSeen: { operator: 'lt', days: 7 },
       totalSpent: { operator: 'between', amount: [50, 99] },
@@ -60,8 +60,8 @@ export const SMART_AUDIENCES: SmartAudience[] = [
   },
   {
     id: 'anniversary_celebration',
-    name: 'Anniversaire 1 an',
-    description: 'Fans fidèles depuis 12 mois (±7 jours)',
+    name: '1-Year Anniversary',
+    description: 'Loyal fans for 12 months (±7 days)',
     criteria: {
       customEvents: ['subscription_anniversary_365'],
       subscriptionStatus: 'active',

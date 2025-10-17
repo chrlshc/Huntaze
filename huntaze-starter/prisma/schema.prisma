@@ -1,0 +1,67 @@
+// Prisma schema for Huntaze starter (OnlyFans data models)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Content {
+  id             Int                   @id @default(autoincrement())
+  creatorId      String
+  creatorName    String?
+  type           String                @default("POST")
+  title          String?
+  caption        String?
+  mediaUrl       String?
+  thumbUrl       String?
+  postedAt       DateTime
+  price          Float?
+  isPaid         Boolean               @default(false)
+  performances   ContentPerformance[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+}
+
+model ContentPerformance {
+  id              Int       @id @default(autoincrement())
+  contentId       Int
+  content         Content   @relation(fields: [contentId], references: [id])
+  recordedAt      DateTime  @default(now())
+  views           Int       @default(0)
+  likes           Int       @default(0)
+  comments        Int       @default(0)
+  shares          Int       @default(0)
+  bookmarks       Int       @default(0)
+  revenue         Float     @default(0)
+  tips            Float     @default(0)
+  engagementRate  Float?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Fan {
+  id             Int      @id @default(autoincrement())
+  creatorId      String
+  onlyfansId     String   @unique
+  username       String?
+  country        String?
+  subscribedAt   DateTime?
+  lastActiveAt   DateTime?
+  isActive       Boolean  @default(true)
+  lifetimeValue  Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ScrapeLog {
+  id         Int      @id @default(autoincrement())
+  jobId      String   @unique
+  scrapeType String
+  creatorId  String?
+  payload    Json
+  createdAt  DateTime @default(now())
+}

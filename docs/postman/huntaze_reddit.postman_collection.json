@@ -1,0 +1,81 @@
+{
+  "info": {
+    "_postman_id": "c1c62a65-3c9c-4c09-8c70-hz-reddit",
+    "name": "Huntaze — Reddit (OAuth2 & Snapshot)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Authorize → Token/Refresh → Snapshot (User-Agent required)."
+  },
+  "item": [
+    {
+      "name": "Authorize",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://www.reddit.com/api/v1/authorize?client_id={{REDDIT_CLIENT_ID}}&response_type=code&state={{STATE}}&redirect_uri={{NEXT_PUBLIC_REDDIT_REDIRECT_URI}}&duration=permanent&scope=identity",
+          "protocol": "https",
+          "host": ["www","reddit","com"],
+          "path": ["api","v1","authorize"],
+          "query": [
+            {"key":"client_id","value":"{{REDDIT_CLIENT_ID}}"},
+            {"key":"response_type","value":"code"},
+            {"key":"state","value":"{{STATE}}"},
+            {"key":"redirect_uri","value":"{{NEXT_PUBLIC_REDDIT_REDIRECT_URI}}"},
+            {"key":"duration","value":"permanent"},
+            {"key":"scope","value":"identity"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Exchange code → tokens",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Authorization","value":"Basic {{REDDIT_BASIC_AUTH_B64}}"},
+          {"key":"Content-Type","value":"application/x-www-form-urlencoded"},
+          {"key":"User-Agent","value":"{{REDDIT_USER_AGENT}}"}
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {"key":"grant_type","value":"authorization_code"},
+            {"key":"code","value":"{{REDDIT_AUTH_CODE}}"},
+            {"key":"redirect_uri","value":"{{NEXT_PUBLIC_REDDIT_REDIRECT_URI}}"}
+          ]
+        },
+        "url": "https://www.reddit.com/api/v1/access_token"
+      }
+    },
+    {
+      "name": "Refresh access_token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Authorization","value":"Basic {{REDDIT_BASIC_AUTH_B64}}"},
+          {"key":"Content-Type","value":"application/x-www-form-urlencoded"},
+          {"key":"User-Agent","value":"{{REDDIT_USER_AGENT}}"}
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {"key":"grant_type","value":"refresh_token"},
+            {"key":"refresh_token","value":"{{REDDIT_REFRESH_TOKEN}}"}
+          ]
+        },
+        "url": "https://www.reddit.com/api/v1/access_token"
+      }
+    },
+    {
+      "name": "Snapshot — GET /api/v1/me",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{REDDIT_ACCESS_TOKEN}}"},
+          {"key":"User-Agent","value":"{{REDDIT_USER_AGENT}}"}
+        ],
+        "url": "https://oauth.reddit.com/api/v1/me"
+      }
+    }
+  ]
+}
+

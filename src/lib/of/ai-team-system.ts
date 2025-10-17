@@ -1,5 +1,5 @@
-// AI Team System - Des IA qui collaborent et évoluent ensemble
-// Chaque IA apprend des autres pour une croissance exponentielle
+// AI Team System – AIs that collaborate and evolve together
+// Each AI learns from the others for exponential growth
 
 import { EventEmitter } from 'events';
 
@@ -80,7 +80,7 @@ export class MessagingAI implements AITeamMember {
   id = 'messaging_ai';
   name = 'Emma';
   role = 'messaging' as const;
-  model = 'GPT-4 + Claude';
+  model = 'Azure OpenAI (GPT-4 family)';
   specialties = ['conversation', 'personality_matching', 'upsell_timing'];
   learningRate = 0.85;
   sharedKnowledge = new Map();
@@ -287,7 +287,7 @@ export class SalesAI implements AITeamMember {
   id = 'sales_ai';
   name = 'Sarah';
   role = 'sales' as const;
-  model = 'GPT-4 + Custom';
+  model = 'Azure OpenAI + Custom';
   specialties = ['psychological_tactics', 'pricing_optimization', 'urgency_creation'];
   learningRate = 0.88;
   sharedKnowledge = new Map();

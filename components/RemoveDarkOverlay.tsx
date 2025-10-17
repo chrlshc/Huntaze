@@ -4,16 +4,16 @@ import { useEffect } from 'react';
 
 export default function RemoveDarkOverlay() {
   useEffect(() => {
-    // N’active le nettoyage que si explicitement demandé via data-no-overlay
-    // (défini dans <body data-no-overlay="true"> depuis app/layout.tsx)
+    // Only run the cleanup when explicitly requested via data-no-overlay
+    // (set with <body data-no-overlay="true"> inside app/layout.tsx)
     if (typeof document !== 'undefined') {
       const shouldDisable = document.body?.dataset?.noOverlay === 'true'
       if (!shouldDisable) return
     }
 
-    // Fonction pour supprimer les overlays
+    // Remove overlays from the DOM
     const removeOverlays = () => {
-      // Trouve et supprime tous les éléments overlay
+      // Find and remove overlay elements
       const overlaySelectors = [
         '.overlay',
         '[class*="overlay"]',
@@ -28,7 +28,7 @@ export default function RemoveDarkOverlay() {
       overlaySelectors.forEach(selector => {
         const elements = document.querySelectorAll(selector);
         elements.forEach(el => {
-          // Si l'élément contient hover:opacity, le supprimer
+          // Remove elements that rely on hover opacity utilities
           const classes = el.className;
           if (classes.includes('hover:opacity') || classes.includes('group-hover:opacity')) {
             el.remove();
@@ -36,7 +36,7 @@ export default function RemoveDarkOverlay() {
         });
       });
 
-      // Supprime les styles inline qui créent des overlays
+      // Strip inline styles that recreate overlays
       const allElements = document.querySelectorAll('*');
       allElements.forEach(el => {
         const htmlEl = el as HTMLElement;
@@ -48,7 +48,7 @@ export default function RemoveDarkOverlay() {
         }
       });
 
-      // Désactive les event listeners de hover causant l'overlay
+      // Disable hover classes that recreate overlays
       const elementsWithHover = document.querySelectorAll('[class*="hover"]');
       elementsWithHover.forEach(el => {
         const htmlEl = el as HTMLElement;
@@ -63,7 +63,7 @@ export default function RemoveDarkOverlay() {
       });
     };
 
-    // Exécute au moment idle pour éviter de bloquer le rendu initial
+    // Run during an idle window to avoid blocking the initial paint
     const idle = (cb: () => void) => {
       // @ts-ignore
       if (typeof requestIdleCallback === 'function') return requestIdleCallback(cb)
@@ -72,7 +72,7 @@ export default function RemoveDarkOverlay() {
 
     const idleHandle = idle(() => removeOverlays())
 
-    // Observer pour les nouveaux éléments ajoutés dynamiquement
+    // Watch for dynamically added nodes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// import CountUp from 'react-countup'; // Désactivé pour les performances
+// import CountUp from 'react-countup'; // Disabled for performance
 import { 
   MessageSquare, 
   TrendingUp, 
@@ -336,7 +336,7 @@ const FeatureCard = ({ feature, index, isHovered, onHover }: any) => {
 
 export default function AIFeaturesBentoGrid() {
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
-  const activeFeatures = features.length; // Valeur statique au lieu d'animée
+  const activeFeatures = features.length; // Static value instead of animated
 
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-gray-950 via-black to-gray-950 relative overflow-hidden">

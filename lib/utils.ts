@@ -23,3 +23,25 @@ export function formatBytes(bytes?: number | null, digits: number = 1): string {
     return '';
   }
 }
+
+export function formatCurrency(
+  amount?: number | null,
+  currency: string = 'USD',
+  locale: string = 'en-US'
+): string {
+  if (amount === undefined || amount === null || Number.isNaN(amount)) {
+    return '';
+  }
+
+  try {
+    const formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2,
+    });
+
+    return formatter.format(amount);
+  } catch {
+    return `${currency} ${amount.toFixed ? amount.toFixed(2) : amount}`;
+  }
+}

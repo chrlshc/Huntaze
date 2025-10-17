@@ -1,0 +1,110 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  cognitoId String   @unique
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fans          Fan[]
+  trackingLinks TrackingLink[]
+  mediaItems    MediaItem[]
+  autopilotRoutines AutopilotRoutine[]
+}
+
+model Fan {
+  id                String   @id @default(cuid())
+  name              String
+  platform          String // e.g., "OnlyFans"
+  platformUsername  String?
+  
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  subscriptionDate    DateTime
+  subscriptionSource  String?
+  currentStatus       String   @default("Active") // Active, Expired
+  autoRenewStatus     Boolean  @default(true)
+  
+  totalSpendSubscription Float @default(0)
+  totalSpendPPV          Float @default(0)
+  totalSpendTips         Float @default(0)
+  
+  lastInteractionDate DateTime?
+  
+  predictedLTV      Float?
+  churnRiskScore    Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TrackingLink {
+  id            String   @id @default(cuid())
+  name          String
+  url           String   @unique
+  destination   String
+  source        String?
+  campaign      String?
+  
+  clicks        Int      @default(0)
+  subscriptions Int      @default(0)
+  totalRevenue  Float    @default(0)
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model MediaItem {
+  id              String   @id @default(cuid())
+  name            String
+  url             String
+  type            String // "image", "video"
+  size            Int // in bytes
+  
+  totalRevenue    Float    @default(0)
+  conversionRate  Float    @default(0)
+  timesSent       Int      @default(0)
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AutopilotRoutine {
+  id              String   @id @default(cuid())
+  creatorId       String
+  creator         User     @relation(fields: [creatorId], references: [id])
+
+  name            String
+  description     String
+  cadence         String
+  requiresApproval Boolean  @default(true)
+  active          Boolean   @default(true)
+  lastRunAt       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AIInteraction {
+  id        String   @id @default(cuid())
+  prompt    String
+  response  String
+  context   Json?
+  
+  createdAt DateTime @default(now())
+}

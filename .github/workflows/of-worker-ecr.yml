@@ -1,0 +1,74 @@
+name: Build & Push of-worker to ECR
+
+on:
+  push:
+    tags: ['v*']   # ex: v1.0.0, v2.3.4
+  workflow_dispatch:
+
+permissions:
+  id-token: write    # OIDC -> AWS
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPO: of-worker
+  CONTEXT_DIR: workers/of-worker
+  PLATFORM: linux/amd64
+
+concurrency:
+  group: of-worker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Assume une role AWS via OIDC (configurer le trust côté IAM)
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Ensure ECR repository exists
+        run: |
+          aws ecr describe-repositories --repository-names "${ECR_REPO}" >/dev/null 2>&1 || \
+          aws ecr create-repository --repository-name "${ECR_REPO}" \
+            --image-scanning-configuration scanOnPush=true \
+            --encryption-configuration encryptionType=KMS
+        env:
+          ECR_REPO: ${{ env.ECR_REPO }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Génère les tags à partir du tag Git (v1.2.3 -> v1.2.3, v1.2, v1, latest)
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}
+          tags: |
+            type=ref,event=tag,pattern=v{{version}}
+            type=ref,event=tag,pattern=v{{major}}.{{minor}}
+            type=ref,event=tag,pattern=v{{major}}
+            type=raw,value=latest
+
+      - name: Build & Push (linux/amd64)
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.CONTEXT_DIR }}
+          platforms: ${{ env.PLATFORM }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+

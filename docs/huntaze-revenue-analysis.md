@@ -16,7 +16,7 @@ Per Creator:
 - Avg creator revenue: $5,000/month
 - Commission (7%): $350/month
 - Total revenue: $369/month
-- AI costs (Claude + GPT): ~$40/month
+- AI costs (Azure OpenAI): ~$40/month
 - Net profit: $329/month per creator
 ```
 

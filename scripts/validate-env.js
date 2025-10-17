@@ -1,4 +1,21 @@
 /* Simple ENV validator for site-web */
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
+
+const envFiles = [
+  '.env.local',
+  process.env.NODE_ENV === 'production' ? '.env.production' : undefined,
+  '.env',
+].filter(Boolean);
+
+for (const file of envFiles) {
+  const abs = path.resolve(__dirname, '..', file);
+  if (fs.existsSync(abs)) {
+    dotenv.config({ path: abs });
+  }
+}
+
 const requiredCommon = [];
 
 const requiredProd = [
@@ -14,8 +31,14 @@ const warnIfMissing = [
   'TIKTOK_CLIENT_KEY',
   'TIKTOK_CLIENT_SECRET',
   'NEXT_PUBLIC_TIKTOK_REDIRECT_URI',
-  'STRIPE_SECRET_KEY',
   'STRIPE_WEBHOOK_SECRET',
+];
+
+const optionalSecretPairs = [
+  {
+    label: 'STRIPE secret key',
+    envVars: ['STRIPE_SECRET_KEY', 'STRIPE_SECRET_KEY_SECRET_NAME'],
+  },
 ];
 
 function main() {
@@ -29,6 +52,16 @@ function main() {
   }
 
   const softMissing = warnIfMissing.filter((k) => !process.env[k] || String(process.env[k]).trim() === '');
+
+  optionalSecretPairs.forEach(({ label, envVars }) => {
+    const hasValue = envVars.some((key) => {
+      const value = process.env[key];
+      return value && String(value).trim() !== '';
+    });
+    if (!hasValue) {
+      softMissing.push(`${label} (${envVars.join(' or ')})`);
+    }
+  });
   if (softMissing.length) {
     console.warn(`Warning: optional env vars not set: ${softMissing.join(', ')}`);
   }

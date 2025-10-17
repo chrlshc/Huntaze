@@ -1,23 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import { generateToken, generateRefreshToken } from '@/lib/auth/jwt';
 import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const { pathname } = new URL(request.url);
+  const log = makeReqLogger({ requestId, route: pathname, method: request.method });
   try {
     // Basic rate limit to reduce abuse of signin endpoint
     const limited = rateLimit(request, { windowMs: 60_000, max: 10 });
     if (!limited.ok) {
-      return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 });
+      const r = NextResponse.json({ error: 'Too many attempts, try later', requestId }, { status: 429 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+      const r = NextResponse.json({ error: 'Email and password are required', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // TODO: Fetch user from database
@@ -32,10 +38,9 @@ export async function POST(request: NextRequest) {
     const mockStoredHash = await bcrypt.hash('password123', 10);
     const isValidPassword = await bcrypt.compare(password, mockStoredHash);
     if (!isValidPassword && password !== 'password123') {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      );
+      const rr = NextResponse.json({ error: 'Invalid email or password', requestId }, { status: 401 });
+      rr.headers.set('X-Request-Id', requestId);
+      return rr;
     }
 
     // Create user object (would come from database)
@@ -68,7 +73,8 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
         provider: user.provider,
-      }
+      },
+      requestId,
     });
 
     // Set secure cookies
@@ -95,12 +101,12 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60, // 1 hour
     });
 
+    response.headers.set('X-Request-Id', requestId);
     return response;
-  } catch (error) {
-    console.error('Signin error:', error);
-    return NextResponse.json(
-      { error: 'Failed to sign in' },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    log.error('auth_signin_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Failed to sign in', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

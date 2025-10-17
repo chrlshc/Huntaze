@@ -1,14 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ArrowRight } from 'lucide-react'
 import ContactSalesModal from '@/components/ContactSalesModal'
 // import ThemeToggle from '@/components/ThemeToggle'
 import analytics from '@/lib/analytics/enterprise-events'
+import { useAuth } from '@/components/providers/AuthProvider'
 
-// Navigation items based on the new IA
+// Navigation items mapped to the new IA positioning
 const solutionItems = [
   {
     title: 'For Solo Creators',
@@ -98,6 +99,7 @@ const resourceItems = [
 
 export default function EnterpriseNav() {
   const [solutionsOpen, setSolutionsOpen] = useState(false)
+  const { user, loading: authLoading } = useAuth()
   const [resourcesOpen, setResourcesOpen] = useState(false)
   const [contactModalOpen, setContactModalOpen] = useState(false)
 
@@ -105,12 +107,12 @@ export default function EnterpriseNav() {
     <nav className="fixed inset-x-0 top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
       <div className="w-full pl-80 pr-8">
         <div className="flex items-center h-16">
-          {/* Logo - Invisible mais garde l'espace */}
+          {/* Logo placeholder to preserve spacing */}
           <div className="invisible">
             <span className="text-2xl font-bold">Huntaze</span>
           </div>
 
-          {/* Spacer pour pousser le reste à droite */}
+          {/* Spacer to push everything else to the right */}
           <div className="flex-1"></div>
 
           {/* Navigation Items */}
@@ -219,21 +221,37 @@ export default function EnterpriseNav() {
 
           </div>
 
-          {/* Sign in - Indépendant */}
-          <Link
-            href="/auth"
-            className="ml-20 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
-          >
-            Sign in
-          </Link>
+          {/* Auth section */}
+          {!authLoading && (
+            <>
+              {user ? (
+                <Link
+                  href="/dashboard"
+                  className="ml-20 px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  {/* Standalone sign-in link */}
+                  <Link
+                    href="/auth"
+                    className="ml-20 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                  >
+                    Sign in
+                  </Link>
 
-          {/* Start for free - Indépendant */}
-          <Link
-            href="/get-started"
-            className="ml-6 px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
-          >
-            Start for free
-          </Link>
+                  {/* Standalone start-for-free button */}
+                  <Link
+                    href="/get-started"
+                    className="ml-6 px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                  >
+                    Start for free
+                  </Link>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
       

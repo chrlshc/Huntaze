@@ -101,7 +101,7 @@
 .nav-action-button {
   @apply w-full px-4 py-3 rounded-lg font-medium;
   @apply text-center transition-all;
-  background: var(--gradient-primary);
+  background: var(--color-primary);
   color: var(--color-btn-primary-text);
   box-shadow: var(--shadow-sm);
 }
@@ -109,6 +109,7 @@
 .nav-action-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+  background: var(--color-primary-hover);
 }
 
 /* Mobile Drawer */

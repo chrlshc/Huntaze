@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 export interface ModerationResult {
   safe: boolean;
@@ -147,8 +148,9 @@ export class ContentModerationService {
       }
       
       return result;
-    } catch (error) {
-      console.error('Content moderation error:', error);
+    } catch (error: any) {
+      const log = makeReqLogger({});
+      log.error('content_moderation_failed', { error: error?.message || 'unknown_error' });
       // Fail closed - mark as unsafe if error
       return {
         safe: false,

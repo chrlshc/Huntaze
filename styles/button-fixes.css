@@ -1,0 +1,147 @@
+/* Global button fixes for text centering and proper sizing */
+
+/* Fix all button elements to have proper centering by default */
+button:not(.no-center),
+[role="button"]:not(.no-center),
+.btn,
+.button,
+a[class*="btn-"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+  gap: 0.375rem;
+}
+
+/* Prevent oversized buttons */
+button,
+[role="button"],
+.btn,
+.button {
+  max-height: 2.75rem; /* 44px max for accessibility */
+  max-width: 100%;
+}
+
+/* Fix Radix UI Button component */
+[data-radix-collection-item] button,
+button[data-state] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Fix oversized padding classes */
+.px-8 {
+  padding-left: 1.5rem !important; /* Reduce from 2rem to 1.5rem */
+  padding-right: 1.5rem !important;
+}
+
+.px-12 {
+  padding-left: 2rem !important; /* Reduce from 3rem to 2rem */
+  padding-right: 2rem !important;
+}
+
+.py-6 {
+  padding-top: 1rem !important; /* Reduce from 1.5rem to 1rem */
+  padding-bottom: 1rem !important;
+}
+
+.py-8 {
+  padding-top: 1.25rem !important; /* Reduce from 2rem to 1.25rem */
+  padding-bottom: 1.25rem !important;
+}
+
+/* Ensure text in buttons stays centered */
+button > span,
+button > div,
+.btn > span,
+.btn > div {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+}
+
+/* Fix button text sizes */
+button.text-xl,
+.btn.text-xl,
+button .text-xl {
+  font-size: 1rem !important; /* Reduce from 1.25rem */
+}
+
+button.text-2xl,
+.btn.text-2xl,
+button .text-2xl {
+  font-size: 1.125rem !important; /* Reduce from 1.5rem */
+}
+
+/* Card centering fixes */
+.card,
+[class*="card"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content,
+[class*="card-content"],
+.card-body,
+[class*="card-body"] {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Ensure cards with text-center actually center content */
+.text-center > * {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Fix button groups */
+.button-group,
+.btn-group,
+.flex.gap-2 > button,
+.flex.gap-3 > button,
+.flex.gap-4 > button {
+  height: auto;
+  max-height: 2.75rem;
+}
+
+/* Specific fix for "Generate with AI" button pattern */
+button:has(.lucide-sparkles),
+button:has(svg):has(+ span),
+.btn:has(svg) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+}
+
+/* Fix button hover states */
+button:hover,
+.btn:hover {
+  transform: translateY(0) !important; /* Prevent excessive movement */
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  button,
+  .btn,
+  [role="button"] {
+    min-height: 2.75rem; /* 44px touch target */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Stack button groups on mobile */
+  .button-group,
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .button-group > *,
+  .btn-group > * {
+    width: 100%;
+  }
+}

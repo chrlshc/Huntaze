@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 const API_URL = process.env.API_URL || 'http://localhost:3001';
 
@@ -6,11 +8,16 @@ const API_URL = process.env.API_URL || 'http://localhost:3001';
 const aiConfigs = new Map<string, any>();
 
 export async function GET(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const { pathname } = new URL(request.url);
+  const log = makeReqLogger({ requestId, route: pathname, method: request.method });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Try in-memory first
@@ -32,10 +39,12 @@ export async function GET(request: NextRequest) {
       if (response.ok) {
         const data = await response.json();
         aiConfigs.set(token, data);
-        return NextResponse.json(data);
+        const r = NextResponse.json({ ...data, requestId });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
       }
-    } catch (error) {
-      console.error('Backend API error:', error);
+    } catch (error: any) {
+      log.error('ai_config_backend_error', { error: error?.message || 'unknown_error' });
     }
 
     // Return default config if backend fails
@@ -50,18 +59,27 @@ export async function GET(request: NextRequest) {
       customResponses: [],
     };
     aiConfigs.set(token, defaultConfig);
-    return NextResponse.json(defaultConfig);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch AI config' }, { status: 500 });
+    const r = NextResponse.json({ ...defaultConfig, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    const r = NextResponse.json({ error: 'Failed to fetch AI config', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const { pathname } = new URL(request.url);
+  const log = makeReqLogger({ requestId, route: pathname, method: request.method });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
     
     const config = await request.json();
@@ -80,34 +98,47 @@ export async function POST(request: NextRequest) {
       if (response.ok) {
         const data = await response.json();
         aiConfigs.set(token, data.config || config);
-        return NextResponse.json({ success: true, config: data.config || config });
+        const r = NextResponse.json({ success: true, config: data.config || config, requestId });
+        r.headers.set('X-Request-Id', requestId);
+        return r;
       }
-    } catch (error) {
-      console.error('Backend API error:', error);
+    } catch (error: any) {
+      log.error('ai_config_backend_error', { error: error?.message || 'unknown_error' });
     }
     
     // Fallback to in-memory
     aiConfigs.set(token, config);
-    return NextResponse.json({ success: true, config });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to save config' }, { status: 500 });
+    const r = NextResponse.json({ success: true, config, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    const r = NextResponse.json({ error: 'Failed to save config', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 
 export async function PUT(request: NextRequest) {
+  const requestId = crypto.randomUUID();
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // token presence is checked above; detailed verification handled by downstream APIs in prod
 
     const config = await request.json();
     aiConfigs.set(token, config);
-    return NextResponse.json({ success: true, config });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to save config' }, { status: 500 });
+    const r = NextResponse.json({ success: true, config, requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    const r = NextResponse.json({ error: 'Failed to save config', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

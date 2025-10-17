@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
+import { redactObj } from '@/lib/log-sanitize';
+import { requireUser, HttpError } from '@/lib/server-auth';
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const { pathname } = new URL(request.url);
+  const log = makeReqLogger({ requestId, route: pathname, method: request.method });
   try {
+    await requireUser();
     const { code } = await request.json();
     
     if (!code) {
-      return NextResponse.json({ error: 'Missing authorization code' }, { status: 400 });
+      const r = NextResponse.json({ error: 'Missing authorization code', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Exchange code for access token
@@ -25,9 +35,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (!tokenResponse.ok) {
-      const error = await tokenResponse.text();
-      console.error('Threads token error:', error);
-      return NextResponse.json({ error: 'Failed to exchange code for token' }, { status: 400 });
+      const errorText = await tokenResponse.text();
+      log.error('threads_token_error', redactObj({ error: errorText }));
+      const r = NextResponse.json({ error: 'Failed to exchange code for token', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const tokenData = await tokenResponse.json();
@@ -36,7 +48,9 @@ export async function POST(request: NextRequest) {
     const profileResponse = await fetch(`https://graph.instagram.com/v18.0/me?fields=id,username,account_type,media_count&access_token=${tokenData.access_token}`);
     
     if (!profileResponse.ok) {
-      return NextResponse.json({ error: 'Failed to get user profile' }, { status: 400 });
+      const r = NextResponse.json({ error: 'Failed to get user profile', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const profileData = await profileResponse.json();
@@ -52,16 +66,21 @@ export async function POST(request: NextRequest) {
     //   accountType: profileData.account_type
     // });
 
-    return NextResponse.json({ 
+    const r = NextResponse.json({ 
       success: true,
       user: {
         username: profileData.username,
         accountType: profileData.account_type,
         mediaCount: profileData.media_count
-      }
+      },
+      requestId,
     });
-  } catch (error) {
-    console.error('Threads callback error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('threads_callback_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

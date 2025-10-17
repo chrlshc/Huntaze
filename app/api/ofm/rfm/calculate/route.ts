@@ -6,12 +6,18 @@ import {
 } from '@/src/utils/rfm-segmentation';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const { importData, timeRange } = await request.json();
@@ -36,11 +42,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (fanData.length === 0) {
-      return NextResponse.json({
+      const r = NextResponse.json({
         message: 'No fan data available for RFM calculation',
         segments: {},
-        distribution: {}
+        distribution: {},
+        requestId,
       });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Convert to FanMetrics format
@@ -86,11 +95,11 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({ segments, distribution })
       });
-    } catch (error) {
-      console.error('Failed to store RFM segments:', error);
+    } catch (error: any) {
+      log.error('rfm_store_segments_failed', { error: error?.message || 'unknown_error' });
     }
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       message: 'RFM segmentation calculated successfully',
       totalFans: fanMetrics.length,
       segments,
@@ -102,14 +111,17 @@ export async function POST(request: NextRequest) {
         churnRisk: distribution.CHURN_RISK || 0,
         new: distribution.NEW || 0,
         unknown: distribution.UNKNOWN || 0
-      }
+      },
+      requestId,
     });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
   } catch (error: any) {
-    console.error('RFM calculation error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Failed to calculate RFM segmentation' 
-    }, { status: 500 });
+    log.error('rfm_calculation_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: error.message || 'Failed to calculate RFM segmentation', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
 

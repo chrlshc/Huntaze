@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from '@/lib/auth';
 import { z } from 'zod';
 import type { OfConversation } from '@/lib/types/onlyfans';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 
 // Mock data for now - will be replaced with actual OF sync
 const mockConversations: OfConversation[] = [
@@ -51,10 +53,14 @@ const querySchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Unauthorized', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Parse query parameters
@@ -99,22 +105,29 @@ export async function GET(request: NextRequest) {
     const end = start + query.limit;
     const paginated = filtered.slice(start, end);
 
-    return NextResponse.json({
+    const r = NextResponse.json({
       conversations: paginated,
       pagination: {
         page: query.page,
         limit: query.limit,
         total: filtered.length,
         totalPages: Math.ceil(filtered.length / query.limit)
-      }
+      },
+      requestId,
     });
-  } catch (error) {
-    console.error('Error fetching OF inbox:', error);
+    r.headers.set('X-Request-Id', requestId);
+    return r;
+  } catch (error: any) {
+    log.error('of_inbox_failed', { error: error?.message || 'unknown_error' });
     
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid parameters', details: error.errors }, { status: 400 });
+      const r = NextResponse.json({ error: 'Invalid parameters', details: error.errors, requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const r = NextResponse.json({ error: 'Internal server error', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }

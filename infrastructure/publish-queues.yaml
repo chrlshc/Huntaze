@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SQS queues for content publishing per platform (with DLQs)
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+
+Resources:
+  TwitterDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-twitter-dlq-${Environment}'
+      SqsManagedSseEnabled: true
+
+  TwitterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-twitter-${Environment}'
+      MessageRetentionPeriod: 345600
+      VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt TwitterDLQ.Arn
+        maxReceiveCount: 5
+      SqsManagedSseEnabled: true
+
+  InstagramDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-instagram-dlq-${Environment}'
+      SqsManagedSseEnabled: true
+
+  InstagramQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-instagram-${Environment}'
+      MessageRetentionPeriod: 345600
+      VisibilityTimeout: 180
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt InstagramDLQ.Arn
+        maxReceiveCount: 5
+      SqsManagedSseEnabled: true
+
+  TikTokDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-tiktok-dlq-${Environment}'
+      SqsManagedSseEnabled: true
+
+  TikTokQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-tiktok-${Environment}'
+      MessageRetentionPeriod: 345600
+      VisibilityTimeout: 300
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt TikTokDLQ.Arn
+        maxReceiveCount: 5
+      SqsManagedSseEnabled: true
+
+  RedditDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-reddit-dlq-${Environment}'
+      SqsManagedSseEnabled: true
+
+  RedditQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'publisher-reddit-${Environment}'
+      MessageRetentionPeriod: 345600
+      VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt RedditDLQ.Arn
+        maxReceiveCount: 5
+      SqsManagedSseEnabled: true
+
+Outputs:
+  TwitterQueueUrl:
+    Value: !Ref TwitterQueue
+  InstagramQueueUrl:
+    Value: !Ref InstagramQueue
+  TikTokQueueUrl:
+    Value: !Ref TikTokQueue
+  RedditQueueUrl:
+    Value: !Ref RedditQueue
+

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: site-web
+        working-directory: .
 
     steps:
       - name: Checkout
@@ -30,6 +30,11 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_COGNITO_DOMAIN: ${{ secrets.NEXT_PUBLIC_COGNITO_DOMAIN }}
+          NEXT_PUBLIC_AWS_REGION: ${{ secrets.NEXT_PUBLIC_AWS_REGION }}
+          NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_ID }}
+          NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_USER_POOL_CLIENT_ID }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: npm run build
 
       # OPTION A: Deploy to Vercel (automatique avec integration GitHub)

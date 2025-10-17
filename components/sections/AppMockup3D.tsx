@@ -4,8 +4,8 @@ import { motion } from 'framer-motion'
 
 export default function AppMockup3D() {
   return (
-    <section className="relative py-16 overflow-hidden bg-black">
-      <div className="max-w-[1400px] mx-auto px-6">
+    <section className="relative overflow-hidden bg-black py-12 sm:py-16">
+      <div className="max-w-6xl mx-auto px-6">
         {/* 3D Perspective Container */}
         <div className="relative perspective-[2000px]">
           <motion.div 
@@ -17,7 +17,7 @@ export default function AppMockup3D() {
             style={{ transformStyle: 'preserve-3d' }}
           >
             {/* Glow Effect */}
-            <div className="absolute -inset-20 bg-purple-600/20 blur-[100px] rounded-full"></div>
+            <div className="absolute -inset-12 md:-inset-16 bg-purple-600/20 blur-[100px] rounded-full"></div>
             
             {/* Browser Mockup */}
             <div className="relative bg-[#1a1a1a] rounded-xl shadow-2xl border border-gray-800/50 overflow-hidden">
@@ -42,7 +42,7 @@ export default function AppMockup3D() {
               </div>
 
               {/* App Content */}
-              <div className="bg-[#0a0a0a] h-[700px] relative overflow-hidden">
+              <div className="relative overflow-hidden bg-[#0a0a0a] min-h-[520px] sm:min-h-[560px] lg:min-h-[600px]">
                 {/* Sidebar */}
                 <div className="absolute left-0 top-0 bottom-0 w-64 bg-black/70 backdrop-blur border-r border-gray-800/50 p-4">
                   <div className="flex items-center gap-3 mb-8">
@@ -90,108 +90,114 @@ export default function AppMockup3D() {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="ml-64 p-8">
-                  {/* Header */}
-                  <div className="flex justify-between items-center mb-8">
-                    <div>
-                      <h2 className="text-3xl font-bold text-white mb-1">Welcome back, Sarah</h2>
-                      <p className="text-gray-400">Here's what's happening with your content today</p>
+                <div className="ml-64 px-6 py-8 sm:px-8">
+                  <div className="space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="space-y-1.5">
+                        <h2 className="text-3xl font-bold text-white">Welcome back, Sarah</h2>
+                        <p className="text-gray-400">Here's what's happening with your content today</p>
+                      </div>
+                      <button className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-700 dark:bg-purple-500">
+                        Create Post
+                      </button>
                     </div>
-                    <button className="bg-purple-600 dark:bg-purple-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors">
-                      Create Post
-                    </button>
-                  </div>
-                  
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-4 gap-6 mb-8">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 }}
-                      className="bg-gray-900/50 backdrop-blur rounded-xl p-6 border border-gray-800/50"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <p className="text-sm text-gray-400">Total Revenue</p>
-                        <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-1">$147,298</p>
-                      <p className="text-sm text-green-400">+23.5% from last month</p>
-                    </motion.div>
 
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="bg-gray-900/50 backdrop-blur rounded-xl p-6 border border-gray-800/50"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <p className="text-sm text-gray-400">Active Subscribers</p>
-                        <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-1">4,832</p>
-                      <p className="text-sm text-green-400">+18.2% from last month</p>
-                    </motion.div>
+                    {/* Stats Grid */}
+                    <div className="grid gap-4 lg:gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="space-y-3 rounded-xl border border-gray-800/50 bg-gray-900/50 p-6 backdrop-blur"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-400">Total Revenue</p>
+                          <svg className="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                          </svg>
+                        </div>
+                        <p className="text-3xl font-bold text-white">$147,298</p>
+                        <p className="text-sm text-green-400">+23.5% from last month</p>
+                      </motion.div>
 
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="bg-gray-900/50 backdrop-blur rounded-xl p-6 border border-gray-800/50"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <p className="text-sm text-gray-400">Messages Today</p>
-                        <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-1">342</p>
-                      <p className="text-sm text-purple-400">AI handled 89%</p>
-                    </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="space-y-3 rounded-xl border border-gray-800/50 bg-gray-900/50 p-6 backdrop-blur"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-400">Active Subscribers</p>
+                          <svg className="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        </div>
+                        <p className="text-3xl font-bold text-white">4,832</p>
+                        <p className="text-sm text-green-400">+18.2% from last month</p>
+                      </motion.div>
 
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="bg-gray-900/50 backdrop-blur rounded-xl p-6 border border-gray-800/50"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <p className="text-sm text-gray-400">Conversion Rate</p>
-                        <svg className="w-5 h-5 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </div>
-                      <p className="text-3xl font-bold text-white mb-1">28.4%</p>
-                      <p className="text-sm text-green-400">+5.2% from last week</p>
-                    </motion.div>
-                  </div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="space-y-3 rounded-xl border border-gray-800/50 bg-gray-900/50 p-6 backdrop-blur"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-400">Messages Today</p>
+                          <svg className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                        </div>
+                        <p className="text-3xl font-bold text-white">342</p>
+                        <p className="text-sm text-purple-400">AI handled 89%</p>
+                      </motion.div>
 
-                  {/* Chart Area */}
-                  <div className="bg-gray-900/50 backdrop-blur rounded-xl p-6 border border-gray-800/50">
-                    <h3 className="text-lg font-semibold text-white mb-4">Revenue Overview</h3>
-                    <div className="h-64 flex items-center justify-center">
-                      {/* Placeholder for chart */}
-                      <div className="text-gray-500 dark:text-gray-400">
-                        <svg className="w-full h-full" viewBox="0 0 400 200">
-                          <path
-                            d="M 0,150 C 50,140 100,120 150,100 C 200,80 250,90 300,70 C 350,50 400,60 400,40"
-                            fill="none"
-                            stroke="url(#gradient)"
-                            strokeWidth="3"
-                          />
-                          <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                              <stop offset="0%" stopColor="#8B5CF6" />
-                              <stop offset="100%" stopColor="#EC4899" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="space-y-3 rounded-xl border border-gray-800/50 bg-gray-900/50 p-6 backdrop-blur"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-400">Conversion Rate</p>
+                          <svg className="h-5 w-5 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                        </div>
+                        <p className="text-3xl font-bold text-white">28.4%</p>
+                        <p className="text-sm text-green-400">+5.2% from last week</p>
+                      </motion.div>
+                    </div>
+
+                    {/* Chart Area */}
+                    <div className="space-y-4 rounded-xl border border-gray-800/50 bg-gray-900/50 p-6 backdrop-blur">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-white">Revenue Overview</h3>
+                      </div>
+                      <div className="flex h-48 items-center justify-center sm:h-56">
+                        {/* Placeholder for chart */}
+                        <div className="text-gray-500 dark:text-gray-400">
+                          <svg className="h-full w-full" viewBox="0 0 400 200">
+                            <path
+                              d="M 0,150 C 50,140 100,120 150,100 C 200,80 250,90 300,70 C 350,50 400,60 400,40"
+                              fill="none"
+                              stroke="url(#gradient)"
+                              strokeWidth="3"
+                            />
+                            <defs>
+                              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#8B5CF6" />
+                                <stop offset="100%" stopColor="#EC4899" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                        </div>
                       </div>
                     </div>
                   </div>
+                </div>
+
                 </div>
               </div>
             </div>

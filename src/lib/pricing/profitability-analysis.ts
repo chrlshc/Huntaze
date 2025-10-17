@@ -1,4 +1,4 @@
-// Huntaze Profitability Analysis with Claude AI Everywhere
+// Huntaze Profitability Analysis with Azure OpenAI Everywhere
 // Real calculations with revenue caps and AI costs
 
 export interface PlanProfitability {
@@ -7,8 +7,7 @@ export interface PlanProfitability {
   commissionRate: number;
   revenueCap: number | null;
   aiCosts: {
-    gpt: number;
-    claude: number;
+    azure: number;
     total: number;
   };
   profitAnalysis: {
@@ -23,17 +22,11 @@ export interface PlanProfitability {
   };
 }
 
-// Real AI Pricing (per 1K tokens)
+// Reference AI Pricing (per 1K tokens) — Azure OpenAI
 const AI_PRICING = {
-  // GPT Models
   'gpt-4': 0.03,
   'gpt-4-turbo': 0.01,
-  'gpt-4o': 0.005, // Latest model, actually cheaper!
-  
-  // Claude Models (Anthropic pricing)
-  'claude-3-haiku': 0.00025,   // Ultra cheap
-  'claude-3-sonnet': 0.003,    // Middle tier
-  'claude-3-opus': 0.015,      // Premium
+  'gpt-4o': 0.005, // Latest model (Azure), cost-optimized
 };
 
 // Average tokens per message conversation
@@ -45,18 +38,14 @@ const MESSAGES_PER_MONTH = {
   enterprise: 50000 // Realistic for enterprise
 };
 
-// REAL Profitability with Claude EVERYWHERE
-export const PROFITABILITY_WITH_CLAUDE: Record<string, PlanProfitability> = {
+// REAL Profitability with Azure OpenAI EVERYWHERE
+export const PROFITABILITY_WITH_AZURE: Record<string, PlanProfitability> = {
   starter: {
     plan: 'STARTER',
     monthlyFee: 19,
     commissionRate: 0.07,
     revenueCap: 2500,
-    aiCosts: {
-      gpt: 4.50, // GPT-4: 1000 msgs * 150 tokens * $0.03
-      claude: 0.04, // Claude Haiku: 1000 msgs * 150 tokens * $0.00025
-      total: 4.54
-    },
+    aiCosts: { azure: 4.50, total: 4.50 },
     profitAnalysis: {
       atCap: 19 + (2500 * 0.07) - 4.54, // $189.46
       examples: [
@@ -83,11 +72,7 @@ export const PROFITABILITY_WITH_CLAUDE: Record<string, PlanProfitability> = {
     monthlyFee: 39,
     commissionRate: 0.05,
     revenueCap: 5000,
-    aiCosts: {
-      gpt: 7.50, // GPT-4-Turbo: 5000 msgs * 150 tokens * $0.01
-      claude: 0.19, // Claude Haiku: 5000 msgs * 150 tokens * $0.00025
-      total: 7.69
-    },
+    aiCosts: { azure: 7.50, total: 7.50 },
     profitAnalysis: {
       atCap: 39 + (5000 * 0.05) - 7.69, // $281.31
       examples: [
@@ -114,11 +99,7 @@ export const PROFITABILITY_WITH_CLAUDE: Record<string, PlanProfitability> = {
     monthlyFee: 79,
     commissionRate: 0.03,
     revenueCap: 15000,
-    aiCosts: {
-      gpt: 37.50, // GPT-4-Turbo: 25000 msgs * 150 tokens * $0.01
-      claude: 11.25, // Claude Sonnet: 25000 msgs * 150 tokens * $0.003
-      total: 48.75
-    },
+    aiCosts: { azure: 37.50, total: 37.50 },
     profitAnalysis: {
       atCap: 79 + (15000 * 0.03) - 48.75, // $480.25
       examples: [
@@ -145,11 +126,7 @@ export const PROFITABILITY_WITH_CLAUDE: Record<string, PlanProfitability> = {
     monthlyFee: 199,
     commissionRate: 0.015,
     revenueCap: null, // No cap
-    aiCosts: {
-      gpt: 37.50, // GPT-4o: 50000 msgs * 150 tokens * $0.005 (cheaper!)
-      claude: 112.50, // Claude Opus: 50000 msgs * 150 tokens * $0.015
-      total: 150.00
-    },
+    aiCosts: { azure: 37.50, total: 37.50 },
     profitAnalysis: {
       atCap: 0, // No cap
       examples: [
@@ -180,58 +157,56 @@ export const PROFITABILITY_WITH_CLAUDE: Record<string, PlanProfitability> = {
 };
 
 // Smart AI Usage Strategy
-export const CLAUDE_EVERYWHERE_STRATEGY = {
+export const AZURE_EVERYWHERE_STRATEGY = {
   starter: {
     messaging: "GPT-4 for quality responses",
-    analysis: "Claude 3 Haiku for basic insights",
-    cost: "$4.54/month total AI",
+    analysis: "Azure OpenAI for basic insights",
+    cost: "$4.50/month total AI",
     value: "Premium AI even at starter level!"
   },
   
   pro: {
     messaging: "GPT-4-Turbo for faster responses",
-    analysis: "Claude 3 Haiku for fan profiling",
-    enhancement: "Double AI verification on key messages",
-    cost: "$7.69/month total AI",
-    value: "2 AIs working together!"
+    analysis: "Azure OpenAI for fan profiling",
+    enhancement: "Quality checks on key messages",
+    cost: "$7.50/month total AI",
+    value: "Optimized for ROI"
   },
   
   scale: {
     messaging: "GPT-4-Turbo primary",
-    analysis: "Claude 3 Sonnet for predictive analytics",
-    enhancement: "A/B testing with both AIs",
-    cost: "$48.75/month total AI",
+    analysis: "Azure OpenAI for predictive analytics",
+    enhancement: "A/B testing pipeline",
+    cost: "$37.50/month total AI",
     value: "Enterprise features at scale pricing!"
   },
   
   enterprise: {
     messaging: "GPT-4o (latest) for cutting edge",
-    analysis: "Claude 3 Opus for deep psychology",
-    enhancement: "Full AI symphony - both models optimize each response",
-    cost: "$150/month total AI",
-    value: "The absolute best AI money can buy!"
+    analysis: "Advanced profiling with Azure OpenAI",
+    enhancement: "Full optimization pipeline",
+    cost: "$37.50+/month total AI (usage-based)",
+    value: "Top-tier Azure OpenAI stack"
   }
 };
 
 // Marketing Angle
 export const MARKETING_MESSAGE = `
-🧠 HUNTAZE: The ONLY OnlyFans platform using BOTH GPT-4 AND Claude AI
+🧠 HUNTAZE: Built on Azure OpenAI (GPT-4 family)
 
-While competitors give everyone the same basic chatbot, we use:
-- GPT-4 for perfect responses
-- Claude AI for psychological analysis
-- Different AI tiers for different growth stages
+While competitors give everyone the same basic chatbot, we:
+- Use Azure OpenAI for high-quality, safe responses
+- Adapt AI power by plan and use case
+- Focus on conversions and creator personality
 
-STARTER gets better AI than competitors' ENTERPRISE plans!
-
-Result: 
+Result:
 ✅ 2-3x higher conversion rates
 ✅ Fans feel truly understood
 ✅ Messages that actually sound like you
 `;
 
 // Profit Summary
-console.log('💰 PROFIT ANALYSIS WITH CLAUDE EVERYWHERE:');
+console.log('💰 PROFIT ANALYSIS WITH AZURE OPENAI:');
 console.log('Starter: $84-189 profit/month (95-98% margin)');
 console.log('Pro: $181-281 profit/month (96-97% margin)');
 console.log('Scale: $330-480 profit/month (87-91% margin)');

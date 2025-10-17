@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { configureAmplify } from '@/lib/amplify-config';
 import "./globals.css";
+
+// Initialize Amplify at the top level
+configureAmplify();
 import "./mobile.css";
 import "./mobile-emergency-fix.css";
 import "./nuclear-mobile-fix.css";
@@ -31,6 +35,9 @@ import "../styles/cta-buttons.css"; // Unified CTA button styles
 import "../styles/typography-fixes.css"; // Typography visibility fixes
 import "../styles/enterprise.css"; // Enterprise landing page styles
 import "../styles/clean-dark-theme.css"; // Clean dark theme
+import "../styles/shopify-mobile.css"; // Shopify mobile design system
+import "../styles/mobile-animations.css"; // Mobile-specific animations
+import "../styles/shopify-design-system.css"; // Shopify design system overrides
 // import HeaderShopify from "@/src/components/header-shopify";
 // import FooterImproved from "@/src/components/footer-improved";
 // import MobileBottomNav from "@/src/components/mobile-bottom-nav";
@@ -41,6 +48,10 @@ import RemoveDarkOverlay from "@/components/RemoveDarkOverlay";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import MobileLightTheme from "@/components/MobileLightTheme";
 import MobileForceLightCSS from "@/components/MobileForceLightCSS";
+import dynamic from 'next/dynamic';
+
+// Dynamic import for mobile layout
+const MobileLayout = dynamic(() => import('./mobile-layout'), { ssr: false });
 // Sidebar disabled on marketing pages to avoid overlay
 // import AppSidebar from "@/src/components/app-sidebar";
 
@@ -117,28 +128,15 @@ export default function RootLayout({
         {/* Huntaze premium tokens (override) */}
         <link rel="stylesheet" href="/styles/huntaze-tokens.css?v=dev" />
         <link rel="stylesheet" href="/styles/amoled-mode.css?v=dev" />
-        {/* Force dark mode - MUST be last */}
-        <link rel="stylesheet" href="/styles/force-dark-mode.css?v=dev" />
-        {/* Clean dark theme - No purple, pure black */}
+        {/* Clean dark theme */}
         <link rel="stylesheet" href="/styles/clean-dark-theme.css?v=dev" />
-        {/* Linear exact theme - Match Linear.app */}
-        <link rel="stylesheet" href="/styles/linear-exact-theme.css?v=dev" />
         {/* CTA button fixes */}
         <link rel="stylesheet" href="/styles/cta-button-fixes.css?v=dev" />
         {/* Full site fixes */}
         <link rel="stylesheet" href="/styles/full-site-fixes.css?v=dev" />
-        {/* Final button fix - MUST be last */}
-        <link rel="stylesheet" href="/styles/final-button-fix.css?v=dev" />
-        {/* Emergency fix - Remove all borders */}
-        <link rel="stylesheet" href="/styles/emergency-fix.css?v=dev" />
-        {/* Linear dropdown fix - Match Linear.app */}
+        {/* Linear dropdown fix */}
         <link rel="stylesheet" href="/styles/linear-dropdown-fix.css?v=dev" />
-        {/* Remove purple sections - CRITICAL */}
-        <link rel="stylesheet" href="/styles/remove-purple-sections.css?v=dev" />
-        {/* FORCE BLACK EVERYWHERE - ABSOLUTELY NO PURPLE */}
-        <link rel="stylesheet" href="/styles/force-black-everywhere.css?v=dev" />
-        {/* Remove white backgrounds from nav */}
-        <link rel="stylesheet" href="/styles/remove-white-backgrounds.css?v=dev" />
+        {/* Reduced overrides: removed force-black/force-dark and emergency fixes */}
         {/* Mobile fixes script - must run early */}
         <script src="/mobile-fix.js" async />
         {forceDark && (
@@ -195,8 +193,7 @@ export default function RootLayout({
             `,
           }}
         />)}
-        {/* Force remove ALL nav borders - MUST BE LAST */}
-        <link rel="stylesheet" href="/styles/nav-no-borders.css?v=dev" />
+        {/* Optional: nav border adjustments removed for neutrality */}
         {/* Remove selection effect */}
         <link rel="stylesheet" href="/styles/remove-selection-effect.css?v=dev" />
         {/* Force remove nav borders with JS */}
@@ -228,7 +225,9 @@ export default function RootLayout({
         <Providers>
           {/* Enterprise page has its own navigation and footer */}
           <main id="main" className="app-main content min-h-screen">
-            {children}
+            <MobileLayout>
+              {children}
+            </MobileLayout>
           </main>
         </Providers>
       </body>

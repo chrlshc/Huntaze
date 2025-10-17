@@ -6,12 +6,17 @@
     "NEXT_PUBLIC_APP_URL": "https://huntaze.com"
   },
   "rewrites": [
+    { "source": "/api/(auth|cron)/:path*", "destination": "/api/:path*" },
     { "source": "/api/:path*", "destination": "https://api.huntaze.com/api/:path*" }
   ],
   "crons": [
     {
       "path": "/api/cron/monthly-billing",
       "schedule": "0 0 1 * *"
+    },
+    {
+      "path": "/api/cron/refresh-oauth",
+      "schedule": "*/30 * * * *"
     }
   ]
 }

@@ -1,21 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+import { makeReqLogger } from '@/lib/logger';
 import { generateABTestLinks } from '@/src/utils/tracking-links';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
+  const log = makeReqLogger({ requestId });
   try {
     const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
     if (!token) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     const { baseUrl, platform, variants, campaignId } = await request.json();
 
     if (!baseUrl || !platform || !variants || !Array.isArray(variants)) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: baseUrl, platform, variants' 
-      }, { status: 400 });
+      const r = NextResponse.json({ error: 'Missing required fields: baseUrl, platform, variants', requestId }, { status: 400 });
+      r.headers.set('X-Request-Id', requestId);
+      return r;
     }
 
     // Generate unique campaign ID if not provided
@@ -60,16 +66,14 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ 
-      links,
-      campaignId: campaign,
-      message: 'Tracking links created successfully'
-    });
+    const r = NextResponse.json({ links, campaignId: campaign, message: 'Tracking links created successfully', requestId });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
 
   } catch (error: any) {
-    console.error('Create tracking links error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Failed to create tracking links' 
-    }, { status: 500 });
+    log.error('tracking_create_links_failed', { error: error?.message || 'unknown_error' });
+    const r = NextResponse.json({ error: error.message || 'Failed to create tracking links', requestId }, { status: 500 });
+    r.headers.set('X-Request-Id', requestId);
+    return r;
   }
 }
