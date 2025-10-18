@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
+const isExport = process.env.NEXT_OUTPUT_EXPORT === '1'
+
 const nextConfig = {
   // Core
   reactStrictMode: true,
   swcMinify: true,
   compress: true,
-  output: 'standalone',
+  output: isExport ? 'export' : 'standalone',
 
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
@@ -30,7 +32,7 @@ const nextConfig = {
   images: {
     domains: ['api.dicebear.com', 'ui-avatars.com', 'cdn.huntaze.com', 'static.onlyfansassets.com'],
     formats: ['image/avif', 'image/webp'],
-    unoptimized: false,
+    unoptimized: isExport ? true : false,
   },
 
   // CSS and build perf
