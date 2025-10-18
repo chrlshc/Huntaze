@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   const redis = getRedis()
   const qs = req.nextUrl.searchParams
   const mins = Number(qs.get('mins') ?? '120')
-  const limit = Number(qs.get('limit') ?? '200')
+  const pageLimit = Number(qs.get('limit') ?? '200')
   const type = (qs.get('type') ?? '').toLowerCase()
   const q = (qs.get('q') ?? '').toLowerCase()
 
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
   } else {
     // Fallback: SCAN per-video event keys
     let cursor = '0'
-    const maxScanRows = limit * 2
+    const maxScanRows = pageLimit * 2
     do {
       const res = (await redis.scan(cursor, 'MATCH', 'tiktok:events:*', 'COUNT', '500')) as unknown as [string, string[]]
       cursor = res[0]
@@ -78,12 +78,12 @@ export async function GET(req: NextRequest) {
         }
         if (rows.length >= maxScanRows) break
       }
-    } while (cursor !== '0' && rows.length < limit * 2)
+    } while (cursor !== '0' && rows.length < pageLimit * 2)
   }
 
   rows.sort((a, b) => b.tsMs - a.tsMs)
   return NextResponse.json(
-    { items: rows.slice(0, limit) },
+    { items: rows.slice(0, pageLimit) },
     { headers: { 'cache-control': 'no-store', 'X-Robots-Tag': 'noindex' } }
   )
 }
