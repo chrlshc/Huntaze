@@ -3,23 +3,33 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm use 22 || true
-        - corepack enable || true
-        - npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+        - nvm install 20 && nvm use 20
+        - echo "[PREBUILD] node=$(node -v) npm=$(npm -v)"
+        - npm ci --no-audit --no-fund || npm i --no-audit --no-fund
         - echo "PREBUILD_DONE"
     build:
       commands:
-        - node -v && npm -v
         - echo "BUILD_START"
+        # Write only the keys required at runtime for SSR
+        - |
+          cat > .env.production <<EOF
+          AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+          AZURE_OPENAI_DEPLOYMENT=${AZURE_OPENAI_DEPLOYMENT}
+          AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+          AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
+          DATABASE_URL=${DATABASE_URL}
+          JWT_SECRET=${JWT_SECRET}
+          STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+          NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+          NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+          EOF
+        - echo "[BUILD] wrote .env.production"
         - npm run build
         - echo "BUILD_DONE"
   artifacts:
-    baseDirectory: .
+    baseDirectory: .next
     files:
-      - .next/**
-      - public/**
-      - package.json
-      - next.config.mjs
+      - '**/*'
   cache:
     paths:
       - node_modules/**/*
