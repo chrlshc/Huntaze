@@ -3,32 +3,21 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm use 20 || echo "Using default Node"
-        - npm ci
+        - nvm use 22 || true
+        - corepack enable || true
+        - npm ci --no-audit --no-fund
     build:
       commands:
-        # Set environment variables for build
-        - export NEXT_PUBLIC_APP_URL=https://app.huntaze.com
-        - export NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
-        # Speed up CI builds (skip lint + TS typecheck) and reduce noise
-        - export NEXT_DISABLE_ESLINT=1
-        - export NEXT_PRIVATE_SKIP_TYPECHECK=true
-        - export NEXT_TELEMETRY_DISABLED=1
+        - node -v
         - npm run build
   artifacts:
-    baseDirectory: .next
+    baseDirectory: .
     files:
-      - '**/*'
+      - .next/**
+      - public/**
+      - package.json
+      - next.config.mjs
   cache:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
-  customHeaders:
-    - pattern: '**/*'
-      headers:
-        - key: 'X-Frame-Options'
-          value: 'DENY'
-        - key: 'X-Content-Type-Options'
-          value: 'nosniff'
-        - key: 'X-XSS-Protection'
-          value: '1; mode=block'
