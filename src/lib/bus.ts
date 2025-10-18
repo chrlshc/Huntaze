@@ -7,8 +7,8 @@ export class Bus {
   private sub: Redis;
 
   constructor(url = process.env.REDIS_URL!) {
-    this.pub = new Redis(url);
-    this.sub = new Redis(url);
+    this.pub = new Redis(url, { lazyConnect: true, enableOfflineQueue: false, maxRetriesPerRequest: 0, retryStrategy: () => null });
+    this.sub = new Redis(url, { lazyConnect: true, enableOfflineQueue: false, maxRetriesPerRequest: 0, retryStrategy: () => null });
   }
 
   async publish(event: string, data: any) {
@@ -35,5 +35,25 @@ export class Bus {
   }
 }
 
-export const bus = new Bus();
+function createMockBus() {
+  const noop = async () => {};
+  return {
+    publish: noop,
+    subscribe: async (_event: string, _onMessage: (data: any) => void) => {
+      return async () => {};
+    },
+  } as unknown as Bus;
+}
 
+let _bus: Bus | null = null;
+export function getBus(): Bus {
+  if (_bus) return _bus;
+  if (process.env.BUILD_REDIS_MOCK === '1') {
+    _bus = createMockBus();
+    return _bus;
+  }
+  _bus = new Bus();
+  return _bus;
+}
+
+export const bus = getBus();
