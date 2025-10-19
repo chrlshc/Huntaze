@@ -34,7 +34,7 @@ function respond202(payload: any) {
   })
 }
 
-export async function POST(req: Request) {
+async function postHandler(req: Request) {
   const p = await parseParams(req)
   const requestId = randomUUID()
   const msg = { requestId, ts: Date.now(), payload: p }
@@ -54,4 +54,10 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) { return POST(req) }
+import { withMonitoring } from '@/lib/observability/bootstrap'
+export const POST = withMonitoring('analytics.ai.summary.run', postHandler as any, {
+  domain: 'analytics',
+  feature: 'summary_run',
+  getUserId: (req) => req.headers.get('x-user-id') || undefined,
+})
+export const GET = POST

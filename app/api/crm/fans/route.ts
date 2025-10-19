@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { crmData } from '@/lib/services/crmData';
 import { getUserFromRequest } from '@/lib/auth/request';
-import { rateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
+import { withMonitoring } from '@/lib/observability/bootstrap'
 
-export async function GET(request: NextRequest) {
+async function getHandler(request: NextRequest) {
   try {
     const user = await getUserFromRequest(request);
     const userId = user?.userId || null;
@@ -15,11 +16,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postHandler(request: NextRequest) {
   try {
     // modest rate limit to protect write endpoint
-    const limited = rateLimit(request, { windowMs: 60_000, max: 60 });
-    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    const ident = idFromRequestHeaders(request.headers)
+    const rl = await checkRateLimit({ id: ident.id, limit: 60, windowSec: 60 })
+    if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
     const user = await getUserFromRequest(request);
     const userId = user?.userId || null;
@@ -31,3 +33,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create fan' }, { status: 500 });
   }
 }
+
+export const GET = withMonitoring('crm.fans.get', getHandler as any, {
+  domain: 'crm',
+  feature: 'fans_list',
+  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
+})
+export const POST = withMonitoring('crm.fans.post', postHandler as any, {
+  domain: 'crm',
+  feature: 'fans_create',
+  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
+})
