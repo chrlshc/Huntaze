@@ -6,6 +6,7 @@ This doc summarizes flags, endpoints, quotas and run commands to operate the AI 
 - `LLM_PROVIDER=azure|openai` — prefer Azure OpenAI when `azure`.
 - `ENABLE_AZURE_AI=1` — enable backend smoke route for Azure.
 - `ENABLE_AZURE_AI_TEAM=1` — enable planner/publish routes.
+- `USE_AZURE_RESPONSES=1` — prefer Azure OpenAI v1 Responses API (default ON in prod).
 - `ENABLE_EVENTBRIDGE_HOOKS=1` — publish outbox to EventBridge (PutEvents).
 - `ENABLE_AGENTS_PROXY=1` — proxy `/api/agents/*` to an external service (requires `AGENTS_PROXY_TOKEN`).
 
@@ -13,6 +14,7 @@ This doc summarizes flags, endpoints, quotas and run commands to operate the AI 
 - Required: `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT`, `AZURE_OPENAI_API_KEY`
 - Optional: `AZURE_OPENAI_API_VERSION` (default `2024-05-01-preview`)
 - Smoke: `GET /api/ai/azure/smoke` → status + usage
+ - Default path: Responses API (`/openai/v1/responses`) when `USE_AZURE_RESPONSES=1`; legacy Chat Completions kept for fallback with `api-version`.
 
 ## AI Team — routes
 - Plan Azure: `POST /api/ai-team/schedule/plan/azure`
@@ -56,4 +58,3 @@ This doc summarizes flags, endpoints, quotas and run commands to operate the AI 
 - Disable flags in order: `ENABLE_EVENTBRIDGE_HOOKS=0`, `ENABLE_AZURE_AI_TEAM=0`, `ENABLE_AZURE_AI=0`
 - Workers/CronJobs can be paused (K8s: `suspend: true` on CronJob)
 - DB schema is additive/safe; no destructive migration in this set
-
