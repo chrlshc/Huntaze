@@ -62,4 +62,8 @@ async function handler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('onboarding.complete', handler as any);
+export const POST = withMonitoring('onboarding.complete', handler as any, {
+  domain: 'onboarding',
+  feature: 'complete',
+  getUserId: (req) => req.headers.get('x-user-id') || undefined,
+});

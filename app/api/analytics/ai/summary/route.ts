@@ -3,6 +3,7 @@ import { withMonitoring } from '@/lib/observability/bootstrap'
 import { getLatestInsightSummary } from '@/src/lib/db/summaryRepo'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 async function handler(req: NextRequest) {
   const url = new URL(req.url)
@@ -14,6 +15,9 @@ async function handler(req: NextRequest) {
   return NextResponse.json(s, { headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
 }
 
-export const GET = withMonitoring('analytics.ai.summary.get', handler)
+export const GET = withMonitoring('analytics.ai.summary.get', handler, {
+  domain: 'analytics',
+  feature: 'summary_get',
+  getUserId: (req) => (req.headers.get('x-user-id') || undefined),
+})
 export const HEAD = GET
-
