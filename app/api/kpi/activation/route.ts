@@ -4,10 +4,8 @@ export const dynamic = 'force-dynamic'
 import { NextRequest } from 'next/server'
 import { CloudWatchLogsClient, StartQueryCommand, GetQueryResultsCommand } from '@aws-sdk/client-cloudwatch-logs'
 
-const REGION = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1'
-const LOG_GROUPS = (process.env.API_LOG_GROUP || '').split(',').map(s => s.trim()).filter(Boolean)
-
-const client = new CloudWatchLogsClient({ region: REGION })
+const DEFAULT_REGION = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1'
+const client = new CloudWatchLogsClient({ region: DEFAULT_REGION })
 
 async function runQuery(queryString: string, logGroupNames: string[], startTime: number, endTime: number) {
   const start = await client.send(new StartQueryCommand({
@@ -26,9 +24,24 @@ async function runQuery(queryString: string, logGroupNames: string[], startTime:
   return []
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    if (!LOG_GROUPS.length) return Response.json({ error: 'API_LOG_GROUP not set' }, { status: 500 })
+    let logGroups = (process.env.API_LOG_GROUP || '').split(',').map(s => s.trim()).filter(Boolean)
+    if (!logGroups.length) {
+      // Fallback: derive from host for Amplify default domains, or assume prod custom domain.
+      const host = (() => { try { return new URL(req.url).host } catch { return '' } })()
+      // Pattern: <branch>.<appId>.amplifyapp.com
+      const m = host.match(/^([^.]+)\.([^.]+)\.amplifyapp\.com$/)
+      if (m) {
+        const br = m[1]
+        const app = m[2]
+        logGroups = [`/aws/amplify/${app}/branches/${br}/compute/default`]
+      } else {
+        // Custom domain fallback: assume prod branch and known app id if provided
+        const app = process.env.AMPLIFY_APP_ID || process.env.APP_ID || 'd33l77zi1h78ce'
+        logGroups = [`/aws/amplify/${app}/branches/prod/compute/default`]
+      }
+    }
 
     const now = new Date()
     const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())) // today 00:00Z
@@ -54,8 +67,8 @@ fields @timestamp, @message
 `
 
     const [rsStarted, rsCompleted] = await Promise.all([
-      runQuery(qStarted, LOG_GROUPS, start.getTime(), end.getTime()),
-      runQuery(qCompleted, LOG_GROUPS, start.getTime(), end.getTime()),
+      runQuery(qStarted, logGroups, start.getTime(), end.getTime()),
+      runQuery(qCompleted, logGroups, start.getTime(), end.getTime()),
     ])
 
     const getVal = (rows: any[], field: string) => {
@@ -75,4 +88,3 @@ fields @timestamp, @message
     return Response.json({ error: e?.message || 'query_failed' }, { status: 500 })
   }
 }
-
