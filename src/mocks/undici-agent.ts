@@ -111,5 +111,24 @@ function installHappyPathInterceptors(agent: MockAgent) {
         usage: { prompt_tokens: 5, completion_tokens: 3, total_tokens: 8 },
       }))
       .persist();
+
+    // Azure OpenAI v1 Responses (mock)
+    az
+      .intercept({ method: 'POST', path: '/openai/v1/responses' })
+      .reply(200, () => ({
+        id: 'resp_azure_mock',
+        output: [
+          {
+            id: 'msg_1',
+            type: 'message',
+            role: 'assistant',
+            content: [
+              { id: 'txt_1', type: 'output_text', text: 'Hello from Azure (Responses)!' }
+            ]
+          }
+        ],
+        usage: { input_tokens: 5, output_tokens: 3, total_tokens: 8 }
+      }))
+      .persist();
   } catch {}
 }
