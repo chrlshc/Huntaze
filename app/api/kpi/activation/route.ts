@@ -30,9 +30,9 @@ export async function GET(_req: NextRequest) {
   try {
     if (!LOG_GROUPS.length) return Response.json({ error: 'API_LOG_GROUP not set' }, { status: 500 })
 
-    const now = new Date()
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())) // today 00:00Z
-    const start = new Date(end.getTime() - 24 * 3600 * 1000) // yesterday 00:00Z
+    // Use last 24 hours up to now to avoid creation/retention edge cases on fresh log groups
+    const end = new Date()
+    const start = new Date(end.getTime() - 24 * 3600 * 1000)
 
     const qStarted = `
 fields @timestamp, @message
@@ -75,4 +75,3 @@ fields @timestamp, @message
     return Response.json({ error: e?.message || 'query_failed' }, { status: 500 })
   }
 }
-
