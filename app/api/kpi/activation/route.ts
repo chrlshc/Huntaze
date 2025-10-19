@@ -30,15 +30,15 @@ export async function GET(req: NextRequest) {
     let logGroups = (process.env.API_LOG_GROUP || '').split(',').map(s => s.trim()).filter(Boolean)
     if (!logGroups.length) {
       const host = (() => { try { return new URL(req.url).host } catch { return '' } })()
+      // Map custom domains to branches
+      let br = 'prod'
+      if (/^kpi\./i.test(host) || /(^|\.)kpi\.huntaze\.com$/i.test(host)) br = 'kpi'
+      else if (/^stagging\./i.test(host) || /(^|\.)stagging\.huntaze\.com$/i.test(host)) br = 'stagging'
+      // Amplify default domain pattern: <branch>.<appId>.amplifyapp.com
       const m = host.match(/^([^.]+)\.([^.]+)\.amplifyapp\.com$/)
-      if (m) {
-        const br = m[1]
-        const app = m[2]
-        logGroups = [`/aws/amplify/${app}/branches/${br}/compute/default`]
-      } else {
-        const app = process.env.AMPLIFY_APP_ID || process.env.APP_ID || 'd33l77zi1h78ce'
-        logGroups = [`/aws/amplify/${app}/branches/prod/compute/default`]
-      }
+      const app = m ? m[2] : (process.env.AMPLIFY_APP_ID || process.env.APP_ID || 'd33l77zi1h78ce')
+      if (m) br = m[1] || br
+      logGroups = [`/aws/amplify/${app}/branches/${br}/compute/default`]
     }
     // Windows to try: 24h → 6h → 1h → 15m → 5m
     const end = new Date()
