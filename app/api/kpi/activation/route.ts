@@ -40,9 +40,9 @@ export async function GET(req: NextRequest) {
       if (m) br = m[1] || br
       logGroups = [`/aws/amplify/${app}/branches/${br}/compute/default`]
     }
-    // Windows to try: 24h → 6h → 1h → 15m → 5m
+    // Windows to try (short-first to avoid fresh-group issues): 15m → 1h → 6h → 24h → 5m
     const end = new Date()
-    const windowsMs = [24*3600*1000, 6*3600*1000, 3600*1000, 15*60*1000, 5*60*1000]
+    const windowsMs = [15*60*1000, 3600*1000, 6*3600*1000, 24*3600*1000, 5*60*1000]
 
     const qStarted = `
 fields @timestamp, @message
@@ -84,7 +84,10 @@ fields @timestamp, @message
       }
     }
     if (!ok) {
-      return Response.json({ date: new Date(end.getTime() - windowsMs[0]).toISOString().slice(0,10), started: 0, completed: 0, activation_rate: 0 })
+      return Response.json(
+        { date: new Date(end.getTime() - windowsMs[0]).toISOString().slice(0,10), started: 0, completed: 0, activation_rate: 0 },
+        { headers: { 'Cache-Control': 'no-store' } }
+      )
     }
 
     const getVal = (rows: any[], field: string) => {
@@ -99,8 +102,14 @@ fields @timestamp, @message
     const completed = getVal(rsCompleted as any, 'completed')
     const activation_rate = started ? Math.round((completed * 10000) / started) / 100 : 0
 
-    return Response.json({ date: usedStart.toISOString().slice(0, 10), started, completed, activation_rate })
+    return Response.json(
+      { date: usedStart.toISOString().slice(0, 10), started, completed, activation_rate },
+      { headers: { 'Cache-Control': 'no-store' } }
+    )
   } catch (e: any) {
-    return Response.json({ error: e?.message || 'query_failed' }, { status: 500 })
+    return Response.json(
+      { error: e?.message || 'query_failed' },
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+    )
   }
 }
