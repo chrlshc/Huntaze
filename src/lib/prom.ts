@@ -23,10 +23,23 @@ const counters = {
     labelNames: ['status'] as const,
     registers: [registry],
   }),
+  messagesSent: new client.Counter({
+    name: 'hz_messages_sent_total',
+    help: 'Total messages sent via messaging',
+    labelNames: ['mode'] as const,
+    registers: [registry],
+  }),
   tiktokWebhookEvents: new client.Counter({
     name: 'social_tiktok_webhook_events_total',
     help: 'TikTok webhook events',
     labelNames: ['type'] as const,
+    registers: [registry],
+  }),
+  messageReplyLatency: new client.Histogram({
+    name: 'hz_messages_reply_latency_seconds',
+    help: 'End-to-end latency to process a message reply',
+    labelNames: ['mode'] as const,
+    buckets: [0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10],
     registers: [registry],
   }),
   rateLimitHits: new client.Counter({
@@ -75,6 +88,13 @@ const histograms = {
     name: 'llm_latency_seconds',
     help: 'LLM request latency in seconds',
     labelNames: ['provider'] as const,
+    buckets: [0.1, 0.25, 0.5, 1, 2, 5, 10],
+    registers: [registry],
+  }),
+  aiSummaryLatency: new client.Histogram({
+    name: 'ai_summary_latency_seconds',
+    help: 'AI insights summarizer latency in seconds',
+    labelNames: ['platform'] as const,
     buckets: [0.1, 0.25, 0.5, 1, 2, 5, 10],
     registers: [registry],
   }),
@@ -156,6 +176,21 @@ counters.llmTokens = new client.Counter({
   name: 'llm_tokens_total',
   help: 'LLM tokens by provider and kind (input|output)',
   labelNames: ['provider','kind'] as const,
+  registers: [registry],
+}) as any
+
+// Summarizer jobs & errors
+counters.aiSummaryJobs = new client.Counter({
+  name: 'ai_summary_jobs_total',
+  help: 'AI insights summarizer jobs processed',
+  labelNames: ['platform','status'] as const,
+  registers: [registry],
+}) as any
+
+counters.aiSummaryErrors = new client.Counter({
+  name: 'ai_summary_errors_total',
+  help: 'AI insights summarizer errors',
+  labelNames: ['platform','reason'] as const,
   registers: [registry],
 }) as any
 
