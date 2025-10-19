@@ -5,8 +5,6 @@ import { NextRequest } from 'next/server'
 import { CloudWatchLogsClient, StartQueryCommand, GetQueryResultsCommand } from '@aws-sdk/client-cloudwatch-logs'
 
 const REGION = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || 'us-east-1'
-const LOG_GROUPS = (process.env.API_LOG_GROUP || '').split(',').map(s => s.trim()).filter(Boolean)
-
 const client = new CloudWatchLogsClient({ region: REGION })
 
 async function runQuery(queryString: string, logGroupNames: string[], startTime: number, endTime: number) {
@@ -26,13 +24,25 @@ async function runQuery(queryString: string, logGroupNames: string[], startTime:
   return []
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    if (!LOG_GROUPS.length) return Response.json({ error: 'API_LOG_GROUP not set' }, { status: 500 })
-
-    // Use last 24 hours up to now to avoid creation/retention edge cases on fresh log groups
+    // Resolve log groups: prefer env, fallback to host-derived default
+    let logGroups = (process.env.API_LOG_GROUP || '').split(',').map(s => s.trim()).filter(Boolean)
+    if (!logGroups.length) {
+      const host = (() => { try { return new URL(req.url).host } catch { return '' } })()
+      const m = host.match(/^([^.]+)\.([^.]+)\.amplifyapp\.com$/)
+      if (m) {
+        const br = m[1]
+        const app = m[2]
+        logGroups = [`/aws/amplify/${app}/branches/${br}/compute/default`]
+      } else {
+        const app = process.env.AMPLIFY_APP_ID || process.env.APP_ID || 'd33l77zi1h78ce'
+        logGroups = [`/aws/amplify/${app}/branches/prod/compute/default`]
+      }
+    }
+    // Windows to try: 24h → 6h → 1h → 15m → 5m
     const end = new Date()
-    const start = new Date(end.getTime() - 24 * 3600 * 1000)
+    const windowsMs = [24*3600*1000, 6*3600*1000, 3600*1000, 15*60*1000, 5*60*1000]
 
     const qStarted = `
 fields @timestamp, @message
@@ -53,10 +63,29 @@ fields @timestamp, @message
 | stats count_distinct(userId) as completed
 `
 
-    const [rsStarted, rsCompleted] = await Promise.all([
-      runQuery(qStarted, LOG_GROUPS, start.getTime(), end.getTime()),
-      runQuery(qCompleted, LOG_GROUPS, start.getTime(), end.getTime()),
-    ])
+    let rsStarted: any[] = []
+    let rsCompleted: any[] = []
+    let usedStart = new Date(end.getTime() - windowsMs[0])
+    let ok = false
+    for (const w of windowsMs) {
+      const s = new Date(end.getTime() - w)
+      try {
+        const [a, b] = await Promise.all([
+          runQuery(qStarted, logGroups, s.getTime(), end.getTime()),
+          runQuery(qCompleted, logGroups, s.getTime(), end.getTime()),
+        ])
+        rsStarted = a || []
+        rsCompleted = b || []
+        usedStart = s
+        ok = true
+        break
+      } catch (e) {
+        // try next window
+      }
+    }
+    if (!ok) {
+      return Response.json({ date: new Date(end.getTime() - windowsMs[0]).toISOString().slice(0,10), started: 0, completed: 0, activation_rate: 0 })
+    }
 
     const getVal = (rows: any[], field: string) => {
       try {
@@ -70,7 +99,7 @@ fields @timestamp, @message
     const completed = getVal(rsCompleted as any, 'completed')
     const activation_rate = started ? Math.round((completed * 10000) / started) / 100 : 0
 
-    return Response.json({ date: start.toISOString().slice(0, 10), started, completed, activation_rate })
+    return Response.json({ date: usedStart.toISOString().slice(0, 10), started, completed, activation_rate })
   } catch (e: any) {
     return Response.json({ error: e?.message || 'query_failed' }, { status: 500 })
   }
