@@ -3,6 +3,7 @@ import { withMonitoring } from '@/lib/observability/bootstrap'
 import { getPlan } from '@/src/lib/db/planRepo'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 async function handler(req: NextRequest, ctx: { params: { id: string } }) {
   const pid = ctx.params.id
@@ -14,4 +15,3 @@ async function handler(req: NextRequest, ctx: { params: { id: string } }) {
 
 export const GET = withMonitoring('ai-team.plan.get', handler as any)
 export const HEAD = GET
-

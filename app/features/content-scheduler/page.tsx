@@ -85,6 +85,23 @@ export default function ContentSchedulerPage() {
   const [activeTab, setActiveTab] = useState<'calendar' | 'analytics' | 'ai'>('calendar')
   const [aiSuggestions, setAiSuggestions] = useState(false)
 
+  // Agenda grouping (mobile-first)
+  const agendaByDate = (() => {
+    const byDate: Record<string, typeof scheduledPosts> = {}
+    for (const p of scheduledPosts) {
+      const d = new Date(p.scheduledTime)
+      const key = d.toISOString().split('T')[0]
+      ;(byDate[key] ||= []).push(p)
+    }
+    // sort by time within date
+    for (const k of Object.keys(byDate)) {
+      byDate[k].sort((a,b)=> new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime())
+    }
+    // sort dates ascending
+    const ordered = Object.entries(byDate).sort(([a],[b])=> a.localeCompare(b))
+    return ordered
+  })()
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pt-24">
       {/* Header */}
@@ -127,7 +144,7 @@ export default function ContentSchedulerPage() {
             animate={{ opacity: 1, y: 0 }}
             className="grid lg:grid-cols-3 gap-8"
           >
-            {/* Calendar View */}
+            {/* Calendar / Agenda */}
             <div className="lg:col-span-2">
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -143,47 +160,72 @@ export default function ContentSchedulerPage() {
                     </button>
                   </div>
                 </div>
-
-                {/* Calendar Grid */}
-                <div className="grid grid-cols-7 gap-1 mb-2">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                    <div key={day} className="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">
-                      {day}
+                {/* Agenda (mobile) */}
+                <div className="md:hidden space-y-6">
+                  {agendaByDate.map(([date, posts]) => (
+                    <div key={date}>
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{new Date(date).toLocaleDateString()}</h4>
+                      <div className="space-y-2">
+                        {posts.map(post => (
+                          <div key={post.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-md px-3 py-2">
+                            <div className="mr-2">
+                              <p className="text-sm text-gray-900 dark:text-white line-clamp-1">{post.content}</p>
+                              <p className="text-xs text-gray-500">{new Date(post.scheduledTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+                            <div className="flex gap-1">
+                              {post.platforms.map((platform) => (
+                                <div key={platform} className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center overflow-hidden">
+                                  <PlatformIcon platform={platform} className="w-4 h-4" />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-7 gap-1">
-                  {Array.from({ length: 35 }, (_, i) => {
-                    const day = i - 2; // Start from correct day
-                    const isToday = day === 8;
-                    const hasContent = [5, 8, 12, 15, 20, 25].includes(day);
-                    
-                    if (day < 1 || day > 31) return <div key={i} />;
-                    
-                    return (
-                      <button
-                        key={i}
-                        className={`aspect-square p-2 rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          isToday ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 font-semibold' : ''
-                        }`}
-                      >
-                        <div className="text-sm">{day}</div>
-                        {hasContent && (
-                          <div className="flex justify-center mt-1 gap-0.5">
-                            <div className="w-1 h-1 bg-purple-600 dark:bg-purple-400 rounded-full" />
-                            <div className="w-1 h-1 bg-pink-600 dark:bg-pink-400 rounded-full" />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
+
+                {/* Calendar Grid (md+) */}
+                <div className="hidden md:block">
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                      <div key={day} className="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {Array.from({ length: 35 }, (_, i) => {
+                      const day = i - 2; // mock alignment
+                      const isToday = day === 8;
+                      const hasContent = [5, 8, 12, 15, 20, 25].includes(day);
+                      if (day < 1 || day > 31) return <div key={i} />;
+                      return (
+                        <button
+                          key={i}
+                          className={`aspect-square p-2 rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                            isToday ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold' : ''
+                          }`}
+                        >
+                          <div className="text-sm">{day}</div>
+                          {hasContent && (
+                            <div className="flex justify-center mt-1 gap-0.5">
+                              <div className="w-1 h-1 bg-emerald-600 dark:bg-emerald-400 rounded-full" />
+                              <div className="w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Quick Add */}
                 <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <button
                     onClick={() => setShowScheduleModal(true)}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-300"
                   >
                     <Plus className="w-5 h-5" />
                     Schedule New Content
@@ -500,11 +542,11 @@ export default function ContentSchedulerPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowScheduleModal(false)}
-                    className="flex-1 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="flex-1 py-3 border border-border text-text rounded-lg hover:bg-black/5 transition-colors"
                   >
                     Cancel
                   </button>
-                  <button className="flex-1 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                  <button className="flex-1 py-3 bg-primary text-primaryFg rounded-lg hover:opacity-90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-300">
                     Schedule Post
                   </button>
                 </div>

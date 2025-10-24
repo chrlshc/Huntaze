@@ -5,6 +5,10 @@ function isTruthy(v: any) {
   return s === '1' || s === 'true' || s === 'yes' || s === 'on'
 }
 
+function isBillingLocked() {
+  return isTruthy(process.env.AZURE_BILLING_LOCK)
+}
+
 export async function callAzureOpenAI(opts: {
   model?: string
   messages: ChatMsg[]
@@ -12,6 +16,10 @@ export async function callAzureOpenAI(opts: {
   maxTokens?: number
   abortSignal?: AbortSignal
 }) {
+  // Global kill switch to prevent any accidental spend
+  if (isBillingLocked()) {
+    return { content: '', usage: { input: 0, output: 0, total: 0 } }
+  }
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT
   const deployment = process.env.AZURE_OPENAI_DEPLOYMENT
   const apiKey = process.env.AZURE_OPENAI_API_KEY

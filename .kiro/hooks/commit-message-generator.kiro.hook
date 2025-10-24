@@ -1,0 +1,31 @@
+{
+  "enabled": true,
+  "name": "Commit Message Generator",
+  "description": "Génère des messages de commit conventionnels",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/**/*",
+      "components/**/*",
+      "lib/**/*",
+      "styles/**/*",
+      "public/**/*",
+      "scripts/**/*",
+      "docs/**/*",
+      "*.ts",
+      "*.tsx",
+      "*.js",
+      "*.jsx",
+      "*.json",
+      "*.md",
+      "*.css",
+      "*.yml",
+      "*.yaml"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Commit Agent, génère un message de commit :\n\n1. Analyse les fichiers modifiés via git status\n2. Identifie le type de changement (feat, fix, refactor, docs, etc.)\n3. Détermine le scope affecté (api, ui, database, auth, etc.)\n4. Génère un message suivant Conventional Commits\n5. Format : type(scope): description courte (<50 chars)\n6. Ajoute une description détaillée si nécessaire\n7. Inclut les breaking changes si applicable\n8. Référence les issues GitHub/Jira si pertinent"
+  }
+}

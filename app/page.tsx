@@ -1,83 +1,59 @@
-import EnterpriseNav from '@/src/components/enterprise-nav';
-import EnterpriseHero from '@/components/sections/EnterpriseHero';
-import EnterpriseTrustBar from '@/components/sections/EnterpriseTrustBar';
-import ValuePropositions from '@/components/sections/ValuePropositions';
-import PlatformCapabilities from '@/components/sections/PlatformCapabilities';
-import PricingSection from '@/components/sections/PricingSection';
-import ProofByNumbers from '@/components/sections/ProofByNumbers';
-import CreatorPainPoints from '@/components/sections/CreatorPainPoints';
-import EnterpriseReady from '@/components/sections/EnterpriseReady';
-import ROICalculator from '@/components/sections/ROICalculator';
-import FAQSection from '@/components/sections/FAQSection';
-import EnterpriseFinalCTA from '@/components/sections/EnterpriseFinalCTA';
-import EnterpriseFooter from '@/components/sections/EnterpriseFooter';
+import MarketingHero from '@/components/sections/marketing/HeroSection';
+import BetaBenefits from '@/components/sections/beta/BetaBenefits';
+import BetaFeatures from '@/components/sections/beta/BetaFeatures';
+import BetaSocialProof from '@/components/sections/beta/BetaSocialProof';
+import BetaHowItWorks from '@/components/sections/beta/BetaHowItWorks';
+import BetaFAQ from '@/components/sections/beta/BetaFAQ';
+import BetaFinalCTA from '@/components/sections/beta/BetaFinalCTA';
+import PlatformStrip from '@/components/sections/huntaze/PlatformStrip';
+import HuntazeFeatures from '@/components/sections/huntaze/HuntazeFeatures';
+import HuntazeFlow from '@/components/sections/huntaze/HuntazeFlow';
 
 export default function HomePage() {
   return (
     <>
-      <div className="enterprise-page min-h-screen">
-        {/* Enterprise Navigation - Replaces standard header */}
-        <EnterpriseNav />
-        
-        {/* Hero Section with Authority Positioning */}
-        <section className="hero-section">
-          <EnterpriseHero />
+      <div className="min-h-screen">
+        {/* JSON-LD (SoftwareApplication + FAQ) */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'Huntaze',
+          applicationCategory: 'BusinessApplication',
+          operatingSystem: 'Web',
+          description: 'All‑in‑one platform for creators & agencies: unified inbox, PPV campaigns & AI—for OnlyFans, Instagram & TikTok.',
+          offers: {
+            '@type': 'Offer',
+            price: 0,
+            priceCurrency: 'USD',
+            category: 'Beta'
+          }
+        }) }} />
+        {/* Hero with Beta mention */}
+        <section>
+          <MarketingHero />
         </section>
-        
-        {/* Trust Bar with Anonymous Metrics */}
-        <section className="trust-bar">
-          <EnterpriseTrustBar />
-        </section>
-        
-        {/* Value Propositions - 3 Pillars */}
-        <section className="value-propositions">
-          <ValuePropositions />
-        </section>
-        
-        {/* Platform Capabilities with Progressive Disclosure */}
-        <section className="platform-capabilities">
-          <PlatformCapabilities />
-        </section>
-        
-        {/* Pricing Section */}
-        <section className="pricing-section">
-          <PricingSection />
-        </section>
-        
-        {/* Social Proof by Numbers (No Testimonials) */}
-        <section className="proof-numbers">
-          <ProofByNumbers />
-        </section>
-        
-        {/* Creator Pain Points - Anti-Agency */}
-        <section className="creator-pain-points">
-          <CreatorPainPoints />
-        </section>
-        
-        {/* Enterprise Features & Compliance */}
-        <section className="enterprise-ready">
-          <EnterpriseReady />
-        </section>
-        
-        {/* ROI Calculator with Revenue Share */}
-        <section className="roi-section interactive-section">
-          <ROICalculator />
-        </section>
-        
-        {/* FAQ Section */}
-        <section className="faq-section">
-          <FAQSection />
-        </section>
-        
-        {/* Final CTA with Consultative Approach */}
-        <section className="final-cta-section">
-          <EnterpriseFinalCTA />
-        </section>
-        
-        {/* Enterprise Footer */}
-        <section className="footer-section">
-          <EnterpriseFooter />
-        </section>
+        {/* Platform compatibility strip */}
+        <PlatformStrip />
+        {/* Huntaze product pillars */}
+        <HuntazeFeatures />
+        {/* 3-step value storyline */}
+        <HuntazeFlow />
+        {/* Beta content sections */}
+        <BetaBenefits />
+        <BetaFeatures />
+        <BetaSocialProof />
+        <BetaHowItWorks />
+        <BetaFAQ />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: [
+            { '@type': 'Question', name: 'What platforms do you support?', acceptedAnswer: { '@type': 'Answer', text: 'OnlyFans, Instagram, and TikTok. Reddit and others are on the roadmap.' }},
+            { '@type': 'Question', name: 'Is the beta free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes — access is free during beta. No credit card.' }},
+            { '@type': 'Question', name: 'How long does it take to get started?', acceptedAnswer: { '@type': 'Answer', text: 'Most creators set up in under 5 minutes.' }}
+          ]
+        }) }} />
+        <BetaFinalCTA />
       </div>
     </>
   );

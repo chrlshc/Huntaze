@@ -24,69 +24,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Huntaze Design System Colors
-        surface: {
-          DEFAULT: 'var(--color-surface)',
-          light: 'var(--color-surface-light)',
-          elevated: 'var(--color-surface-elevated)',
-          'elevated-light': 'var(--color-surface-elevated-light)',
-          hover: 'var(--color-surface-hover)',
-          'hover-light': 'var(--color-surface-hover-light)',
-        },
-        content: {
-          primary: 'var(--color-content-primary)',
-          secondary: 'var(--color-content-secondary)',
-          tertiary: 'var(--color-content-tertiary)',
-        },
-        border: {
-          DEFAULT: 'var(--color-border)',
-          light: 'var(--color-border-light)',
-        },
-        primary: {
-          DEFAULT: 'rgb(var(--color-primary-rgb) / <alpha-value>)',
-          hover: 'rgb(var(--color-teal-600-rgb) / <alpha-value>)',
-          foreground: 'var(--color-btn-primary-text)',
-        },
-        secondary: {
-          DEFAULT: 'rgb(var(--color-secondary-rgb) / <alpha-value>)',
-          foreground: 'var(--text-primary)',
-        },
-        danger: 'var(--color-danger)',
-        input: {
-          bg: {
-            DEFAULT: 'var(--color-input-bg)',
-            light: 'var(--color-input-bg-light)',
-          },
-          border: {
-            DEFAULT: 'var(--color-input-border)',
-            light: 'var(--color-input-border-light)',
-          },
-        },
-        neutral: {
-          200: 'var(--color-neutral-200)',
-          300: 'var(--color-neutral-300)',
-          700: 'var(--color-neutral-700)',
-          800: 'var(--color-neutral-800)',
-        },
-        // Professional Dark Mode Color System (Legacy)
-        background: {
-          primary: 'var(--background-primary)',
-          secondary: 'var(--background-secondary)',
-          elevated: 'var(--background-elevated)',
-          overlay: 'var(--background-overlay)',
-        },
-        text: {
-          primary: 'var(--text-primary)',
-          secondary: 'var(--text-secondary)',
-          tertiary: 'var(--text-tertiary)',
-          disabled: 'var(--text-disabled)',
-        },
-        accent: {
-          primary: 'var(--accent-primary)',
-          hover: 'var(--accent-hover)',
-          active: 'var(--accent-active)',
-          muted: 'var(--accent-muted)',
-        },
+        bg:       'hsl(var(--bg))',
+        surface:  'hsl(var(--surface))',
+        border:   'hsl(var(--border))',
+        text:     'hsl(var(--text))',
+        primary:  'hsl(var(--primary))',
+        primaryFg:'hsl(var(--primary-fg))',
+        info:     'hsl(var(--info))',
+        success:  'hsl(var(--success))',
+        warning:  'hsl(var(--warning))',
+        critical: 'hsl(var(--critical))',
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

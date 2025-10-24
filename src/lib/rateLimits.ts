@@ -5,6 +5,8 @@ export const RATE_LIMITS: Record<string, RateLimitCfg> = {
   '/api/debug/tiktok-events': { tokenRpm: 60, ipRpm: 30 },
   // Example: cron endpoint tighter by default
   '/api/cron/tiktok-status': { tokenRpm: 20, ipRpm: 10 },
+  // Azure smoke: very tight IP limit, higher token allowance
+  '/api/ai/azure/smoke': { tokenRpm: 60, ipRpm: 6 },
 }
 
 export function resolveRateLimit(pathname: string): RateLimitCfg | null {
@@ -16,4 +18,3 @@ export function resolveRateLimit(pathname: string): RateLimitCfg | null {
   }
   return null
 }
-

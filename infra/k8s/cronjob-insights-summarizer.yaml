@@ -4,6 +4,8 @@ metadata:
   name: ai-insights-summarizer
 spec:
   schedule: "*/15 * * * *" # every 15 min
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
   jobTemplate:
@@ -31,4 +33,3 @@ spec:
                     secretKeyRef:
                       name: ai-team
                       key: account_id
-

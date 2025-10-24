@@ -1,0 +1,11 @@
+{
+    "AZURE_OPENAI_API_KEY": "4spL9UZ273N38AxyhlbdcpAxgkXNqbbvweUw5Sr3BHJfcNAL3D4NJQQJ99BHACYeBjFXJ3w3AAABACOG95jj",
+    "AZURE_OPENAI_API_VERSION": "2024-05-01-preview",
+    "AZURE_OPENAI_DEPLOYMENT": "gpt-4-turbo",
+    "AZURE_OPENAI_ENDPOINT": "https://huntaze-ai-hub-eus2.openai.azure.com/",
+    "ENABLE_AZURE_AI": "1",
+    "NEXT_PUBLIC_API_URL": "https://app.huntaze.com/api",
+    "NEXT_PUBLIC_APP_URL": "https://app.huntaze.com",
+    "STRIPE_SECRET_KEY": "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",
+    "USE_AZURE_OPENAI": "1"
+}

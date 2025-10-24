@@ -1,84 +1,98 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SignJWT } from 'jose';
-import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+import { AuthService } from '@/lib/services/auth-service';
+import { prisma } from '@/lib/db';
+
+const signUpSchema = z.object({
+  email: z.string().email('Email invalide'),
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json();
+    const { email, name, password } = signUpSchema.parse(body);
 
-    if (!email || !password) {
+    // Valider la force du mot de passe
+    const passwordValidation = AuthService.validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Mot de passe trop faible', details: passwordValidation.errors },
         { status: 400 }
       );
     }
 
-    if (password.length < 8) {
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (existingUser) {
       return NextResponse.json(
-        { error: 'Password must be at least 8 characters' },
-        { status: 400 }
+        { error: 'Un compte avec cet email existe déjà' },
+        { status: 409 }
       );
     }
 
-    // TODO: Check if user already exists in database
-    // For now, we'll create a mock user
+    // Hasher le mot de passe
+    const passwordHash = await AuthService.hashPassword(password);
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Créer l'utilisateur
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        passwordHash,
+        subscription: 'FREE',
+        role: 'CREATOR'
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        subscription: true
+      }
+    });
 
-    // Create user object
-    const user = {
-      id: Math.random().toString(36).substring(7),
-      email,
-      name: email.split('@')[0], // Use email prefix as name
-      provider: 'email',
-      createdAt: new Date().toISOString(),
-    };
-
-    // TODO: Save user to database
-    console.log('New user signup:', { ...user, password: '[HASHED]' });
-
-    // Generate JWT
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-
-    const token = await new SignJWT({ 
-      userId: user.id,
+    // Générer les tokens
+    const accessToken = await AuthService.generateAccessToken({
+      id: user.id,
       email: user.email,
-      provider: 'email'
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('10y')
-      .sign(secret);
+      subscription: user.subscription.toLowerCase() as 'free' | 'pro' | 'enterprise'
+    });
 
-    // Create response with redirect URL for onboarding
-    const response = NextResponse.json({ 
-      success: true,
-      redirect: '/onboarding/setup',
+    const refreshTokenData = await AuthService.generateRefreshToken(user.id);
+
+    // Configurer les cookies sécurisés
+    AuthService.setAuthCookies({
+      accessToken,
+      refreshToken: refreshTokenData.token,
+      expiresAt: refreshTokenData.expiresAt
+    });
+
+    // Retourner les informations utilisateur
+    return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
-        provider: user.provider,
-      }
-    });
+        subscription: user.subscription.toLowerCase()
+      },
+      message: 'Compte créé avec succès'
+    }, { status: 201 });
 
-    // Set auth cookie
-    response.cookies.set('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
-    });
-
-    return response;
   } catch (error) {
-    console.error('Signup error:', error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Données invalides', details: error.errors },
+        { status: 400 }
+      );
+    }
+
+    console.error('Erreur lors de l\'inscription:', error);
     return NextResponse.json(
-      { error: 'Failed to create account' },
+      { error: 'Erreur interne du serveur' },
       { status: 500 }
     );
   }

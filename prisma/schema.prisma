@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String
+  avatar            String?
+  passwordHash      String
+  subscription      Subscription @default(FREE)
+  stripeCustomerId  String?   @unique
+  role              Role      @default(CREATOR)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime? // Soft delete
+  
+  // Relations
+  contentAssets     ContentAsset[]
+  apiKeys           ApiKey[]
+  subscriptionRecord SubscriptionRecord?
+  refreshTokens     RefreshToken[]
+  
+  @@map("users")
+}
+
+model RefreshToken {
+  id          String    @id @default(cuid())
+  userId      String
+  jti         String    @unique // JWT ID
+  tokenHash   String    @unique // SHA-256 hash du token
+  expiresAt   DateTime
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model SubscriptionRecord {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  stripeSubscriptionId  String?   @unique
+  status                SubscriptionStatus @default(ACTIVE)
+  plan                  Subscription
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  cancelAtPeriodEnd     Boolean   @default(false)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("subscription_records")
+}
+
+model ContentAsset {
+  id          String      @id @default(cuid())
+  userId      String      // Toujours lié à un utilisateur
+  title       String
+  content     String
+  type        ContentType
+  category    String?
+  tags        String[]
+  metadata    Json?
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("content_assets")
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  keyHash     String    @unique
+  permissions String[]
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@map("api_keys")
+}
+
+// Enums
+enum Subscription {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+}
+
+enum Role {
+  CREATOR
+  ADMIN
+}
+
+enum ContentType {
+  POST
+  STORY
+  VIDEO
+  IMAGE
+  CAPTION
+}

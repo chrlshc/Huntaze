@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "AWS CDK Validator",
+  "description": "Valide les configurations AWS CDK",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.cdk.ts",
+      "**/cdk/**/*.ts",
+      "**/infrastructure/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Deployer Agent, valide la configuration AWS :\n\n1. Exécute cdk synth pour valider la syntaxe\n2. Vérifie les best practices AWS (tagging, naming)\n3. Valide les politiques IAM (principe du moindre privilège)\n4. Vérifie la configuration des VPC et security groups\n5. Analyse les coûts estimés des ressources\n6. Identifie les risques de sécurité dans l'infra\n7. Vérifie la configuration de monitoring (CloudWatch)\n8. Suggère des optimisations de coûts\n9. Documente les changements d'infrastructure"
+  }
+}

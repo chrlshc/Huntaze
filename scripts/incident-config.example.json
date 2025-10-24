@@ -1,0 +1,25 @@
+{
+  "region": "us-east-1",
+  "ecs": [
+    { "cluster": "my-ecs-cluster", "service": "web" }
+  ],
+  "asg": [
+    "my-ecs-asg"
+  ],
+  "lambda": {
+    "functions": ["my-consumer-fn"],
+    "apply": { "batchSize": 5, "maxWindow": 10, "maxConcurrency": 5, "disable": false }
+  },
+  "sqs": {
+    "queueUrls": ["https://sqs.us-east-1.amazonaws.com/123456789012/my-queue"],
+    "visibilityTimeout": 900
+  },
+  "waf": {
+    "enabled": false,
+    "scope": "CLOUDFRONT",
+    "webAclName": "my-web-acl",
+    "ruleName": "rate-limit-ai",
+    "newLimit": 200
+  }
+}
+

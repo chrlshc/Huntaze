@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Use system font stack locally to avoid remote CSS and CSP issues */
 
 @tailwind base;
 @tailwind components;
@@ -20,8 +20,8 @@
 @import '../styles/gpu-optimize.css';
 @import '../styles/section-styles.css';
 
-/* Import Text Selection Fix */
-@import '../styles/text-selection-fix.css';
+/* Import Text Selection Fix (disabled; handled by selection-fixes.css) */
+/* @import '../styles/text-selection-fix.css'; */
 
 /* Import Shopify-style Sections */
 @import '../styles/shopify-sections.css';
@@ -74,15 +74,9 @@ a:not([class*="text-"]) {
   color: #ffffff;
 }
 
-/* Primary CTA style fix */
-.bg-white {
-  background-color: #a855f7 !important;
-  color: #ffffff !important;
-}
-
-.bg-white:hover {
-  background-color: #9333ea !important;
-}
+/* Primary CTA style fix (disabled to avoid global override of .bg-white colors) */
+/* .bg-white { background-color: #a855f7 !important; color: #ffffff !important; }
+.bg-white:hover { background-color: #9333ea !important; } */
 
 /* Secondary CTA style fix */
 .border-white {
@@ -123,6 +117,39 @@ a:not([class*="text-"]) {
   /* Button Text */
   --color-btn-primary-text: #FFFFFF;
   --color-btn-secondary-text: #111827;
+}
+
+/* Shopify-like palette tokens (emerald/teal + slate neutrals) */
+:root {
+  /* Light */
+  --bg:        210 40% 98%;   /* slate-50 */
+  --surface:   0 0% 100%;     /* white */
+  --border:    214 32% 91%;   /* slate-200 */
+  --text:      222 47% 11%;   /* slate-900 */
+
+  --primary:    160 84% 39%;  /* emerald-600 */
+  --primary-fg: 0 0% 100%;    /* white */
+  --info:       199 89% 48%;  /* sky-600 */
+  --success:    160 84% 39%;  /* emerald-600 */
+  --warning:    38 92% 50%;   /* amber-600 */
+  --critical:   346 77% 49%;  /* rose-600 */
+}
+
+.dark {
+  /* Dark */
+  --bg:        240 10% 4%;    /* slate-950 */
+  --surface:   222 47% 11%;   /* slate-900 */
+  --border:    217 33% 17%;   /* slate-800 */
+  --text:      210 40% 98%;   /* slate-100 */
+
+  --primary:    160 84% 39%;
+  --primary-fg: 0 0% 100%;
+}
+
+/* Apply base background/text using tokens */
+html, body {
+  background-color: hsl(var(--bg));
+  color: hsl(var(--text));
 }
 
 /* Dark Mode Colors */
@@ -1603,3 +1630,6 @@ p, span, h1, h2, h3, h4, h5, h6, li, a {
     animation: none;
   }
 }
+/* Hide scrollbar utility for horizontal scroll areas on mobile */
+.no-scrollbar::-webkit-scrollbar{ display:none; }
+.no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }

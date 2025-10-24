@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { platformConnections } from '@/lib/services/platformConnections';
 import { getUserFromRequest } from '@/lib/auth/request';
-import { rateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
     // Basic write-rate limit
-    const limited = rateLimit(request, { windowMs: 60_000, max: 20 });
-    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    const ident = idFromRequestHeaders(request.headers)
+    const rl = await checkRateLimit({ id: ident.id, limit: 20, windowSec: 60 })
+    if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
     const user = await getUserFromRequest(request);
     if (!user?.userId) {

@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "API Documentation Sync",
+  "description": "Synchronise la documentation API",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/api/**/*.ts",
+      "**/app/api/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Documentation Agent, synchronise la doc API :\n\n1. Génère/met à jour la spec OpenAPI (swagger.json)\n2. Documente les endpoints, paramètres, réponses\n3. Ajoute des exemples de requêtes/réponses\n4. Documente les codes d'erreur possibles\n5. Maintient api-reference.md à jour\n6. Crée des guides d'intégration pour les clients\n7. Documente les changements dans CHANGELOG.md"
+  }
+}

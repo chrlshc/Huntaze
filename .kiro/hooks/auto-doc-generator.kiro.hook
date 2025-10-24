@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Auto Documentation Generator",
+  "description": "Génère automatiquement la documentation",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/src/**/*.{ts",
+      "tsx}",
+      "**/api/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Documentation Agent, génère la documentation :\n\n1. Extraire les commentaires JSDoc existants\n2. Générer la documentation des fonctions publiques\n3. Documenter les interfaces et types TypeScript\n4. Créer des exemples d'utilisation basés sur le code\n5. Mettre à jour le README.md si nécessaire\n6. Générer la documentation API avec Swagger/OpenAPI\n7. Créer des diagrammes de flux si pertinent\n8. Maintenir une structure de documentation cohérente"
+  }
+}

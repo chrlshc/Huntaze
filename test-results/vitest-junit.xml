@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="21" failures="2" errors="0" time="573.836">
+    <testsuite name="tests/unit/content-generation-services.test.ts" timestamp="2025-10-22T23:23:23.456Z" hostname="MacBook-Pro-de-765.local" tests="21" failures="2" errors="0" skipped="0" time="0.057">
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Message Personalization Service &gt; should generate personalized messages" time="0.009">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Message Personalization Service &gt; should handle different message types" time="0.003">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Message Personalization Service &gt; should provide template management" time="0.001">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Content Idea Generator Service &gt; should generate content ideas" time="0.019">
+            <system-err>
+Failed to parse trend response: Error: No JSON found
+    at ContentIdeaGeneratorService.parseTrendResponse [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:586:15[90m)[39m
+    at ContentIdeaGeneratorService.getTrendingTopics [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:553:27[90m)[39m
+    at ContentIdeaGeneratorService.generateContentIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:183:29[90m)[39m
+    at [90m/Users/765h/Huntaze/[39mtests/unit/content-generation-services.test.ts:151:22
+    at runTest [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:781:11[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runFiles [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:958:5[90m)[39m
+    at startTests [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:967:3[90m)[39m
+Failed to parse AI response: Error: No JSON array found in AI response
+    at ContentIdeaGeneratorService.parseAIResponseToIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:382:15[90m)[39m
+    at ContentIdeaGeneratorService.generateIdeasByFocus [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:274:30[90m)[39m
+    at ContentIdeaGeneratorService.generateContentIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:190:26[90m)[39m
+    at [90m/Users/765h/Huntaze/[39mtests/unit/content-generation-services.test.ts:151:22
+    at runTest [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:781:11[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runFiles [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:958:5[90m)[39m
+    at startTests [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:967:3[90m)[39m
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Content Idea Generator Service &gt; should analyze idea performance" time="0.002">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Content Idea Generator Service &gt; should handle brainstorming requests" time="0.002">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Caption and Hashtag Generator Service &gt; should generate captions" time="0.007">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Caption and Hashtag Generator Service &gt; should generate hashtag suggestions" time="0.001">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Caption and Hashtag Generator Service &gt; should analyze caption trends" time="0.001">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should generate messages through unified interface" time="0.001">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should generate ideas through unified interface" time="0.001">
+            <system-err>
+Failed to parse AI response: Error: No JSON array found in AI response
+    at ContentIdeaGeneratorService.parseAIResponseToIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:382:15[90m)[39m
+    at ContentIdeaGeneratorService.generateIdeasByFocus [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:274:30[90m)[39m
+    at ContentIdeaGeneratorService.generateContentIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:190:26[90m)[39m
+    at ContentGenerationService.generateIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-generation-service.ts:180:20[90m)[39m
+    at ContentGenerationService.generateContent [90m(/Users/765h/Huntaze/[39mlib/services/content-generation-service.ts:104:20[90m)[39m
+    at [90m/Users/765h/Huntaze/[39mtests/unit/content-generation-services.test.ts:299:22
+    at runTest [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:781:11[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should generate captions through unified interface" time="0">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should generate hashtags through unified interface" time="0">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should generate comprehensive content package" time="0.001">
+            <system-err>
+Failed to parse AI response: Error: No JSON array found in AI response
+    at ContentIdeaGeneratorService.parseAIResponseToIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:382:15[90m)[39m
+    at ContentIdeaGeneratorService.generateIdeasByFocus [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:274:30[90m)[39m
+    at ContentIdeaGeneratorService.generateContentIdeas [90m(/Users/765h/Huntaze/[39mlib/services/content-idea-generator.ts:190:26[90m)[39m
+    at ContentGenerationService.generateComprehensive [90m(/Users/765h/Huntaze/[39mlib/services/content-generation-service.ts:280:25[90m)[39m
+    at ContentGenerationService.generateContent [90m(/Users/765h/Huntaze/[39mlib/services/content-generation-service.ts:113:20[90m)[39m
+    at [90m/Users/765h/Huntaze/[39mtests/unit/content-generation-services.test.ts:355:22
+    at runTest [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:781:11[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+    at runSuite [90m(file:///Users/765h/Huntaze/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:909:15[90m)[39m
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should handle batch processing" time="0.001">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should handle errors gracefully" time="0">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should optimize content strategy" time="0">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Unified Content Generation Service &gt; should perform health checks" time="0.002">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Performance and Edge Cases &gt; should handle empty or minimal input gracefully" time="0.001">
+            <failure message="expected NaN to be greater than or equal to 0" type="AssertionError">
+AssertionError: expected NaN to be greater than or equal to 0
+ ❯ tests/unit/content-generation-services.test.ts:458:43
+            </failure>
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Performance and Edge Cases &gt; should handle concurrent requests" time="0.001">
+        </testcase>
+        <testcase classname="tests/unit/content-generation-services.test.ts" name="Content Generation Services &gt; Performance and Edge Cases &gt; should validate processing times are reasonable" time="0.001">
+            <failure message="expected 0 to be greater than 0" type="AssertionError">
+AssertionError: expected 0 to be greater than 0
+ ❯ tests/unit/content-generation-services.test.ts:497:46
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

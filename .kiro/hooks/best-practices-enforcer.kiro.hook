@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Best Practices Enforcer",
+  "description": "Applique les best practices du projet",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/src/**/*.ts",
+      "**/src/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Reviewer Agent, applique les best practices Huntaze :\n\n1. Vérifie l'utilisation de TypeScript strict mode\n2. Valide les conventions de nommage (camelCase, PascalCase)\n3. Vérifie la structure des dossiers (src/components, src/services, etc.)\n4. Assure l'utilisation des barrel exports (index.ts)\n5. Vérifie les imports absolus vs relatifs\n6. Valide l'utilisation de Tailwind CSS (pas de styles inline)\n7. Vérifie la documentation JSDoc des fonctions publiques\n8. Assure la cohérence avec le style existant"
+  }
+}

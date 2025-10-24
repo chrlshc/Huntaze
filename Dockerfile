@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production && \
+# Install dependencies (omit dev to keep image slim)
+RUN npm install --omit=dev && \
     npm install sharp
 
 # Copy source code

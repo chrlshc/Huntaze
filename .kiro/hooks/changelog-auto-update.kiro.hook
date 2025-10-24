@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Changelog Auto-Update",
+  "description": "Met à jour automatiquement CHANGELOG.md",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "package.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Commit Agent, mets à jour le changelog :\n\n1. Détecte le changement de version dans package.json\n2. Analyse les commits depuis la dernière version\n3. Catégorise les changements (Features, Fixes, Breaking Changes)\n4. Génère une section pour la nouvelle version dans CHANGELOG.md\n5. Inclut les contributeurs si applicable\n6. Ajoute des liens vers les PRs et issues\n7. Respecte le format Keep a Changelog"
+  }
+}

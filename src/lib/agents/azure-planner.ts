@@ -11,6 +11,17 @@ export async function azurePlannerAgent(req: z.infer<typeof PlanRequest>): Promi
   const sys = `You are an AI planner that prepares a content schedule. Output STRICT JSON with key \"contents\" as array of items: {id, idea, text, assets:[{kind:"image"|"video"}]}. Keep it concise.`
   const user = `Plan a ${req.period.replace('_', ' ')} content batch for platforms ${platforms.join(', ') || 'instagram'}. Use 2-4 items.`
 
+  // Respect global billing lock: skip remote call, return fallback plan
+  if (String(process.env.AZURE_BILLING_LOCK || '').toLowerCase() === '1') {
+    return {
+      platforms,
+      contents: [
+        { id: 'P1', idea: 'Teaser', text: 'New drop this week! 🚀', assets: [{ kind: 'image' }] },
+        { id: 'P2', idea: 'Behind the scenes', text: 'BTS clip (60s)', assets: [{ kind: 'video' }] },
+      ],
+    }
+  }
+
   try {
     const out = await callAzureOpenAI({
       messages: [ { role: 'system', content: sys }, { role: 'user', content: user } ],
@@ -37,4 +48,3 @@ export async function azurePlannerAgent(req: z.infer<typeof PlanRequest>): Promi
     ],
   }
 }
-

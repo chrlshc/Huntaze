@@ -1,0 +1,28 @@
+.hero-section .btn-primary,
+.hero-section .cta-primary,
+.hero-section .hero-buttons .btn-primary {
+  background: #059669 !important; /* emerald-600 */
+  color: #FFFFFF !important;
+  border: 0 !important;
+}
+.hero-section .btn-primary:hover,
+.hero-section .cta-primary:hover,
+.hero-section .hero-buttons .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(5,150,105,0.35);
+}
+.hero-section .btn-outline,
+.hero-section .cta-secondary,
+.hero-section .hero-buttons .cta-pill-outline {
+  background: transparent !important;
+  color: rgba(255,255,255,0.9) !important;
+  border: 2px solid rgba(255,255,255,0.3) !important;
+}
+@media (prefers-color-scheme: light) {
+  .hero-section .btn-outline,
+  .hero-section .cta-secondary,
+  .hero-section .hero-buttons .cta-pill-outline { color: #111111 !important; border-color: rgba(0,0,0,0.2) !important; }
+  .hero-section .btn-outline:hover,
+  .hero-section .cta-secondary:hover,
+  .hero-section .hero-buttons .cta-pill-outline:hover { background: rgba(0,0,0,0.06) !important; border-color: rgba(0,0,0,0.35) !important; }
+}

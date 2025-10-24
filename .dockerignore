@@ -1,0 +1,39 @@
+# Git metadata
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store
+
+# Next.js build outputs
+.next
+out
+
+# Local env and caches
+.env.local
+.env.production
+.env.*
+.cache
+.DS_Store
+
+# CI/build artifacts
+artifacts
+deployment-logs*
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Tests, docs, examples (not needed in runtime image)
+tests
+docs
+examples
+
+# Misc
+ofm-creators-platform
+huntaze-api
+site-web

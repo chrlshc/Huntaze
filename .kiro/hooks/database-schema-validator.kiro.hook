@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Database Schema Validator",
+  "description": "Valide les schémas de base de données Prisma",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/prisma/schema.prisma",
+      "**/database/**/*.sql"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant qu'Architect Agent, valide le schéma de base de données :\n\n1. Vérifie les relations et contraintes d'intégrité\n2. Identifie les problèmes de normalisation\n3. Évalue les performances des index\n4. Valide les types de données choisis\n5. Suggère des optimisations pour les requêtes fréquentes\n6. Vérifie la conformité avec les best practices Prisma\n7. Documente les migrations nécessaires"
+  }
+}

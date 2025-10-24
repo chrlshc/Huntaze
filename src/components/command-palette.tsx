@@ -39,30 +39,11 @@ export function CommandPalette() {
   }, []);
 
   const commands = [
-    {
-      icon: Home,
-      title: 'Dashboard',
-      shortcut: '⌘D',
-      action: () => router.push('/dashboard')
-    },
-    {
-      icon: MessageSquare,
-      title: 'Messages',
-      shortcut: '⌘M',
-      action: () => router.push('/messages')
-    },
-    {
-      icon: DollarSign,
-      title: 'Billing',
-      shortcut: '⌘B',
-      action: () => router.push('/billing')
-    },
-    {
-      icon: Settings,
-      title: 'Settings',
-      shortcut: '⌘,',
-      action: () => router.push('/settings')
-    }
+    { icon: Home,          title: 'Dashboard',        shortcut: '⌘D', action: () => router.push('/dashboard') },
+    { icon: MessageSquare, title: 'Unified Inbox',    shortcut: '⌘M', action: () => router.push('/of-messages') },
+    { icon: DollarSign,    title: 'Revenue Analytics',shortcut: '⌘R', action: () => router.push('/of-analytics') },
+    { icon: Settings,      title: 'Content Scheduler',shortcut: '⌘S', action: () => router.push('/features/content-scheduler') },
+    { icon: HelpCircle,    title: 'Go to Features',   shortcut: '⌘K', action: () => router.push('/#features') },
   ];
 
   return (

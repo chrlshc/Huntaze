@@ -60,6 +60,12 @@ const counters = {
     labelNames: ['result'] as const,
     registers: [registry],
   }),
+  azureSmokeEvents: new client.Counter({
+    name: 'azure_smoke_events_total',
+    help: 'Azure smoke route events by action',
+    labelNames: ['action', 'path', 'env', 'force', 'source'] as const, // actions: locked, auth_missing, auth_invalid, force_required, rate_limited, ok
+    registers: [registry],
+  }),
 }
 
 const histograms = {

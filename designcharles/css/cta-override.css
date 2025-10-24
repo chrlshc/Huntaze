@@ -1,0 +1,36 @@
+/* Inline overrides used at the end of <head> to survive external CSS */
+.hero-section .btn-primary,
+.hero-section .cta-primary,
+.hero-section .hero-buttons .btn-primary {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%) !important;
+  color: #FFFFFF !important;
+  border: 0 !important;
+}
+.hero-section .btn-primary:hover,
+.hero-section .cta-primary:hover,
+.hero-section .hero-buttons .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(139,92,246,0.5);
+}
+.hero-section .btn-outline,
+.hero-section .cta-secondary,
+.hero-section .hero-buttons .cta-pill-outline {
+  background: transparent !important;
+  color: rgba(255,255,255,0.9) !important;
+  border: 2px solid rgba(255,255,255,0.3) !important;
+}
+@media (prefers-color-scheme: light) {
+  .hero-section .btn-outline,
+  .hero-section .cta-secondary,
+  .hero-section .hero-buttons .cta-pill-outline {
+    color: #111111 !important;
+    border-color: rgba(0,0,0,0.2) !important;
+  }
+  .hero-section .btn-outline:hover,
+  .hero-section .cta-secondary:hover,
+  .hero-section .hero-buttons .cta-pill-outline:hover {
+    background: rgba(0,0,0,0.06) !important;
+    border-color: rgba(0,0,0,0.35) !important;
+  }
+}
+

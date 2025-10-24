@@ -1,0 +1,94 @@
+groups:
+  - name: api.slo
+    interval: 1m
+    rules:
+      - record: api:ai:error_ratio5m
+        expr: |
+          sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*", status=~"5.."}[5m]))
+          /
+          clamp_min(sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*"}[5m])), 1)
+
+      - record: api:ai:error_ratio1h
+        expr: |
+          sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*", status=~"5.."}[1h]))
+          /
+          clamp_min(sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*"}[1h])), 1)
+
+      - record: api:ai:error_ratio6h
+        expr: |
+          sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*", status=~"5.."}[6h]))
+          /
+          clamp_min(sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*"}[6h])), 1)
+
+      - record: api:ai:error_ratio24h
+        expr: |
+          sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*", status=~"5.."}[24h]))
+          /
+          clamp_min(sum(rate(http_requests_total{job="huntaze", route=~"/api/ai/.*"}[24h])), 1)
+
+      - alert: APIAISLOBudgetBurnFast
+        expr: (api:ai:error_ratio5m > (14.4 * 0.001)) or (api:ai:error_ratio1h > (6 * 0.001))
+        for: 10m
+        labels:
+          severity: page
+        annotations:
+          summary: "API /api/ai/* SLO fast burn (5m>14.4x or 1h>6x)"
+
+      - alert: APIAISLOBudgetBurnSlow
+        expr: (api:ai:error_ratio6h > (3 * 0.001)) or (api:ai:error_ratio24h > (1 * 0.001))
+        for: 1h
+        labels:
+          severity: ticket
+        annotations:
+          summary: "API /api/ai/* SLO slow burn (6h>3x or 24h>1x)"
+
+      # Latency-based SLI using histogram buckets
+      # Define threshold T=1s; compute ratio of requests slower than T
+      - record: api:ai:latency_over_1s_ratio5m
+        expr: |
+          1 - (
+            sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="1"}[5m]))
+            /
+            clamp_min(sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="+Inf"}[5m])), 1)
+          )
+
+      - record: api:ai:latency_over_1s_ratio1h
+        expr: |
+          1 - (
+            sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="1"}[1h]))
+            /
+            clamp_min(sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="+Inf"}[1h])), 1)
+          )
+
+      - record: api:ai:latency_over_1s_ratio6h
+        expr: |
+          1 - (
+            sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="1"}[6h]))
+            /
+            clamp_min(sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="+Inf"}[6h])), 1)
+          )
+
+      - record: api:ai:latency_over_1s_ratio24h
+        expr: |
+          1 - (
+            sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="1"}[24h]))
+            /
+            clamp_min(sum by (route) (rate(http_request_duration_seconds_bucket{job="huntaze", route=~"/api/ai/.*", le="+Inf"}[24h])), 1)
+          )
+
+      - alert: APIAILatencySLOBurnFast
+        expr: (max_over_time(api:ai:latency_over_1s_ratio5m[5m]) > (14.4 * 0.001))
+          or (max_over_time(api:ai:latency_over_1s_ratio1h[1h]) > (6 * 0.001))
+        for: 10m
+        labels:
+          severity: page
+        annotations:
+          summary: "API /api/ai/* latency SLO fast burn (T=1s)"
+
+      - alert: APIAILatencySLOBurnSlow
+        expr: (api:ai:latency_over_1s_ratio6h > (3 * 0.001)) or (api:ai:latency_over_1s_ratio24h > (1 * 0.001))
+        for: 1h
+        labels:
+          severity: ticket
+        annotations:
+          summary: "API /api/ai/* latency SLO slow burn (T=1s)"

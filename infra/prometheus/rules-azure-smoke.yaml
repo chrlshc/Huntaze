@@ -1,0 +1,31 @@
+groups:
+  - name: azure.smoke
+    interval: 1m
+    rules:
+      - record: azure:smoke:events_rate5m
+        expr: sum by (action) (rate(azure_smoke_events_total[5m]))
+
+      - alert: AzureSmokeAuthFailuresBurst
+        expr: sum(rate(azure_smoke_events_total{action="auth_invalid"}[5m])) > 5
+        for: 5m
+        labels:
+          severity: ticket
+        annotations:
+          summary: "Azure smoke auth failures >5/5m"
+
+      - alert: AzureSmokeRateLimitedBurst
+        expr: sum(rate(azure_smoke_events_total{action="rate_limited"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: ticket
+        annotations:
+          summary: "Azure smoke 429s burst >2/5m"
+
+      - alert: AzureSmokeLockedProlonged
+        expr: sum(rate(azure_smoke_events_total{action="locked"}[5m])) > 0
+        for: 15m
+        labels:
+          severity: info
+        annotations:
+          summary: "Azure billing lock active for >15m"
+

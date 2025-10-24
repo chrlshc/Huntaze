@@ -1,0 +1,23 @@
+{
+  "css": [
+    { "path": "designcharles/css/selection-fixes.css", "source": "public/styles/selection-fixes.css" },
+    { "path": "designcharles/css/beta-landing-fixes.css", "source": "public/styles/beta-landing-fixes.css" },
+    { "path": "designcharles/css/cta-override.css", "source": "app/layout.tsx#cta-override" }
+  ],
+  "components": [
+    { "path": "designcharles/components/HeroSection.tsx", "source": "components/sections/marketing/HeroSection.tsx" },
+    { "path": "designcharles/components/BetaBanner.tsx", "source": "components/BetaBanner.tsx" },
+    { "path": "designcharles/components/beta/BetaBenefits.tsx", "source": "components/sections/beta/BetaBenefits.tsx" },
+    { "path": "designcharles/components/beta/BetaFeatures.tsx", "source": "components/sections/beta/BetaFeatures.tsx" },
+    { "path": "designcharles/components/beta/BetaHowItWorks.tsx", "source": "components/sections/beta/BetaHowItWorks.tsx" },
+    { "path": "designcharles/components/beta/BetaSocialProof.tsx", "source": "components/sections/beta/BetaSocialProof.tsx" },
+    { "path": "designcharles/components/beta/BetaFAQ.tsx", "source": "components/sections/beta/BetaFAQ.tsx" },
+    { "path": "designcharles/components/beta/BetaFinalCTA.tsx", "source": "components/sections/beta/BetaFinalCTA.tsx" }
+  ],
+  "pages": [
+    { "path": "designcharles/pages/home.page.tsx", "source": "app/page.tsx" },
+    { "path": "designcharles/pages/join.page.tsx", "source": "app/join/page.tsx" },
+    { "path": "designcharles/pages/ui-review.page.tsx", "source": "app/ui/review/page.tsx" }
+  ]
+}
+

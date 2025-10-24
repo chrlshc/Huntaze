@@ -11,9 +11,20 @@ const puppeteer = require('puppeteer');
   
   // Test homepage in different theme states
   const pages = [
+    // Marketing & conversion
     { url: 'http://localhost:3000', name: 'Homepage' },
     { url: 'http://localhost:3000/pricing', name: 'Pricing' },
+    { url: 'http://localhost:3000/get-started', name: 'Get Started' },
+    { url: 'http://localhost:3000/features', name: 'Features' },
+    { url: 'http://localhost:3000/for-agencies', name: 'For Agencies' },
+
+    // Legal & trust
+    { url: 'http://localhost:3000/terms-of-service', name: 'Terms' },
+    { url: 'http://localhost:3000/privacy-policy', name: 'Privacy' },
+
+    // App surfaces (anonymized)
     { url: 'http://localhost:3000/dashboard', name: 'Dashboard' },
+    { url: 'http://localhost:3000/messages', name: 'Messages' },
   ];
   
   for (const testPage of pages) {

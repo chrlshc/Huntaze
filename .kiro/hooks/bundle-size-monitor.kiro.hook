@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Bundle Size Monitor",
+  "description": "Surveille la taille des bundles",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "package.json",
+      "**/src/**/*.ts",
+      "**/src/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant qu'Optimizer Agent, surveille la taille du bundle :\n\n1. Analyse l'impact des nouvelles dépendances\n2. Identifie les librairies lourdes importées\n3. Suggère des alternatives plus légères\n4. Vérifie le tree-shaking des imports\n5. Recommande des dynamic imports pour les gros composants\n6. Alerte si le bundle dépasse les seuils définis\n7. Génère un rapport de bundle size avec recommandations"
+  }
+}

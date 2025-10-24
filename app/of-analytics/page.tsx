@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { analyticsManager, seedMockAnalytics } from '@/lib/of/analytics-manager';
 import type { FanAnalytics } from '@/lib/types/onlyfans';
+import AppShell from '@/components/layout/AppShell';
+import Card from '@/components/ui/Card';
 
 export default function OfAnalyticsPage() {
   const [period, setPeriod] = useState<'24h' | '7d' | '30d' | 'all'>('30d');
@@ -40,52 +42,77 @@ export default function OfAnalyticsPage() {
 
   if (loading || !analytics) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse">Loading analytics...</div>
+      <AppShell title="Analytics">
+        <div className="space-y-6">
+          {/* Metric cards skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-xl p-6 border border-gray-200 dark:border-gray-700 animate-pulse">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-6 w-6 bg-gray-200 dark:bg-gray-700 rounded" />
+                  <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded" />
+                </div>
+                <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+                <div className="h-3 w-28 bg-gray-200 dark:bg-gray-700 rounded" />
+              </div>
+            ))}
+          </div>
+
+          {/* Chart skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 rounded-xl p-6 border border-gray-200 dark:border-gray-700 animate-pulse">
+              <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+              <div className="h-40 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+            </div>
+            <div className="rounded-xl p-6 border border-gray-200 dark:border-gray-700 animate-pulse">
+              <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, j) => (
+                  <div key={j} className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   const { metrics } = analytics;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+    <AppShell title="Analytics">
+      <div className="space-y-6">
+        {/* Page header with primary action */}
+        <header className="mb-2 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              OnlyFans Analytics
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Track your performance and optimize your content strategy
-            </p>
+            <h1 className="text-lg md:text-xl font-semibold">OnlyFans Analytics</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-0.5">Track your performance and optimize your content strategy</p>
           </div>
+          <button className="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-4 py-2 rounded-md">Export data</button>
+        </header>
 
-          {/* Period Selector */}
-          <div className="flex gap-2 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-sm">
-            {(['24h', '7d', '30d', 'all'] as const).map(p => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  period === p
-                    ? 'bg-purple-600 text-white'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                {p === '24h' ? '24 Hours' : p === '7d' ? '7 Days' : p === '30d' ? '30 Days' : 'All Time'}
-              </button>
-            ))}
-          </div>
+        {/* Period Selector */}
+        <div className="flex gap-2 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-sm w-fit">
+          {(['24h', '7d', '30d', 'all'] as const).map(p => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                period === p
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              {p === '24h' ? '24 Hours' : p === '7d' ? '7 Days' : p === '30d' ? '30 Days' : 'All Time'}
+            </button>
+          ))}
         </div>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Revenue */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -99,10 +126,10 @@ export default function OfAnalyticsPage() {
               ${metrics.revenue.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
-          </div>
+          </Card>
 
           {/* Total Fans */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -116,10 +143,10 @@ export default function OfAnalyticsPage() {
               {metrics.totalFans.toLocaleString()}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Active Subscribers</p>
-          </div>
+          </Card>
 
           {/* Average Spend */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Target className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -133,10 +160,10 @@ export default function OfAnalyticsPage() {
               ${metrics.averageSpendPerFan.toFixed(2)}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Avg Spend per Fan</p>
-          </div>
+          </Card>
 
           {/* Active Conversations */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card>
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
                 <MessageSquare className="w-6 h-6 text-pink-600 dark:text-pink-400" />
@@ -150,12 +177,12 @@ export default function OfAnalyticsPage() {
               {metrics.activeConversations}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Active Conversations</p>
-          </div>
+          </Card>
         </div>
 
         {/* Revenue Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card className="lg:col-span-2">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <BarChart3 className="w-5 h-5" />
               Revenue Breakdown
@@ -235,10 +262,10 @@ export default function OfAnalyticsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Top Spenders */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Award className="w-5 h-5" />
               Top Spenders
@@ -271,11 +298,11 @@ export default function OfAnalyticsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Fan Segments */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <Card>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <PieChart className="w-5 h-5" />
             Fan Segments
@@ -296,8 +323,8 @@ export default function OfAnalyticsPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
-    </div>
+    </AppShell>
   );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getUserFromRequest } from '@/lib/auth/request';
-import { rateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2023-10-16',
@@ -9,8 +9,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 
 export async function POST(request: NextRequest) {
   try {
-    const limited = rateLimit(request, { windowMs: 60_000, max: 20 });
-    if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    const ident = idFromRequestHeaders(request.headers)
+    const rl = await checkRateLimit({ id: ident.id, limit: 20, windowSec: 60 })
+    if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
     const user = await getUserFromRequest(request);
     if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });

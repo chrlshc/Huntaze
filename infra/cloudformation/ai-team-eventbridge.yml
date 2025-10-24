@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AI Team — EventBridge rule (DLQ) + ECS Fargate Summarizer
+
+Parameters:
+  ClusterArn: { Type: String }
+  TaskDefinitionArn: { Type: String }
+  EventsToEcsRoleArn: { Type: String }
+  DlqArn: { Type: String }
+  Subnet1: { Type: AWS::EC2::Subnet::Id }
+  Subnet2: { Type: AWS::EC2::Subnet::Id }
+  SecurityGroupId: { Type: AWS::EC2::SecurityGroup::Id }
+
+Resources:
+  AiInsightsReadyRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: ai-insights-ready
+      EventPattern:
+        source: ["app.ai-team"]
+        detail-type: ["AI_INSIGHTS_READY","CONTENT_READY"]
+      State: ENABLED
+      Targets:
+        - Id: EcsRunSummarizer
+          Arn: !Ref ClusterArn
+          RoleArn: !Ref EventsToEcsRoleArn
+          DeadLetterConfig:
+            Arn: !Ref DlqArn
+          RetryPolicy:
+            MaximumEventAgeInSeconds: 3600
+            MaximumRetryAttempts: 3
+          EcsParameters:
+            TaskDefinitionArn: !Ref TaskDefinitionArn
+            LaunchType: FARGATE
+            NetworkConfiguration:
+              AwsVpcConfiguration:
+                Subnets: [!Ref Subnet1, !Ref Subnet2]
+                SecurityGroups: [!Ref SecurityGroupId]
+                AssignPublicIp: DISABLED
+

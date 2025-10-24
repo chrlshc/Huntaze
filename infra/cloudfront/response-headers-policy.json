@@ -1,0 +1,52 @@
+{
+  "ResponseHeadersPolicyConfig": {
+    "Name": "huntaze-security-headers-v1",
+    "Comment": "Baseline security headers (HSTS/XFO/CTO/Referrer). CSP handled by app in Report-Only.",
+    "SecurityHeadersConfig": {
+      "StrictTransportSecurity": {
+        "Override": true,
+        "AccessControlMaxAgeSec": 31536000,
+        "IncludeSubdomains": true,
+        "Preload": false
+      },
+      "ContentTypeOptions": {
+        "Override": true
+      },
+      "FrameOptions": {
+        "FrameOption": "DENY",
+        "Override": true
+      },
+      "ReferrerPolicy": {
+        "ReferrerPolicy": "strict-origin-when-cross-origin",
+        "Override": true
+      }
+    },
+    "RemoveHeadersConfig": {
+      "Quantity": 2,
+      "Items": [
+        "Server",
+        "X-Powered-By"
+      ]
+    },
+    "CustomHeadersConfig": {
+      "Quantity": 3,
+      "Items": [
+        {
+          "Header": "Permissions-Policy",
+          "Value": "geolocation=(), microphone=(), camera=(), payment=(), browsing-topics=()",
+          "Override": true
+        },
+        {
+          "Header": "Content-Security-Policy-Report-Only",
+          "Value": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.huntaze.com https://static.onlyfansassets.com; font-src 'self' data:; connect-src 'self' https: wss:; upgrade-insecure-requests; report-to csp",
+          "Override": true
+        },
+        {
+          "Header": "Reporting-Endpoints",
+          "Value": "csp=https://app.huntaze.com/api/csp/report",
+          "Override": true
+        }
+      ]
+    }
+  }
+}

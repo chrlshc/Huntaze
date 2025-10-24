@@ -1,0 +1,59 @@
+/* Selection & interaction fixes (site-wide) */
+
+/* 1) Disable text selection on interactive elements */
+button,
+a,
+[role="button"],
+.no-select,
+.badge,
+nav,
+.faq-item,
+.accordion-header,
+summary,
+.btn-primary,
+.btn-outline,
+.cta,
+.cta-pill-outline {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent; /* iOS */
+}
+
+/* Allow selection on content text elements */
+p,
+li,
+span:not(.badge),
+h1, h2, h3, h4, h5, h6,
+.faq-accordion-content {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* 2) Custom selection styles: neutral/transparent (remove violet) */
+*::selection { background-color: transparent !important; color: inherit !important; }
+*::-moz-selection { background-color: transparent !important; color: inherit !important; }
+
+/* 3) Prevent drag on images/icons/logos */
+img,
+svg,
+.icon,
+.logo {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* 4) Safari-specific fix for buttons */
+button {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none;
+}
+button * { pointer-events: none; }
+
+/* 5) FAQ accordions: summary non-selectable, content selectable */
+details > summary { user-select: none; }
+details > *:not(summary) { user-select: text; }

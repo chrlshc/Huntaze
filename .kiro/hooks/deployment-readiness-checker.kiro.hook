@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "name": "Deployment Readiness Checker",
+  "description": "Vérifie que le code est prêt pour le déploiement",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "package.json",
+      "Dockerfile",
+      "amplify.yml",
+      "next.config.mjs",
+      "deploy.sh",
+      "deploy-aws.sh",
+      "DEPLOYMENT.md",
+      "BUILD.txt",
+      "DEPLOY.txt"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Deployer Agent, vérifie la préparation au déploiement :\n\n1. Vérifie que tous les tests passent (unitaires, intégration)\n2. Valide la couverture de code (>= 80%)\n3. Vérifie qu'il n'y a pas de vulnérabilités critiques\n4. Valide les variables d'environnement requises\n5. Vérifie les migrations de base de données\n6. Valide la configuration Docker/AWS\n7. Vérifie les logs et monitoring configurés\n8. Teste le build de production\n9. Génère un deployment checklist\n10. Crée un rollback plan si nécessaire"
+  }
+}

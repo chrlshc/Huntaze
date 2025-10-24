@@ -1,19 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OfInbox from '@/components/of/inbox';
 import OfCampaigns from '@/components/of/campaigns';
+import AppShell from '@/components/layout/AppShell';
 import { MessageSquare, Send } from 'lucide-react';
 
 export default function OfMessagesPage() {
   const [activeTab, setActiveTab] = useState('inbox');
+  // Open campaigns tab if URL hash indicates it
+  if (typeof window !== 'undefined') {
+    // no-op to enable client hints
+  }
+  
+  // Set initial tab from hash once on mount
+  useEffect(() => {
+    try {
+      const hash = window.location.hash.toLowerCase();
+      if (hash.includes('campaign')) setActiveTab('campaigns');
+    } catch {}
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <AppShell title="Inbox">
+      <div className="">
         {/* Page Header */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             OnlyFans Messages
           </h1>
@@ -59,6 +72,6 @@ export default function OfMessagesPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </AppShell>
   );
 }

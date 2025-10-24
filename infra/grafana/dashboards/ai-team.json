@@ -1,0 +1,272 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ai-team-overview",
+    "title": "AI Team — Overview",
+    "tags": [
+      "ai-team",
+      "observability"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "10s",
+    "style": "dark",
+    "editable": true,
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "DS_PROMETHEUS",
+          "type": "datasource",
+          "label": "Prometheus",
+          "query": "prometheus",
+          "current": {
+            "text": "Prometheus",
+            "value": "Prometheus"
+          },
+          "hide": 0
+        },
+        {
+          "name": "provider",
+          "type": "query",
+          "label": "LLM Provider",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "query": "label_values(llm_requests_total, provider)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          }
+        },
+        {
+          "name": "platform",
+          "type": "query",
+          "label": "Platform",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "query": "label_values(ai_summary_jobs_total, platform)",
+          "refresh": 1,
+          "multi": true,
+          "includeAll": true,
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          }
+        }
+      ]
+    },
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "LLM latency p95/p99 (Azure)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le, provider) (rate(llm_latency_seconds_bucket{provider=~\"$provider\"}[$__rate_interval])))",
+            "legendFormat": "p95",
+            "interval": "",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum by (le, provider) (rate(llm_latency_seconds_bucket{provider=~\"$provider\"}[$__rate_interval])))",
+            "legendFormat": "p99",
+            "interval": "",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth"
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "LLM throughput (req/s)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "sum by (provider) (rate(llm_requests_total{provider=~\"$provider\"}[$__rate_interval]))",
+            "legendFormat": "",
+            "interval": "",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "req/s",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth"
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "type": "stat",
+        "title": "LLM Error% (5m)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "(sum by (provider) (rate(llm_requests_total{provider=~\"$provider\",status!=\"success\"}[5m])) / sum by (provider) (rate(llm_requests_total{provider=~\"$provider\"}[5m])))*100",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green" },
+                { "color": "orange", "value": 1 },
+                { "color": "red", "value": 5 }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "reduceOptions": { "calcs": [ "lastNotNull" ] }
+        },
+        "gridPos": { "h": 9, "w": 6, "x": 18, "y": 0 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Insights summarizer latency p95/p99",
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (le, platform) (rate(ai_summary_latency_seconds_bucket{platform=~\"$platform\"}[$__rate_interval])))",
+            "legendFormat": "p95",
+            "interval": "",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum by (le, platform) (rate(ai_summary_latency_seconds_bucket{platform=~\"$platform\"}[$__rate_interval])))",
+            "legendFormat": "p99",
+            "interval": "",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineInterpolation": "smooth" } },
+          "overrides": []
+        },
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+        "gridPos": { "h": 9, "w": 12, "x": 0, "y": 9 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Insights throughput (jobs/s)",
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "targets": [ { "expr": "sum(rate(ai_summary_jobs_total[5m]))", "legendFormat": "", "interval": "", "refId": "A" } ],
+        "fieldConfig": { "defaults": { "unit": "ops", "custom": { "drawStyle": "line", "lineInterpolation": "smooth" } }, "overrides": [] },
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+        "gridPos": { "h": 9, "w": 6, "x": 12, "y": 9 }
+      },
+      {
+        "type": "stat",
+        "title": "Insights Error% (5m)",
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "targets": [ { "expr": "(sum(rate(ai_summary_jobs_total{status=\"error\"}[5m])) / sum(rate(ai_summary_jobs_total[5m])))*100", "refId": "A" } ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": { "mode": "absolute", "steps": [ { "color": "green" }, { "color": "orange", "value": 1 }, { "color": "red", "value": 5 } ] }
+          },
+          "overrides": []
+        },
+        "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": [ "lastNotNull" ] } },
+        "gridPos": { "h": 9, "w": 6, "x": 18, "y": 9 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Scheduler lag (s)",
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "targets": [ { "expr": "max(insights_scheduler_lag_seconds)", "legendFormat": "", "interval": "", "refId": "A" } ],
+        "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineInterpolation": "smooth" } }, "overrides": [] },
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Scheduler inflight",
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "targets": [ { "expr": "sum(insights_scheduler_inflight)", "legendFormat": "", "interval": "", "refId": "A" } ],
+        "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "lineInterpolation": "smooth" } }, "overrides": [] },
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+        "gridPos": { "h": 8, "w": 6, "x": 12, "y": 18 }
+      },
+      {
+        "type": "timeseries",
+        "title": "LLM 429 (debug)",
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "targets": [ { "expr": "increase(llm_requests_total{status=\"429\"}[5m])", "legendFormat": "", "interval": "", "refId": "A" } ],
+        "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "lineInterpolation": "smooth" } }, "overrides": [] },
+        "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+        "gridPos": { "h": 8, "w": 6, "x": 18, "y": 18 }
+      }
+    ]
+  },
+  "overwrite": true
+}
+

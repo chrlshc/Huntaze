@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus, Play, Pause, BarChart3, Users, Clock, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Plus, Play, Pause, BarChart3, Users, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
 import type { OfMassMessageCampaign } from '@/lib/types/onlyfans';
 import CreateCampaignModal from './create-campaign-modal';
 import CampaignDetails from './campaign-details';
@@ -12,6 +13,8 @@ export default function OfCampaigns() {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'scheduled' | 'sending' | 'paused' | 'completed' | 'failed'>('all');
 
   // Fetch campaigns
   useEffect(() => {
@@ -56,171 +59,165 @@ export default function OfCampaigns() {
     );
   }
 
-  const getStatusColor = (status: string) => {
+  const statusBadge = (status: string) => {
     switch (status) {
-      case 'draft': return 'text-gray-600 bg-gray-100 dark:bg-gray-800';
-      case 'scheduled': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/30';
-      case 'sending': return 'text-green-600 bg-green-100 dark:bg-green-900/30';
-      case 'paused': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30';
-      case 'completed': return 'text-purple-600 bg-purple-100 dark:bg-purple-900/30';
-      case 'failed': return 'text-red-600 bg-red-100 dark:bg-red-900/30';
-      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-800';
+      case 'draft': return <Badge variant="neutral" tone="soft">Draft</Badge>;
+      case 'scheduled': return <Badge variant="progress" tone="soft">Scheduled</Badge>;
+      case 'sending': return <Badge variant="sent" tone="soft">Sending</Badge>;
+      case 'paused': return <Badge variant="progress" tone="soft">Paused</Badge>;
+      case 'completed': return <Badge variant="sent" tone="soft">Completed</Badge>;
+      case 'failed': return <Badge variant="failed" tone="soft">Failed</Badge>;
+      default: return <Badge variant="neutral" tone="soft">Unknown</Badge>;
     }
   };
 
+  type SortKey = 'name' | 'created' | 'recipients' | 'sent' | 'failed' | 'status';
+  const [sortKey, setSortKey] = useState<SortKey>('created');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const base = campaigns.filter((c) => {
+      const nameMatch = q.length === 0 || (c.name || '').toLowerCase().includes(q);
+      const statusMatch = statusFilter === 'all' || c.status === statusFilter;
+      return nameMatch && statusMatch;
+    });
+    const sorted = [...base].sort((a,b) => {
+      let va: any, vb: any;
+      switch (sortKey) {
+        case 'name': va = a.name || ''; vb = b.name || ''; break;
+        case 'created': va = new Date(a.createdAt).getTime(); vb = new Date(b.createdAt).getTime(); break;
+        case 'recipients': va = a.stats.totalRecipients; vb = b.stats.totalRecipients; break;
+        case 'sent': va = a.stats.sentCount; vb = b.stats.sentCount; break;
+        case 'failed': va = a.stats.failedCount; vb = b.stats.failedCount; break;
+        case 'status': va = a.status; vb = b.status; break;
+      }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [campaigns, query, statusFilter, sortKey, sortDir]);
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    else { setSortKey(key); setSortDir('asc'); }
+  };
+
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const allVisibleSelected = filtered.length > 0 && filtered.every(c => selected.has(c.id));
+  const toggleSelectAll = () => {
+    const s = new Set(selected);
+    if (allVisibleSelected) { filtered.forEach(c => s.delete(c.id)); }
+    else { filtered.forEach(c => s.add(c.id)); }
+    setSelected(s);
+  }
+  const toggleRow = (id: string) => {
+    const s = new Set(selected);
+    s.has(id) ? s.delete(id) : s.add(id);
+    setSelected(s);
+  }
+
   return (
     <>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Mass Message Campaigns
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Send targeted messages to groups of fans
-            </p>
-          </div>
-          
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Create Campaign
-          </button>
-        </div>
+      {/* Page header */}
+      <header className="mb-4 flex items-center justify-between">
+        <h1 className="text-lg md:text-xl font-semibold">Campaigns</h1>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-4 py-2 rounded-md"
+        >
+          New campaign
+        </button>
+      </header>
 
-        {/* Campaigns Grid */}
-        {loading ? (
-          <div className="text-center py-12 text-gray-500">Loading campaigns...</div>
-        ) : campaigns.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No campaigns yet
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Create your first mass message campaign to reach multiple fans at once
-            </p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Create Campaign
-            </button>
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {campaigns.map((campaign) => (
-              <div
-                key={campaign.id}
-                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => setSelectedCampaign(campaign.id)}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {campaign.name}
-                    </h3>
-                    <div className="flex items-center gap-4 mt-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(campaign.status)}`}>
-                        {campaign.status}
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        Created {formatDistanceToNow(new Date(campaign.createdAt), { addSuffix: true })}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    {campaign.status === 'draft' && (
-                      <button
-                        onClick={() => handleCampaignAction(campaign.id, 'launch')}
-                        className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                        title="Launch campaign"
-                      >
-                        <Play className="w-5 h-5" />
-                      </button>
-                    )}
-                    {campaign.status === 'sending' && (
-                      <button
-                        onClick={() => handleCampaignAction(campaign.id, 'pause')}
-                        className="p-2 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
-                        title="Pause campaign"
-                      >
-                        <Pause className="w-5 h-5" />
-                      </button>
-                    )}
-                    {campaign.status === 'paused' && (
-                      <button
-                        onClick={() => handleCampaignAction(campaign.id, 'resume')}
-                        className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                        title="Resume campaign"
-                      >
-                        <Play className="w-5 h-5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm">Recipients</span>
-                    </div>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                      {campaign.stats.totalRecipients}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                      <BarChart3 className="w-4 h-4" />
-                      <span className="text-sm">Sent</span>
-                    </div>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                      {campaign.stats.sentCount}
-                      <span className="text-sm text-gray-500 ml-1">
-                        ({campaign.stats.totalRecipients > 0 
-                          ? Math.round((campaign.stats.sentCount / campaign.stats.totalRecipients) * 100)
-                          : 0}%)
-                      </span>
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                      <AlertCircle className="w-4 h-4" />
-                      <span className="text-sm">Failed</span>
-                    </div>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                      {campaign.stats.failedCount}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                {campaign.status === 'sending' && (
-                  <div className="mt-4">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-purple-600 h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${campaign.stats.totalRecipients > 0 
-                            ? (campaign.stats.sentCount / campaign.stats.totalRecipients) * 100 
-                            : 0}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+      {/* Filters */}
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm p-3 md:p-4 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search campaigns"
+            aria-label="Search campaigns"
+            className="w-full sm:max-w-xs px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm"
+          />
+          <div className="flex flex-wrap gap-1 sm:ml-auto">
+            {["all","draft","scheduled","sending","paused","completed","failed"].map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s as any)}
+                className={`px-2.5 py-1 rounded-md text-xs border ${statusFilter===s? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800':'text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+              >{s}</button>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Resource index list/table */}
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        {loading ? (
+          <div className="p-4 space-y-3 animate-pulse">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-16 rounded bg-gray-100 dark:bg-gray-800" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="p-8 text-center text-gray-600 dark:text-gray-300">No campaigns</div>
+        ) : (
+          <>
+            {/* Mobile list */}
+            <div className="md:hidden divide-y divide-gray-200 dark:divide-gray-800">
+              {filtered.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCampaign(c.id)}
+                  className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-medium text-gray-900 dark:text-white">{c.name}</div>
+                      <div className="text-xs text-gray-500">Created {formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}</div>
+                    </div>
+                    {statusBadge(c.status)}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full table-auto text-sm">
+                <thead className="text-xs uppercase text-gray-500">
+                  <tr className="border-b border-gray-200 dark:border-gray-800">
+                    <th className="px-4 py-3"><input type="checkbox" aria-label="Select all" checked={allVisibleSelected} onChange={toggleSelectAll} /></th>
+                    <th className="text-left px-4 py-3 font-medium cursor-pointer" onClick={() => toggleSort('name')}>Name</th>
+                    <th className="text-left px-4 py-3 font-medium cursor-pointer" onClick={() => toggleSort('created')}>Created</th>
+                    <th className="text-left px-4 py-3 font-medium cursor-pointer" onClick={() => toggleSort('recipients')}>Recipients</th>
+                    <th className="text-left px-4 py-3 font-medium cursor-pointer" onClick={() => toggleSort('sent')}>Sent</th>
+                    <th className="text-left px-4 py-3 font-medium cursor-pointer" onClick={() => toggleSort('failed')}>Failed</th>
+                    <th className="text-left px-4 py-3 font-medium cursor-pointer" onClick={() => toggleSort('status')}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((c) => {
+                    const pct = c.stats.totalRecipients > 0 ? Math.round((c.stats.sentCount / c.stats.totalRecipients) * 100) : 0;
+                    return (
+                      <tr key={c.id} className="border-b last:border-b-0 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">
+                        <td className="px-4 py-3"><input type="checkbox" aria-label={`Select ${c.name}`} checked={selected.has(c.id)} onChange={() => toggleRow(c.id)} /></td>
+                        <td className="px-4 py-3 text-gray-900 dark:text-white font-medium cursor-pointer" onClick={() => setSelectedCampaign(c.id)}>{c.name}</td>
+                        <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}</td>
+                        <td className="px-4 py-3">{c.stats.totalRecipients}</td>
+                        <td className="px-4 py-3">{c.stats.sentCount} <span className="text-gray-500">({pct}%)</span></td>
+                        <td className="px-4 py-3">{c.stats.failedCount}</td>
+                        <td className="px-4 py-3">{statusBadge(c.status)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 

@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Environment Sync Validator",
+  "description": "Synchronise les variables d'environnement",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/.env.example",
+      "**/.env.template"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Deployer Agent, synchronise les environnements :\n\n1. Compare .env.example avec .env.local (si existe)\n2. Identifie les variables manquantes\n3. Vérifie les formats des URLs et configurations\n4. Suggère l'utilisation de AWS Secrets Manager pour les secrets\n5. Valide que les secrets ne sont pas committes\n6. Documente les nouvelles variables dans README.md\n7. Crée des alertes pour les configurations manquantes"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Performance Test Monitor",
+  "description": "Surveille les performances critiques",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/api/**/*.ts",
+      "lib/**/*.ts",
+      "components/**/*.tsx",
+      "app/**/page.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Tester Agent, analyse les performances :\n\n1. Exécute les tests de charge sur les endpoints critiques\n2. Mesure les temps de réponse (objectif < 200ms)\n3. Teste la scalabilité (10k utilisateurs concurrents)\n4. Identifie les goulots d'étranglement\n5. Analyse l'utilisation mémoire et CPU\n6. Vérifie les performances de la base de données\n7. Génère un rapport de performance détaillé\n8. Suggère des optimisations concrètes"
+  }
+}

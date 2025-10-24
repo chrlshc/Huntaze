@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Architecture Validator",
+  "agent": "architect",
+  "description": "Valide l'architecture lors de modifications de specs",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/requirements.md",
+      "**/design.md",
+      "**/architecture/**/*.md",
+      "**/*.architecture.yml"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant qu'Architect Agent, analyse les changements d'architecture :\n\n1. Vérifie la cohérence de l'architecture globale\n2. Valide les patterns de conception choisis\n3. Évalue la scalabilité (objectif : 10k+ utilisateurs concurrents)\n4. Vérifie la compatibilité avec l'infrastructure AWS existante\n5. Identifie les points de défaillance potentiels\n6. Suggère des optimisations d'architecture\n7. Documente les décisions architecturales dans design.md"
+  }
+}

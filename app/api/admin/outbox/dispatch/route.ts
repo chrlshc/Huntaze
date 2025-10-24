@@ -10,6 +10,12 @@ async function handler(req: NextRequest) {
   const auth = req.headers.get('authorization') || ''
   const raw = auth.startsWith('Bearer ') ? auth.slice(7) : (req.headers.get('x-admin-token') || '')
   if (!admin || raw !== admin) return new NextResponse('Unauthorized', { status: 401, headers: { 'WWW-Authenticate': 'Bearer', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
+  // Optional IP allowlist
+  const allow = (process.env.ADMIN_IP_ALLOWLIST || '').split(',').map(s=>s.trim()).filter(Boolean)
+  if (allow.length) {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || ''
+    if (!allow.includes(ip)) return new NextResponse('Forbidden', { status: 403, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
+  }
 
   const rows = await outboxFetchUnsent(50)
   let sent = 0
@@ -24,4 +30,3 @@ async function handler(req: NextRequest) {
 export const POST = withMonitoring('admin.outbox.dispatch', handler)
 export const GET = POST
 export const HEAD = POST
-

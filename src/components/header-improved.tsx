@@ -265,6 +265,11 @@ export default function HeaderImproved() {
               Pricing
             </Link>
 
+            {/* Features anchor */}
+            <Link href="/#features" className="text-text-secondary hover:text-text-primary text-[14px] font-normal">
+              Features
+            </Link>
+
             <MegaMenu label="Resources" groups={resourcesNav} columns={4} align="left" panelAlign="viewport-left" panelGutter={96} footerLinks={[{ title: 'See all resources', href: '/resources' }]} />
           </div>
 
@@ -297,11 +302,11 @@ export default function HeaderImproved() {
                   Log in
                 </Link>
                   <Link 
-                    href="/auth" 
+                    href="/join" 
                     className="btn-outline rounded-full px-5 py-2"
-                    onClick={() => events.ctaClick({ location: 'nav', label: 'Start for free' })}
+                    onClick={() => events.ctaClick({ location: 'nav', label: 'Join Beta' })}
                   >
-                    Start for free
+                    Join Beta
                   </Link>
               </>
             )}

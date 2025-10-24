@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "React Component Generator",
+  "description": "Génère des composants React optimisés avec TypeScript, hooks, gestion d'erreurs, performances et accessibilité",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/components/**/*.tsx",
+      "**/app/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Coder Agent, optimise le nouveau composant React :\n\n1. Ajoute les types TypeScript pour les props\n2. Implémente les hooks appropriés (useState, useEffect, etc.)\n3. Ajoute la gestion d'erreurs et états de chargement\n4. Optimise les performances (memo, useMemo, useCallback)\n5. Assure l'accessibilité (attributs ARIA)\n6. Suit les conventions de style du projet (Tailwind CSS)\n7. Crée le fichier de test associé (.test.tsx)"
+  }
+}

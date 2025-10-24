@@ -1,0 +1,11 @@
+{
+  "containerOverrides": [
+    {
+      "name": "summarizer",
+      "command": [
+        "/bin/sh","-lc",
+        "printenv | egrep '^(AZURE_OPENAI_|DATABASE_URL)=' | sed -E 's/=.*//' ; echo start ; sleep 30 ; echo end"
+      ]
+    }
+  ]
+}

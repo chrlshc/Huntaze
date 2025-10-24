@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Filter, Circle, DollarSign, Star } from 'lucide-react';
+import { Search, Filter, Circle, DollarSign } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
 import { formatDistanceToNow } from 'date-fns';
 import type { OfConversation } from '@/lib/types/onlyfans';
 import OfConversationView from './conversation-view';
@@ -67,7 +68,17 @@ export default function OfInbox() {
       {/* Conversations List */}
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {loading ? (
-          <div className="p-8 text-center text-gray-500">Loading conversations...</div>
+          <div className="p-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-4 py-4 border-b last:border-b-0 border-gray-100 dark:border-gray-700 animate-pulse">
+                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-3 w-64 rounded bg-gray-200 dark:bg-gray-700" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : conversations.length === 0 ? (
           <div className="p-8 text-center text-gray-500">No conversations found</div>
         ) : (
@@ -92,14 +103,14 @@ export default function OfInbox() {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2 mb-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {conversation.displayName || conversation.username}
-                    </h3>
-                    {conversation.tags.includes('VIP') && (
-                      <Star className="w-4 h-4 text-yellow-500" fill="currentColor" />
-                    )}
-                  </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {conversation.displayName || conversation.username}
+                  </h3>
+                  {conversation.tags.includes('VIP') && (
+                    <Badge variant="vip" tone="soft" aria-label="VIP subscriber">VIP</Badge>
+                  )}
+                </div>
                   <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     {formatDistanceToNow(new Date(conversation.lastMessageAt), { addSuffix: true })}
                   </span>

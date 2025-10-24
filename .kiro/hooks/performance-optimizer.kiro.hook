@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Performance Optimizer",
+  "description": "Optimise les performances du code en analysant le bundle size, les re-renders React, le lazy loading, les images, Lighthouse, Prisma, le caching et le code splitting",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/**/*.tsx",
+      "app/**/*.ts",
+      "components/**/*.tsx",
+      "lib/**/*.ts",
+      "next.config.mjs",
+      "package.json",
+      "tailwind.config.mjs"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant qu'Optimizer Agent, optimise les performances :\n\n1. Analyse le bundle size des composants\n2. Identifie les re-renders inutiles dans React\n3. Suggère des optimisations de lazy loading\n4. Optimise les images (formats, tailles, lazy loading)\n5. Analyse les performances Lighthouse\n6. Optimise les requêtes Prisma (N+1 problems)\n7. Suggère des stratégies de caching\n8. Identifie les opportunités de code splitting\n9. Génère un rapport d'optimisation avec mesures concrètes"
+  }
+}

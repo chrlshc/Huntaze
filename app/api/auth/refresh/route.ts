@@ -1,27 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { refreshAccessToken, verifyToken } from '@/lib/auth/jwt';
+import { cookies } from 'next/headers';
+import { AuthService } from '@/lib/services/auth-service';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const newAccess = await refreshAccessToken();
-    if (!newAccess) {
-      return NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 });
+    const cookieStore = cookies();
+    const refreshToken = cookieStore.get('refresh_token')?.value;
+
+    if (!refreshToken) {
+      return NextResponse.json(
+        { error: 'Refresh token manquant' },
+        { status: 401 }
+      );
     }
-    const payload = await verifyToken(newAccess);
-    if (!payload) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+
+    // Effectuer la rotation des tokens
+    const result = await AuthService.refreshTokens(refreshToken);
+
+    if (!result) {
+      // Token invalide ou expiré, supprimer les cookies
+      AuthService.clearAuthCookies();
+      return NextResponse.json(
+        { error: 'Refresh token invalide ou expiré' },
+        { status: 401 }
+      );
     }
-    return NextResponse.json({
-      success: true,
-      user: {
-        id: payload.userId,
-        email: payload.email,
-        name: payload.name,
-        provider: payload.provider,
-      },
+
+    // Configurer les nouveaux cookies
+    AuthService.setAuthCookies({
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+      expiresAt: result.expiresAt
     });
-  } catch (e) {
-    return NextResponse.json({ error: 'Failed to refresh' }, { status: 500 });
+
+    return NextResponse.json({
+      message: 'Tokens renouvelés avec succès'
+    });
+
+  } catch (error) {
+    console.error('Erreur lors du renouvellement des tokens:', error);
+    
+    // En cas d'erreur, supprimer les cookies pour forcer une nouvelle connexion
+    AuthService.clearAuthCookies();
+    
+    return NextResponse.json(
+      { error: 'Erreur lors du renouvellement des tokens' },
+      { status: 500 }
+    );
   }
 }
-

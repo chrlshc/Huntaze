@@ -4,6 +4,8 @@ metadata:
   name: events-outbox-dispatcher
 spec:
   schedule: "*/2 * * * *" # every 2 min
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
   jobTemplate:
@@ -29,4 +31,3 @@ spec:
                     secretKeyRef:
                       name: ai-team
                       key: admin_token
-

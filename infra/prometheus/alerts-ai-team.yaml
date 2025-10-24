@@ -1,0 +1,32 @@
+groups:
+  - name: ai-team.alerts
+    interval: 30s
+    rules:
+      - alert: AzureLLMErrors
+        expr: increase(llm_requests_total{provider="azure",status="error"}[5m]) > 0
+        for: 5m
+        labels: { severity: page }
+        annotations:
+          summary: "Azure LLM errors > 0 over 5m"
+          runbook: "Check /api/ai/azure/smoke, quotas TPM/RPM, and provider logs"
+
+      - alert: AzureLLMLatencyP95High
+        expr: histogram_quantile(0.95, sum by (le) (rate(llm_latency_seconds_bucket{provider="azure"}[$__rate_interval]))) > 3
+        for: 10m
+        labels: { severity: warn }
+        annotations:
+          summary: "Azure LLM p95 latency > 3s for 10m"
+          runbook: "Review quotas, load, and fallback routing"
+
+      - alert: InsightsErrorRateHigh
+        expr: (
+          sum(rate(social_insights_fetch_total{status="error"}[10m]))
+          /
+          clamp_min(sum(rate(social_insights_fetch_total[10m])), 1)
+        ) > 0.1
+        for: 10m
+        labels: { severity: ticket }
+        annotations:
+          summary: "Insights error rate > 10% (10m)"
+          runbook: "Check platform APIs and summarizer"
+

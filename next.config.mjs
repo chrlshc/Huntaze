@@ -7,10 +7,64 @@ const nextConfig = {
   swcMinify: true,
   compress: true,
   output: isExport ? 'export' : 'standalone',
+  poweredByHeader: false,
 
   // Let Amplify set edge/static headers; avoid duplication here
+  // We still add a CSP in Report-Only to iterate safely.
   async headers() {
-    return []
+    const reportEndpoint = process.env.CSP_REPORT_ENDPOINT || ''
+    const dev = process.env.NODE_ENV === 'development'
+    const cspDirectives = [
+      "default-src 'self'",
+      "base-uri 'self'",
+      "frame-ancestors 'none'",
+      "object-src 'none'",
+      "form-action 'self'",
+      // Scripts: start strict in Report-Only; add nonces/hashes before enforce
+      `script-src 'self'${dev ? " 'unsafe-eval'" : ''}`,
+      // Styles: allow inline during transition; tighten later with nonces
+      "style-src 'self' 'unsafe-inline'",
+      // Images: self + data URIs + known CDNs used by the app
+      "img-src 'self' data: https://cdn.huntaze.com https://static.onlyfansassets.com",
+      // Fonts: self + data URIs
+      "font-src 'self' data:",
+      // Network: allow same-origin, HTTPS endpoints, and websockets
+      "connect-src 'self' https: wss:",
+      // Upgrade any stray http links to https in browsers
+      'upgrade-insecure-requests',
+      // Send violations to our endpoint (legacy directive for broad UA support)
+      'report-uri /api/csp/report',
+    ]
+
+    // If an absolute report endpoint is provided, use modern Reporting API too
+    if (reportEndpoint) {
+      cspDirectives.push("report-to csp")
+    }
+
+    const csp = cspDirectives.join('; ')
+
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Content-Security-Policy-Report-Only', value: csp },
+          // Modern Reporting API (optional; requires absolute URL)
+          ...(reportEndpoint
+            ? [
+                {
+                  key: 'Report-To',
+                  value: JSON.stringify({
+                    group: 'csp',
+                    max_age: 60 * 60 * 24 * 30, // 30d
+                    endpoints: [{ url: reportEndpoint }],
+                  }),
+                },
+                { key: 'Reporting-Endpoints', value: `csp=${reportEndpoint}` },
+              ]
+            : []),
+        ],
+      },
+    ]
   },
 
   // Minimal rewrites

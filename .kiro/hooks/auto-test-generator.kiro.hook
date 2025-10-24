@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Auto Test Generator",
+  "description": "Génère automatiquement les tests unitaires",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/src/**/*.ts",
+      "**/src/**/*.tsx",
+      "!**/*.test.ts",
+      "!**/*.test.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant que Tester Agent, génère les tests appropriés :\n\n1. Identifie les nouvelles fonctions ou modifications\n2. Crée/met à jour les fichiers de test Jest correspondants\n3. Couvre les cas normaux, limites et erreurs\n4. Atteins minimum 80% de couverture de code\n5. Utilise les mocks appropriés pour les dépendances externes\n6. Teste les comportements asynchrones correctement\n7. Ajoute des tests de régression pour les bugs corrigés\n8. Vérifie que tous les tests passent avant de sauvegarder"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Technology Stack Advisor",
+  "agent": "architect",
+  "description": "Conseille sur les choix technologiques",
+  "version": "1",
+  "when": {
+    "type": "manual"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "En tant qu'Architect Agent, analyse la stack technologique actuelle :\n\n1. Examine package.json et les dépendances\n2. Identifie les technologies obsolètes ou sous-optimales\n3. Suggère des alternatives modernes et performantes\n4. Évalue l'impact sur l'infrastructure AWS (coûts, performances)\n5. Propose un plan de migration si nécessaire\n6. Documente les recommandations dans tech-stack-analysis.md"
+  }
+}
