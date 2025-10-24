@@ -326,7 +326,7 @@ html, body {
   
   /* Premium card */
   .premium-card {
-    @apply bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 hover:shadow-premium-lg;
+    @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl;
   }
 
   /* Debug: disable overlays and glass when data-no-overlay is set (does not affect default UI) */
@@ -1330,7 +1330,7 @@ a:focus-visible {
   }
   
   .mobile-menu-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+    @apply fixed inset-0 bg-black/50 z-40;
   }
   
   /* Stack elements on mobile */

@@ -1,4 +1,5 @@
 /* Auth Page Specific Styles using Huntaze Design Tokens */
+@reference "tailwindcss";
 
 /* Button styles using our design system */
 .btn-primary {

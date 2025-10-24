@@ -1,14 +1,18 @@
 /* Dashboard Styles using Huntaze Design System */
+@reference "tailwindcss";
 
 /* Navigation Items */
 .nav-item {
   @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all;
-  @apply text-content-secondary hover:text-content-primary;
-  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+  color: var(--color-content-secondary);
+}
+.nav-item:hover {
+  color: var(--color-content-primary);
 }
 
 .nav-item.active {
-  @apply text-content-primary font-medium;
+  @apply font-medium;
+  color: var(--color-content-primary);
   background: var(--gradient-primary);
   background-clip: padding-box;
   position: relative;
@@ -46,8 +50,8 @@
 
 /* Cards */
 .card {
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border border-border-light dark:border-border;
+  background: var(--color-surface-elevated-light);
+  border: 1px solid var(--color-border-light);
   @apply rounded-xl overflow-hidden;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
@@ -58,18 +62,19 @@
 }
 
 .card-header {
-  @apply p-6 border-b border-border-light dark:border-border;
-  @apply flex items-center justify-between;
+  @apply p-6 flex items-center justify-between;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .card-title {
-  @apply text-xl font-bold text-content-primary;
+  @apply text-xl font-bold;
+  color: var(--color-content-primary);
 }
 
 /* Stat Cards */
 .stat-card {
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border border-border-light dark:border-border;
+  background: var(--color-surface-elevated-light);
+  border: 1px solid var(--color-border-light);
   @apply rounded-xl p-6;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
@@ -86,11 +91,13 @@
 }
 
 .stat-value {
-  @apply text-3xl font-bold text-content-primary;
+  @apply text-3xl font-bold;
+  color: var(--color-content-primary);
 }
 
 .stat-label {
-  @apply text-sm text-content-tertiary mt-1;
+  @apply text-sm mt-1;
+  color: var(--color-content-tertiary);
 }
 
 .stat-badge {
@@ -107,8 +114,8 @@
 
 /* Platform Cards */
 .platform-card {
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border border-border-light dark:border-border;
+  background: var(--color-surface-elevated-light);
+  border: 1px solid var(--color-border-light);
   @apply rounded-xl p-6;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
@@ -122,7 +129,7 @@
 /* Quick Action Items */
 .quick-action-item {
   @apply p-4 rounded-lg;
-  @apply border border-border-light dark:border-border;
+  border: 1px solid var(--color-border-light);
   @apply hover:border-purple-600/30 hover:bg-surface-hover-light dark:hover:bg-surface-hover;
   @apply transition-all cursor-pointer;
 }
@@ -152,14 +159,14 @@
 
 .btn-secondary {
   @apply px-4 py-2 rounded-lg font-medium transition-all text-center inline-flex items-center justify-center gap-2;
-  @apply bg-surface-hover-light dark:bg-surface-hover;
-  @apply text-content-primary;
-  @apply border border-border-light dark:border-border;
+  background: var(--color-surface-hover-light);
+  color: var(--color-content-primary);
+  border: 1px solid var(--color-border-light);
 }
 
 .btn-secondary:hover {
-  @apply bg-surface-light dark:bg-surface;
-  @apply border-border dark:border-border-light;
+  background: var(--color-surface-light);
+  border-color: var(--color-border);
 }
 
 .btn-outline {

@@ -26,7 +26,13 @@
 
 /* Glass Variants */
 .glass-card {
-  @apply glass;
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  border-radius: 20px;
+  transform: translateZ(0);
+  will-change: transform;
   padding: 2rem;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
@@ -37,7 +43,13 @@
 }
 
 .glass-navbar {
-  @apply glass;
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  border-radius: 20px;
+  transform: translateZ(0);
+  will-change: transform;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -48,7 +60,13 @@
 }
 
 .glass-button {
-  @apply glass;
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border-light);
+  border-radius: 20px;
+  transform: translateZ(0);
+  will-change: transform;
   padding: 0.75rem 1.5rem;
   transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
 }
@@ -118,21 +136,42 @@
 }
 
 .skeleton-text {
-  @apply skeleton;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
   height: 1em;
   border-radius: 4px;
   margin-bottom: 0.5em;
 }
 
 .skeleton-button {
-  @apply skeleton;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
   height: 3rem;
   border-radius: 8px;
   width: 120px;
 }
 
 .skeleton-card {
-  @apply skeleton;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
   height: 200px;
   border-radius: 20px;
 }
