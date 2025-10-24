@@ -6,9 +6,9 @@ import { getServerAuth } from '@/lib/server-auth';
 import { triggerAssetEvents } from '@/lib/services/sse-events';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Update asset schema
@@ -20,7 +20,8 @@ const UpdateAssetSchema = z.object({
   scheduledDate: z.string().datetime().optional(),
 });
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, props: RouteParams) {
+  const params = await props.params;
   return withErrorHandling(async () => {
     const auth = await getServerAuth();
     if (!auth.user) {
@@ -75,7 +76,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   });
 }
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(request: NextRequest, props: RouteParams) {
+  const params = await props.params;
   return withErrorHandling(async () => {
     const auth = await getServerAuth();
     if (!auth.user) {
@@ -136,7 +138,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   });
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, props: RouteParams) {
+  const params = await props.params;
   return withErrorHandling(async () => {
     const auth = await getServerAuth();
     if (!auth.user) {

@@ -1,8 +1,6 @@
 /* Use system font stack locally to avoid remote CSS and CSP issues */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Import mobile overrides after Tailwind */
 @import '../styles/mobile-tailwind-override.css';

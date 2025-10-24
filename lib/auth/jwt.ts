@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 
 // JWT secret handling
 function getSecret(): Uint8Array {
@@ -68,12 +68,12 @@ export function setAuthCookies(accessToken: string, refreshToken: string) {
     path: '/',
   };
 
-  cookies().set('access_token', accessToken, {
+  (cookies() as unknown as UnsafeUnwrappedCookies).set('access_token', accessToken, {
     ...cookieOptions,
     maxAge: 60 * 60, // 1 hour
   });
 
-  cookies().set('refresh_token', refreshToken, {
+  (cookies() as unknown as UnsafeUnwrappedCookies).set('refresh_token', refreshToken, {
     ...cookieOptions,
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });
@@ -81,7 +81,7 @@ export function setAuthCookies(accessToken: string, refreshToken: string) {
 
 // Get current user from cookies
 export async function getCurrentUser(): Promise<UserPayload | null> {
-  const accessToken = cookies().get('access_token')?.value;
+  const accessToken = (await cookies()).get('access_token')?.value;
   
   if (!accessToken) {
     return null;
@@ -92,14 +92,14 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
 
 // Clear auth cookies
 export function clearAuthCookies() {
-  cookies().delete('access_token');
-  cookies().delete('refresh_token');
-  cookies().delete('session');
+  (cookies() as unknown as UnsafeUnwrappedCookies).delete('access_token');
+  (cookies() as unknown as UnsafeUnwrappedCookies).delete('refresh_token');
+  (cookies() as unknown as UnsafeUnwrappedCookies).delete('session');
 }
 
 // Refresh access token using refresh token
 export async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = cookies().get('refresh_token')?.value;
+  const refreshToken = (await cookies()).get('refresh_token')?.value;
   
   if (!refreshToken) {
     return null;
@@ -122,7 +122,7 @@ export async function refreshAccessToken(): Promise<string | null> {
       .sign(getSecret());
 
     // Update cookies
-    cookies().set('access_token', newAccess, {
+    (await cookies()).set('access_token', newAccess, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -130,7 +130,7 @@ export async function refreshAccessToken(): Promise<string | null> {
       maxAge: 60 * 60,
     });
     // Legacy compatibility cookie
-    cookies().set('auth_token', newAccess, {
+    (await cookies()).set('auth_token', newAccess, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 
 export interface TikTokUser {
   id: string;
@@ -21,13 +21,13 @@ export class TikTokService {
   }
 
   async getAccessToken(): Promise<string | null> {
-    const cookieStore = cookies();
+    const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
     const token = cookieStore.get('tiktok_access_token');
     return token?.value || null;
   }
 
   async getCurrentUser(): Promise<TikTokUser | null> {
-    const cookieStore = cookies();
+    const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
     const userCookie = cookieStore.get('tiktok_user');
     
     if (!userCookie?.value) return null;
@@ -126,7 +126,7 @@ export class TikTokService {
   }
 
   async disconnect(): Promise<void> {
-    const cookieStore = cookies();
+    const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
     cookieStore.delete('tiktok_access_token');
     cookieStore.delete('tiktok_user');
   }

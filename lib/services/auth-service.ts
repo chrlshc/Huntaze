@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { createHash, randomUUID } from 'crypto';
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
@@ -232,7 +232,7 @@ export class AuthService {
     refreshToken: string;
     expiresAt: Date;
   }): void {
-    const cookieStore = cookies();
+    const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
     const isProduction = process.env.NODE_ENV === 'production';
 
     // Access token en cookie httpOnly
@@ -258,7 +258,7 @@ export class AuthService {
    * Supprime les cookies d'authentification
    */
   static clearAuthCookies(): void {
-    const cookieStore = cookies();
+    const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
 
     cookieStore.delete('access_token');
     cookieStore.delete('refresh_token');
@@ -268,7 +268,7 @@ export class AuthService {
    * Récupère l'utilisateur depuis les cookies
    */
   static async getUserFromCookies(): Promise<JWTPayload | null> {
-    const cookieStore = cookies();
+    const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
     const accessToken = cookieStore.get('access_token')?.value;
 
     if (!accessToken) {

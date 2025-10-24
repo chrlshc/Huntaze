@@ -7,14 +7,14 @@ export async function GET(request: Request) {
     const goto = searchParams.get("goto") || "onboarding";
     
     // Set a simple dev cookie
-    cookies().set("dev-bypass", "true", {
+    (await cookies()).set("dev-bypass", "true", {
       httpOnly: true,
       path: "/",
       maxAge: 60 * 60 * 24 // 24 hours
     });
     
     // Mock user data in cookie
-    cookies().set("dev-user", JSON.stringify({
+    (await cookies()).set("dev-user", JSON.stringify({
       id: "dev-123",
       email: "dev@huntaze.com",
       name: "Dev User",

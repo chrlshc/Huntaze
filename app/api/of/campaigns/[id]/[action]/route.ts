@@ -7,8 +7,9 @@ const campaigns: any[] = [];
 // POST - Launch or Pause campaign
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string; action: string } }
+  props: { params: Promise<{ id: string; action: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {

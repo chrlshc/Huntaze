@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
   if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   const payload = await request.json();
@@ -15,7 +16,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   return NextResponse.json(data, { status: resp.status });
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const token = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
   if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   const resp = await fetch(`${API_URL}/schedule/${params.id}`, {

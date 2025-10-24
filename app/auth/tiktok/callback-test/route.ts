@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   console.log('All params:', Object.fromEntries(searchParams.entries()));
   
   // For testing, just set a simple cookie
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.set('tiktok_test', 'callback_received', {
     httpOnly: false,
     secure: false,

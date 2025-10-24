@@ -7,7 +7,8 @@ async function getUserId(request: NextRequest): Promise<string | null> {
   return user?.userId || null;
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   const updated = crmData.markMessageRead(userId, params.id);

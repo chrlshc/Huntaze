@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { markCompleted } from '@/app/api/_store/onboarding';
 
 export async function GET(req: Request) {
-  const authToken = cookies().get('auth_token')?.value;
+  const authToken = (await cookies()).get('auth_token')?.value;
   const isDev = process.env.NODE_ENV !== 'production';
   const url = new URL(req.url);
   const isLocalHost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     });
     
     // Update in-memory status (if token available)
-    const token = cookies().get('access_token')?.value || cookies().get('auth_token')?.value || 'dev';
+    const token = (await cookies()).get('access_token')?.value || (await cookies()).get('auth_token')?.value || 'dev';
     if (token) {
       try { markCompleted(token); } catch {}
     }

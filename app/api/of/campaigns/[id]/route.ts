@@ -6,10 +6,8 @@ import type { CampaignMetrics } from '@/lib/types/onlyfans';
 const campaigns: any[] = [];
 
 // GET - Get campaign details with metrics
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getServerSession();
     if (!session?.user?.id) {

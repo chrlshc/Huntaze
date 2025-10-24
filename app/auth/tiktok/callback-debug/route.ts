@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
 
     if (tokenData.data?.access_token) {
       // Success! Store the token
-      const cookieStore = cookies();
+      const cookieStore = await cookies();
       cookieStore.set('tiktok_access_token', tokenData.data.access_token, {
         httpOnly: true,
         secure: appBase.startsWith('https://'),

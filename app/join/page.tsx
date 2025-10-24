@@ -1,6 +1,7 @@
 export const dynamic = 'force-static'
 
-export default function JoinBetaPage({ searchParams }: { searchParams?: Record<string, string> }) {
+export default async function JoinBetaPage(props: { searchParams?: Promise<Record<string, string>> }) {
+  const searchParams = await props.searchParams;
   const email = (searchParams && searchParams['email']) || ''
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100">

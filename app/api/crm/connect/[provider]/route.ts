@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { crmConnections, CrmProviderId } from '@/lib/services/crmConnections';
 import { getUserFromRequest } from '@/lib/auth/request';
 
-export async function POST(request: NextRequest, { params }: { params: { provider: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ provider: string }> }) {
+  const params = await props.params;
   try {
     const user = await getUserFromRequest(request);
     if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -44,7 +45,8 @@ export async function POST(request: NextRequest, { params }: { params: { provide
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { provider: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ provider: string }> }) {
+  const params = await props.params;
   try {
     const user = await getUserFromRequest(request);
     if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });

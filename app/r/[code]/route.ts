@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://app.huntaze.com/api';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { code: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ code: string }> }) {
+  const params = await props.params;
   try {
     const { code } = params;
     
