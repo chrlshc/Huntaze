@@ -1603,3 +1603,101 @@ p, span, h1, h2, h3, h4, h5, h6, li, a {
     animation: none;
   }
 }
+
+
+/* ============================================
+   AUTH SYSTEM DESIGN TOKENS
+   ============================================ */
+
+:root {
+  /* Auth Color Palette */
+  --auth-primary: #6366f1;        /* Indigo 500 */
+  --auth-primary-hover: #4f46e5;  /* Indigo 600 */
+  --auth-success: #10b981;         /* Green 500 */
+  --auth-success-light: #d1fae5;   /* Green 100 */
+  --auth-error: #ef4444;           /* Red 500 */
+  --auth-error-light: #fee2e2;     /* Red 100 */
+  
+  /* Auth Neutral Colors */
+  --auth-gray-50: #f9fafb;
+  --auth-gray-100: #f3f4f6;
+  --auth-gray-200: #e5e7eb;
+  --auth-gray-300: #d1d5db;
+  --auth-gray-500: #6b7280;
+  --auth-gray-700: #374151;
+  --auth-gray-900: #111827;
+  
+  /* Auth Typography */
+  --auth-font-family: 'Inter', system-ui, sans-serif;
+  
+  /* Auth Transitions */
+  --auth-transition-fast: 150ms ease;
+  --auth-transition-base: 200ms ease;
+  --auth-transition-slow: 300ms ease;
+}
+
+/* Auth Component Styles */
+@layer components {
+  /* Auth Card */
+  .auth-card {
+    @apply max-w-md w-full mx-auto p-8 bg-white rounded-xl shadow-lg;
+  }
+  
+  /* Keyboard navigation - visible focus for all interactive elements */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-2 ring-auth-primary ring-offset-2;
+  }
+
+  /* Auth Input */
+  .auth-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg text-base transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-auth-primary focus:border-transparent;
+  }
+  
+  .auth-input.error {
+    @apply border-auth-error focus:ring-auth-error;
+  }
+  
+  .auth-input.success {
+    @apply border-auth-success focus:ring-auth-success;
+  }
+  
+  /* Auth Button */
+  .auth-button {
+    @apply px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .auth-button.primary {
+    @apply bg-auth-primary text-white hover:bg-auth-primary-hover;
+    @apply focus:ring-auth-primary;
+  }
+  
+  .auth-button.secondary {
+    @apply bg-gray-200 text-gray-900 hover:bg-gray-300;
+    @apply focus:ring-gray-500;
+  }
+  
+  .auth-button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  
+  /* Auth Label */
+  .auth-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+  }
+  
+  /* Auth Error Message */
+  .auth-error-message {
+    @apply text-sm text-auth-error mt-1;
+  }
+  
+  /* Auth Success Message */
+  .auth-success-message {
+    @apply text-sm text-auth-success mt-1;
+  }
+}
