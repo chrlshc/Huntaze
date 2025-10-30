@@ -21,12 +21,12 @@ export default function NewCampaignPage() {
                 className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Retour aux campagnes</span>
+                <span className="text-sm">Back to campaigns</span>
               </Link>
             </div>
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-purple-600" />
-              <span className="font-semibold">Nouvelle Campagne</span>
+              <span className="font-semibold">New Campaign</span>
             </div>
           </div>
         </div>
@@ -40,9 +40,9 @@ export default function NewCampaignPage() {
             <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Fonctionnalité à venir</h2>
+            <h2 className="text-2xl font-bold mb-2">Feature Coming Soon</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              La création de campagnes automatisées n'est pas encore disponible. Cette fonctionnalité sera ajoutée prochainement.
+              Automated campaign creation is not yet available. This feature will be added soon.
             </p>
 
             {/* What's Coming */}
@@ -50,14 +50,14 @@ export default function NewCampaignPage() {
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
                 <div>
-                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">Bientôt disponible :</p>
+                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">Coming soon:</p>
                   <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                    <li>• Campagnes de messages ciblées</li>
-                    <li>• Segmentation par tags et comportement</li>
-                    <li>• A/B testing des messages</li>
-                    <li>• Planification et automatisation</li>
-                    <li>• Analytics de performance</li>
-                    <li>• Templates réutilisables</li>
+                    <li>• Targeted message campaigns</li>
+                    <li>• Segmentation by tags and behavior</li>
+                    <li>• A/B testing for messages</li>
+                    <li>• Scheduling and automation</li>
+                    <li>• Performance analytics</li>
+                    <li>• Reusable templates</li>
                   </ul>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export default function NewCampaignPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Retour aux campagnes
+                Back to campaigns
               </Link>
             </div>
           </div>
@@ -79,4 +79,3 @@ export default function NewCampaignPage() {
     </div>
   );
 }
-

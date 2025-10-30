@@ -22,12 +22,12 @@ export default function BulkMessagesPage() {
                 className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Retour aux messages</span>
+                <span className="text-sm">Back to messages</span>
               </Link>
             </div>
             <div className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-purple-600" />
-              <span className="font-semibold">Messages groupés</span>
+              <span className="font-semibold">Bulk Messages</span>
             </div>
           </div>
         </div>
@@ -41,9 +41,9 @@ export default function BulkMessagesPage() {
             <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Fonctionnalité à venir</h2>
+            <h2 className="text-2xl font-bold mb-2">Feature Coming Soon</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Les messages groupés ne sont pas encore disponibles. Cette fonctionnalité sera ajoutée prochainement.
+              Bulk messaging is not yet available. This feature will be added soon.
             </p>
 
             {/* What's Coming */}
@@ -51,13 +51,13 @@ export default function BulkMessagesPage() {
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
                 <div>
-                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">Ce qui arrive :</p>
+                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-2">What's coming:</p>
                   <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                    <li>• Envoi de messages à plusieurs fans</li>
-                    <li>• Templates réutilisables</li>
-                    <li>• Segmentation par tags</li>
-                    <li>• Planification des envois</li>
-                    <li>• Statistiques de performance</li>
+                    <li>• Send messages to multiple fans</li>
+                    <li>• Reusable templates</li>
+                    <li>• Segmentation by tags</li>
+                    <li>• Schedule message delivery</li>
+                    <li>• Performance statistics</li>
                   </ul>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export default function BulkMessagesPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Retour aux messages
+                Back to messages
               </Link>
             </div>
           </div>

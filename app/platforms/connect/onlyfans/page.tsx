@@ -35,15 +35,15 @@ export default function OnlyFansConnectPage() {
     setError('');
     setNotice('');
     if (!username || !password) {
-      setError('Veuillez saisir votre identifiant et mot de passe OnlyFans');
+      setError('Please enter your OnlyFans username and password');
       return;
     }
     try {
       setLoading(true);
       await ofIntegrationApi.connect({ username, password, totp: totp || undefined });
-      setNotice("OnlyFans connecté. La synchronisation démarre…");
+      setNotice("OnlyFans connected. Synchronization starting…");
     } catch (e: any) {
-      setError(e?.message || 'Échec de connexion.');
+      setError(e?.message || 'Connection failed.');
     } finally {
       setLoading(false);
     }
@@ -53,27 +53,27 @@ export default function OnlyFansConnectPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/platforms/connect" className="text-sm text-gray-600 hover:text-gray-900">← Retour</Link>
-          <h1 className="text-lg font-semibold">Connecter OnlyFans</h1>
+          <Link href="/platforms/connect" className="text-sm text-gray-600 hover:text-gray-900">← Back</Link>
+          <h1 className="text-lg font-semibold">Connect OnlyFans</h1>
           <div />
         </div>
       </header>
       <main className="max-w-xl mx-auto p-6">
         <ComplianceNotice platform="OnlyFans" />
         <div className="bg-white border border-gray-200 rounded-xl p-6">
-          <p className="text-sm text-gray-600 mb-4">Deux options aujourd'hui: importer un CSV officiel d'OnlyFans pour l'analytics, ou vous inscrire à la liste d’attente pour l'API officielle.</p>
+          <p className="text-sm text-gray-600 mb-4">Two options available today: import an official OnlyFans CSV for analytics, or join the waitlist for the official API.</p>
           
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
             <div className="flex items-start gap-2">
               <span className="text-amber-600">⚠️</span>
               <div className="text-sm text-amber-800">
-                <p className="font-medium mb-1">Fonctionnalité limitée</p>
-                <p>Actuellement, seul l'import CSV est disponible. Pour exporter vos données :</p>
+                <p className="font-medium mb-1">Limited functionality</p>
+                <p>Currently, only CSV import is available. To export your data:</p>
                 <ol className="list-decimal ml-4 mt-2">
-                  <li>Connectez-vous à OnlyFans</li>
-                  <li>Allez dans Settings → Statements</li>
-                  <li>Exportez vos données en CSV</li>
-                  <li>Importez le fichier ici</li>
+                  <li>Log in to OnlyFans</li>
+                  <li>Go to Settings → Statements</li>
+                  <li>Export your data as CSV</li>
+                  <li>Import the file here</li>
                 </ol>
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function OnlyFansConnectPage() {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    setNotice(`Fichier "${file.name}" sélectionné. L'import CSV sera bientôt disponible.`);
+                    setNotice(`File "${file.name}" selected. CSV import will be available soon.`);
                   }
                 }}
               />
@@ -101,8 +101,8 @@ export default function OnlyFansConnectPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <span className="text-sm text-gray-600">Cliquez pour importer un fichier CSV</span>
-                <span className="text-xs text-gray-500">ou glissez-déposez ici</span>
+                <span className="text-sm text-gray-600">Click to import a CSV file</span>
+                <span className="text-xs text-gray-500">or drag and drop here</span>
               </label>
             </div>
             {notice && <div className="text-green-600 text-sm">{notice}</div>}
@@ -124,28 +124,28 @@ export default function OnlyFansConnectPage() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({}),
                     });
-                    setNotice('Inscrit à la liste d’attente API OnlyFans. Nous vous contacterons.');
+                    setNotice('Added to OnlyFans API waitlist. We will contact you.');
                   } catch (e: any) {
-                    setError(e?.message || 'Échec de l’inscription à la liste d’attente.');
+                    setError(e?.message || 'Failed to join waitlist.');
                   } finally {
                     setWaitlistLoading(false);
                   }
                 }}
                 className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-60"
               >
-                {waitlistLoading ? 'Inscription…' : 'Rejoindre la waitlist API'}
+                {waitlistLoading ? 'Joining…' : 'Join API Waitlist'}
               </button>
             </div>
             
             <div className="opacity-50 pointer-events-none">
-              <p className="text-xs text-gray-500 mb-2">Connexion directe (bientôt disponible) :</p>
-              <input className="w-full p-3 border border-gray-300 rounded-lg" placeholder="Identifiant OnlyFans" disabled />
-              <input type="password" className="w-full p-3 border border-gray-300 rounded-lg mt-2" placeholder="Mot de passe OnlyFans" disabled />
+              <p className="text-xs text-gray-500 mb-2">Direct connection (coming soon):</p>
+              <input className="w-full p-3 border border-gray-300 rounded-lg" placeholder="OnlyFans Username" disabled />
+              <input type="password" className="w-full p-3 border border-gray-300 rounded-lg mt-2" placeholder="OnlyFans Password" disabled />
               <button disabled className="w-full py-2.5 bg-gray-400 text-white rounded-lg font-medium mt-2">
-                Connexion directe (à venir)
+                Direct connection (coming soon)
               </button>
             </div>
-            <div className="text-xs text-gray-500">Après connexion, consultez <Link className="underline" href="/messages/onlyfans">Messages → OnlyFans</Link> et cliquez sur “Sync Now”.</div>
+            <div className="text-xs text-gray-500">After connecting, visit <Link className="underline" href="/messages/onlyfans">Messages → OnlyFans</Link> and click "Sync Now".</div>
           </div>
         </div>
       </main>
