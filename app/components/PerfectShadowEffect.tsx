@@ -12,7 +12,7 @@ export default function PerfectShadowEffect() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Classe pour créer les lignes d'ombre néon AUTOUR du contenu
+    // Class to create neon shadow lines AROUND the content
     class ShadowLinesEffect {
       shadowLines: any[] = [];
       floatingOrbs: any[] = [];
@@ -55,7 +55,7 @@ export default function PerfectShadowEffect() {
       }
       
       createShadowLines() {
-        // Créer des lignes qui flottent AUTOUR du contenu central
+        // Create lines that float AROUND the central content
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         const radius = 300;

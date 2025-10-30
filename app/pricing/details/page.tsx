@@ -11,7 +11,7 @@ export default function PricingDetailsPage() {
           className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:underline mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Retour aux plans
+          Back to plans
         </Link>
         
         <PlanDetails />
