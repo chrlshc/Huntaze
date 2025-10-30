@@ -24,6 +24,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Auth System Design Colors
+        auth: {
+          primary: '#6366f1',        // Indigo 500
+          'primary-hover': '#4f46e5', // Indigo 600
+          success: '#10b981',         // Green 500
+          'success-light': '#d1fae5', // Green 100
+          error: '#ef4444',           // Red 500
+          'error-light': '#fee2e2',   // Red 100
+        },
         // Huntaze Design System Colors
         surface: {
           DEFAULT: 'var(--color-surface)',
@@ -87,6 +96,9 @@ export default {
           active: 'var(--accent-active)',
           muted: 'var(--accent-muted)',
         },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

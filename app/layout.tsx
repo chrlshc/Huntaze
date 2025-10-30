@@ -41,6 +41,7 @@ import RemoveDarkOverlay from "@/components/RemoveDarkOverlay";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import MobileLightTheme from "@/components/MobileLightTheme";
 import MobileForceLightCSS from "@/components/MobileForceLightCSS";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 // Sidebar disabled on marketing pages to avoid overlay
 // import AppSidebar from "@/src/components/app-sidebar";
 
@@ -226,10 +227,12 @@ export default function RootLayout({
           </svg>
         ` }} />
         <Providers>
-          {/* Enterprise page has its own navigation and footer */}
-          <main id="main" className="app-main content min-h-screen">
-            {children}
-          </main>
+          <AuthProvider>
+            {/* Enterprise page has its own navigation and footer */}
+            <main id="main" className="app-main content min-h-screen">
+              {children}
+            </main>
+          </AuthProvider>
         </Providers>
       </body>
     </html>
