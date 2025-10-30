@@ -303,6 +303,8 @@ describe('SimpleUserService', () => {
       const mockDate = new Date('2024-01-15T10:00:00Z');
       vi.setSystemTime(mockDate);
 
+      mockPrisma.user.update.mockResolvedValue({});
+
       await userService.deleteUser('user-123');
 
       expect(mockPrisma.user.update).toHaveBeenCalledWith(
@@ -640,6 +642,9 @@ describe('SimpleUserService', () => {
 
   describe('Data Isolation', () => {
     it('should always filter by deletedAt: null', async () => {
+      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      mockPrisma.user.update.mockResolvedValue(mockUser);
+
       await userService.getUserById('user-123');
       await userService.getUserByEmail('test@example.com');
       await userService.updateUser('user-123', { name: 'Test' });
@@ -660,6 +665,9 @@ describe('SimpleUserService', () => {
 
     it('should ensure user data isolation in all operations', async () => {
       const userId = 'user-123';
+
+      mockPrisma.user.findUnique.mockResolvedValue(mockUser);
+      mockPrisma.user.update.mockResolvedValue(mockUser);
 
       await userService.getUserById(userId);
       await userService.updateUser(userId, { name: 'Test' });

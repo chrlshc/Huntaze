@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { sanitizeUserId } from '@/lib/utils/validation';
 
 // Mock user data service
 const mockUserDataService = {
@@ -121,18 +122,14 @@ describe('User Data Isolation', () => {
     });
 
     it('should sanitize user input in queries', () => {
-      const sanitizeUserId = (userId: string) => {
-        // Remove any SQL injection attempts
-        return userId.replace(/[^a-zA-Z0-9_-]/g, '');
-      };
-
       const maliciousUserId = "user1'; DROP TABLE users; --";
       const sanitizedId = sanitizeUserId(maliciousUserId);
 
       expect(sanitizedId).toBe('user1DROPTABLEusers');
       expect(sanitizedId).not.toContain(';');
       expect(sanitizedId).not.toContain('--');
-      expect(sanitizedId).not.toContain('DROP');
+      expect(sanitizedId).not.toContain(' '); // No spaces
+      expect(sanitizedId).not.toContain("'"); // No quotes
     });
   });
 

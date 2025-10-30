@@ -1,4 +1,5 @@
 import React from 'react';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { AdminLayout } from '@/components/admin/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -368,3 +369,7 @@ export default function HomePage() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return { props: {} };
+};

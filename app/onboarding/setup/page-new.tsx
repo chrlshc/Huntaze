@@ -228,7 +228,7 @@ export default function OnboardingSetupPage() {
               {/* Display Name */}
               <div className="form-group">
                 <label className="form-label">
-                  Display Name <span className="text-content-tertiary">(optional)</span>
+                  Display Name <span className="text-(--color-content-tertiary)">(optional)</span>
                 </label>
                 <input
                   type="text"
@@ -288,7 +288,7 @@ export default function OnboardingSetupPage() {
               {/* Bio */}
               <div className="form-group">
                 <label className="form-label">
-                  Bio <span className="text-content-tertiary">(optional)</span>
+                  Bio <span className="text-(--color-content-tertiary)">(optional)</span>
                 </label>
                 <textarea
                   rows={3}
@@ -302,7 +302,7 @@ export default function OnboardingSetupPage() {
               {/* Timezone */}
               <div className="form-group">
                 <label className="form-label">
-                  Timezone <span className="text-content-tertiary">(for optimal posting)</span>
+                  Timezone <span className="text-(--color-content-tertiary)">(for optimal posting)</span>
                 </label>
                 <select
                   value={formData.timezone}
@@ -502,7 +502,7 @@ export default function OnboardingSetupPage() {
                           </div>
                         </div>
                         <div className="platform-badge">
-                          <span className="text-content-tertiary text-sm">Soon</span>
+                          <span className="text-(--color-content-tertiary) text-sm">Soon</span>
                         </div>
                       </div>
                     );
@@ -572,7 +572,7 @@ export default function OnboardingSetupPage() {
                 <Info className="w-5 h-5 flex-shrink-0" />
                 <div>
                   <p className="font-medium mb-1">Platform connections are optional</p>
-                  <p className="text-sm text-content-tertiary">
+                  <p className="text-sm text-(--color-content-tertiary)">
                     You can connect platforms now or add them later from your dashboard. 
                     Each platform unlocks specific features and automation capabilities.
                   </p>
@@ -604,7 +604,7 @@ export default function OnboardingSetupPage() {
                   <p className="font-medium">
                     AI optimized for {niches.find(n => n.id === formData.niche)?.name}
                   </p>
-                  <p className="text-sm text-content-tertiary">
+                  <p className="text-sm text-(--color-content-tertiary)">
                     Your assistant will be trained with industry-specific knowledge and communication styles
                   </p>
                 </div>
@@ -711,16 +711,16 @@ export default function OnboardingSetupPage() {
             </div>
             
             <div className="mt-8">
-              <h2 className="text-3xl font-bold text-content-primary mb-3">
+              <h2 className="text-3xl font-bold text-(--color-content-primary) mb-3">
                 You're all set! 🎉
               </h2>
-              <p className="text-lg text-content-secondary mb-8">
+              <p className="text-lg text-(--color-content-secondary) mb-8">
                 Your personalized dashboard is ready to help you grow
               </p>
             </div>
 
             <div className="complete-summary">
-              <h3 className="font-semibold text-content-primary mb-4">Setup Summary:</h3>
+              <h3 className="font-semibold text-(--color-content-primary) mb-4">Setup Summary:</h3>
               <div className="grid grid-cols-2 gap-3 text-left">
                 {formData.displayName && (
                   <div className="summary-item">
@@ -1007,7 +1007,7 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
         <Shield className="w-5 h-5 text-success flex-shrink-0" />
         <div>
           <p className="font-medium mb-1">14-day free trial on all paid plans</p>
-          <p className="text-sm text-content-tertiary">
+          <p className="text-sm text-(--color-content-tertiary)">
             No credit card required. Upgrade, downgrade, or cancel anytime.
           </p>
         </div>

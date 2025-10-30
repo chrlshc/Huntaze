@@ -1,0 +1,38 @@
+# Dockerfile for running tests in container environment
+FROM node:20-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    git \
+    postgresql-client \
+    redis \
+    jq
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY vitest*.config.ts ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Create directories for reports and coverage
+RUN mkdir -p reports coverage test-results
+
+# Set environment variables
+ENV NODE_ENV=test
+ENV CI=true
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD node --version || exit 1
+
+# Default command
+CMD ["npm", "run", "test:ci"]

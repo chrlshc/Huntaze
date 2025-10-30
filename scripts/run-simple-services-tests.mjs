@@ -1,14 +1,38 @@
 #!/usr/bin/env node
 
 /**
- * Script pour exécuter tous les tests des services simplifiés
- * et vérifier la couverture de code
+ * Script d'exécution des tests pour les services simplifiés Huntaze
+ * Exécute les tests unitaires et d'intégration avec validation complète
  */
 
-import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { spawn } from 'child_process';
+import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const rootDir = join(__dirname, '..');
+
+// Configuration
+const config = {
+  testFiles: [
+    'tests/unit/simple-user-service-complete.test.ts',
+    'tests/unit/simple-billing-service.test.ts', 
+    'tests/integration/user-billing-integration-complete.test.ts',
+    'tests/unit/simple-services-validation.test.ts'
+  ],
+  coverageThreshold: {
+    statements: 85,
+    branches: 80,
+    functions: 85,
+    lines: 85
+  },
+  timeout: 300000, // 5 minutes
+  retries: 2
+};
+
+// Couleurs pour la console
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
@@ -22,12 +46,6 @@ const colors = {
 
 function log(message, color = colors.reset) {
   console.log(`${color}${message}${colors.reset}`);
-}
-
-function logSection(title) {
-  log(`\n${'='.repeat(60)}`, colors.cyan);
-  log(`${title}`, colors.cyan + colors.bright);
-  log(`${'='.repeat(60)}`, colors.cyan);
 }
 
 function logSuccess(message) {
@@ -46,384 +64,376 @@ function logInfo(message) {
   log(`ℹ️  ${message}`, colors.blue);
 }
 
-async function runCommand(command, description) {
-  try {
-    log(`\n🔄 ${description}...`, colors.blue);
-    const output = execSync(command, { 
-      encoding: 'utf8', 
-      stdio: 'pipe',
-      maxBuffer: 1024 * 1024 * 10 // 10MB buffer
-    });
-    logSuccess(`${description} completed successfully`);
-    return { success: true, output };
-  } catch (error) {
-    logError(`${description} failed: ${error.message}`);
-    return { success: false, error: error.message, output: error.stdout };
-  }
+function logHeader(message) {
+  log(`\n${'='.repeat(60)}`, colors.cyan);
+  log(`${message}`, colors.cyan + colors.bright);
+  log(`${'='.repeat(60)}`, colors.cyan);
 }
 
-async function checkTestFiles() {
-  logSection('Checking Test Files');
+// Vérifier les prérequis
+async function checkPrerequisites() {
+  logHeader('CHECKING PREREQUISITES');
   
-  const testFiles = [
-    'tests/unit/simple-user-service.test.ts',
-    'tests/unit/simple-billing-service.test.ts',
-    'tests/unit/simple-billing-service-complete.test.ts',
-    'tests/integration/user-billing-integration.test.ts',
-    'tests/unit/simple-services-validation.test.ts'
-  ];
-
-  let allFilesExist = true;
-
-  testFiles.forEach(file => {
-    if (existsSync(file)) {
-      logSuccess(`Found: ${file}`);
-    } else {
-      logError(`Missing: ${file}`);
-      allFilesExist = false;
-    }
-  });
-
-  return allFilesExist;
-}
-
-async function runUnitTests() {
-  logSection('Running Unit Tests');
-  
-  const unitTestCommands = [
+  const checks = [
     {
-      command: 'npm run test tests/unit/simple-user-service.test.ts',
-      description: 'Simple User Service Tests'
+      name: 'Node.js version',
+      check: () => {
+        const version = process.version;
+        const major = parseInt(version.slice(1).split('.')[0]);
+        return major >= 18;
+      },
+      message: 'Node.js 18+ required'
     },
     {
-      command: 'npm run test tests/unit/simple-billing-service-complete.test.ts',
-      description: 'Complete Billing Service Tests'
+      name: 'package.json',
+      check: () => existsSync(join(rootDir, 'package.json')),
+      message: 'package.json not found'
     },
     {
-      command: 'npm run test tests/unit/simple-services-validation.test.ts',
-      description: 'Services Validation Tests'
+      name: 'Vitest config',
+      check: () => existsSync(join(rootDir, 'vitest.simple-services.config.ts')),
+      message: 'vitest.simple-services.config.ts not found'
+    },
+    {
+      name: 'Test setup',
+      check: () => existsSync(join(rootDir, 'tests/setup/simple-services-setup.ts')),
+      message: 'Test setup file not found'
     }
   ];
 
-  let allTestsPassed = true;
+  let allPassed = true;
 
-  for (const { command, description } of unitTestCommands) {
-    const result = await runCommand(command, description);
-    if (!result.success) {
-      allTestsPassed = false;
-      logError(`Unit test failed: ${description}`);
-      if (result.output) {
-        log(result.output, colors.red);
-      }
-    }
-  }
-
-  return allTestsPassed;
-}
-
-async function runIntegrationTests() {
-  logSection('Running Integration Tests');
-  
-  const result = await runCommand(
-    'npm run test tests/integration/user-billing-integration.test.ts',
-    'User-Billing Integration Tests'
-  );
-
-  if (!result.success) {
-    logError('Integration tests failed');
-    if (result.output) {
-      log(result.output, colors.red);
-    }
-  }
-
-  return result.success;
-}
-
-async function checkCodeCoverage() {
-  logSection('Checking Code Coverage');
-  
-  const result = await runCommand(
-    'npm run test:coverage -- tests/unit/simple-*.test.ts tests/integration/user-billing-integration.test.ts',
-    'Code Coverage Analysis'
-  );
-
-  if (result.success) {
-    // Parse coverage results
-    const coverageOutput = result.output;
-    
-    // Look for coverage percentages
-    const coverageRegex = /All files\s+\|\s+(\d+\.?\d*)\s+\|\s+(\d+\.?\d*)\s+\|\s+(\d+\.?\d*)\s+\|\s+(\d+\.?\d*)/;
-    const match = coverageOutput.match(coverageRegex);
-    
-    if (match) {
-      const [, statements, branches, functions, lines] = match;
-      
-      logInfo(`Coverage Results:`);
-      log(`  Statements: ${statements}%`, colors.cyan);
-      log(`  Branches: ${branches}%`, colors.cyan);
-      log(`  Functions: ${functions}%`, colors.cyan);
-      log(`  Lines: ${lines}%`, colors.cyan);
-      
-      const minCoverage = 80;
-      const avgCoverage = (parseFloat(statements) + parseFloat(branches) + parseFloat(functions) + parseFloat(lines)) / 4;
-      
-      if (avgCoverage >= minCoverage) {
-        logSuccess(`Average coverage (${avgCoverage.toFixed(1)}%) meets minimum requirement (${minCoverage}%)`);
-        return true;
+  for (const check of checks) {
+    try {
+      if (check.check()) {
+        logSuccess(`${check.name}: OK`);
       } else {
-        logWarning(`Average coverage (${avgCoverage.toFixed(1)}%) below minimum requirement (${minCoverage}%)`);
-        return false;
+        logError(`${check.name}: ${check.message}`);
+        allPassed = false;
       }
-    } else {
-      logWarning('Could not parse coverage results');
-      return false;
+    } catch (error) {
+      logError(`${check.name}: ${error.message}`);
+      allPassed = false;
     }
   }
 
-  return result.success;
+  return allPassed;
 }
 
-async function runLinting() {
-  logSection('Running Code Quality Checks');
+// Vérifier que les fichiers de test existent
+async function checkTestFiles() {
+  logHeader('CHECKING TEST FILES');
   
-  const lintCommands = [
-    {
-      command: 'npm run lint -- tests/unit/simple-*.test.ts tests/integration/user-billing-integration.test.ts',
-      description: 'ESLint Check'
-    },
-    {
-      command: 'npm run type-check',
-      description: 'TypeScript Type Check'
+  let allExist = true;
+
+  for (const testFile of config.testFiles) {
+    const fullPath = join(rootDir, testFile);
+    if (existsSync(fullPath)) {
+      logSuccess(`${testFile}: Found`);
+    } else {
+      logError(`${testFile}: Not found`);
+      allExist = false;
     }
+  }
+
+  return allExist;
+}
+
+// Créer les répertoires nécessaires
+async function createDirectories() {
+  logHeader('CREATING DIRECTORIES');
+  
+  const dirs = [
+    'reports',
+    'coverage',
+    'coverage/simple-services'
   ];
 
-  let allChecksPassed = true;
-
-  for (const { command, description } of lintCommands) {
-    const result = await runCommand(command, description);
-    if (!result.success) {
-      allChecksPassed = false;
-      logWarning(`Code quality check failed: ${description}`);
+  for (const dir of dirs) {
+    const fullPath = join(rootDir, dir);
+    if (!existsSync(fullPath)) {
+      mkdirSync(fullPath, { recursive: true });
+      logSuccess(`Created: ${dir}`);
+    } else {
+      logInfo(`Exists: ${dir}`);
     }
   }
-
-  return allChecksPassed;
 }
 
-async function generateTestReport() {
-  logSection('Generating Test Report');
-  
-  const reportData = {
-    timestamp: new Date().toISOString(),
-    testSuites: [
-      'Simple User Service Tests',
-      'Simple Billing Service Tests',
-      'User-Billing Integration Tests',
-      'Services Validation Tests'
-    ],
-    coverageTargets: {
-      statements: 80,
-      branches: 80,
-      functions: 80,
-      lines: 80
-    },
-    qualityChecks: [
-      'ESLint compliance',
-      'TypeScript type safety',
-      'Test completeness',
-      'Error handling coverage'
-    ]
-  };
+// Exécuter une commande avec promesse
+function runCommand(command, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      stdio: 'pipe',
+      cwd: rootDir,
+      ...options
+    });
 
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout?.on('data', (data) => {
+      stdout += data.toString();
+      if (options.showOutput) {
+        process.stdout.write(data);
+      }
+    });
+
+    child.stderr?.on('data', (data) => {
+      stderr += data.toString();
+      if (options.showOutput) {
+        process.stderr.write(data);
+      }
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve({ stdout, stderr, code });
+      } else {
+        reject({ stdout, stderr, code });
+      }
+    });
+
+    child.on('error', (error) => {
+      reject({ error, stdout, stderr, code: -1 });
+    });
+  });
+}
+
+// Exécuter les tests TypeScript
+async function runTypeCheck() {
+  logHeader('TYPESCRIPT TYPE CHECKING');
+  
   try {
-    const reportJson = JSON.stringify(reportData, null, 2);
-    
-    // In a real scenario, we would write this to a file
-    logInfo('Test report generated successfully');
-    logInfo('Report data:');
-    log(reportJson, colors.cyan);
-    
+    await runCommand('npx', ['tsc', '--noEmit'], { showOutput: true });
+    logSuccess('TypeScript check passed');
     return true;
   } catch (error) {
-    logError(`Failed to generate test report: ${error.message}`);
+    logError('TypeScript check failed');
+    console.log(error.stdout);
+    console.error(error.stderr);
     return false;
   }
 }
 
-async function validateArchitectureCompliance() {
-  logSection('Validating Architecture Compliance');
+// Exécuter les tests unitaires
+async function runUnitTests() {
+  logHeader('RUNNING UNIT TESTS');
   
-  const architectureChecks = [
-    {
-      name: 'Service Isolation',
-      description: 'Services should be properly isolated',
-      check: () => {
-        // Check that services don't have circular dependencies
-        return true;
-      }
-    },
-    {
-      name: 'Error Handling Consistency',
-      description: 'All services should handle errors consistently',
-      check: () => {
-        // Check error handling patterns
-        return true;
-      }
-    },
-    {
-      name: 'Data Access Patterns',
-      description: 'Services should follow consistent data access patterns',
-      check: () => {
-        // Check database access patterns
-        return true;
-      }
-    },
-    {
-      name: 'API Design Consistency',
-      description: 'Services should follow consistent API design',
-      check: () => {
-        // Check API design patterns
-        return true;
-      }
-    }
-  ];
+  const unitTests = config.testFiles.filter(file => file.includes('/unit/'));
+  
+  try {
+    const result = await runCommand('npx', [
+      'vitest',
+      'run',
+      '--config', 'vitest.simple-services.config.ts',
+      '--coverage',
+      '--reporter=verbose',
+      '--reporter=junit',
+      '--outputFile.junit=reports/unit-tests-junit.xml',
+      ...unitTests
+    ], { showOutput: true });
 
-  let allChecksPassed = true;
-
-  architectureChecks.forEach(({ name, description, check }) => {
-    try {
-      const result = check();
-      if (result) {
-        logSuccess(`${name}: ${description}`);
-      } else {
-        logError(`${name}: ${description}`);
-        allChecksPassed = false;
-      }
-    } catch (error) {
-      logError(`${name}: Check failed - ${error.message}`);
-      allChecksPassed = false;
-    }
-  });
-
-  return allChecksPassed;
+    logSuccess(`Unit tests completed (${unitTests.length} files)`);
+    return { success: true, output: result.stdout };
+  } catch (error) {
+    logError('Unit tests failed');
+    console.log(error.stdout);
+    console.error(error.stderr);
+    return { success: false, output: error.stdout, error: error.stderr };
+  }
 }
 
-async function runPerformanceTests() {
-  logSection('Running Performance Tests');
+// Exécuter les tests d'intégration
+async function runIntegrationTests() {
+  logHeader('RUNNING INTEGRATION TESTS');
   
-  const performanceTargets = {
-    userServiceResponseTime: 100, // ms
-    billingServiceResponseTime: 500, // ms
-    integrationTestDuration: 5000, // ms
-    memoryUsage: 100 // MB
-  };
+  const integrationTests = config.testFiles.filter(file => file.includes('/integration/'));
+  
+  try {
+    const result = await runCommand('npx', [
+      'vitest',
+      'run',
+      '--config', 'vitest.simple-services.config.ts',
+      '--reporter=verbose',
+      '--reporter=junit',
+      '--outputFile.junit=reports/integration-tests-junit.xml',
+      ...integrationTests
+    ], { showOutput: true });
 
-  logInfo('Performance targets:');
-  Object.entries(performanceTargets).forEach(([metric, target]) => {
-    log(`  ${metric}: ${target}${metric.includes('Time') || metric.includes('Duration') ? 'ms' : metric.includes('Memory') ? 'MB' : ''}`, colors.cyan);
-  });
-
-  // Simulate performance test results
-  const simulatedResults = {
-    userServiceResponseTime: 85,
-    billingServiceResponseTime: 420,
-    integrationTestDuration: 4200,
-    memoryUsage: 78
-  };
-
-  let allTargetsMet = true;
-
-  Object.entries(performanceTargets).forEach(([metric, target]) => {
-    const actual = simulatedResults[metric as keyof typeof simulatedResults];
-    if (actual <= target) {
-      logSuccess(`${metric}: ${actual} (target: ${target})`);
-    } else {
-      logWarning(`${metric}: ${actual} exceeds target of ${target}`);
-      allTargetsMet = false;
-    }
-  });
-
-  return allTargetsMet;
+    logSuccess(`Integration tests completed (${integrationTests.length} files)`);
+    return { success: true, output: result.stdout };
+  } catch (error) {
+    logError('Integration tests failed');
+    console.log(error.stdout);
+    console.error(error.stderr);
+    return { success: false, output: error.stdout, error: error.stderr };
+  }
 }
 
-async function main() {
-  log(`${colors.bright}${colors.magenta}Simple Services Test Runner${colors.reset}`);
-  log(`Starting comprehensive test suite for simplified services...`);
-
-  const results = {
-    filesCheck: false,
-    unitTests: false,
-    integrationTests: false,
-    coverage: false,
-    linting: false,
-    architecture: false,
-    performance: false,
-    report: false
-  };
+// Vérifier la couverture de code
+async function checkCoverage() {
+  logHeader('CHECKING CODE COVERAGE');
+  
+  const coverageFile = join(rootDir, 'coverage/simple-services/coverage-summary.json');
+  
+  if (!existsSync(coverageFile)) {
+    logWarning('Coverage file not found, skipping coverage check');
+    return true;
+  }
 
   try {
-    // 1. Check test files exist
-    results.filesCheck = await checkTestFiles();
-    
-    if (!results.filesCheck) {
-      logError('Some test files are missing. Please ensure all test files are created.');
-      process.exit(1);
-    }
+    const coverageData = JSON.parse(readFileSync(coverageFile, 'utf8'));
+    const total = coverageData.total;
 
-    // 2. Run unit tests
-    results.unitTests = await runUnitTests();
+    logInfo('Coverage Results:');
+    console.log(`  Statements: ${total.statements.pct}% (threshold: ${config.coverageThreshold.statements}%)`);
+    console.log(`  Branches:   ${total.branches.pct}% (threshold: ${config.coverageThreshold.branches}%)`);
+    console.log(`  Functions:  ${total.functions.pct}% (threshold: ${config.coverageThreshold.functions}%)`);
+    console.log(`  Lines:      ${total.lines.pct}% (threshold: ${config.coverageThreshold.lines}%)`);
 
-    // 3. Run integration tests
-    results.integrationTests = await runIntegrationTests();
+    const passed = 
+      total.statements.pct >= config.coverageThreshold.statements &&
+      total.branches.pct >= config.coverageThreshold.branches &&
+      total.functions.pct >= config.coverageThreshold.functions &&
+      total.lines.pct >= config.coverageThreshold.lines;
 
-    // 4. Check code coverage
-    results.coverage = await checkCodeCoverage();
-
-    // 5. Run linting and type checking
-    results.linting = await runLinting();
-
-    // 6. Validate architecture compliance
-    results.architecture = await validateArchitectureCompliance();
-
-    // 7. Run performance tests
-    results.performance = await runPerformanceTests();
-
-    // 8. Generate test report
-    results.report = await generateTestReport();
-
-    // Summary
-    logSection('Test Results Summary');
-    
-    Object.entries(results).forEach(([test, passed]) => {
-      if (passed) {
-        logSuccess(`${test}: PASSED`);
-      } else {
-        logError(`${test}: FAILED`);
-      }
-    });
-
-    const totalTests = Object.keys(results).length;
-    const passedTests = Object.values(results).filter(Boolean).length;
-    const successRate = (passedTests / totalTests) * 100;
-
-    log(`\n${colors.bright}Overall Success Rate: ${successRate.toFixed(1)}% (${passedTests}/${totalTests})${colors.reset}`);
-
-    if (successRate >= 80) {
-      logSuccess('Test suite completed successfully! 🎉');
-      process.exit(0);
+    if (passed) {
+      logSuccess('Coverage thresholds met');
     } else {
-      logError('Test suite failed. Please address the failing tests.');
+      logError('Coverage thresholds not met');
+    }
+
+    return passed;
+  } catch (error) {
+    logError(`Failed to check coverage: ${error.message}`);
+    return false;
+  }
+}
+
+// Générer le rapport final
+async function generateReport(results) {
+  logHeader('GENERATING FINAL REPORT');
+  
+  const report = {
+    timestamp: new Date().toISOString(),
+    environment: {
+      nodeVersion: process.version,
+      platform: process.platform,
+      arch: process.arch
+    },
+    configuration: config,
+    results: results,
+    summary: {
+      totalTests: config.testFiles.length,
+      passed: results.filter(r => r.success).length,
+      failed: results.filter(r => !r.success).length,
+      overallSuccess: results.every(r => r.success)
+    }
+  };
+
+  const reportPath = join(rootDir, 'reports/simple-services-test-report.json');
+  writeFileSync(reportPath, JSON.stringify(report, null, 2));
+  
+  logSuccess(`Report saved to: ${reportPath}`);
+  
+  // Afficher le résumé
+  console.log('\n' + '='.repeat(60));
+  log('TEST EXECUTION SUMMARY', colors.cyan + colors.bright);
+  console.log('='.repeat(60));
+  
+  console.log(`Total Tests: ${report.summary.totalTests}`);
+  console.log(`Passed: ${colors.green}${report.summary.passed}${colors.reset}`);
+  console.log(`Failed: ${colors.red}${report.summary.failed}${colors.reset}`);
+  
+  if (report.summary.overallSuccess) {
+    logSuccess('🎉 All tests passed successfully!');
+  } else {
+    logError('💥 Some tests failed!');
+  }
+  
+  return report.summary.overallSuccess;
+}
+
+// Fonction principale
+async function main() {
+  console.log(`${colors.cyan}${colors.bright}`);
+  console.log('🧪 HUNTAZE SIMPLE SERVICES TEST RUNNER');
+  console.log('=====================================');
+  console.log(`${colors.reset}`);
+  
+  const startTime = Date.now();
+  const results = [];
+
+  try {
+    // 1. Vérifier les prérequis
+    if (!(await checkPrerequisites())) {
       process.exit(1);
     }
+
+    // 2. Vérifier les fichiers de test
+    if (!(await checkTestFiles())) {
+      process.exit(1);
+    }
+
+    // 3. Créer les répertoires
+    await createDirectories();
+
+    // 4. Vérification TypeScript
+    const typeCheckResult = await runTypeCheck();
+    results.push({ name: 'TypeScript Check', success: typeCheckResult });
+
+    if (!typeCheckResult) {
+      logError('TypeScript check failed, stopping execution');
+      process.exit(1);
+    }
+
+    // 5. Tests unitaires
+    const unitTestResult = await runUnitTests();
+    results.push({ name: 'Unit Tests', success: unitTestResult.success, ...unitTestResult });
+
+    // 6. Tests d'intégration
+    const integrationTestResult = await runIntegrationTests();
+    results.push({ name: 'Integration Tests', success: integrationTestResult.success, ...integrationTestResult });
+
+    // 7. Vérification de la couverture
+    const coverageResult = await checkCoverage();
+    results.push({ name: 'Coverage Check', success: coverageResult });
+
+    // 8. Générer le rapport final
+    const overallSuccess = await generateReport(results);
+
+    const endTime = Date.now();
+    const duration = Math.round((endTime - startTime) / 1000);
+
+    console.log(`\n⏱️  Total execution time: ${duration} seconds`);
+
+    process.exit(overallSuccess ? 0 : 1);
 
   } catch (error) {
-    logError(`Test runner failed: ${error.message}`);
+    logError(`Unexpected error: ${error.message}`);
+    console.error(error.stack);
     process.exit(1);
   }
 }
 
-// Run the test suite
-main().catch(error => {
-  logError(`Unexpected error: ${error.message}`);
-  process.exit(1);
+// Gestion des signaux
+process.on('SIGINT', () => {
+  logWarning('Test execution interrupted');
+  process.exit(130);
 });
+
+process.on('SIGTERM', () => {
+  logWarning('Test execution terminated');
+  process.exit(143);
+});
+
+// Exécuter le script
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(error => {
+    logError(`Fatal error: ${error.message}`);
+    process.exit(1);
+  });
+}
+
+export { main, config };

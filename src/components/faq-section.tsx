@@ -99,7 +99,7 @@ export default function FAQSection() {
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-5">
-                    <p className="text-gray-600 dark:text-[var(--text-secondary-dark)] leading-relaxed">
+                    <p className="text-gray-600 dark:text-(--text-secondary-dark) leading-relaxed">
                       {faq.answer}
                     </p>
                   </div>
@@ -110,7 +110,7 @@ export default function FAQSection() {
         ))}
       </div>
       
-      <p className="mt-8 text-center text-gray-600 dark:text-[var(--text-tertiary-dark)]">
+      <p className="mt-8 text-center text-gray-600 dark:text-(--text-tertiary-dark)">
         Have more questions? <a href="/support" className="text-purple-600 dark:text-purple-400 font-medium hover:underline">Contact our team</a>
       </p>
     </div>

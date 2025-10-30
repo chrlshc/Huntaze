@@ -1,4 +1,5 @@
 import React from 'react';
+import type { GetServerSideProps } from 'next';
 import { HuntazeLayout } from '@/components/admin/HuntazeLayout';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,3 +46,6 @@ export default function ContentCreationPage() {
   );
 }
 
+export const getServerSideProps: GetServerSideProps = async () => {
+  return { props: {} };
+};

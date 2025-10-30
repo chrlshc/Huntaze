@@ -1,0 +1,366 @@
+# Implementation Plan - Content Optimization & Multi-Platform Publishing
+
+- [ ] 1. Set up core data models and database schema
+  - Extend Prisma schema with ContentOptimization, ABTest, ABTestVariant, ComplianceCheck, ShadowbanCheck, PublishedContent, HashtagPerformance, and OptimalPostingTime models
+  - Run database migration to create new tables
+  - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1, 9.1, 10.1, 11.1, 12.1, 13.1, 14.1, 15.1_
+
+- [ ] 2. Implement ContentOptimizerService
+  - [ ] 2.1 Create ContentOptimizerService class with bio optimization methods
+    - Implement `optimizeBio()` with AI-powered suggestions
+    - Implement `generateBioVariants()` for A/B testing
+    - Add platform-specific character limit validation (Instagram: 150, TikTok: 80, Reddit: 200)
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [ ] 2.2 Implement caption optimization methods
+    - Create `optimizeCaption()` with platform-specific best practices
+    - Implement `generateCaptionVariants()` for testing
+    - Add engagement hooks (questions, CTAs, emojis)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 2.3 Implement hashtag strategy methods
+    - Create `suggestHashtags()` with volume-based mixing (30% high, 40% medium, 30% niche)
+    - Implement `validateHashtags()` against banned lists
+    - Add platform-specific hashtag limits
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [ ] 2.4 Implement CTA optimization
+    - Create `suggestCTA()` with platform-appropriate recommendations
+    - Add CTA placement suggestions
+    - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
+  - [ ] 2.5 Implement platform-specific optimization methods
+    - Create `optimizeForInstagram()` with Reels priority and carousel tips
+    - Create `optimizeForTikTok()` with trending sounds and effects
+    - Create `optimizeForReddit()` with subreddit-specific rules
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
+  - [ ] 2.6 Write unit tests for ContentOptimizerService
+    - Test bio generation with various inputs
+    - Test caption optimization logic
+    - Test hashtag validation and strategy
+    - Test platform-specific rules
+    - _Requirements: 1.1-1.5, 2.1-2.5, 3.1-3.5, 12.1-12.5, 13.1-13.5_
+
+- [ ] 3. Implement ABTestingEngine
+  - [ ] 3.1 Create ABTestingEngine class with test management
+    - Implement `createTest()` for test initialization
+    - Implement `createVariants()` for variant setup
+    - Implement `startTest()` and `stopTest()` for lifecycle management
+    - _Requirements: 4.1, 4.2_
+  - [ ] 3.2 Implement performance tracking methods
+    - Create `trackVariantPerformance()` to record metrics
+    - Implement `calculateStatisticalSignificance()` with Z-test for proportions
+    - Add minimum sample size validation
+    - _Requirements: 4.3, 4.4_
+  - [ ] 3.3 Implement winner selection logic
+    - Create `selectWinner()` with statistical significance check
+    - Implement `applyWinner()` to auto-apply winning variants
+    - _Requirements: 4.4, 4.5_
+  - [ ] 3.4 Implement analytics methods
+    - Create `getTestResults()` for detailed test analysis
+    - Implement `getTestHistory()` for user's past tests
+    - _Requirements: 4.3, 10.1, 10.2, 10.3, 10.4, 10.5_
+  - [ ] 3.5 Write unit tests for ABTestingEngine
+    - Test variant creation and distribution
+    - Test statistical significance calculations
+    - Test winner selection logic
+    - _Requirements: 4.1-4.5_
+
+- [ ] 4. Implement PlatformComplianceChecker
+  - [ ] 4.1 Create PlatformComplianceChecker class with validation methods
+    - Implement `validateContent()` for general compliance
+    - Implement `validateBio()` with platform-specific rules
+    - Implement `validateCaption()` with content guidelines
+    - Implement `validateHashtags()` against banned lists
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 14.1, 14.2, 14.3, 14.4, 14.5_
+  - [ ] 4.2 Implement shadowban detection methods
+    - Create `detectShadowban()` with reach/engagement analysis
+    - Implement `analyzeShadowbanCause()` to identify triggers
+    - Implement `suggestShadowbanFix()` with corrective actions
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [ ] 4.3 Implement content moderation methods
+    - Create `moderateContent()` with prohibited terms scanning
+    - Implement `detectNSFW()` using content moderation API
+    - Add sensitive content detection
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [ ] 4.4 Implement banned content management
+    - Create `getBannedHashtags()` with platform-specific lists
+    - Implement `updateBannedHashtags()` for regular updates
+    - Create `checkProhibitedTerms()` for text validation
+    - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
+  - [ ] 4.5 Write unit tests for PlatformComplianceChecker
+    - Test compliance validation logic
+    - Test shadowban detection algorithms
+    - Test content moderation
+    - Test banned hashtag checking
+    - _Requirements: 5.1-5.5, 6.1-6.5, 11.1-11.5, 14.1-14.5_
+
+- [ ] 5. Implement PublishingService
+  - [ ] 5.1 Create PublishingService class with publishing methods
+    - Implement `publishContent()` for single platform publishing
+    - Implement `crossPost()` for multi-platform publishing with content adaptation
+    - Implement `schedulePost()` for delayed publishing
+    - Add platform-specific media requirement handling
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 5.2 Implement timing optimization methods
+    - Create `getOptimalPostingTime()` with audience activity analysis
+    - Implement `analyzeAudienceActivity()` to identify patterns
+    - Add timezone and global audience consideration
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [ ] 5.3 Implement platform-specific publishing methods
+    - Create `publishToInstagram()` with Graph API integration
+    - Create `publishToTikTok()` with Content API integration
+    - Create `publishToReddit()` with Submit API integration
+    - Add error handling and retry logic for each platform
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 5.4 Implement performance tracking methods
+    - Create `trackPostPerformance()` to collect metrics
+    - Implement `getPostAnalytics()` for detailed insights
+    - Add engagement rate calculation
+    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - [ ] 5.5 Write unit tests for PublishingService
+    - Test publishing logic for each platform
+    - Test cross-posting with content adaptation
+    - Test scheduling functionality
+    - Test performance tracking
+    - _Requirements: 7.1-7.5, 8.1-8.5, 10.1-10.5_
+
+- [ ] 6. Create API routes for content optimization
+  - [ ] 6.1 Create POST /api/content/optimize/bio endpoint
+    - Accept userId, platform, currentBio, goals, tone
+    - Call ContentOptimizerService.optimizeBio()
+    - Return optimized bio suggestions
+    - Add authentication and validation
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [ ] 6.2 Create POST /api/content/optimize/caption endpoint
+    - Accept userId, platform, contentType, description, goal
+    - Call ContentOptimizerService.optimizeCaption()
+    - Return optimized caption with hashtags and CTA
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 6.3 Create POST /api/content/optimize/hashtags endpoint
+    - Accept userId, platform, niche, contentDescription
+    - Call ContentOptimizerService.suggestHashtags()
+    - Return categorized hashtag strategy
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [ ] 6.4 Write integration tests for optimization API routes
+    - Test bio optimization endpoint
+    - Test caption optimization endpoint
+    - Test hashtag suggestion endpoint
+    - _Requirements: 1.1-1.5, 2.1-2.5, 3.1-3.5_
+
+- [ ] 7. Create API routes for A/B testing
+  - [ ] 7.1 Create POST /api/content/ab-test endpoint
+    - Accept userId, name, platform, testType, variants
+    - Call ABTestingEngine.createTest() and createVariants()
+    - Return test ID and variant IDs
+    - _Requirements: 4.1, 4.2_
+  - [ ] 7.2 Create POST /api/content/ab-test/:testId/start endpoint
+    - Call ABTestingEngine.startTest()
+    - Return updated test status
+    - _Requirements: 4.1, 4.2_
+  - [ ] 7.3 Create POST /api/content/ab-test/:testId/track endpoint
+    - Accept variantId and performance metrics
+    - Call ABTestingEngine.trackVariantPerformance()
+    - Return tracking confirmation
+    - _Requirements: 4.3_
+  - [ ] 7.4 Create GET /api/content/ab-test/:testId/results endpoint
+    - Call ABTestingEngine.getTestResults()
+    - Return test results with winner if available
+    - _Requirements: 4.3, 4.4, 4.5_
+  - [ ] 7.5 Write integration tests for A/B testing API routes
+    - Test test creation and variant setup
+    - Test performance tracking
+    - Test results retrieval
+    - _Requirements: 4.1-4.5_
+
+- [ ] 8. Create API routes for compliance checking
+  - [ ] 8.1 Create POST /api/content/validate endpoint
+    - Accept userId, platform, contentType, content
+    - Call PlatformComplianceChecker.validateContent()
+    - Return compliance result with issues and suggestions
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [ ] 8.2 Create POST /api/content/shadowban/check endpoint
+    - Accept userId, platform
+    - Call PlatformComplianceChecker.detectShadowban()
+    - Return shadowban status with probable causes
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [ ] 8.3 Create POST /api/content/moderate endpoint
+    - Accept content and mediaUrls
+    - Call PlatformComplianceChecker.moderateContent()
+    - Return moderation result
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [ ] 8.4 Write integration tests for compliance API routes
+    - Test content validation endpoint
+    - Test shadowban detection endpoint
+    - Test content moderation endpoint
+    - _Requirements: 5.1-5.5, 6.1-6.5, 11.1-11.5_
+
+- [ ] 9. Create API routes for publishing
+  - [ ] 9.1 Create POST /api/content/publish endpoint
+    - Accept userId, platform, content, mediaUrls, scheduledFor
+    - Call PublishingService.publishContent() or schedulePost()
+    - Return publish result with platformPostId
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 9.2 Create POST /api/content/cross-post endpoint
+    - Accept userId, platforms, content, mediaUrls
+    - Call PublishingService.crossPost()
+    - Return results for each platform
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 9.3 Create GET /api/content/optimal-times endpoint
+    - Accept userId, platform
+    - Call PublishingService.getOptimalPostingTime()
+    - Return recommended posting times
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [ ] 9.4 Create GET /api/content/analytics/:postId endpoint
+    - Call PublishingService.getPostAnalytics()
+    - Return detailed performance metrics
+    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - [ ] 9.5 Write integration tests for publishing API routes
+    - Test single platform publishing
+    - Test cross-posting
+    - Test optimal times retrieval
+    - Test analytics endpoint
+    - _Requirements: 7.1-7.5, 8.1-8.5, 10.1-10.5_
+
+- [ ] 10. Implement AI prompt templates and integration
+  - [ ] 10.1 Create AI prompt templates for content optimization
+    - Implement bio optimization prompt with platform-specific requirements
+    - Implement caption generation prompt with best practices
+    - Implement hashtag strategy prompt with volume categorization
+    - _Requirements: 1.1, 1.2, 2.1, 2.2, 3.1, 3.2, 9.1, 9.2, 9.3, 9.4, 9.5_
+  - [ ] 10.2 Integrate Azure OpenAI service
+    - Create AzureOpenAIService wrapper
+    - Implement caching for similar requests
+    - Add fallback to templates if AI unavailable
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+  - [ ] 10.3 Write unit tests for AI integration
+    - Test prompt template generation
+    - Test AI response parsing
+    - Test caching logic
+    - Test fallback behavior
+    - _Requirements: 9.1-9.5_
+
+- [ ] 11. Implement platform-specific rules and banned content management
+  - [ ] 11.1 Create platform rules configuration
+    - Define Instagram rules (character limits, hashtag limits, content guidelines)
+    - Define TikTok rules (bio length, caption best practices, trending requirements)
+    - Define Reddit rules (subreddit-specific, karma requirements, self-promotion limits)
+    - _Requirements: 5.1, 5.2, 5.3, 12.1, 12.2, 12.3_
+  - [ ] 11.2 Implement banned hashtag database
+    - Create seed data for known banned hashtags per platform
+    - Implement update mechanism for banned hashtag lists
+    - Add hashtag status tracking
+    - _Requirements: 3.4, 14.1, 14.2, 14.3, 14.4, 14.5_
+  - [ ] 11.3 Create prohibited terms list
+    - Define platform-specific prohibited terms
+    - Implement term matching logic
+    - Add suggestion system for alternative wording
+    - _Requirements: 11.1, 11.4, 11.5_
+
+- [ ] 12. Implement CloudWatch metrics and monitoring
+  - [ ] 12.1 Create CloudWatchMetricsService integration
+    - Implement metrics for content optimizations generated
+    - Implement metrics for A/B tests created and completed
+    - Implement metrics for publishing success rates
+    - Implement metrics for compliance checks and failures
+    - _Requirements: All requirements (monitoring)_
+  - [ ] 12.2 Create CloudWatch alarms
+    - Create alarm for high compliance failure rate (>10%)
+    - Create alarm for publishing errors (>5%)
+    - Create alarm for AI generation failures (>2%)
+    - Create alarm for shadowban spike (>5 detections/day)
+    - _Requirements: 5.5, 6.1, 8.5, 11.5_
+  - [ ] 12.3 Create CloudWatch dashboard
+    - Add widgets for content optimizations per day
+    - Add widgets for A/B test win rates
+    - Add widgets for publishing success rate by platform
+    - Add widgets for compliance check results
+    - Add widgets for shadowban detections timeline
+    - _Requirements: All requirements (observability)_
+
+- [ ] 13. Implement content calendar and scheduling
+  - [ ] 13.1 Create content calendar UI component
+    - Implement visual calendar with drag-and-drop
+    - Show optimal posting slots highlighted
+    - Display scheduled posts
+    - _Requirements: 15.1, 15.2, 15.3_
+  - [ ] 13.2 Implement scheduling logic
+    - Create background job for scheduled post publishing
+    - Implement reminder system for scheduled posts
+    - Add bulk scheduling capability
+    - _Requirements: 15.2, 15.4, 15.5_
+  - [ ] 13.3 Write integration tests for scheduling
+    - Test calendar functionality
+    - Test scheduled post execution
+    - Test bulk scheduling
+    - _Requirements: 15.1-15.5_
+
+- [ ] 14. Implement performance analytics and insights
+  - [ ] 14.1 Create analytics aggregation service
+    - Aggregate post performance metrics across platforms
+    - Calculate engagement rates and trends
+    - Identify top-performing content patterns
+    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - [ ] 14.2 Implement hashtag performance tracking
+    - Track hashtag usage and performance over time
+    - Calculate average reach and engagement per hashtag
+    - Identify best-performing hashtags
+    - _Requirements: 3.5_
+  - [ ] 14.3 Implement optimal posting time analysis
+    - Analyze audience activity patterns by day and hour
+    - Calculate engagement scores for different time slots
+    - Update optimal posting times based on historical data
+    - _Requirements: 7.1, 7.2, 7.3, 7.4_
+  - [ ] 14.4 Write unit tests for analytics service
+    - Test metrics aggregation
+    - Test hashtag performance calculations
+    - Test optimal time analysis
+    - _Requirements: 3.5, 7.1-7.4, 10.1-10.5_
+
+- [ ] 15. Implement error handling and retry logic
+  - [ ] 15.1 Create platform API error handlers
+    - Implement Instagram API error handling with rate limit respect
+    - Implement TikTok API error handling with retry logic
+    - Implement Reddit API error handling with rate limit headers
+    - _Requirements: 8.4, 8.5_
+  - [ ] 15.2 Implement circuit breaker pattern
+    - Create circuit breaker for platform API calls
+    - Add fallback mechanisms for service failures
+    - Implement health checks
+    - _Requirements: 8.4, 8.5_
+  - [ ] 15.3 Write integration tests for error handling
+    - Test rate limit handling
+    - Test retry logic
+    - Test circuit breaker behavior
+    - _Requirements: 8.4, 8.5_
+
+- [ ] 16. Create frontend UI components
+  - [ ] 16.1 Create content optimization UI
+    - Build bio optimizer interface with variant display
+    - Build caption generator with real-time preview
+    - Build hashtag strategy selector with performance indicators
+    - _Requirements: 1.1-1.5, 2.1-2.5, 3.1-3.5_
+  - [ ] 16.2 Create A/B testing UI
+    - Build test creation wizard
+    - Build variant comparison view
+    - Build results dashboard with winner indication
+    - _Requirements: 4.1-4.5_
+  - [ ] 16.3 Create compliance checker UI
+    - Build content validation interface with issue highlighting
+    - Build shadowban detector with diagnostic results
+    - Build content moderation preview
+    - _Requirements: 5.1-5.5, 6.1-6.5, 11.1-11.5_
+  - [ ] 16.4 Create publishing UI
+    - Build multi-platform publisher with content preview
+    - Build scheduling interface with calendar view
+    - Build analytics dashboard with performance charts
+    - _Requirements: 7.1-7.5, 8.1-8.5, 10.1-10.5, 15.1-15.5_
+
+- [ ] 17. Integration and end-to-end testing
+  - [ ] 17.1 Write E2E tests for complete workflows
+    - Test bio optimization → A/B test → apply winner flow
+    - Test caption generation → validation → publish → track performance flow
+    - Test shadowban detection → fix suggestion → verification flow
+    - Test cross-posting with content adaptation flow
+    - _Requirements: All requirements_
+  - [ ] 17.2 Write regression tests
+    - Test platform API integrations
+    - Test AI service integration
+    - Test database operations
+    - _Requirements: All requirements_

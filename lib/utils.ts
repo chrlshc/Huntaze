@@ -124,6 +124,11 @@ export function formatFileSize(bytes: number) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+// Backward-compat alias used in some pages
+export function formatBytes(bytes: number) {
+  return formatFileSize(bytes);
+}
+
 // Check if object is empty
 export function isEmpty(obj: any) {
   if (obj == null) return true;

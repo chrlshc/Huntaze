@@ -83,8 +83,8 @@ export default function HeaderMobileOptimized() {
       {/* Header with mobile-first design */}
       <header className={`
         fixed top-0 left-0 right-0 z-[1000]
-        h-[var(--mobile-header-height)]
-        pt-[var(--safe-area-top)]
+        h-(--mobile-header-height)
+        pt-(--safe-area-top)
         bg-white/95 backdrop-blur-md
         border-b transition-all duration-300
         ${scrolled ? 'border-gray-200 shadow-sm' : 'border-transparent'}
@@ -169,7 +169,7 @@ export default function HeaderMobileOptimized() {
                   href="/auth" 
                   className="
                     inline-flex items-center justify-center
-                    min-h-[var(--touch-target-min)]
+                    min-h-(--touch-target-min)
                     px-6 py-2 
                     bg-gradient-to-r from-purple-600 to-pink-600 
                     text-white font-medium text-sm
@@ -190,8 +190,8 @@ export default function HeaderMobileOptimized() {
             className="
               lg:hidden
               flex items-center justify-center
-              w-[var(--touch-target-min)]
-              h-[var(--touch-target-min)]
+              w-(--touch-target-min)
+              h-(--touch-target-min)
               -mr-2
               touch-manipulation
             "
@@ -242,8 +242,8 @@ export default function HeaderMobileOptimized() {
               "
             >
               <nav className="
-                px-[var(--content-padding)]
-                py-[var(--spacing-lg)]
+                px-(--content-padding)
+                py-(--spacing-lg)
                 pb-[max(var(--spacing-lg),var(--safe-area-bottom))]
               ">
                 {/* Mobile Navigation Groups */}
@@ -263,7 +263,7 @@ export default function HeaderMobileOptimized() {
                           href={item.href}
                           className="
                             flex items-center gap-3
-                            min-h-[var(--touch-target-comfortable)]
+                            min-h-(--touch-target-comfortable)
                             px-3 py-2
                             rounded-lg
                             text-gray-700 hover:text-gray-900
@@ -285,7 +285,7 @@ export default function HeaderMobileOptimized() {
                       href="/pricing"
                       className="
                         flex items-center
-                        min-h-[var(--touch-target-comfortable)]
+                        min-h-(--touch-target-comfortable)
                         px-3 py-2
                         rounded-lg
                         text-gray-700 hover:text-gray-900
@@ -315,7 +315,7 @@ export default function HeaderMobileOptimized() {
                           href={item.href}
                           className="
                             flex items-center gap-3
-                            min-h-[var(--touch-target-comfortable)]
+                            min-h-(--touch-target-comfortable)
                             px-3 py-2
                             rounded-lg
                             text-gray-700 hover:text-gray-900
@@ -347,7 +347,7 @@ export default function HeaderMobileOptimized() {
                           href="/dashboard"
                           className="
                             block w-full
-                            min-h-[var(--touch-target-primary)]
+                            min-h-(--touch-target-primary)
                             px-6 py-3
                             bg-purple-600 text-white
                             rounded-lg font-medium
@@ -367,7 +367,7 @@ export default function HeaderMobileOptimized() {
                           }}
                           className="
                             block w-full
-                            min-h-[var(--touch-target-comfortable)]
+                            min-h-(--touch-target-comfortable)
                             px-6 py-3
                             text-gray-600
                             rounded-lg font-medium
@@ -386,7 +386,7 @@ export default function HeaderMobileOptimized() {
                           href="/auth"
                           className="
                             block w-full
-                            min-h-[var(--touch-target-comfortable)]
+                            min-h-(--touch-target-comfortable)
                             px-6 py-3
                             text-gray-700
                             rounded-lg font-medium
@@ -406,7 +406,7 @@ export default function HeaderMobileOptimized() {
                           href="/auth"
                           className="
                             block w-full
-                            min-h-[var(--touch-target-primary)]
+                            min-h-(--touch-target-primary)
                             px-6 py-4
                             bg-gradient-to-r from-purple-600 to-pink-600
                             text-white
@@ -435,7 +435,7 @@ export default function HeaderMobileOptimized() {
 
       {/* Spacer to compensate for fixed header */}
       <div 
-        className="h-[var(--mobile-header-height)] pt-[var(--safe-area-top)]" 
+        className="h-(--mobile-header-height) pt-(--safe-area-top)" 
         aria-hidden="true" 
       />
     </>

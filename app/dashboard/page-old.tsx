@@ -221,40 +221,40 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface-light dark:bg-surface flex items-center justify-center">
+      <div className="min-h-screen bg-(--color-surface-light) dark:bg-surface flex items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <span className="text-content-secondary">Loading dashboard...</span>
+          <span className="text-(--color-content-secondary)">Loading dashboard...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface-light dark:bg-surface">
+    <div className="min-h-screen bg-(--color-surface-light) dark:bg-surface">
       {/* Sync Progress Bar */}
       {ofSyncing && (
         <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-primary animate-pulse z-50" />
       )}
 
       {/* Mobile Header */}
-      <div className="lg:hidden sticky top-0 z-40 bg-surface-elevated-light dark:bg-surface-elevated border-b border-border-light dark:border-border">
+      <div className="lg:hidden sticky top-0 z-40 bg-(--color-surface-elevated-light) dark:bg-surface-elevated border-b border-(--color-border-light) dark:border-border">
         <div className="flex items-center justify-between p-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors"
+            className="p-2 hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg transition-colors"
           >
-            <Menu className="w-5 h-5 text-content-primary" />
+            <Menu className="w-5 h-5 text-(--color-content-primary)" />
           </button>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">H</span>
             </div>
-            <span className="font-bold text-content-primary">Huntaze</span>
+            <span className="font-bold text-(--color-content-primary)">Huntaze</span>
           </div>
           <div className="flex items-center gap-3">
-            <button className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors relative">
-              <Bell className="w-5 h-5 text-content-primary" />
+            <button className="p-2 hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg transition-colors relative">
+              <Bell className="w-5 h-5 text-(--color-content-primary)" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full" />
             </button>
             <img
@@ -268,14 +268,14 @@ export default function DashboardPage() {
 
       <div className="flex h-full">
         {/* Sidebar - Desktop */}
-        <aside className="hidden lg:flex flex-col w-72 bg-surface-elevated-light dark:bg-surface-elevated border-r border-border-light dark:border-border min-h-screen">
+        <aside className="hidden lg:flex flex-col w-72 bg-(--color-surface-elevated-light) dark:bg-surface-elevated border-r border-(--color-border-light) dark:border-border min-h-screen">
           {/* Logo */}
-          <div className="p-6 border-b border-border-light dark:border-border">
+          <div className="p-6 border-b border-(--color-border-light) dark:border-border">
             <Link href="/dashboard" className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">H</span>
               </div>
-              <span className="text-xl font-bold text-content-primary">Huntaze</span>
+              <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
             </Link>
           </div>
 
@@ -303,7 +303,7 @@ export default function DashboardPage() {
               })}
               
               <div className="pt-4 pb-2">
-                <p className="px-3 text-xs font-semibold text-content-tertiary uppercase tracking-wider">
+                <p className="px-3 text-xs font-semibold text-(--color-content-tertiary) uppercase tracking-wider">
                   Analytics & Tools
                 </p>
               </div>
@@ -339,18 +339,18 @@ export default function DashboardPage() {
           </nav>
 
           {/* User Section */}
-          <div className="p-4 border-t border-border-light dark:border-border">
-            <div className="flex items-center gap-3 p-3 hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors cursor-pointer">
+          <div className="p-4 border-t border-(--color-border-light) dark:border-border">
+            <div className="flex items-center gap-3 p-3 hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg transition-colors cursor-pointer">
               <img
                 src={user?.picture || "https://ui-avatars.com/api/?name=" + (user?.name || "User")}
                 alt={user?.name}
                 className="w-10 h-10 rounded-lg"
               />
               <div className="flex-1">
-                <p className="font-medium text-content-primary text-sm">{user?.name}</p>
-                <p className="text-xs text-content-tertiary">{user?.email}</p>
+                <p className="font-medium text-(--color-content-primary) text-sm">{user?.name}</p>
+                <p className="text-xs text-(--color-content-tertiary)">{user?.email}</p>
               </div>
-              <Settings className="w-4 h-4 text-content-tertiary" />
+              <Settings className="w-4 h-4 text-(--color-content-tertiary)" />
             </div>
           </div>
         </aside>
@@ -362,20 +362,20 @@ export default function DashboardPage() {
               className="lg:hidden fixed inset-0 bg-black/50 z-40"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="lg:hidden fixed left-0 top-0 bottom-0 w-80 bg-surface-elevated-light dark:bg-surface-elevated z-50 shadow-xl">
+            <aside className="lg:hidden fixed left-0 top-0 bottom-0 w-80 bg-(--color-surface-elevated-light) dark:bg-surface-elevated z-50 shadow-xl">
               {/* Similar content as desktop sidebar */}
-              <div className="p-6 border-b border-border-light dark:border-border flex items-center justify-between">
+              <div className="p-6 border-b border-(--color-border-light) dark:border-border flex items-center justify-between">
                 <Link href="/dashboard" className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
                     <span className="text-white font-bold text-xl">H</span>
                   </div>
-                  <span className="text-xl font-bold text-content-primary">Huntaze</span>
+                  <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
                 </Link>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg"
+                  className="p-2 hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg"
                 >
-                  <X className="w-5 h-5 text-content-primary" />
+                  <X className="w-5 h-5 text-(--color-content-primary)" />
                 </button>
               </div>
               {/* Rest of mobile sidebar content... */}
@@ -390,10 +390,10 @@ export default function DashboardPage() {
 
           {/* Welcome Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-content-primary mb-2">
+            <h1 className="text-3xl font-bold text-(--color-content-primary) mb-2">
               Welcome back, {user?.name?.split(' ')[0] || 'Creator'}! 👋
             </h1>
-            <p className="text-content-secondary">
+            <p className="text-(--color-content-secondary)">
               Here's your performance overview for today
             </p>
           </div>
@@ -459,7 +459,7 @@ export default function DashboardPage() {
                 <div className="divide-y divide-border-light dark:divide-border">
                   {topFans.length > 0 ? (
                     topFans.slice(0, 3).map((fan, index) => (
-                      <div key={index} className="p-4 hover:bg-surface-hover-light dark:hover:bg-surface-hover transition-colors">
+                      <div key={index} className="p-4 hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover transition-colors">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <img
@@ -468,12 +468,12 @@ export default function DashboardPage() {
                               className="w-12 h-12 rounded-xl"
                             />
                             <div>
-                              <p className="font-semibold text-content-primary">{fan.name}</p>
-                              <p className="text-sm text-content-tertiary">{fan.lastActive}</p>
+                              <p className="font-semibold text-(--color-content-primary)">{fan.name}</p>
+                              <p className="text-sm text-(--color-content-tertiary)">{fan.lastActive}</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-content-primary">{fan.revenue}</p>
+                            <p className="font-bold text-(--color-content-primary)">{fan.revenue}</p>
                             <p className="text-sm text-success flex items-center justify-end gap-1">
                               <TrendingUp className="w-3 h-3" />
                               +{(fan.trend * 100).toFixed(0)}%
@@ -483,7 +483,7 @@ export default function DashboardPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="p-8 text-center text-content-tertiary">
+                    <div className="p-8 text-center text-(--color-content-tertiary)">
                       <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
                       <p>No fan data yet</p>
                       <p className="text-sm mt-1">Connect a platform to see your top fans</p>
@@ -495,7 +495,7 @@ export default function DashboardPage() {
               {/* Social Platforms */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-content-primary">Connected Platforms</h2>
+                  <h2 className="text-xl font-bold text-(--color-content-primary)">Connected Platforms</h2>
                   <Link href="/platforms/connect" className="text-sm text-primary hover:text-primary-hover font-medium">
                     Manage →
                   </Link>
@@ -508,11 +508,11 @@ export default function DashboardPage() {
                       <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
                         <MessageSquare className="w-6 h-6 text-blue-600" />
                       </div>
-                      <h3 className="font-bold text-content-primary">OnlyFans</h3>
+                      <h3 className="font-bold text-(--color-content-primary)">OnlyFans</h3>
                     </div>
                     {ofStatus?.connected ? (
                       <div>
-                        <p className="text-sm text-content-tertiary mb-3">
+                        <p className="text-sm text-(--color-content-tertiary) mb-3">
                           @{ofStatus.username} • Last sync: {ofStatus.lastSync ? new Date(ofStatus.lastSync).toLocaleTimeString() : 'Never'}
                         </p>
                         <div className="flex gap-2">
@@ -557,7 +557,7 @@ export default function DashboardPage() {
                       </div>
                     ) : (
                       <div>
-                        <p className="text-sm text-content-tertiary mb-4">
+                        <p className="text-sm text-(--color-content-tertiary) mb-4">
                           Sync earnings, subscribers and messages.
                         </p>
                         <Link href="/platforms/connect/onlyfans" className="btn-outline w-full">
@@ -571,13 +571,13 @@ export default function DashboardPage() {
                   <div className="platform-card">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-3 rounded-xl bg-gradient-to-br from-red-100 to-blue-100 dark:from-red-900/30 dark:to-blue-900/30">
-                        <Video className="w-6 h-6 text-content-primary" />
+                        <Video className="w-6 h-6 text-(--color-content-primary)" />
                       </div>
-                      <h3 className="font-bold text-content-primary">TikTok</h3>
+                      <h3 className="font-bold text-(--color-content-primary)">TikTok</h3>
                     </div>
                     {tiktokUser ? (
                       <div>
-                        <p className="text-sm text-content-tertiary mb-3">
+                        <p className="text-sm text-(--color-content-tertiary) mb-3">
                           @{tiktokUser.display_name}
                         </p>
                         <div className="flex gap-2">
@@ -597,7 +597,7 @@ export default function DashboardPage() {
                       </div>
                     ) : (
                       <div>
-                        <p className="text-sm text-content-tertiary mb-4">
+                        <p className="text-sm text-(--color-content-tertiary) mb-4">
                           Share videos and grow your audience
                         </p>
                         <button 
@@ -616,9 +616,9 @@ export default function DashboardPage() {
                       <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30">
                         <Camera className="w-6 h-6 text-pink-600" />
                       </div>
-                      <h3 className="font-bold text-content-primary">Instagram</h3>
+                      <h3 className="font-bold text-(--color-content-primary)">Instagram</h3>
                     </div>
-                    <p className="text-sm text-content-tertiary mb-4">Coming soon</p>
+                    <p className="text-sm text-(--color-content-tertiary) mb-4">Coming soon</p>
                     <button disabled className="btn-secondary w-full opacity-50 cursor-not-allowed">
                       Not available
                     </button>
@@ -630,9 +630,9 @@ export default function DashboardPage() {
                       <div className="p-3 rounded-xl bg-orange-100 dark:bg-orange-900/30">
                         <MessageSquare className="w-6 h-6 text-orange-600" />
                       </div>
-                      <h3 className="font-bold text-content-primary">Reddit</h3>
+                      <h3 className="font-bold text-(--color-content-primary)">Reddit</h3>
                     </div>
-                    <p className="text-sm text-content-tertiary mb-4">Coming soon</p>
+                    <p className="text-sm text-(--color-content-tertiary) mb-4">Coming soon</p>
                     <button disabled className="btn-secondary w-full opacity-50 cursor-not-allowed">
                       Not available
                     </button>
@@ -659,10 +659,10 @@ export default function DashboardPage() {
                               <ActionIcon className={`w-5 h-5 text-${action.color}-600`} />
                             </div>
                             <div>
-                              <p className="font-medium text-content-primary">{action.title}</p>
-                              <p className="text-xs text-content-tertiary">{action.description}</p>
+                              <p className="font-medium text-(--color-content-primary)">{action.title}</p>
+                              <p className="text-xs text-(--color-content-tertiary)">{action.description}</p>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-content-tertiary ml-auto group-hover:translate-x-1 transition-transform" />
+                            <ChevronRight className="w-4 h-4 text-(--color-content-tertiary) ml-auto group-hover:translate-x-1 transition-transform" />
                           </div>
                         </div>
                       </Link>

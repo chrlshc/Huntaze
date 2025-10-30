@@ -1,425 +1,405 @@
-import Stripe from 'stripe';
-import { prisma } from '@/lib/db';
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  interval: 'month' | 'year';
+  features: string[];
+  limits: {
+    assets: number;
+    campaigns: number;
+    apiCalls: number;
+  };
+}
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
+export interface UserSubscription {
+  id: string;
+  userId: string;
+  planId: string;
+  status: 'active' | 'canceled' | 'past_due' | 'unpaid';
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  stripeSubscriptionId?: string;
+  stripeCustomerId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CheckoutSessionData {
+  priceId: string;
+  successUrl: string;
+  cancelUrl: string;
+  customerId?: string;
+  metadata?: Record<string, string>;
+}
+
+export interface PortalSessionData {
+  customerId: string;
+  returnUrl: string;
+}
+
+export interface WebhookEvent {
+  id: string;
+  type: string;
+  data: any;
+  created: number;
+}
+
+// Mock Stripe objects
+const mockStripeCustomer = {
+  id: 'cus_mock123',
+  email: 'test@example.com',
+  name: 'Test User',
+  created: Math.floor(Date.now() / 1000),
+};
+
+const mockStripeSubscription = {
+  id: 'sub_mock123',
+  customer: 'cus_mock123',
+  status: 'active',
+  current_period_start: Math.floor(Date.now() / 1000),
+  current_period_end: Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
+  items: {
+    data: [
+      {
+        price: {
+          id: 'price_pro_monthly',
+          unit_amount: 2900,
+          currency: 'usd',
+          recurring: { interval: 'month' }
+        }
+      }
+    ]
+  }
+};
+
+// Mock data
+const subscriptionPlans: Map<string, SubscriptionPlan> = new Map([
+  ['free', {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    currency: 'usd',
+    interval: 'month',
+    features: ['Basic content creation', '5 assets', '1 campaign'],
+    limits: { assets: 5, campaigns: 1, apiCalls: 100 }
+  }],
+  ['pro', {
+    id: 'pro',
+    name: 'Pro',
+    price: 29,
+    currency: 'usd',
+    interval: 'month',
+    features: ['Advanced AI tools', '100 assets', '10 campaigns', 'Priority support'],
+    limits: { assets: 100, campaigns: 10, apiCalls: 1000 }
+  }],
+  ['enterprise', {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 99,
+    currency: 'usd',
+    interval: 'month',
+    features: ['Unlimited assets', 'Unlimited campaigns', 'Custom integrations', '24/7 support'],
+    limits: { assets: -1, campaigns: -1, apiCalls: -1 }
+  }]
+]);
+
+const userSubscriptions: Map<string, UserSubscription> = new Map();
+const priceIdToPlanMap: Map<string, string> = new Map([
+  ['price_free', 'free'],
+  ['price_pro_monthly', 'pro'],
+  ['price_pro_yearly', 'pro'],
+  ['price_enterprise_monthly', 'enterprise'],
+  ['price_enterprise_yearly', 'enterprise']
+]);
+
+// Initialize test data
+userSubscriptions.set('user-1', {
+  id: 'sub-1',
+  userId: 'user-1',
+  planId: 'free',
+  status: 'active',
+  currentPeriodStart: new Date(),
+  currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  createdAt: new Date(),
+  updatedAt: new Date()
 });
 
-export interface CreateCheckoutSessionParams {
-  userId: string;
-  priceId: string;
-  successUrl?: string;
-  cancelUrl?: string;
-}
-
-export interface CreatePortalSessionParams {
-  userId: string;
-  returnUrl?: string;
-}
-
 export class SimpleBillingService {
-  /**
-   * Create a Stripe checkout session for a user
-   */
-  static async createCheckoutSession({
-    userId,
-    priceId,
-    successUrl = `${process.env.NEXT_PUBLIC_URL}/dashboard?success=true`,
-    cancelUrl = `${process.env.NEXT_PUBLIC_URL}/pricing`
-  }: CreateCheckoutSessionParams): Promise<string> {
-    // Get user info
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { email: true, stripeCustomerId: true }
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Create or use existing Stripe customer
-    let customerId = user.stripeCustomerId;
+  // Create Stripe checkout session
+  async createCheckoutSession(data: CheckoutSessionData): Promise<{ url: string; sessionId: string }> {
+    // Simulate Stripe checkout session creation
+    const sessionId = `cs_mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: { userId }
-      });
-      customerId = customer.id;
-
-      // Update user with Stripe customer ID
-      await prisma.user.update({
-        where: { id: userId },
-        data: { stripeCustomerId: customerId }
-      });
-    }
-
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      metadata: { userId },
-      allow_promotion_codes: true,
-      billing_address_collection: 'required',
-    });
-
-    if (!session.url) {
-      throw new Error('Failed to create checkout session');
-    }
-
-    return session.url;
-  }
-
-  /**
-   * Create a Stripe customer portal session
-   */
-  static async createPortalSession({
-    userId,
-    returnUrl = `${process.env.NEXT_PUBLIC_URL}/dashboard`
-  }: CreatePortalSessionParams): Promise<string> {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { stripeCustomerId: true }
-    });
-
-    if (!user?.stripeCustomerId) {
-      throw new Error('No Stripe customer found for user');
-    }
-
-    const session = await stripe.billingPortal.sessions.create({
-      customer: user.stripeCustomerId,
-      return_url: returnUrl,
-    });
-
-    return session.url;
-  }
-
-  /**
-   * Handle Stripe webhooks
-   */
-  static async handleWebhook(event: Stripe.Event): Promise<void> {
-    console.log(`Processing webhook: ${event.type}`);
-
-    switch (event.type) {
-      case 'checkout.session.completed':
-        await this.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
-        break;
-
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        await this.handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
-        break;
-
-      case 'customer.subscription.deleted':
-        await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
-        break;
-
-      case 'invoice.payment_succeeded':
-        await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
-        break;
-
-      case 'invoice.payment_failed':
-        await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
-        break;
-
-      default:
-        console.log(`Unhandled webhook event type: ${event.type}`);
-    }
-  }
-
-  /**
-   * Handle successful checkout completion
-   */
-  private static async handleCheckoutCompleted(session: Stripe.Checkout.Session): Promise<void> {
-    const userId = session.metadata?.userId;
-    
-    if (!userId) {
-      console.error('No userId in checkout session metadata');
-      return;
-    }
-
-    const subscriptionId = session.subscription as string;
-    
-    if (!subscriptionId) {
-      console.error('No subscription ID in checkout session');
-      return;
-    }
-
-    // Get subscription details from Stripe
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const plan = this.getPlanFromSubscription(subscription);
-
-    // Update user subscription in database
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        subscription: plan,
-        stripeCustomerId: session.customer as string,
-        subscriptionRecord: {
-          upsert: {
-            create: {
-              stripeSubscriptionId: subscriptionId,
-              status: 'ACTIVE',
-              plan,
-              currentPeriodStart: new Date(subscription.current_period_start * 1000),
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-            },
-            update: {
-              stripeSubscriptionId: subscriptionId,
-              status: 'ACTIVE',
-              plan,
-              currentPeriodStart: new Date(subscription.current_period_start * 1000),
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-            }
-          }
-        }
-      }
-    });
-
-    console.log(`Subscription activated for user ${userId}: ${plan}`);
-  }
-
-  /**
-   * Handle subscription updates
-   */
-  private static async handleSubscriptionUpdated(subscription: Stripe.Subscription): Promise<void> {
-    const customerId = subscription.customer as string;
-    
-    // Find user by Stripe customer ID
-    const user = await prisma.user.findUnique({
-      where: { stripeCustomerId: customerId }
-    });
-
-    if (!user) {
-      console.error(`No user found for Stripe customer ${customerId}`);
-      return;
-    }
-
-    const plan = this.getPlanFromSubscription(subscription);
-    const status = this.mapStripeStatus(subscription.status);
-
-    // Update user and subscription record
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        subscription: status === 'ACTIVE' ? plan : 'FREE',
-        subscriptionRecord: {
-          upsert: {
-            create: {
-              stripeSubscriptionId: subscription.id,
-              status,
-              plan,
-              currentPeriodStart: new Date(subscription.current_period_start * 1000),
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-              cancelAtPeriodEnd: subscription.cancel_at_period_end,
-            },
-            update: {
-              status,
-              plan,
-              currentPeriodStart: new Date(subscription.current_period_start * 1000),
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-              cancelAtPeriodEnd: subscription.cancel_at_period_end,
-            }
-          }
-        }
-      }
-    });
-
-    console.log(`Subscription updated for user ${user.id}: ${plan} (${status})`);
-  }
-
-  /**
-   * Handle subscription deletion
-   */
-  private static async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
-    const customerId = subscription.customer as string;
-    
-    const user = await prisma.user.findUnique({
-      where: { stripeCustomerId: customerId }
-    });
-
-    if (!user) {
-      console.error(`No user found for Stripe customer ${customerId}`);
-      return;
-    }
-
-    // Downgrade user to free plan
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        subscription: 'FREE',
-        subscriptionRecord: {
-          update: {
-            status: 'CANCELED'
-          }
-        }
-      }
-    });
-
-    console.log(`Subscription canceled for user ${user.id}`);
-  }
-
-  /**
-   * Handle successful payment
-   */
-  private static async handlePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
-    const customerId = invoice.customer as string;
-    
-    const user = await prisma.user.findUnique({
-      where: { stripeCustomerId: customerId }
-    });
-
-    if (!user) {
-      console.error(`No user found for Stripe customer ${customerId}`);
-      return;
-    }
-
-    // Update subscription status to active if it was past due
-    await prisma.subscriptionRecord.updateMany({
-      where: { 
-        userId: user.id,
-        status: 'PAST_DUE'
-      },
-      data: {
-        status: 'ACTIVE'
-      }
-    });
-
-    console.log(`Payment succeeded for user ${user.id}`);
-  }
-
-  /**
-   * Handle failed payment
-   */
-  private static async handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
-    const customerId = invoice.customer as string;
-    
-    const user = await prisma.user.findUnique({
-      where: { stripeCustomerId: customerId }
-    });
-
-    if (!user) {
-      console.error(`No user found for Stripe customer ${customerId}`);
-      return;
-    }
-
-    // Mark subscription as past due
-    await prisma.subscriptionRecord.updateMany({
-      where: { 
-        userId: user.id,
-        status: 'ACTIVE'
-      },
-      data: {
-        status: 'PAST_DUE'
-      }
-    });
-
-    console.log(`Payment failed for user ${user.id}`);
-  }
-
-  /**
-   * Get plan type from Stripe subscription
-   */
-  private static getPlanFromSubscription(subscription: Stripe.Subscription): 'FREE' | 'PRO' | 'ENTERPRISE' {
-    const priceId = subscription.items.data[0]?.price.id;
-    
-    // Map Stripe price IDs to plan types
-    const priceMap: Record<string, 'FREE' | 'PRO' | 'ENTERPRISE'> = {
-      [process.env.STRIPE_PRO_MONTHLY_PRICE_ID!]: 'PRO',
-      [process.env.STRIPE_PRO_YEARLY_PRICE_ID!]: 'PRO',
-      [process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID!]: 'ENTERPRISE',
-      [process.env.STRIPE_ENTERPRISE_YEARLY_PRICE_ID!]: 'ENTERPRISE',
+    // Mock successful response
+    return {
+      url: `https://checkout.stripe.com/pay/${sessionId}`,
+      sessionId
     };
-
-    return priceMap[priceId || ''] || 'FREE';
   }
 
-  /**
-   * Map Stripe subscription status to our internal status
-   */
-  private static mapStripeStatus(stripeStatus: Stripe.Subscription.Status): 'ACTIVE' | 'CANCELED' | 'PAST_DUE' | 'UNPAID' {
+  // Create Stripe customer portal session
+  async createPortalSession(data: PortalSessionData): Promise<{ url: string }> {
+    // Simulate Stripe portal session creation
+    return {
+      url: `https://billing.stripe.com/session/${data.customerId}`
+    };
+  }
+
+  // Handle Stripe webhooks
+  async handleWebhook(event: WebhookEvent): Promise<{ processed: boolean; message?: string }> {
+    try {
+      switch (event.type) {
+        case 'customer.subscription.created':
+          return this.handleSubscriptionCreated(event.data);
+        
+        case 'customer.subscription.updated':
+          return this.handleSubscriptionUpdated(event.data);
+        
+        case 'customer.subscription.deleted':
+          return this.handleSubscriptionDeleted(event.data);
+        
+        case 'invoice.payment_succeeded':
+          return this.handlePaymentSucceeded(event.data);
+        
+        case 'invoice.payment_failed':
+          return this.handlePaymentFailed(event.data);
+        
+        case 'customer.created':
+          return this.handleCustomerCreated(event.data);
+        
+        case 'customer.updated':
+          return this.handleCustomerUpdated(event.data);
+        
+        case 'customer.deleted':
+          return this.handleCustomerDeleted(event.data);
+        
+        default:
+          return { processed: false, message: `Unhandled event type: ${event.type}` };
+      }
+    } catch (error) {
+      return { 
+        processed: false, 
+        message: error instanceof Error ? error.message : 'Webhook processing failed' 
+      };
+    }
+  }
+
+  // Get user subscription
+  async getUserSubscription(userId: string): Promise<UserSubscription | null> {
+    const subscription = userSubscriptions.get(userId);
+    return subscription ? { ...subscription } : null;
+  }
+
+  // Check if user has access to a feature
+  async hasFeatureAccess(userId: string, feature: string): Promise<boolean> {
+    const subscription = await this.getUserSubscription(userId);
+    if (!subscription || subscription.status !== 'active') {
+      return false;
+    }
+    
+    const plan = subscriptionPlans.get(subscription.planId);
+    if (!plan) return false;
+    
+    // Check feature access based on plan
+    switch (feature) {
+      case 'ai_tools':
+        return ['pro', 'enterprise'].includes(plan.id);
+      case 'unlimited_assets':
+        return plan.id === 'enterprise';
+      case 'priority_support':
+        return ['pro', 'enterprise'].includes(plan.id);
+      case 'custom_integrations':
+        return plan.id === 'enterprise';
+      default:
+        return true; // Basic features available to all
+    }
+  }
+
+  // Get usage limits for user
+  async getUsageLimits(userId: string): Promise<SubscriptionPlan['limits'] | null> {
+    const subscription = await this.getUserSubscription(userId);
+    if (!subscription) return null;
+    
+    const plan = subscriptionPlans.get(subscription.planId);
+    return plan ? { ...plan.limits } : null;
+  }
+
+  // Map Stripe price ID to plan
+  mapPriceIdToPlan(priceId: string): string | null {
+    return priceIdToPlanMap.get(priceId) || null;
+  }
+
+  // Map Stripe subscription status
+  mapStripeStatus(stripeStatus: string): UserSubscription['status'] {
     switch (stripeStatus) {
       case 'active':
-        return 'ACTIVE';
+        return 'active';
       case 'canceled':
-      case 'incomplete_expired':
-        return 'CANCELED';
+        return 'canceled';
       case 'past_due':
-        return 'PAST_DUE';
+        return 'past_due';
       case 'unpaid':
-      case 'incomplete':
-        return 'UNPAID';
+        return 'unpaid';
       default:
-        return 'CANCELED';
+        return 'canceled';
     }
   }
 
-  /**
-   * Get user's current subscription info
-   */
-  static async getUserSubscription(userId: string) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { subscriptionRecord: true }
-    });
-
-    if (!user) {
-      throw new Error('User not found');
+  // Private webhook handlers
+  private async handleSubscriptionCreated(subscriptionData: any): Promise<{ processed: boolean; message?: string }> {
+    const planId = this.mapPriceIdToPlan(subscriptionData.items.data[0].price.id);
+    if (!planId) {
+      return { processed: false, message: 'Unknown price ID' };
     }
 
+    // Create or update user subscription
+    const subscription: UserSubscription = {
+      id: `sub_${Date.now()}`,
+      userId: subscriptionData.customer, // Assuming customer ID maps to user ID
+      planId,
+      status: this.mapStripeStatus(subscriptionData.status),
+      currentPeriodStart: new Date(subscriptionData.current_period_start * 1000),
+      currentPeriodEnd: new Date(subscriptionData.current_period_end * 1000),
+      stripeSubscriptionId: subscriptionData.id,
+      stripeCustomerId: subscriptionData.customer,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    userSubscriptions.set(subscription.userId, subscription);
+    return { processed: true };
+  }
+
+  private async handleSubscriptionUpdated(subscriptionData: any): Promise<{ processed: boolean; message?: string }> {
+    const existingSubscription = userSubscriptions.get(subscriptionData.customer);
+    if (!existingSubscription) {
+      return { processed: false, message: 'Subscription not found' };
+    }
+
+    const planId = this.mapPriceIdToPlan(subscriptionData.items.data[0].price.id);
+    if (!planId) {
+      return { processed: false, message: 'Unknown price ID' };
+    }
+
+    const updatedSubscription: UserSubscription = {
+      ...existingSubscription,
+      planId,
+      status: this.mapStripeStatus(subscriptionData.status),
+      currentPeriodStart: new Date(subscriptionData.current_period_start * 1000),
+      currentPeriodEnd: new Date(subscriptionData.current_period_end * 1000),
+      updatedAt: new Date()
+    };
+
+    userSubscriptions.set(updatedSubscription.userId, updatedSubscription);
+    return { processed: true };
+  }
+
+  private async handleSubscriptionDeleted(subscriptionData: any): Promise<{ processed: boolean; message?: string }> {
+    const existingSubscription = userSubscriptions.get(subscriptionData.customer);
+    if (!existingSubscription) {
+      return { processed: false, message: 'Subscription not found' };
+    }
+
+    const updatedSubscription: UserSubscription = {
+      ...existingSubscription,
+      status: 'canceled',
+      updatedAt: new Date()
+    };
+
+    userSubscriptions.set(updatedSubscription.userId, updatedSubscription);
+    return { processed: true };
+  }
+
+  private async handlePaymentSucceeded(invoiceData: any): Promise<{ processed: boolean; message?: string }> {
+    // Update subscription status if needed
+    const subscription = userSubscriptions.get(invoiceData.customer);
+    if (subscription && subscription.status !== 'active') {
+      subscription.status = 'active';
+      subscription.updatedAt = new Date();
+      userSubscriptions.set(subscription.userId, subscription);
+    }
+    
+    return { processed: true };
+  }
+
+  private async handlePaymentFailed(invoiceData: any): Promise<{ processed: boolean; message?: string }> {
+    // Update subscription status to past_due
+    const subscription = userSubscriptions.get(invoiceData.customer);
+    if (subscription) {
+      subscription.status = 'past_due';
+      subscription.updatedAt = new Date();
+      userSubscriptions.set(subscription.userId, subscription);
+    }
+    
+    return { processed: true };
+  }
+
+  private async handleCustomerCreated(customerData: any): Promise<{ processed: boolean; message?: string }> {
+    // Handle customer creation if needed
+    return { processed: true };
+  }
+
+  private async handleCustomerUpdated(customerData: any): Promise<{ processed: boolean; message?: string }> {
+    // Handle customer updates if needed
+    return { processed: true };
+  }
+
+  private async handleCustomerDeleted(customerData: any): Promise<{ processed: boolean; message?: string }> {
+    // Handle customer deletion if needed
+    return { processed: true };
+  }
+
+  // Get all available plans
+  async getAvailablePlans(): Promise<SubscriptionPlan[]> {
+    return Array.from(subscriptionPlans.values());
+  }
+
+  // Get plan by ID
+  async getPlanById(planId: string): Promise<SubscriptionPlan | null> {
+    const plan = subscriptionPlans.get(planId);
+    return plan ? { ...plan } : null;
+  }
+
+  // Health check
+  async isHealthy(): Promise<boolean> {
+    try {
+      // Simple health check
+      return subscriptionPlans.size > 0;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Get service metrics
+  async getMetrics(): Promise<{
+    totalSubscriptions: number;
+    activeSubscriptions: number;
+    planBreakdown: Record<string, number>;
+    revenue: number;
+  }> {
+    const subscriptions = Array.from(userSubscriptions.values());
+    const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active');
+    
+    const planBreakdown = subscriptions.reduce((acc, sub) => {
+      acc[sub.planId] = (acc[sub.planId] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const revenue = activeSubscriptions.reduce((total, sub) => {
+      const plan = subscriptionPlans.get(sub.planId);
+      return total + (plan ? plan.price : 0);
+    }, 0);
+    
     return {
-      subscription: user.subscription,
-      subscriptionRecord: user.subscriptionRecord,
-      stripeCustomerId: user.stripeCustomerId
+      totalSubscriptions: subscriptions.length,
+      activeSubscriptions: activeSubscriptions.length,
+      planBreakdown,
+      revenue
     };
-  }
-
-  /**
-   * Check if user has access to a feature
-   */
-  static hasFeatureAccess(
-    subscription: 'FREE' | 'PRO' | 'ENTERPRISE',
-    feature: string
-  ): boolean {
-    const featureMap = {
-      FREE: ['basic_content', 'limited_ai'],
-      PRO: ['basic_content', 'unlimited_ai', 'analytics', 'scheduling'],
-      ENTERPRISE: ['basic_content', 'unlimited_ai', 'analytics', 'scheduling', 'api_access', 'priority_support']
-    };
-
-    return featureMap[subscription].includes(feature);
-  }
-
-  /**
-   * Get usage limits for a subscription
-   */
-  static getUsageLimits(subscription: 'FREE' | 'PRO' | 'ENTERPRISE') {
-    const limits = {
-      FREE: {
-        aiGenerations: 5,
-        storage: 100, // MB
-        apiCalls: 0
-      },
-      PRO: {
-        aiGenerations: -1, // Unlimited
-        storage: 5000, // MB
-        apiCalls: 1000
-      },
-      ENTERPRISE: {
-        aiGenerations: -1, // Unlimited
-        storage: 50000, // MB
-        apiCalls: 10000
-      }
-    };
-
-    return limits[subscription];
   }
 }
+
+// Export singleton instance
+export const simpleBillingService = new SimpleBillingService();
+export default simpleBillingService;

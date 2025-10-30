@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "huntaze-prisma-skeleton"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-qusvkqzketix"
+s3_prefix = "huntaze-prisma-skeleton"
+region = "us-east-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "DatabaseSecretArn=arn:aws:secretsmanager:us-east-1:317805897534:secret:huntaze/database"

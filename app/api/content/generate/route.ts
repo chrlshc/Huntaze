@@ -1,137 +1,101 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { AuthService } from '@/lib/services/auth-service';
-import { AIContentService, ContentGenerationRequest } from '@/lib/services/ai-content-service';
-import { prisma } from '@/lib/db';
+/**
+ * Legacy Content Generation API - Backward Compatibility
+ * 
+ * Ancien endpoint /api/content/generate maintenu pour compatibilité
+ * Route vers le nouveau système hybrid orchestrator
+ */
 
-const generateContentSchema = z.object({
-  prompt: z.string().min(10, 'Le prompt doit contenir au moins 10 caractères'),
-  type: z.enum(['post', 'story', 'caption', 'ideas']),
-  tone: z.enum(['professional', 'casual', 'creative', 'humorous']).optional(),
-  length: z.enum(['short', 'medium', 'long']).optional(),
-  language: z.string().optional().default('fr'),
-  stream: z.boolean().optional().default(false)
+import { NextRequest, NextResponse } from 'next/server';
+import { getIntegrationMiddleware } from '@/lib/services/integration-middleware';
+import { z } from 'zod';
+
+// Schema pour l'ancienne API de génération de contenu
+const LegacyContentGenerationSchema = z.object({
+  user_id: z.string().optional(),
+  userId: z.string().optional(),
+  theme: z.string().optional(),
+  platform: z.string().optional(),
+  platforms: z.array(z.string()).optional(),
+  content_type: z.string().optional(),
+  contentType: z.string().optional(),
+  target_audience: z.string().optional(),
+  style: z.string().optional(),
+  length: z.enum(['short', 'medium', 'long']).optional()
 });
 
+/**
+ * POST /api/content/generate
+ * Génération de contenu (format legacy)
+ */
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
-    // Vérifier l'authentification
-    const user = await AuthService.getUserFromCookies();
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Non authentifié' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const validatedData = generateContentSchema.parse(body);
-
-    // Vérifier les limites d'usage
-    const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-    const usageCount = await prisma.contentAsset.count({
-      where: {
-        userId: user.sub,
-        createdAt: {
-          gte: new Date(currentMonth + '-01'),
-          lt: new Date(new Date(currentMonth + '-01').getFullYear(), new Date(currentMonth + '-01').getMonth() + 1, 1)
-        }
-      }
-    });
-
-    const usageLimits = AIContentService.validateUsageLimits(user.subscription, usageCount);
-    if (!usageLimits.allowed) {
-      return NextResponse.json(
-        { 
-          error: 'Limite d\'usage atteinte',
-          details: {
-            current: usageCount,
-            limit: usageLimits.limit,
-            subscription: user.subscription
-          }
-        },
-        { status: 429 }
-      );
-    }
-
-    const contentRequest: ContentGenerationRequest = {
-      prompt: validatedData.prompt,
-      type: validatedData.type,
-      tone: validatedData.tone,
-      length: validatedData.length,
-      language: validatedData.language
-    };
-
-    // Si streaming demandé, retourner un stream SSE
-    if (validatedData.stream) {
-      const stream = await AIContentService.generateContentStream(contentRequest);
-      
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Cache-Control'
-        }
-      });
-    }
-
-    // Génération synchrone
-    const result = await AIContentService.generateContent(contentRequest);
-
-    // Sauvegarder le contenu généré
-    const contentAsset = await prisma.contentAsset.create({
+    const validatedData = LegacyContentGenerationSchema.parse(body);
+    
+    // Transformer en format moderne
+    const modernRequest = {
+      userId: validatedData.userId || validatedData.user_id || 'unknown',
+      type: 'content_planning', // Mapper vers le nouveau type
       data: {
-        userId: user.sub,
-        title: `${validatedData.type} - ${new Date().toLocaleDateString()}`,
-        content: result.content,
-        type: validatedData.type.toUpperCase() as any,
-        metadata: {
-          prompt: validatedData.prompt,
-          generationMetadata: result.metadata,
-          tone: validatedData.tone,
-          length: validatedData.length,
-          language: validatedData.language
-        }
+        theme: validatedData.theme || 'general',
+        platforms: validatedData.platforms || (validatedData.platform ? [validatedData.platform] : ['instagram']),
+        contentType: validatedData.contentType || validatedData.content_type || 'post',
+        targetAudience: validatedData.target_audience,
+        style: validatedData.style,
+        length: validatedData.length || 'medium'
+      },
+      metadata: {
+        platform: 'api',
+        source: 'legacy-content-generate',
+        userAgent: request.headers.get('user-agent') || 'unknown'
       }
-    });
-
-    return NextResponse.json({
-      id: contentAsset.id,
-      content: result.content,
-      metadata: result.metadata,
-      usage: {
-        current: usageCount + 1,
-        remaining: usageLimits.remaining > 0 ? usageLimits.remaining - 1 : -1,
-        limit: usageLimits.limit
+    };
+    
+    // Router via le middleware
+    const middleware = await getIntegrationMiddleware();
+    const response = await middleware.routeRequest(modernRequest);
+    
+    // Transformer au format legacy attendu
+    const legacyResponse = {
+      success: response.success,
+      content: response.data?.content || response.data?.fullResult?.contents?.[0]?.text || 'Generated content',
+      platform: validatedData.platform || 'instagram',
+      platforms: modernRequest.data.platforms,
+      metadata: {
+        provider: response.metadata?.provider || 'unknown',
+        duration: Date.now() - startTime,
+        timestamp: new Date().toISOString()
       }
-    });
-
+    };
+    
+    const nextResponse = NextResponse.json(legacyResponse);
+    nextResponse.headers.set('X-API-Version', 'v1-content-legacy');
+    nextResponse.headers.set('X-Provider', response.metadata?.provider || 'unknown');
+    
+    return nextResponse;
+    
   } catch (error) {
+    console.error('[Legacy Content Generation API] Error:', error);
+    
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Données invalides', details: error.errors },
+        {
+          success: false,
+          error: 'Invalid request format',
+          details: error.errors
+        },
         { status: 400 }
       );
     }
-
-    console.error('Erreur lors de la génération de contenu:', error);
+    
     return NextResponse.json(
-      { error: 'Erreur lors de la génération de contenu' },
+      {
+        success: false,
+        error: error.message || 'Content generation failed'
+      },
       { status: 500 }
     );
   }
-}
-
-// Support des requêtes OPTIONS pour CORS
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-    }
-  });
 }

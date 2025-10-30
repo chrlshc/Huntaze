@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze OnlyFans - Ultra Minimal Infrastructure'
+
+Resources:
+  # DynamoDB Tables (sans KMS pour éviter les problèmes)
+  HuntazeOfSessions:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'huntaze-of-sessions'
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+
+  HuntazeOfThreads:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'huntaze-of-threads'
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: fanId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: fanId
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  HuntazeOfMessages:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'huntaze-of-messages'
+      AttributeDefinitions:
+        - AttributeName: taskId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: taskId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+
+  # ECS Cluster (using default VPC)
+  HuntazeEcsCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: 'huntaze-of-fargate'
+
+Outputs:
+  ClusterName:
+    Description: 'ECS Cluster Name'
+    Value: !Ref HuntazeEcsCluster
+    Export:
+      Name: 'HuntazeEcsClusterName'
+  
+  SessionsTableName:
+    Description: 'DynamoDB Sessions Table'
+    Value: !Ref HuntazeOfSessions
+    Export:
+      Name: 'HuntazeOfSessionsTable'
+  
+  ThreadsTableName:
+    Description: 'DynamoDB Threads Table'
+    Value: !Ref HuntazeOfThreads
+    Export:
+      Name: 'HuntazeOfThreadsTable'
+  
+  MessagesTableName:
+    Description: 'DynamoDB Messages Table'
+    Value: !Ref HuntazeOfMessages
+    Export:
+      Name: 'HuntazeOfMessagesTable'

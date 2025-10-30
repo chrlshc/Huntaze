@@ -1,9 +1,13 @@
 import OpenAI from 'openai';
 import { NextRequest } from 'next/server';
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+function getClient(): OpenAI {
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) {
+    throw new Error('OPENAI_API_KEY is not set');
+  }
+  return new OpenAI({ apiKey: key });
+}
 
 export interface ContentGenerationRequest {
   prompt: string;
@@ -32,7 +36,7 @@ export class AIContentService {
     const systemPrompt = this.buildSystemPrompt(request);
     
     try {
-      const stream = await client.chat.completions.create({
+      const stream = await getClient().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
@@ -124,7 +128,7 @@ export class AIContentService {
     const startTime = Date.now();
     
     try {
-      const response = await client.chat.completions.create({
+      const response = await getClient().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
@@ -176,7 +180,7 @@ export class AIContentService {
     Réponds uniquement avec une liste numérotée des idées, sans introduction ni conclusion.`;
 
     try {
-      const response = await client.chat.completions.create({
+      const response = await getClient().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {

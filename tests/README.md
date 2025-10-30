@@ -4,6 +4,19 @@
 
 Cette suite de tests couvre l'ensemble des fonctionnalités de la plateforme e-commerce et du système de création de contenu selon les spécifications définies dans les plans d'implémentation.
 
+## 🆕 Latest: SAM Configuration Tests (Oct 2025)
+
+Suite complète de tests pour valider la configuration SAM (`sam/samconfig.toml`) :
+- **145+ tests** : Validation, régression, intégration
+- **Documentation** : `tests/docs/SAM_CONFIG_TESTS_README.md`
+- **Exécution** : `npm run test:sam-config`
+- **Résumé** : [TEST_GENERATION_SUMMARY_SAM_CONFIG.md](../TEST_GENERATION_SUMMARY_SAM_CONFIG.md)
+
+### Fichiers de test SAM
+- `tests/unit/sam-config-validation.test.ts` - Validation complète (60+ tests)
+- `tests/regression/sam-config-regression.test.ts` - Prévention régressions (45+ tests)
+- `tests/integration/sam-config-integration.test.ts` - Tests end-to-end (40+ tests)
+
 ## Tests Créés
 
 ### Tests d'Architecture (Sprint 1-2)

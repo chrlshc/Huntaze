@@ -135,7 +135,7 @@ export default function OnboardingSetupPage() {
     if (showPlaybook && formData.niche) {
       try { track('playbook_opened', { niche: formData.niche }); } catch {}
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [showPlaybook]);
 
   const copyToClipboard = async (label: string, text: string, meta: Record<string, any> = {}) => {
@@ -450,7 +450,7 @@ export default function OnboardingSetupPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-sm font-semibold">Recommended setup</div>
-                      <div className="text-xs text-content-tertiary">{C.sellPlan.recommendedTip}</div>
+                      <div className="text-xs text-(--color-content-tertiary)">{C.sellPlan.recommendedTip}</div>
                     </div>
                     <button
                       type="button"
@@ -484,7 +484,7 @@ export default function OnboardingSetupPage() {
                       className={`niche-card ${selected ? 'selected' : ''}`}
                     >
                       <h4 className="niche-title">{o.label}</h4>
-                      {o.caption && <p className="text-xs text-content-tertiary">{o.caption}</p>}
+                      {o.caption && <p className="text-xs text-(--color-content-tertiary)">{o.caption}</p>}
                     </button>
                   );
                 })}
@@ -549,7 +549,9 @@ export default function OnboardingSetupPage() {
                           setFormData({ ...formData, niche: n.id });
                           try { localStorage.setItem('selectedNiche', n.id); } catch {}
                         }
-                        try { setNiches([n.id]); setGoals({ automationLevel: DEFAULTS.automation.defaultPct }); } catch {}
+                        try { 
+                          // setNiches([n.id]); setGoals({ automationLevel: DEFAULTS.automation.defaultPct }); 
+                        } catch {}
                       }}
                       className={`niche-card ${formData.niche === n.id ? 'selected' : ''}`}
                     >
@@ -567,7 +569,7 @@ export default function OnboardingSetupPage() {
               <div className="mt-2">
                 <div className="platform-card">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="text-sm font-semibold text-content-primary">AI Strategy for {niches.find(x => x.id === formData.niche)?.name}</div>
+                    <div className="text-sm font-semibold text-(--color-content-primary)">AI Strategy for {niches.find(x => x.id === formData.niche)?.name}</div>
                     <div className="flex items-center gap-3">
                       {(presets as any)[formData.niche] && (
                         <button
@@ -578,7 +580,7 @@ export default function OnboardingSetupPage() {
                           View full playbook
                         </button>
                       )}
-                      <div className="text-xs text-content-tertiary">Applied automatically</div>
+                      <div className="text-xs text-(--color-content-tertiary)">Applied automatically</div>
                       {(presets as any)[formData.niche]?.confidence && (
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
@@ -592,7 +594,7 @@ export default function OnboardingSetupPage() {
                       )}
                     </div>
                   </div>
-                  <ul className="grid sm:grid-cols-3 gap-2 text-sm text-content-secondary">
+                  <ul className="grid sm:grid-cols-3 gap-2 text-sm text-(--color-content-secondary)">
                     {getPresetTips(formData.niche)?.map((t: string, i: number) => (
                       <li key={i} className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5" />{t}</li>
                     ))}
@@ -692,7 +694,7 @@ export default function OnboardingSetupPage() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2 mt-1">
-                            <p className="text-sm text-content-tertiary">DM sequences, cadence, upsells, pricing, and compliance</p>
+                            <p className="text-sm text-(--color-content-tertiary)">DM sequences, cadence, upsells, pricing, and compliance</p>
                             {p.confidence && (
                               <span
                                 className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
@@ -707,7 +709,7 @@ export default function OnboardingSetupPage() {
                           </div>
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
-                          <div className="border border-border-light rounded-lg p-4">
+                          <div className="border border-(--color-border-light) rounded-lg p-4">
                             <div className="font-semibold mb-2">7‑Day DM Sequence</div>
                             <ul className="space-y-3 text-sm">
                               {(['day1','day2','day3','day4','day5','day6','day7'] as const).map(key => {
@@ -783,7 +785,7 @@ export default function OnboardingSetupPage() {
                             </ul>
                           </div>
                           <div className="space-y-4">
-                            <div className="border border-border-light rounded-lg p-4">
+                            <div className="border border-(--color-border-light) rounded-lg p-4">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="font-semibold">Cadence {(customPlaybook.cadence ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Modifié</span> : null)}</div>
                                 <button
@@ -873,7 +875,7 @@ export default function OnboardingSetupPage() {
                                 </>
                               )}
                             </div>
-                            <div className="border border-border-light rounded-lg p-4">
+                            <div className="border border-(--color-border-light) rounded-lg p-4">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="font-semibold">Upsell Menu {(customPlaybook.upsellMenu ? <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Modifié</span> : null)}</div>
                                 <button
@@ -955,7 +957,7 @@ export default function OnboardingSetupPage() {
                                     <li key={idx} className="flex items-center justify-between group">
                                       <span>{u.name}</span>
                                       <div className="flex items-center gap-2">
-                                        <span className="text-content-tertiary">{u.price} · {u.eta}</span>
+                                        <span className="text-(--color-content-tertiary)">{u.price} · {u.eta}</span>
                                         <button
                                           aria-label={`Copy upsell: ${u.name}`}
                                           className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -969,17 +971,17 @@ export default function OnboardingSetupPage() {
                                 </ul>
                               )}
                             </div>
-                            <div className="border border-border-light rounded-lg p-4">
+                            <div className="border border-(--color-border-light) rounded-lg p-4">
                               <div className="font-semibold mb-2">KPIs & Compliance</div>
                               <div className="text-sm">Conv: {p.kpis.subConvRate} · PPV: {p.kpis.ppvAttachRate} · Churn: {p.kpis.monthlyChurn}</div>
-                              <ul className="mt-2 text-sm list-disc list-inside text-content-secondary">
+                              <ul className="mt-2 text-sm list-disc list-inside text-(--color-content-secondary)">
                                 {p.complianceNotes?.map((c: string, idx: number) => (
                                   <li key={idx}>{c}</li>
                                 ))}
                               </ul>
                             </div>
                             {p.ppvPriceBands?.length ? (
-                              <div className="border border-border-light rounded-lg p-4">
+                              <div className="border border-(--color-border-light) rounded-lg p-4">
                                 <div className="font-semibold mb-2">Pricing Guidance</div>
                                 <div className="grid grid-cols-3 gap-2 mt-2">
                                   {p.ppvPriceBands.map((band: string, i: number) => (
@@ -1004,7 +1006,7 @@ export default function OnboardingSetupPage() {
               <div className="form-group">
                 <label className="form-label">Current Monthly Revenue (range)</label>
                 <div className="flex items-center gap-2">
-                  <button type="button" aria-label="Previous range" onClick={() => stepRevenue('current', -1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                  <button type="button" aria-label="Previous range" onClick={() => stepRevenue('current', -1)} className="p-2 rounded-lg border border-(--color-border-light) hover:border-purple-600/40 text-(--color-content-tertiary) hover:text-(--color-content-primary)">
                     <ArrowLeft className="w-4 h-4" />
                   </button>
                   <select
@@ -1019,7 +1021,7 @@ export default function OnboardingSetupPage() {
                     <option value="25k-50k">$25k – $50k</option>
                     <option value=">50k">$50k+</option>
                   </select>
-                  <button type="button" aria-label="Next range" onClick={() => stepRevenue('current', 1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                  <button type="button" aria-label="Next range" onClick={() => stepRevenue('current', 1)} className="p-2 rounded-lg border border-(--color-border-light) hover:border-purple-600/40 text-(--color-content-tertiary) hover:text-(--color-content-primary)">
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -1028,7 +1030,7 @@ export default function OnboardingSetupPage() {
               <div className="form-group">
                 <label className="form-label">Target Monthly Revenue (range)</label>
                 <div className="flex items-center gap-2">
-                  <button type="button" aria-label="Previous range" onClick={() => stepRevenue('target', -1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                  <button type="button" aria-label="Previous range" onClick={() => stepRevenue('target', -1)} className="p-2 rounded-lg border border-(--color-border-light) hover:border-purple-600/40 text-(--color-content-tertiary) hover:text-(--color-content-primary)">
                     <ArrowLeft className="w-4 h-4" />
                   </button>
                   <select
@@ -1042,7 +1044,7 @@ export default function OnboardingSetupPage() {
                     <option value="25k-50k">$25k – $50k</option>
                     <option value=">50k">$50k+</option>
                   </select>
-                  <button type="button" aria-label="Next range" onClick={() => stepRevenue('target', 1)} className="p-2 rounded-lg border border-border-light hover:border-purple-600/40 text-content-tertiary hover:text-content-primary">
+                  <button type="button" aria-label="Next range" onClick={() => stepRevenue('target', 1)} className="p-2 rounded-lg border border-(--color-border-light) hover:border-purple-600/40 text-(--color-content-tertiary) hover:text-(--color-content-primary)">
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -1063,7 +1065,7 @@ export default function OnboardingSetupPage() {
             onContinue={handleNext}
           >
             {(sellPlan || []).includes('calls' as any) && (
-              <div className="rounded-lg border p-3 text-xs text-content-tertiary mb-3">
+              <div className="rounded-lg border p-3 text-xs text-(--color-content-tertiary) mb-3">
                 Calls are selected in your Sell Plan. Call options become available after platform connect.
               </div>
             )}
@@ -1110,7 +1112,7 @@ export default function OnboardingSetupPage() {
                               const typical = Math.round((mock.ppvAnchor || DEFAULTS.ppv.typical) * mult);
                               const min = Math.max(DEFAULTS.ppv.min, Math.round(typical * 0.33));
                               const max = Math.round(typical * 2.5);
-                              updateMonetization({ ppvRange: { min, typical, max } });
+                              // updateMonetization({ ppvRange: { min, typical, max } });
                               if (Array.isArray(mock.peakHours) && mock.peakHours.length > 0) {
                                 const h = mock.peakHours[0];
                                 updateOps({ activeHours: [{ start: h.start, end: h.end }] });
@@ -1119,10 +1121,10 @@ export default function OnboardingSetupPage() {
                                 updateOps({ dailyCaps: { global: DEFAULTS.caps.dailyGlobal, vip: DEFAULTS.caps.dailyVip } });
                               }
                               if (mock.suggestLowerWhaleThreshold) {
-                                updateSegmentation({ whaleThreshold: mock.suggestLowerWhaleThreshold });
+                                // updateSegmentation({ whaleThreshold: mock.suggestLowerWhaleThreshold });
                               }
                               if (mock.igRisk || mock.ttRisk) {
-                                updateBoundaries({ platformRulesFlags: { IG: !!mock.igRisk, TT: !!mock.ttRisk } });
+                                // updateBoundaries({ platformRulesFlags: { IG: !!mock.igRisk, TT: !!mock.ttRisk } });
                               }
                             }
                           } catch {}
@@ -1220,7 +1222,7 @@ export default function OnboardingSetupPage() {
             <div className="form-group">
               <label className="form-label">Conversation tone</label>
               {suggestsFlirty && (
-                <p className="text-xs text-content-tertiary mb-2">Tip: With Sexting or PPV selected, a flirty tone tends to perform best.</p>
+                <p className="text-xs text-(--color-content-tertiary) mb-2">Tip: With Sexting or PPV selected, a flirty tone tends to perform best.</p>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
@@ -1253,7 +1255,7 @@ export default function OnboardingSetupPage() {
                 })}
               </div>
               {formData.niche === 'gfe' && (
-                <p className="text-xs text-content-tertiary mt-2">Recommended for Girlfriend Experience conversations.</p>
+                <p className="text-xs text-(--color-content-tertiary) mt-2">Recommended for Girlfriend Experience conversations.</p>
               )}
             </div>
 
@@ -1320,18 +1322,20 @@ export default function OnboardingSetupPage() {
                   setFormData({ ...formData, monthlyPrice: newPrice })
                   const n = parseFloat(String(newPrice))
                   if (!isNaN(n)) {
-                    try { monetizationSchema.parse({ subPrice: n }); updateMonetization({ subPrice: n }); } catch {}
+                    try { 
+                      // monetizationSchema.parse({ subPrice: n }); updateMonetization({ subPrice: n }); 
+                    } catch {}
                   }
                 }}
               />
-              <p className="text-xs text-content-tertiary mt-1">Auto‑set from niche. You can adjust anytime.</p>
-              <p className="text-xs text-content-tertiary mt-1">
+              <p className="text-xs text-(--color-content-tertiary) mt-1">Auto‑set from niche. You can adjust anytime.</p>
+              <p className="text-xs text-(--color-content-tertiary) mt-1">
                 Guidance: if your PPV content is usually under $10, keep a lower subscription to maximize volume. If you sell higher‑priced PPV bundles, set your subscription higher for positioning.
               </p>
             </div>
 
             {/* Dynamic Preview (DM + PPV suggestion) */}
-            <div className="rounded-2xl p-6 border border-border-light bg-white dark:bg-gray-900">
+            <div className="rounded-2xl p-6 border border-(--color-border-light) bg-white dark:bg-gray-900">
               <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Live Preview</h4>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
@@ -1356,7 +1360,9 @@ export default function OnboardingSetupPage() {
                       const def = NICHES.find(x => x.id === niche);
                       const mult = def?.ppvMultiplier || 1.0;
                       const typical = Math.round(DEFAULTS.ppv.typical * mult);
-                      try { monetizationSchema.parse({ ppvRange: { typical } }); } catch {}
+                      try { 
+                        // monetizationSchema.parse({ ppvRange: { typical } }); 
+                      } catch {}
                       return `$${typical}`;
                     })()}
                   </div>
@@ -1405,7 +1411,7 @@ export default function OnboardingSetupPage() {
             </div>
 
             {/* Live Preview & Apply multipliers */}
-            <div className="rounded-2xl p-6 border border-border-light bg-white dark:bg-gray-900">
+            <div className="rounded-2xl p-6 border border-(--color-border-light) bg-white dark:bg-gray-900">
               <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Live Preview</h4>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
@@ -1435,7 +1441,7 @@ export default function OnboardingSetupPage() {
                   onClick={() => {
                     const niches = formData.niche ? [formData.niche] : [];
                     const newTyp = ppvTypicalWithMultipliers(niches);
-                    updateMonetization({ ppvRange: { min: DEFAULTS.ppv.min, typical: newTyp, max: DEFAULTS.ppv.max } });
+                    // updateMonetization({ ppvRange: { min: DEFAULTS.ppv.min, typical: newTyp, max: DEFAULTS.ppv.max } });
                     alert(`Typical PPV → $${newTyp} (based on niche multipliers)`);
                   }}
                 >
@@ -1599,7 +1605,7 @@ export default function OnboardingSetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-light dark:bg-surface flex flex-col">
+    <div className="min-h-screen bg-(--color-surface-light) dark:bg-surface flex flex-col">
       {/* Top progress (desktop & mobile) */}
       <div className="progress-container max-w-4xl mx-auto w-full px-4 pt-8">
         <div className="progress-steps">

@@ -11,9 +11,14 @@ frontend:
       commands:
         - echo "BUILD_START"
         - export BUILD_REDIS_MOCK=1
-        # Write only the keys required at runtime for SSR
+        # Write environment variables for production build
         - |
           cat > .env.production <<EOF
+          # Database & Cache
+          DATABASE_URL=${DATABASE_URL}
+          REDIS_URL=${REDIS_URL}
+          
+          # Azure OpenAI (Primary - GPT-4 Turbo)
           AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
           AZURE_OPENAI_DEPLOYMENT=${AZURE_OPENAI_DEPLOYMENT}
           AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
@@ -21,16 +26,64 @@ frontend:
           USE_AZURE_RESPONSES=${USE_AZURE_RESPONSES}
           ENABLE_AZURE_AI=${ENABLE_AZURE_AI}
           AZURE_BILLING_LOCK=${AZURE_BILLING_LOCK}
-          AI_SMOKE_TOKEN=${AI_SMOKE_TOKEN}
-          API_LOG_GROUP=${API_LOG_GROUP}
+          
+          # OpenAI (Secondary - GPT-3.5 Turbo)
+          OPENAI_API_KEY=${OPENAI_API_KEY}
+          OPENAI_ORG_ID=${OPENAI_ORG_ID}
+          
+          # AWS Services
+          AWS_REGION=${AWS_REGION}
+          AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+          
+          # DynamoDB Tables
+          DYNAMODB_COSTS_TABLE=${DYNAMODB_COSTS_TABLE}
+          DYNAMODB_ALERTS_TABLE=${DYNAMODB_ALERTS_TABLE}
+          
+          # SQS Queues
           SQS_URL=${SQS_URL}
-          DATABASE_URL=${DATABASE_URL}
+          SQS_WORKFLOW_QUEUE=${SQS_WORKFLOW_QUEUE}
+          SQS_RATE_LIMITER_QUEUE=${SQS_RATE_LIMITER_QUEUE}
+          
+          # SNS Topics
+          COST_ALERTS_SNS_TOPIC=${COST_ALERTS_SNS_TOPIC}
+          
+          # Cost Monitoring
+          COST_ALERT_EMAIL=${COST_ALERT_EMAIL}
+          SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+          DAILY_COST_THRESHOLD=${DAILY_COST_THRESHOLD}
+          MONTHLY_COST_THRESHOLD=${MONTHLY_COST_THRESHOLD}
+          
+          # Feature Flags
+          HYBRID_ORCHESTRATOR_ENABLED=${HYBRID_ORCHESTRATOR_ENABLED}
+          COST_MONITORING_ENABLED=${COST_MONITORING_ENABLED}
+          RATE_LIMITER_ENABLED=${RATE_LIMITER_ENABLED}
+          
+          # OnlyFans
+          ONLYFANS_API_URL=${ONLYFANS_API_URL}
+          ONLYFANS_USER_AGENT=${ONLYFANS_USER_AGENT}
+          
+          # Auth & Security
           JWT_SECRET=${JWT_SECRET}
+          NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+          NEXTAUTH_URL=${NEXTAUTH_URL}
+          
+          # Stripe
           STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+          STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+          
+          # App URLs
           NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
           NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+          
+          # Logging
+          API_LOG_GROUP=${API_LOG_GROUP}
+          AI_SMOKE_TOKEN=${AI_SMOKE_TOKEN}
+          
+          # Node Environment
+          NODE_ENV=production
           EOF
-        - echo "[BUILD] wrote .env.production"
+        - echo "[BUILD] wrote .env.production with hybrid orchestrator config"
         - npm run build
         - echo "BUILD_DONE"
   artifacts:

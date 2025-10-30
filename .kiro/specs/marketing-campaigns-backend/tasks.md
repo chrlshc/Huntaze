@@ -1,0 +1,564 @@
+# Implementation Plan - Marketing & Campaigns Backend
+
+- [x] 1. Set up database schema and migrations
+  - Extend Prisma schema with Campaign, CampaignTemplate, ABTest, ABTestVariant, Automation, AutomationExecution, Segment, SegmentMember, CampaignMetric, and CampaignConversion models
+  - Run database migration to create new tables
+  - Add indexes for performance optimization
+  - _Requirements: 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5_
+
+- [x] 2. Implement CampaignService
+  - [x] 2.1 Create CampaignService class with CRUD operations
+    - Implement `createCampaign()` with validation
+    - Implement `getCampaign()` with relations
+    - Implement `updateCampaign()` with status management
+    - Implement `deleteCampaign()` with soft delete
+    - Implement `listCampaigns()` with filters and pagination
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [x] 2.2 Implement template management methods
+    - Create `getTemplates()` with niche filtering
+    - Implement `createFromTemplate()` with customization
+    - Implement `saveAsTemplate()` for reusable campaigns
+    - Add fitness, gaming, adult, and fashion templates
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 11.2, 11.3, 11.4, 11.5_
+  - [x] 2.3 Implement campaign lifecycle methods
+    - Create `scheduleCampaign()` with date validation
+    - Implement `launchCampaign()` with platform publishing
+    - Implement `pauseCampaign()` and `resumeCampaign()`
+    - Implement `completeCampaign()` with final metrics
+    - _Requirements: 1.4, 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [x] 2.4 Implement A/B testing methods
+    - Create `createABTest()` with variant setup
+    - Implement `trackVariantPerformance()` for metrics
+    - Implement `determineWinner()` with statistical significance
+    - Implement `applyWinner()` to use best variant
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [x] 2.5 Implement multi-platform publishing
+    - Create `publishToPlatforms()` with content adaptation
+    - Add platform-specific error handling
+    - Implement retry logic for failed publishes
+    - Track publication status per platform
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [x] 2.6 Implement campaign duplication
+    - Create `duplicateCampaign()` with all settings
+    - Allow modifications during duplication
+    - _Requirements: 11.1_
+  - [x] 2.7 Write unit tests for CampaignService
+    - Test CRUD operations
+    - Test template management
+    - Test lifecycle methods
+    - Test A/B testing logic
+    - Test multi-platform publishing
+    - _Requirements: 1.1-1.5, 2.1-2.5, 5.1-5.5, 6.1-6.5, 7.1-7.5, 11.1-11.5_
+
+- [-] 3. Implement AutomationService
+  - [x] 3.1 Create AutomationService class with workflow management
+    - Implement `createWorkflow()` with trigger and action setup
+    - Implement `getWorkflow()` with execution history
+    - Implement `updateWorkflow()` with validation
+    - Implement `deleteWorkflow()` with cleanup
+    - Implement `listWorkflows()` with filters
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+  - [ ] 3.2 Implement trigger management
+    - Create `registerTrigger()` for workflow triggers
+    - Implement `evaluateTrigger()` for time-based, event-based, and behavior-based triggers
+    - Add trigger validation and error handling
+    - _Requirements: 4.2_
+  - [ ] 3.3 Implement workflow execution
+    - Create `executeWorkflow()` with context
+    - Implement `executeAction()` for send message, update segment, create campaign, notify creator
+    - Add branching logic support
+    - Implement error recovery
+    - _Requirements: 4.3, 4.4_
+  - [ ] 3.4 Implement execution tracking
+    - Create `getExecutionHistory()` for audit trail
+    - Implement `getExecutionStats()` for success rate
+    - Track execution time and errors
+    - _Requirements: 4.5_
+  - [ ] 3.5 Create pre-built automation templates
+    - Implement "Welcome Series" automation
+    - Implement "Re-engagement Campaign" automation
+    - Add "Birthday Offer" automation
+    - Add "Milestone Celebration" automation
+    - _Requirements: 4.1, 4.2, 4.3, 4.4_
+  - [ ] 3.6 Write unit tests for AutomationService
+    - Test workflow creation and management
+    - Test trigger evaluation
+    - Test action execution
+    - Test branching logic
+    - Test error handling
+    - _Requirements: 4.1-4.5_
+
+- [ ] 4. Implement SegmentationService
+  - [ ] 4.1 Create SegmentationService class with segment management
+    - Implement `createSegment()` with criteria validation
+    - Implement `getSegment()` with member count
+    - Implement `updateSegment()` with refresh
+    - Implement `deleteSegment()` with cleanup
+    - Implement `listSegments()` with filters
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [ ] 4.2 Implement segment calculation
+    - Create `calculateSegmentSize()` in real-time
+    - Implement `getSegmentMembers()` with pagination
+    - Implement `refreshSegment()` for dynamic segments
+    - Add caching for performance
+    - _Requirements: 3.4_
+  - [ ] 4.3 Implement criteria evaluation
+    - Create `evaluateCriteria()` with AND/OR logic
+    - Implement `addUserToSegment()` for manual addition
+    - Implement `removeUserFromSegment()` for manual removal
+    - Support spending level, engagement, subscription tier criteria
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [ ] 4.4 Implement segment performance tracking
+    - Create `getSegmentPerformance()` with metrics
+    - Implement `compareSegments()` for analysis
+    - Track average engagement and revenue per segment
+    - _Requirements: 3.5_
+  - [ ] 4.5 Write unit tests for SegmentationService
+    - Test segment creation and management
+    - Test criteria evaluation
+    - Test dynamic segment updates
+    - Test performance tracking
+    - _Requirements: 3.1-3.5_
+
+- [ ] 5. Implement CampaignAnalyticsService
+  - [ ] 5.1 Create CampaignAnalyticsService class with metrics tracking
+    - Implement `trackImpression()` for view tracking
+    - Implement `trackClick()` for click tracking
+    - Implement `trackConversion()` for conversion tracking
+    - Add deduplication logic
+    - _Requirements: 8.1, 10.1, 10.2_
+  - [ ] 5.2 Implement analytics retrieval
+    - Create `getCampaignMetrics()` with aggregation
+    - Implement `getCampaignROI()` with calculation
+    - Implement `getConversionFunnel()` with stages
+    - Calculate CTR, conversion rate, CPA
+    - _Requirements: 8.1, 8.2, 9.5, 10.3, 10.4, 10.5_
+  - [ ] 5.3 Implement comparison methods
+    - Create `compareCampaigns()` for multi-campaign analysis
+    - Implement `comparePlatforms()` for platform performance
+    - Add statistical comparison
+    - _Requirements: 8.3_
+  - [ ] 5.4 Implement report generation
+    - Create `generateReport()` with JSON, CSV, PDF formats
+    - Implement `getPerformanceTrends()` with time series
+    - Add export functionality
+    - _Requirements: 15.4_
+  - [ ] 5.5 Implement insights and recommendations
+    - Create `getTopPerformingCampaigns()` with ranking
+    - Implement `identifyPatterns()` with ML analysis
+    - Implement `getRecommendations()` based on history
+    - _Requirements: 8.4_
+  - [ ] 5.6 Write unit tests for CampaignAnalyticsService
+    - Test metrics tracking
+    - Test ROI calculation
+    - Test funnel analysis
+    - Test report generation
+    - Test insights generation
+    - _Requirements: 8.1-8.5, 9.5, 10.1-10.5_
+
+- [ ] 6. Create API routes for campaigns
+  - [ ] 6.1 Create POST /api/campaigns endpoint
+    - Accept userId, name, description, type, platforms, goals, content, budget
+    - Call CampaignService.createCampaign()
+    - Return created campaign with ID
+    - Add authentication and validation
+    - _Requirements: 1.1, 1.2, 1.3_
+  - [ ] 6.2 Create GET /api/campaigns endpoint
+    - Accept filters (status, type, platform, dateRange)
+    - Call CampaignService.listCampaigns()
+    - Return paginated campaigns
+    - _Requirements: 1.5_
+  - [ ] 6.3 Create GET /api/campaigns/:id endpoint
+    - Call CampaignService.getCampaign()
+    - Return campaign with metrics
+    - _Requirements: 1.5_
+  - [ ] 6.4 Create PUT /api/campaigns/:id endpoint
+    - Accept campaign updates
+    - Call CampaignService.updateCampaign()
+    - Return updated campaign
+    - _Requirements: 1.4_
+  - [ ] 6.5 Create DELETE /api/campaigns/:id endpoint
+    - Call CampaignService.deleteCampaign()
+    - Return success confirmation
+    - _Requirements: 1.4_
+  - [ ] 6.6 Create POST /api/campaigns/:id/launch endpoint
+    - Call CampaignService.launchCampaign()
+    - Return launch result with status per platform
+    - _Requirements: 6.1, 7.1, 7.2, 7.3_
+  - [ ] 6.7 Create POST /api/campaigns/:id/pause endpoint
+    - Call CampaignService.pauseCampaign()
+    - Return updated campaign
+    - _Requirements: 1.4_
+  - [ ] 6.8 Create POST /api/campaigns/:id/resume endpoint
+    - Call CampaignService.resumeCampaign()
+    - Return updated campaign
+    - _Requirements: 1.4_
+  - [ ] 6.9 Create POST /api/campaigns/:id/duplicate endpoint
+    - Accept modifications
+    - Call CampaignService.duplicateCampaign()
+    - Return new campaign
+    - _Requirements: 11.1_
+  - [ ] 6.10 Write integration tests for campaign API routes
+    - Test campaign creation
+    - Test campaign listing and filtering
+    - Test campaign update and delete
+    - Test campaign launch and lifecycle
+    - Test campaign duplication
+    - _Requirements: 1.1-1.5, 6.1-6.5, 7.1-7.5, 11.1_
+
+- [ ] 7. Create API routes for templates
+  - [ ] 7.1 Create GET /api/campaigns/templates endpoint
+    - Accept niche filter
+    - Call CampaignService.getTemplates()
+    - Return available templates
+    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+  - [ ] 7.2 Create POST /api/campaigns/from-template endpoint
+    - Accept templateId and customization
+    - Call CampaignService.createFromTemplate()
+    - Return created campaign
+    - _Requirements: 2.5_
+  - [ ] 7.3 Create POST /api/campaigns/:id/save-as-template endpoint
+    - Accept template name
+    - Call CampaignService.saveAsTemplate()
+    - Return created template
+    - _Requirements: 11.2_
+  - [ ] 7.4 Write integration tests for template API routes
+    - Test template listing
+    - Test campaign creation from template
+    - Test saving campaign as template
+    - _Requirements: 2.1-2.5, 11.2-11.5_
+
+- [ ] 8. Create API routes for A/B testing
+  - [ ] 8.1 Create POST /api/campaigns/:id/ab-test endpoint
+    - Accept variants configuration
+    - Call CampaignService.createABTest()
+    - Return test ID and variant IDs
+    - _Requirements: 5.1, 5.2_
+  - [ ] 8.2 Create POST /api/campaigns/ab-test/:testId/track endpoint
+    - Accept variantId and metrics
+    - Call CampaignService.trackVariantPerformance()
+    - Return tracking confirmation
+    - _Requirements: 5.3_
+  - [ ] 8.3 Create GET /api/campaigns/ab-test/:testId/results endpoint
+    - Call CampaignService.determineWinner()
+    - Return test results with winner if available
+    - _Requirements: 5.4, 5.5_
+  - [ ] 8.4 Create POST /api/campaigns/ab-test/:testId/apply-winner endpoint
+    - Call CampaignService.applyWinner()
+    - Return updated campaign
+    - _Requirements: 5.5_
+  - [ ] 8.5 Write integration tests for A/B testing API routes
+    - Test A/B test creation
+    - Test variant tracking
+    - Test winner determination
+    - Test winner application
+    - _Requirements: 5.1-5.5_
+
+- [ ] 9. Create API routes for automations
+  - [ ] 9.1 Create POST /api/automations endpoint
+    - Accept workflow configuration
+    - Call AutomationService.createWorkflow()
+    - Return created automation
+    - _Requirements: 4.1_
+  - [ ] 9.2 Create GET /api/automations endpoint
+    - Accept filters
+    - Call AutomationService.listWorkflows()
+    - Return paginated automations
+    - _Requirements: 4.5_
+  - [ ] 9.3 Create GET /api/automations/:id endpoint
+    - Call AutomationService.getWorkflow()
+    - Return automation with execution history
+    - _Requirements: 4.5_
+  - [ ] 9.4 Create PUT /api/automations/:id endpoint
+    - Accept workflow updates
+    - Call AutomationService.updateWorkflow()
+    - Return updated automation
+    - _Requirements: 4.1_
+  - [ ] 9.5 Create DELETE /api/automations/:id endpoint
+    - Call AutomationService.deleteWorkflow()
+    - Return success confirmation
+    - _Requirements: 4.1_
+  - [ ] 9.6 Create POST /api/automations/:id/activate endpoint
+    - Call AutomationService.activateWorkflow()
+    - Return activated automation
+    - _Requirements: 4.1_
+  - [ ] 9.7 Create POST /api/automations/:id/deactivate endpoint
+    - Call AutomationService.deactivateWorkflow()
+    - Return deactivated automation
+    - _Requirements: 4.1_
+  - [ ] 9.8 Create GET /api/automations/:id/executions endpoint
+    - Call AutomationService.getExecutionHistory()
+    - Return execution history
+    - _Requirements: 4.5_
+  - [ ] 9.9 Write integration tests for automation API routes
+    - Test automation creation and management
+    - Test activation and deactivation
+    - Test execution history retrieval
+    - _Requirements: 4.1-4.5_
+
+- [ ] 10. Create API routes for segments
+  - [ ] 10.1 Create POST /api/segments endpoint
+    - Accept segment criteria
+    - Call SegmentationService.createSegment()
+    - Return created segment with size
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [ ] 10.2 Create GET /api/segments endpoint
+    - Accept filters
+    - Call SegmentationService.listSegments()
+    - Return paginated segments
+    - _Requirements: 3.5_
+  - [ ] 10.3 Create GET /api/segments/:id endpoint
+    - Call SegmentationService.getSegment()
+    - Return segment with members
+    - _Requirements: 3.4_
+  - [ ] 10.4 Create PUT /api/segments/:id endpoint
+    - Accept criteria updates
+    - Call SegmentationService.updateSegment()
+    - Return updated segment
+    - _Requirements: 3.2_
+  - [ ] 10.5 Create DELETE /api/segments/:id endpoint
+    - Call SegmentationService.deleteSegment()
+    - Return success confirmation
+    - _Requirements: 3.1_
+  - [ ] 10.6 Create POST /api/segments/:id/refresh endpoint
+    - Call SegmentationService.refreshSegment()
+    - Return refreshed segment
+    - _Requirements: 3.4_
+  - [ ] 10.7 Create GET /api/segments/:id/performance endpoint
+    - Call SegmentationService.getSegmentPerformance()
+    - Return performance metrics
+    - _Requirements: 3.5_
+  - [ ] 10.8 Write integration tests for segment API routes
+    - Test segment creation and management
+    - Test segment refresh
+    - Test performance tracking
+    - _Requirements: 3.1-3.5_
+
+- [ ] 11. Create API routes for analytics
+  - [ ] 11.1 Create GET /api/campaigns/:id/metrics endpoint
+    - Call CampaignAnalyticsService.getCampaignMetrics()
+    - Return detailed metrics
+    - _Requirements: 8.1, 8.2_
+  - [ ] 11.2 Create GET /api/campaigns/:id/roi endpoint
+    - Call CampaignAnalyticsService.getCampaignROI()
+    - Return ROI calculation
+    - _Requirements: 8.2, 9.5_
+  - [ ] 11.3 Create GET /api/campaigns/:id/funnel endpoint
+    - Call CampaignAnalyticsService.getConversionFunnel()
+    - Return funnel metrics
+    - _Requirements: 10.4_
+  - [ ] 11.4 Create POST /api/campaigns/compare endpoint
+    - Accept campaign IDs
+    - Call CampaignAnalyticsService.compareCampaigns()
+    - Return comparison data
+    - _Requirements: 8.3_
+  - [ ] 11.5 Create GET /api/campaigns/:id/platforms endpoint
+    - Call CampaignAnalyticsService.comparePlatforms()
+    - Return platform comparison
+    - _Requirements: 8.3_
+  - [ ] 11.6 Create GET /api/campaigns/:id/report endpoint
+    - Accept format (json, csv, pdf)
+    - Call CampaignAnalyticsService.generateReport()
+    - Return report file
+    - _Requirements: 15.4_
+  - [ ] 11.7 Create GET /api/campaigns/top-performing endpoint
+    - Accept limit
+    - Call CampaignAnalyticsService.getTopPerformingCampaigns()
+    - Return ranked campaigns
+    - _Requirements: 8.4_
+  - [ ] 11.8 Create GET /api/campaigns/insights endpoint
+    - Call CampaignAnalyticsService.getRecommendations()
+    - Return insights and recommendations
+    - _Requirements: 8.4_
+  - [ ] 11.9 Write integration tests for analytics API routes
+    - Test metrics retrieval
+    - Test ROI calculation
+    - Test funnel analysis
+    - Test campaign comparison
+    - Test report generation
+    - _Requirements: 8.1-8.5, 9.5, 10.1-10.5, 15.4_
+
+- [ ] 12. Implement budget management
+  - [ ] 12.1 Add budget tracking to CampaignService
+    - Implement real-time spending tracking
+    - Add budget threshold alerts (75%, 90%, 100%)
+    - Implement automatic pause on budget exceeded
+    - Calculate cost per conversion and CPA
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+  - [ ] 12.2 Create budget alert system
+    - Implement notification service integration
+    - Send alerts via email and in-app
+    - Track alert history
+    - _Requirements: 9.3, 12.1, 12.2, 12.3, 12.4, 12.5_
+  - [ ] 12.3 Write unit tests for budget management
+    - Test spending tracking
+    - Test threshold alerts
+    - Test automatic pause
+    - Test cost calculations
+    - _Requirements: 9.1-9.5_
+
+- [ ] 13. Implement notification system
+  - [ ] 13.1 Create NotificationService
+    - Implement campaign start/complete/fail notifications
+    - Implement performance drop alerts
+    - Implement A/B test winner notifications
+    - Implement daily/weekly summaries
+    - _Requirements: 12.1, 12.2, 12.3, 12.4_
+  - [ ] 13.2 Add notification preferences
+    - Allow customization of notification types
+    - Support email and in-app notifications
+    - Add notification frequency settings
+    - _Requirements: 12.5_
+  - [ ] 13.3 Write unit tests for NotificationService
+    - Test notification sending
+    - Test preference management
+    - Test notification scheduling
+    - _Requirements: 12.1-12.5_
+
+- [ ] 14. Implement collaboration features
+  - [ ] 14.1 Add team management to CampaignService
+    - Implement user role assignment (owner, editor, viewer)
+    - Add permission checks
+    - Track changes with user attribution
+    - _Requirements: 13.1, 13.2, 13.3_
+  - [ ] 14.2 Implement commenting system
+    - Add comments to campaigns
+    - Support replies and threads
+    - Send notifications to team members
+    - _Requirements: 13.4, 13.5_
+  - [ ] 14.3 Write unit tests for collaboration features
+    - Test role management
+    - Test permission checks
+    - Test commenting
+    - Test team notifications
+    - _Requirements: 13.1-13.5_
+
+- [ ] 15. Implement content generation integration
+  - [ ] 15.1 Integrate ContentGenerationService
+    - Connect CampaignService with ContentGenerationService
+    - Generate campaign messages using AI
+    - Suggest captions and hashtags
+    - Create campaign variants automatically
+    - _Requirements: 14.1, 14.2, 14.3, 14.4_
+  - [ ] 15.2 Implement content optimization
+    - Optimize content based on past performance
+    - Use historical data for recommendations
+    - A/B test generated content
+    - _Requirements: 14.5_
+  - [ ] 15.3 Write integration tests for content generation
+    - Test AI message generation
+    - Test caption and hashtag suggestions
+    - Test variant creation
+    - Test optimization
+    - _Requirements: 14.1-14.5_
+
+- [ ] 16. Implement campaign archive and history
+  - [ ] 16.1 Add archive functionality to CampaignService
+    - Implement campaign archiving
+    - Maintain full history with metrics
+    - Add search and filtering for archived campaigns
+    - _Requirements: 15.1, 15.2, 15.3_
+  - [ ] 16.2 Implement export functionality
+    - Export campaign data in CSV format
+    - Export campaign data in JSON format
+    - Export campaign data in PDF format
+    - _Requirements: 15.4_
+  - [ ] 16.3 Implement historical analysis
+    - Calculate historical trends
+    - Generate insights from past campaigns
+    - Identify seasonal patterns
+    - _Requirements: 15.5_
+  - [ ] 16.4 Write unit tests for archive and history
+    - Test archiving
+    - Test export formats
+    - Test historical analysis
+    - _Requirements: 15.1-15.5_
+
+- [ ] 17. Implement CloudWatch metrics and monitoring
+  - [ ] 17.1 Create CloudWatch metrics integration
+    - Implement metrics for campaigns created, launched, conversions, revenue, ROI
+    - Implement metrics for automations executed, success rate, execution time
+    - Implement metrics for A/B tests created, completed, winner accuracy
+    - _Requirements: All requirements (monitoring)_
+  - [ ] 17.2 Create CloudWatch alarms
+    - Create alarm for high campaign failure rate (>5%)
+    - Create alarm for low conversion rate (<1%)
+    - Create alarm for budget overspend (>110%)
+    - Create alarm for automation failures (>10/hour)
+    - _Requirements: 9.3, 12.2_
+  - [ ] 17.3 Create CloudWatch dashboard
+    - Add widgets for campaigns by status
+    - Add widgets for campaign performance over time
+    - Add widgets for top performing campaigns
+    - Add widgets for A/B test results
+    - Add widgets for automation execution stats
+    - Add widgets for ROI by campaign type
+    - _Requirements: All requirements (observability)_
+
+- [ ] 18. Implement background jobs
+  - [ ] 18.1 Create campaign scheduler job
+    - Implement cron job for scheduled campaign launches
+    - Check for campaigns scheduled in next 5 minutes
+    - Launch campaigns at scheduled time
+    - Handle timezone conversions
+    - _Requirements: 6.1, 6.2, 6.4_
+  - [ ] 18.2 Create automation executor job
+    - Implement event-driven automation execution
+    - Listen for trigger events
+    - Execute workflows asynchronously
+    - Handle errors and retries
+    - _Requirements: 4.2, 4.3, 4.4_
+  - [ ] 18.3 Create analytics aggregator job
+    - Implement hourly metrics aggregation
+    - Calculate daily summaries
+    - Update segment performance
+    - Generate performance reports
+    - _Requirements: 8.1, 8.2, 8.5_
+  - [ ] 18.4 Create segment refresh job
+    - Implement daily segment refresh for dynamic segments
+    - Recalculate segment membership
+    - Update segment sizes
+    - _Requirements: 3.4_
+  - [ ] 18.5 Write integration tests for background jobs
+    - Test campaign scheduler
+    - Test automation executor
+    - Test analytics aggregator
+    - Test segment refresh
+    - _Requirements: 3.4, 4.2-4.4, 6.1-6.4, 8.1-8.5_
+
+- [ ] 19. Integration and end-to-end testing
+  - [ ] 19.1 Write E2E tests for complete workflows
+    - Test create campaign → schedule → launch → track metrics flow
+    - Test create A/B test → run → determine winner → apply flow
+    - Test create automation → trigger → execute actions → verify results flow
+    - Test create segment → add members → launch targeted campaign flow
+    - Test campaign duplication and template usage flow
+    - _Requirements: All requirements_
+  - [ ] 19.2 Write regression tests
+    - Test campaign CRUD operations
+    - Test automation execution
+    - Test segment calculation
+    - Test analytics tracking
+    - Test multi-platform publishing
+    - _Requirements: All requirements_
+
+- [ ] 20. Documentation and deployment
+  - [ ] 20.1 Create API documentation
+    - Document all campaign endpoints
+    - Document all automation endpoints
+    - Document all segment endpoints
+    - Document all analytics endpoints
+    - Include request/response examples
+    - _Requirements: All requirements_
+  - [ ] 20.2 Create user guide
+    - Write campaign creation guide
+    - Write automation setup guide
+    - Write A/B testing guide
+    - Write segmentation guide
+    - _Requirements: All requirements_
+  - [ ] 20.3 Create deployment guide
+    - Document database migration steps
+    - Document environment variables
+    - Document background job setup
+    - Document monitoring setup
+    - _Requirements: All requirements_

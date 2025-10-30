@@ -386,7 +386,7 @@ export default function HeaderImproved() {
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-600 dark:text-[var(--text-secondary-dark)]">Theme</span>
+                    <span className="text-gray-600 dark:text-(--text-secondary-dark)">Theme</span>
                     {/* <ThemeToggle /> */}
                   </div>
                   

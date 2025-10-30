@@ -7,6 +7,7 @@ import { getOrCreateCustomer } from '@/lib/billing';
 import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 async function handler(req: Request) {
   const requestId = crypto.randomUUID();

@@ -385,6 +385,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useCircuitBreaker } from './use-circuit-breaker';
 import { useRequestCoalescer } from './use-request-coalescer';
+import {refQuery @srccomponents } from '/CLAUDE.Md';
 
 export const useAPIIntegration = <T>(
   endpoint: string,

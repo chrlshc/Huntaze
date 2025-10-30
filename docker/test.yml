@@ -1,0 +1,105 @@
+version: "3.8"
+
+services:
+  # PostgreSQL test database
+  test-db:
+    image: postgres:15-alpine
+    container_name: huntaze-test-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: huntaze_test
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d huntaze_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - test-network
+
+  # Stripe Mock server for testing Stripe integrations
+  stripe-mock:
+    image: stripe/stripe-mock:0.108.0
+    container_name: huntaze-stripe-mock
+    ports:
+      - "12111:12111"
+    environment:
+      - STRIPE_MOCK_API_BASE=http://localhost:12111
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:12111/v1/charges"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - test-network
+
+  # Redis for caching tests (optional)
+  test-redis:
+    image: redis:7-alpine
+    container_name: huntaze-test-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - test-network
+
+  # Test runner service (optional - for running tests in container)
+  test-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test
+    container_name: huntaze-test-runner
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://postgres:postgres@test-db:5432/huntaze_test
+      - REDIS_URL=redis://test-redis:6379
+      - STRIPE_SECRET_KEY=sk_test_mock_key
+      - STRIPE_WEBHOOK_SECRET=whsec_test_mock
+      - NEXT_PUBLIC_URL=https://test.huntaze.com
+      - STRIPE_PRO_MONTHLY_PRICE_ID=price_pro_monthly
+      - STRIPE_PRO_YEARLY_PRICE_ID=price_pro_yearly
+      - STRIPE_ENTERPRISE_MONTHLY_PRICE_ID=price_enterprise_monthly
+      - STRIPE_ENTERPRISE_YEARLY_PRICE_ID=price_enterprise_yearly
+    volumes:
+      - ..:/app
+      - /app/node_modules
+      - ../reports:/app/reports
+      - ../coverage:/app/coverage
+    working_dir: /app
+    depends_on:
+      test-db:
+        condition: service_healthy
+      stripe-mock:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    networks:
+      - test-network
+    profiles:
+      - test-runner
+
+volumes:
+  postgres_test_data:
+    driver: local
+  redis_test_data:
+    driver: local
+
+networks:
+  test-network:
+    driver: bridge
+    name: huntaze-test-network

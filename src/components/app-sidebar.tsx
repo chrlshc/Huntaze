@@ -211,7 +211,7 @@ export default function AppSidebar() {
               transition={{ duration: 0.2 }}
               className="ml-auto"
             >
-              <ChevronRight className="w-4 h-4 text-content-tertiary" />
+              <ChevronRight className="w-4 h-4 text-(--color-content-tertiary)" />
             </motion.div>
           </button>
           <AnimatePresence>
@@ -279,7 +279,7 @@ export default function AppSidebar() {
             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-xl">H</span>
             </div>
-            <span className="text-xl font-bold text-content-primary">Huntaze</span>
+            <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
           </Link>
         </div>
         
@@ -289,9 +289,9 @@ export default function AppSidebar() {
             <input
               type="search"
               placeholder="Search"
-              className="w-full px-4 py-2 pl-10 bg-surface-light dark:bg-surface border border-border-light dark:border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full px-4 py-2 pl-10 bg-(--color-surface-light) dark:bg-surface border border-(--color-border-light) dark:border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
-            <svg className="absolute left-3 top-2.5 w-4 h-4 text-content-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-3 top-2.5 w-4 h-4 text-(--color-content-tertiary)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -300,9 +300,9 @@ export default function AppSidebar() {
         <div className="app-sidebar-content">{NavList}</div>
         
         {/* Sales Channel Section */}
-        <div className="p-4 border-t border-border-light dark:border-border">
-          <p className="text-xs font-semibold text-content-tertiary mb-2">SALES CHANNELS</p>
-          <Link href="/platforms/connect" className="flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors">
+        <div className="p-4 border-t border-(--color-border-light) dark:border-border">
+          <p className="text-xs font-semibold text-(--color-content-tertiary) mb-2">SALES CHANNELS</p>
+          <Link href="/platforms/connect" className="flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg transition-colors">
             <div className="w-6 h-6 border-2 border-dashed border-primary/50 rounded-lg flex items-center justify-center">
               <span className="text-primary text-xs">+</span>
             </div>
@@ -349,7 +349,7 @@ export default function AppSidebar() {
                   <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold text-xl">H</span>
                   </div>
-                  <span className="text-xl font-bold text-content-primary">Huntaze</span>
+                  <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
                 </div>
                 <button
                   aria-label="Close menu"
@@ -366,9 +366,9 @@ export default function AppSidebar() {
                   <input
                     type="search"
                     placeholder="Search"
-                    className="w-full px-4 py-2 pl-10 bg-surface-light dark:bg-surface border border-border-light dark:border-border rounded-lg text-sm"
+                    className="w-full px-4 py-2 pl-10 bg-(--color-surface-light) dark:bg-surface border border-(--color-border-light) dark:border-border rounded-lg text-sm"
                   />
-                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-content-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-(--color-content-tertiary)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -379,11 +379,11 @@ export default function AppSidebar() {
               </div>
               
               {/* Mobile Sales Channels */}
-              <div className="p-4 border-t border-border-light dark:border-border">
-                <p className="text-xs font-semibold text-content-tertiary mb-2">SALES CHANNELS</p>
+              <div className="p-4 border-t border-(--color-border-light) dark:border-border">
+                <p className="text-xs font-semibold text-(--color-content-tertiary) mb-2">SALES CHANNELS</p>
                 <Link 
                   href="/platforms/connect" 
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-primary hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg transition-colors"
                   onClick={() => setDrawerOpen(false)}
                 >
                   <div className="w-6 h-6 border-2 border-dashed border-primary/50 rounded-lg flex items-center justify-center">

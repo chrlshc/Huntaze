@@ -19,7 +19,7 @@ export default function Navigation() {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-surface-light/95 dark:bg-surface/95 backdrop-blur-lg shadow-md' : 'bg-transparent'
+      scrolled ? 'bg-(--color-surface-light)/95 dark:bg-surface/95 backdrop-blur-lg shadow-md' : 'bg-transparent'
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
@@ -28,7 +28,7 @@ export default function Navigation() {
             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-xl">H</span>
             </div>
-            <span className="text-xl font-bold text-content-primary">Huntaze</span>
+            <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -63,7 +63,7 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/auth"
-              className="px-4 py-2 text-content-secondary hover:text-content-primary transition-colors font-medium"
+              className="px-4 py-2 text-(--color-content-secondary) hover:text-(--color-content-primary) transition-colors font-medium"
             >
               Sign In
             </Link>
@@ -79,7 +79,7 @@ export default function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-surface-hover-light dark:hover:bg-surface-hover rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover rounded-lg transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
@@ -124,7 +124,7 @@ export default function Navigation() {
             <div className="pt-4 space-y-3">
               <Link
                 href="/auth"
-                className="block px-4 py-3 text-center border border-border-light dark:border-border rounded-lg font-medium hover:bg-surface-hover-light dark:hover:bg-surface-hover transition-colors"
+                className="block px-4 py-3 text-center border border-(--color-border-light) dark:border-border rounded-lg font-medium hover:bg-(--color-surface-hover-light) dark:hover:bg-surface-hover transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sign In

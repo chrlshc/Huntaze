@@ -173,7 +173,7 @@ export default function OptimizePage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-light dark:bg-surface">
+    <div className="min-h-screen bg-(--color-surface-light) dark:bg-surface">
       <div className="max-w-4xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Optimize Your Strategy</h1>
@@ -197,7 +197,7 @@ export default function OptimizePage() {
             );
           })}
           {availableTests.length === 0 && (
-            <div className="p-6 border rounded-lg text-sm text-content-tertiary">No recommended tests for this niche yet.</div>
+            <div className="p-6 border rounded-lg text-sm text-(--color-content-tertiary)">No recommended tests for this niche yet.</div>
           )}
         </div>
 

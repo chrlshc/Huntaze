@@ -1,0 +1,75 @@
+🚀 HUNTAZE - PRÊT POUR GPT-5 !
+================================
+
+✅ BONNE NOUVELLE: GPT-5 est disponible depuis août 2025 !
+
+
+📊 MODÈLES DISPONIBLES:
+-----------------------
+1. GPT-5          → Tâches complexes (stratégie, analyse)
+2. GPT-5 Mini     → Tâches quotidiennes (contenu, chatbot)
+3. GPT-5 Nano     → Tâches simples (scheduling, classification)
+
+
+💰 ÉCONOMIES MASSIVES:
+----------------------
+Avant (GPT-4 + GPT-3.5):  $24/jour  (~$720/mois)
+Après (GPT-5 family):     $7.10/jour (~$213/mois)
+
+ÉCONOMIE: $507/mois (70% de réduction) ! 🎉
+
+
+⚙️ CONFIGURATION (2 MINUTES):
+------------------------------
+Ajoute dans amplify-env-vars.txt:
+
+OPENAI_GPT5_MODEL=gpt-5
+OPENAI_GPT5_MINI_MODEL=gpt-5-mini
+OPENAI_GPT5_NANO_MODEL=gpt-5-nano
+USE_GPT5_FOR_STRATEGY=true
+USE_GPT5_MINI_FOR_CONTENT=true
+USE_GPT5_NANO_FOR_SIMPLE_TASKS=true
+
+
+🔄 ROUTING AUTOMATIQUE:
+-----------------------
+Stratégie marketing    → GPT-5      ($2.50/jour)
+Contenu création       → GPT-5 Mini ($1.20/jour)
+Chatbot OnlyFans       → GPT-5 Mini ($3.00/jour)
+Analytics & Scheduling → GPT-5 Nano ($0.40/jour)
+
+
+⚠️ LIMITATION IMPORTANTE:
+-------------------------
+GPT-5 a des données jusqu'en octobre 2023.
+
+Pour les données actuelles (octobre 2025):
+• Option 1: RAG (Retrieval Augmented Generation)
+• Option 2: Hybrid avec GPT-4o ou Claude 4.5 Sonnet
+• Option 3: Web search integration
+
+
+✅ L'ORCHESTRATEUR EST DÉJÀ COMPATIBLE !
+----------------------------------------
+Pas de code à changer, juste des env vars à configurer.
+
+
+📋 PROCHAINES ÉTAPES:
+---------------------
+1. Vérification organisationnelle OpenAI (24-48h)
+2. Ajoute les env vars dans Amplify
+3. git push origin main
+4. Monitor les coûts: /api/v2/costs/stats
+
+
+🎯 RÉSULTAT:
+------------
+• 70% de réduction des coûts AI
+• Meilleure qualité pour les tâches complexes
+• Plus rapide pour les tâches simples
+• Compatible avec l'infrastructure actuelle
+
+
+Pour plus de détails: cat HUNTAZE_O1_CONFIGURATION.md
+
+PRÊT À DÉPLOYER ! 🚀

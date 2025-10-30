@@ -1,0 +1,147 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Huntaze OnlyFans Infrastructure - Minimal Version'
+
+Resources:
+  # KMS Key for encryption
+  HuntazeKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: 'KMS key for Huntaze OnlyFans data encryption'
+      EnableKeyRotation: true
+      KeyPolicy:
+        Statement:
+          - Action: 'kms:*'
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Resource: '*'
+        Version: '2012-10-17'
+
+  HuntazeKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: 'alias/huntaze/onlyfans'
+      TargetKeyId: !Ref HuntazeKmsKey
+
+  # DynamoDB Tables
+  HuntazeOfSessions:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'huntaze-of-sessions'
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+        KMSMasterKeyId: !Ref HuntazeKmsKey
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  HuntazeOfThreads:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'huntaze-of-threads'
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: fanId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: fanId
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+        KMSMasterKeyId: !Ref HuntazeKmsKey
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  HuntazeOfMessages:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'huntaze-of-messages'
+      AttributeDefinitions:
+        - AttributeName: taskId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: taskId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+        KMSMasterKeyId: !Ref HuntazeKmsKey
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+
+  # Secrets Manager
+  OfCredentials:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: 'of/creds/huntaze'
+      Description: 'OnlyFans credentials'
+      GenerateSecretString:
+        SecretStringTemplate: '{"email":"placeholder@example.com","password":"placeholder"}'
+        GenerateStringKey: 'sessionToken'
+
+  # CloudWatch Log Group
+  BrowserWorkerLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: '/huntaze/of/browser-worker'
+      RetentionInDays: 14
+
+  # ECS Cluster (using default VPC)
+  HuntazeEcsCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: 'huntaze-of-fargate'
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+Outputs:
+  ClusterName:
+    Description: 'ECS Cluster Name'
+    Value: !Ref HuntazeEcsCluster
+    Export:
+      Name: 'HuntazeEcsClusterName'
+  
+  SessionsTableName:
+    Description: 'DynamoDB Sessions Table'
+    Value: !Ref HuntazeOfSessions
+    Export:
+      Name: 'HuntazeOfSessionsTable'
+  
+  ThreadsTableName:
+    Description: 'DynamoDB Threads Table'
+    Value: !Ref HuntazeOfThreads
+    Export:
+      Name: 'HuntazeOfThreadsTable'
+  
+  MessagesTableName:
+    Description: 'DynamoDB Messages Table'
+    Value: !Ref HuntazeOfMessages
+    Export:
+      Name: 'HuntazeOfMessagesTable'
+  
+  KmsKeyArn:
+    Description: 'KMS Key ARN'
+    Value: !GetAtt HuntazeKmsKey.Arn
+    Export:
+      Name: 'HuntazeKmsKeyArn'
+  
+  SecretArn:
+    Description: 'OnlyFans Credentials Secret ARN'
+    Value: !Ref OfCredentials
+    Export:
+      Name: 'HuntazeOfCredentialsArn'

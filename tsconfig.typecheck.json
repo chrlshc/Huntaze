@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["app/**/*", "lib/**/*", "components/**/*", "pages/**/*"],
+  "exclude": ["tests", "scripts", "**/*.spec.*", "**/*.test.*"]
+}
+

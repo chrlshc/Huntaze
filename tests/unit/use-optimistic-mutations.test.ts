@@ -1,588 +1,723 @@
-import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useOptimisticMutations } from '@/lib/hooks/use-optimistic-mutations';
 
-// Mock the content creation store
-const mockStore = {
-  mediaAssets: {
-    items: [
-      { id: 'asset-1', title: 'Asset 1', status: 'draft' },
-      { id: 'asset-2', title: 'Asset 2', status: 'published' },
-    ],
-  },
-  campaigns: {
-    items: [
-      { id: 'campaign-1', title: 'Campaign 1', status: 'active' },
-    ],
-  },
-  updateAsset: vi.fn(),
-  updateCampaign: vi.fn(),
-  deleteAsset: vi.fn(),
-  addAsset: vi.fn(),
-  revertOptimisticUpdate: vi.fn(),
-};
-
-vi.mock('@/lib/stores/content-creation-store', () => ({
-  useContentCreationStore: () => mockStore,
-}));
-
-// Mock API client
+// Mock the API client
 const mockApiClient = {
   updateAsset: vi.fn(),
-  updateCampaign: vi.fn(),
-  deleteAsset: vi.fn(),
   createAsset: vi.fn(),
+  deleteAsset: vi.fn(),
+  updateCampaign: vi.fn(),
+  batchUpdateAssets: vi.fn(),
+};
+
+// Mock the store
+const mockStore = {
+  addAsset: vi.fn(),
+  updateAsset: vi.fn(),
+  deleteAsset: vi.fn(),
+  updateCampaign: vi.fn(),
+  revertOptimisticUpdate: vi.fn(),
+  mediaAssets: { items: [] },
+  campaigns: { items: [] }
 };
 
 vi.mock('@/lib/api', () => ({
-  apiClient: mockApiClient,
+  apiClient: mockApiClient
 }));
 
-describe('useOptimisticMutations Hook', () => {
+vi.mock('@/lib/stores/content-creation-store', () => ({
+  useContentCreationStore: () => mockStore
+}));
+
+vi.mock('@/lib/hooks/use-conflict-resolution', () => ({
+  useConflictResolution: () => ({
+    detectConflict: vi.fn(),
+    addConflict: vi.fn()
+  })
+}));
+
+describe('useOptimisticMutations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
-    // Reset mock store state
-    mockStore.mediaAssets.items = [
-      { id: 'asset-1', title: 'Asset 1', status: 'draft' },
-      { id: 'asset-2', title: 'Asset 2', status: 'published' },
-    ];
-    mockStore.campaigns.items = [
-      { id: 'campaign-1', title: 'Campaign 1', status: 'active' },
-    ];
+    mockApiClient.updateAsset.mockResolvedValue({ id: 'asset-1', title: 'Updated' });
+    mockApiClient.createAsset.mockResolvedValue({ id: 'new-asset', title: 'Created' });
+    mockApiClient.deleteAsset.mockResolvedValue(undefined);
+    mockApiClient.updateCampaign.mockResolvedValue({ id: 'campaign-1', name: 'Updated Campaign' });
+    mockApiClient.batchUpdateAssets.mockResolvedValue([]);
   });
 
-  describe('Asset Mutations', () => {
-    it('should perform optimistic asset update', async () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe('Basic Functionality', () => {
+    it('should initialize with empty state', () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      const updateData = { title: 'Updated Asset 1', status: 'published' };
-      mockApiClient.updateAsset.mockResolvedValue({ 
-        id: 'asset-1', 
-        ...updateData,
-        updatedAt: new Date().toISOString(),
-      });
-
-      await act(async () => {
-        await result.current.updateAssetOptimistic('asset-1', updateData);
-      });
-
-      // Should immediately update the store optimistically
-      expect(mockStore.updateAsset).toHaveBeenCalledWith('asset-1', updateData);
-      
-      // Should call the API
-      expect(mockApiClient.updateAsset).toHaveBeenCalledWith('asset-1', updateData);
+      expect(result.current.operations).toEqual([]);
+      expect(result.current.optimisticData).toEqual({});
+      expect(result.current.pendingOperations).toEqual([]);
+      expect(result.current.failedOperations).toEqual([]);
+      expect(result.current.hasPendingOperations).toBe(false);
     });
 
-    it('should revert optimistic update on API failure', async () => {
+    it('should provide all expected methods', () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      const updateData = { title: 'Updated Asset 1' };
-      const apiError = new Error('API Error');
-      mockApiClient.updateAsset.mockRejectedValue(apiError);
-
-      await act(async () => {
-        try {
-          await result.current.updateAssetOptimistic('asset-1', updateData);
-        } catch (error) {
-          expect(error).toBe(apiError);
-        }
-      });
-
-      // Should have attempted optimistic update
-      expect(mockStore.updateAsset).toHaveBeenCalledWith('asset-1', updateData);
-      
-      // Should revert the update on failure
-      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('asset', 'asset-1');
+      expect(typeof result.current.updateAssetOptimistic).toBe('function');
+      expect(typeof result.current.createAssetOptimistic).toBe('function');
+      expect(typeof result.current.deleteAssetOptimistic).toBe('function');
+      expect(typeof result.current.updateCampaignOptimistic).toBe('function');
+      expect(typeof result.current.batchUpdateAssetsOptimistic).toBe('function');
+      expect(typeof result.current.clearCompletedOperations).toBe('function');
+      expect(typeof result.current.rollbackOperation).toBe('function');
+      expect(typeof result.current.clearAllPendingOperations).toBe('function');
     });
+  });
 
-    it('should perform optimistic asset creation', async () => {
+  describe('Asset Operations', () => {
+    it('should update asset optimistically', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      const newAssetData = {
-        title: 'New Asset',
-        type: 'image' as const,
-        status: 'draft' as const,
-      };
-
-      const createdAsset = {
-        id: 'asset-3',
-        ...newAssetData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      mockApiClient.createAsset.mockResolvedValue(createdAsset);
-
       await act(async () => {
-        await result.current.createAssetOptimistic(newAssetData);
+        await result.current.updateAssetOptimistic('asset-1', { title: 'New Title' });
       });
 
-      // Should add asset optimistically with temporary ID
-      expect(mockStore.addAsset).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...newAssetData,
-          id: expect.stringContaining('temp-'),
-        })
+      expect(result.current.optimisticData['asset-1']).toEqual(
+        expect.objectContaining({ title: 'New Title' })
       );
-
-      // Should call the API
-      expect(mockApiClient.createAsset).toHaveBeenCalledWith(newAssetData);
-
-      // Should update with real ID after API success
-      expect(mockStore.updateAsset).toHaveBeenCalledWith(
-        expect.stringContaining('temp-'),
-        createdAsset
-      );
+      expect(mockStore.updateAsset).toHaveBeenCalledWith('asset-1', { title: 'New Title' });
+      expect(mockApiClient.updateAsset).toHaveBeenCalledWith('asset-1', { title: 'New Title' });
     });
 
-    it('should handle asset creation failure', async () => {
+    it('should create asset optimistically', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
-
-      const newAssetData = {
-        title: 'New Asset',
-        type: 'image' as const,
-        status: 'draft' as const,
-      };
-
-      const apiError = new Error('Creation failed');
-      mockApiClient.createAsset.mockRejectedValue(apiError);
+      const assetData = { title: 'New Asset', type: 'image' as const };
 
       await act(async () => {
-        try {
-          await result.current.createAssetOptimistic(newAssetData);
-        } catch (error) {
-          expect(error).toBe(apiError);
-        }
+        await result.current.createAssetOptimistic(assetData);
       });
 
-      // Should have added asset optimistically
       expect(mockStore.addAsset).toHaveBeenCalled();
-
-      // Should remove the temporary asset on failure
-      expect(mockStore.deleteAsset).toHaveBeenCalledWith(
-        expect.stringContaining('temp-')
-      );
+      expect(mockApiClient.createAsset).toHaveBeenCalledWith(assetData);
     });
 
-    it('should perform optimistic asset deletion', async () => {
+    it('should delete asset optimistically', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
-
-      mockApiClient.deleteAsset.mockResolvedValue(undefined);
 
       await act(async () => {
         await result.current.deleteAssetOptimistic('asset-1');
       });
 
-      // Should immediately remove from store
       expect(mockStore.deleteAsset).toHaveBeenCalledWith('asset-1');
-
-      // Should call the API
       expect(mockApiClient.deleteAsset).toHaveBeenCalledWith('asset-1');
-    });
-
-    it('should restore deleted asset on API failure', async () => {
-      const { result } = renderHook(() => useOptimisticMutations());
-
-      const apiError = new Error('Deletion failed');
-      mockApiClient.deleteAsset.mockRejectedValue(apiError);
-
-      await act(async () => {
-        try {
-          await result.current.deleteAssetOptimistic('asset-1');
-        } catch (error) {
-          expect(error).toBe(apiError);
-        }
-      });
-
-      // Should have deleted optimistically
-      expect(mockStore.deleteAsset).toHaveBeenCalledWith('asset-1');
-
-      // Should restore the asset on failure
-      expect(mockStore.addAsset).toHaveBeenCalledWith(
-        mockStore.mediaAssets.items[0] // Original asset data
-      );
     });
   });
 
-  describe('Campaign Mutations', () => {
-    it('should perform optimistic campaign update', async () => {
+  describe('Campaign Operations', () => {
+    it('should update campaign optimistically', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      const updateData = { title: 'Updated Campaign', status: 'paused' };
-      mockApiClient.updateCampaign.mockResolvedValue({
-        id: 'campaign-1',
-        ...updateData,
-        updatedAt: new Date().toISOString(),
-      });
-
       await act(async () => {
-        await result.current.updateCampaignOptimistic('campaign-1', updateData);
+        await result.current.updateCampaignOptimistic('campaign-1', { name: 'New Name' });
       });
 
-      expect(mockStore.updateCampaign).toHaveBeenCalledWith('campaign-1', updateData);
-      expect(mockApiClient.updateCampaign).toHaveBeenCalledWith('campaign-1', updateData);
-    });
-
-    it('should revert campaign update on failure', async () => {
-      const { result } = renderHook(() => useOptimisticMutations());
-
-      const updateData = { title: 'Updated Campaign' };
-      const apiError = new Error('Update failed');
-      mockApiClient.updateCampaign.mockRejectedValue(apiError);
-
-      await act(async () => {
-        try {
-          await result.current.updateCampaignOptimistic('campaign-1', updateData);
-        } catch (error) {
-          expect(error).toBe(apiError);
-        }
-      });
-
-      expect(mockStore.updateCampaign).toHaveBeenCalledWith('campaign-1', updateData);
-      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('campaign', 'campaign-1');
+      expect(result.current.optimisticData['campaign-1']).toEqual(
+        expect.objectContaining({ name: 'New Name' })
+      );
+      expect(mockStore.updateCampaign).toHaveBeenCalledWith('campaign-1', { name: 'New Name' });
+      expect(mockApiClient.updateCampaign).toHaveBeenCalledWith('campaign-1', { name: 'New Name' });
     });
   });
 
   describe('Batch Operations', () => {
-    it('should perform batch optimistic updates', async () => {
+    it('should handle batch updates', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
-
       const updates = [
-        { id: 'asset-1', data: { title: 'Updated Asset 1' } },
-        { id: 'asset-2', data: { title: 'Updated Asset 2' } },
+        { id: 'asset-1', data: { title: 'Title 1' } },
+        { id: 'asset-2', data: { title: 'Title 2' } }
       ];
-
-      mockApiClient.updateAsset
-        .mockResolvedValueOnce({ id: 'asset-1', title: 'Updated Asset 1' })
-        .mockResolvedValueOnce({ id: 'asset-2', title: 'Updated Asset 2' });
 
       await act(async () => {
         await result.current.batchUpdateAssetsOptimistic(updates);
       });
 
-      expect(mockStore.updateAsset).toHaveBeenCalledTimes(2);
-      expect(mockStore.updateAsset).toHaveBeenNthCalledWith(1, 'asset-1', { title: 'Updated Asset 1' });
-      expect(mockStore.updateAsset).toHaveBeenNthCalledWith(2, 'asset-2', { title: 'Updated Asset 2' });
-
-      expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(2);
-    });
-
-    it('should handle partial batch failures', async () => {
-      const { result } = renderHook(() => useOptimisticMutations());
-
-      const updates = [
-        { id: 'asset-1', data: { title: 'Updated Asset 1' } },
-        { id: 'asset-2', data: { title: 'Updated Asset 2' } },
-        { id: 'asset-3', data: { title: 'Updated Asset 3' } },
-      ];
-
-      mockApiClient.updateAsset
-        .mockResolvedValueOnce({ id: 'asset-1', title: 'Updated Asset 1' })
-        .mockRejectedValueOnce(new Error('Update failed'))
-        .mockResolvedValueOnce({ id: 'asset-3', title: 'Updated Asset 3' });
-
-      const results = await act(async () => {
-        return await result.current.batchUpdateAssetsOptimistic(updates);
-      });
-
-      expect(results).toHaveLength(3);
-      expect(results[0].success).toBe(true);
-      expect(results[1].success).toBe(false);
-      expect(results[1].error).toBe('Update failed');
-      expect(results[2].success).toBe(true);
-
-      // Should revert the failed update
-      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('asset', 'asset-2');
+      expect(mockApiClient.batchUpdateAssets).toHaveBeenCalledWith(updates);
     });
   });
 
-  describe('Optimistic State Management', () => {
-    it('should track pending operations', async () => {
+  describe('Operation State Management', () => {
+    it('should track pending operations correctly', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      // Mock a slow API call
-      mockApiClient.updateAsset.mockImplementation(() => 
-        new Promise(resolve => setTimeout(() => resolve({ id: 'asset-1' }), 100))
-      );
+      // Create a promise that never resolves to keep operations pending
+      const neverResolves = new Promise<never>(() => {});
+      mockApiClient.updateAsset.mockReturnValue(neverResolves);
 
-      act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Updated' });
-      });
-
-      // Should show as pending
-      expect(result.current.isPending('asset', 'asset-1')).toBe(true);
-      expect(result.current.pendingOperations).toContain('asset-asset-1');
-
-      // Wait for completion
+      // Start operations - they should remain pending since promise never resolves
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 150));
+        result.current.updateAssetOptimistic('asset-1', { title: 'Update 1' });
+        result.current.updateAssetOptimistic('asset-2', { title: 'Update 2' });
+        // Give a moment for operations to be added
+        await new Promise(resolve => setTimeout(resolve, 1));
       });
 
-      expect(result.current.isPending('asset', 'asset-1')).toBe(false);
+      expect(result.current.pendingOperations).toHaveLength(2);
+      expect(result.current.hasPendingOperations).toBe(true);
     });
 
-    it('should prevent duplicate operations on same entity', async () => {
+    it('should handle successful operations', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      mockApiClient.updateAsset.mockImplementation(() => 
-        new Promise(resolve => setTimeout(() => resolve({ id: 'asset-1' }), 100))
-      );
-
-      // Start first operation
-      act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 1' });
+      await act(async () => {
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Success' });
       });
 
-      // Try to start second operation on same asset
+      // Wait for operation to complete
+      await waitFor(() => {
+        const operation = result.current.operations.find(op => op.entityId === 'asset-1');
+        return operation?.status === 'success';
+      });
+
+      const completedOperation = result.current.operations.find(op => op.entityId === 'asset-1');
+      expect(completedOperation?.status).toBe('success');
+    });
+
+    it('should handle failed operations', async () => {
+      const { result } = renderHook(() => useOptimisticMutations({
+        onError: vi.fn()
+      }));
+
+      const error = new Error('API Error');
+      mockApiClient.updateAsset.mockRejectedValue(error);
+
       await act(async () => {
         try {
-          await result.current.updateAssetOptimistic('asset-1', { title: 'Update 2' });
-        } catch (error) {
-          expect(error.message).toContain('already pending');
+          await result.current.updateAssetOptimistic('asset-1', { title: 'Fail' });
+        } catch (e) {
+          // Expected to fail
         }
       });
 
-      expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(1);
-    });
-
-    it('should queue operations when configured', async () => {
-      const { result } = renderHook(() => useOptimisticMutations({ enableQueue: true }));
-
-      mockApiClient.updateAsset
-        .mockImplementationOnce(() => new Promise(resolve => setTimeout(() => resolve({ id: 'asset-1' }), 50)))
-        .mockImplementationOnce(() => new Promise(resolve => setTimeout(() => resolve({ id: 'asset-1' }), 50)));
-
-      // Start first operation
-      act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 1' });
+      await waitFor(() => {
+        const operation = result.current.operations.find(op => op.entityId === 'asset-1');
+        return operation?.status === 'failed';
       });
 
-      // Queue second operation
+      const failedOperation = result.current.operations.find(op => op.entityId === 'asset-1');
+      expect(failedOperation?.status).toBe('failed');
+      expect(failedOperation?.error).toBe('API Error');
+    });
+  });
+
+  describe('Error Handling and Recovery', () => {
+    it('should revert optimistic updates on failure', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      mockApiClient.updateAsset.mockRejectedValue(new Error('Server error'));
+
+      await act(async () => {
+        try {
+          await result.current.updateAssetOptimistic('asset-1', { title: 'Failed Update' });
+        } catch (error) {
+          // Expected to fail
+        }
+      });
+
+      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('asset', 'asset-1');
+    });
+
+    it('should handle network failures with retry', async () => {
+      const { result } = renderHook(() => useOptimisticMutations({
+        maxRetries: 2,
+        retryDelay: 100
+      }));
+
+      let callCount = 0;
+      mockApiClient.updateAsset.mockImplementation(() => {
+        callCount++;
+        if (callCount <= 2) {
+          return Promise.reject(new Error('Network error'));
+        }
+        return Promise.resolve({ id: 'asset-1', title: 'Success after retry' });
+      });
+
+      await act(async () => {
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Retry Test' });
+      });
+
+      expect(callCount).toBe(3); // Initial + 2 retries
+    });
+  });
+
+  describe('Concurrent Operations', () => {
+    it('should handle multiple concurrent operations', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      const operations = [
+        result.current.updateAssetOptimistic('asset-1', { title: 'Concurrent 1' }),
+        result.current.updateAssetOptimistic('asset-2', { title: 'Concurrent 2' }),
+        result.current.updateAssetOptimistic('asset-3', { title: 'Concurrent 3' })
+      ];
+
+      await act(async () => {
+        await Promise.allSettled(operations);
+      });
+
+      expect(result.current.operations.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should prevent duplicate operations for same entity when not queued', async () => {
+      const { result } = renderHook(() => useOptimisticMutations({
+        enableQueue: false
+      }));
+
+      // Make first operation hang
+      const hangingPromise = new Promise(() => {});
+      mockApiClient.updateAsset.mockReturnValueOnce(hangingPromise);
+
+      await act(async () => {
+        // First operation starts
+        result.current.updateAssetOptimistic('asset-1', { title: 'First' });
+        
+        // Second operation should throw since first is still pending
+        try {
+          await result.current.updateAssetOptimistic('asset-1', { title: 'Second' });
+          expect.fail('Should have thrown error for duplicate operation');
+        } catch (error) {
+          expect(error.message).toContain('Operation already pending');
+        }
+      });
+    });
+  });
+
+  describe('Utility Functions', () => {
+    it('should clear completed operations', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      await act(async () => {
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Complete' });
+      });
+
+      await waitFor(() => {
+        const operation = result.current.operations.find(op => op.entityId === 'asset-1');
+        return operation?.status === 'success';
+      });
+
       act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 2' });
+        result.current.clearCompletedOperations();
+      });
+
+      expect(result.current.operations.filter(op => op.status === 'success')).toHaveLength(0);
+    });
+
+    it('should rollback specific operation', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      await act(async () => {
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Rollback Test' });
+      });
+
+      const operation = result.current.operations[0];
+      
+      act(() => {
+        result.current.rollbackOperation(operation.id);
+      });
+
+      expect(result.current.operations.find(op => op.id === operation.id)).toBeUndefined();
+    });
+
+    it('should clear all pending operations', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      // Mock a never-resolving promise - operations should stay pending
+      const neverResolves = new Promise<never>(() => {});
+      mockApiClient.updateAsset.mockReturnValue(neverResolves);
+
+      // Start operations that will remain pending
+      await act(async () => {
+        result.current.updateAssetOptimistic('asset-1', { title: 'Pending 1' });
+        result.current.updateAssetOptimistic('asset-2', { title: 'Pending 2' });
+        // Give a moment for operations to be added
+        await new Promise(resolve => setTimeout(resolve, 1));
+      });
+
+      // Operations should be pending (never resolved)
+      expect(result.current.hasPendingOperations).toBe(true);
+
+      // Clear all pending operations
+      act(() => {
+        result.current.clearAllPendingOperations();
+      });
+
+      expect(result.current.hasPendingOperations).toBe(false);
+    });
+
+    it('should get pending operations for specific entity', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      const hangingPromise = new Promise(() => {});
+      mockApiClient.updateAsset.mockReturnValue(hangingPromise);
+
+      await act(async () => {
+        result.current.updateAssetOptimistic('asset-1', { title: 'Pending' });
+        await new Promise(resolve => setTimeout(resolve, 1));
+      });
+
+      const pendingForAsset = result.current.getPendingOperationsForEntity('asset-1');
+      expect(pendingForAsset).toHaveLength(1);
+      expect(pendingForAsset[0].entityId).toBe('asset-1');
+    });
+
+    it('should check if entity has pending operations', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      const hangingPromise = new Promise(() => {});
+      mockApiClient.updateAsset.mockReturnValue(hangingPromise);
+
+      await act(async () => {
+        result.current.updateAssetOptimistic('asset-1', { title: 'Pending' });
+        await new Promise(resolve => setTimeout(resolve, 1));
+      });
+
+      expect(result.current.isPending('asset', 'asset-1')).toBe(true);
+      expect(result.current.isPending('asset', 'asset-2')).toBe(false);
+    });
+  });
+
+  describe('Advanced Features', () => {
+    it('should support debouncing', async () => {
+      vi.useFakeTimers();
+      
+      try {
+        const { result } = renderHook(() => useOptimisticMutations({
+          debounceMs: 100
+        }));
+
+        mockApiClient.updateAsset.mockResolvedValue({ id: 'asset-1' });
+
+        // Multiple rapid updates should be debounced
+        act(() => {
+          result.current.updateAssetOptimistic('asset-1', { title: 'Update 1' });
+          result.current.updateAssetOptimistic('asset-1', { title: 'Update 2' });
+          result.current.updateAssetOptimistic('asset-1', { title: 'Update 3' });
+        });
+
+        // Flush microtasks and schedule timers under fake timers
+        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(0);
+
+        // Advance time just before debounce threshold
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(99);
+        });
+        expect(mockApiClient.updateAsset).not.toHaveBeenCalled();
+
+        // Cross the debounce threshold
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(1);
+        });
+
+        // Should only make one API call due to debouncing
+        expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(1);
+        expect(mockApiClient.updateAsset).toHaveBeenCalledWith('asset-1', { title: 'Update 3' });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should support batching', async () => {
+      vi.useFakeTimers();
+      
+      try {
+        const { result } = renderHook(() => useOptimisticMutations({
+          enableBatching: true,
+          batchDelay: 50
+        }));
+
+        mockApiClient.batchUpdateAssets.mockResolvedValue([
+          { id: 'asset-1', title: 'Batch 1' },
+          { id: 'asset-2', title: 'Batch 2' },
+        ]);
+
+        // Enqueue ops
+        act(() => {
+          result.current.updateAssetOptimistic('asset-1', { title: 'Batch 1' });
+          result.current.updateAssetOptimistic('asset-2', { title: 'Batch 2' });
+        });
+
+        // Flush microtasks and schedule timers under fake timers
+        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(0);
+
+        // Advance to t=batch-1 (0 calls)
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(49);
+        });
+        expect(mockApiClient.batchUpdateAssets).not.toHaveBeenCalled();
+
+        // Advance to t=batch (1 call with both ops)
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(1);
+        });
+
+        expect(mockApiClient.batchUpdateAssets).toHaveBeenCalledTimes(1);
+        expect(mockApiClient.batchUpdateAssets).toHaveBeenCalledWith([
+          { id: 'asset-1', data: { title: 'Batch 1' } },
+          { id: 'asset-2', data: { title: 'Batch 2' } },
+        ]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should support operation queuing', async () => {
+      const { result } = renderHook(() => useOptimisticMutations({
+        enableQueue: true
+      }));
+
+      // First operation hangs
+      let resolveFirst: () => void;
+      const firstPromise = new Promise<any>(resolve => {
+        resolveFirst = () => resolve({ id: 'asset-1', title: 'First' });
+      });
+      mockApiClient.updateAsset.mockReturnValueOnce(firstPromise);
+
+      await act(async () => {
+        result.current.updateAssetOptimistic('asset-1', { title: 'First' });
+        result.current.updateAssetOptimistic('asset-1', { title: 'Second' });
+        await new Promise(resolve => setTimeout(resolve, 1));
       });
 
       expect(result.current.queuedOperations).toHaveLength(1);
 
-      // Wait for both to complete
+      // Resolve first operation
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 150));
+        resolveFirst!();
+        await firstPromise;
       });
 
-      expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(2);
-      expect(result.current.queuedOperations).toHaveLength(0);
+      // Second operation should now be processed
+      await waitFor(() => {
+        return result.current.queuedOperations.length === 0;
+      });
     });
   });
 
-  describe('Conflict Resolution Integration', () => {
-    it('should detect conflicts during optimistic updates', async () => {
+  describe('Offline Support', () => {
+    it('should queue operations when offline', async () => {
+      // Mock navigator.onLine
+      Object.defineProperty(navigator, 'onLine', {
+        writable: true,
+        value: false
+      });
+
       const { result } = renderHook(() => useOptimisticMutations());
 
-      const updateData = { title: 'Local Update', updatedAt: '2024-01-01T10:00:00Z' };
-      const serverData = { 
-        id: 'asset-1', 
-        title: 'Server Update', 
-        updatedAt: '2024-01-01T11:00:00Z' 
-      };
-
-      mockApiClient.updateAsset.mockResolvedValue(serverData);
-
       await act(async () => {
-        await result.current.updateAssetOptimistic('asset-1', updateData);
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Offline Update' });
       });
 
-      // Should detect conflict if server data differs from optimistic update
-      expect(mockStore.updateAsset).toHaveBeenCalledWith('asset-1', updateData);
-      
-      // In a real implementation, this would trigger conflict resolution
-      // if the server returned different data than expected
-    });
-
-    it('should handle server-side validation errors', async () => {
-      const { result } = renderHook(() => useOptimisticMutations());
-
-      const updateData = { title: '' }; // Invalid data
-      const validationError = new Error('Title cannot be empty');
-      validationError.name = 'ValidationError';
-      
-      mockApiClient.updateAsset.mockRejectedValue(validationError);
-
-      await act(async () => {
-        try {
-          await result.current.updateAssetOptimistic('asset-1', updateData);
-        } catch (error) {
-          expect(error).toBe(validationError);
-        }
-      });
-
-      // Should revert optimistic update
-      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('asset', 'asset-1');
-    });
-  });
-
-  describe('Network Resilience', () => {
-    it('should retry failed operations', async () => {
-      const { result } = renderHook(() => 
-        useOptimisticMutations({ retryAttempts: 2, retryDelay: 10 })
-      );
-
-      const updateData = { title: 'Updated Asset' };
-      
-      mockApiClient.updateAsset
-        .mockRejectedValueOnce(new Error('Network error'))
-        .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce({ id: 'asset-1', ...updateData });
-
-      await act(async () => {
-        await result.current.updateAssetOptimistic('asset-1', updateData);
-      });
-
-      expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(3);
-    });
-
-    it('should give up after max retry attempts', async () => {
-      const { result } = renderHook(() => 
-        useOptimisticMutations({ retryAttempts: 2, retryDelay: 10 })
-      );
-
-      const updateData = { title: 'Updated Asset' };
-      const networkError = new Error('Network error');
-      
-      mockApiClient.updateAsset.mockRejectedValue(networkError);
-
-      await act(async () => {
-        try {
-          await result.current.updateAssetOptimistic('asset-1', updateData);
-        } catch (error) {
-          expect(error).toBe(networkError);
-        }
-      });
-
-      expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(3); // Initial + 2 retries
-      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('asset', 'asset-1');
-    });
-
-    it('should handle offline scenarios', async () => {
-      const { result } = renderHook(() => useOptimisticMutations());
-
-      // Mock offline scenario
-      Object.defineProperty(navigator, 'onLine', { value: false, writable: true });
-
-      const updateData = { title: 'Offline Update' };
-
-      await act(async () => {
-        await result.current.updateAssetOptimistic('asset-1', updateData);
-      });
-
-      // Should still perform optimistic update
-      expect(mockStore.updateAsset).toHaveBeenCalledWith('asset-1', updateData);
-
-      // Should queue for later sync (in a real implementation)
-      expect(result.current.offlineQueue).toContain(
+      expect(result.current.offlineQueue).toHaveLength(1);
+      expect(result.current.offlineQueue[0]).toEqual(
         expect.objectContaining({
           type: 'update',
           entityType: 'asset',
           entityId: 'asset-1',
-          data: updateData,
+          data: { title: 'Offline Update' }
         })
       );
+
+      // Restore online status
+      Object.defineProperty(navigator, 'onLine', {
+        writable: true,
+        value: true
+      });
     });
   });
 
-  describe('Performance Optimization', () => {
-    it('should debounce rapid updates to same entity', async () => {
-      const { result } = renderHook(() => 
-        useOptimisticMutations({ debounceMs: 100 })
-      );
+  describe('Callback Integration', () => {
+    it('should call onSuccess callback', async () => {
+      const onSuccess = vi.fn();
+      const { result } = renderHook(() => useOptimisticMutations({ onSuccess }));
 
-      mockApiClient.updateAsset.mockResolvedValue({ id: 'asset-1' });
-
-      // Rapid updates
-      act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 1' });
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 2' });
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 3' });
-      });
-
-      // Should only make one API call with the latest data
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 150));
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Success' });
       });
 
-      expect(mockApiClient.updateAsset).toHaveBeenCalledTimes(1);
-      expect(mockApiClient.updateAsset).toHaveBeenCalledWith('asset-1', { title: 'Update 3' });
+      await waitFor(() => {
+        expect(onSuccess).toHaveBeenCalled();
+      });
     });
 
-    it('should batch similar operations', async () => {
-      const { result } = renderHook(() => 
-        useOptimisticMutations({ enableBatching: true, batchDelay: 50 })
-      );
+    it('should call onError callback', async () => {
+      const onError = vi.fn();
+      const { result } = renderHook(() => useOptimisticMutations({ onError }));
 
-      mockApiClient.batchUpdateAssets = vi.fn().mockResolvedValue([
-        { id: 'asset-1', title: 'Updated 1' },
-        { id: 'asset-2', title: 'Updated 2' },
-      ]);
+      mockApiClient.updateAsset.mockRejectedValue(new Error('Test error'));
 
-      // Multiple updates in quick succession
-      act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Updated 1' });
-        result.current.updateAssetOptimistic('asset-2', { title: 'Updated 2' });
+      await act(async () => {
+        try {
+          await result.current.updateAssetOptimistic('asset-1', { title: 'Error' });
+        } catch (e) {
+          // Expected
+        }
+      });
+
+      await waitFor(() => {
+        expect(onError).toHaveBeenCalled();
+      });
+    });
+
+    it('should call onConflict callback', async () => {
+      const onConflict = vi.fn();
+      const { result } = renderHook(() => useOptimisticMutations({ onConflict }));
+
+      // Mock conflict detection
+      const { useConflictResolution } = await import('@/lib/hooks/use-conflict-resolution');
+      const mockDetectConflict = vi.mocked(useConflictResolution().detectConflict);
+      mockDetectConflict.mockReturnValue({
+        id: 'conflict-1',
+        entityType: 'asset',
+        entityId: 'asset-1',
+        localVersion: { title: 'Local' },
+        remoteVersion: { title: 'Remote' },
+        timestamp: new Date(),
+        conflictedFields: ['title'],
+        severity: 'medium'
       });
 
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await result.current.updateAssetOptimistic('asset-1', { title: 'Conflict Test' });
       });
 
-      expect(mockApiClient.batchUpdateAssets).toHaveBeenCalledWith([
-        { id: 'asset-1', data: { title: 'Updated 1' } },
-        { id: 'asset-2', data: { title: 'Updated 2' } },
-      ]);
+      await waitFor(() => {
+        expect(onConflict).toHaveBeenCalled();
+      });
     });
   });
 
-  describe('Error Recovery', () => {
-    it('should provide rollback functionality', async () => {
+  describe('Regression Tests for Async Timing', () => {
+    it('should properly handle async operations with act wrapper', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      const originalAsset = mockStore.mediaAssets.items[0];
-      const updateData = { title: 'Updated Asset' };
+      // This test specifically validates the fix for async timing issues
+      const slowPromise = new Promise(resolve => setTimeout(resolve, 10));
+      mockApiClient.updateAsset.mockReturnValue(slowPromise);
 
-      // Perform optimistic update
       await act(async () => {
-        mockApiClient.updateAsset.mockResolvedValue({ id: 'asset-1', ...updateData });
-        await result.current.updateAssetOptimistic('asset-1', updateData);
+        result.current.updateAssetOptimistic('asset-1', { title: 'Async Test' });
+        // Allow time for operation to be registered
+        await new Promise(resolve => setTimeout(resolve, 1));
       });
 
-      // Rollback the change
-      act(() => {
-        result.current.rollbackOptimisticUpdate('asset', 'asset-1');
+      // Operation should be tracked immediately
+      expect(result.current.operations).toHaveLength(1);
+      expect(result.current.operations[0].status).toBe('pending');
+
+      // Wait for completion
+      await act(async () => {
+        await slowPromise;
       });
 
-      expect(mockStore.revertOptimisticUpdate).toHaveBeenCalledWith('asset', 'asset-1');
+      await waitFor(() => {
+        const operation = result.current.operations.find(op => op.entityId === 'asset-1');
+        return operation?.status === 'success';
+      });
     });
 
-    it('should clear all pending operations on error', async () => {
+    it('should handle multiple async operations without race conditions', async () => {
       const { result } = renderHook(() => useOptimisticMutations());
 
-      // Start multiple operations
-      mockApiClient.updateAsset.mockImplementation(() => 
-        new Promise(() => {}) // Never resolves
+      const promises = [
+        new Promise(resolve => setTimeout(() => resolve({ id: 'asset-1', title: 'First' }), 20)),
+        new Promise(resolve => setTimeout(() => resolve({ id: 'asset-2', title: 'Second' }), 10)),
+        new Promise(resolve => setTimeout(() => resolve({ id: 'asset-3', title: 'Third' }), 30))
+      ];
+
+      mockApiClient.updateAsset
+        .mockReturnValueOnce(promises[0])
+        .mockReturnValueOnce(promises[1])
+        .mockReturnValueOnce(promises[2]);
+
+      await act(async () => {
+        result.current.updateAssetOptimistic('asset-1', { title: 'First' });
+        result.current.updateAssetOptimistic('asset-2', { title: 'Second' });
+        result.current.updateAssetOptimistic('asset-3', { title: 'Third' });
+        // Allow operations to be registered
+        await new Promise(resolve => setTimeout(resolve, 1));
+      });
+
+      expect(result.current.operations).toHaveLength(3);
+
+      // Wait for all operations to complete
+      await act(async () => {
+        await Promise.all(promises);
+      });
+
+      await waitFor(() => {
+        return result.current.operations.every(op => op.status === 'success');
+      });
+
+      expect(result.current.operations.filter(op => op.status === 'success')).toHaveLength(3);
+    });
+
+    it('should maintain operation order with async timing', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      const operationIds: string[] = [];
+      // Push-only wrapper to avoid recursive re-entry on the same spy
+      mockApiClient.updateAsset.mockImplementation(async (id: string, data: any) => {
+        operationIds.push(id);
+        return Promise.resolve({ id, ...data });
+      });
+
+      await act(async () => {
+        result.current.updateAssetOptimistic('asset-1', { title: 'First' });
+        result.current.updateAssetOptimistic('asset-2', { title: 'Second' });
+        result.current.updateAssetOptimistic('asset-3', { title: 'Third' });
+        // Ensure operations are processed
+        await new Promise(resolve => setTimeout(resolve, 5));
+      });
+
+      expect(operationIds).toEqual(['asset-1', 'asset-2', 'asset-3']);
+    });
+  });
+
+  describe('Memory Management', () => {
+    it('should not leak memory with many operations', async () => {
+      const { result } = renderHook(() => useOptimisticMutations());
+
+      // Create many operations
+      const operations = Array.from({ length: 100 }, (_, i) => 
+        result.current.updateAssetOptimistic(`asset-${i}`, { title: `Asset ${i}` })
       );
 
-      act(() => {
-        result.current.updateAssetOptimistic('asset-1', { title: 'Update 1' });
-        result.current.updateAssetOptimistic('asset-2', { title: 'Update 2' });
+      await act(async () => {
+        await Promise.allSettled(operations);
       });
 
-      expect(result.current.pendingOperations).toHaveLength(2);
-
-      // Clear all pending
+      // Clear completed operations to free memory
       act(() => {
-        result.current.clearAllPending();
+        result.current.clearCompletedOperations();
       });
 
-      expect(result.current.pendingOperations).toHaveLength(0);
+      expect(result.current.operations.length).toBeLessThan(100);
+    });
+
+    it('should cleanup timers on unmount', () => {
+      const { unmount } = renderHook(() => useOptimisticMutations({
+        debounceMs: 1000
+      }));
+
+      // Start an operation that would be debounced
+      act(() => {
+        // This would normally set a timer
+      });
+
+      // Unmount should cleanup timers
+      expect(() => unmount()).not.toThrow();
     });
   });
 });

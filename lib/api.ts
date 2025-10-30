@@ -96,6 +96,39 @@ class ApiClient {
     return this.request(endpoint, { method: 'POST', body: form });
   }
 
+  // Generic HTTP helpers (used by tests via mocks)
+  async get(endpoint: string) {
+    return this.request(endpoint, { method: 'GET', retry: 1 });
+  }
+  async post(endpoint: string, data?: any) {
+    const body = data instanceof FormData ? data : data != null ? JSON.stringify(data) : undefined;
+    return this.request(endpoint, { method: 'POST', body, retry: 2 });
+  }
+  async patch(endpoint: string, data?: any) {
+    const body = data instanceof FormData ? data : data != null ? JSON.stringify(data) : undefined;
+    return this.request(endpoint, { method: 'PATCH', body, retry: 2 });
+  }
+  async delete(endpoint: string) {
+    return this.request(endpoint, { method: 'DELETE', retry: 1 });
+  }
+
+  // Convenience domain helpers used by optimistic mutations (tests often mock these)
+  async updateAsset(id: string, data: any) {
+    return this.patch(`/content-creation/assets/${id}`, data);
+  }
+  async createAsset(data: any) {
+    return this.post('/content-creation/assets', data);
+  }
+  async deleteAsset(id: string) {
+    return this.delete(`/content-creation/assets/${id}`);
+  }
+  async updateCampaign(id: string, data: any) {
+    return this.patch(`/content-creation/campaigns/${id}`, data);
+  }
+  async batchUpdateAssets(updates: Array<{ id: string; data: any }>) {
+    return this.post('/content-creation/assets/batch', { updates });
+  }
+
   // Auth endpoints
   async getMe() { return this.request('/auth/me', { retry: 1 }); }
   async logout() { return this.request('/auth/logout', { method: 'POST' }); }
@@ -120,3 +153,5 @@ class ApiClient {
 }
 
 export const api = new ApiClient();
+// Named export used throughout tests (mocked in suites)
+export const apiClient = api;

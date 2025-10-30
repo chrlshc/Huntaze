@@ -4,7 +4,6 @@ const isExport = process.env.NEXT_OUTPUT_EXPORT === '1'
 const nextConfig = {
   // Core
   reactStrictMode: true,
-  swcMinify: true,
   compress: true,
   output: isExport ? 'export' : 'standalone',
   poweredByHeader: false,
@@ -91,8 +90,9 @@ const nextConfig = {
 
   // CSS and build perf
   experimental: {
-    optimizeCss: true,
-    // Disable optimizePackageImports to avoid dev chunk errors with RSC boundaries
+    // Disable CSS optimization to avoid 'critters' requirement during SSG
+    // Re‑enable after CI adds critters or when not exporting pages
+    optimizeCss: false,
     // optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
   

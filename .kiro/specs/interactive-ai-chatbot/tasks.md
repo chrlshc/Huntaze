@@ -1,0 +1,418 @@
+# Implementation Plan - Interactive AI Chatbot
+
+- [ ] 1. Set up NestJS backend project
+  - Initialize NestJS project with CLI
+  - Configure TypeScript and ESLint
+  - Set up project structure (modules, services, gateways)
+  - Configure environment variables
+  - Set up Prisma for database
+  - _Requirements: All requirements (infrastructure)_
+
+- [ ] 2. Set up database schema
+  - Extend Prisma schema with Conversation, Message, IntentLog, and ConversationAnalytics models
+  - Run database migration
+  - Add indexes for performance
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 10.1, 10.2, 10.3, 10.4, 10.5, 15.1, 15.2, 15.3, 15.4, 15.5_
+
+- [ ] 3. Implement ConversationService
+  - [ ] 3.1 Create ConversationService with CRUD operations
+    - Implement `create()` for new conversations
+    - Implement `getActiveConversations()` with pagination
+    - Implement `getMessages()` with limit
+    - Implement `addMessage()` with role validation
+    - Implement `deleteConversation()` with soft delete
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [ ] 3.2 Implement conversation management
+    - Create `updateConversationTitle()`
+    - Implement `archiveOldConversations()` for cleanup
+    - Add conversation search functionality
+    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - [ ] 3.3 Write unit tests for ConversationService
+    - Test conversation creation
+    - Test message persistence
+    - Test conversation retrieval
+    - Test archiving logic
+    - _Requirements: 3.1-3.5, 10.1-10.5_
+
+- [ ] 4. Implement IntentService
+  - [ ] 4.1 Create IntentService with classification
+    - Implement `classify()` with pattern matching
+    - Add intent patterns (campaign_help, analytics_query, content_idea, technical_support, greeting, farewell)
+    - Implement `extractEntities()` for dates, amounts, platforms
+    - Add fallback to AI classification
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [ ] 4.2 Implement entity extraction
+    - Extract dates from messages
+    - Extract monetary amounts
+    - Extract platform names
+    - Extract user mentions
+    - _Requirements: 5.3_
+  - [ ] 4.3 Implement intent routing
+    - Route to appropriate handlers based on intent
+    - Calculate confidence scores
+    - Log intent classifications
+    - _Requirements: 5.4, 5.5_
+  - [ ] 4.4 Write unit tests for IntentService
+    - Test pattern matching
+    - Test entity extraction
+    - Test confidence scoring
+    - Test fallback logic
+    - _Requirements: 5.1-5.5_
+
+- [ ] 5. Implement ContextService
+  - [ ] 5.1 Create ContextService with Redis integration
+    - Implement `getContext()` from Redis cache
+    - Implement `updateContext()` with message history
+    - Implement `clearContext()` for new topics
+    - Set TTL for context expiration (1 hour)
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+  - [ ] 5.2 Implement context management
+    - Maintain last 10 messages in context window
+    - Extract and store key entities
+    - Track conversation topic
+    - Resolve pronouns and references
+    - _Requirements: 4.2, 4.3, 4.4_
+  - [ ] 5.3 Write unit tests for ContextService
+    - Test context retrieval
+    - Test context updates
+    - Test entity merging
+    - Test TTL expiration
+    - _Requirements: 4.1-4.5_
+
+- [ ] 6. Implement SentimentService
+  - [ ] 6.1 Create SentimentService with analysis
+    - Implement `analyze()` for sentiment detection
+    - Detect positive, neutral, negative sentiment
+    - Detect frustration and confusion
+    - Calculate sentiment score (-1 to 1)
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 6.2 Implement tone adjustment
+    - Adjust AI response tone based on sentiment
+    - Escalate to human support if needed
+    - Track sentiment trends
+    - _Requirements: 8.3, 8.4, 8.5_
+  - [ ] 6.3 Write unit tests for SentimentService
+    - Test sentiment detection
+    - Test frustration detection
+    - Test tone adjustment
+    - Test escalation logic
+    - _Requirements: 8.1-8.5_
+
+- [ ] 7. Implement AIIntegrationService
+  - [ ] 7.1 Create AIIntegrationService wrapper
+    - Integrate with existing AIService
+    - Implement `generateStreamingResponse()` with async iterator
+    - Add context injection into prompts
+    - Handle streaming errors
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [ ] 7.2 Implement response generation
+    - Build prompts with context and intent
+    - Stream responses token by token
+    - Track token usage and processing time
+    - Implement fallback responses
+    - _Requirements: 6.1, 6.2, 6.3, 9.1, 9.2, 9.3, 9.4, 9.5_
+  - [ ] 7.3 Write unit tests for AIIntegrationService
+    - Test streaming response generation
+    - Test context injection
+    - Test error handling
+    - Test fallback logic
+    - _Requirements: 6.1-6.5, 9.1-9.5_
+
+- [ ] 8. Implement ChatGateway (WebSocket)
+  - [ ] 8.1 Create ChatGateway with Socket.io
+    - Set up WebSocket gateway with CORS
+    - Implement `handleConnection()` for client connections
+    - Implement `handleDisconnect()` for cleanup
+    - Extract userId from JWT token
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 8.2 Implement message handling
+    - Create `handleMessage()` for incoming messages
+    - Save user messages to database
+    - Classify intent and extract entities
+    - Generate AI response with streaming
+    - Emit streaming chunks to client
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 6.1, 6.2, 6.3_
+  - [ ] 8.3 Implement conversation management
+    - Create `handleCreateConversation()` for new chats
+    - Implement `handleLoadConversation()` for history
+    - Add typing indicators
+    - _Requirements: 3.1, 3.2, 3.3, 10.1, 10.2_
+  - [ ] 8.4 Implement connection management
+    - Add heartbeat pings
+    - Handle reconnection
+    - Show connection status
+    - _Requirements: 2.2, 2.3, 2.4, 2.5_
+  - [ ] 8.5 Write integration tests for ChatGateway
+    - Test WebSocket connection
+    - Test message sending and receiving
+    - Test streaming responses
+    - Test reconnection logic
+    - _Requirements: 1.1-1.5, 2.1-2.5, 6.1-6.5_
+
+- [ ] 9. Implement REST API endpoints
+  - [ ] 9.1 Create GET /api/chat/conversations endpoint
+    - Return user's conversations with pagination
+    - Include last message preview
+    - Show unread count
+    - _Requirements: 10.1, 10.2, 10.3_
+  - [ ] 9.2 Create GET /api/chat/conversations/:id endpoint
+    - Return conversation with messages
+    - Include conversation metadata
+    - _Requirements: 10.1, 10.2_
+  - [ ] 9.3 Create DELETE /api/chat/conversations/:id endpoint
+    - Soft delete conversation
+    - Return success confirmation
+    - _Requirements: 10.4_
+  - [ ] 9.4 Create GET /api/chat/conversations/:id/export endpoint
+    - Export conversation in text format
+    - Include timestamps and metadata
+    - _Requirements: 10.5_
+  - [ ] 9.5 Create POST /api/chat/conversations/:id/rating endpoint
+    - Accept rating (1-5) and feedback
+    - Update conversation analytics
+    - _Requirements: 15.3_
+  - [ ] 9.6 Write integration tests for REST API
+    - Test conversation listing
+    - Test conversation retrieval
+    - Test conversation deletion
+    - Test conversation export
+    - _Requirements: 10.1-10.5, 15.3_
+
+- [ ] 10. Implement command system
+  - [ ] 10.1 Create CommandService
+    - Implement command parser for slash commands
+    - Add `/help` command for documentation
+    - Add `/clear` command to clear conversation
+    - Add `/export` command to export chat
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
+  - [ ] 10.2 Implement command autocomplete
+    - Show available commands on `/` input
+    - Provide command descriptions
+    - _Requirements: 12.2, 12.4_
+  - [ ] 10.3 Write unit tests for CommandService
+    - Test command parsing
+    - Test command execution
+    - Test autocomplete
+    - _Requirements: 12.1-12.5_
+
+- [ ] 11. Implement file upload support
+  - [ ] 11.1 Add file upload to ChatGateway
+    - Accept image uploads for analysis
+    - Support document uploads (PDF, DOCX)
+    - Validate file size (max 10MB)
+    - Show file preview in chat
+    - _Requirements: 13.1, 13.2, 13.3, 13.4_
+  - [ ] 11.2 Implement file processing
+    - Extract text from documents
+    - Analyze images with AI
+    - Store files in S3
+    - _Requirements: 13.5_
+  - [ ] 11.3 Write integration tests for file uploads
+    - Test image upload
+    - Test document upload
+    - Test file size validation
+    - _Requirements: 13.1-13.5_
+
+- [ ] 12. Implement personalization
+  - [ ] 12.1 Create PersonalizationService
+    - Store user preferences (personality, response length)
+    - Allow setting AI personality (professional, casual, friendly)
+    - Support custom AI instructions
+    - Allow switching between AI models
+    - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
+  - [ ] 12.2 Implement preference management
+    - Save preferences to database
+    - Load preferences on connection
+    - Apply preferences to AI responses
+    - _Requirements: 14.2, 14.3_
+  - [ ] 12.3 Write unit tests for PersonalizationService
+    - Test preference storage
+    - Test preference application
+    - Test model switching
+    - _Requirements: 14.1-14.5_
+
+- [ ] 13. Implement AnalyticsService
+  - [ ] 13.1 Create AnalyticsService for tracking
+    - Track conversation duration and message count
+    - Measure response time
+    - Identify common intents and topics
+    - Detect conversation abandonment
+    - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5_
+  - [ ] 13.2 Implement metrics collection
+    - Collect metrics on conversation end
+    - Calculate satisfaction scores
+    - Track intent distribution
+    - _Requirements: 15.1, 15.2, 15.3_
+  - [ ] 13.3 Implement reporting
+    - Generate usage reports
+    - Create analytics dashboards
+    - Export analytics data
+    - _Requirements: 15.5_
+  - [ ] 13.4 Write unit tests for AnalyticsService
+    - Test metrics collection
+    - Test report generation
+    - Test analytics calculations
+    - _Requirements: 15.1-15.5_
+
+- [ ] 14. Implement notification system
+  - [ ] 14.1 Create NotificationService
+    - Send browser notifications for new messages
+    - Show unread message count
+    - Play sound on new message (optional)
+    - Highlight unread conversations
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [ ] 14.2 Implement notification preferences
+    - Allow enabling/disabling notifications
+    - Configure sound preferences
+    - Set notification frequency
+    - _Requirements: 11.5_
+  - [ ] 14.3 Write unit tests for NotificationService
+    - Test notification sending
+    - Test preference management
+    - Test unread count tracking
+    - _Requirements: 11.1-11.5_
+
+- [ ] 15. Implement quick replies
+  - [ ] 15.1 Create QuickReplyService
+    - Generate contextual suggestions after AI response
+    - Show 3-5 relevant questions
+    - Update suggestions based on conversation flow
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [ ] 15.2 Implement suggestion generation
+    - Use AI to generate relevant questions
+    - Base suggestions on conversation context
+    - Include common follow-ups
+    - _Requirements: 7.2, 7.4_
+  - [ ] 15.3 Write unit tests for QuickReplyService
+    - Test suggestion generation
+    - Test contextual relevance
+    - Test suggestion updates
+    - _Requirements: 7.1-7.5_
+
+- [ ] 16. Create frontend chat interface
+  - [ ] 16.1 Create /app/chat/page.tsx
+    - Build main chat interface
+    - Implement WebSocket connection
+    - Show message list with scrolling
+    - Add message input with send button
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [ ] 16.2 Implement message components
+    - Create MessageBubble component
+    - Show typing indicators
+    - Display streaming messages
+    - Show message status (sending, sent, error)
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 6.1, 6.2, 6.3_
+  - [ ] 16.3 Implement conversation sidebar
+    - Show list of conversations
+    - Display conversation previews
+    - Show unread counts
+    - Add search functionality
+    - _Requirements: 10.1, 10.2, 10.3, 11.4_
+  - [ ] 16.4 Implement quick replies UI
+    - Show suggestion buttons
+    - Handle suggestion clicks
+    - Update suggestions dynamically
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [ ] 16.5 Implement file upload UI
+    - Add file upload button
+    - Show file preview
+    - Display upload progress
+    - _Requirements: 13.1, 13.2, 13.3, 13.4_
+
+- [ ] 17. Set up AWS ECS infrastructure
+  - [ ] 17.1 Create Dockerfile for NestJS app
+    - Multi-stage build for optimization
+    - Install dependencies
+    - Build TypeScript
+    - Configure health check
+    - _Requirements: All requirements (infrastructure)_
+  - [ ] 17.2 Create ECS task definition
+    - Configure CPU and memory (512/1024)
+    - Set environment variables
+    - Configure secrets from Secrets Manager
+    - Set up CloudWatch logging
+    - _Requirements: All requirements (infrastructure)_
+  - [ ] 17.3 Create ECS service with auto-scaling
+    - Set desired count (min: 2, max: 10)
+    - Configure auto-scaling policies (CPU: 70%)
+    - Set up health checks
+    - _Requirements: All requirements (scalability)_
+  - [ ] 17.4 Create Application Load Balancer
+    - Configure ALB with HTTPS
+    - Set up target group with health checks
+    - Enable sticky sessions for WebSocket
+    - Configure SSL certificate
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 17.5 Create Terraform configuration
+    - Define all ECS resources
+    - Configure VPC and subnets
+    - Set up security groups
+    - Configure IAM roles
+    - _Requirements: All requirements (infrastructure)_
+
+- [ ] 18. Set up Redis for context caching
+  - [ ] 18.1 Create ElastiCache Redis cluster
+    - Configure Redis cluster (cache.t3.micro)
+    - Set up replication for HA
+    - Configure security groups
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+  - [ ] 18.2 Implement Redis connection in NestJS
+    - Create RedisModule
+    - Configure connection pooling
+    - Add error handling
+    - _Requirements: 4.1, 4.2, 4.3_
+
+- [ ] 19. Implement CloudWatch monitoring
+  - [ ] 19.1 Create CloudWatch metrics
+    - Track conversation duration
+    - Track message count
+    - Track response time
+    - Track WebSocket connections
+    - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5_
+  - [ ] 19.2 Create CloudWatch alarms
+    - High response time (>2s)
+    - High error rate (>5%)
+    - WebSocket connection failures (>10/min)
+    - ECS task failures (>2/hour)
+    - _Requirements: 2.3, 6.4, 9.4_
+  - [ ] 19.3 Create CloudWatch dashboard
+    - Add widgets for active connections
+    - Add widgets for message throughput
+    - Add widgets for response times
+    - Add widgets for error rates
+    - _Requirements: 15.1-15.5_
+
+- [ ] 20. Integration and end-to-end testing
+  - [ ] 20.1 Write E2E tests for complete workflows
+    - Test WebSocket connection and messaging
+    - Test streaming responses
+    - Test multi-turn conversations with context
+    - Test intent recognition and routing
+    - Test file uploads
+    - _Requirements: All requirements_
+  - [ ] 20.2 Write regression tests
+    - Test WebSocket reconnection
+    - Test context persistence
+    - Test conversation history
+    - Test error handling
+    - _Requirements: All requirements_
+
+- [ ] 21. Documentation and deployment
+  - [ ] 21.1 Create API documentation
+    - Document WebSocket events
+    - Document REST API endpoints
+    - Include request/response examples
+    - Document error codes
+    - _Requirements: All requirements_
+  - [ ] 21.2 Create deployment guide
+    - Document ECS deployment steps
+    - Document environment variables
+    - Document Redis setup
+    - Document monitoring setup
+    - _Requirements: All requirements_
+  - [ ] 21.3 Create user guide
+    - Write chat interface guide
+    - Document slash commands
+    - Explain quick replies
+    - Document file uploads
+    - _Requirements: All requirements_

@@ -1,0 +1,22 @@
+{
+  "name": "huntaze-rate-limiter-lambda",
+  "version": "1.0.0",
+  "description": "Rate limiter Lambda function with token bucket algorithm",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "build": "npm install --production && zip -r ../../../dist/rate-limiter.zip . -x '*.git*' -x 'node_modules/.cache/*'",
+    "test": "node --test test.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.450.0",
+    "@aws-sdk/client-secrets-manager": "^3.450.0",
+    "ioredis": "^5.3.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "Huntaze Team",
+  "license": "MIT"
+}

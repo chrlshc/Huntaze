@@ -1,4 +1,5 @@
 import React from 'react';
+import type { GetServerSideProps } from 'next';
 import { HuntazeLayout } from '@/components/admin/HuntazeLayout';
 import { Card } from '@/components/ui/card';
 import ChatInterface from '@/components/assistant/ChatInterface';
@@ -32,3 +33,6 @@ export default function AIAssistantPage() {
   );
 }
 
+export const getServerSideProps: GetServerSideProps = async () => {
+  return { props: {} };
+};

@@ -1,0 +1,381 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CodeBuild project for Huntaze Simple Services tests with complete CI/CD pipeline'
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: huntaze-simple-services
+    Description: Name of the CodeBuild project
+  
+  RepositoryUrl:
+    Type: String
+    Description: CodeCommit repository URL (e.g., https://git-codecommit.region.amazonaws.com/v1/repos/huntaze)
+  
+  StripeSecretArn:
+    Type: String
+    Description: ARN of the Secrets Manager secret containing Stripe keys
+    Default: arn:aws:secretsmanager:us-east-1:123456789012:secret:huntaze/stripe-secrets
+  
+  NotificationEmail:
+    Type: String
+    Description: Email address for build notifications
+    Default: dev@huntaze.com
+  
+  Environment:
+    Type: String
+    Default: test
+    AllowedValues: [test, staging, production]
+    Description: Environment for the tests
+
+Resources:
+  # S3 Bucket for storing test artifacts
+  TestArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${ProjectName}-test-artifacts-${AWS::AccountId}"
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldArtifacts
+            Status: Enabled
+            ExpirationInDays: 30
+            NoncurrentVersionExpirationInDays: 7
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  # CloudWatch Log Group for CodeBuild logs
+  CodeBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/codebuild/${ProjectName}"
+      RetentionInDays: 14
+
+  # IAM Role for CodeBuild
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ProjectName}-codebuild-role"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: CodeBuildServicePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # CloudWatch Logs permissions
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${ProjectName}"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${ProjectName}:*"
+              
+              # S3 permissions for artifacts
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:GetBucketLocation
+                  - s3:ListBucket
+                Resource:
+                  - !Sub "${TestArtifactsBucket.Arn}"
+                  - !Sub "${TestArtifactsBucket.Arn}/*"
+              
+              # Secrets Manager permissions
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref StripeSecretArn
+              
+              # CodeBuild report permissions
+              - Effect: Allow
+                Action:
+                  - codebuild:CreateReportGroup
+                  - codebuild:CreateReport
+                  - codebuild:UpdateReport
+                  - codebuild:BatchPutTestCases
+                  - codebuild:BatchPutCodeCoverages
+                Resource: !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:report-group/${ProjectName}-*"
+              
+              # ECR permissions (if using custom Docker images)
+              - Effect: Allow
+                Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                  - ecr:GetAuthorizationToken
+                Resource: "*"
+
+  # CodeBuild Project
+  SimpleServicesCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref ProjectName
+      Description: !Sub "CodeBuild project for ${ProjectName} tests"
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      
+      Artifacts:
+        Type: S3
+        Location: !Sub "${TestArtifactsBucket}/artifacts"
+        Packaging: ZIP
+        Name: !Sub "${ProjectName}-artifacts"
+        
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        Image: aws/codebuild/standard:7.0
+        PrivilegedMode: true  # Required for Docker
+        EnvironmentVariables:
+          - Name: NODE_ENV
+            Value: !Ref Environment
+          - Name: AWS_DEFAULT_REGION
+            Value: !Ref AWS::Region
+          - Name: ARTIFACTS_BUCKET
+            Value: !Ref TestArtifactsBucket
+          - Name: STRIPE_SECRET_KEY
+            Type: SECRETS_MANAGER
+            Value: !Sub "${StripeSecretArn}:STRIPE_SECRET_KEY"
+          - Name: STRIPE_PRO_MONTHLY_PRICE_ID
+            Type: SECRETS_MANAGER
+            Value: !Sub "${StripeSecretArn}:STRIPE_PRO_MONTHLY_PRICE_ID"
+          - Name: STRIPE_PRO_YEARLY_PRICE_ID
+            Type: SECRETS_MANAGER
+            Value: !Sub "${StripeSecretArn}:STRIPE_PRO_YEARLY_PRICE_ID"
+          - Name: STRIPE_ENTERPRISE_MONTHLY_PRICE_ID
+            Type: SECRETS_MANAGER
+            Value: !Sub "${StripeSecretArn}:STRIPE_ENTERPRISE_MONTHLY_PRICE_ID"
+          - Name: STRIPE_ENTERPRISE_YEARLY_PRICE_ID
+            Type: SECRETS_MANAGER
+            Value: !Sub "${StripeSecretArn}:STRIPE_ENTERPRISE_YEARLY_PRICE_ID"
+      
+      Source:
+        Type: CODECOMMIT
+        Location: !Ref RepositoryUrl
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              runtime-versions:
+                nodejs: 20
+              commands:
+                - echo "Using buildspec.yml from repository"
+          artifacts:
+            files:
+              - '**/*'
+      
+      TimeoutInMinutes: 30
+      
+      Cache:
+        Type: LOCAL
+        Modes:
+          - LOCAL_DOCKER_LAYER_CACHE
+          - LOCAL_SOURCE_CACHE
+
+  # SNS Topic for notifications
+  BuildNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "${ProjectName}-build-notifications"
+      DisplayName: !Sub "${ProjectName} Build Notifications"
+
+  # SNS Subscription for email notifications
+  BuildNotificationSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      TopicArn: !Ref BuildNotificationTopic
+      Endpoint: !Ref NotificationEmail
+
+  # EventBridge Rule for build state changes
+  BuildStateChangeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub "${ProjectName}-build-state-change"
+      Description: "Trigger notifications on build state changes"
+      EventPattern:
+        source:
+          - aws.codebuild
+        detail-type:
+          - CodeBuild Build State Change
+        detail:
+          project-name:
+            - !Ref SimpleServicesCodeBuildProject
+          build-status:
+            - FAILED
+            - SUCCEEDED
+            - STOPPED
+      State: ENABLED
+      Targets:
+        - Arn: !Ref BuildNotificationTopic
+          Id: "BuildNotificationTarget"
+
+  # IAM Role for EventBridge
+  EventBridgeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: SNSPublishPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref BuildNotificationTopic
+
+  # CloudWatch Dashboard for monitoring
+  TestDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub "${ProjectName}-dashboard"
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/CodeBuild", "Builds", "ProjectName", "${SimpleServicesCodeBuildProject}" ],
+                  [ ".", "Duration", ".", "." ],
+                  [ ".", "SucceededBuilds", ".", "." ],
+                  [ ".", "FailedBuilds", ".", "." ]
+                ],
+                "period": 300,
+                "stat": "Sum",
+                "region": "${AWS::Region}",
+                "title": "CodeBuild Metrics"
+              }
+            },
+            {
+              "type": "log",
+              "x": 0,
+              "y": 6,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                "query": "SOURCE '/aws/codebuild/${ProjectName}'\n| fields @timestamp, @message\n| sort @timestamp desc\n| limit 100",
+                "region": "${AWS::Region}",
+                "title": "Recent Build Logs"
+              }
+            }
+          ]
+        }
+
+  # Lambda function for custom build triggers (optional)
+  BuildTriggerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${ProjectName}-build-trigger"
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: !GetAtt BuildTriggerRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          
+          def lambda_handler(event, context):
+              codebuild = boto3.client('codebuild')
+              
+              try:
+                  response = codebuild.start_build(
+                      projectName=os.environ['PROJECT_NAME']
+                  )
+                  
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': 'Build started successfully',
+                          'buildId': response['build']['id']
+                      })
+                  }
+              except Exception as e:
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'error': str(e)
+                      })
+                  }
+      Environment:
+        Variables:
+          PROJECT_NAME: !Ref SimpleServicesCodeBuildProject
+
+  # IAM Role for Lambda function
+  BuildTriggerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: CodeBuildStartPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                Resource: !GetAtt SimpleServicesCodeBuildProject.Arn
+
+Outputs:
+  CodeBuildProjectName:
+    Description: Name of the CodeBuild project
+    Value: !Ref SimpleServicesCodeBuildProject
+    Export:
+      Name: !Sub "${AWS::StackName}-CodeBuildProject"
+
+  CodeBuildProjectArn:
+    Description: ARN of the CodeBuild project
+    Value: !GetAtt SimpleServicesCodeBuildProject.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-CodeBuildProjectArn"
+
+  ArtifactsBucketName:
+    Description: Name of the S3 bucket for test artifacts
+    Value: !Ref TestArtifactsBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-ArtifactsBucket"
+
+  DashboardURL:
+    Description: URL to the CloudWatch dashboard
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards:name=${ProjectName}-dashboard"
+
+  BuildTriggerFunctionArn:
+    Description: ARN of the Lambda function for triggering builds
+    Value: !GetAtt BuildTriggerFunction.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-BuildTriggerFunction"

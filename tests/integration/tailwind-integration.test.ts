@@ -40,14 +40,14 @@ describe('Tailwind Integration Tests', () => {
       const container = document.getElementById('test-container')!;
       
       // Test primary content color
-      container.innerHTML = '<div class="text-content-primary">Primary Text</div>';
-      const primaryElement = container.querySelector('.text-content-primary') as HTMLElement;
+      container.innerHTML = '<div class="text-(--color-content-primary)">Primary Text</div>';
+      const primaryElement = container.querySelector('.text-(--color-content-primary)') as HTMLElement;
       
       expect(primaryElement).toBeTruthy();
       
       // Test secondary content color
-      container.innerHTML = '<div class="text-content-secondary">Secondary Text</div>';
-      const secondaryElement = container.querySelector('.text-content-secondary') as HTMLElement;
+      container.innerHTML = '<div class="text-(--color-content-secondary)">Secondary Text</div>';
+      const secondaryElement = container.querySelector('.text-(--color-content-secondary)') as HTMLElement;
       
       expect(secondaryElement).toBeTruthy();
     });
@@ -78,8 +78,8 @@ describe('Tailwind Integration Tests', () => {
       expect(borderElement).toBeTruthy();
       
       // Test light border
-      container.innerHTML = '<div class="border-border-light">Light Border</div>';
-      const lightBorderElement = container.querySelector('.border-border-light') as HTMLElement;
+      container.innerHTML = '<div class="border-(--color-border-light)">Light Border</div>';
+      const lightBorderElement = container.querySelector('.border-(--color-border-light)') as HTMLElement;
       
       expect(lightBorderElement).toBeTruthy();
     });

@@ -1,0 +1,142 @@
+# Production Optimizations - SAM Template Additions
+# Add these to your existing template.yaml
+
+# 1. Metric Math Alarm (More Accurate Error Rate)
+ErrorRateAlarmMetricMath:
+  Type: AWS::CloudWatch::Alarm
+  Properties:
+    AlarmName: huntaze-lambda-error-rate-metric-math
+    AlarmDescription: "Error rate calculated via Metric Math (Errors/Invocations)"
+    ComparisonOperator: GreaterThanThreshold
+    EvaluationPeriods: 1
+    DatapointsToAlarm: 1
+    Threshold: 2
+    TreatMissingData: notBreaching
+    AlarmActions:
+      - !Ref ErrorRateAlarmTopic
+    Metrics:
+      - Id: e1
+        Expression: "IF(m2>0, (m1/m2)*100, 0)"
+        Label: "Error Rate %"
+      - Id: m1
+        MetricStat:
+          Metric:
+            Namespace: AWS/Lambda
+            MetricName: Errors
+            Dimensions:
+              - Name: FunctionName
+                Value: !Ref MockReadFn
+          Period: 300
+          Stat: Sum
+        ReturnData: false
+      - Id: m2
+        MetricStat:
+          Metric:
+            Namespace: AWS/Lambda
+            MetricName: Invocations
+            Dimensions:
+              - Name: FunctionName
+                Value: !Ref MockReadFn
+          Period: 300
+          Stat: Sum
+        ReturnData: false
+
+# 2. Log Groups with Retention (Cost Optimization)
+MockReadFnLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Sub "/aws/lambda/${MockReadFn}"
+    RetentionInDays: 30
+
+PrismaReadFnLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Sub "/aws/lambda/${PrismaReadFn}"
+    RetentionInDays: 30
+
+CleanupFnLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Sub "/aws/lambda/${CleanupFn}"
+    RetentionInDays: 14  # Less verbose
+
+# 3. SNS Topic for Alerts
+ErrorRateAlarmTopic:
+  Type: AWS::SNS::Topic
+  Properties:
+    TopicName: huntaze-production-alerts
+    DisplayName: "Huntaze Production Alerts"
+
+ErrorRateAlarmTopicSubscription:
+  Type: AWS::SNS::Subscription
+  Properties:
+    Protocol: email
+    TopicArn: !Ref ErrorRateAlarmTopic
+    Endpoint: alerts@huntaze.com  # Replace with actual email
+
+# 4. X-Ray Sampling Rule (Reduce costs after stabilization)
+XRaySamplingRule:
+  Type: AWS::XRay::SamplingRule
+  Properties:
+    SamplingRule:
+      RuleName: huntaze-production-sampling
+      Priority: 1000
+      FixedRate: 0.1  # 10% sampling in production
+      ReservoirSize: 1
+      ServiceName: "huntaze-*"
+      ServiceType: "*"
+      Host: "*"
+      HTTPMethod: "*"
+      URLPath: "*"
+      Version: 1
+
+# 5. Performance Alarm (P95 Latency)
+PerformanceAlarm:
+  Type: AWS::CloudWatch::Alarm
+  Properties:
+    AlarmName: huntaze-lambda-p95-latency
+    AlarmDescription: "P95 latency > 500ms"
+    ComparisonOperator: GreaterThanThreshold
+    EvaluationPeriods: 2
+    DatapointsToAlarm: 2
+    Threshold: 500
+    TreatMissingData: notBreaching
+    MetricName: Duration
+    Namespace: AWS/Lambda
+    Statistic: "p95"
+    Dimensions:
+      - Name: FunctionName
+        Value: !Ref MockReadFn
+    Period: 300
+
+# 6. Dead Letter Queue (Error Handling)
+DLQQueue:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: huntaze-lambda-dlq
+    MessageRetentionPeriod: 1209600  # 14 days
+    VisibilityTimeoutSeconds: 60
+
+# Add to Lambda functions:
+# DeadLetterConfig:
+#   TargetArn: !GetAtt DLQQueue.Arn
+
+# 7. Outputs for monitoring
+Outputs:
+  MetricMathAlarmArn:
+    Description: "ARN of the Metric Math Error Rate Alarm"
+    Value: !GetAtt ErrorRateAlarmMetricMath.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-MetricMathAlarm"
+  
+  XRaySamplingRuleArn:
+    Description: "X-Ray Sampling Rule ARN"
+    Value: !GetAtt XRaySamplingRule.RuleArn
+    Export:
+      Name: !Sub "${AWS::StackName}-XRaySamplingRule"
+  
+  AlertsTopicArn:
+    Description: "SNS Topic for Production Alerts"
+    Value: !Ref ErrorRateAlarmTopic
+    Export:
+      Name: !Sub "${AWS::StackName}-AlertsTopic"

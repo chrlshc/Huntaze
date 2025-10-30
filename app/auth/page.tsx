@@ -78,7 +78,7 @@ export default function AuthPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-light dark:bg-surface flex">
+    <div className="min-h-screen bg-(--color-surface-light) dark:bg-surface flex">
       {/* Left Side - Auth Form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12 relative">
         {/* Gradient Background Effect */}
@@ -88,14 +88,14 @@ export default function AuthPage() {
           {/* Back button */}
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-content-tertiary hover:text-content-primary mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-(--color-content-tertiary) hover:text-(--color-content-primary) mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to home</span>
           </Link>
 
           {/* Card */}
-          <div className="bg-surface-elevated-light dark:bg-surface-elevated rounded-2xl shadow-soft border border-border-light dark:border-border p-8">
+          <div className="bg-(--color-surface-elevated-light) dark:bg-surface-elevated rounded-2xl shadow-soft border border-(--color-border-light) dark:border-border p-8">
             {/* Logo */}
             <div className="flex justify-center mb-8">
               <div className="w-14 h-14 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg hover-lift-soft">
@@ -115,8 +115,8 @@ export default function AuthPage() {
                 : (authMethod === 'signup' ? '14-day free trial • No credit card required' : 'Sign in to your Huntaze account');
               return (
                 <>
-                  <h1 className="text-3xl font-bold text-center text-content-primary mb-2">{title}</h1>
-                  <p className="text-center text-content-secondary mb-8">{subtitle}</p>
+                  <h1 className="text-3xl font-bold text-center text-(--color-content-primary) mb-2">{title}</h1>
+                  <p className="text-center text-(--color-content-secondary) mb-8">{subtitle}</p>
                 </>
               );
             })()}
@@ -124,7 +124,7 @@ export default function AuthPage() {
             {/* Email Form */}
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-content-primary mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-(--color-content-primary) mb-2">
                   Email address
                 </label>
                 <div className="relative">
@@ -135,16 +135,16 @@ export default function AuthPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 pr-10 border border-input-border-light dark:border-input-border bg-input-bg-light dark:bg-input-bg rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-content-primary placeholder-content-tertiary transition-all"
+                    className="w-full px-4 py-3 pr-10 border border-input-border-light dark:border-input-border bg-input-bg-light dark:bg-input-bg rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-(--color-content-primary) placeholder-content-tertiary transition-all"
                   />
-                  <Mail className="absolute right-3 top-3.5 w-5 h-5 text-content-tertiary" />
+                  <Mail className="absolute right-3 top-3.5 w-5 h-5 text-(--color-content-tertiary)" />
                 </div>
               </div>
 
               {showEmailForm && (
                 <>
                   <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-content-primary mb-2">
+                    <label htmlFor="password" className="block text-sm font-medium text-(--color-content-primary) mb-2">
                       {authMethod === 'signup' ? 'Create a password' : 'Password'}
                     </label>
                     <div className="relative">
@@ -156,12 +156,12 @@ export default function AuthPage() {
                         required
                         minLength={authMethod === 'signup' ? 8 : undefined}
                         placeholder="••••••••"
-                        className="w-full px-4 py-3 pr-10 border border-input-border-light dark:border-input-border bg-input-bg-light dark:bg-input-bg rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-content-primary placeholder-content-tertiary transition-all"
+                        className="w-full px-4 py-3 pr-10 border border-input-border-light dark:border-input-border bg-input-bg-light dark:bg-input-bg rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-(--color-content-primary) placeholder-content-tertiary transition-all"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3.5 text-content-tertiary hover:text-content-secondary transition-colors"
+                        className="absolute right-3 top-3.5 text-(--color-content-tertiary) hover:text-(--color-content-secondary) transition-colors"
                       >
                         {showPassword ? (
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,7 +176,7 @@ export default function AuthPage() {
                       </button>
                     </div>
                     {authMethod === 'signup' && (
-                      <p className="mt-1 text-xs text-content-tertiary">Must be at least 8 characters</p>
+                      <p className="mt-1 text-xs text-(--color-content-tertiary)">Must be at least 8 characters</p>
                     )}
                   </div>
 
@@ -219,7 +219,7 @@ export default function AuthPage() {
             </form>
 
             {/* Dev Mode Bypass - Only in development */}
-            {true && (
+            {process.env.NODE_ENV === 'development' && (
               <div className="my-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                 <p className="text-xs text-center text-yellow-800 dark:text-yellow-200 mb-3 font-medium">🚀 Dev Mode - Quick Access</p>
                 <div className="flex gap-2">
@@ -242,7 +242,7 @@ export default function AuthPage() {
             {/* Divider */}
             <div className="my-6 flex items-center">
               <div className="flex-1 h-px bg-border-light dark:bg-border" />
-              <span className="px-3 text-sm text-content-tertiary">or continue with</span>
+              <span className="px-3 text-sm text-(--color-content-tertiary)">or continue with</span>
               <div className="flex-1 h-px bg-border-light dark:bg-border" />
             </div>
 
@@ -260,7 +260,7 @@ export default function AuthPage() {
             </div>
 
             {/* Switch auth method */}
-            <p className="mt-6 text-center text-sm text-content-secondary">
+            <p className="mt-6 text-center text-sm text-(--color-content-secondary)">
               {authMethod === 'signin' ? (
                 <>
                   New to Huntaze?{' '}
@@ -293,7 +293,7 @@ export default function AuthPage() {
             </p>
 
             {/* Terms */}
-            <p className="mt-6 text-xs text-center text-content-tertiary">
+            <p className="mt-6 text-xs text-center text-(--color-content-tertiary)">
               By continuing, you agree to our{' '}
               <Link href="/terms" className="text-primary hover:text-primary-hover underline">
                 Terms

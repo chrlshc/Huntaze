@@ -41,6 +41,8 @@
     "huntaze-api/**/*",
     "site-web/**/*",
     "components/sections/shopify/**/*",
-    "src/lib/workers/**/*"
+    "src/lib/workers/**/*",
+    "tests/**/*",
+    "scripts/**/*"
   ]
 }

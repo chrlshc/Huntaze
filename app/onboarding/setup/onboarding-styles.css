@@ -190,10 +190,7 @@
   @apply text-white;
 }
 
-.vertical-step-label {
-  @apply text-sm font-medium;
-  color: var(--color-content-secondary);
-}
+.vertical-step-label { @apply text-sm font-medium; color: var(--color-content-secondary); }
 
 .vertical-step.active .vertical-step-label {
   @apply text-purple-600;
@@ -207,10 +204,7 @@
   @apply mb-8 text-center;
 }
 
-.step-title {
-  @apply text-2xl lg:text-3xl font-bold mb-2;
-  color: var(--color-content-primary);
-}
+.step-title { @apply text-2xl lg:text-3xl font-bold mb-2; color: var(--color-content-primary); }
 
 .step-description {
   @apply text-lg;
@@ -222,10 +216,7 @@
   @apply mb-6;
 }
 
-.form-label {
-  @apply block text-sm font-medium mb-2;
-  color: var(--color-content-primary);
-}
+.form-label { @apply block text-sm font-medium mb-2; color: var(--color-content-primary); }
 
 .form-input {
   @apply w-full px-4 py-3 rounded-lg;
@@ -236,9 +227,7 @@
   @apply focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600;
 }
 
-.form-input:hover {
-  @apply border-purple-600/30;
-}
+.form-input:hover { border-color: color-mix(in oklab, var(--color-border-light) 70%, #7c3aed 30%); }
 
 .form-textarea {
   @apply w-full px-4 py-3 rounded-lg transition-all duration-200;
@@ -311,8 +300,8 @@
 
 .niche-card {
   @apply p-4 rounded-xl cursor-pointer transition-all;
-  @apply bg-surface-light dark:bg-surface;
-  @apply border-2 border-border-light dark:border-border;
+  background: var(--color-surface-light);
+  border: 2px solid var(--color-border-light);
   @apply hover:border-purple-600/30;
 }
 
@@ -370,19 +359,13 @@
   color: var(--color-content-primary);
 }
 
-.platform-description {
-  @apply text-sm;
-  color: var(--color-content-secondary);
-}
+.platform-description { @apply text-sm; color: var(--color-content-secondary); }
 
 .platform-features {
   @apply mt-4 space-y-2;
 }
 
-.platform-feature {
-  @apply flex items-center gap-2 text-sm;
-  color: var(--color-content-secondary);
-}
+.platform-feature { @apply flex items-center gap-2 text-sm; color: var(--color-content-secondary); }
 
 .platform-feature-icon {
   @apply w-4 h-4 text-green-500;
@@ -415,11 +398,7 @@
   color: var(--color-content-tertiary);
 }
 
-.slider {
-  @apply w-full h-2 rounded-full;
-  background: var(--color-border-light);
-  @apply appearance-none cursor-pointer;
-}
+.slider { @apply w-full h-2 rounded-full appearance-none cursor-pointer; background: var(--color-border-light); }
 
 .slider::-webkit-slider-thumb {
   @apply appearance-none;
@@ -447,11 +426,7 @@
   @apply opacity-0 w-0 h-0;
 }
 
-.switch-slider {
-  @apply absolute inset-0 rounded-full;
-  background: var(--color-border-light);
-  @apply cursor-pointer transition-all duration-300;
-}
+.switch-slider { @apply absolute inset-0 rounded-full cursor-pointer transition-all duration-300; background: var(--color-border-light); }
 
 .switch-slider:before {
   @apply absolute content-[''] h-4 w-4 left-1 bottom-1;
@@ -474,8 +449,8 @@
 
 .pricing-card {
   @apply relative rounded-2xl p-6 transition-all;
-  @apply bg-surface-light dark:bg-surface;
-  @apply border-2 border-border-light dark:border-border;
+  background: var(--color-surface-light);
+  border: 2px solid var(--color-border-light);
   @apply hover:border-purple-600/30;
 }
 
@@ -497,21 +472,13 @@
   @apply text-center mb-6;
 }
 
-.pricing-title {
-  @apply text-2xl font-bold text-content-primary mb-2;
-}
+.pricing-title { @apply text-2xl font-bold mb-2; color: var(--color-content-primary); }
 
-.pricing-price {
-  @apply text-4xl font-bold text-content-primary;
-}
+.pricing-price { @apply text-4xl font-bold; color: var(--color-content-primary); }
 
-.pricing-price-unit {
-  @apply text-lg text-content-tertiary font-normal;
-}
+.pricing-price-unit { @apply text-lg font-normal; color: var(--color-content-tertiary); }
 
-.pricing-description {
-  @apply text-content-secondary mt-2;
-}
+.pricing-description { @apply mt-2; color: var(--color-content-secondary); }
 
 .pricing-features {
   @apply space-y-3 mb-6;
@@ -525,20 +492,14 @@
   @apply w-5 h-5 text-green-500 flex-shrink-0 mt-0.5;
 }
 
-.pricing-feature-text {
-  @apply text-sm text-content-primary;
-}
+.pricing-feature-text { @apply text-sm; color: var(--color-content-primary); }
 
 /* Navigation Buttons */
 .nav-buttons {
   @apply flex items-center justify-between mt-8;
 }
 
-.btn-back {
-  @apply px-4 py-2 rounded-lg font-medium transition-all;
-  color: var(--color-content-tertiary);
-  @apply flex items-center gap-2;
-}
+.btn-back { @apply px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2; color: var(--color-content-tertiary); }
 .btn-back:hover { color: var(--color-content-primary); }
 
 .btn-continue {
@@ -593,10 +554,7 @@
   color: var(--color-content-primary);
 }
 
-.complete-message {
-  @apply text-lg mb-8;
-  color: var(--color-content-secondary);
-}
+.complete-message { @apply text-lg mb-8; color: var(--color-content-secondary); }
 
 .complete-stats {
   @apply grid grid-cols-3 gap-4 mb-8 max-w-md mx-auto;

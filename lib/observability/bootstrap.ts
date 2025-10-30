@@ -22,7 +22,7 @@ function getRequestId(req: Request): string {
   const g = (globalThis as any)
   if (g.crypto?.randomUUID) return g.crypto.randomUUID()
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     const { randomUUID } = require('crypto') as typeof import('crypto')
     return randomUUID()
   } catch {

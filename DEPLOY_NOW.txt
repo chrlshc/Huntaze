@@ -1,0 +1,62 @@
+🚀 HUNTAZE - DEPLOY NOW!
+========================
+
+TL;DR - 3 COMMANDS:
+-------------------
+
+1. Check:
+   ./scripts/pre-deployment-check.sh
+
+2. Deploy:
+   ./QUICK_DEPLOY.sh
+
+3. Done! 🎉
+
+
+MANUAL (20 min):
+----------------
+
+1. Check (30s):
+   ./scripts/pre-deployment-check.sh
+
+2. AWS Config (2 min):
+   export AWS_ACCESS_KEY_ID="AKIA..."
+   export AWS_SECRET_ACCESS_KEY="..."
+
+3. Deploy Infrastructure (5 min):
+   ./scripts/deploy-huntaze-hybrid.sh
+
+4. Configure Amplify (10 min):
+   - Open: https://console.aws.amazon.com/amplify
+   - Go to: App Settings > Environment variables
+   - Copy from: amplify-env-vars.txt
+
+5. Deploy (2 min):
+   git push origin main
+
+6. Verify (3 min):
+   curl https://YOUR-URL/api/health/hybrid-orchestrator
+
+
+NEED HELP?
+----------
+Read: START_HERE.md
+
+
+STATUS:
+-------
+✅ Code: Ready
+✅ Docs: Ready
+✅ Tests: Ready
+✅ Scripts: Ready
+⚠️  AWS: 20 min remaining
+
+
+COST:
+-----
+~$70-75/month total
+
+
+NEXT:
+-----
+./QUICK_DEPLOY.sh

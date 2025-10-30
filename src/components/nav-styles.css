@@ -1,53 +1,92 @@
-/* Unified Navigation Styles with Huntaze Design System */
+/* Unified Navigation Styles with Huntaze Design System - Tailwind v4 CSS-first */
 
 /* App Sidebar Styles */
 .app-sidebar {
-  @apply fixed inset-y-0 left-0 w-72 z-40 flex flex-col;
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border-r border-border-light dark:border-border;
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 18rem; /* w-72 */
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface-elevated-light);
+  border-inline-end: 1px solid var(--color-border-light);
+}
+
+.dark .app-sidebar {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border);
 }
 
 .app-sidebar-header {
-  @apply h-16 px-4 flex items-center;
-  @apply border-b border-border-light dark:border-border;
+  height: 4rem; /* h-16 */
+  padding-inline: 1rem;
+  display: flex;
+  align-items: center;
+  border-block-end: 1px solid var(--color-border-light);
+}
+
+.dark .app-sidebar-header {
+  border-color: var(--color-border);
 }
 
 .app-sidebar-logo {
-  @apply flex items-center gap-3;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .app-sidebar-content {
-  @apply flex-1 overflow-y-auto px-3 py-4;
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 0.75rem;
 }
 
 /* Navigation Sections */
 .nav-section {
-  @apply mb-6;
+  margin-block-end: 1.5rem;
 }
 
 .nav-section-label {
-  @apply px-3 py-2 text-xs font-semibold uppercase tracking-wider;
-  @apply text-content-tertiary;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-content-tertiary);
 }
 
 .nav-item-list {
-  @apply space-y-1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 /* Navigation Items */
 .nav-item {
-  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg;
-  @apply transition-all duration-200;
-  @apply text-content-secondary hover:text-content-primary;
-  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  color: var(--color-content-secondary);
+  text-decoration: none;
 }
 
 .nav-item:hover {
+  color: var(--color-content-primary);
+  background-color: var(--color-surface-hover-light);
   transform: translateX(2px);
 }
 
+.dark .nav-item:hover {
+  background-color: var(--color-surface-hover);
+}
+
 .nav-item.active {
-  @apply text-content-primary font-medium;
+  color: var(--color-content-primary);
+  font-weight: 500;
   background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   background-clip: padding-box;
   position: relative;
@@ -64,23 +103,36 @@
 }
 
 .nav-item-icon {
-  @apply w-5 h-5 flex-shrink-0;
-  @apply text-content-tertiary;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--color-content-tertiary);
 }
 
 .nav-item.active .nav-item-icon {
-  @apply text-purple-600;
+  color: #9333ea; /* purple-600 */
 }
 
 .nav-item-label {
-  @apply flex-1 truncate;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Badges */
 .nav-badge {
-  @apply min-w-[20px] h-5 px-1.5 text-xs font-semibold;
-  @apply rounded-full flex items-center justify-center;
-  @apply bg-red-600 text-white;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding-inline: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dc2626; /* red-600 */
+  color: white;
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
@@ -93,17 +145,23 @@
     opacity: 1;
   }
   50% {
-    opacity: .8;
+    opacity: 0.8;
   }
 }
 
 /* Action Button */
 .nav-action-button {
-  @apply w-full px-4 py-3 rounded-lg font-medium;
-  @apply text-center transition-all;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s ease;
   background: var(--gradient-primary);
   color: var(--color-btn-primary-text);
   box-shadow: var(--shadow-sm);
+  border: none;
+  cursor: pointer;
 }
 
 .nav-action-button:hover {
@@ -113,45 +171,100 @@
 
 /* Mobile Drawer */
 .mobile-drawer-trigger {
-  @apply lg:hidden fixed top-4 left-4 z-50;
-  @apply px-3 py-2 rounded-lg;
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border border-border-light dark:border-border;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-surface-elevated-light);
+  border: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.dark .mobile-drawer-trigger {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .mobile-drawer-trigger {
+    display: none;
+  }
 }
 
 .mobile-drawer-overlay {
-  @apply fixed inset-0 bg-black/50 z-50;
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 0.5);
+  z-index: 50;
   backdrop-filter: blur(4px);
 }
 
 .mobile-drawer {
-  @apply fixed inset-y-0 left-0 w-80 z-50;
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border-r border-border-light dark:border-border;
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 20rem;
+  z-index: 50;
+  background-color: var(--color-surface-elevated-light);
+  border-inline-end: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-xl);
 }
 
+.dark .mobile-drawer {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
 .mobile-drawer-header {
-  @apply p-4 flex items-center justify-between;
-  @apply border-b border-border-light dark:border-border;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-block-end: 1px solid var(--color-border-light);
+}
+
+.dark .mobile-drawer-header {
+  border-color: var(--color-border);
 }
 
 .mobile-drawer-close {
-  @apply p-2 rounded-lg transition-colors;
-  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mobile-drawer-close:hover {
+  background-color: var(--color-surface-hover-light);
+}
+
+.dark .mobile-drawer-close:hover {
+  background-color: var(--color-surface-hover);
 }
 
 /* Main Navigation (Marketing Site) */
 .main-nav {
-  @apply flex items-center gap-8;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .main-nav-item {
-  @apply text-content-secondary hover:text-content-primary;
-  @apply font-medium transition-colors duration-200;
-  @apply relative;
+  color: var(--color-content-secondary);
+  font-weight: 500;
+  transition: color 0.2s ease;
+  position: relative;
+  text-decoration: none;
+}
+
+.main-nav-item:hover {
+  color: var(--color-content-primary);
 }
 
 .main-nav-item::after {
@@ -172,21 +285,48 @@
 
 /* Mobile Menu */
 .mobile-menu {
-  @apply md:hidden absolute top-full left-0 right-0;
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border-b border-border-light dark:border-border;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-surface-elevated-light);
+  border-block-end: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-lg);
 }
 
+.dark .mobile-menu {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border);
+}
+
+@media (min-width: 768px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+
 .mobile-menu-content {
-  @apply flex flex-col p-6 space-y-3;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 0.75rem;
 }
 
 .mobile-menu-item {
-  @apply px-4 py-3 rounded-lg;
-  @apply text-content-primary font-medium;
-  @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
-  @apply transition-all duration-200;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: var(--color-content-primary);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.mobile-menu-item:hover {
+  background-color: var(--color-surface-hover-light);
+}
+
+.dark .mobile-menu-item:hover {
+  background-color: var(--color-surface-hover);
 }
 
 .mobile-menu-item:active {
@@ -195,35 +335,56 @@
 
 /* Bottom Navigation (Mobile App) */
 .bottom-nav {
-  @apply fixed bottom-0 left-0 right-0 z-40;
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply border-t border-border-light dark:border-border;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background-color: var(--color-surface-elevated-light);
+  border-block-start: 1px solid var(--color-border-light);
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-block-end: env(safe-area-inset-bottom);
+}
+
+.dark .bottom-nav {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border);
 }
 
 .bottom-nav-content {
-  @apply flex justify-around items-center;
-  @apply h-16;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 4rem;
 }
 
 .bottom-nav-item {
-  @apply flex-1 flex flex-col items-center justify-center;
-  @apply py-2 px-3 relative;
-  @apply text-content-tertiary transition-colors;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+  color: var(--color-content-tertiary);
+  transition: color 0.2s ease;
+  text-decoration: none;
 }
 
 .bottom-nav-item.active {
-  @apply text-primary;
+  color: var(--color-primary);
 }
 
 .bottom-nav-item-icon {
-  @apply w-6 h-6 mb-1;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-block-end: 0.25rem;
 }
 
 .bottom-nav-item-label {
-  @apply text-xs font-medium;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .bottom-nav-item.active .bottom-nav-item-icon {
@@ -244,45 +405,77 @@
 
 /* Breadcrumbs */
 .breadcrumb-nav {
-  @apply flex items-center gap-2;
-  @apply text-sm text-content-tertiary;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-content-tertiary);
 }
 
 .breadcrumb-separator {
-  @apply text-content-tertiary opacity-50;
+  color: var(--color-content-tertiary);
+  opacity: 0.5;
 }
 
 .breadcrumb-item {
-  @apply hover:text-content-primary transition-colors;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.breadcrumb-item:hover {
+  color: var(--color-content-primary);
 }
 
 .breadcrumb-item.active {
-  @apply text-content-primary font-medium;
+  color: var(--color-content-primary);
+  font-weight: 500;
 }
 
 /* Tab Navigation */
 .tab-nav {
-  @apply flex items-center gap-1 p-1;
-  @apply bg-surface-light dark:bg-surface;
-  @apply rounded-lg;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background-color: var(--color-surface-light);
+  border-radius: 0.5rem;
+}
+
+.dark .tab-nav {
+  background-color: var(--color-surface);
 }
 
 .tab-nav-item {
-  @apply flex-1 px-4 py-2.5 rounded-md;
-  @apply text-center font-medium;
-  @apply text-content-secondary;
-  @apply transition-all duration-200;
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  font-weight: 500;
+  color: var(--color-content-secondary);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .tab-nav-item:hover:not(.active) {
-  @apply bg-surface-hover-light dark:bg-surface-hover;
-  @apply text-content-primary;
+  background-color: var(--color-surface-hover-light);
+  color: var(--color-content-primary);
+}
+
+.dark .tab-nav-item:hover:not(.active) {
+  background-color: var(--color-surface-hover);
 }
 
 .tab-nav-item.active {
-  @apply bg-surface-elevated-light dark:bg-surface-elevated;
-  @apply text-content-primary;
+  background-color: var(--color-surface-elevated-light);
+  color: var(--color-content-primary);
   box-shadow: var(--shadow-sm);
+}
+
+.dark .tab-nav-item.active {
+  background-color: var(--color-surface-elevated);
 }
 
 /* Scrollbar Styling for Navigation */
@@ -352,14 +545,14 @@
 /* Responsive Adjustments */
 @media (max-width: 640px) {
   .app-sidebar {
-    @apply w-full;
+    width: 100%;
   }
   
   .nav-section-label {
-    @apply text-xs;
+    font-size: 0.75rem;
   }
   
   .nav-item {
-    @apply py-3;
+    padding-block: 0.75rem;
   }
 }

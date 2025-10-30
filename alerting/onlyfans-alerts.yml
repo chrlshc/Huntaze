@@ -1,0 +1,95 @@
+# OnlyFans Alerting Rules - Adjusted for Realistic Limits (2025)
+
+groups:
+  - name: onlyfans_rate_limiting
+    interval: 30s
+    rules:
+      # Alert if >80% of daily limit used
+      - alert: OnlyFansRateLimitApproaching
+        expr: onlyfans_rate_limit_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: onlyfans
+        annotations:
+          summary: "Rate limit approaching for {{ $labels.account_type }}"
+          description: "{{ $value }}% of daily limit used"
+          runbook_url: "https://docs.huntaze.com/runbooks/onlyfans-rate-limit"
+      
+      # Alert if daily limit reached
+      - alert: OnlyFansRateLimitReached
+        expr: onlyfans_rate_limit_usage_percent >= 100
+        for: 1m
+        labels:
+          severity: critical
+          component: onlyfans
+        annotations:
+          summary: "Daily rate limit reached for {{ $labels.account_type }}"
+          description: "Account cannot send more messages today"
+          runbook_url: "https://docs.huntaze.com/runbooks/onlyfans-rate-limit"
+      
+      # Alert if too many hits (>10% of requests)
+      - alert: OnlyFansHighRateLimitHits
+        expr: rate(onlyfans_rate_limit_hits_total[5m]) / rate(onlyfans_messages_sent_total[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          component: onlyfans
+        annotations:
+          summary: "High rate limit hit rate: {{ $value | humanizePercentage }}"
+          description: "Consider increasing limits or adjusting delays"
+          runbook_url: "https://docs.huntaze.com/runbooks/onlyfans-rate-limit"
+      
+      # Alert if messages fail (>5%)
+      - alert: OnlyFansHighFailureRate
+        expr: |
+          rate(onlyfans_messages_sent_total{status="failed"}[5m]) 
+          / rate(onlyfans_messages_sent_total[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: critical
+          component: onlyfans
+        annotations:
+          summary: "High message failure rate: {{ $value | humanizePercentage }}"
+          description: "Check OnlyFans API status and session validity"
+          runbook_url: "https://docs.huntaze.com/runbooks/onlyfans-errors"
+
+  - name: onlyfans_critical
+    interval: 30s
+    rules:
+      - alert: OnlyFansSessionExpired
+        expr: onlyfans_active_sessions < 1
+        for: 5m
+        labels:
+          severity: warning
+          component: onlyfans
+        annotations:
+          summary: "No active OnlyFans sessions"
+          description: "All OnlyFans sessions have expired or are inactive"
+          runbook_url: "https://docs.huntaze.com/runbooks/onlyfans-session"
+
+      - alert: OnlyFansSlowMessageSending
+        expr: histogram_quantile(0.95, sum(rate(onlyfans_message_send_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: onlyfans
+        annotations:
+          summary: "OnlyFans message sending is slow"
+          description: "P95 message send duration is {{ $value }}s (threshold: 2s)"
+          runbook_url: "https://docs.huntaze.com/runbooks/onlyfans-performance"
+
+  - name: onlyfans_capacity
+    interval: 1m
+    rules:
+      # Adjusted for realistic volume: 50 users × 250 msgs/day = 12,500/day
+      # Peak: ~200 msgs/min during campaigns
+      - alert: OnlyFansHighCampaignVolume
+        expr: sum(rate(onlyfans_messages_sent_total[1m])) > 200
+        for: 5m
+        labels:
+          severity: info
+          component: onlyfans
+        annotations:
+          summary: "High OnlyFans campaign volume"
+          description: "Sending {{ $value }} messages/min (capacity planning alert)"

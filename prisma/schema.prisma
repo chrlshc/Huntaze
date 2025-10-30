@@ -11,79 +11,85 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(cuid())
-  email             String    @unique
-  name              String
-  avatar            String?
-  passwordHash      String
-  subscription      Subscription @default(FREE)
-  stripeCustomerId  String?   @unique
-  role              Role      @default(CREATOR)
-  
+  id               String       @id @default(cuid())
+  email            String       @unique
+  name             String
+  avatar           String?
+  passwordHash     String
+  subscription     Subscription @default(FREE)
+  stripeCustomerId String?      @unique
+  role             Role         @default(CREATOR)
+
   // Timestamps
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  deletedAt         DateTime? // Soft delete
-  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // Soft delete
+
   // Relations
-  contentAssets     ContentAsset[]
-  apiKeys           ApiKey[]
+  contentAssets      ContentAsset[]
+  apiKeys            ApiKey[]
   subscriptionRecord SubscriptionRecord?
-  refreshTokens     RefreshToken[]
-  
+  refreshTokens      RefreshToken[]
+  hybridWorkflows    HybridWorkflow[]
+  onlyFansMessages   OnlyFansMessage[]
+  campaigns          Campaign[]
+  abTests            ABTest[]
+  automations        Automation[]
+  segments           Segment[]
+
   @@map("users")
 }
 
 model RefreshToken {
-  id          String    @id @default(cuid())
-  userId      String
-  jti         String    @unique // JWT ID
-  tokenHash   String    @unique // SHA-256 hash du token
-  expiresAt   DateTime
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id        String   @id @default(cuid())
+  userId    String
+  jti       String   @unique // JWT ID
+  tokenHash String   @unique // SHA-256 hash du token
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([expiresAt])
   @@map("refresh_tokens")
 }
 
 model SubscriptionRecord {
-  id                    String    @id @default(cuid())
-  userId                String    @unique
-  stripeSubscriptionId  String?   @unique
-  status                SubscriptionStatus @default(ACTIVE)
-  plan                  Subscription
-  currentPeriodStart    DateTime?
-  currentPeriodEnd      DateTime?
-  cancelAtPeriodEnd     Boolean   @default(false)
-  
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeSubscriptionId String?            @unique
+  status               SubscriptionStatus @default(ACTIVE)
+  plan                 Subscription
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("subscription_records")
 }
 
 model ContentAsset {
-  id          String      @id @default(cuid())
-  userId      String      // Toujours lié à un utilisateur
-  title       String
-  content     String
-  type        ContentType
-  category    String?
-  tags        String[]
-  metadata    Json?
-  
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id       String      @id @default(cuid())
+  userId   String // Toujours lié à un utilisateur
+  title    String
+  content  String
+  type     ContentType
+  category String?
+  tags     String[]
+  metadata Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([type])
   @@index([createdAt])
@@ -98,12 +104,12 @@ model ApiKey {
   permissions String[]
   lastUsedAt  DateTime?
   expiresAt   DateTime?
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@map("api_keys")
 }
@@ -133,4 +139,348 @@ enum ContentType {
   VIDEO
   IMAGE
   CAPTION
+}
+
+model HybridWorkflow {
+  id              String  @id @default(cuid())
+  userId          String  @map("user_id")
+  workflowId      String  @unique @map("workflow_id")
+  traceId         String  @map("trace_id")
+  currentProvider String  @map("current_provider")
+  providerStates  Json    @default("{}") @map("provider_states")
+  sqsMessageId    String? @map("sqs_message_id")
+  checkpointData  Json    @default("{}") @map("checkpoint_data")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([traceId])
+  @@map("hybrid_workflows")
+}
+
+model OnlyFansMessage {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  recipientId String   @map("recipient_id")
+  content     String
+  mediaUrls   String[] @default([]) @map("media_urls")
+  priority    String   @default("medium") // low | medium | high
+
+  // Queue & Status
+  status       String  @default("queued") // queued | sent | failed | rate_limited
+  sqsMessageId String? @map("sqs_message_id")
+  attempts     Int     @default(0)
+  maxRetries   Int     @default(3) @map("max_retries")
+  lastError    String? @map("last_error")
+
+  // Metadata
+  metadata Json? // Flexible JSON for workflowId, traceId, source, etc.
+
+  // Timestamps
+  queuedAt  DateTime  @default(now()) @map("queued_at")
+  sentAt    DateTime? @map("sent_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([queuedAt])
+  @@index([recipientId])
+  @@map("onlyfans_messages")
+}
+
+// ============================================
+// MARKETING & CAMPAIGNS MODELS
+// ============================================
+
+// Campaign
+model Campaign {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  type        String // ppv, subscription, promotion, engagement, retention
+  status      String // draft, scheduled, active, paused, completed, cancelled
+
+  // Targeting
+  platforms  String[] // onlyfans, instagram, tiktok, reddit
+  segmentIds String[]
+
+  // Content
+  content   Json // Platform-specific content
+  mediaUrls String[]
+
+  // Scheduling
+  scheduledFor DateTime?
+  startedAt    DateTime?
+  completedAt  DateTime?
+
+  // Budget
+  budget Float?
+  spent  Float  @default(0)
+
+  // Goals
+  goals Json // { conversions: 100, revenue: 5000, engagement: 1000 }
+
+  // A/B Testing
+  isABTest Boolean @default(false)
+  abTestId String?
+
+  // Template
+  templateId String?
+  isTemplate Boolean @default(false)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User             @relation(fields: [userId], references: [id])
+  metrics     CampaignMetric[]
+  automations Automation[]
+  abTest      ABTest?          @relation(fields: [abTestId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("campaigns")
+}
+
+// Campaign Template
+model CampaignTemplate {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  niche       String // fitness, gaming, adult, fashion, general
+  type        String // ppv, subscription, promotion, engagement, retention
+
+  // Template content
+  content         Json
+  defaultSettings Json
+
+  // Usage stats
+  usageCount     Int    @default(0)
+  avgPerformance Float?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([niche])
+  @@index([type])
+  @@map("campaign_templates")
+}
+
+// A/B Test
+model ABTest {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  status String // running, completed, cancelled
+
+  // Test configuration
+  trafficSplit    Json // { variantA: 50, variantB: 50 }
+  minSampleSize   Int   @default(100)
+  confidenceLevel Float @default(0.95)
+
+  // Results
+  winnerId     String?
+  significance Float?
+
+  // Dates
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User            @relation(fields: [userId], references: [id])
+  campaigns Campaign[]
+  variants  ABTestVariant[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("ab_tests")
+}
+
+model ABTestVariant {
+  id        String  @id @default(cuid())
+  testId    String
+  name      String
+  isControl Boolean @default(false)
+
+  // Content
+  content Json
+
+  // Metrics
+  impressions Int   @default(0)
+  clicks      Int   @default(0)
+  conversions Int   @default(0)
+  revenue     Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  test ABTest @relation(fields: [testId], references: [id])
+
+  @@index([testId])
+  @@map("ab_test_variants")
+}
+
+// Automation
+model Automation {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  status      String // active, paused, archived
+
+  // Workflow definition
+  trigger    Json // { type: 'time' | 'event' | 'behavior', config: {...} }
+  conditions Json[] // Array of conditions to evaluate
+  actions    Json[] // Array of actions to execute
+
+  // Execution stats
+  executionCount Int       @default(0)
+  successCount   Int       @default(0)
+  failureCount   Int       @default(0)
+  lastExecutedAt DateTime?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User                  @relation(fields: [userId], references: [id])
+  executions AutomationExecution[]
+  campaigns  Campaign[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("automations")
+}
+
+model AutomationExecution {
+  id           String @id @default(cuid())
+  automationId String
+  status       String // success, failure, partial
+
+  // Execution details
+  triggerData     Json
+  executedActions Json[]
+  errors          Json[]
+
+  // Timing
+  startedAt   DateTime
+  completedAt DateTime?
+  duration    Int? // milliseconds
+
+  automation Automation @relation(fields: [automationId], references: [id])
+
+  @@index([automationId])
+  @@index([startedAt])
+  @@map("automation_executions")
+}
+
+// Segment
+model Segment {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  type        String // static, dynamic
+
+  // Criteria
+  criteria Json // { spendingLevel: 'high', engagement: '>50', ... }
+
+  // Stats
+  memberCount     Int       @default(0)
+  lastRefreshedAt DateTime?
+
+  // Performance
+  avgEngagement Float?
+  avgRevenue    Float?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User            @relation(fields: [userId], references: [id])
+  members SegmentMember[]
+
+  @@index([userId])
+  @@index([type])
+  @@map("segments")
+}
+
+model SegmentMember {
+  id        String @id @default(cuid())
+  segmentId String
+  userId    String
+
+  // Metadata
+  addedAt DateTime @default(now())
+
+  segment Segment @relation(fields: [segmentId], references: [id])
+
+  @@unique([segmentId, userId])
+  @@index([segmentId])
+  @@index([userId])
+  @@map("segment_members")
+}
+
+// Campaign Metrics
+model CampaignMetric {
+  id         String  @id @default(cuid())
+  campaignId String
+  platform   String? // null for aggregated
+
+  // Metrics
+  impressions Int   @default(0)
+  reach       Int   @default(0)
+  clicks      Int   @default(0)
+  conversions Int   @default(0)
+  revenue     Float @default(0)
+  spent       Float @default(0)
+
+  // Calculated
+  ctr            Float? // Click-through rate
+  conversionRate Float?
+  roi            Float?
+  cpa            Float? // Cost per acquisition
+
+  // Timestamp
+  recordedAt DateTime @default(now())
+
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+  @@index([recordedAt])
+  @@map("campaign_metrics")
+}
+
+// Campaign Conversion
+model CampaignConversion {
+  id         String @id @default(cuid())
+  campaignId String
+  userId     String
+
+  // Conversion details
+  type  String // purchase, subscription, click, engagement
+  value Float
+
+  // Attribution
+  platform      String
+  clickedAt     DateTime?
+  convertedAt   DateTime
+  timeToConvert Int? // seconds
+
+  @@index([campaignId])
+  @@index([userId])
+  @@index([convertedAt])
+  @@map("campaign_conversions")
 }

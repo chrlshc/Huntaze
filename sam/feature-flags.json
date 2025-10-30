@@ -1,0 +1,21 @@
+{
+  "version": "1",
+  "flags": {
+    "prismaAdapter": {
+      "name": "prismaAdapter",
+      "_description": "Enable Prisma database adapter for canary deployment",
+      "attributes": {
+        "enabled": {
+          "constraints": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "values": {
+    "prismaAdapter": {
+      "enabled": false
+    }
+  }
+}

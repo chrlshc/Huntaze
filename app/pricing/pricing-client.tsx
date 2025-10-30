@@ -131,7 +131,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   billingPeriod === 'monthly'
                     ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-[var(--text-tertiary-dark)]'
+                    : 'text-gray-500 dark:text-(--text-tertiary-dark)'
                 }`}
               >
                 Monthly
@@ -141,7 +141,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   billingPeriod === 'yearly'
                     ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-[var(--text-tertiary-dark)]'
+                    : 'text-gray-500 dark:text-(--text-tertiary-dark)'
                 }`}
               >
                 Yearly
@@ -222,7 +222,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                       <p className={`text-lg font-semibold text-gray-900 dark:text-white`}>
                         {plan.commission} platform fee
                       </p>
-                      <p className={`text-xs text-gray-600 dark:text-[var(--text-secondary-dark)]`}>
+                      <p className={`text-xs text-gray-600 dark:text-(--text-secondary-dark)`}>
                         Revenue cap: {plan.revenueCap}
                       </p>
                     </div>
@@ -312,11 +312,11 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Creator making $2k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Agency (50%) cost</span>
+                  <span className="text-gray-700 dark:text-(--text-secondary-dark)">Agency (50%) cost</span>
                   <span className="text-gray-900 dark:text-white font-bold">$1,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Cost (Huntaze STARTER)</span>
+                  <span className="text-gray-700 dark:text-(--text-secondary-dark)">Cost (Huntaze STARTER)</span>
                   <span className="text-gray-900 dark:text-white font-bold">$159</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
@@ -332,11 +332,11 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Creator making $10k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Agency (50%) cost</span>
+                  <span className="text-gray-700 dark:text-(--text-secondary-dark)">Agency (50%) cost</span>
                   <span className="text-gray-900 dark:text-white font-bold">$5,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Cost (Huntaze SCALE)</span>
+                  <span className="text-gray-700 dark:text-(--text-secondary-dark)">Cost (Huntaze SCALE)</span>
                   <span className="text-gray-900 dark:text-white font-bold">$379</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
@@ -352,11 +352,11 @@ export default function PricingClient({ plans }: PricingClientProps) {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Creator making $50k/month</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Agency (50%) cost</span>
+                  <span className="text-gray-700 dark:text-(--text-secondary-dark)">Agency (50%) cost</span>
                   <span className="text-gray-900 dark:text-white font-bold">$25,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-[var(--text-secondary-dark)]">Cost (Huntaze ENTERPRISE · 0%)</span>
+                  <span className="text-gray-700 dark:text-(--text-secondary-dark)">Cost (Huntaze ENTERPRISE · 0%)</span>
                   <span className="text-gray-900 dark:text-white font-bold">$399</span>
                 </div>
                 <div className="pt-2 border-t mt-2">
@@ -381,7 +381,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elevated-card rounded-xl p-6">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Compliance & Safety</h3>
-            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-[var(--text-secondary-dark)]">
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-(--text-secondary-dark)">
               <li>L'IA fournit des suggestions de réponses. Vous approuvez avant envoi.</li>
               <li>Intégration OnlyFans en lecture seule (CSV uniquement pour l'instant).</li>
               <li>Respectez les conditions de chaque plateforme. Huntaze n'est affilié à aucune plateforme.</li>
@@ -411,8 +411,8 @@ export default function PricingClient({ plans }: PricingClientProps) {
               </h3>
               <button onClick={() => setDetailsPlan(null)} className="text-gray-500 hover:text-gray-800 dark:hover:text-white">✕</button>
             </div>
-            <p className="text-sm text-gray-700 dark:text-[var(--text-secondary-dark)] mb-4">Marketing feature list</p>
-            <ul className="space-y-2 list-disc pl-5 text-gray-800 dark:text-[var(--text-secondary-dark)]">
+            <p className="text-sm text-gray-700 dark:text-(--text-secondary-dark) mb-4">Marketing feature list</p>
+            <ul className="space-y-2 list-disc pl-5 text-gray-800 dark:text-(--text-secondary-dark)">
               {(detailsByPlan[detailsPlan] || []).map((d, i) => (
                 <li key={i}>{d}</li>
               ))}

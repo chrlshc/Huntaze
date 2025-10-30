@@ -6,9 +6,7 @@
   @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all;
   color: var(--color-content-secondary);
 }
-.nav-item:hover {
-  color: var(--color-content-primary);
-}
+.nav-item:hover { color: var(--color-content-primary); }
 
 .nav-item.active {
   @apply font-medium;
@@ -27,26 +25,16 @@
   border-radius: inherit;
 }
 
-.nav-item.active svg {
-  @apply text-purple-600;
-}
+.nav-item.active svg { @apply text-purple-600; }
 
 /* Badges */
-.badge {
-  @apply px-2 py-0.5 text-xs font-medium rounded-full;
-}
+.badge { @apply px-2 py-0.5 text-xs font-medium rounded-full; }
 
-.badge-default {
-  @apply bg-purple-600/10 text-purple-600;
-}
+.badge-default { @apply bg-purple-600/10 text-purple-600; }
 
-.badge-success {
-  @apply bg-green-600/10 text-green-600;
-}
+.badge-success { @apply bg-green-600/10 text-green-600; }
 
-.badge-primary {
-  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white;
-}
+.badge-primary { @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white; }
 
 /* Cards */
 .card {
@@ -85,20 +73,11 @@
   transform: translateY(-2px);
 }
 
-.stat-icon {
-  @apply w-12 h-12 rounded-xl flex items-center justify-center;
-  @apply shadow-lg;
-}
+.stat-icon { @apply w-12 h-12 rounded-xl flex items-center justify-center shadow-lg; }
 
-.stat-value {
-  @apply text-3xl font-bold;
-  color: var(--color-content-primary);
-}
+.stat-value { @apply text-3xl font-bold; color: var(--color-content-primary); }
 
-.stat-label {
-  @apply text-sm mt-1;
-  color: var(--color-content-tertiary);
-}
+.stat-label { @apply text-sm mt-1; color: var(--color-content-tertiary); }
 
 .stat-badge {
   @apply text-xs font-semibold flex items-center gap-1 px-2 py-1 rounded-full;
@@ -128,11 +107,10 @@
 
 /* Quick Action Items */
 .quick-action-item {
-  @apply p-4 rounded-lg;
+  @apply p-4 rounded-lg transition-all cursor-pointer;
   border: 1px solid var(--color-border-light);
-  @apply hover:border-purple-600/30 hover:bg-surface-hover-light dark:hover:bg-surface-hover;
-  @apply transition-all cursor-pointer;
 }
+.quick-action-item:hover { border-color: color-mix(in oklab, var(--color-border-light) 60%, #7c3aed 40%); background-color: var(--color-surface-hover-light); }
 
 /* Buttons */
 .btn-primary {
@@ -157,17 +135,9 @@
   transform: none;
 }
 
-.btn-secondary {
-  @apply px-4 py-2 rounded-lg font-medium transition-all text-center inline-flex items-center justify-center gap-2;
-  background: var(--color-surface-hover-light);
-  color: var(--color-content-primary);
-  border: 1px solid var(--color-border-light);
-}
+.btn-secondary { @apply px-4 py-2 rounded-lg font-medium transition-all text-center inline-flex items-center justify-center gap-2; border:1px solid var(--color-border-light); background: var(--color-surface-hover-light); color: var(--color-content-primary); }
 
-.btn-secondary:hover {
-  background: var(--color-surface-light);
-  border-color: var(--color-border);
-}
+.btn-secondary:hover { background: var(--color-surface-light); border-color: var(--color-border); }
 
 .btn-outline {
   @apply px-4 py-2 rounded-lg font-medium transition-all text-center inline-flex items-center justify-center gap-2;

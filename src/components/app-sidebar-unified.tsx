@@ -185,11 +185,11 @@ export default function AppSidebar() {
             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-xl">H</span>
             </div>
-            <span className="text-xl font-bold text-content-primary">Huntaze</span>
+            <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
           </Link>
         </div>
         <div className="app-sidebar-content">{NavList}</div>
-        <div className="p-4 border-t border-border-light dark:border-border">
+        <div className="p-4 border-t border-(--color-border-light) dark:border-border">
           <Link
             href="/campaigns/new"
             className="nav-action-button"
@@ -238,7 +238,7 @@ export default function AppSidebar() {
                   <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold text-xl">H</span>
                   </div>
-                  <span className="text-xl font-bold text-content-primary">Huntaze</span>
+                  <span className="text-xl font-bold text-(--color-content-primary)">Huntaze</span>
                 </div>
                 <button
                   aria-label="Close menu"
@@ -251,7 +251,7 @@ export default function AppSidebar() {
               <div className="flex-1 overflow-y-auto px-3 py-4">
                 {NavList}
               </div>
-              <div className="p-4 border-t border-border-light dark:border-border">
+              <div className="p-4 border-t border-(--color-border-light) dark:border-border">
                 <Link
                   href="/campaigns/new"
                   className="nav-action-button"

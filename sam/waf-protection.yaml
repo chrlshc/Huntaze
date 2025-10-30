@@ -1,0 +1,224 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: WAF Protection for Huntaze API Gateway
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - production
+      - staging
+      - development
+  
+  RateLimitPerIP:
+    Type: Number
+    Default: 2000
+    Description: Maximum requests per IP per 5 minutes
+
+Resources:
+  # CloudWatch Log Group for WAF Logs
+  WAFLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: aws-waf-logs-huntaze-api
+      RetentionInDays: 30
+
+  # WAF Web ACL
+  HuntazeWebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: huntaze-api-protection
+      Scope: REGIONAL
+      Description: WAF protection for Huntaze API Gateway
+      DefaultAction:
+        Allow: {}
+      
+      Rules:
+        # Rule 1: Rate Limiting (Priority 10)
+        - Name: RateLimitRule
+          Priority: 10
+          Statement:
+            RateBasedStatement:
+              Limit: !Ref RateLimitPerIP
+              AggregateKeyType: IP
+          Action:
+            Block:
+              CustomResponse:
+                ResponseCode: 429
+                CustomResponseBodyKey: RateLimitExceeded
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: RateLimitRule
+        
+        # Rule 2: AWS Managed Rules - Core Rule Set (Priority 20)
+        - Name: AWSManagedRulesCommonRuleSet
+          Priority: 20
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+              ExcludedRules: []
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesCommonRuleSet
+        
+        # Rule 3: AWS Managed Rules - Known Bad Inputs (Priority 30)
+        - Name: AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 30
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesKnownBadInputsRuleSet
+        
+        # Rule 4: AWS Managed Rules - Amazon IP Reputation List (Priority 40)
+        - Name: AWSManagedRulesAmazonIpReputationList
+          Priority: 40
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAmazonIpReputationList
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesAmazonIpReputationList
+        
+        # Rule 5: AWS Managed Rules - SQL Injection (Priority 50)
+        - Name: AWSManagedRulesSQLiRuleSet
+          Priority: 50
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesSQLiRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesSQLiRuleSet
+      
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: HuntazeWebACL
+      
+      CustomResponseBodies:
+        RateLimitExceeded:
+          ContentType: APPLICATION_JSON
+          Content: '{"error":"Rate limit exceeded. Please try again later."}'
+
+  # WAF Logging Configuration (commented out - will be added via CLI after deployment)
+  # WAFLoggingConfiguration:
+  #   Type: AWS::WAFv2::LoggingConfiguration
+  #   Properties:
+  #     ResourceArn: !GetAtt HuntazeWebACL.Arn
+  #     LogDestinationConfigs:
+  #       - !GetAtt WAFLogGroup.Arn
+  #     RedactedFields:
+  #       - SingleHeader:
+  #           Name: authorization
+  #       - SingleHeader:
+  #           Name: cookie
+
+  # CloudWatch Alarm - High Block Rate
+  WAFHighBlockRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: huntaze-waf-high-block-rate
+      AlarmDescription: WAF is blocking more than 10% of requests
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 2
+      DatapointsToAlarm: 2
+      Threshold: 10
+      TreatMissingData: notBreaching
+      Metrics:
+        - Id: blockRate
+          Expression: "(blocked / (blocked + allowed)) * 100"
+          Label: "Block Rate %"
+        - Id: blocked
+          MetricStat:
+            Metric:
+              Namespace: AWS/WAFV2
+              MetricName: BlockedRequests
+              Dimensions:
+                - Name: WebACL
+                  Value: huntaze-api-protection
+                - Name: Region
+                  Value: !Ref AWS::Region
+                - Name: Rule
+                  Value: ALL
+            Period: 300
+            Stat: Sum
+          ReturnData: false
+        - Id: allowed
+          MetricStat:
+            Metric:
+              Namespace: AWS/WAFV2
+              MetricName: AllowedRequests
+              Dimensions:
+                - Name: WebACL
+                  Value: huntaze-api-protection
+                - Name: Region
+                  Value: !Ref AWS::Region
+                - Name: Rule
+                  Value: ALL
+            Period: 300
+            Stat: Sum
+          ReturnData: false
+
+  # CloudWatch Alarm - Rate Limit Triggers
+  WAFRateLimitAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: huntaze-waf-rate-limit-triggered
+      AlarmDescription: Rate limit rule is blocking requests
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 10
+      TreatMissingData: notBreaching
+      MetricName: BlockedRequests
+      Namespace: AWS/WAFV2
+      Statistic: Sum
+      Period: 300
+      Dimensions:
+        - Name: WebACL
+          Value: huntaze-api-protection
+        - Name: Region
+          Value: !Ref AWS::Region
+        - Name: Rule
+          Value: RateLimitRule
+
+Outputs:
+  WebACLArn:
+    Description: ARN of the WAF Web ACL
+    Value: !GetAtt HuntazeWebACL.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-WebACLArn'
+  
+  WebACLId:
+    Description: ID of the WAF Web ACL
+    Value: !GetAtt HuntazeWebACL.Id
+    Export:
+      Name: !Sub '${AWS::StackName}-WebACLId'
+  
+  WAFLogGroupName:
+    Description: CloudWatch Log Group for WAF logs
+    Value: !Ref WAFLogGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-WAFLogGroup'
+  
+  WAFDashboardURL:
+    Description: CloudWatch dashboard URL for WAF metrics
+    Value: !Sub 'https://console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#metricsV2:graph=~();query=~(AWS*2fWAFV2*20WebACL*3dhuntaze-api-protection)'

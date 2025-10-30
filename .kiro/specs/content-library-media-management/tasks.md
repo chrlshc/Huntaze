@@ -1,0 +1,465 @@
+# Implementation Plan - Content Library & Media Management
+
+- [ ] 1. Set up database schema and AWS infrastructure
+  - Extend Prisma schema with Asset, Collection, AssetCollection, AssetVersion, ShareLink, ShareAccess, and ProcessingJob models
+  - Run database migration to create new tables
+  - Create S3 bucket with versioning and lifecycle policies
+  - Set up CloudFront distribution with cache policies
+  - Deploy Lambda functions for image and video processing
+  - _Requirements: 1.5, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5, 5.1-5.5, 6.1-6.5, 7.1-7.5_
+
+- [ ] 2. Implement StorageService (S3)
+  - [ ] 2.1 Create StorageService class with upload methods
+    - Implement `getPresignedUploadUrl()` for client-side uploads
+    - Implement `uploadFile()` for server-side uploads
+    - Implement `uploadMultipart()` for large files
+    - Add file validation (type, size, dimensions)
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 2.3_
+  - [ ] 2.2 Implement download methods
+    - Create `getPresignedDownloadUrl()` with expiration
+    - Implement `downloadFile()` for server-side downloads
+    - Implement `streamFile()` for streaming
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
+  - [ ] 2.3 Implement file management methods
+    - Create `copyFile()` and `moveFile()`
+    - Implement `deleteFile()` with soft delete
+    - Implement `listFiles()` with pagination
+    - _Requirements: 15.1, 15.2, 15.3, 15.4_
+  - [ ] 2.4 Implement metadata and versioning
+    - Create `getFileMetadata()` and `updateFileMetadata()`
+    - Implement `enableVersioning()` on bucket
+    - Implement `listVersions()` and `restoreVersion()`
+    - _Requirements: 3.4, 14.1, 14.2, 14.3, 14.4, 14.5_
+  - [ ] 2.5 Implement lifecycle management
+    - Create `setLifecyclePolicy()` for automatic transitions
+    - Implement `transitionToIntelligentTiering()`
+    - Add cost optimization rules
+    - _Requirements: 3.3, 3.5, 15.5_
+  - [ ] 2.6 Write unit tests for StorageService
+    - Test presigned URL generation
+    - Test upload and download operations
+    - Test file management
+    - Test versioning
+    - Test lifecycle policies
+    - _Requirements: 1.1-1.5, 2.1-2.5, 3.1-3.5, 14.1-14.5, 15.1-15.5_
+
+- [ ] 3. Implement CDNService (CloudFront)
+  - [ ] 3.1 Create CDNService class with distribution methods
+    - Implement `getDistributionUrl()` for public URLs
+    - Implement `getSignedUrl()` for private content
+    - Implement `getSignedCookies()` for multiple files
+    - _Requirements: 4.1, 4.3, 13.1, 13.2_
+  - [ ] 3.2 Implement cache management
+    - Create `invalidateCache()` for content updates
+    - Implement `getInvalidationStatus()` for tracking
+    - Implement `setCachePolicy()` with TTL configuration
+    - _Requirements: 4.2, 4.4_
+  - [ ] 3.3 Implement distribution configuration
+    - Create `createDistribution()` for new distributions
+    - Implement `updateDistribution()` for config changes
+    - Implement `deleteDistribution()` for cleanup
+    - _Requirements: 4.1, 4.5_
+  - [ ] 3.4 Write unit tests for CDNService
+    - Test URL generation
+    - Test signed URLs and cookies
+    - Test cache invalidation
+    - Test distribution management
+    - _Requirements: 4.1-4.5, 13.1-13.5_
+
+- [ ] 4. Implement MediaProcessingService (Lambda)
+  - [ ] 4.1 Create MediaProcessingService class with image processing
+    - Implement `resizeImage()` for multiple sizes (thumbnail, small, medium, large)
+    - Implement `compressImage()` with quality control
+    - Implement `convertToWebP()` for modern browsers
+    - Implement `generateThumbnail()` for previews
+    - _Requirements: 5.1, 5.2, 5.3, 5.4_
+  - [ ] 4.2 Implement watermarking
+    - Create `addWatermark()` for images with position config
+    - Implement watermark for videos
+    - Support custom watermark images
+    - Add opacity adjustment
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [ ] 4.3 Implement video processing
+    - Create `transcodeVideo()` for multiple resolutions (360p, 720p, 1080p)
+    - Implement `generateVideoThumbnails()` at multiple timestamps
+    - Implement `extractVideoMetadata()` (duration, resolution, codec)
+    - Implement `compressVideo()` for optimal streaming
+    - Implement `generateHLS()` for adaptive bitrate
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [ ] 4.4 Implement audio processing
+    - Create `transcodeAudio()` for format conversion
+    - Implement `generateWaveform()` for visualization
+    - Implement `extractAudioMetadata()`
+    - _Requirements: 1.3, 8.4_
+  - [ ] 4.5 Implement batch processing
+    - Create `processBatch()` for multiple jobs
+    - Implement `getProcessingStatus()` for tracking
+    - Add job queue management
+    - _Requirements: 2.2, 2.3, 2.4_
+  - [ ] 4.6 Write unit tests for MediaProcessingService
+    - Test image processing
+    - Test video processing
+    - Test watermarking
+    - Test batch processing
+    - _Requirements: 5.1-5.5, 6.1-6.5, 7.1-7.5_
+
+- [ ] 5. Implement ContentLibraryService
+  - [ ] 5.1 Create ContentLibraryService class with asset management
+    - Implement `createAsset()` with metadata
+    - Implement `getAsset()` with relations
+    - Implement `updateAsset()` with validation
+    - Implement `deleteAsset()` with soft delete
+    - Implement `listAssets()` with filters and pagination
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 15.1, 15.2, 15.3, 15.4_
+  - [ ] 5.2 Implement upload workflow
+    - Create `getUploadUrl()` for presigned URLs
+    - Implement `completeUpload()` to finalize upload
+    - Trigger processing pipeline after upload
+    - Track upload progress
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 5.3 Implement collection management
+    - Create `createCollection()` with name and description
+    - Implement `addToCollection()` and `removeFromCollection()`
+    - Implement `listCollections()` with hierarchy
+    - Support nested collections
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+  - [ ] 5.4 Implement tagging system
+    - Create `addTags()` and `removeTags()`
+    - Implement `suggestTags()` using AI analysis
+    - Implement tag autocomplete
+    - Create `getTagCloud()` with usage count
+    - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - [ ] 5.5 Implement search and filters
+    - Create `searchAssets()` with full-text search
+    - Implement `filterAssets()` by type, date, collection
+    - Support advanced search with multiple criteria
+    - Add sorting options
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [ ] 5.6 Implement metadata management
+    - Create `extractMetadata()` from files
+    - Implement `updateMetadata()` for manual editing
+    - Extract EXIF data from images
+    - Extract video metadata
+    - _Requirements: 5.5, 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 5.7 Implement versioning
+    - Create `getVersionHistory()` for assets
+    - Implement `restoreVersion()` to previous version
+    - Limit to last 10 versions
+    - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
+  - [ ] 5.8 Implement sharing
+    - Create `createShareLink()` with expiration and permissions
+    - Implement `revokeShareLink()` for access control
+    - Implement `trackAccess()` for audit trail
+    - Support password-protected shares
+    - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
+  - [ ] 5.9 Write unit tests for ContentLibraryService
+    - Test asset CRUD operations
+    - Test collection management
+    - Test tagging system
+    - Test search and filters
+    - Test versioning
+    - Test sharing
+    - _Requirements: All requirements_
+
+- [ ] 6. Create Lambda functions
+  - [ ] 6.1 Create image processing Lambda
+    - Set up Lambda function with Sharp library
+    - Implement S3 event trigger
+    - Generate multiple image sizes
+    - Convert to WebP format
+    - Upload processed images to S3
+    - _Requirements: 5.1, 5.2, 5.3, 5.4_
+  - [ ] 6.2 Create video processing Lambda
+    - Set up Lambda function with FFmpeg
+    - Implement S3 event trigger
+    - Transcode to multiple resolutions
+    - Generate video thumbnails
+    - Upload processed videos to S3
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [ ] 6.3 Create watermark Lambda
+    - Set up Lambda function for watermarking
+    - Support images and videos
+    - Configurable position and opacity
+    - Upload watermarked files to S3
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [ ] 6.4 Create metadata extraction Lambda
+    - Set up Lambda function for metadata
+    - Extract EXIF from images
+    - Extract video metadata
+    - Store metadata in database
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 6.5 Write integration tests for Lambda functions
+    - Test image processing pipeline
+    - Test video processing pipeline
+    - Test watermarking
+    - Test metadata extraction
+    - _Requirements: 5.1-5.5, 6.1-6.5, 7.1-7.5, 8.1-8.5_
+
+- [ ] 7. Create API routes for uploads
+  - [ ] 7.1 Create POST /api/content/upload/presigned endpoint
+    - Accept filename, contentType, size
+    - Call StorageService.getPresignedUploadUrl()
+    - Return presigned URL and asset ID
+    - Add authentication and validation
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [ ] 7.2 Create POST /api/content/upload/complete endpoint
+    - Accept assetId and s3Key
+    - Call ContentLibraryService.completeUpload()
+    - Trigger processing pipeline
+    - Return asset with processing status
+    - _Requirements: 1.5, 2.5_
+  - [ ] 7.3 Create POST /api/content/upload/multipart endpoint
+    - Support large file uploads
+    - Handle multipart upload initialization
+    - Track upload progress
+    - _Requirements: 2.1, 2.2, 2.3_
+  - [ ] 7.4 Create DELETE /api/content/upload/:uploadId endpoint
+    - Cancel ongoing upload
+    - Clean up partial uploads
+    - _Requirements: 2.5_
+  - [ ] 7.5 Write integration tests for upload API routes
+    - Test presigned URL generation
+    - Test upload completion
+    - Test multipart uploads
+    - Test upload cancellation
+    - _Requirements: 1.1-1.5, 2.1-2.5_
+
+- [ ] 8. Create API routes for assets
+  - [ ] 8.1 Create GET /api/content/assets endpoint
+    - Accept filters (type, date, collection, tags)
+    - Call ContentLibraryService.listAssets()
+    - Return paginated assets
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [ ] 8.2 Create GET /api/content/assets/:id endpoint
+    - Call ContentLibraryService.getAsset()
+    - Return asset with metadata and variants
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [ ] 8.3 Create PUT /api/content/assets/:id endpoint
+    - Accept metadata updates
+    - Call ContentLibraryService.updateAsset()
+    - Return updated asset
+    - _Requirements: 8.5_
+  - [ ] 8.4 Create DELETE /api/content/assets/:id endpoint
+    - Call ContentLibraryService.deleteAsset()
+    - Move to trash (soft delete)
+    - Return success confirmation
+    - _Requirements: 15.2, 15.3, 15.4_
+  - [ ] 8.5 Create POST /api/content/assets/:id/duplicate endpoint
+    - Call ContentLibraryService.duplicateAsset()
+    - Return new asset
+    - _Requirements: 15.1_
+  - [ ] 8.6 Create POST /api/content/assets/:id/restore endpoint
+    - Restore asset from trash
+    - Return restored asset
+    - _Requirements: 15.3_
+  - [ ] 8.7 Write integration tests for asset API routes
+    - Test asset listing and filtering
+    - Test asset retrieval
+    - Test asset update
+    - Test asset deletion and restoration
+    - Test asset duplication
+    - _Requirements: 8.1-8.5, 11.1-11.5, 15.1-15.4_
+
+- [ ] 9. Create API routes for collections
+  - [ ] 9.1 Create POST /api/content/collections endpoint
+    - Accept name, description, parentId
+    - Call ContentLibraryService.createCollection()
+    - Return created collection
+    - _Requirements: 9.1, 9.3_
+  - [ ] 9.2 Create GET /api/content/collections endpoint
+    - Call ContentLibraryService.listCollections()
+    - Return collections with hierarchy
+    - _Requirements: 9.1, 9.3_
+  - [ ] 9.3 Create POST /api/content/collections/:id/assets endpoint
+    - Accept assetId
+    - Call ContentLibraryService.addToCollection()
+    - Return updated collection
+    - _Requirements: 9.2, 9.4_
+  - [ ] 9.4 Create DELETE /api/content/collections/:id/assets/:assetId endpoint
+    - Call ContentLibraryService.removeFromCollection()
+    - Return updated collection
+    - _Requirements: 9.2_
+  - [ ] 9.5 Write integration tests for collection API routes
+    - Test collection creation
+    - Test adding/removing assets
+    - Test nested collections
+    - _Requirements: 9.1-9.5_
+
+- [ ] 10. Create API routes for search and tags
+  - [ ] 10.1 Create GET /api/content/search endpoint
+    - Accept query and filters
+    - Call ContentLibraryService.searchAssets()
+    - Return search results
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [ ] 10.2 Create POST /api/content/assets/:id/tags endpoint
+    - Accept tags array
+    - Call ContentLibraryService.addTags()
+    - Return updated asset
+    - _Requirements: 10.1, 10.5_
+  - [ ] 10.3 Create GET /api/content/tags/suggest endpoint
+    - Accept assetId
+    - Call ContentLibraryService.suggestTags()
+    - Return suggested tags
+    - _Requirements: 10.2_
+  - [ ] 10.4 Create GET /api/content/tags/cloud endpoint
+    - Call ContentLibraryService.getTagCloud()
+    - Return tag cloud with usage count
+    - _Requirements: 10.4_
+  - [ ] 10.5 Write integration tests for search and tags API routes
+    - Test search functionality
+    - Test tag management
+    - Test tag suggestions
+    - Test tag cloud
+    - _Requirements: 10.1-10.5, 11.1-11.5_
+
+- [ ] 11. Create API routes for sharing
+  - [ ] 11.1 Create POST /api/content/assets/:id/share endpoint
+    - Accept share options (expiration, permissions, password)
+    - Call ContentLibraryService.createShareLink()
+    - Return share link
+    - _Requirements: 13.1, 13.2, 13.5_
+  - [ ] 11.2 Create DELETE /api/content/share/:linkId endpoint
+    - Call ContentLibraryService.revokeShareLink()
+    - Return success confirmation
+    - _Requirements: 13.4_
+  - [ ] 11.3 Create GET /api/content/share/:token endpoint
+    - Validate token and permissions
+    - Track access
+    - Return asset or download URL
+    - _Requirements: 13.2, 13.3_
+  - [ ] 11.4 Write integration tests for sharing API routes
+    - Test share link creation
+    - Test share link access
+    - Test share link revocation
+    - Test access tracking
+    - _Requirements: 13.1-13.5_
+
+- [ ] 12. Create API routes for versioning
+  - [ ] 12.1 Create GET /api/content/assets/:id/versions endpoint
+    - Call ContentLibraryService.getVersionHistory()
+    - Return version history
+    - _Requirements: 14.1, 14.2_
+  - [ ] 12.2 Create POST /api/content/assets/:id/versions/:versionId/restore endpoint
+    - Call ContentLibraryService.restoreVersion()
+    - Return restored asset
+    - _Requirements: 14.3_
+  - [ ] 12.3 Write integration tests for versioning API routes
+    - Test version history retrieval
+    - Test version restoration
+    - _Requirements: 14.1-14.5_
+
+- [ ] 13. Create frontend pages
+  - [ ] 13.1 Create /app/content/page.tsx
+    - Build main content library page
+    - Implement grid and list views
+    - Add search and filters UI
+    - Add upload button and modal
+    - _Requirements: 1.1-1.5, 11.1-11.5, 12.1-12.5_
+  - [ ] 13.2 Create upload modal component
+    - Implement drag-and-drop
+    - Show upload progress
+    - Handle multiple files
+    - Show upload queue
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [ ] 13.3 Create asset preview component
+    - Show image previews
+    - Play videos inline
+    - Display PDF previews
+    - Show audio waveforms
+    - Support fullscreen mode
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
+  - [ ] 13.4 Create collection sidebar component
+    - Show collection hierarchy
+    - Allow drag-and-drop to collections
+    - Show collection thumbnails
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+  - [ ] 13.5 Create asset details panel
+    - Show metadata
+    - Allow metadata editing
+    - Show tags with autocomplete
+    - Show version history
+    - Show share options
+    - _Requirements: 8.1-8.5, 10.1-10.5, 13.1-13.5, 14.1-14.5_
+
+- [ ] 14. Implement CloudWatch metrics and monitoring
+  - [ ] 14.1 Create CloudWatch metrics integration
+    - Implement metrics for assets uploaded, processing jobs, storage used
+    - Implement metrics for CDN requests, cache hit rate
+    - Implement metrics for processing duration
+    - _Requirements: All requirements (monitoring)_
+  - [ ] 14.2 Create CloudWatch alarms
+    - Create alarm for high processing failure rate (>5%)
+    - Create alarm for storage quota warning (>80%)
+    - Create alarm for CDN error rate (>1%)
+    - Create alarm for Lambda timeout (>10/hour)
+    - _Requirements: 2.3, 5.1-5.5, 6.1-6.5_
+  - [ ] 14.3 Create CloudWatch dashboard
+    - Add widgets for assets uploaded per day
+    - Add widgets for storage usage
+    - Add widgets for processing jobs status
+    - Add widgets for CDN performance
+    - Add widgets for Lambda execution metrics
+    - _Requirements: All requirements (observability)_
+
+- [ ] 15. Implement Terraform infrastructure
+  - [ ] 15.1 Create S3 bucket Terraform configuration
+    - Define bucket with versioning
+    - Set lifecycle policies
+    - Configure CORS
+    - Set up bucket policies
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [ ] 15.2 Create CloudFront distribution Terraform
+    - Define distribution with origins
+    - Set cache behaviors
+    - Configure signed URLs
+    - Set up SSL certificate
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+  - [ ] 15.3 Create Lambda functions Terraform
+    - Define image processing Lambda
+    - Define video processing Lambda
+    - Define watermark Lambda
+    - Define metadata extraction Lambda
+    - Set up S3 event triggers
+    - _Requirements: 5.1-5.5, 6.1-6.5, 7.1-7.5, 8.1-8.5_
+  - [ ] 15.4 Create IAM roles and policies
+    - Define Lambda execution role
+    - Define S3 access policies
+    - Define CloudFront access policies
+    - _Requirements: All requirements (security)_
+
+- [ ] 16. Integration and end-to-end testing
+  - [ ] 16.1 Write E2E tests for complete workflows
+    - Test upload → processing → CDN delivery flow
+    - Test collection management flow
+    - Test search and retrieval flow
+    - Test sharing flow
+    - Test version history flow
+    - _Requirements: All requirements_
+  - [ ] 16.2 Write regression tests
+    - Test S3 operations
+    - Test CloudFront distribution
+    - Test Lambda processing
+    - Test database operations
+    - _Requirements: All requirements_
+
+- [ ] 17. Documentation and deployment
+  - [ ] 17.1 Create API documentation
+    - Document all upload endpoints
+    - Document all asset endpoints
+    - Document all collection endpoints
+    - Document all search and tag endpoints
+    - Document all sharing endpoints
+    - Include request/response examples
+    - _Requirements: All requirements_
+  - [ ] 17.2 Create user guide
+    - Write upload guide
+    - Write collection management guide
+    - Write search guide
+    - Write sharing guide
+    - _Requirements: All requirements_
+  - [ ] 17.3 Create deployment guide
+    - Document Terraform deployment
+    - Document Lambda deployment
+    - Document environment variables
+    - Document monitoring setup
+    - _Requirements: All requirements_

@@ -1,0 +1,21 @@
+{
+  "name": "of-orchestrator-lambda",
+  "version": "1.0.0",
+  "description": "Lambda orchestrator for OnlyFans browser workers",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "package": "npm run build && zip -r function.zip index.js node_modules"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ecs": "^3.637.0",
+    "@aws-sdk/client-dynamodb": "^3.637.0",
+    "@aws-sdk/client-sqs": "^3.637.0",
+    "@aws-sdk/client-cloudwatch": "^3.637.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

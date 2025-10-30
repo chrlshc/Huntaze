@@ -1,354 +1,325 @@
-/**
- * Configuration et setup pour les tests des services simplifiés
- */
-
 import { vi, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
-// Configuration globale des mocks
-beforeAll(() => {
-  // Mock des variables d'environnement
-  process.env.NODE_ENV = 'test';
-  process.env.NEXT_PUBLIC_URL = 'https://test.huntaze.com';
-  process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key';
-  process.env.STRIPE_PRO_MONTHLY_PRICE_ID = 'price_pro_monthly';
-  process.env.STRIPE_PRO_YEARLY_PRICE_ID = 'price_pro_yearly';
-  process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID = 'price_enterprise_monthly';
-  process.env.STRIPE_ENTERPRISE_YEARLY_PRICE_ID = 'price_enterprise_yearly';
+/**
+ * Configuration et setup pour les tests des services simplifiés Huntaze
+ * Initialise les mocks, l'environnement de test et les utilitaires communs
+ */
 
-  // Mock des modules externes
-  vi.mock('stripe', () => {
-    return {
-      default: vi.fn().mockImplementation(() => ({
-        customers: {
-          create: vi.fn(),
-          retrieve: vi.fn(),
-          update: vi.fn(),
-          delete: vi.fn()
-        },
-        subscriptions: {
-          create: vi.fn(),
-          retrieve: vi.fn(),
-          update: vi.fn(),
-          cancel: vi.fn(),
-          list: vi.fn()
-        },
-        checkout: {
-          sessions: {
-            create: vi.fn(),
-            retrieve: vi.fn(),
-            list: vi.fn()
-          }
-        },
-        billingPortal: {
-          sessions: {
-            create: vi.fn()
-          }
-        },
-        webhooks: {
-          constructEvent: vi.fn()
-        },
-        prices: {
-          list: vi.fn(),
-          retrieve: vi.fn()
-        },
-        products: {
-          list: vi.fn(),
-          retrieve: vi.fn()
-        }
-      }))
-    };
-  });
+// Configuration globale des timeouts
+vi.setConfig({
+  testTimeout: 30000,
+  hookTimeout: 10000
+});
 
-  // Mock de Prisma
-  vi.mock('@/lib/db', () => ({
-    prisma: {
-      user: {
-        findUnique: vi.fn(),
-        findMany: vi.fn(),
+// Mock des modules externes
+vi.mock('stripe', () => ({
+  default: vi.fn(() => ({
+    customers: {
+      create: vi.fn(),
+      retrieve: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn()
+    },
+    subscriptions: {
+      create: vi.fn(),
+      retrieve: vi.fn(),
+      update: vi.fn(),
+      cancel: vi.fn()
+    },
+    checkout: {
+      sessions: {
         create: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
-        upsert: vi.fn(),
-        count: vi.fn()
-      },
-      subscriptionRecord: {
-        findUnique: vi.fn(),
-        findMany: vi.fn(),
-        create: vi.fn(),
-        update: vi.fn(),
-        updateMany: vi.fn(),
-        delete: vi.fn(),
-        upsert: vi.fn()
-      },
-      contentAsset: {
-        findMany: vi.fn(),
-        create: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn()
-      },
-      $transaction: vi.fn(),
-      $connect: vi.fn(),
-      $disconnect: vi.fn()
+        retrieve: vi.fn()
+      }
+    },
+    billingPortal: {
+      sessions: {
+        create: vi.fn()
+      }
+    },
+    webhooks: {
+      constructEvent: vi.fn()
+    },
+    prices: {
+      list: vi.fn(),
+      retrieve: vi.fn()
     }
-  }));
+  }))
+}));
 
-  // Mock des services de logging
-  vi.mock('console', () => ({
-    log: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    info: vi.fn(),
-    debug: vi.fn()
-  }));
+// Mock de Prisma (si utilisé)
+vi.mock('@prisma/client', () => ({
+  PrismaClient: vi.fn(() => ({
+    user: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn()
+    },
+    subscription: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn()
+    },
+    $connect: vi.fn(),
+    $disconnect: vi.fn(),
+    $transaction: vi.fn()
+  }))
+}));
 
-  // Mock des timers pour les tests de performance
-  vi.useFakeTimers();
-});
-
-afterAll(() => {
-  // Nettoyer les mocks
-  vi.restoreAllMocks();
-  vi.useRealTimers();
-});
-
-beforeEach(() => {
-  // Réinitialiser les mocks avant chaque test
-  vi.clearAllMocks();
-  
-  // Réinitialiser les timers
-  vi.setSystemTime(new Date('2024-01-15T10:00:00Z'));
-});
-
-afterEach(() => {
-  // Nettoyer après chaque test
-  vi.clearAllTimers();
-});
+// Mock des variables d'environnement
+process.env.NODE_ENV = 'test';
+process.env.NEXT_PUBLIC_URL = 'https://test.huntaze.com';
+process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key_for_simple_services';
+process.env.STRIPE_PRO_MONTHLY_PRICE_ID = 'price_pro_monthly_mock';
+process.env.STRIPE_PRO_YEARLY_PRICE_ID = 'price_pro_yearly_mock';
+process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID = 'price_enterprise_monthly_mock';
+process.env.STRIPE_ENTERPRISE_YEARLY_PRICE_ID = 'price_enterprise_yearly_mock';
 
 // Utilitaires de test globaux
-declare global {
-  var testUtils: {
-    createMockUser: (overrides?: any) => any;
-    createMockSubscription: (overrides?: any) => any;
-    createMockStripeCustomer: (overrides?: any) => any;
-    createMockStripeSession: (overrides?: any) => any;
-    waitForAsync: (ms?: number) => Promise<void>;
-    mockDate: (date: string | Date) => void;
-    restoreDate: () => void;
-  };
-}
-
-// Utilitaires de test
-globalThis.testUtils = {
-  /**
-   * Crée un utilisateur mock avec des valeurs par défaut
-   */
+global.testUtils = {
+  // Créer un utilisateur mock
   createMockUser: (overrides = {}) => ({
-    id: 'user-123',
-    email: 'test@example.com',
+    id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    email: 'test@huntaze.com',
     name: 'Test User',
-    subscription: 'FREE',
-    stripeCustomerId: null,
-    role: 'CREATOR',
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-15'),
-    deletedAt: null,
-    subscriptionRecord: null,
-    contentAssets: [],
+    subscription: 'free' as const,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides
   }),
 
-  /**
-   * Crée un abonnement mock avec des valeurs par défaut
-   */
+  // Créer des stats utilisateur mock
+  createMockUserStats: (overrides = {}) => ({
+    totalAssets: 10,
+    totalCampaigns: 3,
+    totalRevenue: 1500,
+    engagementRate: 0.85,
+    lastLoginAt: new Date(),
+    ...overrides
+  }),
+
+  // Créer un abonnement mock
   createMockSubscription: (overrides = {}) => ({
-    id: 'sub-123',
-    userId: 'user-123',
-    plan: 'PRO',
-    status: 'ACTIVE',
-    stripeSubscriptionId: 'sub_stripe123',
-    currentPeriodStart: new Date('2024-01-01'),
-    currentPeriodEnd: new Date('2024-02-01'),
-    cancelAtPeriodEnd: false,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-15'),
+    id: `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    userId: 'user-test-123',
+    planId: 'pro',
+    status: 'active' as const,
+    currentPeriodStart: new Date(),
+    currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    stripeSubscriptionId: 'sub_stripe_123',
+    stripeCustomerId: 'cus_stripe_123',
+    createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides
   }),
 
-  /**
-   * Crée un client Stripe mock avec des valeurs par défaut
-   */
+  // Créer un événement webhook Stripe mock
+  createMockWebhookEvent: (type: string, data: any = {}) => ({
+    id: `evt-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    type,
+    data: {
+      id: 'sub_mock_123',
+      customer: 'cus_mock_123',
+      status: 'active',
+      current_period_start: Math.floor(Date.now() / 1000),
+      current_period_end: Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
+      items: {
+        data: [
+          {
+            price: {
+              id: 'price_pro_monthly',
+              unit_amount: 2900,
+              currency: 'usd',
+              recurring: { interval: 'month' }
+            }
+          }
+        ]
+      },
+      ...data
+    },
+    created: Math.floor(Date.now() / 1000)
+  }),
+
+  // Créer un client Stripe mock
   createMockStripeCustomer: (overrides = {}) => ({
-    id: 'cus_stripe123',
-    email: 'test@example.com',
+    id: 'cus_mock_123',
+    email: 'test@huntaze.com',
     name: 'Test User',
-    metadata: {
-      userId: 'user-123'
-    },
     created: Math.floor(Date.now() / 1000),
+    metadata: {},
     ...overrides
   }),
 
-  /**
-   * Crée une session Stripe mock avec des valeurs par défaut
-   */
-  createMockStripeSession: (overrides = {}) => ({
-    id: 'cs_session123',
-    url: 'https://checkout.stripe.com/session123',
-    customer: 'cus_stripe123',
-    subscription: 'sub_stripe123',
-    mode: 'subscription',
-    status: 'complete',
-    metadata: {
-      userId: 'user-123'
-    },
-    ...overrides
-  }),
+  // Attendre de manière asynchrone
+  waitForAsync: (ms = 100) => new Promise(resolve => setTimeout(resolve, ms)),
 
-  /**
-   * Utilitaire pour attendre de manière asynchrone
-   */
-  waitForAsync: (ms = 0) => new Promise(resolve => setTimeout(resolve, ms)),
+  // Générer un ID unique
+  generateId: (prefix = 'test') => `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 
-  /**
-   * Mock une date spécifique
-   */
-  mockDate: (date: string | Date) => {
-    const mockDate = new Date(date);
+  // Mock d'une date fixe
+  mockDate: (dateString: string) => {
+    const mockDate = new Date(dateString);
+    vi.useFakeTimers();
     vi.setSystemTime(mockDate);
+    return mockDate;
   },
 
-  /**
-   * Restaure la date réelle
-   */
+  // Restaurer les timers réels
   restoreDate: () => {
     vi.useRealTimers();
-    vi.useFakeTimers();
+  },
+
+  // Créer des données de test en lot
+  createBulkTestData: (count: number, factory: (index: number) => any) => {
+    return Array.from({ length: count }, (_, index) => factory(index));
+  },
+
+  // Vérifier qu'une promesse se résout dans un délai donné
+  expectToResolveWithin: async (promise: Promise<any>, timeoutMs: number) => {
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(`Promise did not resolve within ${timeoutMs}ms`)), timeoutMs);
+    });
+
+    return Promise.race([promise, timeoutPromise]);
+  },
+
+  // Simuler une erreur réseau
+  simulateNetworkError: () => {
+    const error = new Error('Network Error');
+    (error as any).code = 'NETWORK_ERROR';
+    return error;
+  },
+
+  // Simuler une erreur Stripe
+  simulateStripeError: (type = 'card_error', code = 'card_declined') => {
+    const error = new Error('Your card was declined.');
+    (error as any).type = type;
+    (error as any).code = code;
+    (error as any).decline_code = 'generic_decline';
+    return error;
   }
 };
 
-// Configuration des matchers personnalisés
+// Matchers personnalisés pour Vitest
 expect.extend({
-  /**
-   * Vérifie qu'un objet a les propriétés d'un utilisateur valide
-   */
+  // Vérifier qu'un objet est un utilisateur valide
   toBeValidUser(received) {
-    const requiredProperties = ['id', 'email', 'name', 'subscription', 'role'];
-    const missingProperties = requiredProperties.filter(prop => !(prop in received));
-    
-    if (missingProperties.length > 0) {
-      return {
-        message: () => `Expected object to have user properties: ${missingProperties.join(', ')}`,
-        pass: false
-      };
-    }
-
-    const validSubscriptions = ['FREE', 'PRO', 'ENTERPRISE'];
-    if (!validSubscriptions.includes(received.subscription)) {
-      return {
-        message: () => `Expected subscription to be one of: ${validSubscriptions.join(', ')}, got: ${received.subscription}`,
-        pass: false
-      };
-    }
-
-    const validRoles = ['CREATOR', 'ADMIN'];
-    if (!validRoles.includes(received.role)) {
-      return {
-        message: () => `Expected role to be one of: ${validRoles.join(', ')}, got: ${received.role}`,
-        pass: false
-      };
-    }
+    const isValid = received &&
+      typeof received.id === 'string' &&
+      typeof received.email === 'string' &&
+      typeof received.name === 'string' &&
+      ['free', 'pro', 'enterprise'].includes(received.subscription) &&
+      typeof received.isActive === 'boolean' &&
+      received.createdAt instanceof Date &&
+      received.updatedAt instanceof Date;
 
     return {
-      message: () => 'Expected object not to be a valid user',
-      pass: true
+      pass: isValid,
+      message: () => isValid 
+        ? `Expected ${received} not to be a valid user`
+        : `Expected ${received} to be a valid user with required fields`
     };
   },
 
-  /**
-   * Vérifie qu'un objet a les propriétés d'un abonnement valide
-   */
+  // Vérifier qu'un objet est un abonnement valide
   toBeValidSubscription(received) {
-    const requiredProperties = ['id', 'userId', 'plan', 'status'];
-    const missingProperties = requiredProperties.filter(prop => !(prop in received));
-    
-    if (missingProperties.length > 0) {
-      return {
-        message: () => `Expected object to have subscription properties: ${missingProperties.join(', ')}`,
-        pass: false
-      };
-    }
-
-    const validPlans = ['FREE', 'PRO', 'ENTERPRISE'];
-    if (!validPlans.includes(received.plan)) {
-      return {
-        message: () => `Expected plan to be one of: ${validPlans.join(', ')}, got: ${received.plan}`,
-        pass: false
-      };
-    }
-
-    const validStatuses = ['ACTIVE', 'CANCELED', 'PAST_DUE', 'UNPAID'];
-    if (!validStatuses.includes(received.status)) {
-      return {
-        message: () => `Expected status to be one of: ${validStatuses.join(', ')}, got: ${received.status}`,
-        pass: false
-      };
-    }
+    const isValid = received &&
+      typeof received.id === 'string' &&
+      typeof received.userId === 'string' &&
+      typeof received.planId === 'string' &&
+      ['active', 'canceled', 'past_due', 'unpaid'].includes(received.status) &&
+      received.currentPeriodStart instanceof Date &&
+      received.currentPeriodEnd instanceof Date;
 
     return {
-      message: () => 'Expected object not to be a valid subscription',
-      pass: true
+      pass: isValid,
+      message: () => isValid 
+        ? `Expected ${received} not to be a valid subscription`
+        : `Expected ${received} to be a valid subscription with required fields`
     };
   },
 
-  /**
-   * Vérifie qu'une promesse se résout dans un délai donné
-   */
-  async toResolveWithin(received, timeout) {
-    const startTime = Date.now();
-    
+  // Vérifier qu'une promesse se résout dans un délai donné
+  async toResolveWithin(received: Promise<any>, timeoutMs: number) {
     try {
-      await Promise.race([
-        received,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), timeout)
-        )
-      ]);
-      
-      const duration = Date.now() - startTime;
-      
+      await global.testUtils.expectToResolveWithin(received, timeoutMs);
       return {
-        message: () => `Expected promise to take longer than ${timeout}ms, but resolved in ${duration}ms`,
-        pass: true
+        pass: true,
+        message: () => `Expected promise not to resolve within ${timeoutMs}ms`
       };
     } catch (error) {
-      if (error.message === 'Timeout') {
-        return {
-          message: () => `Expected promise to resolve within ${timeout}ms, but it timed out`,
-          pass: false
-        };
-      }
-      
-      // Re-throw other errors
-      throw error;
+      return {
+        pass: false,
+        message: () => `Expected promise to resolve within ${timeoutMs}ms but it didn't`
+      };
     }
   }
 });
 
-// Types pour les matchers personnalisés
-declare module 'vitest' {
-  interface Assertion<T = any> {
-    toBeValidUser(): T;
-    toBeValidSubscription(): T;
-    toResolveWithin(timeout: number): Promise<T>;
-  }
-  interface AsymmetricMatchersContaining {
-    toBeValidUser(): any;
-    toBeValidSubscription(): any;
-    toResolveWithin(timeout: number): any;
-  }
-}
+// Configuration avant tous les tests
+beforeAll(async () => {
+  // Initialiser les mocks globaux
+  console.log('🚀 Initializing Simple Services Test Suite');
+  
+  // Configurer les mocks de console pour réduire le bruit
+  vi.spyOn(console, 'log').mockImplementation(() => {});
+  vi.spyOn(console, 'info').mockImplementation(() => {});
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
+  
+  // Garder console.error pour les vrais problèmes
+  const originalError = console.error;
+  vi.spyOn(console, 'error').mockImplementation((...args) => {
+    // Afficher seulement les erreurs importantes
+    if (args[0]?.includes?.('Test error') || args[0]?.includes?.('Expected')) {
+      return;
+    }
+    originalError(...args);
+  });
+});
 
-// Configuration des handlers d'erreur pour les tests
+// Configuration après tous les tests
+afterAll(async () => {
+  console.log('✅ Simple Services Test Suite Completed');
+  
+  // Nettoyer les mocks globaux
+  vi.restoreAllMocks();
+  vi.clearAllTimers();
+  vi.useRealTimers();
+});
+
+// Configuration avant chaque test
+beforeEach(() => {
+  // Réinitialiser tous les mocks
+  vi.clearAllMocks();
+  
+  // Réinitialiser les timers si nécessaire
+  if (vi.isFakeTimers()) {
+    vi.clearAllTimers();
+  }
+  
+  // Réinitialiser les variables d'environnement
+  process.env.NODE_ENV = 'test';
+  process.env.NEXT_PUBLIC_URL = 'https://test.huntaze.com';
+});
+
+// Configuration après chaque test
+afterEach(() => {
+  // Nettoyer les mocks
+  vi.clearAllMocks();
+  
+  // Restaurer les timers réels si des faux timers étaient utilisés
+  if (vi.isFakeTimers()) {
+    vi.useRealTimers();
+  }
+});
+
+// Gestion des erreurs non capturées
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
@@ -358,4 +329,33 @@ process.on('uncaughtException', (error) => {
 });
 
 // Export des utilitaires pour utilisation dans les tests
-export { testUtils } from './simple-services-setup';
+export { global as testUtils };
+
+// Types pour TypeScript
+declare global {
+  var testUtils: {
+    createMockUser: (overrides?: any) => any;
+    createMockUserStats: (overrides?: any) => any;
+    createMockSubscription: (overrides?: any) => any;
+    createMockWebhookEvent: (type: string, data?: any) => any;
+    createMockStripeCustomer: (overrides?: any) => any;
+    waitForAsync: (ms?: number) => Promise<void>;
+    generateId: (prefix?: string) => string;
+    mockDate: (dateString: string) => Date;
+    restoreDate: () => void;
+    createBulkTestData: (count: number, factory: (index: number) => any) => any[];
+    expectToResolveWithin: (promise: Promise<any>, timeoutMs: number) => Promise<any>;
+    simulateNetworkError: () => Error;
+    simulateStripeError: (type?: string, code?: string) => Error;
+  };
+
+  namespace Vi {
+    interface AsymmetricMatchersContaining {
+      toBeValidUser(): any;
+      toBeValidSubscription(): any;
+      toResolveWithin(timeoutMs: number): any;
+    }
+  }
+}
+
+export default {};
