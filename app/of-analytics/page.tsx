@@ -8,7 +8,7 @@ import {
 import { analyticsManager, seedMockAnalytics } from '@/lib/of/analytics-manager';
 import type { FanAnalytics } from '@/lib/types/onlyfans';
 import AppShell from '@/components/layout/AppShell';
-import Card from '@/components/ui/Card';
+import Card from '@/components/ui/card';
 
 export default function OfAnalyticsPage() {
   const [period, setPeriod] = useState<'24h' | '7d' | '30d' | 'all'>('30d');

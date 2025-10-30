@@ -2,9 +2,9 @@ import React from 'react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { AdminLayout } from '@/components/admin/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 // Dashboard principal de l'app Huntaze
 const todayStats = {

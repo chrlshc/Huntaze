@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Section from "@/components/marketing/Section";
 import { MessageSquare, Bot, Megaphone, BarChart3, Calendar, Shield } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 
 type FeatureKey = "inbox" | "ai" | "campaigns" | "analytics" | "scheduler" | "security";
 

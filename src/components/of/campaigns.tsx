@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Plus, Play, Pause, BarChart3, Users, AlertCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import type { OfMassMessageCampaign } from '@/lib/types/onlyfans';
 import CreateCampaignModal from './create-campaign-modal';
 import CampaignDetails from './campaign-details';

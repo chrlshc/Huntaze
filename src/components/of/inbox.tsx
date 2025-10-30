@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Filter, Circle, DollarSign } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import type { OfConversation } from '@/lib/types/onlyfans';
 import OfConversationView from './conversation-view';
