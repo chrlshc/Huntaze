@@ -5,7 +5,7 @@ frontend:
       commands:
         - nvm install 20 && nvm use 20
         - echo "[PREBUILD] node=$(node -v) npm=$(npm -v)"
-        - npm ci --no-audit --no-fund || npm i --no-audit --no-fund
+        - npm ci --no-audit --no-fund --legacy-peer-deps || npm i --no-audit --no-fund --legacy-peer-deps
         - echo "PREBUILD_DONE"
     build:
       commands:
