@@ -43,12 +43,34 @@ reports/
 test-results/
 playwright-report/
 
-huntazee/
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+.terraform.tfstate.lock.info
+
+# Lambda node_modules
+lambda/node_modules/
+lambda/send-worker/node_modules/
+infra/lambda/orchestrator/node_modules
+
+# OFM platform node_modules
+ofm-creators-platform/node_modules/
+ofm-creators-platform/backend/node_modules/
+ofm-creators-platform/e2e/node_modules/
+
+# SAM build artifacts
+sam/.aws-sam/
+
+# CDK artifacts
+infra/cdk/node_modules/
 infra/**/cdk.out
 infra/**/dist
-
-# infra/build artifacts (do not commit)
 artifacts/
 cdk.out/
 dist/
 traces/
+
+# huntazee submodule
+huntazee/
