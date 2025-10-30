@@ -4,24 +4,22 @@ Configuration files prêts pour la production avec toutes les meilleures pratiqu
 
 ## 📦 Fichiers Inclus
 
-### 1. `proxy.ts` - Next.js 16 Proxy
-Remplace `middleware.ts` avec sécurité renforcée.
+### 1. `middleware.ts` - Next.js 15.5 Middleware (Production Ready)
+Middleware avec sécurité renforcée pour Next.js 15.5.
 
 **Features:**
 - ✅ CSP strict avec nonces (NO unsafe-eval/unsafe-inline)
 - ✅ Security headers complets (HSTS, X-Frame-Options, etc.)
 - ✅ Host validation
-- ✅ A/B testing support
-- ✅ Feature flags
+- ✅ Authentication checks
 - ✅ Rate limiting headers
+
+**Note:** Next.js 16 introduit `proxy.ts` mais nous restons sur 15.5 pour la stabilité.
 
 **Installation:**
 ```bash
-# Copier vers la racine du projet
-cp config/production-ready/proxy.ts ./proxy.ts
-
-# Supprimer l'ancien middleware si présent
-rm middleware.ts
+# Le middleware.ts est déjà en place
+# Ajouter les security headers dans next.config.ts
 ```
 
 **Usage dans layout.tsx:**

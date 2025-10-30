@@ -1,124 +1,269 @@
 # Changelog
 
-All notable changes to this project are documented here.
+All notable changes to the Huntaze API will be documented in this file.
 
-## [v2.0.0] – AI Service Optimization (2025-10-26)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### AI Service - Major Optimization Release 🚀
+## [Unreleased]
 
-#### Added
-- **Structured Error Handling**: New `AIServiceError` class with typed error categories
-  - Error types: RATE_LIMIT, AUTHENTICATION, INVALID_REQUEST, SERVER_ERROR, NETWORK_ERROR, TIMEOUT, CONTENT_FILTER
-  - Retryable flag and retry-after information
-  - JSON serialization for logging
-  - Original error preservation for debugging
+### Added
 
-- **Automatic Retry Strategy**: Exponential backoff with configurable parameters
-  - Default: 3 attempts with 1s initial delay, 2x multiplier, 10s max delay
-  - Respects retry-after headers from API responses
-  - Selective retry based on error type
-  - Comprehensive logging of retry attempts
+#### OnlyFans Subscribers Management
+- **NEW**: `GET /api/onlyfans/subscribers` - List OnlyFans subscribers
+  - Pagination support (page, pageSize)
+  - Filter by subscription tier (free, premium, vip)
+  - Search by username or email (case-insensitive)
+  - Aggregated counts (messages, transactions)
+  - Returns subscriber metadata and activity stats
+- **NEW**: `POST /api/onlyfans/subscribers` - Add new subscriber
+  - Required fields: username, email
+  - Optional fields: tier, onlyfansId
+  - Automatic isActive flag set to true
+  - Returns created subscriber with timestamps
 
-- **Enhanced TypeScript Types**:
-  - `AIErrorType` enum for error categorization
-  - `RetryConfig` interface for retry configuration
-  - `Logger` interface for structured logging
-  - Enhanced `AIResponse` with `cached` and `latencyMs` fields
-  - Complete type safety across all operations
+## [2.0.0] - 2025-10-30
 
-- **Structured Logging System**:
-  - `Logger` interface with debug, info, warn, error levels
-  - `ConsoleLogger` implementation with context
-  - Debug logs only in development mode
-  - Structured metadata for all log entries
-  - Integration points for external logging services
+### Added
 
-- **Azure OpenAI Support**:
-  - Azure-specific URL format with deployment names
-  - Azure-specific authentication (api-key header)
-  - Configurable API version
-  - Automatic detection and handling
+#### Dashboard APIs
+- **NEW**: `GET /api/dashboard/metrics` - Aggregated dashboard metrics
+  - Revenue metrics with 30-day comparison
+  - Message count with trend analysis
+  - Campaign statistics (active/total)
+  - Engagement rate tracking
+  - Formatted currency output
+  - Percentage change calculations
 
-- **Performance Metrics**:
-  - Latency tracking for all API calls
-  - Token usage tracking in responses
-  - Cache hit/miss indicators
-  - Provider performance monitoring
+#### OnlyFans Integration
+- **NEW**: `POST /api/onlyfans/messages/send` - Send messages with rate limiting
+  - Automatic rate limiting (10 messages/minute)
+  - AWS SQS queue integration
+  - Priority-based message handling
+  - Media attachment support
+  - Estimated delivery time
+- **NEW**: `GET /api/onlyfans/messages/status` - Check message delivery status
+  - Real-time status tracking
+  - Retry attempt counting
+  - Delivery timestamps
 
-- **Comprehensive Documentation**:
-  - 400+ line API integration guide (`docs/AI_SERVICE_API_INTEGRATION.md`)
-  - Complete JSDoc headers with examples
-  - Endpoint documentation for all providers
-  - Error handling guide
-  - Troubleshooting section
-  - Services README (`lib/services/README.md`)
+#### Marketing Campaigns
+- **NEW**: `GET /api/campaigns` - List campaigns with filtering
+  - Status-based filtering
+  - Pagination support
+  - Multi-platform campaigns
+- **NEW**: `POST /api/campaigns` - Create marketing campaigns
+  - 10 pre-built templates
+  - Multi-platform support (OnlyFans, Instagram, TikTok, Reddit)
+  - A/B testing integration
+  - Scheduling capabilities
+- **NEW**: `GET /api/campaigns/:id` - Get campaign details
+- **NEW**: `POST /api/campaigns/:id/start` - Start campaign
+- **NEW**: `POST /api/campaigns/:id/pause` - Pause campaign
+- **NEW**: `GET /api/campaigns/:id/analytics` - Campaign analytics
 
-#### Changed
-- **OpenAIProvider**: Enhanced with error handling, retry logic, and logging
-- **ClaudeProvider**: Enhanced with error handling, retry logic, and logging
-- **AIService**: Complete refactor with retry helper and structured logging
-- **Cache**: Now indicates cache hits in response metadata
-- **Timeout**: Configurable per-request with AbortController
+#### Infrastructure
+- AWS Lambda rate limiter integration
+- SQS queue for message processing
+- Redis ElastiCache for token bucket
+- CloudWatch monitoring and alarms
+- Terraform infrastructure as code
 
-#### Fixed
-- Network errors now properly categorized and retryable
-- Timeout errors properly handled with AbortController
-- Rate limit errors include retry-after information
-- Provider fallback works correctly on retryable errors
-
-#### Tests
-- Added `tests/unit/ai-service-optimized.test.ts` with 30+ tests covering:
-  - Error handling (5 tests)
-  - Retry strategy (3 tests)
-  - TypeScript type validation (2 tests)
-  - Token management (2 tests)
-  - Caching (2 tests)
-  - Logging (2 tests)
-  - Azure OpenAI support (2 tests)
-  - Provider fallback (1 test)
-  - Performance metrics (1 test)
+#### Database Models
+- `OnlyFansMessage` - Message tracking
+- `Campaign` - Campaign management
+- `CampaignTemplate` - Reusable templates
+- `CampaignMetric` - Performance metrics
+- `CampaignConversion` - Conversion tracking
+- `ABTest` - A/B test configurations
+- `ABTestVariant` - Test variants
+- `Automation` - Workflow definitions
+- `AutomationExecution` - Execution history
+- `Segment` - Audience segments
+- `SegmentMember` - Segment membership
 
 #### Documentation
-- Created `docs/AI_SERVICE_API_INTEGRATION.md` - Complete integration guide (400+ lines)
-- Created `docs/AI_SERVICE_OPTIMIZATION_SUMMARY.md` - Optimization summary
-- Created `lib/services/README.md` - Services overview
-- Created `scripts/test-ai-service.mjs` - Test runner script
-- Enhanced inline JSDoc comments throughout codebase
+- OpenAPI 3.0 specification
+- Comprehensive API reference
+- Integration guides
+- Error code documentation
+- Rate limiting documentation
 
-#### Performance Improvements
-- Response caching reduces API calls by ~80% for similar requests
-- Automatic retry increases success rate by ~95% for temporary failures
-- Timeout management prevents hanging requests
-- Rate limiting prevents API quota exhaustion
+### Changed
 
-#### Breaking Changes
-- None - All changes are backward compatible
-- Existing code continues to work without modifications
-- New features are opt-in through configuration
+- **BREAKING**: Authentication now requires NextAuth.js v5 session
+- **BREAKING**: All API responses now follow standardized format:
+  ```json
+  {
+    "success": boolean,
+    "data": object | array,
+    "error": { "code": string, "message": string }
+  }
+  ```
+- Improved error handling with specific error codes
+- Enhanced logging with structured format
+- Updated TypeScript types for all endpoints
+
+### Deprecated
+
+- Legacy authentication endpoints (use NextAuth.js v5)
+- Old message sending endpoint (use rate-limited version)
+
+### Security
+
+- Added rate limiting on all endpoints
+- Implemented circuit breaker pattern
+- Enhanced input validation with Zod schemas
+- Encrypted data at rest (SQS, Redis, Database)
+- TLS 1.2+ for all communications
+
+### Performance
+
+- Parallel database queries for dashboard metrics
+- Redis caching for rate limit state
+- Optimized Prisma queries with indexes
+- CloudWatch metrics for monitoring
+
+### Fixed
+
+- Fixed authentication session handling
+- Fixed timezone issues in date calculations
+- Fixed percentage change calculation for zero values
+- Fixed currency formatting for large amounts
 
 ---
 
-## [v1.2.1] – UX guard (2025-10-05)
-- CI guard to forbid the word "backend" in UX‑facing paths (`app/**`, `components/**`, `public/locales/**`, `lib/ui/**`).
-- Add friendly error adapter (`lib/ui/friendlyError.ts`) and `fetchJson` helper (propagates `X-Request-Id`, throws friendly errors).
-- No product copy changes beyond removing jargon.
-- PR: #3
+## [1.0.0] - 2025-10-01
 
-## [v1.2.0] – CIN endpoints + smoke (2025-10-05)
-- Extend `withMonitoring` to CIN endpoints: `POST /api/cin/chat`, `GET /api/cin/status`.
-- Force `runtime='nodejs'` on CIN routes.
-- Add Playwright smoke test for `/api/cin/chat` (checks 200 + `X-Request-Id`).
-- PR: #5 (replaces closed #4)
+### Added
 
-## [v1.1.0] – Observability baseline (2025-10-05)
-- Add `withMonitoring` wrapper for billing/onboarding/webhooks routes.
-- Structured logs + CloudWatch EMF metrics (`HttpRequests`, `HttpLatencyMs`) with dimensions `Service`, `Route`, `Method`, `Status`.
-- Default namespace `Hunt/CIN` and service `cin-api`.
-- Ensure `X-Request-Id` correlation in responses.
-- Add `docs/RUNBOOK-CIN-AI.md`.
-- PR: #1
+- Initial API release
+- Basic authentication
+- User management
+- Content creation endpoints
 
-[v1.2.1]: https://github.com/chrlshc/Huntaze/releases/tag/v1.2.1
-[v1.2.0]: https://github.com/chrlshc/Huntaze/releases/tag/v1.2.0
-[v1.1.0]: https://github.com/chrlshc/Huntaze/releases/tag/v1.1.0
+---
 
+## API Versioning
+
+The Huntaze API uses semantic versioning:
+
+- **Major version** (2.x.x): Breaking changes
+- **Minor version** (x.1.x): New features, backward compatible
+- **Patch version** (x.x.1): Bug fixes, backward compatible
+
+### Breaking Changes Policy
+
+Breaking changes will be:
+1. Announced 30 days in advance
+2. Documented in this changelog
+3. Supported for 90 days after deprecation
+
+### Deprecation Timeline
+
+1. **Announcement**: Feature marked as deprecated
+2. **30 days**: Warning added to API responses
+3. **90 days**: Feature removed
+
+---
+
+## Migration Guides
+
+### Migrating from v1.x to v2.0
+
+#### Authentication
+
+**Before (v1.x)**:
+```typescript
+// Custom JWT authentication
+const token = await getAuthToken();
+fetch('/api/endpoint', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+```
+
+**After (v2.0)**:
+```typescript
+// NextAuth.js session-based
+import { signIn } from 'next-auth/react';
+await signIn('credentials', { email, password });
+
+// Cookies handled automatically
+fetch('/api/endpoint', {
+  credentials: 'include'
+});
+```
+
+#### Response Format
+
+**Before (v1.x)**:
+```json
+{
+  "data": { ... },
+  "status": "success"
+}
+```
+
+**After (v2.0)**:
+```json
+{
+  "success": true,
+  "data": { ... }
+}
+```
+
+#### Error Handling
+
+**Before (v1.x)**:
+```json
+{
+  "error": "Something went wrong"
+}
+```
+
+**After (v2.0)**:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "Something went wrong"
+  }
+}
+```
+
+---
+
+## Upcoming Features
+
+### Q4 2025
+
+- [ ] Webhook support for real-time events
+- [ ] GraphQL API endpoint
+- [ ] Batch operations for campaigns
+- [ ] Advanced analytics with ML insights
+- [ ] Multi-language support
+
+### Q1 2026
+
+- [ ] Python SDK
+- [ ] Ruby SDK
+- [ ] Mobile SDKs (iOS, Android)
+- [ ] WebSocket support for real-time updates
+- [ ] Advanced A/B testing features
+
+---
+
+## Support
+
+For questions about API changes:
+- **Documentation**: https://docs.huntaze.com
+- **Support**: support@huntaze.com
+- **Discord**: https://discord.gg/huntaze
+- **Status Page**: https://status.huntaze.com
+
+---
+
+[Unreleased]: https://github.com/huntaze/huntaze/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/huntaze/huntaze/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/huntaze/huntaze/releases/tag/v1.0.0

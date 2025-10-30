@@ -1,0 +1,1010 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Huntaze API",
+        "version": "2.0.0",
+        "description": "API for Huntaze creator platform - Marketing campaigns, OnlyFans integration, and analytics",
+        "contact": {
+            "name": "Huntaze Support",
+            "email": "support@huntaze.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://app.huntaze.com/api",
+            "description": "Production"
+        },
+        {
+            "url": "http://localhost:3000/api",
+            "description": "Development"
+        }
+    ],
+    "paths": {
+        "/dashboard/metrics": {
+            "get": {
+                "summary": "Get dashboard metrics",
+                "description": "Returns aggregated metrics for revenue, messages, campaigns, and engagement",
+                "tags": [
+                    "Dashboard"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DashboardMetricsResponse"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "data": {
+                                        "revenue": {
+                                            "total": 45000,
+                                            "change": 12.5,
+                                            "changeType": "increase",
+                                            "formatted": "$45,000"
+                                        },
+                                        "messages": {
+                                            "sent": 1250,
+                                            "change": 8.3,
+                                            "changeType": "increase"
+                                        },
+                                        "campaigns": {
+                                            "active": 5,
+                                            "total": 23,
+                                            "change": 0,
+                                            "changeType": "increase"
+                                        },
+                                        "engagement": {
+                                            "rate": 68,
+                                            "change": 5.4,
+                                            "changeType": "increase"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    }
+                }
+            }
+        },
+        "/onlyfans/messages/send": {
+            "post": {
+                "summary": "Send OnlyFans message with rate limiting",
+                "description": "Queue a message to be sent to OnlyFans with automatic rate limiting (10 msg/min)",
+                "tags": [
+                    "OnlyFans"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Message queued successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SendMessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    }
+                }
+            }
+        },
+        "/onlyfans/messages/status": {
+            "get": {
+                "summary": "Get message status",
+                "description": "Check the delivery status of a queued OnlyFans message",
+                "tags": [
+                    "OnlyFans"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "messageId",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Message ID returned from send endpoint"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message status retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageStatusResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFoundError"
+                    }
+                }
+            }
+        },
+        "/onlyfans/subscribers": {
+            "get": {
+                "summary": "List OnlyFans subscribers",
+                "description": "Get paginated list of OnlyFans subscribers with filtering and search",
+                "tags": [
+                    "OnlyFans"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        },
+                        "description": "Page number for pagination"
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "minimum": 1,
+                            "maximum": 100
+                        },
+                        "description": "Number of subscribers per page"
+                    },
+                    {
+                        "name": "tier",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "free",
+                                "premium",
+                                "vip"
+                            ]
+                        },
+                        "description": "Filter by subscription tier"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Search by username or email (case-insensitive)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscribers retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscribersListResponse"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "data": [
+                                        {
+                                            "id": "sub_abc123",
+                                            "userId": "user_xyz789",
+                                            "username": "fan_user_1",
+                                            "email": "fan@example.com",
+                                            "tier": "premium",
+                                            "onlyfansId": "of_12345",
+                                            "isActive": true,
+                                            "createdAt": "2025-10-15T10:30:00Z",
+                                            "updatedAt": "2025-10-29T14:20:00Z",
+                                            "_count": {
+                                                "messages": 45,
+                                                "transactions": 12
+                                            }
+                                        }
+                                    ],
+                                    "metadata": {
+                                        "page": 1,
+                                        "pageSize": 20,
+                                        "total": 156,
+                                        "totalPages": 8
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Add OnlyFans subscriber",
+                "description": "Create a new subscriber record",
+                "tags": [
+                    "OnlyFans"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSubscriberRequest"
+                            },
+                            "examples": {
+                                "basic": {
+                                    "summary": "Basic subscriber",
+                                    "value": {
+                                        "username": "new_fan_123",
+                                        "email": "newfan@example.com",
+                                        "tier": "free"
+                                    }
+                                },
+                                "premium": {
+                                    "summary": "Premium subscriber with OnlyFans ID",
+                                    "value": {
+                                        "username": "vip_fan_456",
+                                        "email": "vipfan@example.com",
+                                        "tier": "premium",
+                                        "onlyfansId": "of_67890"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Subscriber created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscriberResponse"
+                                },
+                                "example": {
+                                    "success": true,
+                                    "data": {
+                                        "id": "sub_new123",
+                                        "userId": "user_xyz789",
+                                        "username": "new_fan_123",
+                                        "email": "newfan@example.com",
+                                        "tier": "free",
+                                        "onlyfansId": null,
+                                        "isActive": true,
+                                        "createdAt": "2025-10-29T15:45:00Z",
+                                        "updatedAt": "2025-10-29T15:45:00Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalError"
+                    }
+                }
+            }
+        },
+        "/campaigns": {
+            "get": {
+                "summary": "List campaigns",
+                "description": "Get all campaigns for the authenticated user",
+                "tags": [
+                    "Campaigns"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "draft",
+                                "active",
+                                "paused",
+                                "completed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Campaigns list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CampaignsListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create campaign",
+                "description": "Create a new marketing campaign",
+                "tags": [
+                    "Campaigns"
+                ],
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCampaignRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Campaign created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CampaignResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ValidationError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/UnauthorizedError"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DashboardMetricsResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "revenue": {
+                                "$ref": "#/components/schemas/RevenueMetric"
+                            },
+                            "messages": {
+                                "$ref": "#/components/schemas/MessagesMetric"
+                            },
+                            "campaigns": {
+                                "$ref": "#/components/schemas/CampaignsMetric"
+                            },
+                            "engagement": {
+                                "$ref": "#/components/schemas/EngagementMetric"
+                            }
+                        }
+                    }
+                }
+            },
+            "RevenueMetric": {
+                "type": "object",
+                "properties": {
+                    "total": {
+                        "type": "number",
+                        "description": "Total revenue in cents"
+                    },
+                    "change": {
+                        "type": "number",
+                        "description": "Percentage change"
+                    },
+                    "changeType": {
+                        "type": "string",
+                        "enum": [
+                            "increase",
+                            "decrease"
+                        ]
+                    },
+                    "formatted": {
+                        "type": "string",
+                        "description": "Formatted currency string"
+                    }
+                }
+            },
+            "MessagesMetric": {
+                "type": "object",
+                "properties": {
+                    "sent": {
+                        "type": "integer",
+                        "description": "Number of messages sent"
+                    },
+                    "change": {
+                        "type": "number",
+                        "description": "Percentage change"
+                    },
+                    "changeType": {
+                        "type": "string",
+                        "enum": [
+                            "increase",
+                            "decrease"
+                        ]
+                    }
+                }
+            },
+            "CampaignsMetric": {
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "type": "integer",
+                        "description": "Number of active campaigns"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total campaigns"
+                    },
+                    "change": {
+                        "type": "number",
+                        "description": "Percentage change"
+                    },
+                    "changeType": {
+                        "type": "string",
+                        "enum": [
+                            "increase",
+                            "decrease"
+                        ]
+                    }
+                }
+            },
+            "EngagementMetric": {
+                "type": "object",
+                "properties": {
+                    "rate": {
+                        "type": "number",
+                        "description": "Engagement rate percentage"
+                    },
+                    "change": {
+                        "type": "number",
+                        "description": "Percentage point change"
+                    },
+                    "changeType": {
+                        "type": "string",
+                        "enum": [
+                            "increase",
+                            "decrease"
+                        ]
+                    }
+                }
+            },
+            "SendMessageRequest": {
+                "type": "object",
+                "required": [
+                    "recipientId",
+                    "content"
+                ],
+                "properties": {
+                    "recipientId": {
+                        "type": "string",
+                        "description": "OnlyFans user ID"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "Message content"
+                    },
+                    "mediaUrls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                        ],
+                        "default": "medium"
+                    }
+                }
+            },
+            "SendMessageResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "messageId": {
+                        "type": "string"
+                    },
+                    "queuedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "estimatedDelivery": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "MessageStatusResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "messageId": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "queued",
+                                    "processing",
+                                    "sent",
+                                    "failed"
+                                ]
+                            },
+                            "sentAt": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "attempts": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "CreateCampaignRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "type",
+                    "platforms"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "email",
+                            "sms",
+                            "social",
+                            "onlyfans"
+                        ]
+                    },
+                    "platforms": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "onlyfans",
+                                "instagram",
+                                "tiktok",
+                                "reddit"
+                            ]
+                        }
+                    },
+                    "templateId": {
+                        "type": "string"
+                    },
+                    "schedule": {
+                        "type": "object",
+                        "properties": {
+                            "startDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "endDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            },
+            "CampaignResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            },
+                            "createdAt": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            },
+            "CampaignsListResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "page": {
+                                "type": "integer"
+                            },
+                            "pageSize": {
+                                "type": "integer"
+                            },
+                            "total": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "Subscriber": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique subscriber ID"
+                    },
+                    "userId": {
+                        "type": "string",
+                        "description": "Creator's user ID"
+                    },
+                    "username": {
+                        "type": "string",
+                        "description": "Subscriber's username"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Subscriber's email address"
+                    },
+                    "tier": {
+                        "type": "string",
+                        "enum": [
+                            "free",
+                            "premium",
+                            "vip"
+                        ],
+                        "description": "Subscription tier"
+                    },
+                    "onlyfansId": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "OnlyFans platform user ID"
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "description": "Whether subscription is active"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Subscription creation date"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last update date"
+                    },
+                    "_count": {
+                        "type": "object",
+                        "description": "Aggregated counts",
+                        "properties": {
+                            "messages": {
+                                "type": "integer",
+                                "description": "Number of messages sent to subscriber"
+                            },
+                            "transactions": {
+                                "type": "integer",
+                                "description": "Number of transactions from subscriber"
+                            }
+                        }
+                    }
+                }
+            },
+            "CreateSubscriberRequest": {
+                "type": "object",
+                "required": [
+                    "username",
+                    "email"
+                ],
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "description": "Subscriber's username",
+                        "example": "new_fan_123"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Subscriber's email address",
+                        "example": "newfan@example.com"
+                    },
+                    "tier": {
+                        "type": "string",
+                        "enum": [
+                            "free",
+                            "premium",
+                            "vip"
+                        ],
+                        "default": "free",
+                        "description": "Subscription tier"
+                    },
+                    "onlyfansId": {
+                        "type": "string",
+                        "description": "OnlyFans platform user ID",
+                        "example": "of_67890"
+                    }
+                }
+            },
+            "SubscriberResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/Subscriber"
+                    }
+                }
+            },
+            "SubscribersListResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Subscriber"
+                        }
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "page": {
+                                "type": "integer",
+                                "description": "Current page number"
+                            },
+                            "pageSize": {
+                                "type": "integer",
+                                "description": "Number of items per page"
+                            },
+                            "total": {
+                                "type": "integer",
+                                "description": "Total number of subscribers"
+                            },
+                            "totalPages": {
+                                "type": "integer",
+                                "description": "Total number of pages"
+                            }
+                        }
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "UnauthorizedError": {
+                "description": "Authentication required",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        },
+                        "example": {
+                            "success": false,
+                            "error": {
+                                "code": "UNAUTHORIZED",
+                                "message": "Authentication required"
+                            }
+                        }
+                    }
+                }
+            },
+            "ValidationError": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        },
+                        "example": {
+                            "success": false,
+                            "error": {
+                                "code": "VALIDATION_ERROR",
+                                "message": "Invalid request data"
+                            }
+                        }
+                    }
+                }
+            },
+            "NotFoundError": {
+                "description": "Resource not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        },
+                        "example": {
+                            "success": false,
+                            "error": {
+                                "code": "NOT_FOUND",
+                                "message": "Resource not found"
+                            }
+                        }
+                    }
+                }
+            },
+            "InternalError": {
+                "description": "Internal server error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponse"
+                        },
+                        "example": {
+                            "success": false,
+                            "error": {
+                                "code": "INTERNAL_ERROR",
+                                "message": "An unexpected error occurred"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "sessionAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "next-auth.session-token",
+                "description": "Session-based authentication using NextAuth.js"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Dashboard",
+            "description": "Dashboard metrics and analytics"
+        },
+        {
+            "name": "OnlyFans",
+            "description": "OnlyFans integration and messaging"
+        },
+        {
+            "name": "Campaigns",
+            "description": "Marketing campaign management"
+        }
+    ]
+}

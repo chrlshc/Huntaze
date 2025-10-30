@@ -63,7 +63,7 @@
     "ioredis": "^5.8.2",
     "jszip": "^3.10.1",
     "lucide-react": "^0.548.0",
-    "next": "^16.0.1",
+    "next": "^15.5.0",
     "next-auth": "^4.24.13",
     "nodemailer": "^7.0.10",
     "openai": "^6.7.0",
