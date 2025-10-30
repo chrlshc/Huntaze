@@ -1,18 +1,25 @@
-/** @type {import('next').NextConfig} */
-const isExport = process.env.NEXT_OUTPUT_EXPORT === '1'
+import type { NextConfig } from 'next';
 
-const nextConfig = {
+const isExport = process.env.NEXT_OUTPUT_EXPORT === '1';
+
+const nextConfig: NextConfig = {
   // Core
   reactStrictMode: true,
   compress: true,
   output: isExport ? 'export' : 'standalone',
   poweredByHeader: false,
 
+  // Next.js 15: Bundle Pages Router dependencies for consistency
+  bundlePagesRouterDependencies: true,
+
+  // Next.js 15: External packages for Node.js runtime (don't bundle Prisma binary)
+  serverExternalPackages: ['@prisma/client'],
+
   // Let Amplify set edge/static headers; avoid duplication here
   // We still add a CSP in Report-Only to iterate safely.
   async headers() {
-    const reportEndpoint = process.env.CSP_REPORT_ENDPOINT || ''
-    const dev = process.env.NODE_ENV === 'development'
+    const reportEndpoint = process.env.CSP_REPORT_ENDPOINT || '';
+    const dev = process.env.NODE_ENV === 'development';
     const cspDirectives = [
       "default-src 'self'",
       "base-uri 'self'",
@@ -33,14 +40,14 @@ const nextConfig = {
       'upgrade-insecure-requests',
       // Send violations to our endpoint (legacy directive for broad UA support)
       'report-uri /api/csp/report',
-    ]
+    ];
 
     // If an absolute report endpoint is provided, use modern Reporting API too
     if (reportEndpoint) {
-      cspDirectives.push("report-to csp")
+      cspDirectives.push('report-to csp');
     }
 
-    const csp = cspDirectives.join('; ')
+    const csp = cspDirectives.join('; ');
 
     return [
       {
@@ -63,7 +70,7 @@ const nextConfig = {
             : []),
         ],
       },
-    ]
+    ];
   },
 
   // Minimal rewrites
@@ -78,12 +85,17 @@ const nextConfig = {
       { source: '/resources', destination: '/learn' },
       { source: '/enterprise', destination: '/for-agencies' },
       { source: '/help', destination: '/support' },
-    ]
+    ];
   },
 
-  // Image optimization
+  // Image optimization (using remotePatterns instead of deprecated domains)
   images: {
-    domains: ['api.dicebear.com', 'ui-avatars.com', 'cdn.huntaze.com', 'static.onlyfansassets.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'api.dicebear.com' },
+      { protocol: 'https', hostname: 'ui-avatars.com' },
+      { protocol: 'https', hostname: 'cdn.huntaze.com' },
+      { protocol: 'https', hostname: 'static.onlyfansassets.com' },
+    ],
     formats: ['image/avif', 'image/webp'],
     unoptimized: isExport ? true : false,
   },
@@ -95,32 +107,21 @@ const nextConfig = {
     optimizeCss: false,
     // optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
-  
+
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // Allow local builds to proceed despite TS/ESLint issues (useful during UI iteration)
+  // Allow local builds to proceed despite TS issues (useful during UI iteration)
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 
-  // Client bundle fallbacks
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      }
-    }
-    return config
+  // Turbopack config (Next.js 16 default)
+  turbopack: {
+    // Empty config to silence webpack warning
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
