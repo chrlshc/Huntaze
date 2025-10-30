@@ -9,7 +9,7 @@ export default function TestNeonPage() {
       {/* Test du composant SimpleNeonTest d\'abord */}
       <SimpleNeonTest />
       
-      {/* Contenu simple pour vérifier que l\'effet est visible */}
+      {/* Simple content to verify the effect is visible */}
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-6xl font-bold text-white mb-8">

@@ -187,12 +187,12 @@ export default function NeonCircuit({
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       for (let i = 0; i < paths.length; i++) {
-        if (i % 2 !== 0) continue; // 1/2 des chemins seulement
+        if (i % 2 !== 0) continue; // Only 1/2 of the paths
         const p = paths[i];
 
         // Paramètres par chemin (légère variation)
         const pulseLen = Math.max(24, Math.min(80, p.len * 0.08));
-        const gap = p.len + pulseLen * 2; // garantit un seul dash par cycle
+        const gap = p.len + pulseLen * 2; // ensures a single dash per cycle
         const speed = 40 + (i % 7) * 12; // px/s
         const phase = (i * 137) % gap;
         const offset = -((t * speed + phase) % gap);
