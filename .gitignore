@@ -39,6 +39,7 @@ next-env.d.ts
 server-output.log
 reports/
 
+<<<<<<< HEAD
 # playwright
 test-results/
 playwright-report/
@@ -52,3 +53,25 @@ artifacts/
 cdk.out/
 dist/
 traces/
+=======
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+.terraform.tfstate.lock.info
+infra/lambda/orchestrator/node_modules
+
+# Lambda node_modules
+lambda/node_modules/
+lambda/send-worker/node_modules/
+
+# OFM platform node_modules
+ofm-creators-platform/node_modules/
+ofm-creators-platform/backend/node_modules/
+ofm-creators-platform/e2e/node_modules/
+
+# SAM build artifacts
+sam/.aws-sam/
+>>>>>>> c7d5f8da5 (chore: cleanup for production beta - remove node_modules and test artifacts)
+infra/cdk/node_modules/
