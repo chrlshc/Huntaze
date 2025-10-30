@@ -44,3 +44,16 @@ server-output.log
 *.tfstate
 *.tfstate.backup
 .terraform.tfstate.lock.info
+infra/lambda/orchestrator/node_modules
+
+# Lambda node_modules
+lambda/node_modules/
+lambda/send-worker/node_modules/
+
+# OFM platform node_modules
+ofm-creators-platform/node_modules/
+ofm-creators-platform/backend/node_modules/
+ofm-creators-platform/e2e/node_modules/
+
+# SAM build artifacts
+sam/.aws-sam/
