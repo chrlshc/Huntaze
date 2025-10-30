@@ -44,7 +44,7 @@ export default function ImportFanPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16 px-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-white py-16 px-4">
       <div className="max-w-2xl mx-auto elevated-card rounded-2xl p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Add a Fan</h1>
         <p className="text-gray-600 mb-6">Create a fan record in your CRM</p>

@@ -41,7 +41,7 @@ function MockupSkeleton({ type }: MockupSkeletonProps) {
 
   return (
     <div className={`${dimensions[type]} bg-gray-200 rounded-lg animate-pulse`}>
-      <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-200 rounded-lg" />
+      <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-200 rounded-lg" />
     </div>
   );
 }
@@ -87,7 +87,7 @@ export const SafeDeviceShowcase = dynamic(
 
       if (!mounted) {
         return (
-          <div className="device-showcase bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl p-8">
+          <div className="device-showcase bg-linear-to-br from-purple-100 to-pink-100 rounded-3xl p-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <MockupSkeleton type="desktop" />
               <MockupSkeleton type="tablet" />

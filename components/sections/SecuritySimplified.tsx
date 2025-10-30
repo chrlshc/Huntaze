@@ -46,7 +46,7 @@ export default function SecuritySimplified() {
             
             <div className="space-y-6">
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">End-to-end encryption</h4>
                   <p className="text-gray-400">
@@ -56,7 +56,7 @@ export default function SecuritySimplified() {
               </div>
 
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">Automatic anonymization</h4>
                   <p className="text-gray-400">
@@ -66,7 +66,7 @@ export default function SecuritySimplified() {
               </div>
 
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">Regular security checks</h4>
                   <p className="text-gray-400">
@@ -76,7 +76,7 @@ export default function SecuritySimplified() {
               </div>
 
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-green-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">Instant data deletion</h4>
                   <p className="text-gray-400">
@@ -102,7 +102,7 @@ export default function SecuritySimplified() {
             
             <div className="space-y-6">
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-purple-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-purple-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">Annual security audit</h4>
                   <p className="text-gray-400">
@@ -112,7 +112,7 @@ export default function SecuritySimplified() {
               </div>
 
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-purple-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-purple-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">Privacy law compliant</h4>
                   <p className="text-gray-400">
@@ -122,7 +122,7 @@ export default function SecuritySimplified() {
               </div>
 
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-purple-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-purple-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">99.9% uptime guarantee</h4>
                   <p className="text-gray-400">
@@ -132,7 +132,7 @@ export default function SecuritySimplified() {
               </div>
 
               <div className="flex gap-4">
-                <CheckCircle className="w-6 h-6 text-purple-500 flex-shrink-0 mt-1" />
+                <CheckCircle className="w-6 h-6 text-purple-500 shrink-0 mt-1" />
                 <div>
                   <h4 className="font-semibold text-white mb-2">ISO 27001 certified</h4>
                   <p className="text-gray-400">

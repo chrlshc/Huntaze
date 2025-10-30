@@ -85,7 +85,7 @@ export default function HowItWorksPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
+      <section className="py-20 md:py-32 bg-linear-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -135,7 +135,7 @@ export default function HowItWorksPage() {
                   <div className="relative">
                     <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
                       <div className="flex items-center gap-4 mb-6">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
+                        <div className="w-16 h-16 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
                           <step.icon className="w-8 h-8 text-white" />
                         </div>
                         <div className="text-4xl font-bold text-gray-300 dark:text-gray-700">
@@ -210,7 +210,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <section className="py-20 bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Save Time and Grow?

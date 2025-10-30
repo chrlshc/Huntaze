@@ -40,7 +40,7 @@ export default function InstagramCreatorsPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-pink-50 to-white dark:from-gray-900 dark:to-gray-950">
+      <section className="relative py-20 md:py-32 overflow-hidden bg-linear-to-b from-pink-50 to-white dark:from-gray-900 dark:to-gray-950">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +54,7 @@ export default function InstagramCreatorsPage() {
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Turn Your Instagram Into a 
-              <span className="text-gradient bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"> Revenue Machine</span>
+              <span className="text-gradient bg-linear-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent"> Revenue Machine</span>
             </h1>
             
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
@@ -83,7 +83,7 @@ export default function InstagramCreatorsPage() {
         </div>
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-pink-100/50 to-purple-100/50 dark:from-pink-900/10 dark:to-purple-900/10 -z-10" />
+        <div className="absolute inset-0 bg-linear-to-r from-pink-100/50 to-purple-100/50 dark:from-pink-900/10 dark:to-purple-900/10 -z-10" />
       </section>
 
       {/* Problem Section */}
@@ -113,7 +113,7 @@ export default function InstagramCreatorsPage() {
                 transition={{ delay: index * 0.1 }}
                 className="flex items-start gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl"
               >
-                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
+                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 shrink-0" />
                 <p className="text-gray-700 dark:text-gray-300">{pain}</p>
               </motion.div>
             ))}
@@ -148,7 +148,7 @@ export default function InstagramCreatorsPage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-linear-to-br from-pink-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <benefit.icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
@@ -200,7 +200,7 @@ export default function InstagramCreatorsPage() {
                 className="relative"
               >
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+                  <div className="w-16 h-16 bg-linear-to-br from-pink-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
                     {item.step}
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
@@ -232,7 +232,7 @@ export default function InstagramCreatorsPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 rounded-3xl p-8 md:p-12 text-center"
+            className="bg-linear-to-br from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 rounded-3xl p-8 md:p-12 text-center"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-8">
               Join 2,000+ Instagram Creators
@@ -333,7 +333,7 @@ export default function InstagramCreatorsPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/onboarding">
-                <Button size="lg" className="bg-gradient-to-r from-pink-600 to-purple-600 text-white hover:from-pink-700 hover:to-purple-700">
+                <Button size="lg" className="bg-linear-to-r from-pink-600 to-purple-600 text-white hover:from-pink-700 hover:to-purple-700">
                   Start Free Trial
                 </Button>
               </Link>

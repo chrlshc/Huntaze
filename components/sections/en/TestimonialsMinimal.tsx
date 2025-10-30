@@ -72,7 +72,7 @@ export default function TestimonialsMinimal() {
             <div className="flex items-center gap-8">
               {Object.entries(testimonials[activeIndex].metrics).map(([key, value]) => (
                 <div key={key} className="text-center">
-                  <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                  <div className="text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                     {value}
                   </div>
                   <div className="text-sm text-gray-500 capitalize">{key}</div>

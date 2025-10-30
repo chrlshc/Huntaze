@@ -1168,7 +1168,7 @@ export default function OnboardingSetupPage() {
               {/* Social Media Promotion */}
               <div className="platform-card">
                 <div className="platform-header">
-                  <div className="platform-icon-container bg-gradient-to-br from-purple-500 to-pink-500">
+                  <div className="platform-icon-container bg-linear-to-br from-purple-500 to-pink-500">
                     <Share2 className="platform-icon text-white" />
                   </div>
                   <h3 className="platform-name">Social Media</h3>
@@ -1178,7 +1178,7 @@ export default function OnboardingSetupPage() {
                   {/* Instagram */}
                   <button
                     onClick={() => { sessionStorage.setItem('onboarding_return', 'platform'); window.location.href = '/api/auth/instagram'; }}
-                    className="flex items-center justify-center gap-1 px-3 py-2 text-xs rounded-lg text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:opacity-90"
+                    className="flex items-center justify-center gap-1 px-3 py-2 text-xs rounded-lg text-white bg-linear-to-r from-rose-500 to-purple-600 hover:opacity-90"
                     aria-label="Connect Instagram"
                   >
                     <Instagram className="w-4 h-4" /> IG
@@ -1246,7 +1246,7 @@ export default function OnboardingSetupPage() {
                       }`}
                     >
                       {recommended && (
-                        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white">Recommended</span>
+                        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-[10px] rounded-full bg-linear-to-r from-purple-600 to-pink-600 text-white">Recommended</span>
                       )}
                       <div className="font-semibold">{tone.label}</div>
                       <div className="text-xs text-gray-500 mt-1">{tone.desc}</div>

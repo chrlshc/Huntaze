@@ -203,7 +203,7 @@ export default function RootLayout({
         {/* <script src="/remove-nav-borders.js" defer></script> */}
       </head>
       <body className="antialiased dark-mode theme-dark" data-ui={minimal ? 'minimal' : undefined}>
-        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-3 focus:py-2 focus:rounded" aria-label="Skip to content">Skip to content</a>
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:z-100 focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-3 focus:py-2 focus:rounded" aria-label="Skip to content">Skip to content</a>
         <GoogleAnalytics />
         <RemoveDarkOverlay />
         <PerformanceMonitor />
@@ -231,7 +231,7 @@ export default function RootLayout({
           {/* Cookie consent (essential only) */}
           <CookieConsent />
           {/* Global command palette (⌘/Ctrl+K) */}
-          <div className="fixed right-4 z-[1000]" style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
+          <div className="fixed right-4 z-1000" style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
             <CommandPalette />
           </div>
           {/* Enterprise page has its own navigation and footer */}

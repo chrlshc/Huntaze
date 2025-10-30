@@ -122,7 +122,7 @@ export default function UseCasesPage() {
       <HeaderImproved />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-gradient-to-b from-purple-50 to-white dark:from-gray-950 dark:to-black">
+      <section className="pt-32 pb-20 bg-linear-to-b from-purple-50 to-white dark:from-gray-950 dark:to-black">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -131,7 +131,7 @@ export default function UseCasesPage() {
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
               Built for
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="block text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 every creator
               </span>
             </h1>
@@ -181,7 +181,7 @@ export default function UseCasesPage() {
                 {/* Content */}
                 <div className={index % 2 !== 0 ? "md:order-2" : ""}>
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
                       <useCase.icon className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-3xl font-bold">{useCase.title}</h2>
@@ -221,7 +221,7 @@ export default function UseCasesPage() {
                   <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-6">
                     <p className="text-lg mb-4 italic">"{useCase.testimonial.content}"</p>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full" />
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-pink-600 rounded-full" />
                       <div>
                         <p className="font-semibold">{useCase.testimonial.author}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">{useCase.testimonial.role}</p>
@@ -232,7 +232,7 @@ export default function UseCasesPage() {
 
                 {/* Visual */}
                 <div className={`relative ${index % 2 !== 0 ? "md:order-1" : ""}`}>
-                  <div className="aspect-square bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl flex items-center justify-center">
+                  <div className="aspect-square bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl flex items-center justify-center">
                     <useCase.icon className="w-32 h-32 text-purple-600 opacity-20" />
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export default function UseCasesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <section className="py-20 bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Ready to transform your business?

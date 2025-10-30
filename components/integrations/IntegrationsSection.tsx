@@ -134,7 +134,7 @@ export function IntegrationsSection() {
               onClick={() => setSelectedCategory(category.id)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                 selectedCategory === category.id
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                  ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
               }`}
             >
@@ -172,7 +172,7 @@ export function IntegrationsSection() {
                 >
                   {/* Featured Badge */}
                   {integration.featured && (
-                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                    <div className="absolute -top-2 -right-2 bg-linear-to-r from-purple-500 to-pink-500 text-white text-xs px-2 py-1 rounded-full font-medium">
                       Popular
                     </div>
                   )}
@@ -207,7 +207,7 @@ export function IntegrationsSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex flex-col items-center justify-center text-white p-4"
+                        className="absolute inset-0 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl flex flex-col items-center justify-center text-white p-4"
                       >
                         <p className="text-xs text-center mb-3">{integration.description}</p>
                         <button className="text-xs bg-white text-purple-600 px-3 py-1.5 rounded-full font-medium hover:bg-gray-100 transition-colors">
@@ -252,7 +252,7 @@ export function IntegrationsSection() {
           <p className="text-gray-600 mb-6">
             Can't find what you're looking for?
           </p>
-          <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <button className="px-8 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:shadow-lg transition-all duration-300 hover:scale-105">
             Request an Integration
           </button>
           <p className="text-sm text-gray-500 mt-4">

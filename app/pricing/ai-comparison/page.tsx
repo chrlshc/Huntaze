@@ -211,7 +211,7 @@ export default function AIComparison() {
             All plans include FULL OnlyFans features. The difference is in AI performance and limits.
           </p>
           <Link href="/pricing">
-            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
+            <button className="px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
               Choose Your Plan →
             </button>
           </Link>

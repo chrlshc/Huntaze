@@ -120,7 +120,7 @@ export default function AnimatedSuccessStories() {
           
           <h2 className="text-4xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white">
             Real creators.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
               Real results.
             </span>
           </h2>
@@ -135,7 +135,7 @@ export default function AnimatedSuccessStories() {
             {/* Left side - Creator info and growth */}
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${
+                <div className={`w-16 h-16 rounded-full bg-linear-to-br ${
                   currentStory.color === 'purple' ? 'from-purple-500 to-purple-600' :
                   currentStory.color === 'green' ? 'from-green-500 to-emerald-600' :
                   'from-pink-500 to-rose-600'
@@ -158,7 +158,7 @@ export default function AnimatedSuccessStories() {
               </div>
 
               <div className="text-right mb-8">
-                <div className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                <div className="text-5xl lg:text-6xl font-bold bg-linear-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                   +{currentStory.growthPercentage}%
                 </div>
                 <p className="text-gray-600 dark:text-gray-400">in {currentStory.duration}</p>

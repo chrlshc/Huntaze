@@ -136,7 +136,7 @@ export default function SecurityTrustCenter() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-20">
+      <section className="bg-linear-to-br from-gray-900 to-gray-800 text-white py-20">
         <div className="max-w-7xl mx-auto px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -276,7 +276,7 @@ export default function SecurityTrustCenter() {
                       <ul className="space-y-2">
                         {feature.details.map((detail) => (
                           <li key={detail} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                            <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                             <span>{detail}</span>
                           </li>
                         ))}
@@ -297,7 +297,7 @@ export default function SecurityTrustCenter() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-12 text-center"
+            className="bg-linear-to-br from-green-50 to-green-100 rounded-2xl p-12 text-center"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-full mb-6">
               <CheckCircle className="w-5 h-5" />

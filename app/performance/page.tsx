@@ -21,7 +21,7 @@ export default function PerformancePage() {
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               Built for speed,
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 designed to scale
               </span>
             </h1>
@@ -79,7 +79,7 @@ export default function PerformancePage() {
 
               <div className="space-y-6">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -93,7 +93,7 @@ export default function PerformancePage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
@@ -107,7 +107,7 @@ export default function PerformancePage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                     </svg>
@@ -251,7 +251,7 @@ export default function PerformancePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30 max-w-5xl mx-auto mb-16"
+            className="bg-linear-to-r from-purple-600/10 to-pink-600/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30 max-w-5xl mx-auto mb-16"
           >
             <h3 className="text-2xl font-bold text-white text-center mb-8">
               Compliance & Certifications
@@ -296,7 +296,7 @@ export default function PerformancePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/signup"
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
+                className="inline-flex items-center px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
               >
                 Start free trial
                 <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

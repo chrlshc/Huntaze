@@ -196,7 +196,7 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
             className="space-y-6"
           >
             <h2 className="text-5xl lg:text-6xl font-bold">
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
                 Une interface,
                 <br />
                 tous vos réseaux
@@ -371,7 +371,7 @@ const FeatureItem: React.FC<{ text: string }> = ({ text }) => (
     className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm"
     whileHover={{ backgroundColor: 'rgba(139,92,246,0.1)' }}
   >
-    <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" />
+    <div className="w-2 h-2 bg-linear-to-r from-purple-400 to-pink-400 rounded-full" />
     <span className="text-white">{text}</span>
   </motion.div>
 );

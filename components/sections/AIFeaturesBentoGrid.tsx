@@ -284,15 +284,15 @@ const FeatureCard = ({ feature, index, isHovered, onHover }: any) => {
 
   return (
     <div
-      className={`${gridClass} relative bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer group hover:scale-[1.02] hover:-translate-y-[5px] transition-transform`}
+      className={`${gridClass} relative bg-linear-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer group hover:scale-[1.02] hover:-translate-y-[5px] transition-transform`}
       onMouseEnter={() => onHover(feature.id)}
       onMouseLeave={() => onHover(null)}
     >
       {/* Animated border gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${feature.borderGradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
+      <div className={`absolute inset-0 bg-linear-to-br ${feature.borderGradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
       
       {/* Border */}
-      <div className="absolute inset-[1px] bg-gray-900 rounded-2xl" />
+      <div className="absolute inset-px bg-gray-900 rounded-2xl" />
       
       {/* Content */}
       <div className="relative p-6 h-full flex flex-col">
@@ -301,7 +301,7 @@ const FeatureCard = ({ feature, index, isHovered, onHover }: any) => {
         <div className="flex justify-between items-start mb-4">
           {/* Icon */}
           <div 
-            className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center`}
+            className={`w-12 h-12 bg-linear-to-br ${feature.gradient} rounded-xl flex items-center justify-center`}
           >
             <Icon className="w-6 h-6 text-white" />
           </div>
@@ -318,7 +318,7 @@ const FeatureCard = ({ feature, index, isHovered, onHover }: any) => {
 
         {/* Content */}
         <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-        <p className="text-gray-400 text-sm flex-grow">{feature.description}</p>
+        <p className="text-gray-400 text-sm grow">{feature.description}</p>
 
         {/* Demo components for specific features */}
         {feature.id === 'ai-chat' && feature.size === 'large' && <AIChatDemo />}
@@ -327,7 +327,7 @@ const FeatureCard = ({ feature, index, isHovered, onHover }: any) => {
         
         {/* Hover effect indicator */}
         <div
-          className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 transition-transform duration-300 origin-left ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}
+          className={`absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-purple-500 to-pink-500 transition-transform duration-300 origin-left ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}
         />
       </div>
     </div>
@@ -339,7 +339,7 @@ export default function AIFeaturesBentoGrid() {
   const activeFeatures = features.length; // Valeur statique au lieu d'animée
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-950 via-black to-gray-950 relative overflow-hidden">
+    <section className="py-20 px-4 bg-linear-to-b from-gray-950 via-black to-gray-950 relative overflow-hidden">
       {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/3 -right-1/4 w-[600px] h-[600px] bg-blue-600/10 rounded-full filter blur-3xl animate-pulse" />
@@ -360,7 +360,7 @@ export default function AIFeaturesBentoGrid() {
           
           <h2 className="text-5xl lg:text-6xl font-bold text-white mb-4">
             Your AI{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">
               Command Center
             </span>
           </h2>
@@ -400,7 +400,7 @@ export default function AIFeaturesBentoGrid() {
             See how creators are saving <span className="text-purple-600 font-semibold">20+ hours</span> per week
           </p>
           <button
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold group relative overflow-hidden hover:scale-105 active:scale-95 transition-transform"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold group relative overflow-hidden hover:scale-105 active:scale-95 transition-transform"
           >
             <span
               className="absolute inset-0 bg-white dark:bg-gray-800 opacity-20 -translate-x-full group-hover:translate-x-full transition-transform duration-500"

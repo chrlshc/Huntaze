@@ -39,7 +39,7 @@ export default function TestEnv() {
 
           <button
             onClick={handleDirectTikTok}
-            className="px-6 py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-lg hover:opacity-90"
+            className="px-6 py-3 bg-linear-to-r from-red-500 to-blue-500 text-white rounded-lg hover:opacity-90"
           >
             Launch TikTok OAuth Directly
           </button>

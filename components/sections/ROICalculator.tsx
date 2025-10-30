@@ -40,7 +40,7 @@ export default function ROICalculator() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      className="py-20 bg-gradient-to-br from-purple-50 via-white to-pink-50"
+      className="py-20 bg-linear-to-br from-purple-50 via-white to-pink-50"
     >
       <div className="max-w-7xl mx-auto px-8">
         {/* Header */}
@@ -198,7 +198,7 @@ export default function ROICalculator() {
             className="space-y-6"
           >
             {/* Main Result Card */}
-            <div className="bg-gradient-to-br from-purple-600 to-pink-600 text-white rounded-2xl p-8 shadow-xl">
+            <div className="bg-linear-to-br from-purple-600 to-pink-600 text-white rounded-2xl p-8 shadow-xl">
               <h3 className="text-2xl font-semibold mb-6">
                 Your Potential with Huntaze
               </h3>

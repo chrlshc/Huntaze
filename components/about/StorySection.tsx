@@ -26,7 +26,7 @@ export function StorySection() {
   ];
 
   return (
-    <section id="story" className="py-32 bg-gradient-to-b from-white to-gray-50">
+    <section id="story" className="py-32 bg-linear-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           ref={ref}
@@ -60,8 +60,8 @@ export function StorySection() {
                   transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
                   className="flex gap-6"
                 >
-                  <div className="flex-shrink-0">
-                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="shrink-0">
+                    <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
                       {item.year}
                     </div>
                   </div>
@@ -85,8 +85,8 @@ export function StorySection() {
             className="relative"
           >
             <div className="aspect-square relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl transform rotate-3"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl transform -rotate-3"></div>
+              <div className="absolute inset-0 bg-linear-to-br from-purple-100 to-pink-100 rounded-3xl transform rotate-3"></div>
+              <div className="absolute inset-0 bg-linear-to-br from-blue-100 to-purple-100 rounded-3xl transform -rotate-3"></div>
               <div className="relative bg-white rounded-3xl shadow-xl p-8 h-full flex flex-col justify-center">
                 <blockquote className="text-2xl font-medium text-gray-900 mb-6">
                   "We believe creators should focus on creating, not on spreadsheets and scheduling."

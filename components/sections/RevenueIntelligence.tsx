@@ -140,7 +140,7 @@ const DashboardInterface = () => {
               className="flex-1 flex flex-col items-center gap-1 h-full"
             >
               <div
-                className="w-full bg-gradient-to-t from-purple-600 to-pink-600 rounded-t-lg relative hover:opacity-80 transition-opacity"
+                className="w-full bg-linear-to-t from-purple-600 to-pink-600 rounded-t-lg relative hover:opacity-80 transition-opacity"
                 style={{ height: `${(data.value / maxValue) * 100}%` }}
               >
                 <span
@@ -206,7 +206,7 @@ export default function RevenueIntelligence() {
           
           <h2 className="text-4xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white">
             Revenue Intelligence{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-500">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-green-500 to-emerald-500">
               Dashboard
             </span>
           </h2>
@@ -228,7 +228,7 @@ export default function RevenueIntelligence() {
             
             {/* Floating metric cards */}
             <div
-              className="absolute -top-4 -right-4 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl px-4 py-2 shadow-2xl"
+              className="absolute -top-4 -right-4 bg-linear-to-br from-green-600 to-emerald-600 rounded-xl px-4 py-2 shadow-2xl"
               style={{ 
                 transform: isHovered ? 'translateY(-10px) rotate(5deg)' : 'translateY(0) rotate(0)',
                 transition: 'transform 0.3s ease'
@@ -239,7 +239,7 @@ export default function RevenueIntelligence() {
             </div>
             
             <div
-              className="absolute -bottom-4 -left-4 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl px-4 py-2 shadow-2xl"
+              className="absolute -bottom-4 -left-4 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl px-4 py-2 shadow-2xl"
               style={{ 
                 transform: isHovered ? 'translateY(10px) rotate(-5deg)' : 'translateY(0) rotate(0)',
                 transition: 'transform 0.3s ease'
@@ -296,7 +296,7 @@ export default function RevenueIntelligence() {
         
         {/* Stats bar */}
         <div
-          className="mt-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8"
+          className="mt-16 bg-linear-to-r from-purple-600 to-pink-600 rounded-2xl p-8"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[

@@ -183,7 +183,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative rounded-2xl p-8 min-h-[32rem] flex flex-col elevated-card hover:shadow-md transition-shadow ${isPro ? 'ring-2 ring-purple-300 dark:ring-purple-700' : ''}`}
+                className={`relative rounded-2xl p-8 min-h-128 flex flex-col elevated-card hover:shadow-md transition-shadow ${isPro ? 'ring-2 ring-purple-300 dark:ring-purple-700' : ''}`}
               >
                 {plan.badge && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -232,7 +232,7 @@ export default function PricingClient({ plans }: PricingClientProps) {
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start">
-                      <Check className={`w-5 h-5 mr-3 flex-shrink-0 ${
+                      <Check className={`w-5 h-5 mr-3 shrink-0 ${
                         isPro ? 'text-purple-200' : 'text-green-500'
                       }`} />
                       <span className={`text-sm ${

@@ -193,7 +193,7 @@ export default function FallingLines() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute top-0 left-0 w-full h-full pointer-events-none z-[1]"
+      className="absolute top-0 left-0 w-full h-full pointer-events-none z-1"
       style={{ mixBlendMode: 'screen' }}
     />
   );

@@ -161,7 +161,7 @@ export default function FeaturesMinimal() {
                         transition={{ delay: i * 0.1 }}
                         className="flex items-center gap-3 p-3 bg-gray-800 rounded-xl"
                       >
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full" />
+                        <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-pink-400 rounded-full" />
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-sm text-white">{msg.name}</span>
@@ -215,7 +215,7 @@ export default function FeaturesMinimal() {
                           <span className="text-xs text-green-600 font-medium">{metric.change}</span>
                         </div>
                         <div className="text-2xl font-bold text-white">{metric.value}</div>
-                        <div className="mt-2 h-8 bg-gradient-to-r from-purple-200 to-purple-100 rounded" />
+                        <div className="mt-2 h-8 bg-linear-to-r from-purple-200 to-purple-100 rounded" />
                       </motion.div>
                     ))}
                   </div>

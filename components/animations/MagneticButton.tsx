@@ -76,7 +76,7 @@ const MagneticButton: React.FC<MagneticButtonProps> = ({
   // Style variants
   const variants = {
     primary: `
-      bg-gradient-to-r from-purple-500 to-pink-500 text-white
+      bg-linear-to-r from-purple-500 to-pink-500 text-white
       shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/40
       border-0
     `,
@@ -171,7 +171,7 @@ const MagneticButton: React.FC<MagneticButtonProps> = ({
     >
       {/* Gradient overlay for hover effect */}
       <motion.div
-        className="absolute inset-0 opacity-0 bg-gradient-to-t from-white/20 to-transparent"
+        className="absolute inset-0 opacity-0 bg-linear-to-t from-white/20 to-transparent"
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       />

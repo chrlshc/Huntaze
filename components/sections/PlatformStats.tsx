@@ -31,7 +31,7 @@ const StatCard = ({ platform }: { platform: typeof platforms[0] }) => {
   return (
     <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-8 overflow-hidden group border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
       {/* Background gradient on hover */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${platform.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+      <div className={`absolute inset-0 bg-linear-to-br ${platform.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
       
       {/* Logo */}
       <div className="text-5xl mb-4">{platform.logo}</div>
@@ -70,7 +70,7 @@ export default function PlatformStats() {
         </div>
 
         {/* Bottom section with total stats */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center text-white">
+        <div className="bg-linear-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center text-white">
           <h3 className="text-3xl font-bold mb-6">Total Platform Impact</h3>
           <div className="grid md:grid-cols-3 gap-8">
             <div>

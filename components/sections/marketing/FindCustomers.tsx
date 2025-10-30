@@ -47,7 +47,7 @@ export function FindCustomers() {
   ];
 
   return (
-    <section id="customers" className="py-24 lg:py-32 bg-gradient-to-b from-gray-50 to-white dark:from-black to-gray-950 overflow-hidden">
+    <section id="customers" className="py-24 lg:py-32 bg-linear-to-b from-gray-50 to-white dark:from-black to-gray-950 overflow-hidden">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -63,7 +63,7 @@ export function FindCustomers() {
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Find your{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400">
               forever customers
             </span>
           </h2>
@@ -81,7 +81,7 @@ export function FindCustomers() {
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="absolute -inset-4 bg-gradient-to-r from-purple-200 to-pink-200 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl blur-3xl opacity-50" />
+            <div className="absolute -inset-4 bg-linear-to-r from-purple-200 to-pink-200 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl blur-3xl opacity-50" />
             
             <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-8">
               <div className="flex items-center justify-between mb-8">
@@ -118,7 +118,7 @@ export function FindCustomers() {
                 ))}
               </div>
 
-              <div className="mt-8 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+              <div className="mt-8 p-4 rounded-xl bg-linear-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -153,7 +153,7 @@ export function FindCustomers() {
                 transition={{ delay: index * 0.1 }}
                 className="flex gap-4"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center shrink-0">
                   <feature.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -177,11 +177,11 @@ export function FindCustomers() {
           transition={{ duration: 1 }}
           className="mt-24 max-w-4xl mx-auto"
         >
-          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-1">
+          <div className="bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl p-1">
             <div className="bg-white dark:bg-gray-900 rounded-3xl p-8">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                     <Brain className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -220,7 +220,7 @@ export function FindCustomers() {
                 <Link href="/demo">
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Get AI insights now
                   </Button>

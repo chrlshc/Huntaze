@@ -66,7 +66,7 @@ export default function LinearHero() {
       className={`relative ${isMobile ? 'min-h-screen' : 'min-h-[180vh]'} bg-[#0b0d10] text-[#e7e9ee]`}
       aria-label="Hero section"
     >
-      <div className="sticky top-0 h-[100svh] grid place-items-center px-4">
+      <div className="sticky top-0 h-svh grid place-items-center px-4">
         <div className="w-full max-w-[1100px] pt-20 md:pt-0">
           {/* Title */}
           <div className="mb-12 text-center">
@@ -99,7 +99,7 @@ export default function LinearHero() {
           <motion.div
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
-            className="relative mx-auto aspect-[16/9] w-full select-none rounded-3xl border border-white/10 bg-[#0f1217] shadow-[0_40px_120px_rgba(0,0,0,0.55)]"
+            className="relative mx-auto aspect-video w-full select-none rounded-3xl border border-white/10 bg-[#0f1217] shadow-[0_40px_120px_rgba(0,0,0,0.55)]"
             style={{
               transformStyle: 'preserve-3d',
               transformPerspective: 1200,

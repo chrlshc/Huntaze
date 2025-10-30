@@ -209,7 +209,7 @@ export default function SupportFundingPage() {
 
           {activeTab === 'funding' && (
             <div className="space-y-8">
-              <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-2xl p-8 border border-purple-500/20">
+              <div className="bg-linear-to-r from-purple-500/10 to-blue-500/10 rounded-2xl p-8 border border-purple-500/20">
                 <h2 className="text-3xl font-bold mb-4">Creator Capital Fund</h2>
                 <p className="text-lg text-gray-300 mb-8">
                   Access up to $500,000 in funding to grow your content business. No equity required.
@@ -407,7 +407,7 @@ export default function SupportFundingPage() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl p-6 border border-purple-500/20">
+                <div className="bg-linear-to-r from-purple-500/10 to-blue-500/10 rounded-xl p-6 border border-purple-500/20">
                   <h3 className="text-lg font-semibold mb-2">Huntaze Creator Summit 2024</h3>
                   <p className="text-gray-400 mb-4">
                     Join us in Miami for 3 days of learning, networking, and exclusive announcements.
@@ -451,7 +451,7 @@ export default function SupportFundingPage() {
             </div>
           )}
 
-          <div className="mt-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl p-8 text-center">
+          <div className="mt-16 bg-linear-to-r from-purple-500 to-blue-500 rounded-2xl p-8 text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to get the support you deserve?</h2>
             <p className="text-lg mb-8 opacity-90">
               Join thousands of creators who trust Huntaze for growth and support.

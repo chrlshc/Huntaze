@@ -8,10 +8,10 @@ import LiveDashboard from './LiveDashboard'
 
 export default function EnterpriseHero() {
   return (
-    <section className="pt-24 pb-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+    <section className="pt-24 pb-20 bg-linear-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" aria-hidden>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-size-[4rem_4rem]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-8 relative z-10">
@@ -24,7 +24,7 @@ export default function EnterpriseHero() {
           >
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
               Scale your creator business{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="bg-clip-text text-transparent bg-linear-to-r from-purple-600 to-pink-600">
                 without hiring
               </span>
             </h1>

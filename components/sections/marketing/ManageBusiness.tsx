@@ -82,7 +82,7 @@ export function ManageBusiness() {
   };
 
   return (
-    <section id="manage" className="py-24 lg:py-32 bg-gradient-to-b from-gray-50 to-white dark:from-black to-gray-950">
+    <section id="manage" className="py-24 lg:py-32 bg-linear-to-b from-gray-50 to-white dark:from-black to-gray-950">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -150,7 +150,7 @@ export function ManageBusiness() {
                         transition={{ delay: index * 0.1 }}
                         className="flex items-start gap-3"
                       >
-                        <CheckCircle2 className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-6 h-6 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
                         <span className="text-gray-700 dark:text-gray-300">
                           {benefit}
                         </span>
@@ -193,7 +193,7 @@ export function ManageBusiness() {
                   <Link href="/demo">
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                      className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
                     >
                       Get started
                       <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -208,7 +208,7 @@ export function ManageBusiness() {
                   transition={{ duration: 0.5 }}
                   className="relative"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl blur-3xl opacity-50" />
+                  <div className="absolute inset-0 bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl blur-3xl opacity-50" />
                   
                   <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-8 shadow-xl">
                     {/* Dashboard Preview */}
@@ -251,7 +251,7 @@ export function ManageBusiness() {
                     </div>
 
                     {/* Chart Placeholder */}
-                    <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-xl flex items-center justify-center">
+                    <div className="h-48 bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-xl flex items-center justify-center">
                       <span className="text-gray-400 dark:text-gray-600">
                         Revenue Chart
                       </span>

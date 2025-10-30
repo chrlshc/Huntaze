@@ -23,7 +23,7 @@ export default function SocialProof() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-950 to-gray-900">
+    <section className="py-20 bg-linear-to-b from-gray-950 to-gray-900">
       <div className="container mx-auto px-4">
         {/* Main counter - NO ANIMATION */}
         <div className="text-center mb-16">
@@ -31,7 +31,7 @@ export default function SocialProof() {
             Thousands of creators have collectively generated over
           </p>
           <div className="text-6xl lg:text-8xl font-bold mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
               $50,000,000
             </span>
           </div>
@@ -68,7 +68,7 @@ export default function SocialProof() {
               className="bg-gray-900/50 rounded-xl p-6 border border-gray-800"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
+                <div className="w-12 h-12 rounded-full bg-linear-to-br from-purple-500 to-pink-500" />
                 <div>
                   <div className="font-semibold">{testimonial.name}</div>
                   <div className="text-sm text-gray-400">{testimonial.role}</div>

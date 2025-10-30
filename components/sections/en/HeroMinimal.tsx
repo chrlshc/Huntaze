@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function HeroMinimal() {
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-linear-to-b from-gray-50 to-white">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
       
@@ -30,7 +30,7 @@ export default function HeroMinimal() {
               className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight tracking-tight"
             >
               Double your revenue.
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="block text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 Cut the busywork.
               </span>
             </motion.h1>
@@ -125,7 +125,7 @@ export default function HeroMinimal() {
                         </span>
                       </div>
                       <div className="text-3xl font-bold text-gray-900">$2,847</div>
-                      <div className="mt-3 h-16 bg-gradient-to-t from-purple-100 to-transparent rounded-lg" />
+                      <div className="mt-3 h-16 bg-linear-to-t from-purple-100 to-transparent rounded-lg" />
                     </div>
                     
                     {/* Metrics grid */}
@@ -168,7 +168,7 @@ export default function HeroMinimal() {
                 className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-gray-100"
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full" />
+                  <div className="w-8 h-8 bg-linear-to-br from-purple-400 to-pink-400 rounded-full" />
                   <div>
                     <div className="text-xs font-semibold text-gray-900">New subscriber!</div>
                     <div className="text-[10px] text-gray-500">Emily just joined</div>

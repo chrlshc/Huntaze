@@ -53,7 +53,7 @@ export default function PhoneMockup({
       </div>
       
       {/* Reflection effect */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent rounded-[60px] pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-tr from-transparent via-white/5 to-transparent rounded-[60px] pointer-events-none" />
     </motion.div>
   );
 }

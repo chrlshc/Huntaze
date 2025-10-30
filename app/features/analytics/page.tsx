@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8"
+              className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8"
             >
               <div className="text-center mb-6">
                 <div className="text-5xl font-bold text-purple-600 dark:text-purple-400 mb-2">

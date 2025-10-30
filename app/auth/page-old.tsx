@@ -115,7 +115,7 @@ export default function AuthPage() {
           </div>
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-2xl">H</span>
             </div>
           </div>

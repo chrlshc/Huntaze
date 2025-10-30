@@ -7,7 +7,7 @@ export default function OnlyFansFeatures() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-br from-blue-600 to-blue-700">
+      <section className="relative py-20 px-4 bg-linear-to-br from-blue-600 to-blue-700">
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
             <Zap className="w-5 h-5 text-yellow-300" />
@@ -49,7 +49,7 @@ export default function OnlyFansFeatures() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* DM Automation */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
                 <MessageSquare className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -76,7 +76,7 @@ export default function OnlyFansFeatures() {
 
             {/* PPV Campaigns */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-linear-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6">
                 <DollarSign className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -103,7 +103,7 @@ export default function OnlyFansFeatures() {
 
             {/* Welcome Messages */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-6">
                 <Gift className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -130,7 +130,7 @@ export default function OnlyFansFeatures() {
 
             {/* Fan Analytics */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-linear-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-6">
                 <BarChart3 className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -157,7 +157,7 @@ export default function OnlyFansFeatures() {
 
             {/* Fan Management */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-linear-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-6">
                 <Users className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -184,7 +184,7 @@ export default function OnlyFansFeatures() {
 
             {/* Security */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="w-14 h-14 bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-linear-to-br from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mb-6">
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
@@ -233,7 +233,7 @@ export default function OnlyFansFeatures() {
               </ul>
             </div>
             
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
+            <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
               <h3 className="text-xl font-bold text-green-600 mb-4">
                 ✅ What Huntaze Does
               </h3>
@@ -252,7 +252,7 @@ export default function OnlyFansFeatures() {
               Just pick the plan that matches your message volume. That's it.
             </p>
             <Link href="/pricing">
-              <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
+              <button className="px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
                 See Simple, Honest Pricing
               </button>
             </Link>

@@ -172,7 +172,7 @@ export default function AppSidebar() {
                   <div
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                       active
-                        ? "bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700"
+                        ? "bg-linear-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700"
                         : "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                     }`}
                     aria-current={active ? "page" : undefined}

@@ -106,7 +106,7 @@ export default function CreatorPainPoints() {
               className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow"
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-red-50 rounded-lg flex-shrink-0">
+                <div className="p-3 bg-red-50 rounded-lg shrink-0">
                   {point.icon}
                 </div>
                 <div>
@@ -127,7 +127,7 @@ export default function CreatorPainPoints() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-12 text-white"
+          className="bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl p-12 text-white"
         >
           <h3 className="text-3xl font-bold text-center mb-12">
             The Solo Creator Revolution

@@ -113,7 +113,7 @@ export default function CareersPage() {
       <HeaderImproved />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-gradient-to-b from-purple-50 to-white dark:from-gray-950 dark:to-black">
+      <section className="pt-32 pb-20 bg-linear-to-b from-purple-50 to-white dark:from-gray-950 dark:to-black">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -122,7 +122,7 @@ export default function CareersPage() {
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
               Join the team
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="block text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 building the future
               </span>
             </h1>
@@ -174,7 +174,7 @@ export default function CareersPage() {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
                   <value.icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
@@ -268,7 +268,7 @@ export default function CareersPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <section className="py-20 bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Don't see your role?

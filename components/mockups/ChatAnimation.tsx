@@ -101,7 +101,7 @@ export default function ChatAnimation({
       {/* Header */}
       <div className="p-4 bg-gray-900 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full" />
+          <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-pink-500 rounded-full" />
           <div>
             <div className="font-semibold text-white">Sarah Miller</div>
             <div className="text-xs text-green-400">Online now</div>
@@ -123,7 +123,7 @@ export default function ChatAnimation({
               <div className={`px-4 py-2 rounded-2xl max-w-[80%] ${
                 msg.from === 'ai' 
                   ? 'bg-gray-800 text-white rounded-bl-sm' 
-                  : 'bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-br-sm'
+                  : 'bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-br-sm'
               }`}>
                 {msg.text}
               </div>

@@ -17,7 +17,7 @@ export function HeroSection() {
       {/* Background with parallax effect */}
       <motion.div 
         style={{ y }}
-        className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"
+        className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-purple-50"
       />
       
       <motion.div
@@ -25,7 +25,7 @@ export function HeroSection() {
         className="relative z-10 max-w-4xl mx-auto px-6 text-center"
       >
         <motion.h1 
-          className="display-1 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent"
+          className="display-1 bg-linear-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
@@ -53,7 +53,7 @@ export function HeroSection() {
         >
           <a 
             href="#story" 
-            className="btn-primary px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
+            className="btn-primary px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
           >
             Our Story
           </a>

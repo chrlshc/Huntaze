@@ -24,7 +24,7 @@ export default function ProductScreenshot({
       className={`relative ${className}`}
     >
       {/* Glow effect derrière la capture */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
+      <div className="absolute inset-0 bg-linear-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
       
       {/* Container avec bordure subtile */}
       <div className="relative rounded-xl overflow-hidden border border-white/10 bg-black/50 backdrop-blur-sm">
@@ -39,7 +39,7 @@ export default function ProductScreenshot({
         />
         
         {/* Overlay gradient pour meilleure intégration */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
       </div>
       
       {/* Badge "Live Demo" */}

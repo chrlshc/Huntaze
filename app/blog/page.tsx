@@ -91,7 +91,7 @@ export default function BlogPage() {
       <HeaderImproved />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-gradient-to-b from-purple-50 to-white dark:from-gray-950 dark:to-black">
+      <section className="pt-32 pb-20 bg-linear-to-b from-purple-50 to-white dark:from-gray-950 dark:to-black">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -100,7 +100,7 @@ export default function BlogPage() {
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
               Creator insights &
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="block text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 growth strategies
               </span>
             </h1>
@@ -139,7 +139,7 @@ export default function BlogPage() {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-1"
+              className="bg-linear-to-r from-purple-600 to-pink-600 rounded-3xl p-1"
             >
               <div className="bg-white dark:bg-black rounded-3xl p-8 md:p-12">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -175,7 +175,7 @@ export default function BlogPage() {
                     </Link>
                   </div>
                   <div className="relative">
-                    <div className="aspect-video bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl flex items-center justify-center">
+                    <div className="aspect-video bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl flex items-center justify-center">
                       <post.icon className="w-24 h-24 text-purple-600 opacity-20" />
                     </div>
                   </div>
@@ -202,7 +202,7 @@ export default function BlogPage() {
                 <Link href={`/blog/${post.slug}`}>
                   <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-lg transition-shadow">
                     {/* Image */}
-                    <div className="aspect-video bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
+                    <div className="aspect-video bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
                       <post.icon className="w-16 h-16 text-purple-600 opacity-20" />
                     </div>
                     
@@ -225,7 +225,7 @@ export default function BlogPage() {
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full" />
+                          <div className="w-8 h-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-full" />
                           <div>
                             <p className="text-sm font-medium">{post.author}</p>
                             <p className="text-xs text-gray-500">{post.date}</p>
@@ -250,7 +250,7 @@ export default function BlogPage() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <section className="py-20 bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Get creator insights delivered

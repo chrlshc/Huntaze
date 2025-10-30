@@ -171,7 +171,7 @@ export default function AIChatPage() {
                 transition={{ delay: index * 0.2 }}
                 className="flex gap-6 items-start"
               >
-                <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold shrink-0">
                   {step.step}
                 </div>
                 <div>

@@ -66,7 +66,7 @@ export function ThemeToggleEnhanced() {
         </div>
         
         {/* Hover effect */}
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        <div className="absolute inset-0 rounded-lg bg-linear-to-r from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
       </button>
 
       <AnimatePresence>
@@ -208,8 +208,8 @@ export function ThemeToggleCompact() {
       {/* Background gradient effect */}
       <div className={`absolute inset-0 rounded-full transition-opacity duration-300 ${
         resolvedTheme === 'dark' 
-          ? 'bg-gradient-to-r from-purple-600/20 to-purple-400/20 opacity-100' 
-          : 'bg-gradient-to-r from-amber-400/20 to-orange-400/20 opacity-100'
+          ? 'bg-linear-to-r from-purple-600/20 to-purple-400/20 opacity-100' 
+          : 'bg-linear-to-r from-amber-400/20 to-orange-400/20 opacity-100'
       }`} />
     </motion.button>
   )

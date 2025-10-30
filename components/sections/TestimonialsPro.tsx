@@ -91,7 +91,7 @@ export default function TestimonialsPro() {
         <div className="text-center mb-12">
           <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
             Loved by{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
               15,000+ creators
             </span>
           </h2>
@@ -109,7 +109,7 @@ export default function TestimonialsPro() {
                 <div className="relative">
                   <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200">
                     {/* Placeholder for real image */}
-                    <div className="w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-2xl">
+                    <div className="w-full h-full bg-linear-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-2xl">
                       {selectedTestimonial.name.split(' ').map(n => n[0]).join('')}
                     </div>
                   </div>
@@ -206,7 +206,7 @@ export default function TestimonialsPro() {
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                  <div className="w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold">
+                  <div className="w-full h-full bg-linear-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold">
                     {testimonial.name.split(' ').map(n => n[0]).join('')}
                   </div>
                 </div>
@@ -249,7 +249,7 @@ export default function TestimonialsPro() {
           </p>
           <Link 
             href="/auth"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-colors"
+            className="inline-flex items-center gap-2 bg-linear-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-colors"
           >
             Start free trial
             <span>→</span>

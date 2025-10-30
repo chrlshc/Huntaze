@@ -80,7 +80,7 @@ export default function FAQSection() {
               <h3 className="text-lg font-medium text-gray-900 dark:text-white pr-4">
                 {faq.question}
               </h3>
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {openItems.includes(faq.id) ? (
                   <Minus className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                 ) : (

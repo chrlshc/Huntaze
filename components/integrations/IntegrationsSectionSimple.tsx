@@ -91,7 +91,7 @@ export function IntegrationsSectionSimple() {
               onClick={() => setSelectedCategory(category.id)}
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 hover-scale ${
                 selectedCategory === category.id
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                  ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
               }`}
             >

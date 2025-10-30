@@ -10,7 +10,7 @@ export default function HeroSimple() {
         <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
           Turn your content into
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
             predictable revenue
           </span>
         </h1>
@@ -23,7 +23,7 @@ export default function HeroSimple() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Link 
             href="/auth"
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg font-semibold text-lg"
+            className="bg-linear-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg font-semibold text-lg"
           >
             Start free trial
           </Link>

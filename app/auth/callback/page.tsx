@@ -26,7 +26,7 @@ function CallbackContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
         <div className="elevated-card p-8 max-w-md w-full text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Authorization Error</h1>
           <p className="text-gray-700 mb-2">{error}</p>
@@ -42,7 +42,7 @@ function CallbackContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
       <div className="elevated-card p-8 max-w-md w-full text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Connecting to TikTok...</h1>
         <div className="flex justify-center mb-6">
@@ -57,7 +57,7 @@ function CallbackContent() {
 export default function CallbackPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
         <div className="elevated-card p-8 max-w-md w-full text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Loading...</h1>
           <div className="flex justify-center mb-6">

@@ -30,7 +30,7 @@ export function DashboardMockup() {
       {/* Dashboard Content */}
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-b-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/80 border-b border-gray-200 dark:border-gray-600 p-8">
+        <div className="bg-linear-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/80 border-b border-gray-200 dark:border-gray-600 p-8">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Revenue Dashboard</h3>
@@ -58,7 +58,7 @@ export function DashboardMockup() {
         <div className="hidden grid-cols-4 gap-6 p-6">
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4"
+            className="bg-linear-to-br from-purple-50 to-pink-50 rounded-xl p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-5 h-5 text-purple-600" />
@@ -70,7 +70,7 @@ export function DashboardMockup() {
 
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4"
+            className="bg-linear-to-br from-blue-50 to-purple-50 rounded-xl p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <Users className="w-5 h-5 text-blue-600" />
@@ -82,7 +82,7 @@ export function DashboardMockup() {
 
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl p-4"
+            className="bg-linear-to-br from-green-50 to-blue-50 rounded-xl p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <MessageSquare className="w-5 h-5 text-green-600" />
@@ -94,7 +94,7 @@ export function DashboardMockup() {
 
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl p-4"
+            className="bg-linear-to-br from-pink-50 to-purple-50 rounded-xl p-4"
           >
             <div className="flex items-center justify-between mb-2">
               <Zap className="w-5 h-5 text-pink-600" />
@@ -107,8 +107,8 @@ export function DashboardMockup() {
 
         {/* Chart Area */}
         <div className="p-8 pt-0">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/50 rounded-2xl p-8 h-80 relative overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-100/50 to-transparent dark:from-purple-900/20"></div>
+          <div className="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/50 rounded-2xl p-8 h-80 relative overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
+            <div className="absolute inset-0 bg-linear-to-t from-purple-100/50 to-transparent dark:from-purple-900/20"></div>
             <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="revenue-gradient" x1="0%" y1="0%" x2="0%" y2="100%">

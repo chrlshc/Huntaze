@@ -64,7 +64,7 @@ export default function OfConnectPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl font-bold text-white">OF</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">

@@ -75,7 +75,7 @@ export function TeamSection() {
                   className="object-cover"
                 />
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-t from-purple-600/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute inset-0 bg-linear-to-t from-purple-600/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 />
               </motion.div>
               <h3 className="text-xl font-semibold text-gray-900 mb-1">
@@ -106,7 +106,7 @@ export function TeamSection() {
           </p>
           <a 
             href="/careers" 
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
           >
             View Open Positions
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

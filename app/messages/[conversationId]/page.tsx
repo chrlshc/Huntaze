@@ -241,7 +241,7 @@ export default function ConversationPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
       {/* Header */}
-      <header className="bg-white/90 dark:bg-gray-900/90 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+      <header className="bg-white/90 dark:bg-gray-900/90 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-40 backdrop-blur supports-backdrop-filter:bg-white/80">
         <div className="flex items-center justify-between gap-3">
           <button onClick={() => router.back()} className="p-2 -ml-2">
             <ChevronLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />

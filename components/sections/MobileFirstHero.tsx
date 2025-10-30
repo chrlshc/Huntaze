@@ -63,8 +63,8 @@ export default function MobileFirstHero() {
     >
       {/* Background: discrete halos + safe zone for notches */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-1/2 h-[46rem] w-[46rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.15),transparent_70%)] blur-3xl" />
-        <div className="absolute bottom-[-16rem] right-[-8rem] h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(236,72,153,0.1),transparent_70%)] blur-3xl" />
+        <div className="absolute -top-40 left-1/2 h-184 w-184 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.15),transparent_70%)] blur-3xl" />
+        <div className="absolute -bottom-64 -right-32 h-144 w-xl rounded-full bg-[radial-gradient(closest-side,rgba(236,72,153,0.1),transparent_70%)] blur-3xl" />
       </div>
 
       {/* Mobile-first container (no sticky on mobile) */}
@@ -72,7 +72,7 @@ export default function MobileFirstHero() {
         className="
           mx-auto flex max-w-[1200px] flex-col items-center justify-center
           px-4 pt-24 pb-16
-          min-h-[100vh] md:min-h-[120vh]
+          min-h-screen md:min-h-[120vh]
         "
         style={{
           // Subtle parallax (mobile/desktop)
@@ -90,7 +90,7 @@ export default function MobileFirstHero() {
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6">
             Turn your content into
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
               predictable revenue
             </span>
           </h1>

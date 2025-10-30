@@ -69,10 +69,10 @@ export default function WhyHuntazePage() {
   const currentWidget = widgets[activeWidget];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-purple-600/10 to-pink-600/10"></div>
         <div className="relative max-w-7xl mx-auto px-6 pt-20 pb-12">
           <Link href="/dashboard" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-8">
             <ChevronRight className="w-4 h-4 rotate-180" />
@@ -101,7 +101,7 @@ export default function WhyHuntazePage() {
                 onClick={() => setActiveWidget(index)}
                 className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
                   activeWidget === index 
-                    ? 'border-purple-300 bg-gradient-to-r from-purple-50 to-pink-50' 
+                    ? 'border-purple-300 bg-linear-to-r from-purple-50 to-pink-50' 
                     : 'border-gray-200 hover:border-gray-300 bg-white'
                 }`}
               >
@@ -134,13 +134,13 @@ export default function WhyHuntazePage() {
             <ul className="space-y-3 mb-6">
               {currentWidget.features.map((feature, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                   <span className="text-gray-700">{feature}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl">
+            <div className="p-4 bg-linear-to-r from-purple-100 to-pink-100 rounded-xl">
               <p className="text-sm font-semibold text-purple-900 mb-1">Average impact:</p>
               <p className="text-lg font-bold text-purple-900">{currentWidget.impact}</p>
             </div>
@@ -174,7 +174,7 @@ export default function WhyHuntazePage() {
             </div>
 
             {/* Huntaze */}
-            <div className="bg-gradient-to-br from-purple-900 to-pink-900 rounded-2xl p-8">
+            <div className="bg-linear-to-br from-purple-900 to-pink-900 rounded-2xl p-8">
               <h3 className="text-2xl font-bold text-green-400 mb-6">Huntaze 💜</h3>
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export default function WhyHuntazePage() {
       {/* Testimonials trimmed for clarity */}
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 py-14">
+      <div className="bg-linear-to-r from-purple-600 to-pink-600 py-14">
         <div className="max-w-4xl mx-auto px-6 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Keep more. Do less.</h2>
           <p className="text-base mb-6 opacity-90">Switch in minutes. No contracts.</p>

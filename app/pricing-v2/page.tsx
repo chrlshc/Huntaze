@@ -262,7 +262,7 @@ export default function PricingV2() {
                     <ul className="space-y-2">
                       {plan.features.core.map((feature, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
-                          <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                           <span className="text-gray-700 dark:text-gray-300">{feature}</span>
                         </li>
                       ))}
@@ -278,7 +278,7 @@ export default function PricingV2() {
                       <ul className="space-y-2">
                         {plan.features.advanced.map((feature, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                            <Check className="w-4 h-4 text-purple-500 mt-0.5 shrink-0" />
                             <span className="text-gray-700 dark:text-gray-300">{feature}</span>
                           </li>
                         ))}
@@ -295,7 +295,7 @@ export default function PricingV2() {
                       <ul className="space-y-2">
                         {plan.features.notIncluded.slice(0, 3).map((feature, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm">
-                            <X className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                            <X className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
                             <span className="text-gray-500 line-through">{feature}</span>
                           </li>
                         ))}

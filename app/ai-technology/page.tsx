@@ -8,7 +8,7 @@ export default function AITechnologyPage() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Hero Section */}
       <section className="relative py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20" />
+        <div className="absolute inset-0 bg-linear-to-br from-purple-600/20 to-pink-600/20" />
         
         <div className="relative z-10 max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-purple-500/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
@@ -16,7 +16,7 @@ export default function AITechnologyPage() {
             <span className="text-purple-200 font-semibold">Revolutionary Multi-Branch AI System</span>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-7xl font-black mb-6 bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Not All AI Is Created Equal
           </h1>
           
@@ -48,7 +48,7 @@ export default function AITechnologyPage() {
             </div>
 
             {/* What Huntaze Does */}
-            <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-2xl p-8 border border-purple-500/50">
+            <div className="bg-linear-to-br from-purple-900/50 to-pink-900/50 rounded-2xl p-8 border border-purple-500/50">
               <h3 className="text-2xl font-bold mb-6 text-green-400">✅ What Huntaze Does</h3>
               <div className="space-y-3">
                 <div className="bg-gray-900/50 rounded-lg p-3 border border-green-500/30">
@@ -202,7 +202,7 @@ export default function AITechnologyPage() {
           Don't settle for basic AI. Get the intelligence level that matches your growth goals.
         </p>
         <Link href="/pricing">
-          <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-2xl transform hover:-translate-y-1 transition-all">
+          <button className="px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-2xl transform hover:-translate-y-1 transition-all">
             Choose Your AI Power Level →
           </button>
         </Link>

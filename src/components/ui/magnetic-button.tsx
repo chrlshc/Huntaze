@@ -47,7 +47,7 @@ export function MagneticButton({
   };
 
   const variantClasses = {
-    primary: 'glass-button bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700',
+    primary: 'glass-button bg-linear-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700',
     secondary: 'glass-button bg-white/10 text-gray-900 dark:text-white hover:bg-white/20',
     ghost: 'text-gray-900 dark:text-white hover:bg-white/10'
   };
@@ -70,7 +70,7 @@ export function MagneticButton({
     >
       {/* Hover gradient effect */}
       <motion.div
-        className="absolute inset-0 opacity-0 bg-gradient-to-r from-white/20 to-white/0"
+        className="absolute inset-0 opacity-0 bg-linear-to-r from-white/20 to-white/0"
         whileHover={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       />

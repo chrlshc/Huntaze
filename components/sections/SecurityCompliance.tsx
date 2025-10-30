@@ -55,7 +55,7 @@ export default function SecurityCompliance() {
           
           <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
             Your content.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-700">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-purple-700">
               Always secure.
             </span>
           </h2>
@@ -94,28 +94,28 @@ export default function SecurityCompliance() {
               </h3>
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-white">Zero-knowledge architecture</p>
                     <p className="text-sm text-gray-400">Your content is encrypted before it reaches our servers</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-white">Automatic data anonymization</p>
                     <p className="text-sm text-gray-400">Personal data is anonymized for AI training</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-white">Regular security audits</p>
                     <p className="text-sm text-gray-400">Third-party penetration testing quarterly</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-white">Instant data deletion</p>
                     <p className="text-sm text-gray-400">Delete your data anytime, no questions asked</p>

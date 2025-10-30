@@ -7,7 +7,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function DemoPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50">
       {/* Hero Section */}
       <section className="pt-20 pb-12 px-6">
         <motion.div
@@ -21,7 +21,7 @@ export default function DemoPage() {
             Interactive Product Tour
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Experience Huntaze in Action
           </h1>
           
@@ -35,7 +35,7 @@ export default function DemoPage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
               >
                 Start Free Trial
                 <ArrowRight className="w-5 h-5" />
@@ -131,7 +131,7 @@ export default function DemoPage() {
           viewport={{ once: true }}
           className="max-w-4xl mx-auto"
         >
-          <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-12 text-center text-white">
+          <div className="bg-linear-to-br from-purple-600 to-pink-600 rounded-3xl p-12 text-center text-white">
             <h2 className="text-4xl font-bold mb-6">
               Ready to Get Started?
             </h2>

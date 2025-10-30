@@ -70,8 +70,8 @@ export default function LinearLikeHero() {
     >
       {/* Arrière-plan : halos radiaux + noise subtil */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-1/2 h-[60rem] w-[60rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.25),transparent_70%)] blur-3xl" />
-        <div className="absolute bottom-[-20rem] right-[-10rem] h-[40rem] w-[40rem] rounded-full bg-[radial-gradient(closest-side,rgba(236,72,153,0.2),transparent_70%)] blur-3xl" />
+        <div className="absolute -top-40 left-1/2 h-240 w-240 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.25),transparent_70%)] blur-3xl" />
+        <div className="absolute -bottom-80 -right-40 h-160 w-160 rounded-full bg-[radial-gradient(closest-side,rgba(236,72,153,0.2),transparent_70%)] blur-3xl" />
         {/* texture "grain" générée en SVG (très légère) */}
         <div
           className="absolute inset-0 opacity-[0.06] mix-blend-overlay"
@@ -83,7 +83,7 @@ export default function LinearLikeHero() {
       </div>
 
       {/* Viewport sticky */}
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+      <div className="sticky top-0 h-svh overflow-hidden">
         <div className="mx-auto flex h-full max-w-[1200px] flex-col items-center justify-center px-4">
           {/* Titre / copy */}
           <div className="mb-8 text-center">
@@ -144,7 +144,7 @@ export default function LinearLikeHero() {
             transition={{ duration: 1, delay: 0.4 }}
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
-            className="relative aspect-[16/9] w-full max-w-[1100px] select-none rounded-[28px] border border-white/10 bg-[#0f1217] shadow-[0_60px_160px_rgba(0,0,0,0.6)]"
+            className="relative aspect-video w-full max-w-[1100px] select-none rounded-[28px] border border-white/10 bg-[#0f1217] shadow-[0_60px_160px_rgba(0,0,0,0.6)]"
             style={{
               transformStyle: 'preserve-3d',
               transformPerspective: 1400,
@@ -170,7 +170,7 @@ export default function LinearLikeHero() {
             </div>
 
             {/* App Content */}
-            <div className="absolute inset-0 top-12 bg-gradient-to-br from-[#667eea] to-[#764ba2] p-6">
+            <div className="absolute inset-0 top-12 bg-linear-to-br from-[#667eea] to-[#764ba2] p-6">
               {/* Dashboard Header */}
               <div className="mb-6 flex items-center justify-between">
                 <div>

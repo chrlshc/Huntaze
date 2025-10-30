@@ -46,7 +46,7 @@ export default function LearnPage() {
       <div className="space-y-8">
         {steps.map((step, index) => (
           <div key={index} className="flex flex-col sm:flex-row sm:items-start sm:gap-4">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold">
+            <div className="shrink-0 w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold">
               {index + 1}
             </div>
             <div className="mt-4 sm:mt-0">

@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section id="top" className="hero-section relative overflow-hidden bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-black">
+    <section id="top" className="hero-section relative overflow-hidden bg-linear-to-b from-white to-gray-50 dark:from-gray-950 dark:to-black">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-100 dark:bg-purple-950/20 rounded-full blur-3xl opacity-50" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-100 dark:bg-blue-950/20 rounded-full blur-3xl opacity-50" />
@@ -58,7 +58,7 @@ export default function Hero() {
             className="cta-container"
           >
             <Link href="/join">
-              <Button size="lg" className="cta-primary group bg-gradient-to-r from-violet-500 to-indigo-500 text-white border-0">
+              <Button size="lg" className="cta-primary group bg-linear-to-r from-violet-500 to-indigo-500 text-white border-0">
                 Join the Beta
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>

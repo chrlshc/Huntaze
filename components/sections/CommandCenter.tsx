@@ -164,7 +164,7 @@ const CommandInterface = () => {
       {/* Quick actions with real-time toggles */}
       <div className="space-y-3 mb-6">
         <div 
-          className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 border border-purple-200 hover:scale-[1.02] transition-transform"
+          className="bg-linear-to-r from-purple-50 to-pink-50 rounded-lg p-3 border border-purple-200 hover:scale-[1.02] transition-transform"
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -206,10 +206,10 @@ const CommandInterface = () => {
         <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Active Campaigns</h4>
         
         <div 
-          className="relative bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 rounded-lg p-3 border border-purple-200 overflow-hidden animate-pulse"
+          className="relative bg-linear-to-r from-purple-50 via-pink-50 to-purple-50 rounded-lg p-3 border border-purple-200 overflow-hidden animate-pulse"
         >
           <div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/30 to-transparent animate-shimmer"
+            className="absolute inset-0 bg-linear-to-r from-transparent via-purple-200/30 to-transparent animate-shimmer"
           />
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-2">
@@ -237,7 +237,7 @@ const CommandInterface = () => {
             {/* Progress bar */}
             <div className="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000"
+                className="h-full bg-linear-to-r from-purple-500 to-pink-500 transition-all duration-1000"
                 style={{ width: `${(conversions / activeMessages) * 100}%` }}
               />
             </div>
@@ -364,19 +364,19 @@ export default function CommandCenter() {
             
             {/* Floating action indicators with enhanced animations */}
             <div
-              className="absolute -top-8 -right-8 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-4 shadow-2xl shadow-purple-500/50"
+              className="absolute -top-8 -right-8 bg-linear-to-br from-purple-600 to-purple-700 rounded-2xl p-4 shadow-2xl shadow-purple-500/50"
             >
               <Zap className="w-6 h-6 text-white" />
             </div>
             
             <div
-              className="absolute -bottom-8 -left-8 bg-gradient-to-br from-pink-600 to-pink-700 rounded-2xl p-4 shadow-2xl shadow-pink-500/50"
+              className="absolute -bottom-8 -left-8 bg-linear-to-br from-pink-600 to-pink-700 rounded-2xl p-4 shadow-2xl shadow-pink-500/50"
             >
               <MessageSquare className="w-6 h-6 text-white" />
             </div>
             
             <div
-              className="absolute top-1/2 -right-16 bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-3 shadow-2xl shadow-green-500/50"
+              className="absolute top-1/2 -right-16 bg-linear-to-br from-green-600 to-green-700 rounded-2xl p-3 shadow-2xl shadow-green-500/50"
             >
               <DollarSign className="w-5 h-5 text-white" />
             </div>
@@ -451,10 +451,10 @@ export default function CommandCenter() {
             Join <span className="text-purple-600 font-semibold">15,000+</span> creators who save 20+ hours per week with automation
           </p>
           <button
-            className="relative inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl overflow-hidden group hover:scale-105 active:scale-95 transition-transform shadow-lg"
+            className="relative inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl overflow-hidden group hover:scale-105 active:scale-95 transition-transform shadow-lg"
           >
             <div
-              className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute inset-0 bg-linear-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity"
             />
             <Sparkles className="w-5 h-5 relative z-10" />
             <span className="relative z-10">Start Automating Now</span>

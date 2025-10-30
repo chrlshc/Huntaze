@@ -21,7 +21,7 @@ export default function OnlyFansPlaceholder() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
+    <div className="bg-linear-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
       <div className="flex items-start gap-4">
         <div className="p-3 bg-white rounded-xl shadow-sm">
           <img src="/onlyfans-logo.svg" alt="OnlyFans" className="w-8 h-8" />
@@ -54,7 +54,7 @@ export default function OnlyFansPlaceholder() {
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg text-sm font-medium hover:opacity-90"
+                className="px-4 py-2 bg-linear-to-r from-blue-600 to-cyan-600 text-white rounded-lg text-sm font-medium hover:opacity-90"
               >
                 Notify Me
               </button>

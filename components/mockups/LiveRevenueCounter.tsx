@@ -58,7 +58,7 @@ export default function LiveRevenueCounter() {
 
   return (
     <motion.div 
-      className="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl p-6 border border-purple-500/20"
+      className="bg-linear-to-br from-gray-900 to-gray-950 rounded-2xl p-6 border border-purple-500/20"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -69,7 +69,7 @@ export default function LiveRevenueCounter() {
           <h3 className="text-lg font-semibold text-white mb-1">Today's Revenue</h3>
           <div className="flex items-center gap-2">
             <motion.span 
-              className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400"
+              className="text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400"
               key={revenue}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}

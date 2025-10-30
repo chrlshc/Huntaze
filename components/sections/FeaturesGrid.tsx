@@ -26,7 +26,7 @@ const MiniChartAnimation = () => {
       {data.map((value, i) => (
         <motion.div
           key={i}
-          className="bg-gradient-to-t from-purple-500 to-purple-400 w-3 rounded-t"
+          className="bg-linear-to-t from-purple-500 to-purple-400 w-3 rounded-t"
           initial={{ height: 0 }}
           animate={inView ? { height: `${value}%` } : { height: 0 }}
           transition={{ delay: i * 0.1, duration: 0.5 }}
@@ -126,7 +126,7 @@ const features = [
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-gray-900"
+            className="w-8 h-8 rounded-full bg-linear-to-br from-purple-400 to-pink-400 border-2 border-gray-900"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: i * 0.1 }}
@@ -187,7 +187,7 @@ export default function FeaturesGrid() {
               return (
                 <AnimatedCard key={feature.title} delay={index * 0.1}>
                   <div className="p-6">
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4`}>
+                    <div className={`w-12 h-12 rounded-lg bg-linear-to-br ${feature.color} flex items-center justify-center mb-4`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -207,7 +207,7 @@ export default function FeaturesGrid() {
             return (
               <AnimatedCard key={feature.title} delay={(index + 2) * 0.1}>
                 <div className="p-6">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4`}>
+                  <div className={`w-12 h-12 rounded-lg bg-linear-to-br ${feature.color} flex items-center justify-center mb-4`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>

@@ -60,7 +60,7 @@ export function ValuesSectionSimple() {
               <p className="text-gray-600 leading-relaxed">
                 {value.description}
               </p>
-              <div className="mt-6 h-1 w-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 group-hover:w-full" />
+              <div className="mt-6 h-1 w-0 bg-linear-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 group-hover:w-full" />
             </div>
           ))}
         </div>

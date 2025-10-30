@@ -101,7 +101,7 @@ const ChartAnimation = () => {
       {[40, 65, 45, 80, 95, 70, 85].map((height, i) => (
         <motion.div
           key={i}
-          className="w-2 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t"
+          className="w-2 bg-linear-to-t from-blue-600 to-blue-400 rounded-t"
           initial={{ height: 0 }}
           animate={{ height: `${height}%` }}
           transition={{ delay: i * 0.1, duration: 0.8, ease: "easeOut" }}
@@ -148,7 +148,7 @@ const FansAnimation = () => {
       {[...Array(5)].map((_, i) => (
         <motion.div
           key={i}
-          className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 border-2 border-gray-900"
+          className="w-8 h-8 rounded-full bg-linear-to-br from-pink-400 to-purple-600 border-2 border-gray-900"
           initial={{ scale: 0, x: -20 }}
           animate={{ scale: 1, x: 0 }}
           transition={{ delay: i * 0.1, type: "spring" }}
@@ -262,12 +262,12 @@ export default function AnimatedFeatureCards() {
 
             {/* Card content */}
             <motion.div
-              className={`relative bg-gradient-to-br ${colors.bg} backdrop-blur-sm rounded-2xl p-6 border ${colors.border} h-full`}
+              className={`relative bg-linear-to-br ${colors.bg} backdrop-blur-sm rounded-2xl p-6 border ${colors.border} h-full`}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               {/* Icon and animation container */}
               <div className="mb-6 h-16 flex items-center justify-between">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.bg} border ${colors.border} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl bg-linear-to-br ${colors.bg} border ${colors.border} flex items-center justify-center`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 flex justify-end">

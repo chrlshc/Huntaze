@@ -16,7 +16,7 @@ export default function ShopifyHero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-b from-[#fafbfc] to-white">
+    <section className="relative min-h-screen bg-linear-to-b from-[#fafbfc] to-white">
       <div className="container mx-auto px-6 pt-24 pb-16">
         {/* Header */}
         <motion.div 
@@ -27,7 +27,7 @@ export default function ShopifyHero() {
         >
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#1a1a1a] mb-6 leading-tight">
             Double Your Revenue,<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
               Half the Work
             </span>
           </h1>
@@ -83,7 +83,7 @@ export default function ShopifyHero() {
               {/* Top Bar */}
               <div className={`flex items-center justify-between ${isMobile ? 'mb-6' : 'mb-8'}`}>
                 <div className="flex items-center gap-3">
-                  <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold`}>
+                  <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold`}>
                     H
                   </div>
                   <div className={isMobile ? 'flex-1' : ''}>
@@ -105,7 +105,7 @@ export default function ShopifyHero() {
 
               {/* Stats Cards */}
               <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 md:grid-cols-4 gap-4'} mb-8`}>
-                <div className={`bg-gradient-to-br from-purple-50 to-pink-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-purple-100`}>
+                <div className={`bg-linear-to-br from-purple-50 to-pink-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-purple-100`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Revenue</span>
                     <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">+23%</span>
@@ -113,7 +113,7 @@ export default function ShopifyHero() {
                   <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900`}>$47,298</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">This month</p>
                 </div>
-                <div className={`bg-gradient-to-br from-blue-50 to-indigo-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-blue-100`}>
+                <div className={`bg-linear-to-br from-blue-50 to-indigo-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-blue-100`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Subscribers</span>
                     <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">+18%</span>
@@ -121,7 +121,7 @@ export default function ShopifyHero() {
                   <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900`}>4,832</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Active users</p>
                 </div>
-                <div className={`bg-gradient-to-br from-green-50 to-emerald-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-green-100`}>
+                <div className={`bg-linear-to-br from-green-50 to-emerald-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-green-100`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Conversion</span>
                     <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">89%</span>
@@ -129,7 +129,7 @@ export default function ShopifyHero() {
                   <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-gray-900`}>89%</p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">AI success rate</p>
                 </div>
-                <div className={`bg-gradient-to-br from-orange-50 to-red-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-orange-100`}>
+                <div className={`bg-linear-to-br from-orange-50 to-red-50 ${isMobile ? 'p-4' : 'p-6'} rounded-xl border border-orange-100`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Messages</span>
                     <span className="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">147</span>

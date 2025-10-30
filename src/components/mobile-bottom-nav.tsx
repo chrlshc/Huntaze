@@ -147,7 +147,7 @@ export default function MobileBottomNav() {
                       {isActive && (
                         <motion.div
                           layoutId="mobile-nav-indicator"
-                          className="absolute -inset-1 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl -z-10"
+                          className="absolute -inset-1 bg-linear-to-br from-purple-100 to-pink-100 rounded-2xl -z-10"
                         />
                       )}
                     </div>

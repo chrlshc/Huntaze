@@ -110,7 +110,7 @@ export default function OnlyFansMessagesPage() {
         <ComplianceNotice platform="OnlyFans" />
         {/* Connection banner */}
         {!status?.connected && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+          <div className="mb-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
             <p className="text-amber-900 font-medium">
               🔗 Connect OnlyFans to view your messages and analytics
             </p>

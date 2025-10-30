@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function BetaFinalCTA() {
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-zinc-950 dark:to-black">
+    <section className="py-16 bg-linear-to-b from-gray-50 to-white dark:from-zinc-950 dark:to-black">
       <div className="max-w-4xl mx-auto px-6 text-center">
         <h2 className="text-3xl font-bold mb-3">Ready to build faster and grow smarter?</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6">

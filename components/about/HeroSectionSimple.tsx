@@ -2,10 +2,10 @@ export function HeroSectionSimple() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50" />
+      <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-purple-50" />
       
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        <h1 className="display-1 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent animate-fadeIn">
+        <h1 className="display-1 bg-linear-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent animate-fadeIn">
           We're Reinventing
           <br />
           Creator Business

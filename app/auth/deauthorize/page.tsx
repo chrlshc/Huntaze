@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DeauthorizePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white flex items-center justify-center">
       <div className="elevated-card p-8 max-w-md w-full text-center">
         <div className="mb-6">
           <svg className="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,7 +32,7 @@ export default function DeauthorizePage() {
         <div className="space-y-3">
           <Link 
             href="/" 
-            className="block w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition"
+            className="block w-full bg-linear-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition"
           >
             Return to Home
           </Link>

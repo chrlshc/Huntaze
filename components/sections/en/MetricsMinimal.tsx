@@ -72,7 +72,7 @@ export default function MetricsMinimal() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="text-center"
             >
-              <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+              <div className="text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600 mb-2">
                 <AnimatedNumber value={metric.value} prefix={metric.prefix} suffix={metric.suffix} />
               </div>
               <p className="text-gray-400">{metric.label}</p>

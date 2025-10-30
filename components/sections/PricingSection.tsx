@@ -138,7 +138,7 @@ export default function PricingSection() {
               <ul className="space-y-3 mb-8">
                 {tier.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-gray-700 dark:text-gray-300">
                       {feature}
                     </span>
@@ -167,7 +167,7 @@ export default function PricingSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8"
+          className="bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8"
         >
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">

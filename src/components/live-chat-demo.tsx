@@ -192,10 +192,10 @@ export default function LiveChatDemo() {
                 <div className={`flex items-end gap-2 max-w-[80%] ${
                   message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                 }`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     message.role === 'user' 
                       ? 'bg-gray-200 dark:bg-gray-700' 
-                      : 'bg-gradient-to-br from-purple-600 to-pink-600'
+                      : 'bg-linear-to-br from-purple-600 to-pink-600'
                   }`}>
                     {message.role === 'user' ? (
                       <User className="w-4 h-4 text-gray-600 dark:text-gray-300" />
@@ -221,7 +221,7 @@ export default function LiveChatDemo() {
               animate={{ opacity: 1 }}
               className="flex items-center gap-2"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-600 to-pink-600 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-600">

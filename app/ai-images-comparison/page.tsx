@@ -43,7 +43,7 @@ export default function AIImagesComparison() {
 
               {/* Pro */}
               <div className="space-y-3">
-                <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-4 h-48 flex items-center justify-center border-2 border-purple-200 dark:border-purple-800">
+                <div className="bg-linear-to-br from-purple-500 to-pink-500 rounded-xl p-4 h-48 flex items-center justify-center border-2 border-purple-200 dark:border-purple-800">
                   <div className="text-center text-white">
                     <p className="text-4xl font-black">50% OFF</p>
                     <p className="text-lg">✨ WEEKEND ONLY ✨</p>
@@ -62,7 +62,7 @@ export default function AIImagesComparison() {
               {/* Scale */}
               <div className="space-y-3">
                 <div className="relative rounded-xl h-48 overflow-hidden border-2 border-blue-200 dark:border-blue-800">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600" />
+                  <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-purple-600 to-pink-600" />
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white">
@@ -85,13 +85,13 @@ export default function AIImagesComparison() {
               {/* Enterprise */}
               <div className="space-y-3">
                 <div className="relative rounded-xl h-48 overflow-hidden border-2 border-yellow-200 dark:border-yellow-800">
-                  <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-900" />
+                  <div className="absolute inset-0 bg-linear-to-br from-black to-gray-900" />
                   <div className="absolute inset-0" style={{
                     backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.4) 0%, transparent 50%)',
                   }} />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-6xl font-black bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+                      <p className="text-6xl font-black bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
                         50% OFF
                       </p>
                       <p className="text-white/90 text-sm tracking-[0.3em] mt-2">EXCLUSIVE ACCESS</p>
@@ -135,7 +135,7 @@ export default function AIImagesComparison() {
 
               {/* Pro */}
               <div className="space-y-3">
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 h-64 border border-purple-300 dark:border-purple-700">
+                <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 h-64 border border-purple-300 dark:border-purple-700">
                   <h3 className="font-bold mb-3 text-purple-800 dark:text-purple-200 text-center">
                     💕 TIP MENU 💕
                   </h3>
@@ -161,9 +161,9 @@ export default function AIImagesComparison() {
 
               {/* Scale */}
               <div className="space-y-3">
-                <div className="relative rounded-xl h-64 overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-600 p-[2px]">
+                <div className="relative rounded-xl h-64 overflow-hidden bg-linear-to-br from-indigo-600 to-purple-600 p-[2px]">
                   <div className="bg-white dark:bg-gray-900 rounded-xl p-4 h-full">
-                    <h3 className="font-black text-center mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    <h3 className="font-black text-center mb-4 bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                       EXCLUSIVE TIP MENU
                     </h3>
                     <div className="space-y-3">
@@ -171,7 +171,7 @@ export default function AIImagesComparison() {
                         const [text, price, color] = item.split('|');
                         return (
                           <div key={i} className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-linear-to-r from-transparent via-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="relative flex justify-between items-center p-2">
                               <span className="font-medium">{text}</span>
                               <span className={`font-bold ${color}`}>{price}</span>
@@ -191,7 +191,7 @@ export default function AIImagesComparison() {
               <div className="space-y-3">
                 <div className="relative rounded-xl h-64 overflow-hidden">
                   <div className="absolute inset-0 bg-black" />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/30 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-tr from-yellow-600/30 to-transparent" />
                   <div className="relative p-6 h-full flex flex-col">
                     <h3 className="text-center mb-auto">
                       <span className="text-xs text-yellow-400 tracking-[0.3em]">EXCLUSIVE</span>
@@ -255,7 +255,7 @@ export default function AIImagesComparison() {
         {/* CTA */}
         <div className="mt-12 text-center">
           <Link href="/pricing">
-            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
+            <button className="px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
               Get The AI That Matches Your Standards →
             </button>
           </Link>

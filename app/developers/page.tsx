@@ -96,7 +96,7 @@ export default function DevelopersPage() {
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
               Build with
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">
+              <span className="block text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-400 to-blue-400">
                 Huntaze API
               </span>
             </h1>
@@ -263,7 +263,7 @@ export default function DevelopersPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <section className="py-20 bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Start building today

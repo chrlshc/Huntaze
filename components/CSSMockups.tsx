@@ -79,19 +79,19 @@ export function DeviceShowcase({ className = '' }: { className?: string }) {
   return (
     <div className={`device-showcase ${className}`}>
       <DesktopMockup className="showcase-desktop">
-        <div className="demo-content bg-gradient-to-br from-purple-100 to-pink-100 h-full flex items-center justify-center">
+        <div className="demo-content bg-linear-to-br from-purple-100 to-pink-100 h-full flex items-center justify-center">
           <span className="text-2xl font-bold text-purple-600">Dashboard</span>
         </div>
       </DesktopMockup>
       
       <TabletMockup className="showcase-tablet">
-        <div className="demo-content bg-gradient-to-br from-blue-100 to-cyan-100 h-full flex items-center justify-center">
+        <div className="demo-content bg-linear-to-br from-blue-100 to-cyan-100 h-full flex items-center justify-center">
           <span className="text-xl font-bold text-blue-600">Analytics</span>
         </div>
       </TabletMockup>
       
       <IPhoneMockup className="showcase-phone" scale={0.8}>
-        <div className="demo-content bg-gradient-to-br from-green-100 to-emerald-100 h-full flex items-center justify-center">
+        <div className="demo-content bg-linear-to-br from-green-100 to-emerald-100 h-full flex items-center justify-center">
           <span className="text-lg font-bold text-green-600">Mobile</span>
         </div>
       </IPhoneMockup>

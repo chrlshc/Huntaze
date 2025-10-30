@@ -57,10 +57,10 @@ export default function HeroAnimatedEN() {
             className="relative"
           >
             <div className="relative mx-auto max-w-sm">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl p-1">
+              <div className="bg-linear-to-br from-purple-500 to-pink-500 rounded-3xl p-1">
                 <div className="bg-white rounded-3xl p-6">
                   <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4">
+                    <div className="bg-linear-to-r from-purple-100 to-pink-100 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-semibold text-gray-900">Today's Revenue</span>
                         <span className="text-xs text-green-600">+12.5%</span>
@@ -81,7 +81,7 @@ export default function HeroAnimatedEN() {
                 </div>
               </div>
               {/* Glow effect */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-3xl blur-2xl opacity-30 -z-10" />
+              <div className="absolute -inset-4 bg-linear-to-r from-purple-400 to-pink-400 rounded-3xl blur-2xl opacity-30 -z-10" />
             </div>
           </motion.div>
         </div>

@@ -177,7 +177,7 @@ interface ScrollProgressBarProps {
 export const ScrollProgressBar: React.FC<ScrollProgressBarProps> = ({ 
   className = '',
   height = 4,
-  color = 'bg-gradient-to-r from-purple-400 to-pink-400'
+  color = 'bg-linear-to-r from-purple-400 to-pink-400'
 }) => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {

@@ -58,10 +58,10 @@ export default function RevenueChart() {
                 transition={{ duration: 0.8, delay: index * 0.1, ease: "easeOut" }}
               >
                 {/* Gradient bar */}
-                <div className="absolute inset-0 rounded-t-xl bg-gradient-to-t from-violet-600 to-pink-500 opacity-90 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 rounded-t-xl bg-linear-to-t from-violet-600 to-pink-500 opacity-90 group-hover:opacity-100 transition-opacity" />
                 
                 {/* Glow effect */}
-                <div className="absolute inset-0 rounded-t-xl bg-gradient-to-t from-violet-600/50 to-pink-500/50 blur-xl opacity-50 group-hover:opacity-70 transition-opacity" />
+                <div className="absolute inset-0 rounded-t-xl bg-linear-to-t from-violet-600/50 to-pink-500/50 blur-xl opacity-50 group-hover:opacity-70 transition-opacity" />
                 
                 {/* Revenue amount on hover */}
                 <motion.div
@@ -126,7 +126,7 @@ export default function RevenueChart() {
       {/* Stats cards below */}
       <div className="grid grid-cols-4 gap-4 mt-6">
         <motion.div 
-          className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-4 border border-purple-500/30"
+          className="bg-linear-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-4 border border-purple-500/30"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
@@ -136,7 +136,7 @@ export default function RevenueChart() {
         </motion.div>
         
         <motion.div 
-          className="bg-gradient-to-br from-blue-500/20 to-green-500/20 rounded-xl p-4 border border-blue-500/30"
+          className="bg-linear-to-br from-blue-500/20 to-green-500/20 rounded-xl p-4 border border-blue-500/30"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
@@ -146,7 +146,7 @@ export default function RevenueChart() {
         </motion.div>
         
         <motion.div 
-          className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30"
+          className="bg-linear-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
@@ -156,7 +156,7 @@ export default function RevenueChart() {
         </motion.div>
         
         <motion.div 
-          className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-xl p-4 border border-pink-500/30"
+          className="bg-linear-to-br from-pink-500/20 to-purple-500/20 rounded-xl p-4 border border-pink-500/30"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
         >

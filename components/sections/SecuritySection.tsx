@@ -63,7 +63,7 @@ export default function SecuritySection() {
     <section className="py-20 px-4 bg-black relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/5" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent to-white/5" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -109,7 +109,7 @@ export default function SecuritySection() {
                 </div>
 
                 {/* Icon */}
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-green-400" />
                 </div>
 
@@ -118,7 +118,7 @@ export default function SecuritySection() {
                 <p className="text-gray-400 text-sm">{feature.description}</p>
 
                 {/* Hover effect */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                <div className="absolute inset-0 rounded-xl bg-linear-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
               </div>
             </motion.div>
           ))}
@@ -172,15 +172,15 @@ export default function SecuritySection() {
           className="grid md:grid-cols-3 gap-4 mt-8"
         >
           <div className="flex items-center gap-3 p-4 bg-gray-900/30 rounded-lg">
-            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
             <span className="text-sm text-gray-300">Aucune donnée vendue à des tiers</span>
           </div>
           <div className="flex items-center gap-3 p-4 bg-gray-900/30 rounded-lg">
-            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
             <span className="text-sm text-gray-300">Suppression définitive en 24h</span>
           </div>
           <div className="flex items-center gap-3 p-4 bg-gray-900/30 rounded-lg">
-            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
             <span className="text-sm text-gray-300">Audit de sécurité mensuel</span>
           </div>
         </motion.div>

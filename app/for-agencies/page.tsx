@@ -52,7 +52,7 @@ export default function AgenciesPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-gray-900 to-black">
+      <section className="relative py-20 md:py-32 overflow-hidden bg-linear-to-b from-gray-900 to-black">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -66,7 +66,7 @@ export default function AgenciesPage() {
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Scale Your Agency 
-              <span className="text-gradient bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"> Without Limits</span>
+              <span className="text-gradient bg-linear-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"> Without Limits</span>
             </h1>
             
             <p className="text-xl text-gray-300 mb-8">
@@ -76,7 +76,7 @@ export default function AgenciesPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Link href="/demo">
-                <MagneticButton size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600">
+                <MagneticButton size="lg" className="w-full sm:w-auto bg-linear-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600">
                   Book Enterprise Demo
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </MagneticButton>
@@ -95,7 +95,7 @@ export default function AgenciesPage() {
         </div>
 
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 -z-10" />
+        <div className="absolute inset-0 bg-linear-to-r from-blue-600/10 to-purple-600/10 -z-10" />
       </section>
 
       {/* Problem Section */}
@@ -166,7 +166,7 @@ export default function AgenciesPage() {
                 transition={{ delay: index * 0.1 }}
                 className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg text-center"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 bg-linear-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <benefit.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
@@ -184,7 +184,7 @@ export default function AgenciesPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-3xl p-8 md:p-12"
+            className="bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-3xl p-8 md:p-12"
           >
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
@@ -263,7 +263,7 @@ export default function AgenciesPage() {
                 <ul className="space-y-3">
                   {section.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                       <span className="text-gray-700 dark:text-gray-300">{feature}</span>
                     </li>
                   ))}
@@ -301,7 +301,7 @@ export default function AgenciesPage() {
                 "Data isolation per creator"
               ].map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                   <span className="text-gray-700 dark:text-gray-300">{item}</span>
                 </div>
               ))}
@@ -311,7 +311,7 @@ export default function AgenciesPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-20 bg-linear-to-r from-blue-600 to-purple-600 text-white">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -31,7 +31,7 @@ export default function TikTokAuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-red-500 to-black">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-pink-500 via-red-500 to-black">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
         <div className="text-center">
           <div className="w-16 h-16 bg-black rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -45,7 +45,7 @@ export default function TikTokAuthPage() {
           
           <button
             onClick={handleTikTokAuth}
-            className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-medium py-3 rounded-lg transition-all mb-4"
+            className="w-full bg-linear-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-medium py-3 rounded-lg transition-all mb-4"
           >
             Connect with TikTok
           </button>

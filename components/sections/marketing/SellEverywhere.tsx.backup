@@ -100,7 +100,7 @@ export function SellEverywhere() {
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Sell here, there, and{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
               everywhere
             </span>
           </h2>
@@ -119,7 +119,7 @@ export function SellEverywhere() {
                 onClick={() => setActiveChannel(index)}
                 className={`flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   activeChannel === index
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
+                    ? 'bg-linear-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
                 whileHover={{ scale: 1.05 }}
@@ -175,7 +175,7 @@ export function SellEverywhere() {
                       transition={{ delay: index * 0.1 }}
                       className="flex items-start gap-3"
                     >
-                      <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0 mt-0.5">
                         <DollarSign className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                       </div>
                       <span className="text-gray-700 dark:text-gray-300">
@@ -188,7 +188,7 @@ export function SellEverywhere() {
                 <Link href="/demo">
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     See it in action
                   </Button>
@@ -202,9 +202,9 @@ export function SellEverywhere() {
                 transition={{ duration: 0.5 }}
                 className="relative"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-3xl blur-3xl opacity-50" />
+                <div className="absolute inset-0 bg-linear-to-br from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-3xl blur-3xl opacity-50" />
                 
-                <div className="relative bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-700">
+                <div className="relative bg-linear-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-700">
                   <div className="aspect-square bg-white dark:bg-gray-950 rounded-2xl flex items-center justify-center">
                     <channels[activeChannel].icon className="w-32 h-32 text-blue-600 dark:text-blue-400" />
                   </div>

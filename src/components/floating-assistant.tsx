@@ -52,7 +52,7 @@ export function FloatingAssistant() {
             exit={{ scale: 0, opacity: 0 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full shadow-2xl flex items-center justify-center group"
+            className="fixed bottom-8 right-8 z-50 w-16 h-16 bg-linear-to-br from-purple-600 to-pink-600 rounded-full shadow-2xl flex items-center justify-center group"
             onClick={() => setIsOpen(true)}
           >
             <MessageSquare className="w-7 h-7 text-white" />
@@ -76,7 +76,7 @@ export function FloatingAssistant() {
             className="fixed bottom-8 right-8 z-50 w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 text-white">
+            <div className="bg-linear-to-r from-purple-600 to-pink-600 p-4 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">

@@ -13,7 +13,7 @@ export default function SimpleHero() {
         </p>
         
         {/* Simple Mobile Mockup */}
-        <div className="relative w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[22px] border-2 border-white/20 bg-gray-800 p-4">
+        <div className="relative w-full max-w-[320px] mx-auto aspect-9/16 rounded-[22px] border-2 border-white/20 bg-gray-800 p-4">
           <h2 className="text-white font-semibold mb-4">Weekly Revenue</h2>
           
           {/* Simple Chart */}

@@ -175,7 +175,7 @@ const LiveDashboard: React.FC = () => {
           className="text-center mb-12"
         >
           <h2 className="text-5xl lg:text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Dashboard en temps réel
             </span>
           </h2>
@@ -196,7 +196,7 @@ const LiveDashboard: React.FC = () => {
             key={revenue}
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className="text-6xl lg:text-7xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent"
+            className="text-6xl lg:text-7xl font-bold bg-linear-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent"
           >
             €{revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </motion.div>
@@ -230,7 +230,7 @@ const LiveDashboard: React.FC = () => {
                 key={metric.value}
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
-                className={`text-2xl font-bold bg-gradient-to-r ${metric.color} bg-clip-text text-transparent`}
+                className={`text-2xl font-bold bg-linear-to-r ${metric.color} bg-clip-text text-transparent`}
               >
                 {metric.label === 'Taux Rétention' 
                   ? `${metric.value.toFixed(1)}%`
@@ -263,7 +263,7 @@ const LiveDashboard: React.FC = () => {
                       className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm">
+                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm">
                           {message.user.name.charAt(0)}
                         </div>
                         <div className="flex-1">
@@ -393,7 +393,7 @@ const AIInsight: React.FC<{ type: 'success' | 'warning' | 'info'; text: string; 
   
   return (
     <motion.div
-      className={`p-3 rounded-lg bg-gradient-to-r ${styles[type]} border backdrop-blur-sm`}
+      className={`p-3 rounded-lg bg-linear-to-r ${styles[type]} border backdrop-blur-sm`}
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex justify-between items-start">

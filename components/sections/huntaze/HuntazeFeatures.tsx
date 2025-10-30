@@ -194,7 +194,7 @@ export default function HuntazeFeatures() {
               transition={{ duration: prefersReduced ? 0 : 0.2 }}
             >
               <div className="inline-flex items-center gap-3 mb-4">
-                <span className={`p-2 rounded-lg bg-gradient-to-r ${feature.color}`}>
+                <span className={`p-2 rounded-lg bg-linear-to-r ${feature.color}`}>
                   <Icon className="w-5 h-5 text-white" />
                 </span>
                 <h3 className="text-2xl font-semibold">{feature.title}</h3>
@@ -270,7 +270,7 @@ export default function HuntazeFeatures() {
                           <div className="text-sm font-semibold">PPV Campaign</div>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700">Draft</span>
                         </div>
-                        <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg p-4">
+                        <div className="bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-lg p-4">
                           <div className="text-sm opacity-90">Limited Offer</div>
                           <div className="text-xl font-bold">Unlock premium set — $9.99</div>
                         </div>
@@ -287,7 +287,7 @@ export default function HuntazeFeatures() {
                             </div>
                           ))}
                         </div>
-                        <div className="h-28 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded" />
+                        <div className="h-28 bg-linear-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded" />
                       </div>
                     )}
                     {feature.key === "scheduler" && (

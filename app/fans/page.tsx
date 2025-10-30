@@ -71,7 +71,7 @@ export default function FansPage() {
       <main className="px-6 lg:px-8 py-8 max-w-7xl mx-auto">
         {/* Alert for no platform */}
         {!hasConnectedPlatforms && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+          <div className="mb-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
             <p className="text-amber-900 font-medium">
               🔗 Connect a platform to start importing fans
             </p>
@@ -110,7 +110,7 @@ export default function FansPage() {
         ) : (
           <div className="elevated-card rounded-xl overflow-hidden">
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-linear-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
                 <Users className="w-10 h-10 text-purple-600" />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-3">Build Your Fan Database</h2>

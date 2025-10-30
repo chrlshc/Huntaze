@@ -82,7 +82,7 @@ export default function HeaderMobileOptimized() {
     <>
       {/* Header with mobile-first design */}
       <header className={`
-        fixed top-0 left-0 right-0 z-[1000]
+        fixed top-0 left-0 right-0 z-1000
         h-(--mobile-header-height)
         pt-(--safe-area-top)
         bg-white/95 backdrop-blur-md
@@ -171,7 +171,7 @@ export default function HeaderMobileOptimized() {
                     inline-flex items-center justify-center
                     min-h-(--touch-target-min)
                     px-6 py-2 
-                    bg-gradient-to-r from-purple-600 to-pink-600 
+                    bg-linear-to-r from-purple-600 to-pink-600 
                     text-white font-medium text-sm
                     rounded-full hover:shadow-lg
                     transition-all duration-200
@@ -218,7 +218,7 @@ export default function HeaderMobileOptimized() {
               exit={{ opacity: 0 }}
               className="
                 fixed inset-0 bg-black/20 backdrop-blur-sm
-                z-[999] lg:hidden
+                z-999 lg:hidden
               "
               onClick={() => setMobileMenuOpen(false)}
             />
@@ -235,7 +235,7 @@ export default function HeaderMobileOptimized() {
                 bottom-0
                 w-full max-w-sm
                 bg-white
-                z-[1001] lg:hidden
+                z-1001 lg:hidden
                 overflow-y-auto
                 overscroll-behavior-y-contain
                 -webkit-overflow-scrolling-touch
@@ -408,7 +408,7 @@ export default function HeaderMobileOptimized() {
                             block w-full
                             min-h-(--touch-target-primary)
                             px-6 py-4
-                            bg-gradient-to-r from-purple-600 to-pink-600
+                            bg-linear-to-r from-purple-600 to-pink-600
                             text-white
                             rounded-lg font-semibold
                             text-center

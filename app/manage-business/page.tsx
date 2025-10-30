@@ -21,7 +21,7 @@ export default function ManageBusinessPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               Run your empire
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 on autopilot
               </span>
             </h1>
@@ -41,7 +41,7 @@ export default function ManageBusinessPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -52,25 +52,25 @@ export default function ManageBusinessPage() {
               </p>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Custom roles & permissions</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Activity monitoring</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Performance metrics</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Secure collaboration</span>
@@ -85,7 +85,7 @@ export default function ManageBusinessPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
@@ -96,25 +96,25 @@ export default function ManageBusinessPage() {
               </p>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Revenue forecasting</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Expense tracking</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Tax optimization</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Profit analytics</span>
@@ -129,7 +129,7 @@ export default function ManageBusinessPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center mb-6">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
@@ -140,25 +140,25 @@ export default function ManageBusinessPage() {
               </p>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Content calendar</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Bulk scheduling</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Performance tracking</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 shrink-0">
                     <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   </div>
                   <span className="text-white/80">Rights management</span>
@@ -174,7 +174,7 @@ export default function ManageBusinessPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="max-w-6xl mx-auto mb-20"
           >
-            <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30">
+            <div className="bg-linear-to-r from-purple-600/10 to-pink-600/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-white mb-4">
                   Automate your entire business workflow
@@ -283,7 +283,7 @@ export default function ManageBusinessPage() {
             </p>
             <a
               href="/signup"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
+              className="inline-flex items-center px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
             >
               Start managing smarter
               <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

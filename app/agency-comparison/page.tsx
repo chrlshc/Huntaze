@@ -141,7 +141,7 @@ export default function AgencyComparisonPage() {
             The Real Cost Difference
           </h2>
           
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/15 dark:to-pink-900/15 rounded-2xl p-8">
+          <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/15 dark:to-pink-900/15 rounded-2xl p-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
@@ -194,7 +194,7 @@ export default function AgencyComparisonPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-purple-600 to-pink-600 py-16 px-6 md:px-8">
+      <section className="bg-linear-to-r from-purple-600 to-pink-600 py-16 px-6 md:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to keep more of your revenue?

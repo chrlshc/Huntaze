@@ -44,7 +44,7 @@ export default function HuntazeFlow() {
               {...cardProps}
               className="relative min-w-[80%] md:min-w-0 snap-center"
             >
-              <div className={`bg-gradient-to-r ${s.color} p-[2px] rounded-2xl`}>
+              <div className={`bg-linear-to-r ${s.color} p-[2px] rounded-2xl`}>
                 <div className="rounded-xl bg-white dark:bg-zinc-900 p-6 h-full">
                   <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white/20 text-white mb-3">
                     <s.icon className="w-5 h-5" />

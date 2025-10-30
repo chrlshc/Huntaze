@@ -64,7 +64,7 @@ export default function PremiumCard({
       >
         {/* Gradient border effect (fancy only) */}
         {fancy && (
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-lg" />
+          <div className="absolute inset-0 rounded-xl bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-lg" />
         )}
         
         {/* Card content */}

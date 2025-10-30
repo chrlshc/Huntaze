@@ -52,7 +52,7 @@ export async function publishTikTok(opts: {
   if (pipelineMode === "dry_run") {
     return { externalId: "DRYRUN_TT", publishedAt: new Date().toISOString(), raw: { mode: pipelineMode } };
   }
-  // Schedule polling worker for status (works for shadow/live alike)
+  // Schedule polling worker for status (works for shadow alike)
   if (publish_id && opts.userAccessToken) {
     // start ~30s later to give time for processing to start
     try { await enqueueTikTokStatusPoll({ videoId: publish_id, userAccessToken: opts.userAccessToken, delaySec: 30 }); } catch {}

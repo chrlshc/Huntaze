@@ -21,7 +21,7 @@ export default function SellEverywherePage() {
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               Sell everywhere your
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 fans already are
               </span>
             </h1>
@@ -41,7 +41,7 @@ export default function SellEverywherePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 hover:border-purple-600/50 transition-all"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
                 <span className="text-white font-bold text-lg">OF</span>
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">OnlyFans</h3>
@@ -63,7 +63,7 @@ export default function SellEverywherePage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 hover:border-purple-600/50 transition-all"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 via-purple-500 to-orange-500 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-linear-to-br from-pink-500 via-purple-500 to-orange-500 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
                 </svg>
@@ -111,7 +111,7 @@ export default function SellEverywherePage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 hover:border-purple-600/50 transition-all"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-500 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-linear-to-br from-pink-500 to-blue-500 rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.37 6.37 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.33 6.34A6.37 6.37 0 0016.37 16V8.5a8.1 8.1 0 004.13 1.2v-3a4.49 4.49 0 01-.91.01z"/>
                 </svg>
@@ -216,7 +216,7 @@ export default function SellEverywherePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30 max-w-5xl mx-auto mb-16"
+            className="bg-linear-to-r from-purple-600/20 to-pink-600/20 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30 max-w-5xl mx-auto mb-16"
           >
             <h3 className="text-2xl font-bold text-white text-center mb-8">
               Multi-platform success by the numbers
@@ -256,7 +256,7 @@ export default function SellEverywherePage() {
             </p>
             <a
               href="/signup"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
+              className="inline-flex items-center px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
             >
               Start selling everywhere
               <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

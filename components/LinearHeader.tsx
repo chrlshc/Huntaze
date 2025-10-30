@@ -36,7 +36,7 @@ export default function LinearHeader() {
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 sm:gap-3 relative z-50">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xs sm:text-sm">
                 H
               </div>
               <span className="text-white font-semibold text-base sm:text-lg">Huntaze</span>

@@ -70,7 +70,7 @@ const MD3Chip = forwardRef<HTMLDivElement, MD3ChipProps>(
         {...props}
       >
         {leadingIcon && (
-          <span className="flex-shrink-0">
+          <span className="shrink-0">
             {leadingIcon}
           </span>
         )}
@@ -78,14 +78,14 @@ const MD3Chip = forwardRef<HTMLDivElement, MD3ChipProps>(
         <span>{children as React.ReactNode}</span>
         
         {trailingIcon && !onDelete && (
-          <span className="flex-shrink-0">
+          <span className="shrink-0">
             {trailingIcon}
           </span>
         )}
         
         {onDelete && (
           <motion.button
-            className="flex-shrink-0 -mr-1 ml-1 p-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
+            className="shrink-0 -mr-1 ml-1 p-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
             onClick={handleDelete}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}

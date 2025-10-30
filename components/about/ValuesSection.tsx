@@ -108,7 +108,7 @@ export function ValuesSection() {
                 {value.description}
               </p>
               <motion.div
-                className="mt-4 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                className="mt-4 h-1 bg-linear-to-r from-purple-500 to-pink-500 rounded-full"
                 initial={{ width: 0 }}
                 whileHover={{ width: "100%" }}
                 transition={{ duration: 0.3 }}

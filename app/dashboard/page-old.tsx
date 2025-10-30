@@ -416,7 +416,7 @@ export default function DashboardPage() {
               return (
                 <div key={index} className="stat-card">
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`stat-icon bg-gradient-to-br ${stat.gradient}`}>
+                    <div className={`stat-icon bg-linear-to-br ${stat.gradient}`}>
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                     {changeValue !== 0 && (
@@ -434,7 +434,7 @@ export default function DashboardPage() {
                     {[...Array(8)].map((_, i) => (
                       <div
                         key={i}
-                        className={`flex-1 bg-gradient-to-t ${stat.gradient} opacity-20 rounded-sm`}
+                        className={`flex-1 bg-linear-to-t ${stat.gradient} opacity-20 rounded-sm`}
                         style={{ height: `${20 + Math.random() * 80}%` }}
                       />
                     ))}
@@ -570,7 +570,7 @@ export default function DashboardPage() {
                   {/* TikTok */}
                   <div className="platform-card">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-red-100 to-blue-100 dark:from-red-900/30 dark:to-blue-900/30">
+                      <div className="p-3 rounded-xl bg-linear-to-br from-red-100 to-blue-100 dark:from-red-900/30 dark:to-blue-900/30">
                         <Video className="w-6 h-6 text-(--color-content-primary)" />
                       </div>
                       <h3 className="font-bold text-(--color-content-primary)">TikTok</h3>
@@ -676,7 +676,7 @@ export default function DashboardPage() {
 
               {/* Platform CTA */}
               {!hasConnectedPlatform && (
-                <div className="card bg-gradient-to-br from-primary to-secondary text-white">
+                <div className="card bg-linear-to-br from-primary to-secondary text-white">
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2">Connect Your Platforms</h3>
                     <p className="text-white/80 mb-4">

@@ -11,13 +11,13 @@ const FallingLines = dynamic(
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[100vh] min-h-[100svh] flex items-center justify-center overflow-hidden bg-white dark:bg-gray-800">
+    <section className="relative min-h-screen min-h-svh flex items-center justify-center overflow-hidden bg-white dark:bg-gray-800">
       {/* Falling Lines Effect - centered */}
       <FallingLines />
 
       <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-sm text-purple-300 px-6 py-3 rounded-full text-sm font-medium mb-8 border border-purple-500/30 purple-glow">
+        <div className="inline-flex items-center gap-2 bg-linear-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-sm text-purple-300 px-6 py-3 rounded-full text-sm font-medium mb-8 border border-purple-500/30 purple-glow">
           <Sparkles className="w-4 h-4 text-purple-400" />
           AI-Powered Creator Platform
         </div>
@@ -25,7 +25,7 @@ export default function HeroSection() {
         <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
           Turn your content into
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
             recurring revenue
           </span>
         </h1>

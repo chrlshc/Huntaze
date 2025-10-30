@@ -282,7 +282,7 @@ export default function ConversationPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="backdrop-blur-xl bg-white/90 supports-[backdrop-filter]:bg-white/80 border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
+      <header className="backdrop-blur-xl bg-white/90 supports-backdrop-filter:bg-white/80 border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
         <div className="flex items-center justify-between gap-3">
           <button onClick={() => router.back()} className="p-2 -ml-2">
             <ChevronLeft className="w-6 h-6 text-gray-700" />
@@ -434,7 +434,7 @@ export default function ConversationPage() {
                   max-w-[70%] lg:max-w-[60%] px-4 py-2 rounded-2xl
                   ${isIncoming 
                     ? 'bg-white text-gray-900 rounded-bl-none shadow-sm ring-1 ring-black/5' 
-                    : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-none shadow-md'
+                    : 'bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-br-none shadow-md'
                   }
                   ${msg.id === messages[messages.length - 1]?.id ? 'new-message-enter' : ''}
                 `}>
@@ -518,7 +518,7 @@ export default function ConversationPage() {
             disabled={!inputText.trim() || sending || isBlocked}
             className={`p-2 rounded-full transition-all min-w-[44px] min-h-[44px] flex items-center justify-center ${
               inputText.trim() && !sending
-                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md' 
+                ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-md' 
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-50'
             }`}
           >

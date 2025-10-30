@@ -74,7 +74,7 @@ export default function AppPreviewPage() {
 
             {/* App Content */}
             <div className="bg-[#0a0a0a] rounded-b-xl border-x border-b border-gray-800 overflow-hidden">
-              <div className="relative h-[600px] bg-gradient-to-br from-purple-900/20 to-black">
+              <div className="relative h-[600px] bg-linear-to-br from-purple-900/20 to-black">
                 {/* Sidebar */}
                 <div className="absolute left-0 top-0 bottom-0 w-64 bg-black/50 border-r border-gray-800 p-4">
                   <div className="flex items-center gap-3 mb-8">

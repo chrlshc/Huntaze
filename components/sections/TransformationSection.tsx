@@ -32,7 +32,7 @@ export default function TransformationSection() {
     <section className="py-20 px-4 bg-black relative overflow-hidden">
       {/* Background pattern - More subtle */}
       <div className="absolute inset-0 opacity-[0.02]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-size-[4rem_4rem]" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -68,7 +68,7 @@ export default function TransformationSection() {
             >
               <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-800 hover:border-gray-700 transition-all">
                 {/* Icon with gradient background */}
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-r ${item.color} p-0.5 mb-6`}>
+                <div className={`w-16 h-16 rounded-xl bg-linear-to-r ${item.color} p-0.5 mb-6`}>
                   <div className="w-full h-full bg-gray-900 rounded-xl flex items-center justify-center">
                     <item.icon className="w-8 h-8 text-white" />
                   </div>
@@ -92,7 +92,7 @@ export default function TransformationSection() {
                 </div>
 
                 {/* Metric */}
-                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${item.color} bg-opacity-10`}>
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r ${item.color} bg-opacity-10`}>
                   <TrendingUp className="w-4 h-4 text-white" />
                   <span className="text-white font-bold">{item.metric}</span>
                 </div>

@@ -94,7 +94,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 relative overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full opacity-20 blur-3xl animate-pulse"></div>
@@ -104,7 +104,7 @@ export default function OnboardingPage() {
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200/50 backdrop-blur z-50">
         <motion.div
-          className="h-full bg-gradient-to-r from-purple-600 to-pink-600"
+          className="h-full bg-linear-to-r from-purple-600 to-pink-600"
           initial={{ width: '0%' }}
           animate={{ width: `${(currentStep / steps.length) * 100}%` }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
@@ -116,7 +116,7 @@ export default function OnboardingPage() {
           {/* Logo */}
           <div className="flex justify-center mb-12">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/25">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/25">
                 <span className="text-white font-bold text-2xl">H</span>
               </div>
               <span className="text-2xl font-bold text-gray-900">Huntaze</span>
@@ -129,7 +129,7 @@ export default function OnboardingPage() {
               {/* Continuous progress track behind bubbles */}
               <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200/80 rounded-full -z-10 transform -translate-y-1/2" />
               <motion.div
-                className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full -z-10 transform -translate-y-1/2"
+                className="absolute top-1/2 left-0 h-1 bg-linear-to-r from-purple-600 to-pink-600 rounded-full -z-10 transform -translate-y-1/2"
                 initial={{ width: '0%' }}
                 animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
                 transition={{ duration: 0.4, ease: 'easeInOut' }}
@@ -151,7 +151,7 @@ export default function OnboardingPage() {
                       <div
                         className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
                           isActive
-                            ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/30'
+                            ? 'bg-linear-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/30'
                             : isCompleted
                             ? 'bg-green-500 text-white'
                             : 'bg-gray-200 text-gray-400'
@@ -173,7 +173,7 @@ export default function OnboardingPage() {
                       <div className="w-12 md:w-24 h-0.5 mx-2">
                         <div className="h-full bg-gray-200 relative">
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
+                            className="absolute inset-0 bg-linear-to-r from-purple-600 to-pink-600"
                             initial={{ width: '0%' }}
                             animate={{ width: isCompleted ? '100%' : '0%' }}
                             transition={{ duration: 0.5 }}
@@ -242,7 +242,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, type: 'spring' }}
-          className="inline-flex p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl mb-6"
+          className="inline-flex p-4 bg-linear-to-br from-purple-100 to-pink-100 rounded-3xl mb-6"
         >
           <Sparkles className="w-12 h-12 text-purple-600" />
         </motion.div>
@@ -266,7 +266,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
               className="elevated-card rounded-2xl p-6 hover:border-purple-200 hover:shadow-md transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
+                <div className="p-3 bg-linear-to-br from-purple-50 to-pink-50 rounded-xl">
                   <Icon className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
@@ -282,7 +282,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
       <div className="text-center">
         <button
           onClick={onNext}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
         >
           Get Started
           <ArrowRight className="w-5 h-5" />
@@ -364,7 +364,7 @@ function ConnectPlatformStep({ onNext, onPrev }: { onNext: () => void; onPrev: (
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className={`text-4xl p-3 bg-gradient-to-br ${platform.color} bg-opacity-10 rounded-xl`}>
+                  <div className={`text-4xl p-3 bg-linear-to-br ${platform.color} bg-opacity-10 rounded-xl`}>
                     {platform.icon}
                   </div>
                   <div>
@@ -381,7 +381,7 @@ function ConnectPlatformStep({ onNext, onPrev }: { onNext: () => void; onPrev: (
                   className={`w-full py-3 rounded-xl font-medium transition-all ${
                     selectedPlatforms.includes(platform.id)
                       ? 'bg-green-50 text-green-700'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg'
+                      : 'bg-linear-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg'
                   }`}
                 >
                   {connecting === platform.id ? (
@@ -419,7 +419,7 @@ function ConnectPlatformStep({ onNext, onPrev }: { onNext: () => void; onPrev: (
         </button>
         <button
           onClick={onNext}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
         >
           {selectedPlatforms.length > 0 ? 'Continue' : 'Skip for now'}
           <ArrowRight className="w-5 h-5" />
@@ -517,7 +517,7 @@ function ConfigureAIStep({ onNext, onPrev }: { onNext: () => void; onPrev: () =>
         </div>
 
         {/* Preview */}
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
+        <div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
           <h4 className="font-semibold text-gray-900 mb-3">AI Response Preview</h4>
           <div className="space-y-3">
             <div className="elevated-card rounded-xl p-4">
@@ -543,7 +543,7 @@ function ConfigureAIStep({ onNext, onPrev }: { onNext: () => void; onPrev: () =>
         </button>
         <button
           onClick={onNext}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
         >
           Complete Setup
           <ArrowRight className="w-5 h-5" />
@@ -561,7 +561,7 @@ function CompleteStep({ onNext }: { onNext: () => void }) {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.5, type: 'spring' }}
-        className="inline-flex p-6 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full mb-8"
+        className="inline-flex p-6 bg-linear-to-br from-green-100 to-emerald-100 rounded-full mb-8"
       >
         <Check className="w-16 h-16 text-green-600" />
       </motion.div>
@@ -606,7 +606,7 @@ function CompleteStep({ onNext }: { onNext: () => void }) {
 
       <button
         onClick={onNext}
-        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
+        className="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
       >
         Go to Dashboard
         <ArrowRight className="w-5 h-5" />

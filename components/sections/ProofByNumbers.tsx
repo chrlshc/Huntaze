@@ -90,7 +90,7 @@ function CaseStudyCard({ industry, result, timeframe, metrics }: CaseStudyCardPr
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       whileHover={{ y: -4 }}
-      className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer group"
+      className="bg-linear-to-br from-gray-50 to-white rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer group"
     >
       <div className="flex justify-between items-start mb-4">
         <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">

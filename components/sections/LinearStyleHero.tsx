@@ -75,7 +75,7 @@ export default function LinearStyleHero() {
                   {/* Top Bar */}
                   <div className={`flex items-center justify-between ${isMobile ? 'mb-6' : 'mb-8'}`}>
                     <div className="flex items-center gap-3">
-                      <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold`}>
+                      <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} bg-linear-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold`}>
                         H
                       </div>
                       <div className={isMobile ? 'flex-1' : ''}>

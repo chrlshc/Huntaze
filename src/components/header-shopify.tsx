@@ -32,7 +32,7 @@ export default function HeaderShopify() {
   if (isApp) return null
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-[1000] transition-all duration-300 ${
+    <header className={`fixed inset-x-0 top-0 z-1000 transition-all duration-300 ${
       isScrolled ? 'bg-[#1a1a1a]/95 backdrop-blur-md' : 'bg-[#1a1a1a]'
     }`}>
       <nav className="max-w-[1400px] mx-auto px-8">
@@ -75,7 +75,7 @@ export default function HeaderShopify() {
                           href="/solutions/onlyfans"
                           className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors group"
                         >
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0">
                             <MessageCircle className="w-5 h-5 text-white" />
                           </div>
                           <div>
@@ -93,7 +93,7 @@ export default function HeaderShopify() {
                           href="/solutions/instagram"
                           className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors group"
                         >
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-lg bg-linear-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
                             <Camera className="w-5 h-5 text-white" />
                           </div>
                           <div>
@@ -111,7 +111,7 @@ export default function HeaderShopify() {
                           href="/solutions/tiktok"
                           className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors group"
                         >
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-lg bg-linear-to-br from-gray-900 to-gray-800 flex items-center justify-center shrink-0">
                             <Play className="w-5 h-5 text-white" />
                           </div>
                           <div>
@@ -129,7 +129,7 @@ export default function HeaderShopify() {
                           href="/solutions/reddit"
                           className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors group"
                         >
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-lg bg-linear-to-br from-orange-500 to-red-600 flex items-center justify-center shrink-0">
                             <Users2 className="w-5 h-5 text-white" />
                           </div>
                           <div>

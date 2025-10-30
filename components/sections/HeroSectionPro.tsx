@@ -13,9 +13,9 @@ const FallingLines = dynamic(
 
 export default function HeroSectionPro() {
   return (
-    <section className="relative min-h-[100vh] min-h-[100svh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-950 to-black">
+    <section className="relative min-h-screen min-h-svh flex items-center justify-center overflow-hidden bg-linear-to-b from-gray-950 to-black">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black" />
+      <div className="absolute inset-0 bg-linear-to-b from-gray-900 to-black" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
@@ -28,7 +28,7 @@ export default function HeroSectionPro() {
                 {[1, 2, 3, 4].map((i) => (
                   <div 
                     key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-gray-950"
+                    className="w-8 h-8 rounded-full bg-linear-to-br from-purple-400 to-pink-400 border-2 border-gray-950"
                   />
                 ))}
               </div>
@@ -40,7 +40,7 @@ export default function HeroSectionPro() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
               Turn your content into
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
                 predictable revenue
               </span>
             </h1>
@@ -55,7 +55,7 @@ export default function HeroSectionPro() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
               <Link 
                 href="/auth"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center shadow-xl hover:shadow-2xl transform hover:scale-105"
+                className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 text-center shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 Start free trial
               </Link>
@@ -88,7 +88,7 @@ export default function HeroSectionPro() {
           <div className="relative hidden lg:block">
             <div className="relative">
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
+              <div className="absolute inset-0 bg-linear-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
               
               {/* Main product mockup */}
               <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-2xl border border-gray-800 p-8 shadow-2xl">
@@ -133,7 +133,7 @@ export default function HeroSectionPro() {
                     </div>
                     <div className="space-y-2">
                       <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex-shrink-0" />
+                        <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded-full shrink-0" />
                         <div className="bg-gray-700 rounded-lg p-2 text-sm text-gray-300">
                           Hey babe! Thanks for subscribing 💕
                         </div>
@@ -149,7 +149,7 @@ export default function HeroSectionPro() {
               </div>
               
               {/* Single floating metric */}
-              <div className="absolute -top-4 -right-4 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl px-4 py-2 shadow-xl">
+              <div className="absolute -top-4 -right-4 bg-linear-to-br from-purple-600 to-purple-700 rounded-xl px-4 py-2 shadow-xl">
                 <p className="text-xs text-purple-100">Monthly Revenue</p>
                 <p className="text-lg font-bold text-white">$12 847</p>
               </div>

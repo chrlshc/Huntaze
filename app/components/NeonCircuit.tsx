@@ -266,7 +266,7 @@ export default function NeonCircuit({
       className={`
         ${className ?? ""}
         pointer-events-none absolute inset-0
-        [mask-image:radial-gradient(1200px_1200px_at_60%_30%,#000_40%,transparent_85%)]
+        mask-[radial-gradient(1200px_1200px_at_60%_30%,#000_40%,transparent_85%)]
       `}
       aria-hidden
     >

@@ -39,7 +39,7 @@ export default function LoadingSkeleton({
           }}
         >
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"
+            className="absolute inset-0 bg-linear-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"
             animate={{
               x: ['-100%', '100%'],
             }}

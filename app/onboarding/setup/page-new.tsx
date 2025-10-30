@@ -350,7 +350,7 @@ export default function OnboardingSetupPage() {
         return (
           <div className={`step-content ${animating ? 'animating' : ''}`}>
             <div className="step-header">
-              <div className="step-icon-wrapper bg-gradient-to-br from-purple-500 to-pink-600">
+              <div className="step-icon-wrapper bg-linear-to-br from-purple-500 to-pink-600">
                 <Target className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -470,7 +470,7 @@ export default function OnboardingSetupPage() {
         return (
           <div className={`step-content ${animating ? 'animating' : ''}`}>
             <div className="step-header">
-              <div className="step-icon-wrapper bg-gradient-to-br from-blue-500 to-purple-600">
+              <div className="step-icon-wrapper bg-linear-to-br from-blue-500 to-purple-600">
                 <Zap className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -486,7 +486,7 @@ export default function OnboardingSetupPage() {
                 {platforms.map((platform) => {
                   const isConnected = formData.connectedPlatforms.includes(platform.id);
                   const platformClass = platform.color === 'gradient' 
-                    ? 'bg-gradient-to-br from-purple-500 to-pink-500' 
+                    ? 'bg-linear-to-br from-purple-500 to-pink-500' 
                     : `bg-${platform.color}-500`;
 
                   if (platform.comingSoon) {
@@ -569,7 +569,7 @@ export default function OnboardingSetupPage() {
               </div>
 
               <div className="info-box">
-                <Info className="w-5 h-5 flex-shrink-0" />
+                <Info className="w-5 h-5 shrink-0" />
                 <div>
                   <p className="font-medium mb-1">Platform connections are optional</p>
                   <p className="text-sm text-(--color-content-tertiary)">
@@ -586,7 +586,7 @@ export default function OnboardingSetupPage() {
         return (
           <div className={`step-content ${animating ? 'animating' : ''}`}>
             <div className="step-header">
-              <div className="step-icon-wrapper bg-gradient-to-br from-orange-500 to-red-600">
+              <div className="step-icon-wrapper bg-linear-to-br from-orange-500 to-red-600">
                 <Bot className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -724,36 +724,36 @@ export default function OnboardingSetupPage() {
               <div className="grid grid-cols-2 gap-3 text-left">
                 {formData.displayName && (
                   <div className="summary-item">
-                    <Check className="w-4 h-4 text-success flex-shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>Profile: {formData.displayName}</span>
                   </div>
                 )}
                 {formData.niche && (
                   <div className="summary-item">
-                    <Check className="w-4 h-4 text-success flex-shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>{niches.find(n => n.id === formData.niche)?.name} niche</span>
                   </div>
                 )}
                 {formData.goals.length > 0 && (
                   <div className="summary-item">
-                    <Check className="w-4 h-4 text-success flex-shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>{formData.goals.length} business goals</span>
                   </div>
                 )}
                 {formData.connectedPlatforms.length > 0 && (
                   <div className="summary-item">
-                    <Check className="w-4 h-4 text-success flex-shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>{formData.connectedPlatforms.length} platforms</span>
                   </div>
                 )}
                 {formData.personality && (
                   <div className="summary-item">
-                    <Check className="w-4 h-4 text-success flex-shrink-0" />
+                    <Check className="w-4 h-4 text-success shrink-0" />
                     <span>AI configured</span>
                   </div>
                 )}
                 <div className="summary-item">
-                  <Check className="w-4 h-4 text-success flex-shrink-0" />
+                  <Check className="w-4 h-4 text-success shrink-0" />
                   <span>Ready to grow!</span>
                 </div>
               </div>
@@ -920,7 +920,7 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
   return (
     <div className="step-content">
       <div className="step-header">
-        <div className="step-icon-wrapper bg-gradient-to-br from-green-500 to-emerald-600">
+        <div className="step-icon-wrapper bg-linear-to-br from-green-500 to-emerald-600">
           <CreditCard className="w-8 h-8 text-white" />
         </div>
         <div>
@@ -981,7 +981,7 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
             <ul className="plan-features">
               {plan.features.map((feature, index) => (
                 <li key={index}>
-                  <Check className="w-4 h-4 text-success flex-shrink-0" />
+                  <Check className="w-4 h-4 text-success shrink-0" />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -1004,7 +1004,7 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
 
       {/* Trial Info */}
       <div className="trial-info">
-        <Shield className="w-5 h-5 text-success flex-shrink-0" />
+        <Shield className="w-5 h-5 text-success shrink-0" />
         <div>
           <p className="font-medium mb-1">14-day free trial on all paid plans</p>
           <p className="text-sm text-(--color-content-tertiary)">

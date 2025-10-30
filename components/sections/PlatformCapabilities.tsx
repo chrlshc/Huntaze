@@ -163,7 +163,7 @@ export default function PlatformCapabilities() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8 text-center"
+          className="mt-16 bg-linear-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8 text-center"
         >
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             See it in action

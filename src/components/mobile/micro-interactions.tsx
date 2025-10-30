@@ -396,7 +396,7 @@ export function InlineQuickReply({
       {suggestions.map((suggestion, index) => (
         <motion.button
           key={index}
-          className="flex-shrink-0 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium whitespace-nowrap"
+          className="shrink-0 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium whitespace-nowrap"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: index * 0.05 }}

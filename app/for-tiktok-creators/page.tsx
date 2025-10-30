@@ -40,7 +40,7 @@ export default function TikTokCreatorsPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-black to-gray-900">
+      <section className="relative py-20 md:py-32 overflow-hidden bg-linear-to-b from-black to-gray-900">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +54,7 @@ export default function TikTokCreatorsPage() {
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Turn TikTok Fame Into 
-              <span className="text-gradient bg-gradient-to-r from-pink-500 to-cyan-500 bg-clip-text text-transparent"> Real Income</span>
+              <span className="text-gradient bg-linear-to-r from-pink-500 to-cyan-500 bg-clip-text text-transparent"> Real Income</span>
             </h1>
             
             <p className="text-xl text-gray-300 mb-8">
@@ -64,7 +64,7 @@ export default function TikTokCreatorsPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Link href="/onboarding">
-                <MagneticButton size="lg" className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-cyan-500 text-white hover:from-pink-600 hover:to-cyan-600">
+                <MagneticButton size="lg" className="w-full sm:w-auto bg-linear-to-r from-pink-500 to-cyan-500 text-white hover:from-pink-600 hover:to-cyan-600">
                   Start Free Trial
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </MagneticButton>
@@ -84,7 +84,7 @@ export default function TikTokCreatorsPage() {
 
         {/* Animated background */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 animate-pulse" />
+          <div className="absolute inset-0 bg-linear-to-r from-pink-500/20 to-cyan-500/20 animate-pulse" />
         </div>
       </section>
 
@@ -116,7 +116,7 @@ export default function TikTokCreatorsPage() {
                 className="bg-gray-50 dark:bg-gray-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-800"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0 mt-1">
+                  <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0 mt-1">
                     <div className="w-2 h-2 bg-red-500 rounded-full" />
                   </div>
                   <p className="text-gray-700 dark:text-gray-300 font-medium">{challenge}</p>
@@ -139,7 +139,7 @@ export default function TikTokCreatorsPage() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-20 bg-gradient-to-r from-pink-50 to-cyan-50 dark:from-gray-900 dark:to-gray-950">
+      <section className="py-20 bg-linear-to-r from-pink-50 to-cyan-50 dark:from-gray-900 dark:to-gray-950">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -165,7 +165,7 @@ export default function TikTokCreatorsPage() {
                 transition={{ delay: index * 0.1 }}
                 className="bg-white dark:bg-gray-900 rounded-2xl p-6 text-center shadow-lg"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 bg-linear-to-br from-pink-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <benefit.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
@@ -264,8 +264,8 @@ export default function TikTokCreatorsPage() {
                 transition={{ delay: index * 0.2 }}
                 className={`flex gap-6 mb-12 ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
               >
-                <div className="flex-shrink-0">
-                  <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                <div className="shrink-0">
+                  <div className="w-20 h-20 bg-linear-to-br from-pink-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                     {step.number}
                   </div>
                 </div>
@@ -280,7 +280,7 @@ export default function TikTokCreatorsPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-pink-600 to-cyan-600 text-white">
+      <section className="py-20 bg-linear-to-r from-pink-600 to-cyan-600 text-white">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -129,7 +129,7 @@ function MockupContent({ type }: { type: FeatureKey }) {
               </div>
             </div>
             <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="h-32 bg-gradient-to-r from-purple-100 to-pink-100 rounded flex items-center justify-center">
+              <div className="h-32 bg-linear-to-r from-purple-100 to-pink-100 rounded flex items-center justify-center">
                 <span className="text-gray-500">Revenue Chart</span>
               </div>
             </div>
@@ -144,7 +144,7 @@ function MockupContent({ type }: { type: FeatureKey }) {
               <h4 className="font-semibold text-gray-900">Special Offer</h4>
               <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Active</span>
             </div>
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg p-4">
+            <div className="bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-lg p-4">
               <div className="text-lg font-bold mb-1">Summer Bundle</div>
               <div className="text-sm opacity-90">50% OFF - Limited Time</div>
               <div className="mt-3 text-2xl font-bold">$49.99</div>
@@ -246,7 +246,7 @@ export default function FeatureTabsEN() {
   const Icon = data.icon;
 
   return (
-    <section className="py-24 bg-gradient-to-b from-black via-black to-gray-950 text-white">
+    <section className="py-24 bg-linear-to-b from-black via-black to-gray-950 text-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="section-header">
           <span className="overline">Complete Solution</span>
@@ -284,7 +284,7 @@ export default function FeatureTabsEN() {
               transition={{ duration: 0.25, ease: 'easeOut' }}
             >
               <div className="inline-flex items-center gap-3 mb-4">
-                <span className={`p-2 rounded-lg bg-gradient-to-r ${data.color}`}>
+                <span className={`p-2 rounded-lg bg-linear-to-r ${data.color}`}>
                   <Icon className="w-5 h-5 text-white" />
                 </span>
                 <h3 className="feature-title">{data.title}</h3>
@@ -312,13 +312,13 @@ export default function FeatureTabsEN() {
             >
               {/* Simple preview box instead of mockups */}
               <div className="relative max-w-2xl mx-auto">
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-1 rounded-2xl">
+                <div className="bg-linear-to-r from-purple-500 to-pink-500 p-1 rounded-2xl">
                   <div className="bg-white rounded-xl p-8">
                     <MockupContent type={active} />
                   </div>
                 </div>
                 {/* Glow effect */}
-                <div className="absolute -inset-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-2xl blur-3xl opacity-20 -z-10" />
+                <div className="absolute -inset-8 bg-linear-to-r from-purple-400 to-pink-400 rounded-2xl blur-3xl opacity-20 -z-10" />
               </div>
             </motion.div>
           </AnimatePresence>

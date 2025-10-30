@@ -156,7 +156,7 @@ export default function DashboardHuntazeAIPage() {
             {messages.length === 0 ? (
               <div className="max-w-3xl mx-auto px-4 py-12">
                 <div className="text-center mb-8">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-linear-to-r from-purple-500 to-purple-600 flex items-center justify-center">
                     <span className="text-3xl font-bold text-white">HA</span>
                   </div>
                   <h1 className={`text-3xl font-semibold mb-2 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>Comment puis-je vous aider aujourd'hui ?</h1>
@@ -174,7 +174,7 @@ export default function DashboardHuntazeAIPage() {
                 {messages.map((message) => (
                   <div key={message.id} className={`mb-6 flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`flex gap-3 max-w-[85%] ${message.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.sender === 'user' ? 'bg-purple-600' : 'bg-gradient-to-r from-purple-500 to-purple-600'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${message.sender === 'user' ? 'bg-purple-600' : 'bg-linear-to-r from-purple-500 to-purple-600'}`}>
                         {message.sender === 'user' ? <User size={18} className="text-white" /> : <Bot size={18} className="text-white" />}
                       </div>
                       <div className={`rounded-2xl px-4 py-2.5 ${message.sender === 'user' ? darkMode ? 'bg-gray-700 text-gray-100' : 'bg-gray-100 text-gray-900' : darkMode ? 'bg-gray-700/50 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
@@ -186,7 +186,7 @@ export default function DashboardHuntazeAIPage() {
                 ))}
                 {isTyping && (
                   <div className="flex gap-3 mb-6">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-r from-purple-500 to-purple-600 flex items-center justify-center">
                       <Bot size={18} className="text-white" />
                     </div>
                     <div className={`rounded-2xl px-4 py-3 ${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>

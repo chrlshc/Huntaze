@@ -127,7 +127,7 @@ export default function UseCasesCarousel() {
                         {/* Mockup */}
                         <div className="flex-1 relative">
                           <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl p-4 shadow-2xl">
-                            <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
+                            <div className="aspect-4/3 bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
                               {/* TODO: Add actual screenshot images */}
                               <div className="w-full h-full bg-white dark:bg-gray-950 p-4">
                                 <div className="h-full flex flex-col gap-3">

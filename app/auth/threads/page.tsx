@@ -27,7 +27,7 @@ export default function ThreadsAuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 to-black">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
         <div className="text-center">
           <div className="w-16 h-16 bg-black rounded-xl flex items-center justify-center mx-auto mb-4">

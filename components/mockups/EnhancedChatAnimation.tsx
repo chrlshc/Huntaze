@@ -78,7 +78,7 @@ export default function EnhancedChatAnimation() {
       case 'tip':
         return (
           <motion.div 
-            className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-xl"
+            className="flex items-center gap-2 bg-linear-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-xl"
             whileHover={{ scale: 1.02 }}
           >
             <DollarSign className="w-5 h-5" />
@@ -89,7 +89,7 @@ export default function EnhancedChatAnimation() {
       case 'image':
         return (
           <div className="relative">
-            <div className="w-48 h-64 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl overflow-hidden">
+            <div className="w-48 h-64 bg-linear-to-br from-purple-600 to-pink-600 rounded-xl overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center">
                 <ImageIcon className="w-12 h-12 text-white/50" />
               </div>
@@ -152,7 +152,7 @@ export default function EnhancedChatAnimation() {
       {/* Chat header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-800">
         <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
+          <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500" />
           <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-950" />
         </div>
         <div className="flex-1">

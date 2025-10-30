@@ -92,7 +92,7 @@ export default function ProgressiveOnboarding() {
   const [startTime] = useState(Date.now());
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Progress indicator */}
         <div className="mb-8">
@@ -108,7 +108,7 @@ export default function ProgressiveOnboarding() {
           {/* Progress bar */}
           <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <motion.div
-              className="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-600 to-pink-600"
+              className="absolute inset-y-0 left-0 bg-linear-to-r from-purple-600 to-pink-600"
               initial={{ width: 0 }}
               animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}

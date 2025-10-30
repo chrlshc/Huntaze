@@ -107,7 +107,7 @@ export default function FeaturesPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50" />
+        <div className="absolute inset-0 bg-linear-to-br from-purple-50 via-white to-pink-50" />
         <div className="relative max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -116,7 +116,7 @@ export default function FeaturesPage() {
             className="section-header"
           >
             <span className="overline">Platform Features</span>
-            <h1 className="display-1 mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent balance-text">
+            <h1 className="display-1 mb-6 bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent balance-text">
               Features that Drive Success
             </h1>
             <p className="lead">
@@ -141,7 +141,7 @@ export default function FeaturesPage() {
                 className="group relative bg-white rounded-2xl p-8 border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 {/* Gradient border on hover */}
-                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"
+                <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"
                   style={{
                     backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
                     '--tw-gradient-from': feature.gradient.split(' ')[1],
@@ -150,7 +150,7 @@ export default function FeaturesPage() {
                 />
                 
                 {/* Icon */}
-                <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-16 h-16 bg-linear-to-br ${feature.gradient} rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
                   {feature.icon}
                 </div>
                 
@@ -203,7 +203,7 @@ export default function FeaturesPage() {
                   <ul className="space-y-3">
                     {showcase.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                        <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
                           <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
@@ -224,7 +224,7 @@ export default function FeaturesPage() {
                   viewport={{ once: true }}
                   className="relative"
                 >
-                  <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-2xl">
+                  <div className="aspect-4/3 bg-linear-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden shadow-2xl">
                     {/* Placeholder for mockup - replace with actual mockup component */}
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                       <span className="text-2xl font-medium">
@@ -272,7 +272,7 @@ export default function FeaturesPage() {
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left p-6 font-semibold text-gray-900">Features</th>
-                    <th className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50">
+                    <th className="text-center p-6 bg-linear-to-br from-purple-50 to-pink-50">
                       <span className="font-bold text-purple-600">Huntaze</span>
                     </th>
                     <th className="text-center p-6 font-semibold text-gray-600">Competitor A</th>
@@ -292,7 +292,7 @@ export default function FeaturesPage() {
                   ].map((feature, index) => (
                     <tr key={feature} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                       <td className="p-6 text-gray-900">{feature}</td>
-                      <td className="text-center p-6 bg-gradient-to-br from-purple-50/50 to-pink-50/50">
+                      <td className="text-center p-6 bg-linear-to-br from-purple-50/50 to-pink-50/50">
                         <svg className="w-6 h-6 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
@@ -336,7 +336,7 @@ export default function FeaturesPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-3xl p-12 text-white"
+            className="bg-linear-to-br from-purple-600 to-pink-600 rounded-3xl p-12 text-white"
           >
             <h2 className="text-4xl font-bold mb-6">
               Ready to Transform Your Workflow?

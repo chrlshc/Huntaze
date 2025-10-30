@@ -21,7 +21,7 @@ export default function ForEveryonePage() {
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               From solo creators to
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">
                 global brands
               </span>
             </h1>
@@ -73,7 +73,7 @@ export default function ForEveryonePage() {
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full"></div>
+                  <div className="w-16 h-16 bg-linear-to-br from-purple-600 to-pink-600 rounded-full"></div>
                   <div>
                     <h4 className="text-white font-semibold">@sarahcreates</h4>
                     <p className="text-white/60 text-sm">15K subscribers • $15K/month</p>
@@ -125,7 +125,7 @@ export default function ForEveryonePage() {
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 md:order-1">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  <div className="w-16 h-16 bg-linear-to-br from-orange-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
                     FQ
                   </div>
                   <div>
@@ -179,7 +179,7 @@ export default function ForEveryonePage() {
               </div>
               <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  <div className="w-16 h-16 bg-linear-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
                     ME
                   </div>
                   <div>
@@ -200,7 +200,7 @@ export default function ForEveryonePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30 max-w-5xl mx-auto mb-16"
+            className="bg-linear-to-r from-purple-600/20 to-pink-600/20 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30 max-w-5xl mx-auto mb-16"
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="text-center">
@@ -238,7 +238,7 @@ export default function ForEveryonePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/signup"
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
+                className="inline-flex items-center px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity"
               >
                 Get started free
                 <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

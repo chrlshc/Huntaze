@@ -83,7 +83,7 @@ export function GrowGlobally() {
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Grow{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400">
               around the world
             </span>
           </h2>
@@ -103,10 +103,10 @@ export function GrowGlobally() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/5 dark:to-emerald-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-linear-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/5 dark:to-emerald-500/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <div className="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 h-full hover:border-green-300 dark:hover:border-green-700 transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
                 
@@ -168,7 +168,7 @@ export function GrowGlobally() {
                     whileInView={{ width: '75%' }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, delay: index * 0.1 }}
-                    className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
+                    className="h-full bg-linear-to-r from-green-500 to-emerald-500"
                   />
                 </div>
               </motion.div>
@@ -184,14 +184,14 @@ export function GrowGlobally() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto"
         >
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-12 text-center">
+          <div className="bg-linear-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-12 text-center">
             <div className="max-w-3xl mx-auto">
               <motion.div
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ type: "spring", duration: 0.6 }}
-                className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-6"
+                className="w-20 h-20 rounded-full bg-linear-to-br from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-6"
               >
                 <Globe2 className="w-10 h-10 text-white" />
               </motion.div>
@@ -231,7 +231,7 @@ export function GrowGlobally() {
           <Link href="/demo">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+              className="bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
               <Globe2 className="mr-2 w-5 h-5" />
               Start your global empire

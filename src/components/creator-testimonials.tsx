@@ -127,7 +127,7 @@ export default function CreatorTestimonials() {
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-lg">
-                    <div className="flex items-center gap-3 flex-shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                       <DollarSign className="w-5 h-5 text-green-600" />
                       <span className="text-gray-600 dark:text-gray-300 text-sm md:text-base">Monthly Revenue</span>
                     </div>

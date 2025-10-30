@@ -83,7 +83,7 @@ export default function FeatureTabsFR() {
   const Icon = data.icon;
 
   return (
-    <section className="py-24 bg-gradient-to-b from-black via-black to-gray-950 text-white">
+    <section className="py-24 bg-linear-to-b from-black via-black to-gray-950 text-white">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-12">
           Une plateforme, tout gérer
@@ -119,7 +119,7 @@ export default function FeatureTabsFR() {
               transition={{ duration: 0.3 }}
             >
               <div className="inline-flex items-center gap-3 mb-4">
-                <span className={`p-2 rounded-lg bg-gradient-to-r ${data.color}`}>
+                <span className={`p-2 rounded-lg bg-linear-to-r ${data.color}`}>
                   <Icon className="w-5 h-5 text-white" />
                 </span>
                 <h3 className="text-2xl font-bold">{data.title}</h3>
@@ -146,7 +146,7 @@ export default function FeatureTabsFR() {
               transition={{ duration: 0.3 }}
               className="relative rounded-2xl border border-white/10 overflow-hidden"
             >
-              <div className={`h-[320px] bg-gradient-to-br ${data.color} opacity-80`} />
+              <div className={`h-[320px] bg-linear-to-br ${data.color} opacity-80`} />
               <div className="absolute inset-0 grid place-items-center">
                 <p className="text-sm text-white/90">Mockup d’interface — {data.title}</p>
               </div>

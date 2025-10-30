@@ -221,7 +221,7 @@ export default function MessagesPage() {
         <ResumeBanner />
         {/* Alert for no platform */}
         {!hasConnectedPlatforms && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+          <div className="mb-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
             <p className="text-amber-900 font-medium">
               🔗 Connect a platform to start messaging fans
             </p>
@@ -261,7 +261,7 @@ export default function MessagesPage() {
                     trackEvent('kpi_empty_state_cta_click', { area: 'messages', action: 'first_message' });
                   } catch {}
                 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
               >
                 Send your first message
               </button>

@@ -82,7 +82,7 @@ export default function AuthPage() {
       {/* Left Side - Auth Form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12 relative">
         {/* Gradient Background Effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10" />
         
         <div className="relative w-full max-w-md">
           {/* Back button */}
@@ -308,7 +308,7 @@ export default function AuthPage() {
       </div>
 
       {/* Right Side - Features/Benefits (Desktop only) */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary to-secondary p-12 items-center justify-center relative overflow-hidden">
+      <div className="hidden lg:flex flex-1 bg-linear-to-br from-primary to-secondary p-12 items-center justify-center relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl" />
@@ -334,7 +334,7 @@ export default function AuthPage() {
           <div className="space-y-4">
             {features.map((feature, index) => (
               <div key={index} className="flex items-start gap-3 bg-white/10 backdrop-blur rounded-lg p-4 hover:bg-white/15 transition-colors">
-                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
                   <Check className="w-3 h-3 text-white" />
                 </div>
                 <span className="text-white/90">{feature}</span>

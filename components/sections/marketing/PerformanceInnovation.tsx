@@ -63,7 +63,7 @@ export function PerformanceInnovation() {
     <section id="performance" className="py-24 lg:py-32 bg-white dark:bg-gray-950 relative overflow-hidden">
       {/* Tech Background Pattern */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 opacity-50" />
+        <div className="absolute inset-0 bg-linear-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 opacity-50" />
         <motion.div
           animate={{ 
             backgroundPosition: ['0% 0%', '100% 100%'],
@@ -113,10 +113,10 @@ export function PerformanceInnovation() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-linear-to-br from-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <div className="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 text-center h-full hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-300">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 rounded-xl bg-linear-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <stat.icon className="w-7 h-7 text-purple-600 dark:text-purple-400" />
                 </div>
                 
@@ -179,7 +179,7 @@ export function PerformanceInnovation() {
                 className={index % 2 === 1 ? 'lg:col-start-1' : ''}
               >
                 <div className="relative aspect-square max-w-md mx-auto">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-200 to-blue-200 dark:from-purple-900/30 dark:to-blue-900/30 rounded-3xl blur-2xl" />
+                  <div className="absolute inset-0 bg-linear-to-br from-purple-200 to-blue-200 dark:from-purple-900/30 dark:to-blue-900/30 rounded-3xl blur-2xl" />
                   <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 h-full flex items-center justify-center">
                     {index === 0 && <Cpu className="w-32 h-32 text-purple-600 dark:text-purple-400" />}
                     {index === 1 && <Shield className="w-32 h-32 text-blue-600 dark:text-blue-400" />}
@@ -199,7 +199,7 @@ export function PerformanceInnovation() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-3xl mx-auto"
         >
-          <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-3xl p-12 text-white">
+          <div className="bg-linear-to-br from-purple-600 to-blue-600 rounded-3xl p-12 text-white">
             <h3 className="text-3xl font-bold mb-4">
               Ready to experience the difference?
             </h3>

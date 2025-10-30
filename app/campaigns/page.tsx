@@ -350,7 +350,7 @@ export default function CampaignsPage() {
   const Icon = campaignContent.icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50">
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -395,7 +395,7 @@ export default function CampaignsPage() {
         <div className="elevated-card rounded-3xl overflow-hidden">
           {/* Hero Section */}
           <div className="p-12 text-center border-b border-gray-100">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-linear-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
               <Icon className="w-10 h-10 text-purple-600" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-3">{campaignContent.title}</h2>
@@ -411,7 +411,7 @@ export default function CampaignsPage() {
                   }
                 } catch {}
               }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-600/25 transition-all font-medium"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-600/25 transition-all font-medium"
             >
               <campaignContent.action.icon className="w-5 h-5" />
               {campaignContent.action.label}
@@ -421,7 +421,7 @@ export default function CampaignsPage() {
 
           {/* Campaign Templates */}
           {campaignContent.templates.length > 0 && (
-            <div className="p-8 bg-gradient-to-br from-gray-50 to-white">
+            <div className="p-8 bg-linear-to-br from-gray-50 to-white">
               <h3 className="font-semibold text-gray-900 mb-6">
                 {profile?.niche === 'fitness' ? 'Proven Fitness Campaign Templates' :
                  profile?.niche === 'gaming' ? 'Gaming Campaign Templates' :
@@ -487,7 +487,7 @@ export default function CampaignsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {campaignContent.bestPractices.map((practice, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                     <p className="text-gray-700">{practice}</p>
                   </div>
                 ))}
@@ -496,7 +496,7 @@ export default function CampaignsPage() {
           )}
 
           {/* Performance Preview */}
-          <div className="p-8 bg-gradient-to-br from-purple-50 to-pink-50">
+          <div className="p-8 bg-linear-to-br from-purple-50 to-pink-50">
             <h3 className="font-semibold text-gray-900 mb-6">Expected Campaign Performance</h3>
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
@@ -515,7 +515,7 @@ export default function CampaignsPage() {
           </div>
 
           {/* Call to Action */}
-          <div className="p-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+          <div className="p-8 bg-linear-to-r from-purple-600 to-pink-600 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold mb-1">
@@ -555,7 +555,7 @@ export default function CampaignsPage() {
         {/* AI Optimization Notice */}
         <div className="mt-8 bg-purple-50 border border-purple-200 rounded-2xl p-6">
           <div className="flex items-start gap-4">
-            <Bot className="w-6 h-6 text-purple-600 flex-shrink-0" />
+            <Bot className="w-6 h-6 text-purple-600 shrink-0" />
             <div>
               <h4 className="font-semibold text-purple-900 mb-1">
                 AI-Powered Campaign Optimization

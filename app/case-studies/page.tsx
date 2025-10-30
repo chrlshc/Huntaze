@@ -86,7 +86,7 @@ export default function CaseStudiesPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
+      <section className="py-20 md:py-32 bg-linear-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
         <div className="container-width">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -118,7 +118,7 @@ export default function CaseStudiesPage() {
               >
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                  <div className="w-16 h-16 bg-linear-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
                     {study.avatar}
                   </div>
                   <div>
@@ -151,7 +151,7 @@ export default function CaseStudiesPage() {
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6">
+                  <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6">
                     <h4 className="font-semibold text-purple-600 mb-4">After Huntaze</h4>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export default function CaseStudiesPage() {
               <div className="space-y-4">
                 {commonChallenges.map((challenge, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                       <div className="w-2 h-2 bg-red-500 rounded-full" />
                     </div>
                     <p className="text-gray-700 dark:text-gray-300">{challenge}</p>
@@ -244,7 +244,7 @@ export default function CaseStudiesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+      <section className="py-20 bg-linear-to-r from-purple-600 to-pink-600 text-white">
         <div className="container-width text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Start Working Smarter Today

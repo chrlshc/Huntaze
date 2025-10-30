@@ -123,7 +123,7 @@ const AnimatedHero: React.FC = () => {
           {/* Main title */}
           <motion.div variants={itemVariants} style={{ y: y1 }}>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
-              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
+              <span className="block bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient">
                 Huntaze AI
               </span>
             </h1>
@@ -188,7 +188,7 @@ const AnimatedHero: React.FC = () => {
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <motion.div
-                  className={`inline-flex p-2 rounded-lg bg-gradient-to-r ${stat.color} mb-2`}
+                  className={`inline-flex p-2 rounded-lg bg-linear-to-r ${stat.color} mb-2`}
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >

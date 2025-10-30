@@ -76,7 +76,7 @@ export default function HeaderMarketing() {
   }, [activeDropdown])
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[1000] bg-black border-b border-gray-800">
+    <header className="fixed inset-x-0 top-0 z-1000 bg-black border-b border-gray-800">
       <nav className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-14">
           {/* Left side - Navigation */}
@@ -231,7 +231,7 @@ export default function HeaderMarketing() {
                   </Link>
                   <Link
                     href="/auth"
-                    className="block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg text-center font-semibold"
+                    className="block bg-linear-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg text-center font-semibold"
                     onClick={() => { events.ctaClick({ location: 'nav_mobile', label: 'Start free trial' }); setMobileMenuOpen(false); }}
                   >
                     Start free trial

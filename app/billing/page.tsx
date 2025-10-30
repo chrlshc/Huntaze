@@ -127,7 +127,7 @@ export default function BillingPage() {
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-100 to-pink-100 rounded-full mb-4">
             <Sparkles className="w-4 h-4 text-purple-600" />
             <span className="text-sm font-medium text-purple-700">Upgrade Your Business</span>
           </div>
@@ -232,9 +232,9 @@ export default function BillingPage() {
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       {feature.included ? (
-                        <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <Check className="w-5 h-5 text-green-500 mt-0.5 shrink-0" />
                       ) : (
-                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 mt-0.5 flex-shrink-0" />
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 mt-0.5 shrink-0" />
                       )}
                       <span className={`text-sm ${feature.included ? 'text-gray-700' : 'text-gray-400'}`}>
                         {feature.text}
@@ -248,7 +248,7 @@ export default function BillingPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white text-center">
+        <div className="bg-linear-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white text-center">
           <h2 className="text-2xl font-bold mb-4">Ready to scale your creator business?</h2>
           <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
             Join 5,000+ creators using Huntaze to automate fan interactions and save time

@@ -61,7 +61,7 @@ export function ForEveryone() {
   ];
 
   return (
-    <section id="for-everyone" className="py-24 lg:py-32 bg-gradient-to-b from-gray-50 to-white dark:from-black to-gray-950">
+    <section id="for-everyone" className="py-24 lg:py-32 bg-linear-to-b from-gray-50 to-white dark:from-black to-gray-950">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -72,7 +72,7 @@ export function ForEveryone() {
         >
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             For everyone from{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-purple-600 dark:from-green-400 dark:to-purple-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-green-600 to-purple-600 dark:from-green-400 dark:to-purple-400">
               beginners to empire builders
             </span>
           </h2>
@@ -91,10 +91,10 @@ export function ForEveryone() {
               transition={{ duration: 0.5, delay: index * 0.2 }}
               className="relative group"
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${stage.bgColor} dark:${stage.darkBgColor} rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity duration-300`} />
+              <div className={`absolute inset-0 bg-linear-to-br ${stage.bgColor} dark:${stage.darkBgColor} rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity duration-300`} />
               
               <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-8 h-full hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stage.color} flex items-center justify-center mb-6`}>
+                <div className={`w-14 h-14 rounded-2xl bg-linear-to-br ${stage.color} flex items-center justify-center mb-6`}>
                   <stage.icon className="w-7 h-7 text-white" />
                 </div>
                 
@@ -102,7 +102,7 @@ export function ForEveryone() {
                   {stage.title}
                 </h3>
                 
-                <p className={`text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r ${stage.color} mb-4`}>
+                <p className={`text-lg font-semibold text-transparent bg-clip-text bg-linear-to-r ${stage.color} mb-4`}>
                   {stage.subtitle}
                 </p>
                 
@@ -113,7 +113,7 @@ export function ForEveryone() {
                 <ul className="space-y-3">
                   {stage.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400 mt-0.5 shrink-0" />
                       <span className="text-gray-700 dark:text-gray-300">
                         {feature}
                       </span>
@@ -131,7 +131,7 @@ export function ForEveryone() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-700 dark:to-blue-700 rounded-3xl p-12 text-white text-center"
+          className="bg-linear-to-r from-purple-600 to-blue-600 dark:from-purple-700 dark:to-blue-700 rounded-3xl p-12 text-white text-center"
         >
           <div className="max-w-3xl mx-auto">
             <h3 className="text-3xl font-bold mb-6">

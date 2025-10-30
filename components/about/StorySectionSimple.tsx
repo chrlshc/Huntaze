@@ -39,7 +39,7 @@ export function StorySectionSimple() {
         {/* Timeline */}
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-purple-300 to-pink-300" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-linear-to-b from-purple-300 to-pink-300" />
           
           {/* Timeline items */}
           <div className="space-y-20">
@@ -55,7 +55,7 @@ export function StorySectionSimple() {
                     index % 2 === 0 ? 'text-right pr-12' : 'text-left pl-12'
                   } animate-slideIn${index % 2 === 0 ? 'Right' : 'Left'} delay-${(index + 1) * 200}`}
                 >
-                  <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  <span className="text-5xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     {milestone.year}
                   </span>
                   <h3 className="feature-title mt-4 mb-3">{milestone.title}</h3>

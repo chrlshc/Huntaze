@@ -574,7 +574,7 @@ export default function OnboardingSetupPage() {
                             <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{goal.description}</div>
                           </div>
                           {isSelected && (
-                            <Check className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                            <Check className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
                           )}
                         </div>
                       </button>
@@ -778,7 +778,7 @@ export default function OnboardingSetupPage() {
                 className={`group relative p-6 border-2 rounded-xl transition-all border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400`}
               >
                 <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                     <span className="text-2xl font-bold text-white">IG</span>
                   </div>
                   <div>
@@ -981,7 +981,7 @@ export default function OnboardingSetupPage() {
 
             <button
               onClick={handleComplete}
-              className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all inline-flex items-center gap-2 shadow-lg hover:shadow-xl"
+              className="px-8 py-3 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all inline-flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               Go to Dashboard
               <ArrowRight className="w-5 h-5" />
@@ -1010,7 +1010,7 @@ export default function OnboardingSetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-24 pb-12 px-4">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-24 pb-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Progress Steps */}
         {currentStep !== 'complete' && (
@@ -1145,7 +1145,7 @@ function OnlyFansConnect({ onConnected }: { onConnected: () => void }) {
         <button
           onClick={submit}
           disabled={submitting || !username || !apiKey}
-          className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl disabled:opacity-50"
         >
           {submitting ? (
             <>
@@ -1203,7 +1203,7 @@ function CrmConnect({ provider, onConnected }: { provider: 'inflow' | 'supercrea
         <button
           onClick={submit}
           disabled={submitting || !apiKey}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
         >
           {submitting ? (
             <>
@@ -1306,7 +1306,7 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
           <button
             onClick={() => startCheckout('pro')}
             disabled={loadingPlan === 'pro'}
-            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+            className="w-full py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
           >
             {loadingPlan === 'pro' ? 'Redirecting…' : 'Start Free Trial'}
           </button>
@@ -1324,7 +1324,7 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
           <button
             onClick={() => startCheckout('enterprise')}
             disabled={loadingPlan === 'enterprise'}
-            className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
+            className="w-full py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg disabled:opacity-50"
           >
             {loadingPlan === 'enterprise' ? 'Redirecting…' : 'Contact & Start'}
           </button>

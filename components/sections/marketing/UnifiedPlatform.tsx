@@ -66,7 +66,7 @@ export function UnifiedPlatform() {
         >
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             One platform to run{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400">everything</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400">everything</span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300">
             Replace ten tools. Plan, publish, message, and get paid — in one place.
@@ -81,12 +81,12 @@ export function UnifiedPlatform() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950"
+              className="group relative p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-300 bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/5 group-hover:to-blue-500/5 rounded-2xl transition-all duration-300" />
+              <div className="absolute inset-0 bg-linear-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/5 group-hover:to-blue-500/5 rounded-2xl transition-all duration-300" />
               
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <feature.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 
@@ -136,7 +136,7 @@ export function UnifiedPlatform() {
           transition={{ duration: 1 }}
           className="mt-24 relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/10 dark:to-blue-900/10 rounded-3xl blur-3xl opacity-50" />
+          <div className="absolute inset-0 bg-linear-to-r from-purple-100 to-blue-100 dark:from-purple-900/10 dark:to-blue-900/10 rounded-3xl blur-3xl opacity-50" />
           
           <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-12">
             <h3 className="text-2xl font-semibold text-center text-gray-900 dark:text-white mb-8">

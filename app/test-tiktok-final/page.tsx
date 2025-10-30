@@ -66,7 +66,7 @@ export default function TestTikTokFinal() {
         
         <button
           onClick={testOAuth}
-          className="w-full py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+          className="w-full py-3 bg-linear-to-r from-red-500 to-blue-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
         >
           Test TikTok OAuth
         </button>

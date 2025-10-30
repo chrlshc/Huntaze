@@ -22,7 +22,7 @@ export default function FinalCTA() {
         <div className="text-center mb-12">
           <h2 className="text-5xl md:text-7xl font-bold text-white mb-6">
             Ready to grow your{' '}
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               creator business
             </span>?
           </h2>
@@ -85,7 +85,7 @@ export default function FinalCTA() {
         {/* Pricing Teaser */}
         <div className="mt-16 text-center">
           {/* Offre spéciale sans timer */}
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-full border border-purple-500/20 mb-4">
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-600/10 to-pink-600/10 rounded-full border border-purple-500/20 mb-4">
             <span className="text-purple-400 font-semibold">Offre limitée</span>
             <span className="text-gray-300">-50% le premier mois</span>
           </div>

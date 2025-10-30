@@ -80,7 +80,7 @@ export function SupportFinancing() {
   ];
 
   return (
-    <section id="support" className="py-24 lg:py-32 bg-gradient-to-b from-gray-50 to-white dark:from-black to-gray-950">
+    <section id="support" className="py-24 lg:py-32 bg-linear-to-b from-gray-50 to-white dark:from-black to-gray-950">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -129,7 +129,7 @@ export function SupportFinancing() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 text-center hover:border-green-300 dark:hover:border-green-700 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center mx-auto mb-4">
                   <feature.icon className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
                 
@@ -213,7 +213,7 @@ export function SupportFinancing() {
                 transition={{ duration: 0.5, delay: index * 0.2 }}
                 className="relative group"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-br from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-8 h-full hover:border-green-300 dark:hover:border-green-700 transition-all duration-300">
                   <div className="flex items-center justify-between mb-6">
@@ -234,7 +234,7 @@ export function SupportFinancing() {
                   <ul className="space-y-3">
                     {option.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                        <div className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
                           <TrendingUp className="w-3 h-3 text-green-600 dark:text-green-400" />
                         </div>
                         <span className="text-sm text-gray-700 dark:text-gray-300">
@@ -257,7 +257,7 @@ export function SupportFinancing() {
           transition={{ duration: 0.8 }}
           className="mt-16 text-center"
         >
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-12 max-w-4xl mx-auto">
+          <div className="bg-linear-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 rounded-3xl p-12 max-w-4xl mx-auto">
             <h3 className="text-3xl font-bold text-white mb-4">
               Experience the Huntaze difference
             </h3>
@@ -268,7 +268,7 @@ export function SupportFinancing() {
               <Link href="/demo">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Get started today
                 </Button>

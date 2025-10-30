@@ -52,7 +52,7 @@ export default function TestTikTokURL() {
               
               <button
                 onClick={() => window.location.href = authUrl}
-                className="px-6 py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-lg hover:opacity-90"
+                className="px-6 py-3 bg-linear-to-r from-red-500 to-blue-500 text-white rounded-lg hover:opacity-90"
               >
                 Test OAuth Flow with Sandbox URL
               </button>

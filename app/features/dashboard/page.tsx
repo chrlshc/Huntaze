@@ -172,11 +172,11 @@ export default function DashboardPage() {
                   </li>
                 </ul>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
+              <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
                 <div className="elevated-card rounded-lg p-6">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">$—</div>
                   <div className="text-sm text-green-600">Analytics coming soon</div>
-                  <div className="mt-4 h-32 bg-gradient-to-r from-purple-600 to-pink-600 rounded opacity-20"></div>
+                  <div className="mt-4 h-32 bg-linear-to-r from-purple-600 to-pink-600 rounded opacity-20"></div>
                 </div>
               </div>
             </motion.div>
@@ -189,7 +189,7 @@ export default function DashboardPage() {
               className="grid lg:grid-cols-2 gap-8 items-center"
             >
               <div className="order-2 lg:order-1">
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-8">
+                <div className="bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-8">
                 <div className="elevated-card rounded-lg p-6">
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Top Fans</h4>
                     <div className="space-y-3">
@@ -254,7 +254,7 @@ export default function DashboardPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-20 px-4 bg-linear-to-r from-purple-600 to-pink-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Your business, simplified

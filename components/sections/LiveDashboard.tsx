@@ -118,7 +118,7 @@ export default function LiveDashboard() {
       </div>
 
       {/* Dashboard Content */}
-      <div className="p-6 bg-gradient-to-br from-gray-900 to-gray-800">
+      <div className="p-6 bg-linear-to-br from-gray-900 to-gray-800">
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <motion.div 

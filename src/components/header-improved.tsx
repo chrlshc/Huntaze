@@ -245,7 +245,7 @@ export default function HeaderImproved() {
   }, [])
 
   return (
-    <header className="header fixed inset-x-0 top-0 z-[1000]" data-header="linear-0927">
+    <header className="header fixed inset-x-0 top-0 z-1000" data-header="linear-0927">
       <nav className="header-container">
         <div className="flex items-center gap-10">
           {/* Logo (temporarily hidden) */}

@@ -18,7 +18,7 @@ const StepCard = ({ number, title, description, icon: Icon, delay }: any) => {
       {/* Connector line */}
       {number < 3 && (
         <motion.div
-          className="hidden lg:block absolute top-1/2 left-full w-full h-0.5 bg-gradient-to-r from-purple-600 to-pink-600"
+          className="hidden lg:block absolute top-1/2 left-full w-full h-0.5 bg-linear-to-r from-purple-600 to-pink-600"
           initial={{ scaleX: 0, originX: 0 }}
           animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
           transition={{ delay: delay + 0.3, duration: 0.6 }}
@@ -30,7 +30,7 @@ const StepCard = ({ number, title, description, icon: Icon, delay }: any) => {
         whileHover={{ y: -10, boxShadow: '0 20px 40px rgba(147, 51, 234, 0.1)' }}
       >
         {/* Step number */}
-        <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-xl font-bold">
+        <div className="absolute -top-4 -left-4 w-12 h-12 bg-linear-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-xl font-bold">
           {number}
         </div>
 
@@ -84,7 +84,7 @@ export default function GetStarted() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-950 to-gray-900">
+    <section className="py-20 bg-linear-to-b from-gray-950 to-gray-900">
       <div className="container mx-auto px-4">
         <motion.div
           ref={titleRef}
@@ -125,7 +125,7 @@ export default function GetStarted() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-12 max-w-4xl mx-auto border border-purple-600/30">
+          <div className="bg-linear-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-12 max-w-4xl mx-auto border border-purple-600/30">
             <h3 className="text-3xl font-bold mb-4">
               Ready to Transform Your Business?
             </h3>
@@ -134,7 +134,7 @@ export default function GetStarted() {
             </p>
 
             <motion.button
-              className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all mb-6"
+              className="inline-flex items-center gap-3 px-10 py-5 bg-linear-to-r from-purple-600 to-pink-600 text-white font-bold text-lg rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all mb-6"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

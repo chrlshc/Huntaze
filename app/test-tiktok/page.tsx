@@ -7,7 +7,7 @@ export default function TestTikTok() {
         <h1 className="text-2xl font-bold">Test TikTok OAuth</h1>
         <Link 
           href="/auth/tiktok" 
-          className="inline-block px-6 py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-lg hover:opacity-90"
+          className="inline-block px-6 py-3 bg-linear-to-r from-red-500 to-blue-500 text-white rounded-lg hover:opacity-90"
         >
           Connect TikTok Account
         </Link>

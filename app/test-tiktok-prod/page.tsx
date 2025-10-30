@@ -42,7 +42,7 @@ export default function TestTikTokProd() {
           <button
             onClick={testTikTokOAuth}
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full py-3 bg-linear-to-r from-red-500 to-blue-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {loading ? 'Redirecting...' : 'Test TikTok OAuth (Production)'}
           </button>

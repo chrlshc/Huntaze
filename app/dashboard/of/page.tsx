@@ -38,7 +38,7 @@ export default function OfDashboard() {
           <div className="py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
                   <span className="text-xl font-bold text-white">OF</span>
                 </div>
                 <div>
@@ -84,7 +84,7 @@ export default function OfDashboard() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* AI Status Banner */}
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-6 text-white">
+            <div className="bg-linear-to-r from-purple-600 to-pink-600 rounded-xl p-6 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">

@@ -46,7 +46,7 @@ export default function AppMockup3D() {
                 {/* Sidebar */}
                 <div className="absolute left-0 top-0 bottom-0 w-64 bg-black/70 backdrop-blur border-r border-gray-800/50 p-4">
                   <div className="flex items-center gap-3 mb-8">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-purple-600 to-purple-700 flex items-center justify-center">
                       <span className="text-white font-bold text-sm">H</span>
                     </div>
                     <span className="font-semibold text-white">Huntaze</span>

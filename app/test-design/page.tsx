@@ -111,7 +111,7 @@ export default function TestDesignPage() {
                 <div key={i} className="p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full" />
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-pink-400 rounded-full" />
                       <div>
                         <p className="font-medium text-gray-900">Fan #{i}</p>
                         <p className="text-sm text-gray-500">Active 2 min ago</p>

@@ -95,7 +95,7 @@ export default function InteractiveDemo() {
     <div className="w-full max-w-7xl mx-auto px-4">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Demo Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4">
+        <div className="bg-linear-to-r from-purple-600 to-pink-600 p-4">
           <div className="flex items-center justify-between">
             {/* Progress Bar */}
             <div className="flex-1 mr-8">
@@ -172,7 +172,7 @@ export default function InteractiveDemo() {
                         {step.id === 'dashboard' && (
                           <div className="grid grid-cols-3 gap-4 h-full">
                             <div className="col-span-2">
-                              <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 h-48 mb-4">
+                              <div className="bg-linear-to-br from-purple-100 to-pink-100 rounded-lg p-4 h-48 mb-4">
                                 <h3 className="text-lg font-semibold text-gray-800">Revenue Overview</h3>
                                 <div className="mt-4 h-24 bg-white/60 rounded"></div>
                               </div>
@@ -206,7 +206,7 @@ export default function InteractiveDemo() {
                         {step.id === 'automation' && (
                           <div className="h-full flex items-center justify-center">
                             <div className="text-center">
-                              <div className="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl mx-auto mb-4 flex items-center justify-center">
+                              <div className="w-32 h-32 bg-linear-to-br from-purple-500 to-pink-500 rounded-3xl mx-auto mb-4 flex items-center justify-center">
                                 <svg className="w-16 h-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
@@ -220,19 +220,19 @@ export default function InteractiveDemo() {
                           <div className="h-full">
                             <h3 className="text-xl font-bold text-gray-800 mb-4">Performance Analytics</h3>
                             <div className="grid grid-cols-2 gap-4 mb-6">
-                              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                              <div className="bg-linear-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
                                 <p className="text-sm opacity-90">Total Revenue</p>
                                 <p className="text-2xl font-bold">$47,829</p>
                                 <p className="text-xs opacity-75 mt-1">+23% from last month</p>
                               </div>
-                              <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                              <div className="bg-linear-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
                                 <p className="text-sm opacity-90">Active Subscribers</p>
                                 <p className="text-2xl font-bold">1,247</p>
                                 <p className="text-xs opacity-75 mt-1">+142 this week</p>
                               </div>
                             </div>
                             <div className="bg-gray-50 rounded-lg p-4 h-48">
-                              <div className="h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded"></div>
+                              <div className="h-full bg-linear-to-br from-gray-100 to-gray-200 rounded"></div>
                             </div>
                           </div>
                         )}

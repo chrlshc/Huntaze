@@ -45,7 +45,7 @@ export default function AutomationPage() {
             transition={{ delay: 0.2 }}
             className="mb-16 max-w-5xl mx-auto"
           >
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8">
+            <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-8">
               <div className="grid md:grid-cols-3 gap-6">
                 {[
                   { time: "9:00 AM", action: "Post scheduled content", status: "completed" },
@@ -212,7 +212,7 @@ export default function AutomationPage() {
                 <div className="space-y-3">
                   {workflow.steps.map((step, stepIndex) => (
                     <div key={stepIndex} className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-sm font-medium text-purple-600 dark:text-purple-400 flex-shrink-0">
+                      <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-sm font-medium text-purple-600 dark:text-purple-400 shrink-0">
                         {stepIndex + 1}
                       </div>
                       <span className="text-gray-700 dark:text-gray-300">{step}</span>
@@ -274,7 +274,7 @@ export default function AutomationPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-600">
+      <section className="py-20 px-4 bg-linear-to-r from-purple-600 to-pink-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Work smarter, not harder

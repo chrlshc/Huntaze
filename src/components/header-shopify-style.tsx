@@ -30,8 +30,8 @@ export default function HeaderShopifyStyle() {
   if (isApp) return null
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[1000] bg-black">
-      <nav className="max-w-screen-xl mx-auto px-6 lg:px-8">
+    <header className="fixed inset-x-0 top-0 z-1000 bg-black">
+      <nav className="max-w-(--breakpoint-xl) mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left: Logo with proper spacing */}
           <div className="flex items-center flex-1">

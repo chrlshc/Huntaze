@@ -57,7 +57,7 @@ export default function WorkflowPreview() {
       {/* Workflow Steps */}
       <div className="relative">
         {/* Connection line */}
-        <div className="absolute left-8 top-8 bottom-8 w-0.5 bg-gradient-to-b from-purple-500 to-pink-500" />
+        <div className="absolute left-8 top-8 bottom-8 w-0.5 bg-linear-to-b from-purple-500 to-pink-500" />
 
         {/* Steps */}
         <div className="space-y-8">
@@ -78,7 +78,7 @@ export default function WorkflowPreview() {
               className="flex items-start gap-4 relative"
             >
               {/* Icon */}
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 z-10">
+              <div className="w-16 h-16 rounded-full bg-linear-to-r from-purple-500 to-pink-500 p-0.5 z-10">
                 <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center text-2xl">
                   {step.icon}
                 </div>
@@ -121,7 +121,7 @@ export default function WorkflowPreview() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="mt-8 p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20"
+        className="mt-8 p-4 bg-linear-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20"
       >
         <div className="flex items-center justify-between">
           <span className="text-gray-400">Temps total</span>

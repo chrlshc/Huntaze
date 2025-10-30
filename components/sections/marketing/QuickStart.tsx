@@ -107,7 +107,7 @@ export function QuickStart() {
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Start selling in{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400">
               no time
             </span>
           </h2>
@@ -122,7 +122,7 @@ export function QuickStart() {
           <div className="flex justify-between items-center mb-12 relative">
             <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-800 -translate-y-1/2" />
             <div 
-              className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-purple-600 to-blue-600 -translate-y-1/2 transition-all duration-500"
+              className="absolute top-1/2 left-0 h-1 bg-linear-to-r from-purple-600 to-blue-600 -translate-y-1/2 transition-all duration-500"
               style={{ width: `${((activeStep - 1) / 2) * 100}%` }}
             />
             
@@ -137,7 +137,7 @@ export function QuickStart() {
                   whileTap={{ scale: 0.95 }}
                   className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${
                     activeStep >= step.number
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-purple-600 to-blue-600 text-white shadow-lg'
                       : 'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400'
                   }`}
                 >
@@ -169,7 +169,7 @@ export function QuickStart() {
               {/* Left: Step Details */}
               <div>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 flex items-center justify-center">
                     {React.createElement(steps[activeStep - 1].icon, {
                       className: "w-7 h-7 text-purple-600 dark:text-purple-400"
                     })}
@@ -197,7 +197,7 @@ export function QuickStart() {
                       transition={{ delay: index * 0.1 }}
                       className="flex items-start gap-3"
                     >
-                      <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                      <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0 mt-0.5" />
                       <span className="text-gray-700 dark:text-gray-300">
                         {detail}
                       </span>
@@ -209,7 +209,7 @@ export function QuickStart() {
                   <Link href="/demo">
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                      className="bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
                     >
                       Start now - it's free
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -225,10 +225,10 @@ export function QuickStart() {
                 transition={{ duration: 0.5 }}
                 className="relative"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 rounded-3xl blur-2xl" />
+                <div className="absolute inset-0 bg-linear-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 rounded-3xl blur-2xl" />
                 
                 <div className="relative bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-8 shadow-xl">
-                  <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-2xl flex items-center justify-center">
+                  <div className="aspect-video bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 rounded-2xl flex items-center justify-center">
                     <span className="text-gray-400 dark:text-gray-600">
                       Step {activeStep} Preview
                     </span>
@@ -300,7 +300,7 @@ export function QuickStart() {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-12 text-white max-w-4xl mx-auto">
+          <div className="bg-linear-to-r from-purple-600 to-blue-600 rounded-3xl p-12 text-white max-w-4xl mx-auto">
             <h3 className="text-3xl font-bold mb-4">
               Your empire awaits
             </h3>

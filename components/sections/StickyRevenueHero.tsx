@@ -58,7 +58,7 @@ export default function StickyRevenueHero({
   return (
     <section ref={sectionRef} className="relative min-h-[200vh] bg-[#0b0d10] text-[#e7e9ee]">
       {/* sticky viewport */}
-      <div className="sticky top-0 h-[100svh]">
+      <div className="sticky top-0 h-svh">
         <div className="mx-auto grid h-full max-w-[1200px] grid-rows-[auto_1fr_auto] gap-6 px-6 py-16">
           {/* Header */}
           <motion.header

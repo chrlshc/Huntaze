@@ -2,7 +2,7 @@ export function IntegrationsHeroSimple() {
   return (
     <section className="relative pt-32 pb-20 px-6 overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50" />
+      <div className="absolute inset-0 bg-linear-to-br from-purple-50 via-white to-pink-50" />
       
       <div className="relative max-w-6xl mx-auto text-center">
         <span className="overline animate-fadeIn">Integrations</span>

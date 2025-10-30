@@ -5,7 +5,7 @@ export function IntegrationsHero() {
   return (
     <section className="relative py-32 overflow-hidden">
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50" />
+      <div className="absolute inset-0 bg-linear-to-br from-purple-50 via-white to-pink-50" />
       
       <motion.div 
         className="relative max-w-6xl mx-auto px-6 text-center"
@@ -25,7 +25,7 @@ export function IntegrationsHero() {
         
         <h1 className="display-1 mb-6 balance-text">
           Connect Your
-          <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <span className="block bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Entire Stack
           </span>
         </h1>
@@ -41,7 +41,7 @@ export function IntegrationsHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+          <button className="px-8 py-4 bg-linear-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
             Browse All Integrations
           </button>
           <button className="px-8 py-4 border-2 border-purple-200 text-purple-600 font-semibold rounded-xl hover:bg-purple-50 transition-all duration-300">

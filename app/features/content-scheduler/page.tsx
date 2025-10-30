@@ -342,7 +342,7 @@ export default function ContentSchedulerPage() {
                       </div>
                       <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-gradient-to-r from-purple-600 to-pink-600"
+                          className="h-full bg-linear-to-r from-purple-600 to-pink-600"
                           style={{ width: `${item.engagement}%` }}
                         />
                       </div>
@@ -385,7 +385,7 @@ export default function ContentSchedulerPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8 mb-8">
+            <div className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8 mb-8">
               <div className="max-w-3xl mx-auto text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl mb-6">
                   <Sparkles className="w-8 h-8 text-purple-600 dark:text-purple-400" />

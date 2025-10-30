@@ -877,7 +877,7 @@ export default function AnalyticsPage() {
         {/* Personalized Alert Banner */}
         <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-6">
           <div className="flex items-start gap-4">
-            <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0" />
+            <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
             <div>
               <h4 className="font-semibold text-amber-900 mb-1">
                 {profile?.niche === 'fitness' 
