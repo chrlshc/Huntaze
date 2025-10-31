@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { withMonitoring } from '@/lib/observability/bootstrap'
 import { PlanRequest, ContentReady } from '@/src/lib/agents/events'
 import { azurePlannerAgent } from '@/src/lib/agents/azure-planner'
-import { bus } from '@/src/lib/bus'
+import { getBus } from '@/src/lib/bus'
 import { insertPlan, insertPlanItems } from '@/src/lib/db/planRepo'
 import { outboxInsert } from '@/src/lib/db/outboxRepo'
 import crypto from 'crypto'
@@ -32,7 +32,7 @@ async function handler(req: NextRequest) {
   const ok = ContentReady.safeParse(evt).success
   if (!ok) return NextResponse.json({ error: 'invalid_plan' }, { status: 500, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
 
-  await bus.publish('CONTENT_READY', evt)
+  await getBus().publish('CONTENT_READY', evt)
   await outboxInsert({ aggregateType: 'ai_plan', aggregateId: planId, eventType: 'CONTENT_READY', payload: { correlation, platforms: plan.platforms, items: plan.contents.length } })
   return NextResponse.json({ status: 'accepted', correlation, plan_id: planId, counts: { contents: plan.contents.length, platforms: plan.platforms.length } }, { status: 202, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
 }

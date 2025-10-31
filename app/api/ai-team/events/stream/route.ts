@@ -1,7 +1,7 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { bus } from "../../../../../src/lib/bus";
+import { getBus } from "../../../../../src/lib/bus";
 
 export async function GET(req: Request) {
   const encoder = new TextEncoder();
@@ -19,6 +19,7 @@ export async function GET(req: Request) {
       }, keepAliveMs);
 
       const unsubs: Array<() => Promise<void>> = [];
+      const bus = getBus();
       unsubs.push(await bus.subscribe("POST_SCHEDULED", (d) => send("POST_SCHEDULED", d)));
       unsubs.push(await bus.subscribe("POST_FAILED", (d) => send("POST_FAILED", d)));
       unsubs.push(await bus.subscribe("PUBLISH_BATCH_DONE", (d) => send("PUBLISH_BATCH_DONE", d)));
@@ -43,4 +44,3 @@ export async function GET(req: Request) {
     },
   });
 }
-

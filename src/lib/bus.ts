@@ -56,4 +56,5 @@ export function getBus(): Bus {
   return _bus;
 }
 
-export const bus = getBus();
+// Avoid creating a Redis connection at import-time during builds.
+// Call getBus() where you need it (e.g., inside route handlers).
