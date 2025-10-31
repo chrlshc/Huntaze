@@ -60,13 +60,19 @@
   
   /* Fix text selection colors */
   ::selection {
-    background-color: rgba(99, 102, 241, 0.2);
-    color: inherit;
+    background-color: rgba(99, 102, 241, 0.15);
+    color: #1f2937;
   }
   
   ::-moz-selection {
-    background-color: rgba(99, 102, 241, 0.2);
-    color: inherit;
+    background-color: rgba(99, 102, 241, 0.15);
+    color: #1f2937;
+  }
+  
+  /* Force light background for landing page */
+  html, body {
+    background-color: #ffffff !important;
+    color: #111827 !important;
   }
 }
 

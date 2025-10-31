@@ -203,7 +203,7 @@ export default function RootLayout({
         {/* Force remove nav borders with JS */}
         <script src="/remove-nav-borders.js" defer></script>
       </head>
-      <body className="antialiased dark-mode theme-dark" data-ui={minimal ? 'minimal' : undefined}>
+      <body className="antialiased bg-white text-gray-900" data-ui={minimal ? 'minimal' : undefined}>
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-3 focus:py-2 focus:rounded" aria-label="Skip to content">Skip to content</a>
         <GoogleAnalytics />
         <RemoveDarkOverlay />
