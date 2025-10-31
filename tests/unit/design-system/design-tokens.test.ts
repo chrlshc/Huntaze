@@ -228,6 +228,26 @@ describe('Design System - Tokens (Task 1)', () => {
       expect(globalCss).toContain('body');
     });
 
+    it('should set white background on html element', () => {
+      const htmlBlock = globalCss.match(/html\s*{[^}]*}/s)?.[0] || '';
+      expect(htmlBlock).toContain('background-color: #ffffff');
+    });
+
+    it('should set white background on body element', () => {
+      const bodyBlock = globalCss.match(/body\s*{[^}]*}/s)?.[0] || '';
+      expect(bodyBlock).toContain('background-color: #ffffff');
+    });
+
+    it('should set default text color on body element', () => {
+      const bodyBlock = globalCss.match(/body\s*{[^}]*}/s)?.[0] || '';
+      expect(bodyBlock).toContain('color: #111827');
+    });
+
+    it('should use consistent gray-900 color for text', () => {
+      // #111827 is gray-900 in Tailwind
+      expect(globalCss).toContain('color: #111827');
+    });
+
     it('should define text selection styles', () => {
       expect(globalCss).toContain('::selection');
       expect(globalCss).toContain('::-moz-selection');
@@ -235,20 +255,20 @@ describe('Design System - Tokens (Task 1)', () => {
 
     it('should use primary color for text selection background', () => {
       // Selection should use indigo/primary color with transparency
-      expect(globalCss).toContain('rgba(99, 102, 241, 0.2)');
+      expect(globalCss).toContain('rgba(99, 102, 241, 0.15)');
     });
 
     it('should preserve text color on selection', () => {
-      // Text color should inherit to maintain readability
+      // Text color should be gray-900 for readability
       const selectionBlock = globalCss.match(/::selection\s*{[^}]*}/s)?.[0] || '';
-      expect(selectionBlock).toContain('color: inherit');
+      expect(selectionBlock).toContain('color: #111827');
     });
 
     it('should support Firefox text selection', () => {
       // Firefox requires ::-moz-selection
       const mozSelectionBlock = globalCss.match(/::-moz-selection\s*{[^}]*}/s)?.[0] || '';
       expect(mozSelectionBlock).toContain('background-color');
-      expect(mozSelectionBlock).toContain('color: inherit');
+      expect(mozSelectionBlock).toContain('color: #111827');
     });
   });
 
@@ -282,14 +302,14 @@ describe('Design System - Tokens (Task 1)', () => {
 
     it('should have accessible text selection contrast', () => {
       // Selection background should have sufficient contrast
-      // Using rgba(99, 102, 241, 0.2) - 20% opacity indigo
-      expect(globalCss).toContain('rgba(99, 102, 241, 0.2)');
+      // Using rgba(99, 102, 241, 0.15) - 15% opacity indigo
+      expect(globalCss).toContain('rgba(99, 102, 241, 0.15)');
     });
 
     it('should maintain text readability on selection', () => {
-      // Text color inherits to ensure readability
+      // Text color should be gray-900 to ensure readability
       const selectionStyles = globalCss.match(/::selection\s*{[^}]*}/s)?.[0] || '';
-      expect(selectionStyles).toContain('color: inherit');
+      expect(selectionStyles).toContain('color: #111827');
     });
   });
 
@@ -386,11 +406,18 @@ describe('Design System - Tokens (Task 1)', () => {
 
     it('should use consistent selection color with brand', () => {
       // Selection color should match primary brand color (indigo)
-      const selectionColor = 'rgba(99, 102, 241, 0.2)';
+      const selectionColor = 'rgba(99, 102, 241, 0.15)';
       expect(globalCss).toContain(selectionColor);
       
       // Verify it appears in both selection pseudo-elements
       const selectionCount = (globalCss.match(new RegExp(selectionColor.replace(/[()]/g, '\\$&'), 'g')) || []).length;
+      expect(selectionCount).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should use consistent text color across selection pseudo-elements', () => {
+      // Both ::selection and ::-moz-selection should use gray-900
+      const textColor = 'color: #111827';
+      const selectionCount = (globalCss.match(new RegExp(textColor.replace(/[()]/g, '\\$&'), 'g')) || []).length;
       expect(selectionCount).toBeGreaterThanOrEqual(2);
     });
   });
