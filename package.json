@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:init": "node scripts/init-db.js",
+    "db:init:safe": "node scripts/init-db-safe.js",
     "export": "node scripts/validate-env.js && next build && next export",
     "check:env": "node scripts/validate-env.js",
     "test": "vitest run --exclude tests/smoke/**",
