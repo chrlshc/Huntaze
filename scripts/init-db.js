@@ -1,11 +1,19 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
 async function initDatabase() {
+  if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL not set in environment');
+    process.exit(1);
+  }
+
+  console.log('Using DATABASE_URL:', process.env.DATABASE_URL.replace(/:[^:@]+@/, ':****@'));
+
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: { rejectUnauthorized: false },
   });
 
   try {
