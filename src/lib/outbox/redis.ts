@@ -10,7 +10,11 @@ export class RedisOutbox {
   private prefix: string;
 
   constructor(opts?: { url?: string; prefix?: string }) {
-    this.redis = new Redis(opts?.url ?? process.env.REDIS_URL!);
+    const url = opts?.url ?? process.env.REDIS_URL;
+    const commonOpts = { lazyConnect: true, enableOfflineQueue: false, maxRetriesPerRequest: 0, retryStrategy: () => null } as const;
+    // Avoid connecting during build/import time. If URL is provided, pass it; otherwise rely on options-only ctor.
+    this.redis = url ? new Redis(url, commonOpts) : new Redis(commonOpts as any);
+    this.redis.on('error', (e) => { try { console.error('Redis error', (e as any)?.message || e) } catch {} });
     this.prefix = opts?.prefix ?? "outbox:processed";
   }
 
@@ -33,4 +37,3 @@ export class RedisOutbox {
     return v ? (JSON.parse(v) as OutboxRecord<T>) : null;
   }
 }
-
