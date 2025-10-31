@@ -3,10 +3,13 @@ import { publishInstagram } from "../integration/instagram";
 import { publishTikTok } from "../integration/tiktok";
 import { publishRedditPost } from "../integration/reddit";
 import type { Platform } from "../types/content";
-import { bus } from "../bus";
+import { getBus } from "../bus";
 import { RedisOutbox } from "../outbox/redis";
-
-const outbox = new RedisOutbox();
+let _outbox: RedisOutbox | null = null;
+function getOutbox() {
+  if (!_outbox) _outbox = new RedisOutbox();
+  return _outbox;
+}
 
 // TEST-ONLY backoff override hook
 type DelayFn = (attempt: number) => number;
@@ -62,7 +65,7 @@ export class PostSchedulerAgent {
       this.queue.add(async () => {
         for (const platform of platforms) {
           const key = `${correlation}:${content.id}:${platform}`;
-          if (await outbox.isProcessed(key)) continue;
+          if (await getOutbox().isProcessed(key)) continue;
 
           try {
             const res = await withRetry(async () => {
@@ -97,16 +100,16 @@ export class PostSchedulerAgent {
               }
             });
 
-            await outbox.markProcessed(key, res);
-            await bus.publish("POST_SCHEDULED", { correlation, scheduled: [{ platform, externalId: res.externalId, at: res.publishedAt }] });
+            await getOutbox().markProcessed(key, res);
+            await getBus().publish("POST_SCHEDULED", { correlation, scheduled: [{ platform, externalId: res.externalId, at: res.publishedAt }] });
           } catch (err: any) {
-            await bus.publish("POST_FAILED", { correlation, platform, contentId: content.id, error: { message: err?.message ?? "unknown", code: err?.status ?? err?.code } });
+            await getBus().publish("POST_FAILED", { correlation, platform, contentId: content.id, error: { message: err?.message ?? "unknown", code: err?.status ?? err?.code } });
           }
         }
       })
     );
 
     await Promise.all(tasks);
-    await bus.publish("PUBLISH_BATCH_DONE", { correlation, results: [] });
+    await getBus().publish("PUBLISH_BATCH_DONE", { correlation, results: [] });
   }
 }

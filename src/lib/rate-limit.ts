@@ -28,3 +28,17 @@ export function idFromRequestHeaders(h: Headers) {
   return { id: `ip:${ip}`, kind: 'ip' as const }
 }
 
+// Simple wrapper used by API routes that expect a `rateLimit(req, { windowMs, max })` helper.
+export async function rateLimit(
+  req: Request,
+  opts: { windowMs: number; max: number }
+) {
+  const { id } = idFromRequestHeaders(req.headers)
+  const res = await checkRateLimit({ id, limit: opts.max, windowSec: Math.ceil(opts.windowMs / 1000) })
+  return {
+    ok: res.allowed,
+    remaining: res.remaining,
+    resetMs: res.resetSec * 1000,
+    count: res.count,
+  }
+}
