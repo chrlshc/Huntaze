@@ -24,6 +24,40 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Shadcn/UI Colors
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
         // Auth System Design Colors
         auth: {
           primary: '#6366f1',        // Indigo 500
@@ -47,19 +81,6 @@ export default {
           secondary: 'var(--color-content-secondary)',
           tertiary: 'var(--color-content-tertiary)',
         },
-        border: {
-          DEFAULT: 'var(--color-border)',
-          light: 'var(--color-border-light)',
-        },
-        primary: {
-          DEFAULT: 'rgb(var(--color-primary-rgb) / <alpha-value>)',
-          hover: 'rgb(var(--color-teal-600-rgb) / <alpha-value>)',
-          foreground: 'var(--color-btn-primary-text)',
-        },
-        secondary: {
-          DEFAULT: 'rgb(var(--color-secondary-rgb) / <alpha-value>)',
-          foreground: 'var(--text-primary)',
-        },
         danger: 'var(--color-danger)',
         input: {
           bg: {
@@ -77,25 +98,12 @@ export default {
           700: 'var(--color-neutral-700)',
           800: 'var(--color-neutral-800)',
         },
-        // Professional Dark Mode Color System (Legacy)
-        background: {
-          primary: 'var(--background-primary)',
-          secondary: 'var(--background-secondary)',
-          elevated: 'var(--background-elevated)',
-          overlay: 'var(--background-overlay)',
-        },
-        text: {
-          primary: 'var(--text-primary)',
-          secondary: 'var(--text-secondary)',
-          tertiary: 'var(--text-tertiary)',
-          disabled: 'var(--text-disabled)',
-        },
-        accent: {
-          primary: 'var(--accent-primary)',
-          hover: 'var(--accent-hover)',
-          active: 'var(--accent-active)',
-          muted: 'var(--accent-muted)',
-        },
+
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
