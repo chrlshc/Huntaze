@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthCard } from '@/components/auth/AuthCard';
-import { RegisterForm } from '@/components/auth/RegisterForm';
+import RegisterForm from '@/components/auth/RegisterForm';
 
 export default function RegisterPage() {
   return (
