@@ -2,198 +2,93 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthInput } from './AuthInput';
-import { AuthButton } from './AuthButton';
 import Link from 'next/link';
-import { useAuth } from './AuthProvider';
-import { 
-  validateLoginForm, 
-  validateEmail,
-  focusFirstError,
-  type LoginData,
-  type FormErrors 
-} from '@/lib/auth/validation';
 
-interface LoginFormProps {
-  onSuccess?: () => void;
-  onError?: (error: string) => void;
-}
-
-export default function LoginForm({ onSuccess, onError }: LoginFormProps) {
+export function LoginForm() {
   const router = useRouter();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState<LoginData>({
+  const [formData, setFormData] = useState({
     email: '',
     password: '',
-    rememberMe: false
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [touched, setTouched] = useState<{[key: string]: boolean}>({});
 
-  // Handle input changes
-  const handleInputChange = (field: keyof LoginData, value: string | boolean) => {
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-    
-    // Clear general error
-    if (errors.general) {
-      setErrors(prev => ({ ...prev, general: '' }));
-    }
-    
-    // Update form data
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  // Handle input blur (for validation)
-  const handleInputBlur = (field: keyof LoginData) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    
-    // Validate field on blur
-    let error = '';
-    switch (field) {
-      case 'email':
-        if (formData.email) {
-          const emailValidation = validateEmail(formData.email);
-          error = emailValidation.error || '';
-        }
-        break;
-    }
-    
-    if (error) {
-      setErrors(prev => ({ ...prev, [field]: error }));
-    }
-  };
-
-  // Check if field has success state
-  const getFieldSuccess = (field: keyof LoginData): boolean => {
-    if (!touched[field] || !formData[field] || errors[field]) return false;
-    
-    switch (field) {
-      case 'email':
-        return validateEmail(formData.email).isValid;
-      case 'password':
-        return formData.password.length > 0;
-      default:
-        return false;
-    }
-  };
-
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate all fields
-    const validationErrors = validateLoginForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      focusFirstError(validationErrors);
-      return;
-    }
-    
+    setError('');
     setLoading(true);
-    
+
     try {
-      const success = await login(formData.email, formData.password, formData.rememberMe);
-      
-      if (success) {
-        onSuccess?.();
-        // AuthProvider will handle redirect to dashboard
-      } else {
-        const errorMessage = 'Invalid email or password';
-        setErrors({ general: errorMessage });
-        onError?.(errorMessage);
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
       }
-    } catch (error) {
-      const errorMessage = 'Something went wrong. Please try again.';
-      setErrors({ general: errorMessage });
-      onError?.(errorMessage);
+
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* General error message */}
-      {errors.general && (
-        <div className="bg-auth-error-light border border-auth-error/20 text-auth-error px-4 py-3 rounded-lg" role="alert">
-          {errors.general}
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+          {error}
         </div>
       )}
-      
-      {/* Email field */}
-      <AuthInput
-        label="Email Address"
-        type="email"
-        value={formData.email}
-        onChange={(value) => handleInputChange('email', value)}
-        error={errors.email}
-        success={getFieldSuccess('email')}
-        placeholder="Enter your email address"
-        required
-        disabled={loading}
-      />
-      
-      {/* Password field */}
-      <AuthInput
-        label="Password"
-        type="password"
-        value={formData.password}
-        onChange={(value) => handleInputChange('password', value)}
-        error={errors.password}
-        success={getFieldSuccess('password')}
-        placeholder="Enter your password"
-        required
-        showPasswordToggle
-        disabled={loading}
-      />
-      
-      {/* Remember me and forgot password */}
-      <div className="flex items-center justify-between">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={formData.rememberMe || false}
-            onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
-            className="h-4 w-4 text-auth-primary focus:ring-auth-primary border-gray-300 rounded"
-          />
-          <span className="ml-2 text-sm text-gray-600">Remember me</span>
+
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          Email Address
         </label>
-        
-        <Link 
-          href="/auth/forgot-password" 
-          className="text-sm text-auth-primary hover:text-auth-primary-hover transition-colors"
-        >
-          Forgot password?
-        </Link>
+        <input
+          id="email"
+          type="email"
+          required
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          placeholder="you@example.com"
+        />
       </div>
-      
-      {/* Submit button */}
-      <AuthButton
-        type="submit"
-        variant="primary"
-        loading={loading}
-        disabled={loading}
-        fullWidth
-      >
-        {loading ? 'Signing In...' : 'Sign In'}
-      </AuthButton>
-      
-      {/* Register link */}
-      <div className="text-center">
-        <p className="text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link 
-            href="/auth/register" 
-            className="text-auth-primary hover:text-auth-primary-hover font-medium transition-colors"
-          >
-            Sign up
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <Link href="/auth/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-700">
+            Forgot?
           </Link>
-        </p>
+        </div>
+        <input
+          id="password"
+          type="password"
+          required
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          placeholder="••••••••"
+        />
       </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
+      >
+        {loading ? 'Signing in...' : 'Sign In'}
+      </button>
     </form>
   );
 }
