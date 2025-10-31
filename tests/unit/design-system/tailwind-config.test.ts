@@ -57,7 +57,75 @@ describe('Tailwind Configuration (Task 1)', () => {
     });
   });
 
-  describe('Theme Extension - Colors', () => {
+  describe('Theme Extension - Shadcn/UI Colors', () => {
+    it('should define border color using HSL variables', () => {
+      expect(configContent).toContain("border: 'hsl(var(--border))'");
+    });
+
+    it('should define input color using HSL variables', () => {
+      expect(configContent).toContain("input: 'hsl(var(--input))'");
+    });
+
+    it('should define ring color using HSL variables', () => {
+      expect(configContent).toContain("ring: 'hsl(var(--ring))'");
+    });
+
+    it('should define background color using HSL variables', () => {
+      expect(configContent).toContain("background: 'hsl(var(--background))'");
+    });
+
+    it('should define foreground color using HSL variables', () => {
+      expect(configContent).toContain("foreground: 'hsl(var(--foreground))'");
+    });
+
+    it('should define primary color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('primary: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--primary))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--primary-foreground))'");
+    });
+
+    it('should define secondary color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('secondary: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--secondary))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--secondary-foreground))'");
+    });
+
+    it('should define destructive color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('destructive: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--destructive))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--destructive-foreground))'");
+    });
+
+    it('should define muted color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('muted: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--muted))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--muted-foreground))'");
+    });
+
+    it('should define accent color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('accent: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--accent))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--accent-foreground))'");
+    });
+
+    it('should define popover color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('popover: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--popover))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--popover-foreground))'");
+    });
+
+    it('should define card color with DEFAULT and foreground', () => {
+      expect(configContent).toContain('card: {');
+      expect(configContent).toContain("DEFAULT: 'hsl(var(--card))'");
+      expect(configContent).toContain("foreground: 'hsl(var(--card-foreground))'");
+    });
+
+    it('should have shadcn/ui colors comment', () => {
+      expect(configContent).toContain('// Shadcn/UI Colors');
+    });
+  });
+
+  describe('Theme Extension - Auth System Colors', () => {
     it('should extend auth colors', () => {
       expect(configContent).toContain('auth: {');
     });
@@ -78,6 +146,12 @@ describe('Tailwind Configuration (Task 1)', () => {
       expect(configContent).toContain("error: '#ef4444'");
     });
 
+    it('should have auth system design colors comment', () => {
+      expect(configContent).toContain('// Auth System Design Colors');
+    });
+  });
+
+  describe('Theme Extension - Huntaze Design System Colors', () => {
     it('should extend surface colors', () => {
       expect(configContent).toContain('surface: {');
     });
@@ -86,8 +160,22 @@ describe('Tailwind Configuration (Task 1)', () => {
       expect(configContent).toContain('content: {');
     });
 
-    it('should extend border colors', () => {
+    it('should extend danger color', () => {
+      expect(configContent).toContain("danger: 'var(--color-danger)'");
+    });
+
+    it('should extend input colors', () => {
+      expect(configContent).toContain('input: {');
+      expect(configContent).toContain('bg: {');
       expect(configContent).toContain('border: {');
+    });
+
+    it('should extend neutral colors', () => {
+      expect(configContent).toContain('neutral: {');
+    });
+
+    it('should have huntaze design system colors comment', () => {
+      expect(configContent).toContain('// Huntaze Design System Colors');
     });
   });
 
@@ -271,8 +359,8 @@ describe('Tailwind Configuration (Task 1)', () => {
       expect(configContent).toMatch(/'[\w-]+': '#[0-9a-fA-F]{6}'/);
     });
 
-    it('should use hex color format', () => {
-      // All colors should be in hex format
+    it('should use hex color format for auth colors', () => {
+      // Auth colors should be in hex format
       const hexPattern = /#[0-9a-fA-F]{6}/g;
       const matches = configContent.match(hexPattern);
       
@@ -282,6 +370,39 @@ describe('Tailwind Configuration (Task 1)', () => {
 
     it('should use CSS variables for dynamic colors', () => {
       expect(configContent).toContain("var(--");
+    });
+
+    it('should use HSL format for shadcn/ui colors', () => {
+      // Shadcn/UI colors should use HSL with CSS variables
+      expect(configContent).toContain("hsl(var(--");
+    });
+
+    it('should have consistent HSL color pattern', () => {
+      // All shadcn/ui colors should follow the pattern: hsl(var(--color-name))
+      const hslPattern = /hsl\(var\(--[\w-]+\)\)/g;
+      const matches = configContent.match(hslPattern);
+      
+      expect(matches).toBeTruthy();
+      expect(matches!.length).toBeGreaterThanOrEqual(14); // At least 14 HSL colors
+    });
+
+    it('should have foreground variants for semantic colors', () => {
+      // Semantic colors should have foreground variants
+      const semanticColors = ['primary', 'secondary', 'destructive', 'muted', 'accent', 'popover', 'card'];
+      
+      semanticColors.forEach(color => {
+        expect(configContent).toContain(`${color}: {`);
+        expect(configContent).toContain(`foreground: 'hsl(var(--${color}-foreground))'`);
+      });
+    });
+
+    it('should support both hex and HSL color systems', () => {
+      // Should have both hex colors (auth) and HSL colors (shadcn/ui)
+      const hasHexColors = /#[0-9a-fA-F]{6}/.test(configContent);
+      const hasHslColors = /hsl\(var\(--/.test(configContent);
+      
+      expect(hasHexColors).toBe(true);
+      expect(hasHslColors).toBe(true);
     });
   });
 
@@ -305,6 +426,7 @@ describe('Tailwind Configuration (Task 1)', () => {
       const requirements = {
         'Content paths configured': configContent.includes('./app/**/*.{ts,tsx}'),
         'Dark mode enabled': configContent.includes("darkMode: 'class'"),
+        'Shadcn/UI colors defined': configContent.includes("border: 'hsl(var(--border))'"),
         'Auth colors defined': configContent.includes('auth: {'),
         'Inter font configured': configContent.includes("sans: ['Inter'"),
         'Animations defined': configContent.includes('animation: {'),
@@ -313,7 +435,7 @@ describe('Tailwind Configuration (Task 1)', () => {
         'Safelist configured': configContent.includes('safelist: ['),
       };
 
-      Object.entries(requirements).forEach(([requirement, passed]) => {
+      Object.entries(requirements).forEach(([, passed]) => {
         expect(passed).toBe(true);
       });
     });
@@ -329,6 +451,90 @@ describe('Tailwind Configuration (Task 1)', () => {
       
       mainKeys.forEach(key => {
         expect(configContent).toContain(`${key}:`);
+      });
+    });
+
+    it('should have all required shadcn/ui colors', () => {
+      const requiredColors = [
+        'border',
+        'input',
+        'ring',
+        'background',
+        'foreground',
+        'primary',
+        'secondary',
+        'destructive',
+        'muted',
+        'accent',
+        'popover',
+        'card',
+      ];
+
+      requiredColors.forEach(color => {
+        expect(configContent).toContain(`${color}:`);
+      });
+    });
+
+    it('should have all required auth colors', () => {
+      const requiredAuthColors = [
+        'primary',
+        'primary-hover',
+        'success',
+        'success-light',
+        'error',
+        'error-light',
+      ];
+
+      requiredAuthColors.forEach(color => {
+        const pattern = new RegExp(`['"]${color}['"]:`);
+        expect(configContent).toMatch(pattern);
+      });
+    });
+
+    it('should maintain backward compatibility with existing color system', () => {
+      // Ensure existing Huntaze colors are still present
+      expect(configContent).toContain('surface: {');
+      expect(configContent).toContain('content: {');
+      expect(configContent).toContain('danger:');
+      expect(configContent).toContain('neutral: {');
+    });
+  });
+
+  describe('Border Radius Configuration', () => {
+    it('should define border radius using CSS variables', () => {
+      expect(configContent).toContain('borderRadius: {');
+      expect(configContent).toContain("lg: 'var(--radius)'");
+    });
+
+    it('should define calculated border radius variants', () => {
+      expect(configContent).toContain("md: 'calc(var(--radius) - 2px)'");
+      expect(configContent).toContain("sm: 'calc(var(--radius) - 4px)'");
+    });
+  });
+
+  describe('Integration with globals.css', () => {
+    it('should reference CSS variables defined in globals.css', () => {
+      // All hsl(var(--*)) references should have corresponding definitions in globals.css
+      const hslVars = configContent.match(/hsl\(var\(--([\w-]+)\)\)/g) || [];
+      
+      expect(hslVars.length).toBeGreaterThan(0);
+      
+      // Verify common variables are referenced
+      expect(configContent).toContain('var(--border)');
+      expect(configContent).toContain('var(--primary)');
+      expect(configContent).toContain('var(--background)');
+    });
+
+    it('should use consistent variable naming convention', () => {
+      // CSS variables should use kebab-case
+      const varPattern = /var\(--([\w-]+)\)/g;
+      const matches = configContent.match(varPattern);
+      
+      expect(matches).toBeTruthy();
+      
+      matches?.forEach(match => {
+        // Should not contain uppercase or underscores
+        expect(match).not.toMatch(/[A-Z_]/);
       });
     });
   });

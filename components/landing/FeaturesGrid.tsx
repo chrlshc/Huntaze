@@ -12,23 +12,42 @@ interface FeaturesGridProps {
 
 export function FeaturesGrid({ features }: FeaturesGridProps) {
   return (
-    <section className="py-20 px-4 bg-white">
+    <section id="features" className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Everything You Need
+            </span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Powerful tools designed to help creators succeed in the digital age
+          </p>
+        </div>
+        
+        {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="p-6 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-lg transition-all duration-200 group"
+              className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 hover:border-indigo-300 hover:shadow-xl transition-all duration-300 group"
             >
-              <div className="w-12 h-12 mb-4 text-indigo-600 group-hover:scale-110 transition-transform duration-200">
+              {/* Icon container with gradient background */}
+              <div className="w-14 h-14 mb-5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-3 text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              
+              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors">
                 {feature.title}
               </h3>
+              
               <p className="text-gray-600 leading-relaxed">
                 {feature.description}
               </p>
+              
+              {/* Decorative gradient */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full filter blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 -z-10" />
             </div>
           ))}
         </div>

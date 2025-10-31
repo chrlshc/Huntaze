@@ -31,13 +31,18 @@ export function LandingHeader({ logoSrc, showAuthButtons = true }: LandingHeader
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-3">
             {logoSrc ? (
               <img src={logoSrc} alt="Huntaze" className="h-8" />
             ) : (
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Huntaze
-              </span>
+              <>
+                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Huntaze
+                </span>
+                <span className="px-2 py-0.5 text-xs font-semibold bg-indigo-100 text-indigo-700 rounded-full">
+                  BETA
+                </span>
+              </>
             )}
           </Link>
           
