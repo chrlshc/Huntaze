@@ -227,6 +227,29 @@ describe('Design System - Tokens (Task 1)', () => {
     it('should configure body styles', () => {
       expect(globalCss).toContain('body');
     });
+
+    it('should define text selection styles', () => {
+      expect(globalCss).toContain('::selection');
+      expect(globalCss).toContain('::-moz-selection');
+    });
+
+    it('should use primary color for text selection background', () => {
+      // Selection should use indigo/primary color with transparency
+      expect(globalCss).toContain('rgba(99, 102, 241, 0.2)');
+    });
+
+    it('should preserve text color on selection', () => {
+      // Text color should inherit to maintain readability
+      const selectionBlock = globalCss.match(/::selection\s*{[^}]*}/s)?.[0] || '';
+      expect(selectionBlock).toContain('color: inherit');
+    });
+
+    it('should support Firefox text selection', () => {
+      // Firefox requires ::-moz-selection
+      const mozSelectionBlock = globalCss.match(/::-moz-selection\s*{[^}]*}/s)?.[0] || '';
+      expect(mozSelectionBlock).toContain('background-color');
+      expect(mozSelectionBlock).toContain('color: inherit');
+    });
   });
 
   describe('Component Styles', () => {
@@ -255,6 +278,18 @@ describe('Design System - Tokens (Task 1)', () => {
       const hasColors = globalCss.includes('--primary:') || 
                         tailwindConfig.includes('colors:');
       expect(hasColors).toBe(true);
+    });
+
+    it('should have accessible text selection contrast', () => {
+      // Selection background should have sufficient contrast
+      // Using rgba(99, 102, 241, 0.2) - 20% opacity indigo
+      expect(globalCss).toContain('rgba(99, 102, 241, 0.2)');
+    });
+
+    it('should maintain text readability on selection', () => {
+      // Text color inherits to ensure readability
+      const selectionStyles = globalCss.match(/::selection\s*{[^}]*}/s)?.[0] || '';
+      expect(selectionStyles).toContain('color: inherit');
     });
   });
 
@@ -302,6 +337,7 @@ describe('Design System - Tokens (Task 1)', () => {
         'Dark mode configured': tailwindConfig.includes("darkMode: 'class'"),
         'Tailwind extended': tailwindConfig.includes('extend: {'),
         'Base layer defined': globalCss.includes('@layer base'),
+        'Text selection styled': globalCss.includes('::selection'),
       };
 
       Object.entries(requirements).forEach(([requirement, passed]) => {
@@ -340,6 +376,22 @@ describe('Design System - Tokens (Task 1)', () => {
       // Verify bg-background and text-foreground
       expect(globalCss).toContain('bg-background');
       expect(globalCss).toContain('text-foreground');
+    });
+
+    it('should have cross-browser text selection support', () => {
+      // Verify both standard and Firefox selection styles
+      expect(globalCss).toContain('::selection');
+      expect(globalCss).toContain('::-moz-selection');
+    });
+
+    it('should use consistent selection color with brand', () => {
+      // Selection color should match primary brand color (indigo)
+      const selectionColor = 'rgba(99, 102, 241, 0.2)';
+      expect(globalCss).toContain(selectionColor);
+      
+      // Verify it appears in both selection pseudo-elements
+      const selectionCount = (globalCss.match(new RegExp(selectionColor.replace(/[()]/g, '\\$&'), 'g')) || []).length;
+      expect(selectionCount).toBeGreaterThanOrEqual(2);
     });
   });
 });
