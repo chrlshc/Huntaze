@@ -12,6 +12,10 @@ import { tiktokOAuth } from '@/lib/services/tiktokOAuth';
 import { tiktokUpload, type UploadSource, type PrivacyLevel } from '@/lib/services/tiktokUpload';
 import { db } from '@/lib/db';
 
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 interface UploadRequestBody {
   source: UploadSource;
   videoUrl?: string;
