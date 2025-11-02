@@ -271,5 +271,20 @@ export class TikTokOAuthService {
   }
 }
 
-// Export singleton instance
-export const tiktokOAuth = new TikTokOAuthService();
+// Lazy instantiation pattern - create instance only when needed
+let tiktokOAuthInstance: TikTokOAuthService | null = null;
+
+function getTikTokOAuth(): TikTokOAuthService {
+  if (!tiktokOAuthInstance) {
+    tiktokOAuthInstance = new TikTokOAuthService();
+  }
+  return tiktokOAuthInstance;
+}
+
+// Export singleton instance (lazy)
+export const tiktokOAuth = {
+  getAuthUrl: (...args: Parameters<TikTokOAuthService['getAuthUrl']>) => getTikTokOAuth().getAuthUrl(...args),
+  handleCallback: (...args: Parameters<TikTokOAuthService['handleCallback']>) => getTikTokOAuth().handleCallback(...args),
+  refreshAccessToken: (...args: Parameters<TikTokOAuthService['refreshAccessToken']>) => getTikTokOAuth().refreshAccessToken(...args),
+  getUserInfo: (...args: Parameters<TikTokOAuthService['getUserInfo']>) => getTikTokOAuth().getUserInfo(...args),
+};

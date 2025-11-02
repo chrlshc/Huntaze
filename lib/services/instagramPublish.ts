@@ -427,5 +427,20 @@ export class InstagramPublishService {
   }
 }
 
-// Export singleton instance
-export const instagramPublish = new InstagramPublishService();
+// Lazy instantiation pattern - create instance only when needed
+let instagramPublishInstance: InstagramPublishService | null = null;
+
+function getInstagramPublish(): InstagramPublishService {
+  if (!instagramPublishInstance) {
+    instagramPublishInstance = new InstagramPublishService();
+  }
+  return instagramPublishInstance;
+}
+
+// Export singleton instance (lazy)
+export const instagramPublish = {
+  publishPost: (...args: Parameters<InstagramPublishService['publishPost']>) => getInstagramPublish().publishPost(...args),
+  publishStory: (...args: Parameters<InstagramPublishService['publishStory']>) => getInstagramPublish().publishStory(...args),
+  publishReel: (...args: Parameters<InstagramPublishService['publishReel']>) => getInstagramPublish().publishReel(...args),
+  getMediaDetails: (...args: Parameters<InstagramPublishService['getMediaDetails']>) => getInstagramPublish().getMediaDetails(...args),
+};
