@@ -10,10 +10,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { instagramOAuth } from '@/lib/services/instagramOAuth';
 import { tokenManager } from '@/lib/services/tokenManager';
 import { oauthAccountsRepository } from '@/lib/db/repositories/oauthAccountsRepository';
 import { cookies } from 'next/headers';
+
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -52,6 +55,9 @@ export async function GET(request: NextRequest) {
 
     // Clear state cookie
     cookieStore.delete('instagram_oauth_state');
+
+    // Lazy import to avoid build-time instantiation
+    const { instagramOAuth } = await import('@/lib/services/instagramOAuth');
 
     // Exchange code for short-lived token
     const shortLivedTokens = await instagramOAuth.exchangeCodeForTokens(code);
