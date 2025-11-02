@@ -39,6 +39,7 @@ frontend:
           TIKTOK_CLIENT_KEY=${TIKTOK_CLIENT_KEY}
           TIKTOK_CLIENT_SECRET=${TIKTOK_CLIENT_SECRET}
           NEXT_PUBLIC_TIKTOK_REDIRECT_URI=${NEXT_PUBLIC_TIKTOK_REDIRECT_URI}
+          APP_URL=${APP_URL}
           EOF
         - echo "[BUILD] wrote .env.production"
         # Initialize database tables if needed (now DATABASE_URL is available)
