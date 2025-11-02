@@ -23,8 +23,8 @@ export default function DashboardHuntazeAIPage() {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([
-    { id: 1, title: 'Analyse des VIPs', date: "Aujourd'hui", messages: [] },
-    { id: 2, title: 'Stratégie contenu', date: 'Hier', messages: [] },
+    { id: 1, title: 'VIP Analysis', date: "Today", messages: [] },
+    { id: 2, title: 'Content Strategy', date: 'Yesterday', messages: [] },
   ]);
   const [activeConversation, setActiveConversation] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -50,7 +50,7 @@ export default function DashboardHuntazeAIPage() {
       id: Date.now(),
       text: input,
       sender: 'user',
-      timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     };
 
     setMessages((prev) => [...prev, newMessage]);
@@ -58,20 +58,20 @@ export default function DashboardHuntazeAIPage() {
     setIsTyping(true);
 
     setTimeout(() => {
-      let responseText = "Je vais analyser vos données et vous fournir des insights détaillés.";
+      let responseText = "I'll analyze your data and provide detailed insights.";
       const lower = newMessage.text.toLowerCase();
       if (lower.includes('vip')) {
-        responseText = "D'après mes analyses, vous avez plusieurs VIPs inactifs. Je recommande une campagne de réengagement personnalisée. Voulez‑vous que je génère les messages ?";
-      } else if (lower.includes('revenu')) {
-        responseText = "Votre revenu actuel progresse. Pour +30%, je suggère: +15% sur PPV performants, 2 bundles premium, et upsells post‑achat.";
-      } else if (lower.includes('contenu')) {
-        responseText = "Planning conseillé: Lundi/Mercredi/Vendredi (teasing), Mardi/Jeudi (PPV), Weekend (live/bundle).";
+        responseText = "Based on my analysis, you have several inactive VIPs. I recommend a personalized re-engagement campaign. Would you like me to generate the messages?";
+      } else if (lower.includes('revenue') || lower.includes('revenu')) {
+        responseText = "Your current revenue is progressing. For +30%, I suggest: +15% on performing PPV, 2 premium bundles, and post-purchase upsells.";
+      } else if (lower.includes('content') || lower.includes('contenu')) {
+        responseText = "Recommended schedule: Mon/Wed/Fri (teasing), Tue/Thu (PPV), Weekend (live/bundle).";
       }
       const aiResponse: UIMessage = {
         id: Date.now() + 1,
         text: responseText,
         sender: 'ai',
-        timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, aiResponse]);
       setIsTyping(false);
@@ -88,8 +88,8 @@ export default function DashboardHuntazeAIPage() {
   const startNewChat = () => {
     const newConv: Conversation = {
       id: Date.now(),
-      title: 'Nouvelle conversation',
-      date: 'Maintenant',
+      title: 'New conversation',
+      date: 'Now',
       messages: [],
     };
     setConversations((prev) => [newConv, ...prev]);
@@ -98,10 +98,10 @@ export default function DashboardHuntazeAIPage() {
   };
 
   const examplePrompts = [
-    "📊 Analyser mes fans VIP inactifs",
-    "💰 Comment augmenter mes revenus de 30%",
-    "📅 Créer un calendrier de contenu",
-    "🎯 Stratégie de réengagement",
+    "📊 Analyze my inactive VIP fans",
+    "💰 How to increase my revenue by 30%",
+    "📅 Create a content calendar",
+    "🎯 Re-engagement strategy",
   ];
 
   return (
@@ -112,19 +112,19 @@ export default function DashboardHuntazeAIPage() {
           <div className="p-3 border-b border-gray-800">
             <button onClick={startNewChat} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-gray-700 hover:bg-gray-800 transition-colors text-sm text-gray-100">
               <Plus size={16} />
-              Nouvelle conversation
+              New conversation
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            <div className="text-xs text-gray-500 px-3 py-1">Aujourd'hui</div>
-            {conversations.filter(c => c.date === "Aujourd'hui" || c.date === 'Maintenant').map(conv => (
+            <div className="text-xs text-gray-500 px-3 py-1">Today</div>
+            {conversations.filter(c => c.date === "Today" || c.date === 'Now').map(conv => (
               <button key={conv.id} onClick={() => setActiveConversation(conv.id)} className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${activeConversation === conv.id ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800/50'}`}>
                 <MessageSquare size={14} />
                 <span className="truncate flex-1">{conv.title}</span>
               </button>
             ))}
-            <div className="text-xs text-gray-500 px-3 py-1 pt-3">Hier</div>
-            {conversations.filter(c => c.date === 'Hier').map(conv => (
+            <div className="text-xs text-gray-500 px-3 py-1 pt-3">Yesterday</div>
+            {conversations.filter(c => c.date === 'Yesterday').map(conv => (
               <button key={conv.id} onClick={() => setActiveConversation(conv.id)} className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${activeConversation === conv.id ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800/50'}`}>
                 <MessageSquare size={14} />
                 <span className="truncate flex-1">{conv.title}</span>
@@ -132,7 +132,7 @@ export default function DashboardHuntazeAIPage() {
             ))}
           </div>
           <div className="p-3 border-t border-gray-800">
-            <button className="w-full text-left px-3 py-2 rounded-lg text-sm text-gray-300 hover:bg-gray-800 transition-colors">Paramètres</button>
+            <button className="w-full text-left px-3 py-2 rounded-lg text-sm text-gray-300 hover:bg-gray-800 transition-colors">Settings</button>
           </div>
         </div>
 
@@ -159,7 +159,7 @@ export default function DashboardHuntazeAIPage() {
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
                     <span className="text-3xl font-bold text-white">HA</span>
                   </div>
-                  <h1 className={`text-3xl font-semibold mb-2 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>Comment puis-je vous aider aujourd'hui ?</h1>
+                  <h1 className={`text-3xl font-semibold mb-2 ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}>How can I help you today?</h1>
                 </div>
                 <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
                   {examplePrompts.map((prompt, index) => (
@@ -212,7 +212,7 @@ export default function DashboardHuntazeAIPage() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Envoyez un message à Huntaze AI..."
+                  placeholder="Send a message to Huntaze AI..."
                   className={`w-full px-4 py-3 pr-12 bg-transparent resize-none outline-none text-sm ${darkMode ? 'text-gray-100 placeholder-gray-400' : 'text-gray-900 placeholder-gray-500'}`}
                   rows={1}
                   style={{ maxHeight: '120px' }}
@@ -221,7 +221,7 @@ export default function DashboardHuntazeAIPage() {
                   <Send size={18} />
                 </button>
               </div>
-              <p className={`text-xs text-center mt-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Huntaze AI peut faire des erreurs. Vérifiez les informations importantes.</p>
+              <p className={`text-xs text-center mt-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Huntaze AI can make mistakes. Verify important information.</p>
             </div>
           </div>
         </div>

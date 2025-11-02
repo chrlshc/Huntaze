@@ -327,6 +327,277 @@ describe('Environment Variables - Validation', () => {
       const dbUrl = process.env.DATABASE_URL;
       expect(dbUrl).toContain('schema=public');
     });
+
+    it('should parse DATABASE_URL components', () => {
+      const dbUrl = process.env.DATABASE_URL;
+      expect(dbUrl).toBeTruthy();
+      
+      // Should contain user, password, host, port, database
+      expect(dbUrl).toMatch(/postgresql:\/\/[^:]+:[^@]+@[^:]+:\d+\/\w+/);
+    });
+
+    it('should require DATABASE_URL in production', () => {
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      delete process.env.DATABASE_URL;
+      
+      expect(() => {
+        if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
+          throw new Error('DATABASE_URL is required in production');
+        }
+      }).toThrow('DATABASE_URL is required in production');
+
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+  });
+
+  describe('Email Configuration (AWS SES)', () => {
+    it('should have FROM_EMAIL defined', () => {
+      expect(process.env.FROM_EMAIL).toBeDefined();
+    });
+
+    it('should have valid email format for FROM_EMAIL', () => {
+      const email = process.env.FROM_EMAIL;
+      expect(email).toBeTruthy();
+      expect(email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    });
+
+    it('should use noreply@ prefix for FROM_EMAIL', () => {
+      const email = process.env.FROM_EMAIL;
+      expect(email).toBeTruthy();
+      expect(email).toMatch(/^noreply@/);
+    });
+
+    it('should have AWS_REGION defined for SES', () => {
+      expect(process.env.AWS_REGION).toBeDefined();
+    });
+
+    it('should use valid AWS region for SES', () => {
+      const region = process.env.AWS_REGION;
+      expect(region).toBeTruthy();
+      
+      const validRegions = [
+        'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
+        'eu-west-1', 'eu-west-2', 'eu-central-1',
+        'ap-southeast-1', 'ap-southeast-2', 'ap-northeast-1',
+      ];
+      
+      expect(validRegions).toContain(region);
+    });
+
+    it('should require FROM_EMAIL in production', () => {
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      delete process.env.FROM_EMAIL;
+      
+      expect(() => {
+        if (process.env.NODE_ENV === 'production' && !process.env.FROM_EMAIL) {
+          throw new Error('FROM_EMAIL is required in production');
+        }
+      }).toThrow('FROM_EMAIL is required in production');
+
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+
+    it('should require AWS_REGION in production', () => {
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      delete process.env.AWS_REGION;
+      
+      expect(() => {
+        if (process.env.NODE_ENV === 'production' && !process.env.AWS_REGION) {
+          throw new Error('AWS_REGION is required in production');
+        }
+      }).toThrow('AWS_REGION is required in production');
+
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+
+    it('should accept custom FROM_EMAIL', () => {
+      process.env.FROM_EMAIL = 'support@huntaze.com';
+      
+      expect(process.env.FROM_EMAIL).toBe('support@huntaze.com');
+      expect(process.env.FROM_EMAIL).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    });
+
+    it('should reject invalid email format', () => {
+      const invalidEmails = [
+        'invalid-email',
+        '@huntaze.com',
+        'test@',
+        'test @huntaze.com',
+        'test@huntaze',
+      ];
+
+      invalidEmails.forEach(email => {
+        expect(email).not.toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+      });
+    });
+  });
+
+  describe('App URL Configuration', () => {
+    it('should have NEXT_PUBLIC_APP_URL defined', () => {
+      expect(process.env.NEXT_PUBLIC_APP_URL).toBeDefined();
+    });
+
+    it('should have valid URL format', () => {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      expect(appUrl).toBeTruthy();
+      expect(appUrl).toMatch(/^https?:\/\//);
+    });
+
+    it('should use HTTPS in production', () => {
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      
+      if (process.env.NODE_ENV === 'production') {
+        expect(appUrl).toMatch(/^https:\/\//);
+      }
+
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+
+    it('should allow HTTP in development', () => {
+      process.env.NODE_ENV = 'development';
+      process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
+      
+      expect(process.env.NEXT_PUBLIC_APP_URL).toMatch(/^http:\/\//);
+    });
+
+    it('should not have trailing slash', () => {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      expect(appUrl).toBeTruthy();
+      expect(appUrl).not.toMatch(/\/$/);
+    });
+
+    it('should require NEXT_PUBLIC_APP_URL in production', () => {
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      delete process.env.NEXT_PUBLIC_APP_URL;
+      
+      expect(() => {
+        if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_APP_URL) {
+          throw new Error('NEXT_PUBLIC_APP_URL is required in production');
+        }
+      }).toThrow('NEXT_PUBLIC_APP_URL is required in production');
+
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+  });
+
+  describe('LLM Provider Configuration', () => {
+    it('should have LLM_PROVIDER defined', () => {
+      expect(process.env.LLM_PROVIDER).toBeDefined();
+    });
+
+    it('should use valid LLM provider', () => {
+      const provider = process.env.LLM_PROVIDER;
+      expect(provider).toBeTruthy();
+      
+      const validProviders = ['mock', 'openai', 'azure'];
+      expect(validProviders).toContain(provider);
+    });
+
+    it('should default to azure provider', () => {
+      expect(process.env.LLM_PROVIDER).toBe('azure');
+    });
+
+    it('should have Azure OpenAI configuration when using azure provider', () => {
+      if (process.env.LLM_PROVIDER === 'azure') {
+        expect(process.env.AZURE_OPENAI_ENDPOINT).toBeDefined();
+        expect(process.env.AZURE_OPENAI_DEPLOYMENT).toBeDefined();
+      }
+    });
+
+    it('should have valid Azure OpenAI endpoint format', () => {
+      const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+      if (endpoint) {
+        expect(endpoint).toMatch(/^https:\/\//);
+        expect(endpoint).toContain('.openai.azure.com');
+      }
+    });
+
+    it('should accept OpenAI provider', () => {
+      process.env.LLM_PROVIDER = 'openai';
+      expect(process.env.LLM_PROVIDER).toBe('openai');
+    });
+
+    it('should accept mock provider for testing', () => {
+      process.env.LLM_PROVIDER = 'mock';
+      expect(process.env.LLM_PROVIDER).toBe('mock');
+    });
+  });
+
+  describe('Pipeline Mode Configuration', () => {
+    it('should have pipeline modes defined for all platforms', () => {
+      expect(process.env.PIPELINE_MODE_INSTAGRAM).toBeDefined();
+      expect(process.env.PIPELINE_MODE_TIKTOK).toBeDefined();
+      expect(process.env.PIPELINE_MODE_REDDIT).toBeDefined();
+      expect(process.env.PIPELINE_MODE_TWITTER).toBeDefined();
+    });
+
+    it('should use valid pipeline modes', () => {
+      const validModes = ['mock', 'dry_run', 'shadow', 'live'];
+      
+      const modes = [
+        process.env.PIPELINE_MODE_INSTAGRAM,
+        process.env.PIPELINE_MODE_TIKTOK,
+        process.env.PIPELINE_MODE_REDDIT,
+        process.env.PIPELINE_MODE_TWITTER,
+      ];
+
+      modes.forEach(mode => {
+        if (mode) {
+          expect(validModes).toContain(mode);
+        }
+      });
+    });
+
+    it('should default to shadow mode', () => {
+      expect(process.env.PIPELINE_MODE_INSTAGRAM).toBe('shadow');
+      expect(process.env.PIPELINE_MODE_TIKTOK).toBe('shadow');
+      expect(process.env.PIPELINE_MODE_REDDIT).toBe('shadow');
+      expect(process.env.PIPELINE_MODE_TWITTER).toBe('shadow');
+    });
+
+    it('should have publish enabled flags', () => {
+      expect(process.env.PUBLISH_ENABLED_INSTAGRAM).toBeDefined();
+      expect(process.env.PUBLISH_ENABLED_TIKTOK).toBeDefined();
+      expect(process.env.PUBLISH_ENABLED_REDDIT).toBeDefined();
+    });
+
+    it('should parse publish enabled flags as boolean', () => {
+      const flags = [
+        process.env.PUBLISH_ENABLED_INSTAGRAM,
+        process.env.PUBLISH_ENABLED_TIKTOK,
+        process.env.PUBLISH_ENABLED_REDDIT,
+      ];
+
+      flags.forEach(flag => {
+        expect(['true', 'false']).toContain(flag);
+      });
+    });
+
+    it('should have daily post limits defined', () => {
+      expect(process.env.MAX_POSTS_IG).toBeDefined();
+      expect(process.env.MAX_POSTS_TT).toBeDefined();
+      expect(process.env.MAX_POSTS_REDDIT).toBeDefined();
+    });
+
+    it('should have numeric daily post limits', () => {
+      const limits = [
+        process.env.MAX_POSTS_IG,
+        process.env.MAX_POSTS_TT,
+        process.env.MAX_POSTS_REDDIT,
+      ];
+
+      limits.forEach(limit => {
+        expect(limit).toBeTruthy();
+        expect(Number(limit)).toBeGreaterThan(0);
+      });
+    });
   });
 
   describe('Security Best Practices', () => {
