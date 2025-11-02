@@ -440,8 +440,4 @@ export const onlyFansRateLimiterService = {
   async getQueueStatus(): Promise<QueueStatus> {
     return this.instance.getQueueStatus();
   },
-  
-  async getDLQCount(): Promise<number> {
-    return this.instance.getDLQCount();
-  },
 };
