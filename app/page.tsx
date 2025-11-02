@@ -1,3 +1,6 @@
+// Force dynamic rendering to avoid prerender issues
+export const dynamic = 'force-dynamic';
+
 import React from 'react';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { HeroSection } from '@/components/landing/HeroSection';

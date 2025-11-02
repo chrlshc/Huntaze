@@ -1,3 +1,6 @@
+// Force dynamic rendering to avoid prerender issues with env vars
+export const dynamic = 'force-dynamic';
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -36,7 +39,9 @@ export default function AIAssistantPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (typeof document !== 'undefined') {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -78,8 +83,8 @@ export default function AIAssistantPage() {
         body: JSON.stringify({
           message: input,
           context: {
-            currentPage: window.location.pathname,
-            userRole: session?.user?.role || 'user'
+            currentPage: typeof window !== 'undefined' ? window.location.pathname : '/ai/assistant',
+            userRole: (session?.user as any)?.role || 'user'
           }
         }),
       });
