@@ -7,9 +7,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { redditOAuth } from '@/lib/services/redditOAuth';
 import { cookies } from 'next/headers';
 import { oauthAccountsRepository } from '@/lib/db/repositories/oauthAccountsRepository';
+
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,6 +46,9 @@ export async function GET(request: NextRequest) {
 
     // Clear state cookie
     cookies().delete('reddit_oauth_state');
+
+    // Lazy import to avoid build-time instantiation
+    const { redditOAuth } = await import('@/lib/services/redditOAuth');
 
     // Exchange code for tokens
     const tokens = await redditOAuth.exchangeCodeForTokens(code);

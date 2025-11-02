@@ -7,11 +7,31 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { redditOAuth } from '@/lib/services/redditOAuth';
 import { cookies } from 'next/headers';
+
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check OAuth credentials at runtime
+    if (!process.env.REDDIT_CLIENT_ID || !process.env.REDDIT_CLIENT_SECRET || !process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI) {
+      console.warn('Reddit OAuth credentials not configured');
+      return NextResponse.json(
+        {
+          error: {
+            code: 'OAUTH_NOT_CONFIGURED',
+            message: 'Reddit OAuth is not configured. Please contact support.',
+          },
+        },
+        { status: 500 }
+      );
+    }
+
+    // Lazy import to avoid build-time instantiation
+    const { redditOAuth } = await import('@/lib/services/redditOAuth');
+    
     // Generate authorization URL with state for CSRF protection
     const { url, state } = redditOAuth.getAuthorizationUrl();
 
