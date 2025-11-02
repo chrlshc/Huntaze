@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { query } from '@/lib/db';
 import { validateRegisterForm } from '@/lib/auth/validation';
+import { createVerificationToken } from '@/lib/auth/tokens';
+import { sendVerificationEmail } from '@/lib/email/ses';
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-in-production'
@@ -40,13 +42,25 @@ export async function POST(request: NextRequest) {
 
     // Create user
     const result = await query(
-      'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, created_at',
-      [name, email.toLowerCase(), passwordHash]
+      'INSERT INTO users (name, email, password_hash, email_verified) VALUES ($1, $2, $3, $4) RETURNING id, name, email, created_at',
+      [name, email.toLowerCase(), passwordHash, false]
     );
 
     const user = result.rows[0];
 
-    // Generate JWT token
+    // Generate verification token
+    const verificationToken = await createVerificationToken(user.id, user.email);
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(user.email, user.name, verificationToken);
+      console.log('Verification email sent to:', user.email);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue anyway - user is created, they can request a new verification email
+    }
+
+    // Generate JWT token (user can still login but some features may be restricted)
     const token = await new SignJWT({ userId: user.id, email: user.email })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('7d')
@@ -66,7 +80,9 @@ export async function POST(request: NextRequest) {
         id: user.id,
         name: user.name,
         email: user.email,
+        emailVerified: false,
       },
+      message: 'Account created! Please check your email to verify your account.',
     });
 
     response.cookies.set('auth-token', token, {

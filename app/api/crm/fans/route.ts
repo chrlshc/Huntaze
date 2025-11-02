@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { crmData } from '@/lib/services/crmData';
+import { FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 import { withMonitoring } from '@/lib/observability/bootstrap'
@@ -7,11 +7,15 @@ import { withMonitoring } from '@/lib/observability/bootstrap'
 async function getHandler(request: NextRequest) {
   try {
     const user = await getUserFromRequest(request);
-    const userId = user?.userId || null;
-    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    const fans = crmData.listFans(userId);
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    
+    const userId = parseInt(user.userId, 10);
+    if (isNaN(userId)) return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    
+    const fans = await FansRepository.listFans(userId);
     return NextResponse.json({ fans });
   } catch (error) {
+    console.error('Failed to list fans:', error);
     return NextResponse.json({ error: 'Failed to list fans' }, { status: 500 });
   }
 }
@@ -24,12 +28,16 @@ async function postHandler(request: NextRequest) {
     if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
     const user = await getUserFromRequest(request);
-    const userId = user?.userId || null;
-    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    
+    const userId = parseInt(user.userId, 10);
+    if (isNaN(userId)) return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    
     const body = await request.json();
-    const fan = crmData.createFan(userId, body || {});
+    const fan = await FansRepository.createFan(userId, body || {});
     return NextResponse.json({ fan }, { status: 201 });
   } catch (error) {
+    console.error('Failed to create fan:', error);
     return NextResponse.json({ error: 'Failed to create fan' }, { status: 500 });
   }
 }

@@ -24,6 +24,13 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Theme System Colors (CSS Variables)
+        'theme-bg': 'var(--bg)',
+        'theme-surface': 'var(--surface)',
+        'theme-text': 'var(--text)',
+        'theme-muted': 'var(--muted)',
+        'theme-border': 'var(--border)',
+        
         // Shadcn/UI Colors
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

@@ -12,6 +12,8 @@ frontend:
         - echo "BUILD_START"
         - export BUILD_REDIS_MOCK=1
         # Write only the keys required at runtime for SSR
+        # Initialize database tables if needed
+        - npm run db:init:safe || echo "DB already initialized"
         - |
           cat > .env.production <<EOF
           AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
@@ -26,6 +28,8 @@ frontend:
           STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
           NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
           NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+          FROM_EMAIL=${FROM_EMAIL}
+          AWS_REGION=${AWS_REGION}
           EOF
         - echo "[BUILD] wrote .env.production"
         - npm run build

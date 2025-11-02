@@ -24,7 +24,7 @@ async function initDatabase() {
     console.log('✅ Connected successfully!\n');
     
     // Read SQL file
-    const sqlPath = path.join(__dirname, 'create-tables.sql');
+    const sqlPath = path.join(__dirname, 'create-tables-only.sql');
     const sql = fs.readFileSync(sqlPath, 'utf8');
     
     // Split by semicolon and execute each statement
@@ -37,18 +37,26 @@ async function initDatabase() {
     
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
-      if (statement.includes('SELECT')) {
-        // This is the verification query
-        const result = await client.query(statement);
-        console.log('\n📊 Tables created:');
-        result.rows.forEach(row => {
-          console.log(`  ✓ ${row.table_name} (${row.column_count} columns)`);
-        });
-      } else {
-        await client.query(statement);
-        console.log(`  ✓ Statement ${i + 1} executed`);
-      }
+      await client.query(statement);
+      console.log(`  ✓ Statement ${i + 1} executed`);
     }
+    
+    // Verify tables were created
+    const verifyQuery = `
+      SELECT 
+        table_name, 
+        (SELECT COUNT(*) FROM information_schema.columns WHERE table_name = t.table_name) as column_count
+      FROM information_schema.tables t
+      WHERE table_schema = 'public' 
+        AND table_name IN ('users', 'sessions')
+      ORDER BY table_name;
+    `;
+    
+    const result = await client.query(verifyQuery);
+    console.log('\n📊 Tables created:');
+    result.rows.forEach(row => {
+      console.log(`  ✓ ${row.table_name} (${row.column_count} columns)`);
+    });
     
     console.log('\n✅ Database initialized successfully!');
     console.log('\n📋 Summary:');
