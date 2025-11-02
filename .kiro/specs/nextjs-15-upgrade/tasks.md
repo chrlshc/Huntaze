@@ -9,14 +9,14 @@
   - Document current Next.js version (14.2.32)
   - _Requirements: 12.1, 12.4_
 
-- [ ] 2. Audit current codebase
+- [x] 2. Audit current codebase
   - Run diagnostic tool to identify async API usage
   - List all files using `cookies()`, `headers()`, `params`
   - Identify all route handlers and their caching needs
   - Document all third-party dependencies and versions
   - _Requirements: 2.1, 2.2, 2.3_
 
-- [ ] 3. Set up testing baseline
+- [-] 3. Set up testing baseline
   - Run full test suite and document results
   - Capture current build time and bundle sizes
   - Take screenshots of key pages for visual regression
