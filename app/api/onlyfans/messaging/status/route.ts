@@ -1,9 +1,11 @@
 /**
- * GET /api/onlyfans/messages/status
+ * GET /api/onlyfans/messaging/status
  * 
  * Récupère l'état de la queue SQS OnlyFans et les métriques d'envoi.
  * Permet de monitorer le système et détecter les problèmes.
  */
+
+export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth/request';
