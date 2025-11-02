@@ -213,3 +213,12 @@ export const mediaUploadService = {
     };
   },
 };
+
+// Export as class for compatibility
+export class MediaUploadService {
+  static validateFile = mediaUploadService.validateFile;
+  static checkStorageQuota = mediaUploadService.checkStorageQuota;
+  static uploadMedia = mediaUploadService.uploadMedia;
+  static deleteMedia = mediaUploadService.deleteMedia;
+  static getStorageUsage = mediaUploadService.getStorageUsage;
+}
