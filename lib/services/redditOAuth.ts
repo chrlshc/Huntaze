@@ -59,6 +59,15 @@ export class RedditOAuthService {
     this.redirectUri = process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI || '';
     this.userAgent = 'Huntaze/1.0.0';
 
+    // Don't throw during construction to avoid build-time errors
+    // Validation will happen when methods are called
+  }
+
+  /**
+   * Validate that credentials are configured
+   * @throws Error if credentials are missing
+   */
+  private validateCredentials(): void {
     if (!this.clientId || !this.clientSecret || !this.redirectUri) {
       throw new Error('Reddit OAuth credentials not configured');
     }
@@ -75,6 +84,8 @@ export class RedditOAuthService {
     scopes: string[] = DEFAULT_SCOPES,
     duration: 'temporary' | 'permanent' = 'permanent'
   ): RedditAuthUrl {
+    this.validateCredentials();
+    
     // Generate random state for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
 
@@ -101,6 +112,8 @@ export class RedditOAuthService {
    * @throws Error if exchange fails
    */
   async exchangeCodeForTokens(code: string): Promise<RedditTokens> {
+    this.validateCredentials();
+    
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
