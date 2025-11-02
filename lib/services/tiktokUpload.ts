@@ -310,5 +310,19 @@ export class TikTokUploadService {
   }
 }
 
-// Export singleton instance
-export const tiktokUpload = new TikTokUploadService();
+// Lazy instantiation pattern - create instance only when needed
+let tiktokUploadInstance: TikTokUploadService | null = null;
+
+function getTikTokUpload(): TikTokUploadService {
+  if (!tiktokUploadInstance) {
+    tiktokUploadInstance = new TikTokUploadService();
+  }
+  return tiktokUploadInstance;
+}
+
+// Export singleton instance (lazy)
+export const tiktokUpload = {
+  uploadVideo: (...args: Parameters<TikTokUploadService['uploadVideo']>) => getTikTokUpload().uploadVideo(...args),
+  getPublishStatus: (...args: Parameters<TikTokUploadService['getPublishStatus']>) => getTikTokUpload().getPublishStatus(...args),
+  clearRateLimitTracker: (...args: Parameters<TikTokUploadService['clearRateLimitTracker']>) => getTikTokUpload().clearRateLimitTracker(...args),
+};

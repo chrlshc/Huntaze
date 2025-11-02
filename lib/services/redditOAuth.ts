@@ -322,5 +322,20 @@ export class RedditOAuthService {
   }
 }
 
-// Export singleton instance
-export const redditOAuth = new RedditOAuthService();
+// Lazy instantiation pattern - create instance only when needed
+let redditOAuthInstance: RedditOAuthService | null = null;
+
+function getRedditOAuth(): RedditOAuthService {
+  if (!redditOAuthInstance) {
+    redditOAuthInstance = new RedditOAuthService();
+  }
+  return redditOAuthInstance;
+}
+
+// Export singleton instance (lazy)
+export const redditOAuth = {
+  getAuthUrl: (...args: Parameters<RedditOAuthService['getAuthUrl']>) => getRedditOAuth().getAuthUrl(...args),
+  handleCallback: (...args: Parameters<RedditOAuthService['handleCallback']>) => getRedditOAuth().handleCallback(...args),
+  refreshAccessToken: (...args: Parameters<RedditOAuthService['refreshAccessToken']>) => getRedditOAuth().refreshAccessToken(...args),
+  revokeAccess: (...args: Parameters<RedditOAuthService['revokeAccess']>) => getRedditOAuth().revokeAccess(...args),
+};

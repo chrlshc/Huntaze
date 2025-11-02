@@ -1,11 +1,11 @@
+'use client';
+
 /**
  * TikTok Upload Page
  * 
  * Allows users to upload videos to TikTok
  * Supports FILE_UPLOAD and PULL_FROM_URL modes
  */
-
-'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';

@@ -1,11 +1,11 @@
+'use client';
+
 /**
  * Instagram Connect Page
  * 
  * Allows users to connect their Instagram Business/Creator account
  * via Facebook OAuth
  */
-
-'use client';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
