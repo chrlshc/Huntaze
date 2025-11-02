@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsRepository';
 import { imageEditService } from '@/lib/services/imageEditService';
 
+export const runtime = 'nodejs';
+
 /**
  * POST /api/content/media/[id]/edit
  * Apply edits to an image
