@@ -2,7 +2,7 @@
 
 ## Phase 1: Preparation and Backup
 
-- [-] 1. Create pre-upgrade backup
+- [x] 1. Create pre-upgrade backup
   - Create git branch `upgrade/nextjs-15`
   - Commit current state with tag `pre-nextjs-15-upgrade`
   - Backup package.json and package-lock.json
@@ -16,7 +16,7 @@
   - Document all third-party dependencies and versions
   - _Requirements: 2.1, 2.2, 2.3_
 
-- [-] 3. Set up testing baseline
+- [x] 3. Set up testing baseline
   - Run full test suite and document results
   - Capture current build time and bundle sizes
   - Take screenshots of key pages for visual regression
@@ -25,18 +25,18 @@
 
 ## Phase 2: Dependency Updates
 
-- [ ] 4. Update core dependencies
-  - [ ] 4.1 Update Next.js to 15.5.x
+- [x] 4. Update core dependencies
+  - [x] 4.1 Update Next.js to 15.5.x
     - Run `npm install next@15.5`
     - Verify installation completes successfully
     - _Requirements: 1.1_
   
-  - [ ] 4.2 Update React to 19.x
+  - [x] 4.2 Update React to 19.x
     - Run `npm install react@19 react-dom@19`
     - Update @types/react and @types/react-dom
     - _Requirements: 1.2, 1.3_
   
-  - [ ] 4.3 Check peer dependencies
+  - [x] 4.3 Check peer dependencies
     - Run `npm ls` to identify conflicts
     - Update or replace incompatible packages
     - Verify all dependencies install cleanly
