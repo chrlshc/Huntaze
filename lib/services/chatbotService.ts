@@ -1,8 +1,19 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy OpenAI client instantiation to avoid build-time errors
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -106,7 +117,8 @@ Be concise, friendly, and actionable.`;
       content: message,
     });
 
-    const completion = await openai.chat.completions.create({
+    const client = getOpenAI();
+    const completion = await client.chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-4',
       messages,
       temperature: 0.7,
@@ -118,7 +130,8 @@ Be concise, friendly, and actionable.`;
   }
 
   static async getSuggestions(topic: string): Promise<string[]> {
-    const completion = await openai.chat.completions.create({
+    const client = getOpenAI();
+    const completion = await client.chat.completions.create({
       model: 'gpt-4',
       messages: [
         {
