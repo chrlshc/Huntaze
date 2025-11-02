@@ -351,5 +351,20 @@ export class InstagramOAuthService {
   }
 }
 
-// Export singleton instance
-export const instagramOAuth = new InstagramOAuthService();
+// Lazy instantiation pattern - create instance only when needed
+let instagramOAuthInstance: InstagramOAuthService | null = null;
+
+function getInstagramOAuth(): InstagramOAuthService {
+  if (!instagramOAuthInstance) {
+    instagramOAuthInstance = new InstagramOAuthService();
+  }
+  return instagramOAuthInstance;
+}
+
+// Export singleton instance (lazy)
+export const instagramOAuth = {
+  getAuthUrl: (...args: Parameters<InstagramOAuthService['getAuthUrl']>) => getInstagramOAuth().getAuthUrl(...args),
+  handleCallback: (...args: Parameters<InstagramOAuthService['handleCallback']>) => getInstagramOAuth().handleCallback(...args),
+  refreshAccessToken: (...args: Parameters<InstagramOAuthService['refreshAccessToken']>) => getInstagramOAuth().refreshAccessToken(...args),
+  revokeAccess: (...args: Parameters<InstagramOAuthService['revokeAccess']>) => getInstagramOAuth().revokeAccess(...args),
+};

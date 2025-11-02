@@ -26,6 +26,8 @@ export function Modal({
   className = '',
 }: ModalProps) {
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -144,6 +146,8 @@ export function Modal({
     </AnimatePresence>
   );
 
+  if (typeof window === 'undefined') return null;
+  
   return createPortal(modalContent, document.body);
 }
 

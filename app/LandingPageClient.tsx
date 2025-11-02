@@ -12,7 +12,7 @@ import { FinalCTA } from '@/components/landing/FinalCTA';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { Zap, Users, TrendingUp, Shield, Sparkles, BarChart3 } from 'lucide-react';
 
-export default function HomePage() {
+export default function LandingPageClient() {
   const features = [
     {
       icon: <Zap className="w-full h-full" />,

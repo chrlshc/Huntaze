@@ -389,5 +389,22 @@ export class RedditPublishService {
   }
 }
 
-// Export singleton instance
-export const redditPublish = new RedditPublishService();
+// Lazy instantiation pattern - create instance only when needed
+let redditPublishInstance: RedditPublishService | null = null;
+
+function getRedditPublish(): RedditPublishService {
+  if (!redditPublishInstance) {
+    redditPublishInstance = new RedditPublishService();
+  }
+  return redditPublishInstance;
+}
+
+// Export singleton instance (lazy)
+export const redditPublish = {
+  submitPost: (...args: Parameters<RedditPublishService['submitPost']>) => getRedditPublish().submitPost(...args),
+  submitLink: (...args: Parameters<RedditPublishService['submitLink']>) => getRedditPublish().submitLink(...args),
+  submitImage: (...args: Parameters<RedditPublishService['submitImage']>) => getRedditPublish().submitImage(...args),
+  submitVideo: (...args: Parameters<RedditPublishService['submitVideo']>) => getRedditPublish().submitVideo(...args),
+  getSubreddits: (...args: Parameters<RedditPublishService['getSubreddits']>) => getRedditPublish().getSubreddits(...args),
+  getSubredditRules: (...args: Parameters<RedditPublishService['getSubredditRules']>) => getRedditPublish().getSubredditRules(...args),
+};
