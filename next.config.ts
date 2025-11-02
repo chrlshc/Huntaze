@@ -1,16 +1,18 @@
-/** @type {import('next').NextConfig} */
-const isExport = process.env.NEXT_OUTPUT_EXPORT === '1'
+import type { NextConfig } from 'next';
 
-const nextConfig = {
+const isExport = process.env.NEXT_OUTPUT_EXPORT === '1';
+
+const nextConfig: NextConfig = {
   // Core
   reactStrictMode: true,
-  swcMinify: true,
   compress: true,
   output: isExport ? 'export' : 'standalone',
+  
+  // Note: swcMinify removed - it's now the default in Next.js 15
 
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
-    return []
+    return [];
   },
 
   // Minimal rewrites
@@ -25,7 +27,7 @@ const nextConfig = {
       { source: '/resources', destination: '/learn' },
       { source: '/enterprise', destination: '/for-agencies' },
       { source: '/help', destination: '/support' },
-    ]
+    ];
   },
 
   // Image optimization
@@ -40,6 +42,10 @@ const nextConfig = {
     optimizeCss: true,
     // Disable optimizePackageImports to avoid dev chunk errors with RSC boundaries
     // optimizePackageImports: ['framer-motion', 'lucide-react'],
+    
+    // Turbopack for faster development builds (Next.js 15)
+    // Note: Enable with `next dev --turbo` command
+    // turbo: {}, // Uncomment to enable Turbopack features
   },
   
   // Performance optimizations
@@ -63,10 +69,10 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
-      }
+      };
     }
-    return config
+    return config;
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
