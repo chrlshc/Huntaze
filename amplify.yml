@@ -36,6 +36,9 @@ frontend:
           FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}
           REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
           REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+          TIKTOK_CLIENT_KEY=${TIKTOK_CLIENT_KEY}
+          TIKTOK_CLIENT_SECRET=${TIKTOK_CLIENT_SECRET}
+          NEXT_PUBLIC_TIKTOK_REDIRECT_URI=${NEXT_PUBLIC_TIKTOK_REDIRECT_URI}
           EOF
         - echo "[BUILD] wrote .env.production"
         # Initialize database tables if needed (now DATABASE_URL is available)

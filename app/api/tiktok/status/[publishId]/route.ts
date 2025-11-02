@@ -12,6 +12,10 @@ import { tiktokOAuth } from '@/lib/services/tiktokOAuth';
 import { tiktokUpload } from '@/lib/services/tiktokUpload';
 import { db } from '@/lib/db';
 
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { publishId: string } }

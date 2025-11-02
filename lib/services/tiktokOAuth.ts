@@ -40,18 +40,35 @@ export interface TikTokRefreshResponse {
  * TikTok OAuth Service
  */
 export class TikTokOAuthService {
-  private clientKey: string;
-  private clientSecret: string;
-  private redirectUri: string;
+  private clientKey: string | null = null;
+  private clientSecret: string | null = null;
+  private redirectUri: string | null = null;
 
   constructor() {
-    this.clientKey = process.env.TIKTOK_CLIENT_KEY || '';
-    this.clientSecret = process.env.TIKTOK_CLIENT_SECRET || '';
-    this.redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || '';
+    // Don't validate credentials during construction to avoid build-time errors
+    // Credentials will be validated lazily when needed
+  }
 
+  /**
+   * Get and validate OAuth credentials
+   * @throws Error if credentials are not configured
+   */
+  private getCredentials(): { clientKey: string; clientSecret: string; redirectUri: string } {
     if (!this.clientKey || !this.clientSecret || !this.redirectUri) {
-      throw new Error('TikTok OAuth credentials not configured');
+      this.clientKey = process.env.TIKTOK_CLIENT_KEY || '';
+      this.clientSecret = process.env.TIKTOK_CLIENT_SECRET || '';
+      this.redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || '';
+
+      if (!this.clientKey || !this.clientSecret || !this.redirectUri) {
+        throw new Error('TikTok OAuth credentials not configured');
+      }
     }
+
+    return {
+      clientKey: this.clientKey,
+      clientSecret: this.clientSecret,
+      redirectUri: this.redirectUri,
+    };
   }
 
   /**
@@ -61,15 +78,17 @@ export class TikTokOAuthService {
    * @returns Authorization URL and state
    */
   getAuthorizationUrl(scopes: string[] = DEFAULT_SCOPES): TikTokAuthUrl {
+    const { clientKey, redirectUri } = this.getCredentials();
+
     // Generate random state for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
 
     // Build authorization URL
     const params = new URLSearchParams({
-      client_key: this.clientKey,
+      client_key: clientKey,
       scope: scopes.join(','),
       response_type: 'code',
-      redirect_uri: this.redirectUri,
+      redirect_uri: redirectUri,
       state,
     });
 
@@ -86,12 +105,14 @@ export class TikTokOAuthService {
    * @throws Error if exchange fails
    */
   async exchangeCodeForTokens(code: string): Promise<TikTokTokens> {
+    const { clientKey, clientSecret, redirectUri } = this.getCredentials();
+
     const body = new URLSearchParams({
-      client_key: this.clientKey,
-      client_secret: this.clientSecret,
+      client_key: clientKey,
+      client_secret: clientSecret,
       code,
       grant_type: 'authorization_code',
-      redirect_uri: this.redirectUri,
+      redirect_uri: redirectUri,
     });
 
     try {
@@ -139,9 +160,11 @@ export class TikTokOAuthService {
    * @throws Error if refresh fails
    */
   async refreshAccessToken(refreshToken: string): Promise<TikTokRefreshResponse> {
+    const { clientKey, clientSecret } = this.getCredentials();
+
     const body = new URLSearchParams({
-      client_key: this.clientKey,
-      client_secret: this.clientSecret,
+      client_key: clientKey,
+      client_secret: clientSecret,
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
     });
@@ -184,9 +207,11 @@ export class TikTokOAuthService {
    * @param accessToken - Access token to revoke
    */
   async revokeAccess(accessToken: string): Promise<void> {
+    const { clientKey, clientSecret } = this.getCredentials();
+
     const body = new URLSearchParams({
-      client_key: this.clientKey,
-      client_secret: this.clientSecret,
+      client_key: clientKey,
+      client_secret: clientSecret,
       token: accessToken,
     });
 
