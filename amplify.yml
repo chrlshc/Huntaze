@@ -26,7 +26,7 @@ frontend:
           DATABASE_URL=${DATABASE_URL}
           JWT_SECRET=${JWT_SECRET}
           STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-          NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+          NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://main.d2yjqfqvvvvvvv.amplifyapp.com}
           NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
           FROM_EMAIL=${FROM_EMAIL}
           AWS_REGION=${AWS_REGION}
@@ -39,7 +39,7 @@ frontend:
           TIKTOK_CLIENT_KEY=${TIKTOK_CLIENT_KEY}
           TIKTOK_CLIENT_SECRET=${TIKTOK_CLIENT_SECRET}
           NEXT_PUBLIC_TIKTOK_REDIRECT_URI=${NEXT_PUBLIC_TIKTOK_REDIRECT_URI}
-          APP_URL=${APP_URL}
+          APP_URL=${APP_URL:-https://main.d2yjqfqvvvvvvv.amplifyapp.com}
           EOF
         - echo "[BUILD] wrote .env.production"
         # Initialize database tables if needed (now DATABASE_URL is available)
