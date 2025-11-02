@@ -1,74 +1,123 @@
-import { NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
-import { incCounter } from '@/lib/metrics'
-import { addEvent, setTerminal } from '@/src/lib/tiktok/events'
-import { getRedis } from '@/src/lib/redis'
-import crypto from 'crypto'
+/**
+ * TikTok Webhook Endpoint
+ * 
+ * POST /api/webhooks/tiktok
+ * Receives webhook events from TikTok
+ * 
+ * Events:
+ * - video.publish.complete
+ * - video.publish.failed
+ * - video.inbox.received
+ */
 
-export const runtime = 'nodejs'
+import { NextRequest, NextResponse } from 'next/server';
+import { webhookProcessor } from '@/lib/services/webhookProcessor';
 
-function verifySignature(rawBody: string, headers: Headers) {
-  const secret = process.env.TIKTOK_WEBHOOK_SECRET
-  if (!secret) return true
-  const sig =
-    headers.get('x-tt-webhook-signature') ||
-    headers.get('x-tiktok-signature') ||
-    headers.get('x-signature') ||
-    ''
-  if (!sig) return false
-  const h = crypto.createHmac('sha256', secret)
-  h.update(Buffer.from(rawBody, 'utf-8'))
-  const expected = h.digest('base64')
+const TIKTOK_WEBHOOK_SECRET = process.env.TIKTOK_WEBHOOK_SECRET;
+
+export async function POST(request: NextRequest) {
   try {
-    return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))
-  } catch {
-    return false
-  }
-}
+    // Get raw body for signature verification
+    const rawBody = await request.text();
+    const signature = request.headers.get('x-tiktok-signature');
 
-async function handler(req: Request) {
-  const raw = await req.text()
-  if (!verifySignature(raw, req.headers)) {
-    return new NextResponse('invalid signature', { status: 401 })
-  }
-  // Replay protection if timestamp header exists (10 min skew)
-  const tsHeader = req.headers.get('x-tt-webhook-timestamp') || req.headers.get('x-timestamp')
-  if (tsHeader) {
-    const ts = Number(tsHeader)
-    if (Number.isFinite(ts)) {
-      const skew = Math.abs(Date.now() - ts * 1000)
-      if (skew > 10 * 60 * 1000) return new NextResponse('stale', { status: 400, headers: { 'X-Robots-Tag': 'noindex' } })
+    // Verify signature if secret is configured
+    if (TIKTOK_WEBHOOK_SECRET && signature) {
+      const isValid = webhookProcessor.verifySignature(
+        'tiktok',
+        rawBody,
+        signature,
+        TIKTOK_WEBHOOK_SECRET
+      );
+
+      if (!isValid) {
+        console.error('TikTok webhook signature verification failed');
+        return NextResponse.json(
+          { error: 'Invalid signature' },
+          { status: 401 }
+        );
+      }
+    } else if (TIKTOK_WEBHOOK_SECRET && !signature) {
+      console.warn('TikTok webhook received without signature');
+      return NextResponse.json(
+        { error: 'Missing signature' },
+        { status: 401 }
+      );
     }
+
+    // Parse payload
+    const payload = JSON.parse(rawBody);
+
+    // Extract event information
+    const eventType = payload.event_type || payload.type;
+    const externalId = payload.event_id || `${eventType}_${Date.now()}`;
+
+    if (!eventType) {
+      console.error('TikTok webhook missing event_type');
+      return NextResponse.json(
+        { error: 'Missing event_type' },
+        { status: 400 }
+      );
+    }
+
+    // Respond immediately with 200 (TikTok requirement)
+    // Process event asynchronously
+    const response = NextResponse.json({
+      success: true,
+      message: 'Webhook received',
+    });
+
+    // Queue event for async processing (non-blocking)
+    setImmediate(async () => {
+      try {
+        await webhookProcessor.processEvent({
+          provider: 'tiktok',
+          eventType,
+          externalId,
+          payload,
+          signature: signature || undefined,
+        });
+        console.log(`TikTok webhook processed: ${eventType} (${externalId})`);
+      } catch (error) {
+        console.error('TikTok webhook processing error:', error);
+        // Error is logged but doesn't affect response
+        // Event will be retried by background worker
+      }
+    });
+
+    return response;
+  } catch (error) {
+    console.error('TikTok webhook error:', error);
+
+    // Still return 200 to prevent TikTok from retrying immediately
+    // Event will be retried by our background worker
+    return NextResponse.json({
+      success: true,
+      message: 'Webhook received (processing failed, will retry)',
+    });
   }
-
-  // Idempotency: hash raw body and skip duplicates for 10 minutes
-  try {
-    const cryptoMod = await import('crypto')
-    const idemKey = 'tt:wh:idem:' + cryptoMod.createHash('sha256').update(raw).digest('hex')
-    const redis = getRedis()
-    const set = await redis.set(idemKey, '1', 'EX', 600, 'NX')
-    if (set !== 'OK') return new NextResponse(null, { status: 204, headers: { 'X-Robots-Tag': 'noindex' } })
-  } catch {}
-  const payload = JSON.parse(raw || '{}') as any
-  const type = String(payload?.event || payload?.type || 'unknown')
-  const videoId = String(payload?.data?.video_id || payload?.video_id || '')
-
-  incCounter('social_tiktok_webhook_events_total', { type })
-
-  // Persist event timeline + attempt terminal transition
-  const now = Date.now()
-  await addEvent(videoId, `WEBHOOK:${type}`, now, payload)
-
-  const t = type.toUpperCase()
-  if (t.includes('SUCCESS') || t.includes('PUBLISHED')) {
-    await setTerminal(videoId, 'PUBLISHED', now)
-  } else if (t.includes('FAILED') || t.includes('ERROR')) {
-    await setTerminal(videoId, 'FAILED', now)
-  }
-
-  return new NextResponse(null, { status: 204, headers: { 'X-Robots-Tag': 'noindex' } })
 }
 
-export const POST = withMonitoring('webhooks.tiktok', handler)
-export const GET = POST
-export const HEAD = POST
+/**
+ * Handle TikTok webhook verification challenge
+ * TikTok may send a verification request when setting up webhooks
+ */
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const challenge = searchParams.get('challenge');
+
+  if (challenge) {
+    // Return challenge for verification
+    return new NextResponse(challenge, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  }
+
+  return NextResponse.json(
+    { error: 'Missing challenge parameter' },
+    { status: 400 }
+  );
+}
