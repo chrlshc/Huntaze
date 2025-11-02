@@ -270,3 +270,16 @@ export const templatesRepository = {
     return result.rows;
   },
 };
+
+// Export as class for compatibility
+export class TemplatesRepository {
+  static create = templatesRepository.create;
+  static findById = templatesRepository.findById;
+  static find = templatesRepository.find;
+  static findByCategory = templatesRepository.findByCategory;
+  static findByUser = templatesRepository.findByUser;
+  static incrementUsage = templatesRepository.incrementUsage;
+  static update = templatesRepository.update;
+  static delete = templatesRepository.delete;
+  static getMostUsed = templatesRepository.getMostUsed;
+}

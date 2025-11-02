@@ -12,4 +12,9 @@ function Skeleton({
   )
 }
 
+// Export variants for compatibility
+export const SkeletonCard = Skeleton;
+export const SkeletonList = Skeleton;
+export const SkeletonTable = Skeleton;
+
 export { Skeleton }

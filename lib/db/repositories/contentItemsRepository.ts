@@ -249,3 +249,15 @@ export const contentItemsRepository = {
     return result.rows;
   },
 };
+
+// Export as class for compatibility
+export class ContentItemsRepository {
+  static create = contentItemsRepository.create;
+  static findById = contentItemsRepository.findById;
+  static findByUser = contentItemsRepository.findByUser;
+  static findScheduledDue = contentItemsRepository.findScheduledDue;
+  static update = contentItemsRepository.update;
+  static delete = contentItemsRepository.delete;
+  static countByUser = contentItemsRepository.countByUser;
+  static search = contentItemsRepository.search;
+}
