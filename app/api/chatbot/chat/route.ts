@@ -1,9 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+// Lazy OpenAI client instantiation
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
+    }
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 interface Message {
   role: 'user' | 'assistant';
@@ -63,8 +78,9 @@ Be concise, friendly, and helpful. If you don't know something specific about th
       content: message,
     });
 
-    // Call OpenAI
-    const completion = await openai.chat.completions.create({
+    // Call OpenAI (lazy instantiation)
+    const client = getOpenAI();
+    const completion = await client.chat.completions.create({
       model: 'gpt-4',
       messages,
       temperature: 0.7,

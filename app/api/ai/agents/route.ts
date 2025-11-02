@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { AzureMultiAgentService } from '@/lib/services/azureMultiAgentService';
 
-// Initialize service as singleton
-let multiAgentService: AzureMultiAgentService | null = null;
-
-function getMultiAgentService(): AzureMultiAgentService {
-  if (!multiAgentService) {
-    multiAgentService = new AzureMultiAgentService();
-  }
-  return multiAgentService;
-}
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  // Lazy import to avoid build-time instantiation
+  const { AzureMultiAgentService } = await import('@/lib/services/azureMultiAgentService');
+  
+  // Initialize service as singleton
+  let multiAgentService: AzureMultiAgentService | null = null;
+
+  function getMultiAgentService(): AzureMultiAgentService {
+    if (!multiAgentService) {
+      multiAgentService = new AzureMultiAgentService();
+    }
+    return multiAgentService;
+  }
   try {
     // Authentication check
     const session = await getServerSession();
@@ -118,7 +123,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const service = getMultiAgentService();
+    // Lazy import to avoid build-time instantiation
+    const { AzureMultiAgentService } = await import('@/lib/services/azureMultiAgentService');
+    const service = new AzureMultiAgentService();
     const agents = await service.getAvailableAgents();
 
     return NextResponse.json({
