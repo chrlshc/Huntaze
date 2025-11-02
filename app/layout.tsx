@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import "@/lib/config/chartConfig"; // Register Chart.js components
 
 
 export const metadata: Metadata = {
@@ -54,12 +56,14 @@ export default function RootLayout({
         <meta name="theme-color" content="#6366f1" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
-      <body className="antialiased bg-white text-gray-900">
-        <AuthProvider>
-          <main className="min-h-screen">
-            {children}
-          </main>
-        </AuthProvider>
+      <body className="antialiased">
+        <ThemeProvider>
+          <AuthProvider>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

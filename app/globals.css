@@ -9,28 +9,205 @@
     box-sizing: border-box;
   }
   
+  /* Light theme (default) */
+  :root {
+    /* Background colors */
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --text: #111111;
+    --muted: #666666;
+    --border: #E5E7EB;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    --radius: 12px;
+    
+    /* Transition for smooth theme switching */
+    --transition-theme: 200ms ease-in-out;
+    
+    color-scheme: light dark;
+  }
+  
+  /* Dark theme - Shopify Polaris inspired */
+  [data-theme="dark"] {
+    --bg: #1A1A1A;
+    --surface: #1F1F1F;
+    --text: #EDEDED;
+    --muted: #A1A1AA;
+    --border: #2A2A2A;
+    --shadow: none;
+  }
+  
   html {
     scroll-behavior: smooth;
-    background-color: #ffffff;
+    background-color: var(--bg);
+    transition: background-color var(--transition-theme);
   }
   
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #ffffff;
-    color: #111827;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color var(--transition-theme), color var(--transition-theme);
   }
   
   /* Clean text selection */
   ::selection {
     background-color: rgba(99, 102, 241, 0.15);
-    color: #111827;
+    color: var(--text);
   }
   
   ::-moz-selection {
     background-color: rgba(99, 102, 241, 0.15);
-    color: #111827;
+    color: var(--text);
+  }
+  
+  /* Smooth transitions for theme switching */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: var(--transition-theme);
+    transition-timing-function: ease-in-out;
+  }
+  
+  /* Disable transitions for reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Touch Target Utilities - WCAG 2.2 Compliance (44×44px minimum) */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 1rem;
+  }
+  
+  .touch-target-lg {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .touch-target-icon {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Ensure all interactive elements meet touch target requirements */
+  button,
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    min-height: 44px;
+  }
+  
+  /* Responsive Table Pattern - Mobile: Cards, Desktop: Table */
+  
+  /* Desktop: Normal table (default) */
+  .responsive-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .responsive-table thead {
+    display: table-header-group;
+  }
+  
+  .responsive-table tr {
+    display: table-row;
+    border-bottom: 1px solid var(--border);
+    transition: background-color 150ms ease;
+  }
+  
+  .responsive-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  [data-theme="dark"] .responsive-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+  
+  .responsive-table th {
+    display: table-cell;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  
+  .responsive-table td {
+    display: table-cell;
+    padding: 1rem;
+    color: var(--text);
+  }
+  
+  .responsive-table td::before {
+    content: none;
+  }
+  
+  /* Mobile: Card layout */
+  @media (max-width: 767px) {
+    .responsive-table {
+      border: none;
+    }
+    
+    .responsive-table thead {
+      display: none;
+    }
+    
+    .responsive-table tbody {
+      display: block;
+    }
+    
+    .responsive-table tr {
+      display: block;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background-color: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    
+    .responsive-table tr:hover {
+      background-color: var(--surface);
+    }
+    
+    .responsive-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+    }
+    
+    .responsive-table td:last-child {
+      border-bottom: none;
+    }
+    
+    .responsive-table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: var(--muted);
+      text-align: left;
+      flex: 1;
+      padding-right: 1rem;
+    }
   }
 }
 
@@ -58,5 +235,19 @@
   
   .animation-delay-4000 {
     animation-delay: 4s;
+  }
+  
+  /* Shimmer animation for skeleton screens */
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 1.5s infinite linear;
   }
 }

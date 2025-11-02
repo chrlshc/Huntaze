@@ -202,24 +202,30 @@ export default function AnalyticsPage() {
 
   // Personalized metrics based on user's niche and goals
   const getPersonalizedMetrics = () => {
+    // Use real data from overview API
+    const revenue = overview?.metrics?.revenueMonthly || 0;
+    const revenueChange = overview?.metrics?.change?.revenue || 0;
+    const subscribers = overview?.metrics?.activeSubscribers || 0;
+    const subsChange = overview?.metrics?.change?.subscribers || 0;
+    
     const baseMetrics = [
       {
         title: 'Total Revenue',
-        value: '$124,580',
-        change: '+32.4%',
-        trend: 'up',
+        value: `$${revenue.toLocaleString()}`,
+        change: `${revenueChange >= 0 ? '+' : ''}${(revenueChange * 100).toFixed(1)}%`,
+        trend: revenueChange >= 0 ? 'up' : 'down',
         icon: DollarSign,
         color: 'green',
-        sparkline: [20, 30, 25, 40, 35, 50, 45, 60, 55, 70]
+        sparkline: overview?.revenueSeries?.values?.slice(-10) || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70]
       },
       {
         title: 'Total Fans',
-        value: '8,492',
-        change: '+18.2%',
-        trend: 'up',
+        value: subscribers.toLocaleString(),
+        change: `${subsChange >= 0 ? '+' : ''}${(subsChange * 100).toFixed(1)}%`,
+        trend: subsChange >= 0 ? 'up' : 'down',
         icon: Users,
         color: 'blue',
-        sparkline: [30, 35, 32, 40, 45, 48, 52, 58, 60, 65]
+        sparkline: overview?.fanGrowth?.newFans || [30, 35, 32, 40, 45, 48, 52, 58, 60, 65]
       }
     ];
 
@@ -332,6 +338,21 @@ export default function AnalyticsPage() {
       );
     }
 
+    // Add AI automation metric if available
+    if (overview?.metrics?.aiAutomationRate !== undefined) {
+      const aiRate = overview.metrics.aiAutomationRate;
+      const aiChange = overview.metrics.change?.automation || 0;
+      baseMetrics.push({
+        title: 'AI Automation',
+        value: `${(aiRate * 100).toFixed(0)}%`,
+        change: `${aiChange >= 0 ? '+' : ''}${(aiChange * 100).toFixed(1)}%`,
+        trend: aiChange >= 0 ? 'up' : 'down',
+        icon: Bot,
+        color: 'purple',
+        sparkline: [70, 72, 75, 78, 80, 82, 85, 86, 87, aiRate * 100]
+      });
+    }
+
     // Add goal-specific metrics
     if (profile?.goals?.includes('time')) {
       const timeIndex = baseMetrics.findIndex(m => m.title === 'Avg. Response Time');
@@ -353,8 +374,21 @@ export default function AnalyticsPage() {
 
   const metrics = getPersonalizedMetrics();
 
-  // Personalized top performers based on niche
+  // Top performers based on real fan data
   const getTopPerformers = () => {
+    // Use real top fans data from API
+    if (overview?.topFans && overview.topFans.length > 0) {
+      return overview.topFans.map((fan: any) => ({
+        name: fan.name,
+        type: fan.badge === 'vip' ? 'VIP Fan' : fan.badge === 'whale' ? 'Whale' : 'Fan',
+        revenue: `$${fan.revenue.toLocaleString()}`,
+        conversions: fan.messages,
+        rate: fan.badge === 'vip' ? '92%' : fan.badge === 'whale' ? '88%' : '75%',
+        trend: `${fan.trend >= 0 ? '+' : ''}${(fan.trend * 100).toFixed(0)}%`
+      }));
+    }
+    
+    // Fallback to niche-specific mock data if no real data
     if (profile?.niche === 'fitness') {
       return [
         {
@@ -726,8 +760,17 @@ export default function AnalyticsPage() {
               <h3 className="text-lg font-semibold text-gray-900">Revenue Overview</h3>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">Total:</span>
-                <span className="text-xl font-bold text-gray-900">$124,580</span>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full ml-2">+32.4%</span>
+                <span className="text-xl font-bold text-gray-900">
+                  ${(overview?.metrics?.revenueMonthly || 0).toLocaleString()}
+                </span>
+                <span className={`text-xs px-2 py-1 rounded-full ml-2 ${
+                  (overview?.metrics?.change?.revenue || 0) >= 0 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-red-100 text-red-700'
+                }`}>
+                  {(overview?.metrics?.change?.revenue || 0) >= 0 ? '+' : ''}
+                  {((overview?.metrics?.change?.revenue || 0) * 100).toFixed(1)}%
+                </span>
               </div>
             </div>
             <div className="h-80">
@@ -774,11 +817,11 @@ export default function AnalyticsPage() {
               />
             </div>
             <div className="mt-4 space-y-2">
-              {['OnlyFans', 'Instagram', 'TikTok', 'Reddit'].map((platform, i) => (
-                <div key={platform} className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">{platform}</span>
+              {(overview?.platformDistribution || []).map((platform: any) => (
+                <div key={platform.platform} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 capitalize">{platform.platform}</span>
                   <span className="text-sm font-medium text-gray-900">
-                    ${[55896, 37374, 24858, 6452][i].toLocaleString()}
+                    ${platform.revenue.toLocaleString()}
                   </span>
                 </div>
               ))}
