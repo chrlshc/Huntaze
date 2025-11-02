@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { videoEditService } from '@/lib/services/videoEditService';
 import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsRepository';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const userId = request.headers.get('x-user-id');
