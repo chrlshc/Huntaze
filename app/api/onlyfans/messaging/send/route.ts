@@ -1,9 +1,11 @@
 /**
- * POST /api/onlyfans/messages/send
+ * POST /api/onlyfans/messaging/send
  * 
  * Envoie un message OnlyFans via le rate limiter AWS (SQS + Lambda + Redis).
  * Le message est queued et sera envoyé avec rate limiting automatique (10 msg/min).
  */
+
+export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
