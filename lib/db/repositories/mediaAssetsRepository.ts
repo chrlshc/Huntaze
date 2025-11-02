@@ -255,3 +255,18 @@ export const mediaAssetsRepository = {
     await db.query(query, [contentId, mediaId]);
   },
 };
+
+// Export as class for compatibility
+export class MediaAssetsRepository {
+  static create = mediaAssetsRepository.create;
+  static findById = mediaAssetsRepository.findById;
+  static findByUser = mediaAssetsRepository.findByUser;
+  static findByIds = mediaAssetsRepository.findByIds;
+  static delete = mediaAssetsRepository.delete;
+  static getStorageUsage = mediaAssetsRepository.getStorageUsage;
+  static countByUser = mediaAssetsRepository.countByUser;
+  static isUsedInContent = mediaAssetsRepository.isUsedInContent;
+  static linkToContent = mediaAssetsRepository.linkToContent;
+  static getContentMedia = mediaAssetsRepository.getContentMedia;
+  static unlinkFromContent = mediaAssetsRepository.unlinkFromContent;
+}
