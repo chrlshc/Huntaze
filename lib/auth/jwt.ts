@@ -144,3 +144,6 @@ export async function refreshAccessToken(): Promise<string | null> {
     return null;
   }
 }
+
+// Export verifyAuth as alias for verifyToken (compatibility)
+export const verifyAuth = verifyToken;
