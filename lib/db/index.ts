@@ -6,11 +6,8 @@
 export { getPool, query, getClient } from '../db';
 
 // Re-export db as named export for compatibility
-import { getPool } from '../db';
+import { getPool, query as dbQuery } from '../db';
 export const db = {
-  query: async (text: string, params?: any[]) => {
-    const pool = getPool();
-    return pool.query(text, params);
-  },
+  query: dbQuery,
   getPool,
 };

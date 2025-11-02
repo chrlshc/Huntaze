@@ -69,6 +69,15 @@ export class InstagramOAuthService {
     this.appSecret = process.env.FACEBOOK_APP_SECRET || '';
     this.redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || '';
 
+    // Don't throw during construction to avoid build-time errors
+    // Validation will happen when methods are called
+  }
+
+  /**
+   * Validate that credentials are configured
+   * @throws Error if credentials are missing
+   */
+  private validateCredentials(): void {
     if (!this.appId || !this.appSecret || !this.redirectUri) {
       throw new Error('Instagram/Facebook OAuth credentials not configured');
     }
@@ -81,6 +90,8 @@ export class InstagramOAuthService {
    * @returns Authorization URL and state for CSRF protection
    */
   getAuthorizationUrl(permissions: string[] = DEFAULT_PERMISSIONS): InstagramAuthUrl {
+    this.validateCredentials();
+    
     // Generate random state for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
 
@@ -106,6 +117,8 @@ export class InstagramOAuthService {
    * @throws Error if exchange fails
    */
   async exchangeCodeForTokens(code: string): Promise<InstagramTokens> {
+    this.validateCredentials();
+    
     const params = new URLSearchParams({
       client_id: this.appId,
       client_secret: this.appSecret,
