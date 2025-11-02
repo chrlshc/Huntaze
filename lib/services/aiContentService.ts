@@ -107,7 +107,7 @@ export class AIContentService {
     }
     
     return suggestions;
-  },
+  }
 
   async analyzeUserContent(userId: string): Promise<{ topPerformingContent: string[]; engagementPatterns: Record<string, number>; recommendedTopics: string[] }> {
     return {
@@ -115,7 +115,7 @@ export class AIContentService {
       engagementPatterns: { 'morning_posts': 1.2, 'video_content': 1.8, 'question_posts': 1.5, 'carousel_posts': 1.3 },
       recommendedTopics: ['Industry insights', 'Personal stories', 'Tips and tricks', 'Community highlights']
     };
-  },
+  }
 
   async optimizeForPlatform(content: string, platform: string): Promise<{ optimizedContent: string; suggestions: string[] }> {
     const suggestions: string[] = [];

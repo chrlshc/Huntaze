@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mediaUploadService } from '@/lib/services/mediaUploadService';
 import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsRepository';
 
+export const runtime = 'nodejs';
+
 /**
  * GET /api/content/media/[id]
  * Get media asset by ID
