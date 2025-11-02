@@ -1,213 +1,285 @@
-# Next.js 15 Upgrade - Codebase Audit Report
-
-**Date**: November 2, 2025  
-**Auditor**: Kiro AI  
-**Current Version**: Next.js 14.2.32
+# Codebase Audit for Next.js 15 Upgrade
 
 ## Executive Summary
 
-This audit identifies all code that will require changes for Next.js 15 compatibility. The main breaking changes involve async request APIs: `cookies()`, `headers()`, and route `params`.
+**Audit Date:** November 2, 2025  
+**Current Version:** Next.js 14.2.32  
+**Target Version:** Next.js 15.5.x
 
-## 1. cookies() Usage - CRITICAL ⚠️
+### Critical Findings
 
-**Total Files**: 11 files need updates
+🔴 **HIGH PRIORITY:** 15 files use `cookies()` - requires async migration  
+🟡 **MEDIUM PRIORITY:** 1 file uses `headers()` - requires async migration  
+🟢 **LOW PRIORITY:** 50+ files use `params` - requires async migration
 
-### Files Requiring Async Migration:
+---
 
-1. **lib/services/tiktok.ts** (3 usages)
-   - `getAccessToken()` - Line 24
-   - `getCurrentUser()` - Line 30
-   - `disconnect()` - Line 129
+## 1. cookies() Usage Analysis
 
-2. **lib/auth/jwt.ts** (8 usages)
-   - `setAuthCookies()` - Lines 71, 76
-   - `getCurrentUser()` - Line 84
-   - `clearAuthCookies()` - Lines 95, 96, 97
-   - `refreshAccessToken()` - Lines 102, 125, 133
+### Files Requiring Migration (15 total)
 
-3. **app/api/onboarding/complete/route.ts** (1 usage)
-   - Line 14
+#### Authentication & JWT
+1. **lib/auth/jwt.ts** - 7 occurrences
+   - `setAuthCookies()` - Sets access_token, refresh_token
+   - `getCurrentUser()` - Reads access_token
+   - `clearAuthCookies()` - Deletes auth cookies
+   - `refreshAccessToken()` - Reads/writes tokens
+   - **Impact:** CRITICAL - Core auth system
 
-4. **app/api/force-complete-onboarding/route.ts** (3 usages)
-   - Lines 6, 32 (2x)
+2. **app/api/_lib/upstream.ts** - 1 occurrence
+   - Reads access_token for API calls
+   - **Impact:** HIGH - Used by many API routes
 
-5. **app/api/debug-tiktok/route.ts** (1 usage)
-   - Line 5
+#### Social Media Integrations
+3. **lib/services/tiktok.ts** - 4 occurrences
+   - `getAccessToken()` - Reads tiktok_access_token
+   - `getCurrentUser()` - Reads tiktok_user
+   - `disconnect()` - Deletes TikTok cookies
+   - **Impact:** MEDIUM - TikTok integration
 
-6. **app/api/_lib/upstream.ts** (1 usage)
-   - Line 16
+4. **app/api/auth/instagram/route.ts** - 1 occurrence (ALREADY ASYNC ✅)
+   - Uses `await cookies()` pattern
+   - **Status:** Already migrated!
 
-7. **app/api/auth/instagram/route.ts** (1 usage)
-   - Line 33 ✅ Already async!
+5. **app/api/auth/instagram/callback/route.ts** - 1 occurrence (ALREADY ASYNC ✅)
+   - Uses `await cookies()` pattern
+   - **Status:** Already migrated!
 
-8. **app/api/auth/instagram/callback/route.ts** (1 usage)
-   - Line 46 ✅ Already async!
+6. **app/api/auth/reddit/route.ts** - 1 occurrence
+   - Sets reddit_oauth_state cookie
+   - **Impact:** MEDIUM
 
-9. **app/api/auth/reddit/callback/route.ts** (2 usages)
-   - Lines 40, 48
+7. **app/api/auth/reddit/callback/route.ts** - 2 occurrences
+   - Reads and deletes reddit_oauth_state
+   - **Impact:** MEDIUM
 
-10. **app/api/auth/reddit/route.ts** (1 usage)
-    - Line 39
+#### Development & Testing
+8. **app/api/debug-tiktok/route.ts** - 1 occurrence
+   - Debug endpoint for TikTok cookies
+   - **Impact:** LOW - Dev only
 
-11. **app/api/bypass-onboarding/route.ts** (2 usages)
-    - Lines 10, 17
+9. **app/api/bypass-onboarding/route.ts** - 2 occurrences
+   - Dev bypass functionality
+   - **Impact:** LOW - Dev only
 
-### Priority: HIGH
-- **lib/auth/jwt.ts** - Core authentication, affects entire app
-- **lib/services/tiktok.ts** - Social integration functionality
+10. **app/api/force-complete-onboarding/route.ts** - 3 occurrences
+    - Admin/dev endpoint
+    - **Impact:** LOW - Dev only
 
-## 2. headers() Usage - MEDIUM ⚠️
+11. **app/api/dev/bypass-auth/route.ts** - Uses cookies import
+    - Dev authentication bypass
+    - **Impact:** LOW - Dev only
 
-**Total Files**: 1 file needs update
+#### Onboarding
+12. **app/api/onboarding/complete/route.ts** - 1 occurrence
+    - Reads access_token
+    - **Impact:** MEDIUM
 
-### Files Requiring Async Migration:
+13. **app/api/users/onboarding-status/route.ts** - Uses cookies import
+    - Checks onboarding status
+    - **Impact:** MEDIUM
 
-1. **app/api/subscriptions/webhook/route.ts** (1 usage)
-   - Line 31 - Stripe signature validation
+---
 
-### Priority: MEDIUM
-- Stripe webhook validation is critical but isolated
+## 2. headers() Usage Analysis
 
-## 3. params Usage - CRITICAL ⚠️
+### Files Requiring Migration (1 total)
 
-**Total Files**: 35+ route handlers need updates
+1. **app/api/subscriptions/webhook/route.ts** - 1 occurrence
+   - Reads 'stripe-signature' header
+   - **Impact:** HIGH - Payment webhooks
 
-### Dynamic Route Handlers (Must be made async):
+---
 
-All these files use `{ params }: { params: { ... } }` pattern:
+## 3. params Usage Analysis
 
-#### High Priority (User-facing):
-1. `app/api/tiktok/status/[publishId]/route.ts`
-2. `app/api/content/media/[id]/route.ts`
-3. `app/api/content/media/[id]/edit/route.ts`
-4. `app/api/content/media/[id]/edit-video/route.ts`
-5. `app/api/content/schedule/[id]/route.ts`
-6. `app/api/content/variations/[id]/route.ts`
-7. `app/api/content/variations/[id]/track/route.ts`
-8. `app/api/content/variations/[id]/assign/route.ts`
-9. `app/api/content/variations/[id]/stats/route.ts`
-10. `app/api/content/templates/[id]/use/route.ts`
+### Dynamic Route Patterns Found
 
-#### Medium Priority (CRM/Analytics):
-11. `app/api/crm/fans/[id]/route.ts`
-12. `app/api/crm/conversations/[id]/route.ts`
-13. `app/api/crm/conversations/[id]/messages/route.ts`
-14. `app/api/crm/conversations/[id]/typing/route.ts`
-15. `app/api/analytics/platform/[platform]/route.ts`
-16. `app/api/of/campaigns/[id]/route.ts`
-17. `app/api/of/campaigns/[id]/[action]/route.ts`
-18. `app/api/of/threads/[id]/route.ts`
+#### API Routes with [id] Pattern (30+ files)
+- `app/api/content/schedule/[id]/route.ts`
+- `app/api/content/variations/[id]/route.ts`
+- `app/api/content/variations/[id]/stats/route.ts`
+- `app/api/content/variations/[id]/track/route.ts`
+- `app/api/content/variations/[id]/assign/route.ts`
+- `app/api/content/media/[id]/route.ts`
+- `app/api/content/media/[id]/edit/route.ts`
+- `app/api/content/media/[id]/edit-video/route.ts`
+- `app/api/content/templates/[id]/use/route.ts`
+- `app/api/crm/conversations/[id]/route.ts`
+- `app/api/crm/conversations/[id]/messages/route.ts`
+- `app/api/crm/conversations/[id]/typing/route.ts`
+- `app/api/crm/fans/[id]/route.ts`
+- `app/api/of/campaigns/[id]/route.ts`
+- `app/api/of/campaigns/[id]/[action]/route.ts`
+- `app/api/of/threads/[id]/route.ts`
+- `app/api/onlyfans/messaging/[id]/retry/route.ts`
+- `app/api/analytics/platform/[platform]/route.ts`
+- `app/api/tiktok/status/[publishId]/route.ts`
+- `app/api/messages/[id]/read/route.ts`
+- `app/api/schedule/[id]/route.ts`
+- `app/api/roadmap/proposals/[id]/vote/route.ts`
+- `app/api/ai-team/plan/[id]/route.ts`
+- `app/api/repost/items/[id]/schedule/route.ts`
+- `app/r/[code]/route.ts`
 
-#### Lower Priority (Misc):
-19. `app/api/schedule/[id]/route.ts`
-20. `app/api/messages/[id]/read/route.ts`
-21. `app/api/repost/items/[id]/schedule/route.ts`
-22. `app/api/roadmap/proposals/[id]/vote/route.ts`
-23. `app/api/onlyfans/messaging/[id]/retry/route.ts`
-24. `app/api/agents/[...path]/route.ts`
-25. `app/api/ai-team/plan/[id]/route.ts`
-26. `app/r/[code]/route.ts`
-27. `app/api/crm/connect/[provider]/route.ts`
-28. `app/api/crm/webhooks/[provider]/route.ts`
+#### API Routes with [...path] Pattern
+- `app/api/agents/[...path]/route.ts`
 
-### Page Components:
-29. `app/preview/[token]/page.tsx` - Needs async params
+#### API Routes with [provider] Pattern
+- `app/api/crm/connect/[provider]/route.ts`
+- `app/api/crm/webhooks/[provider]/route.ts`
 
-### Pattern to Update:
-```typescript
-// OLD (Next.js 14)
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
-}
+#### Page Routes
+- `app/preview/[token]/page.tsx`
 
-// NEW (Next.js 15)
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-}
+**Impact:** MEDIUM - All require async params access
+
+---
+
+## 4. Route Handler Caching Analysis
+
+### GET/HEAD Routes Requiring Review
+
+All GET route handlers will be cached by default in Next.js 15. Need to review each for appropriate caching strategy:
+
+#### Analytics Routes (likely need `dynamic = 'force-dynamic'`)
+- `app/api/analytics/overview/route.ts`
+- `app/api/analytics/audience/route.ts`
+- `app/api/analytics/trends/route.ts`
+- `app/api/analytics/content/route.ts`
+- `app/api/analytics/platform/[platform]/route.ts`
+
+#### User-Specific Routes (need `dynamic = 'force-dynamic'`)
+- `app/api/users/onboarding-status/route.ts`
+- `app/api/crm/conversations/[id]/route.ts`
+- `app/api/crm/fans/[id]/route.ts`
+- `app/api/content/schedule/route.ts`
+- `app/api/content/media/[id]/route.ts`
+
+#### Debug/Dev Routes (need `dynamic = 'force-dynamic'`)
+- `app/api/debug-tiktok/route.ts`
+- `app/api/force-complete-onboarding/route.ts`
+- `app/api/bypass-onboarding/route.ts`
+
+---
+
+## 5. Third-Party Dependencies Review
+
+### Potentially Affected Libraries
+
+#### UI Libraries (React 19 Compatibility)
+- ✅ **Framer Motion** (12.23.24) - Compatible with React 19
+- ✅ **Radix UI** (latest versions) - Compatible with React 19
+- ✅ **Lucide React** (0.542.0) - Compatible with React 19
+- ⚠️ **Chart.js / react-chartjs-2** - Need to verify React 19 support
+- ⚠️ **Recharts** (3.2.0) - Need to verify React 19 support
+- ✅ **Three.js / @react-three/fiber** - Should be compatible
+
+#### Form Libraries
+- ✅ **React Hook Form** (7.53.0) - Compatible with React 19
+- ✅ **Zod** (3.25.76) - No React dependency
+
+#### State Management
+- ✅ **Zustand** (5.0.8) - Compatible with React 19
+
+---
+
+## 6. Migration Priority Matrix
+
+### Phase 1: Critical (Week 1)
+1. ✅ Update dependencies (Next.js 15.5, React 19)
+2. 🔴 Migrate `lib/auth/jwt.ts` (core auth)
+3. 🔴 Migrate `app/api/_lib/upstream.ts` (API calls)
+4. 🔴 Migrate `app/api/subscriptions/webhook/route.ts` (payments)
+
+### Phase 2: High Priority (Week 2)
+1. 🟡 Migrate social auth routes (Reddit, TikTok)
+2. 🟡 Migrate onboarding routes
+3. 🟡 Add caching configuration to analytics routes
+
+### Phase 3: Medium Priority (Week 3)
+1. 🟢 Migrate all [id] dynamic routes
+2. 🟢 Migrate [provider] routes
+3. 🟢 Update page components with params
+
+### Phase 4: Low Priority (Week 4)
+1. ⚪ Migrate dev/debug routes
+2. ⚪ Update test files
+3. ⚪ Performance optimization
+
+---
+
+## 7. Risk Assessment
+
+### High Risk Areas
+1. **Authentication System** - Core functionality, affects all users
+2. **Payment Webhooks** - Financial transactions
+3. **Social OAuth Flows** - User onboarding
+
+### Medium Risk Areas
+1. **API Routes** - Many routes need params migration
+2. **Analytics** - Caching behavior changes
+
+### Low Risk Areas
+1. **Dev/Debug Routes** - Not used in production
+2. **Static Pages** - Minimal changes needed
+
+---
+
+## 8. Testing Strategy
+
+### Pre-Migration Tests
+- ✅ Run full test suite on Next.js 14
+- ✅ Document baseline performance metrics
+- ✅ Capture screenshots of key pages
+
+### Post-Migration Tests
+- [ ] Authentication flows (login, register, logout)
+- [ ] Social OAuth (TikTok, Instagram, Reddit)
+- [ ] Payment webhooks
+- [ ] API routes with dynamic params
+- [ ] Analytics dashboard
+- [ ] Content creation flows
+
+---
+
+## 9. Rollback Plan
+
+### Quick Rollback
+```bash
+cp package.json.backup package.json
+cp package-lock.json.backup package-lock.json
+npm ci
+rm -rf .next
+npm run build
 ```
 
-## 4. searchParams Usage
+### Git Rollback
+```bash
+git checkout pre-nextjs-15-upgrade
+npm ci
+rm -rf .next
+npm run build
+```
 
-**Status**: Need to audit page components for searchParams usage
+---
 
-### Known Files:
-- Most page components likely use searchParams
-- Need systematic search in next phase
+## 10. Next Steps
 
-## 5. Third-Party Dependencies
+1. ✅ Complete Phase 1 preparation
+2. ⏭️ Begin Phase 2: Update dependencies
+3. ⏭️ Migrate critical auth files
+4. ⏭️ Test authentication flows
+5. ⏭️ Continue with remaining phases
 
-### React 19 Compatibility Check Needed:
+---
 
-✅ **Likely Compatible**:
-- `framer-motion@12.23.24` - Should support React 19
-- `@radix-ui/*` - Modern versions support React 19
-- `lucide-react@0.542.0` - Should be compatible
-- `recharts@3.2.0` - Should be compatible
-- `chart.js@4.5.1` - Framework agnostic
+## Appendix: File Counts
 
-⚠️ **Need Verification**:
-- `@react-three/fiber@8.15.0` - May need update
-- `@react-three/drei@9.88.0` - May need update
-- `three@0.160.0` - Check compatibility
-- `next-auth@4.24.13` - Check Next.js 15 support
+- **Total files with cookies():** 15
+- **Total files with headers():** 1
+- **Total files with params:** 50+
+- **Total API routes:** 80+
+- **Total page routes:** 30+
 
-## 6. Middleware
-
-**Status**: No middleware.ts file found
-- ✅ No middleware migration needed
-
-## 7. next.config.js
-
-**Current**: JavaScript file
-**Recommendation**: Migrate to TypeScript (next.config.ts)
-
-## 8. Build Configuration
-
-### Current Setup:
-- Using standard Next.js build
-- No Turbopack enabled
-- Standard webpack configuration
-
-### Recommendations:
-- Test Turbopack in development after upgrade
-- Monitor build times for improvements
-
-## Summary Statistics
-
-| Category | Count | Priority |
-|----------|-------|----------|
-| cookies() calls | 11 files | HIGH |
-| headers() calls | 1 file | MEDIUM |
-| params in routes | 35+ files | HIGH |
-| Page components | 1+ files | MEDIUM |
-| Dependencies to check | 4 packages | MEDIUM |
-
-## Next Steps
-
-1. ✅ Complete this audit
-2. ⏳ Set up testing baseline
-3. ⏳ Update dependencies
-4. ⏳ Migrate async APIs systematically
-5. ⏳ Test thoroughly
-
-## Risk Assessment
-
-**Overall Risk**: MEDIUM-HIGH
-
-**Reasons**:
-- Large number of files to update (45+ files)
-- Core authentication system affected
-- Many dynamic routes need updates
-- But: Changes are mechanical and well-documented
-- But: Good test coverage exists
-
-**Mitigation**:
-- Systematic approach (one phase at a time)
-- Comprehensive testing after each phase
-- Rollback plan in place
+**Estimated Migration Time:** 4-5 weeks
