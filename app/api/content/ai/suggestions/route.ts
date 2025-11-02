@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { aiContentService } from '@/lib/services/aiContentService';
+
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  // Lazy import to avoid build-time instantiation
+  const { aiContentService } = await import('@/lib/services/aiContentService');
   try {
     const userId = request.headers.get('x-user-id');
     if (!userId) {

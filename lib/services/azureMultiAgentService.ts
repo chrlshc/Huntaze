@@ -34,15 +34,29 @@ interface AgentTask {
 }
 
 export class AzureMultiAgentService {
-  private openai: OpenAI;
+  private openai: OpenAI | null = null;
   private agents: Map<string, AgentCapability>;
 
   constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    // Don't instantiate OpenAI during construction to avoid build-time errors
     this.agents = new Map();
     this.initializeAgents();
+  }
+
+  /**
+   * Get or create OpenAI client
+   * @throws Error if API key is not configured
+   */
+  private getOpenAI(): OpenAI {
+    if (!this.openai) {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OpenAI API key not configured');
+      }
+      this.openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+    }
+    return this.openai;
   }
 
   private initializeAgents() {
@@ -651,7 +665,8 @@ Return a JSON object with:
 User message: "${message}"`;
 
     try {
-      const response = await this.openai.chat.completions.create({
+      const openai = this.getOpenAI();
+      const response = await openai.chat.completions.create({
         model: process.env.OPENAI_MODEL || 'gpt-4o',
         messages: [{ role: 'system', content: systemPrompt }],
         temperature: 0.3,
@@ -753,7 +768,8 @@ Rules:
 - If no actions are needed, return an empty array`;
 
     try {
-      const response = await this.openai.chat.completions.create({
+      const openai = this.getOpenAI();
+      const response = await openai.chat.completions.create({
         model: process.env.OPENAI_MODEL || 'gpt-4o',
         messages: [{ role: 'system', content: systemPrompt }],
         temperature: 0.2,
@@ -862,7 +878,8 @@ Provide a clear, actionable response that:
 Keep it concise but informative. Use natural language, not technical jargon.`;
 
     try {
-      const response = await this.openai.chat.completions.create({
+      const openai = this.getOpenAI();
+      const response = await openai.chat.completions.create({
         model: process.env.OPENAI_MODEL || 'gpt-4o',
         messages: [{ role: 'system', content: systemPrompt }],
         temperature: 0.7,
