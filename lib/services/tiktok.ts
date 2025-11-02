@@ -132,4 +132,21 @@ export class TikTokService {
   }
 }
 
-export const tiktokService = new TikTokService();
+// Lazy instantiation pattern - create instance only when needed
+let tiktokServiceInstance: TikTokService | null = null;
+
+function getTikTokService(): TikTokService {
+  if (!tiktokServiceInstance) {
+    tiktokServiceInstance = new TikTokService();
+  }
+  return tiktokServiceInstance;
+}
+
+// Export singleton instance (lazy)
+export const tiktokService = {
+  getAuthUrl: (...args: Parameters<TikTokService['getAuthUrl']>) => getTikTokService().getAuthUrl(...args),
+  handleCallback: (...args: Parameters<TikTokService['handleCallback']>) => getTikTokService().handleCallback(...args),
+  getUserInfo: (...args: Parameters<TikTokService['getUserInfo']>) => getTikTokService().getUserInfo(...args),
+  uploadVideo: (...args: Parameters<TikTokService['uploadVideo']>) => getTikTokService().uploadVideo(...args),
+  disconnect: (...args: Parameters<TikTokService['disconnect']>) => getTikTokService().disconnect(...args),
+};
