@@ -13,8 +13,6 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export const runtime = 'nodejs';
-
 export async function GET(request: NextRequest) {
   try {
     // Check OAuth credentials at runtime

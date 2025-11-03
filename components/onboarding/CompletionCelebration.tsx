@@ -85,7 +85,7 @@ export default function CompletionCelebration({
     router.push('/dashboard');
   };
 
-  const handleExploreFeat ures = () => {
+  const handleExploreFeatures = () => {
     router.push('/onboarding/dashboard');
   };
 
@@ -175,7 +175,7 @@ export default function CompletionCelebration({
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
-              onClick={handleExploreFeat ures}
+              onClick={handleExploreFeatures}
               className="flex-1 px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition"
             >
               Explore Features
