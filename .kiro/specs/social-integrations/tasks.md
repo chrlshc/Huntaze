@@ -290,7 +290,7 @@
     - _Requirements: 12.4_
 
 - [ ] 16. Documentation
-  - [ ] 16.1 Create user documentation
+  - [x] 16.1 Create user documentation
     - How to connect TikTok account
     - How to upload videos to TikTok
     - How to connect Instagram account
@@ -298,7 +298,7 @@
     - Troubleshooting common errors
     - _Requirements: 10.1, 10.2_
   
-  - [ ] 16.2 Create developer documentation
+  - [x] 16.2 Create developer documentation
     - OAuth flow architecture
     - Webhook processing design
     - Database schema reference
