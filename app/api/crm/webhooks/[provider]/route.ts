@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Generic webhook entrypoint for CRM providers (placeholder)
-export async function POST(request: NextRequest, { params }: { params: { provider: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ provider: string }> }) {
   try {
-    const provider = (params.provider || '').toLowerCase();
+    const { provider: providerParam } = await params;
+    const provider = (providerParam || '').toLowerCase();
     // TODO: Verify signature once provider docs are known
     const payload = await request.json().catch(() => ({}));
     console.log(`[CRM Webhook] provider=${provider}`, payload);

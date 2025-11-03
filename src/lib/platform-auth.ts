@@ -124,7 +124,8 @@ export async function exchangeCodeForToken(
       grant_type: 'authorization_code',
       code,
       redirect_uri: config.redirectUri
-    })
+    }),
+    cache: 'no-store',
   });
 
   if (!tokenResponse.ok) {
@@ -161,7 +162,8 @@ export async function refreshAccessToken(
       client_secret: process.env[`${platform.toUpperCase()}_CLIENT_SECRET`] || '',
       grant_type: 'refresh_token',
       refresh_token: refreshToken
-    })
+    }),
+    cache: 'no-store',
   });
 
   if (!tokenResponse.ok) {

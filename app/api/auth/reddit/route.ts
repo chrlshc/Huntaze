@@ -36,7 +36,8 @@ export async function GET(request: NextRequest) {
     const { url, state } = redditOAuth.getAuthorizationUrl();
 
     // Store state in cookie for validation in callback
-    cookies().set('reddit_oauth_state', state, {
+    const cookieStore = await cookies();
+    cookieStore.set('reddit_oauth_state', state, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

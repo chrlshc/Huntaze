@@ -7,8 +7,9 @@ async function getUserId(request: NextRequest): Promise<string | null> {
   return user?.userId || null;
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const userId = await getUserId(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 
@@ -20,7 +21,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     const type = action === 'start' ? 'typing-start' : 'typing-stop';
-    eventEmitter.emit({ type, conversationId: params.id, fanId });
+    eventEmitter.emit({ type, conversationId: id, fanId });
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to emit typing event' }, { status: 500 });

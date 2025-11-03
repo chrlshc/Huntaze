@@ -22,9 +22,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { platform: string } }
+  { params }: { params: Promise<{ platform: string }> }
 ) {
   try {
+    const { platform } = await params;
+    
     // Get authenticated user
     const session = await getServerSession();
     
@@ -36,7 +38,6 @@ export async function GET(
     }
 
     const userId = parseInt(session.user.id);
-    const { platform } = params;
 
     // Validate platform
     if (!['tiktok', 'instagram', 'reddit'].includes(platform)) {

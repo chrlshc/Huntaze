@@ -123,6 +123,7 @@ export class TikTokUploadService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      cache: 'no-store',
     });
 
     // Track rate limit
@@ -172,6 +173,7 @@ export class TikTokUploadService {
         'Content-Length': chunkSize.toString(),
       },
       body: chunk as any, // Buffer is compatible with BodyInit
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -200,6 +202,7 @@ export class TikTokUploadService {
       body: JSON.stringify({
         publish_id: publishId,
       }),
+      cache: 'no-store',
     });
 
     // Track rate limit

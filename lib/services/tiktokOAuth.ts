@@ -122,6 +122,7 @@ export class TikTokOAuthService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body.toString(),
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -176,6 +177,7 @@ export class TikTokOAuthService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body.toString(),
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -222,6 +224,7 @@ export class TikTokOAuthService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body.toString(),
+        cache: 'no-store',
       });
 
       if (!response.ok) {
@@ -253,6 +256,7 @@ export class TikTokOAuthService {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
+        cache: 'no-store',
       });
 
       const data = await response.json();

@@ -7,11 +7,12 @@ async function getUserId(request: NextRequest): Promise<string | null> {
   return user?.userId || null;
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const userId = await getUserId(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    const conv = crmData.getConversation(userId, params.id);
+    const conv = crmData.getConversation(userId, id);
     if (!conv) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     // Return the conversation object directly, as expected by the client
     return NextResponse.json(conv);

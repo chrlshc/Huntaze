@@ -64,6 +64,7 @@ export async function callAzureOpenAI(opts: {
       stream: false,
     }),
     signal: opts.abortSignal as any,
+    cache: 'no-store',
   })
 
   if (!resp.ok) {
