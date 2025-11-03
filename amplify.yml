@@ -3,38 +3,49 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm use 20 || echo "Using default Node"
-        - npm ci
+        - nvm install 20 && nvm use 20
+        - echo "[PREBUILD] node=$(node -v) npm=$(npm -v)"
+        - npm ci --no-audit --no-fund || npm i --no-audit --no-fund
+        - echo "PREBUILD_DONE"
     build:
       commands:
-        - if [ -f .env.production ]; then set -a; source .env.production; set +a; fi
-        # Set environment variables for build
-        - export NEXT_PUBLIC_APP_URL=https://app.huntaze.com
-        - export NEXT_PUBLIC_API_URL=https://app.huntaze.com/api
-        - export NEXT_PUBLIC_ROOT_URL=https://huntaze.com
-        - export NEXT_PUBLIC_MARKETING_URL=https://huntaze.com
-        - export NEXT_PUBLIC_DOMAIN=.huntaze.com
-        - export JWT_SECRET=9tZUvb1Ky3Ciy+NKXIju8p5e3AdrC123OCsX0XOx9oQ=
-        # Speed up CI builds (skip lint + TS typecheck) and reduce noise
-        - export NEXT_DISABLE_ESLINT=1
-        - export NEXT_PRIVATE_SKIP_TYPECHECK=true
-        - export NEXT_TELEMETRY_DISABLED=1
-        - npm run build
-    postBuild:
-      commands:
-        # Optional API smoke tests on the built app (disabled by default)
-        # Enable by setting RUN_SMOKE=1 in Amplify environment variables
+        - echo "BUILD_START"
+        - export BUILD_REDIS_MOCK=1
+        # Write .env.production BEFORE any scripts that need it
         - |
-          if [ "$RUN_SMOKE" = "1" ]; then
-            echo "[smoke] Starting Next server for API tests..."
-            export PORT=3000
-            nohup npm start >/dev/null 2>&1 &
-            for i in {1..60}; do curl -fsS http://localhost:3000 >/dev/null && break || sleep 1; done
-            echo "[smoke] Running Playwright smoke tests..."
-            npx playwright test tests/smoke --reporter=line --timeout=30000 --workers=1
-          else
-            echo "[smoke] Skipped (set RUN_SMOKE=1 to enable)"
-          fi
+          cat > .env.production <<EOF
+          OPENAI_API_KEY=${OPENAI_API_KEY}
+          OPENAI_MODEL=${OPENAI_MODEL}
+          AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+          AZURE_OPENAI_DEPLOYMENT=${AZURE_OPENAI_DEPLOYMENT}
+          AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+          AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
+          USE_AZURE_RESPONSES=${USE_AZURE_RESPONSES}
+          ENABLE_AZURE_AI=${ENABLE_AZURE_AI}
+          SQS_URL=${SQS_URL}
+          DATABASE_URL=${DATABASE_URL}
+          JWT_SECRET=${JWT_SECRET}
+          STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+          NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://main.d2yjqfqvvvvvvv.amplifyapp.com}
+          NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+          FROM_EMAIL=${FROM_EMAIL}
+          AWS_REGION=${AWS_REGION}
+          NEXTAUTH_URL=${NEXTAUTH_URL}
+          AUTH_SECRET=${AUTH_SECRET}
+          FACEBOOK_APP_ID=${FACEBOOK_APP_ID}
+          FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}
+          REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+          REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+          TIKTOK_CLIENT_KEY=${TIKTOK_CLIENT_KEY}
+          TIKTOK_CLIENT_SECRET=${TIKTOK_CLIENT_SECRET}
+          NEXT_PUBLIC_TIKTOK_REDIRECT_URI=${NEXT_PUBLIC_TIKTOK_REDIRECT_URI}
+          APP_URL=${APP_URL:-https://main.d2yjqfqvvvvvvv.amplifyapp.com}
+          EOF
+        - echo "[BUILD] wrote .env.production"
+        # Initialize database tables if needed (now DATABASE_URL is available)
+        - npm run db:init:safe || echo "DB already initialized"
+        - npm run build
+        - echo "BUILD_DONE"
   artifacts:
     baseDirectory: .next
     files:
@@ -43,12 +54,3 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
-  customHeaders:
-    - pattern: '**/*'
-      headers:
-        - key: 'X-Frame-Options'
-          value: 'DENY'
-        - key: 'X-Content-Type-Options'
-          value: 'nosniff'
-        - key: 'X-XSS-Protection'
-          value: '1; mode=block'

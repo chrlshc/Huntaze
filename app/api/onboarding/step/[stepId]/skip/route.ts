@@ -1,0 +1,35 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { onboardingOrchestrator } from '@/lib/services/onboardingOrchestrator';
+import { verifyAuth } from '@/lib/auth/jwt';
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { stepId: string } }
+) {
+  try {
+    const authResult = await verifyAuth(request);
+    if (!authResult.valid || !authResult.userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const userId = authResult.userId;
+    const { stepId } = params;
+
+    // Skip the step
+    const result = await onboardingOrchestrator.skipStep(userId, stepId);
+
+    return NextResponse.json({
+      success: result.success,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error skipping step:', error);
+    return NextResponse.json(
+      { error: error.message || 'Failed to skip step' },
+      { status: 500 }
+    );
+  }
+}

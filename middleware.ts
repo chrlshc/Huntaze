@@ -1,403 +1,93 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server'
+import { resolveRateLimit } from '@/src/lib/rateLimits'
+// Optional Edge-compatible rate limiting via Upstash. Enabled when env present.
+let upstashReady = Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+let upstashMod: { Redis: any; Ratelimit: any } | null = null
 
-import { rateLimit } from '@/lib/rate-limit';
-import { CSRF_HEADER_NAME, generateCSRFToken, getCSRFCookieName } from '@/lib/security/csrf';
-
-type LegacyRoute = {
-  prefix: string;
-  target: string;
-};
-
-const legacyAppRoutes: LegacyRoute[] = [
-  { prefix: '/app/app/messages', target: '/dashboard/messages' },
-  { prefix: '/app/app/analytics', target: '/dashboard/analytics' },
-  { prefix: '/app/app/fans', target: '/dashboard/fans' },
-  { prefix: '/app/app/settings', target: '/dashboard/settings' },
-  { prefix: '/app/app/profile', target: '/dashboard/settings' },
-  { prefix: '/app/app/configure', target: '/dashboard/settings' },
-  { prefix: '/app/app/billing', target: '/dashboard/settings' },
-  { prefix: '/app/app/huntaze-ai', target: '/dashboard/messages' },
-  { prefix: '/app/app/onlyfans', target: '/dashboard/messages' },
-  { prefix: '/app/app/manager-ai', target: '/dashboard/messages' },
-  { prefix: '/app/app/social', target: '/dashboard/messages' },
-  { prefix: '/app/app/campaigns', target: '/dashboard/messages' },
-  { prefix: '/app/app/automations', target: '/dashboard/messages' },
-  { prefix: '/app/app/platforms', target: '/dashboard/messages' },
-  { prefix: '/app/app/content', target: '/dashboard/messages' },
-  { prefix: '/app/app/cinai', target: '/dashboard/messages' },
-  { prefix: '/app/messages', target: '/dashboard/messages' },
-  { prefix: '/app/analytics', target: '/dashboard/analytics' },
-  { prefix: '/app/fans', target: '/dashboard/fans' },
-  { prefix: '/app/settings', target: '/dashboard/settings' },
-  { prefix: '/app/profile', target: '/dashboard/settings' },
-  { prefix: '/app/configure', target: '/dashboard/settings' },
-  { prefix: '/app/billing', target: '/dashboard/settings' },
-  { prefix: '/app/huntaze-ai', target: '/dashboard/messages' },
-  { prefix: '/app/onlyfans', target: '/dashboard/messages' },
-  { prefix: '/app/manager-ai', target: '/dashboard/messages' },
-  { prefix: '/app/social', target: '/dashboard/messages' },
-  { prefix: '/app/campaigns', target: '/dashboard/messages' },
-  { prefix: '/app/automations', target: '/dashboard/messages' },
-  { prefix: '/app/platforms', target: '/dashboard/messages' },
-  { prefix: '/app/content', target: '/dashboard/messages' },
-  { prefix: '/app/cinai', target: '/dashboard/messages' },
-  { prefix: '/app/app', target: '/dashboard/messages' },
-  { prefix: '/app', target: '/dashboard/messages' },
-].sort((a, b) => b.prefix.length - a.prefix.length);
-
-function extractHost(value: string | null | undefined): string {
-  if (!value) return '';
-  const host = value.split(',')[0]?.trim() || '';
-  const [hostname] = host.split(':');
-  return (hostname || '').toLowerCase();
+export const config = {
+  matcher: ['/debug/:path*', '/api/debug/:path*'],
 }
 
-function getAppDomains(): string[] {
-  const domains = new Set<string>(['app.huntaze.com']);
-  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (envUrl) {
-    try {
-      const parsed = new URL(envUrl);
-      if (parsed.hostname) domains.add(parsed.hostname.toLowerCase());
-    } catch {
-      // ignore malformed URLs
-    }
+function ctEq(a: string, b: string) { // constant-time compare
+  if (a.length !== b.length) return false
+  let r = 0
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return r === 0
+}
+
+function okBearerOrHeader(req: NextRequest) {
+  const hdr = req.headers.get('authorization')
+  const xhdr = req.headers.get('x-debug-token')
+  const token = process.env.DEBUG_TOKEN || ''
+  if (hdr?.startsWith('Bearer ') && token) return ctEq(hdr.slice(7), token)
+  if (xhdr && token) return ctEq(xhdr, token)
+  return false
+}
+
+function okBasic(req: NextRequest) {
+  const hdr = req.headers.get('authorization')
+  const user = process.env.DEBUG_USER || ''
+  const pass = process.env.DEBUG_PASS || ''
+  if (!hdr?.startsWith('Basic ') || !user || !pass) return false
+  try {
+    const decoded = (globalThis as any).atob ? (globalThis as any).atob(hdr.slice(6)) : ''
+    const idx = decoded.indexOf(':')
+    const u = idx >= 0 ? decoded.slice(0, idx) : decoded
+    const p = idx >= 0 ? decoded.slice(idx + 1) : ''
+    return ctEq(u || '', user) && ctEq(p || '', pass)
+  } catch {
+    return false
   }
-  return Array.from(domains);
 }
 
-function getRootDomains(): string[] {
-  const domains = new Set<string>(['huntaze.com', 'www.huntaze.com']);
-  const envUrl = process.env.NEXT_PUBLIC_MARKETING_URL || process.env.NEXT_PUBLIC_ROOT_URL;
-  if (envUrl) {
+export default async function middleware(req: NextRequest) {
+  const pathname = new URL(req.url).pathname
+
+  // Edge rate-limit if Upstash configured and we have a config for this path
+  const cfg = resolveRateLimit(pathname)
+  if (upstashReady && cfg) {
     try {
-      const parsed = new URL(envUrl);
-      if (parsed.hostname) {
-        domains.add(parsed.hostname.toLowerCase());
-        if (parsed.hostname.startsWith('www.')) {
-          domains.add(parsed.hostname.slice(4));
-        } else {
-          domains.add(`www.${parsed.hostname}`);
-        }
+      if (!upstashMod) {
+        const { Redis } = (await import('@upstash/redis')) as any
+        const { Ratelimit } = (await import('@upstash/ratelimit')) as any
+        upstashMod = { Redis, Ratelimit }
       }
-    } catch {
-      // ignore malformed URLs
-    }
-  }
-  return Array.from(domains);
-}
+      const redis = upstashMod!.Redis.fromEnv()
+      // Create per-request limiters so we can vary rates by path/identity
+      const tokenLimiter = new upstashMod!.Ratelimit({ redis, limiter: upstashMod!.Ratelimit.fixedWindow(cfg.tokenRpm, '1 m') })
+      const ipLimiter = new upstashMod!.Ratelimit({ redis, limiter: upstashMod!.Ratelimit.fixedWindow(cfg.ipRpm, '1 m') })
 
-export async function middleware(request: NextRequest) {
-  const { pathname, searchParams } = request.nextUrl;
-  // Allow internal worker reports without auth gating; protected by WORKER_TOKEN
-  if (pathname.startsWith('/api/_internal/of/connect/report')) {
-    return NextResponse.next();
-  }
-  // Never intercept Next.js internals or static assets
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/manifest') ||
-    pathname.startsWith('/icons') ||
-    pathname.startsWith('/fonts') ||
-    pathname.startsWith('/images') ||
-    pathname.startsWith('/assets') ||
-    pathname.match(/\.[a-zA-Z0-9]+$/) // any file extension
-  ) {
-    return NextResponse.next();
-  }
-  const normalisedPathname =
-    pathname !== '/' && pathname.endsWith('/') ? pathname.replace(/\/+$/, '') : pathname;
-
-  // Legacy OnlyFans connect route → new canonical path
-  if (normalisedPathname.startsWith('/platforms/connect/onlyfans')) {
-    const to = new URL('/of-connect', request.url);
-    return NextResponse.redirect(to, { status: 302 });
-  }
-
-  // Cross-domain routing: marketing vs app subdomain
-  const urlHost = extractHost(request.nextUrl.hostname);
-  const headerHost = extractHost(request.headers.get('host')) || urlHost;
-  const forwardedHost = extractHost(request.headers.get('x-forwarded-host')) || headerHost;
-  const activeHost = forwardedHost || headerHost || urlHost;
-  const appDomains = getAppDomains();
-  const rootDomains = getRootDomains();
-  const primaryAppDomain = appDomains[0] || 'app.huntaze.com';
-  const primaryRootDomain = rootDomains.find((domain) => !domain.startsWith('www.')) || rootDomains[0] || 'huntaze.com';
-  const isRootDomain = rootDomains.includes(activeHost);
-  const isAppDomain = appDomains.includes(activeHost);
-  const marketingFallbackPaths = new Set([
-    '/analytics',
-    '/cinai',
-    '/home',
-    '/onlyfans',
-    '/onlyfans-assisted',
-    '/social-marketing',
-  ]);
-
-  const domainProtectedPrefixes = [
-    '/dashboard',
-    '/profile',
-    '/settings',
-    '/configure',
-    '/analytics',
-    '/messages',
-    '/campaigns',
-    '/fans',
-    '/platforms',
-    '/billing',
-    '/social',
-    '/content',
-    '/cinai',
-    '/manager-ai',
-    '/of-connect',
-  ];
-
-  if (isRootDomain && domainProtectedPrefixes.some((p) => normalisedPathname === p || normalisedPathname.startsWith(p + '/'))) {
-    const target = new URL(request.url);
-    target.hostname = primaryAppDomain;
-    return NextResponse.redirect(target, { status: 302 });
-  }
-
-  if (isAppDomain && normalisedPathname === '/') {
-    const to = new URL('/dashboard', request.url);
-    return NextResponse.redirect(to, { status: 302 });
-  }
-
-  // On app.huntaze.com, redirect non-app marketing pages to root domain
-  const isAppPath = (
-    domainProtectedPrefixes.some((p) => normalisedPathname === p || normalisedPathname.startsWith(p + '/')) ||
-    normalisedPathname.startsWith('/auth') ||
-    normalisedPathname.startsWith('/join') ||
-    normalisedPathname.startsWith('/api') ||
-    normalisedPathname.startsWith('/_next') ||
-    normalisedPathname.startsWith('/favicon') ||
-    normalisedPathname.startsWith('/manifest') ||
-    normalisedPathname.startsWith('/icons') ||
-    normalisedPathname.startsWith('/fonts') ||
-    normalisedPathname.startsWith('/images') ||
-    normalisedPathname.startsWith('/assets') ||
-    /\.[a-zA-Z0-9]+$/.test(normalisedPathname)
-  );
-  if (isAppDomain && !isAppPath) {
-    const target = new URL(request.url);
-    target.hostname = primaryRootDomain;
-    return NextResponse.redirect(target, { status: 302 });
-  }
-
-  const legacyMatch = legacyAppRoutes.find(
-    ({ prefix }) =>
-      normalisedPathname === prefix || normalisedPathname.startsWith(`${prefix}/`),
-  );
-
-  if (legacyMatch) {
-    const targetUrl = new URL(legacyMatch.target, request.url);
-    const searchString = searchParams.toString();
-    if (searchString) {
-      targetUrl.search = `?${searchString}`;
-    }
-    return NextResponse.redirect(targetUrl);
-  }
-
-  const isSensitiveApi =
-    pathname.startsWith('/api/onlyfans') ||
-    pathname.startsWith('/api/analytics') ||
-    pathname.startsWith('/api/cin');
-
-  let rateLimitRemaining: number | undefined;
-  if (isSensitiveApi) {
-    const { ok, remaining } = rateLimit(request, { windowMs: 60_000, max: 60 });
-    if (!ok) {
-      return new NextResponse('Too Many Requests', {
-        status: 429,
-        headers: { 'Retry-After': '60' },
-      });
-    }
-    rateLimitRemaining = remaining;
-  }
-
-  // Local dev convenience: disable auth checks on localhost/non-production
-  const isLocalhost = activeHost === 'localhost' || activeHost === '127.0.0.1' || activeHost === '0.0.0.0';
-  const DEV_MODE = process.env.NODE_ENV !== 'production' && isLocalhost;
-  if (DEV_MODE) return NextResponse.next();
-
-  // Production: no staging bypass. All non-local hosts are gated by the rules below.
-
-  // Single auth cookie
-  const token = request.cookies.get('access_token')?.value;
-
-  // Gating based on protected prefixes
-  const protectedPrefixes = [
-    // canonical
-    '/dashboard',
-    '/profile',
-    '/settings',
-    '/configure',
-    '/analytics',
-    '/messages',
-    '/campaigns',
-    '/fans',
-    '/platforms',
-    '/billing',
-    '/social',
-    '/content',
-    '/cinai',
-    '/manager-ai',
-  ];
-
-  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
-  const isOnboarding = pathname.startsWith('/onboarding');
-  const isAuth = pathname.startsWith('/auth') || pathname.startsWith('/join');
-  const isOAuth = ['/auth/tiktok', '/auth/instagram', '/auth/reddit', '/auth/google'].some((r) => pathname.startsWith(r));
-  const isTest = pathname.includes('/test-') || pathname.includes('/tiktok-diagnostic') || pathname.includes('/debug-');
-
-  // Pre-prod/staging bypass (no auth redirects)
-  const bypassByEnv = process.env.PREPROD_BYPASS_AUTH === 'true' || process.env.STAGING_BYPASS_AUTH === 'true';
-  const bypassByQuery = request.nextUrl.searchParams.get('bypassauth') === '1';
-  const bypassCookie = request.cookies.get('bypass_auth')?.value === '1';
-  const BYPASS_AUTH = bypassByEnv || bypassByQuery || bypassCookie;
-
-  // Not authenticated → redirect to auth for protected/onboarding
-  if (!token && isAppDomain && marketingFallbackPaths.has(normalisedPathname)) {
-    const to = new URL(request.url);
-    to.hostname = primaryRootDomain;
-    return NextResponse.redirect(to, { status: 302 });
-  }
-
-  if (!BYPASS_AUTH && !token && (isProtected || isOnboarding)) {
-    const authUrl = new URL('/auth', request.url);
-    // Preserve intended destination so auth can bounce back
-    const nextPath = request.nextUrl.pathname + (request.nextUrl.search || '');
-    authUrl.searchParams.set('to', nextPath);
-    if (request.nextUrl.pathname.startsWith('/of-connect')) {
-      authUrl.searchParams.set('provider', 'onlyfans');
-    }
-    return NextResponse.redirect(authUrl);
-  }
-
-  // Authenticated → enforce onboarding cookie except OAuth/test routes
-  if (!BYPASS_AUTH && token && isProtected && !isOAuth && !isTest) {
-    const onboarded = request.cookies.get('onboarding_completed')?.value === 'true';
-    if (!onboarded) {
-      const to = new URL('/onboarding', request.url);
-      to.searchParams.set('next', pathname);
-      return NextResponse.redirect(to);
-    }
-  }
-
-  // Authenticated visiting auth routes → redirect to app
-  if (!BYPASS_AUTH && token && isAuth && !isOAuth) {
-    return NextResponse.redirect(new URL('/dashboard/messages', request.url));
-  }
-
-  const response = NextResponse.next();
-  // Use the active host as cookie domain when NEXT_PUBLIC_DOMAIN is unset; if empty, skip setting domain
-  const cookieDomainCandidate = process.env.NEXT_PUBLIC_DOMAIN || activeHost || '';
-  const secureCookies = process.env.NODE_ENV === 'production';
-
-  if (rateLimitRemaining !== undefined) {
-    response.headers.set('X-RateLimit-Remaining', String(rateLimitRemaining));
-    response.headers.set('X-RateLimit-Window', '60');
-  }
-
-  if (token) {
-    try {
-      const baseCookie: any = {
-        httpOnly: true,
-        secure: secureCookies,
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-      };
-      if (cookieDomainCandidate) baseCookie.domain = cookieDomainCandidate;
-      response.cookies.set('access_token', token, baseCookie);
-    } catch {
-      // avoid throwing from middleware due to cookie serialization edge cases
-    }
-  }
-
-  const csrfCookieName = getCSRFCookieName();
-  let csrfToken = request.cookies.get(csrfCookieName)?.value;
-  if (!csrfToken) {
-    csrfToken = generateCSRFToken();
-    try {
-      const csrfOpts: any = {
-        httpOnly: true,
-        secure: secureCookies,
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7,
-      };
-      if (cookieDomainCandidate) csrfOpts.domain = cookieDomainCandidate;
-      response.cookies.set(csrfCookieName, csrfToken, csrfOpts);
-    } catch {
-      // avoid throwing from middleware
-    }
-  }
-
-  if (request.method === 'GET') {
-    response.headers.set(CSRF_HEADER_NAME, csrfToken ?? '');
-  }
-
-  // Persist bypass flag via cookie when provided in query
-  if (bypassByQuery) {
-    try {
-      const bypassOpts: any = {
-        httpOnly: false,
-        secure: secureCookies,
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24,
-      };
-      if (cookieDomainCandidate) bypassOpts.domain = cookieDomainCandidate;
-      response.cookies.set('bypass_auth', '1', bypassOpts);
+      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+      const bearer = req.headers.get('authorization')?.startsWith('Bearer ')
+        ? req.headers.get('authorization')!.slice(7)
+        : ''
+      const id = bearer ? `tok:${pathname}:${bearer}` : `ip:${pathname}:${ip}`
+      const rl = bearer ? tokenLimiter : ipLimiter
+      const result = await rl.limit(id)
+      if (!result?.success) {
+        const retryAfter = Math.max(0, Math.floor((result?.reset || 0) - Date.now() / 1000))
+        return new NextResponse('Too Many Requests', {
+          status: 429,
+          headers: {
+            'Retry-After': String(retryAfter),
+            'X-RateLimit-Limit': String(cfg ? (bearer ? cfg.tokenRpm : cfg.ipRpm) : ''),
+            'X-RateLimit-Remaining': '0',
+            'Cache-Control': 'no-store',
+          },
+        })
+      }
     } catch {}
   }
 
-  return response;
-}
+  const authed = okBasic(req) || okBearerOrHeader(req)
+  if (authed) {
+    const res = NextResponse.next()
+    // Extra safety: advise no indexing for any debug paths
+    res.headers.set('X-Robots-Tag', 'noindex')
+    return res
+  }
 
-export const config = {
-  matcher: [
-    // canonical
-    '/dashboard',
-    '/dashboard/:path*',
-    '/profile/:path*',
-    '/settings/:path*',
-    '/configure/:path*',
-    '/analytics/:path*',
-    '/messages/:path*',
-    '/campaigns/:path*',
-    '/fans/:path*',
-    '/platforms/:path*',
-    '/billing/:path*',
-    '/social/:path*',
-    '/content/:path*',
-    '/cinai/:path*',
-    '/manager-ai/:path*',
-    // legacy nested
-    '/app/app',
-    '/app/app/:path*',
-    // alias under /app/*
-    '/app/dashboard',
-    '/app/dashboard/:path*',
-    '/app/profile/:path*',
-    '/app/settings/:path*',
-    '/app/configure/:path*',
-    '/app/analytics/:path*',
-    '/app/messages/:path*',
-    '/app/campaigns/:path*',
-    '/app/fans/:path*',
-    '/app/platforms/:path*',
-    '/app/billing/:path*',
-    '/app/social/:path*',
-    '/app/manager-ai/:path*',
-    '/app/onlyfans/:path*',
-    '/app/content/:path*',
-    '/app/cinai/:path*',
-    '/onboarding/:path*',
-    '/auth/:path*',
-    '/join/:path*',
-  ],
-};
+  // For browser UX, trigger Basic Auth prompt
+  const headers = new Headers({ 'WWW-Authenticate': 'Basic realm="Debug"' })
+  return new NextResponse('Unauthorized', { status: 401, headers })
+}

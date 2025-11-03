@@ -1,40 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, refreshAccessToken } from '@/lib/auth/jwt';
+import { jwtVerify } from 'jose';
+import { query } from '@/lib/db';
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+);
 
 export async function GET(request: NextRequest) {
   try {
-    const access = request.cookies.get('access_token')?.value || request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('auth-token')?.value;
 
-    if (access) {
-      const payload = await verifyToken(access);
-      if (payload) {
-        return NextResponse.json({
-          userId: payload.userId,
-          email: payload.email,
-          name: payload.name,
-          picture: payload.picture,
-          provider: payload.provider,
-        });
-      }
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
     }
 
-    // Try refresh token path
-    const newAccess = await refreshAccessToken();
-    if (newAccess) {
-      const payload = await verifyToken(newAccess);
-      if (payload) {
-        return NextResponse.json({
-          userId: payload.userId,
-          email: payload.email,
-          name: payload.name,
-          picture: payload.picture,
-          provider: payload.provider,
-        });
-      }
+    // Verify JWT
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const userId = payload.userId as number;
+
+    // Get user from database
+    const result = await query(
+      'SELECT id, name, email, created_at FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    return NextResponse.json({ user: result.rows[0] });
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    console.error('Auth verification error:', error);
+    return NextResponse.json(
+      { error: 'Invalid token' },
+      { status: 401 }
+    );
   }
 }
