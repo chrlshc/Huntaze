@@ -189,8 +189,7 @@ describe('Platform Optimizer Service - Task 8.2', () => {
 
       expect(truncated).toBe('First sentence....');
       expect(truncated).toMatch(/\.\.\.$/);
-    }
-);
+    });
 
     it('should handle text with no spaces', () => {
       const text = 'a'.repeat(100);
@@ -198,8 +197,7 @@ describe('Platform Optimizer Service - Task 8.2', () => {
 
       expect(truncated.length).toBeLessThanOrEqual(50);
       expect(truncated).toMatch(/\.\.\.$/);
-    
-});
+    });
 
     it('should preserve word if cutting point is too early', () => {
       const text = 'Verylongwordthatcannotbebroken short';
@@ -214,8 +212,7 @@ describe('Platform Optimizer Service - Task 8.2', () => {
       const truncated = platformOptimizerService.truncateText(text, 20);
 
       expect(truncated).toMatch(/\.\.\.$/);
-     
- expect(truncated.length).toBeLessThanOrEqual(23);
+      expect(truncated.length).toBeLessThanOrEqual(23);
     });
 
     it('should provide optimized text in validation result', () => {
@@ -227,3 +224,5 @@ describe('Platform Optimizer Service - Task 8.2', () => {
       expect(result.optimizedText).toBeDefined();
       expect(result.optimizedText!.length).toBeLessThanOrEqual(280);
       expect(result.optimizedText).toMatch(/\.\.\.$/);
+    });
+  });});

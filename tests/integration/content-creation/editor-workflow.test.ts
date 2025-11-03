@@ -423,7 +423,7 @@ describe('Rich Text Editor - Integration Tests', () => {
       const content = {
         text: 'a'.repeat(281),
         platforms: ['twitter']
-      });
+      };
 
       const response = await fetch('/api/content/drafts', {
         method: 'POST',
