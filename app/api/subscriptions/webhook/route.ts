@@ -28,7 +28,8 @@ async function handler(request: NextRequest) {
 
   const stripeClient = await getStripe();
 
-  const sig = headers().get('stripe-signature') || '';
+  const headersList = await headers();
+  const sig = headersList.get('stripe-signature') || '';
   const rawBody = await request.text();
 
   let event: Stripe.Event;

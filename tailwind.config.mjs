@@ -38,9 +38,57 @@ export default {
         sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
       },
       colors: {
-        brand: brandPalette,
-        neutral: neutralPalette,
-        accent: accentPalette,
+        // Theme System Colors (CSS Variables)
+        'theme-bg': 'var(--bg)',
+        'theme-surface': 'var(--surface)',
+        'theme-text': 'var(--text)',
+        'theme-muted': 'var(--muted)',
+        'theme-border': 'var(--border)',
+        
+        // Shadcn/UI Colors
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        // Auth System Design Colors
+        auth: {
+          primary: '#6366f1',        // Indigo 500
+          'primary-hover': '#4f46e5', // Indigo 600
+          success: '#10b981',         // Green 500
+          'success-light': '#d1fae5', // Green 100
+          error: '#ef4444',           // Red 500
+          'error-light': '#fee2e2',   // Red 100
+        },
+        // Huntaze Design System Colors
         surface: {
           DEFAULT: surfaceColors.base,
           muted: surfaceColors.muted,
@@ -57,28 +105,7 @@ export default {
           'inverted-subtle': textColors.invertedSubtle,
           'on-brand': textColors.onBrand,
         },
-        border: {
-          DEFAULT: borderColors.default,
-          subtle: borderColors.subtle,
-          strong: borderColors.strong,
-          inverted: borderColors.inverted,
-        },
-        primary: {
-          DEFAULT: brandPalette[600],
-          hover: brandPalette[700],
-          active: brandPalette[800],
-          foreground: textColors.onBrand,
-        },
-        secondary: {
-          DEFAULT: surfaceColors.raised,
-          hover: neutralPalette[100],
-          border: borderColors.default,
-          foreground: textColors.secondary,
-        },
-        danger: accentPalette.danger,
-        success: accentPalette.success,
-        warning: accentPalette.warning,
-        info: accentPalette.info,
+        danger: 'var(--color-danger)',
         input: {
           bg: {
             DEFAULT: surfaceColors.raised,
@@ -94,24 +121,21 @@ export default {
             inverted: textColors.inverted,
           },
         },
-        background: {
-          primary: surfaceColors.base,
-          secondary: surfaceColors.muted,
-          elevated: surfaceColors.raised,
-          overlay: surfaceColors.overlay,
+        neutral: {
+          200: 'var(--color-neutral-200)',
+          300: 'var(--color-neutral-300)',
+          700: 'var(--color-neutral-700)',
+          800: 'var(--color-neutral-800)',
         },
-        text: {
-          primary: textColors.primary,
-          secondary: textColors.secondary,
-          tertiary: textColors.subtle,
-          disabled: 'rgba(15, 23, 42, 0.38)',
-        },
-        accent: {
-          primary: brandPalette[500],
-          hover: brandPalette[600],
-          active: brandPalette[700],
-          muted: neutralPalette[200],
-        },
+
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-primary': `linear-gradient(135deg, ${brandPalette[500]} 0%, ${brandPalette[700]} 100%)`,

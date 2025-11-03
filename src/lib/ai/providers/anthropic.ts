@@ -32,6 +32,7 @@ export async function callAnthropic(opts: {
       messages: userContent,
     }),
     signal: opts.abortSignal as any,
+    cache: 'no-store',
   })
   if (!resp.ok) {
     const text = await resp.text()

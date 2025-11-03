@@ -7,15 +7,14 @@ const campaigns: any[] = [];
 // POST - Launch or Pause campaign
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string; action: string } }
+  { params }: { params: Promise<{ id: string; action: string }> }
 ) {
   try {
+    const { id, action } = await params;
     const session = await getServerSession();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const { id, action } = params;
     
     if (!['launch', 'pause', 'resume', 'cancel'].includes(action)) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

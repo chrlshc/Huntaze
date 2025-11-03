@@ -1,61 +1,149 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { crmData } from '@/lib/services/crmData';
-import { eventEmitter } from '@/lib/services/eventEmitter';
+import { ConversationsRepository, MessagesRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
+import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
+import { withMonitoring } from '@/lib/observability/bootstrap';
+import { z } from 'zod';
 
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const user = await getUserFromRequest(request);
-  return user?.userId || null;
-}
+// Validation schema for creating messages
+const CreateMessageSchema = z.object({
+  text: z.string().min(1).max(5000),
+  priceCents: z.number().int().min(0).optional(),
+  attachments: z.array(z.object({
+    type: z.enum(['image', 'video', 'audio', 'file']),
+    url: z.string().url(),
+    filename: z.string().optional(),
+    size: z.number().optional(),
+  })).optional(),
+});
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+async function getHandler(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const userId = await getUserId(request);
-    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    const messages = crmData.listMessages(userId, params.id);
-    return NextResponse.json({ messages });
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.userId, 10);
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
+
+    const conversationId = parseInt(params.id, 10);
+    if (isNaN(conversationId)) {
+      return NextResponse.json({ error: 'Invalid conversation ID' }, { status: 400 });
+    }
+
+    // Verify conversation ownership
+    const conversation = await ConversationsRepository.getConversation(userId, conversationId);
+    if (!conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    // Get pagination params
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get('limit') || '100', 10);
+    const offset = parseInt(searchParams.get('offset') || '0', 10);
+
+    // Get messages
+    const allMessages = await MessagesRepository.listMessages(userId, conversationId);
+    
+    // Apply pagination
+    const messages = allMessages.slice(offset, offset + limit);
+
+    return NextResponse.json({
+      messages,
+      total: allMessages.length,
+      limit,
+      offset,
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to list messages' }, { status: 500 });
+    console.error('Failed to list messages:', error);
+    return NextResponse.json(
+      { error: 'Failed to list messages' },
+      { status: 500 }
+    );
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+async function postHandler(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const userId = await getUserId(request);
-    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    const { fanId, text, direction, priceCents, attachments } = await request.json();
-    if (!fanId || (!text && (!attachments || attachments.length === 0))) {
-      return NextResponse.json({ error: 'fanId and (text or attachments) are required' }, { status: 400 });
-    }
-    const dir = direction === 'in' ? 'in' : 'out';
-    const msg = crmData.createMessage(userId, params.id, fanId, dir, text || '', priceCents, attachments);
-
-    // Emit SSE event for inbound messages
-    if (dir === 'in') {
-      const fan = crmData.getFan(userId, fanId);
-      const fanName = fan?.name || 'Fan';
-      const fanAvatar = fan?.name
-        ? `https://ui-avatars.com/api/?name=${encodeURIComponent(fan.name)}&background=gradient`
-        : undefined;
-      const isVip = Array.isArray(fan?.tags) && (fan!.tags as string[]).includes('vip');
-      eventEmitter.emit({
-        type: 'new-message',
-        conversationId: params.id,
-        fanId,
-        message: {
-          id: msg.id,
-          text,
-          attachments: msg.attachments,
-          fanName,
-          fanAvatar,
-          isVip,
-          timestamp: new Date().toISOString(),
-        },
-      });
+    // Rate limit write operations
+    const ident = idFromRequestHeaders(request.headers);
+    const rl = await checkRateLimit({ id: ident.id, limit: 60, windowSec: 60 });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    return NextResponse.json({ message: msg }, { status: 201 });
+    const user = await getUserFromRequest(request);
+    if (!user?.userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.userId, 10);
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
+
+    const conversationId = parseInt(params.id, 10);
+    if (isNaN(conversationId)) {
+      return NextResponse.json({ error: 'Invalid conversation ID' }, { status: 400 });
+    }
+
+    // Verify conversation ownership
+    const conversation = await ConversationsRepository.getConversation(userId, conversationId);
+    if (!conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    const body = await request.json();
+    const validated = CreateMessageSchema.parse(body);
+
+    // Create message in database
+    const message = await MessagesRepository.createMessage(
+      userId,
+      conversationId,
+      Number(conversation.fanId),
+      'out', // Outgoing message from creator
+      validated.text,
+      validated.priceCents || undefined,
+      validated.attachments || undefined
+    );
+
+    // TODO: Queue message for sending via OnlyFansRateLimiterService
+    // This will be implemented in Phase 5 (Bulk Messaging Backend)
+    // For now, we just store the message in the database
+
+    return NextResponse.json({ message }, { status: 202 }); // 202 Accepted (queued)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
+    }
+    console.error('Failed to create message:', error);
+    return NextResponse.json(
+      { error: 'Failed to create message' },
+      { status: 500 }
+    );
   }
 }
+
+export const GET = withMonitoring('crm.conversations.messages.list', getHandler as any, {
+  domain: 'crm',
+  feature: 'messages_list',
+  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
+});
+
+export const POST = withMonitoring('crm.conversations.messages.create', postHandler as any, {
+  domain: 'crm',
+  feature: 'messages_create',
+  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
+});

@@ -1,86 +1,98 @@
-import { NextRequest, NextResponse } from 'next/server';
+/**
+ * Reddit OAuth Callback Endpoint
+ * 
+ * Handles Reddit OAuth callback, exchanges code for tokens, and stores in database
+ * 
+ * @route GET /api/auth/reddit/callback
+ */
 
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { oauthAccountsRepository } from '@/lib/db/repositories/oauthAccountsRepository';
+
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { code } = await request.json();
-    
-    if (!code) {
-      return NextResponse.json({ error: 'Missing authorization code' }, { status: 400 });
+    const searchParams = request.nextUrl.searchParams;
+    const code = searchParams.get('code');
+    const state = searchParams.get('state');
+    const error = searchParams.get('error');
+
+    // Handle user denial or errors
+    if (error) {
+      const errorDescription = searchParams.get('error_description') || error;
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=${encodeURIComponent(errorDescription)}`
+      );
     }
 
-    // Exchange code for access token
-    const tokenResponse = await fetch('https://www.reddit.com/api/v1/access_token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${Buffer.from(`${process.env.REDDIT_CLIENT_ID}:${process.env.REDDIT_CLIENT_SECRET}`).toString('base64')}`,
-        'User-Agent': process.env.REDDIT_USER_AGENT || 'Huntaze:v1.0.0'
-      },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com'}/auth/reddit/callback`
-      })
-    });
-
-    if (!tokenResponse.ok) {
-      const error = await tokenResponse.text();
-      console.error('Reddit token error:', error);
-      return NextResponse.json({ error: 'Failed to exchange code for token' }, { status: 400 });
+    // Validate required parameters
+    if (!code || !state) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=missing_parameters`
+      );
     }
 
-    const tokenData = await tokenResponse.json();
-    
+    // Validate state (CSRF protection)
+    const cookieStore = await cookies();
+    const storedState = cookieStore.get('reddit_oauth_state')?.value;
+    if (!storedState || storedState !== state) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=invalid_state`
+      );
+    }
+
+    // Clear state cookie
+    cookieStore.delete('reddit_oauth_state');
+
+    // Lazy import to avoid build-time instantiation
+    const { redditOAuth } = await import('@/lib/services/redditOAuth');
+
+    // Exchange code for tokens
+    const tokens = await redditOAuth.exchangeCodeForTokens(code);
+
     // Get user info
-    const userResponse = await fetch('https://oauth.reddit.com/api/v1/me', {
-      headers: {
-        'Authorization': `Bearer ${tokenData.access_token}`,
-        'User-Agent': process.env.REDDIT_USER_AGENT || 'Huntaze:v1.0.0'
-      }
+    const userInfo = await redditOAuth.getUserInfo(tokens.access_token);
+
+    // TODO: Get actual user ID from session/JWT
+    // For now, using a placeholder
+    const userId = 1;
+
+    // Calculate expiry time
+    const expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+
+    // Store in database (create does upsert automatically)
+    await oauthAccountsRepository.create({
+      userId,
+      provider: 'reddit',
+      openId: userInfo.id,
+      scope: tokens.scope,
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      expiresAt,
+      metadata: {
+        username: userInfo.name,
+        icon_img: userInfo.icon_img,
+        link_karma: userInfo.link_karma,
+        comment_karma: userInfo.comment_karma,
+        created_utc: userInfo.created_utc,
+      },
     });
 
-    if (!userResponse.ok) {
-      return NextResponse.json({ error: 'Failed to get user info' }, { status: 400 });
-    }
-
-    const userData = await userResponse.json();
-    
-    // Save to database (implement based on your backend)
-    // await saveRedditConnection({
-    //   username: userData.name,
-    //   accessToken: tokenData.access_token,
-    //   refreshToken: tokenData.refresh_token,
-    //   expiresAt: new Date(Date.now() + tokenData.expires_in * 1000)
-    // });
-
-    const res = NextResponse.json({ 
-      success: true,
-      user: {
-        username: userData.name,
-        karma: userData.total_karma,
-        created: new Date(userData.created_utc * 1000)
-      }
-    });
-    const maxAge = 30 * 24 * 60 * 60;
-    res.cookies.set('reddit_access_token', tokenData.access_token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: true,
-      path: '/',
-      maxAge,
-    });
-    res.cookies.set('reddit_user', JSON.stringify({ name: userData.name }), {
-      httpOnly: false,
-      sameSite: 'lax',
-      secure: true,
-      path: '/',
-      maxAge,
-    });
-    return res;
+    // Redirect to success page
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?success=true&username=${encodeURIComponent(userInfo.name)}`
+    );
   } catch (error) {
-    console.error('Reddit callback error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Reddit OAuth callback error:', error);
+
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=${encodeURIComponent(
+        error instanceof Error ? error.message : 'oauth_failed'
+      )}`
+    );
   }
 }

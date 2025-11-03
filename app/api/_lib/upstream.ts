@@ -13,7 +13,8 @@ export async function upstream(path: string, init: RequestInit = {}) {
     throw new Error('API_ORIGIN (or NEXT_PUBLIC_API_URL) not configured');
   }
 
-  const token = cookies().get('access_token')?.value || '';
+  const cookieStore = await cookies();
+  const token = cookieStore.get('access_token')?.value || '';
   const headers = new Headers(init.headers);
   headers.set('accept', 'application/json');
   if (!headers.has('content-type')) headers.set('content-type', 'application/json');
