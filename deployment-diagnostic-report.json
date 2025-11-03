@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-11-03T16:07:28.790Z",
+  "issue": {
+    "title": "Amplify Auto-Deployment Not Triggering",
+    "description": "Commits to staging branch are not automatically triggering AWS Amplify deployments",
+    "severity": "HIGH",
+    "impact": "Deployment pipeline broken"
+  },
+  "rootCause": {
+    "primary": "Staging branch has no upstream tracking",
+    "details": [
+      "The local staging branch is not configured to track a remote branch",
+      "Git pushes are not reaching the repository monitored by Amplify",
+      "Amplify webhooks are not being triggered because no commits reach the remote"
+    ],
+    "evidence": {
+      "currentBranch": "staging",
+      "stagingTracking": "None",
+      "remotesAvailable": 0.5
+    }
+  },
+  "solution": {
+    "type": "Git Configuration Fix",
+    "steps": [
+      {
+        "step": 1,
+        "action": "Set upstream tracking for staging branch",
+        "command": "git branch --set-upstream-to=huntaze/staging staging",
+        "description": "Configure staging branch to track huntaze/staging remote"
+      },
+      {
+        "step": 2,
+        "action": "Test push connectivity",
+        "command": "git push huntaze staging",
+        "description": "Verify that pushes reach the correct remote repository"
+      },
+      {
+        "step": 3,
+        "action": "Monitor Amplify console",
+        "command": "Check AWS Amplify console for build trigger",
+        "description": "Verify that Amplify receives webhook and starts build"
+      }
+    ],
+    "automatedScript": "node scripts/fix-git-remotes.js",
+    "estimatedTime": "2-5 minutes"
+  },
+  "status": "IDENTIFIED"
+}
