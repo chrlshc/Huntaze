@@ -6,6 +6,8 @@ frontend:
         - nvm install 20 && nvm use 20
         - echo "[PREBUILD] node=$(node -v) npm=$(npm -v)"
         - npm ci --no-audit --no-fund || npm i --no-audit --no-fund
+        - echo "[PREBUILD] Validating React dependencies..."
+        - npm run validate:dependencies || echo "Dependency validation failed - check logs"
         - echo "PREBUILD_DONE"
     build:
       commands:
