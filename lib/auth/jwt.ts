@@ -48,7 +48,7 @@ export async function verifyToken(token: string): Promise<UserPayload | null> {
 }
 
 // Set auth cookies
-export function setAuthCookies(accessToken: string, refreshToken: string) {
+export async function setAuthCookies(accessToken: string, refreshToken: string) {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -56,12 +56,13 @@ export function setAuthCookies(accessToken: string, refreshToken: string) {
     path: '/',
   };
 
-  cookies().set('access_token', accessToken, {
+  const cookieStore = await cookies();
+  cookieStore.set('access_token', accessToken, {
     ...cookieOptions,
     maxAge: 60 * 60, // 1 hour
   });
 
-  cookies().set('refresh_token', refreshToken, {
+  cookieStore.set('refresh_token', refreshToken, {
     ...cookieOptions,
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });
@@ -69,7 +70,8 @@ export function setAuthCookies(accessToken: string, refreshToken: string) {
 
 // Get current user from cookies
 export async function getCurrentUser(): Promise<UserPayload | null> {
-  const accessToken = cookies().get('access_token')?.value;
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('access_token')?.value;
   
   if (!accessToken) {
     return null;
@@ -79,15 +81,17 @@ export async function getCurrentUser(): Promise<UserPayload | null> {
 }
 
 // Clear auth cookies
-export function clearAuthCookies() {
-  cookies().delete('access_token');
-  cookies().delete('refresh_token');
-  cookies().delete('session');
+export async function clearAuthCookies() {
+  const cookieStore = await cookies();
+  cookieStore.delete('access_token');
+  cookieStore.delete('refresh_token');
+  cookieStore.delete('session');
 }
 
 // Refresh access token using refresh token
 export async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = cookies().get('refresh_token')?.value;
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get('refresh_token')?.value;
   
   if (!refreshToken) {
     return null;
@@ -110,7 +114,7 @@ export async function refreshAccessToken(): Promise<string | null> {
       .sign(getJwtSecret());
 
     // Update cookies
-    cookies().set('access_token', newAccess, {
+    cookieStore.set('access_token', newAccess, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -118,7 +122,7 @@ export async function refreshAccessToken(): Promise<string | null> {
       maxAge: 60 * 60,
     });
     // Legacy compatibility cookie
-    cookies().set('auth_token', newAccess, {
+    cookieStore.set('auth_token', newAccess, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -132,3 +136,6 @@ export async function refreshAccessToken(): Promise<string | null> {
     return null;
   }
 }
+
+// Export verifyAuth as alias for verifyToken (compatibility)
+export const verifyAuth = verifyToken;

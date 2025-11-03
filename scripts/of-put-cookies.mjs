@@ -1,9 +1,6 @@
-// Utility: Put encrypted OnlyFans cookies into DynamoDB using KMS
-// Usage:
-//   OF_AWS_REGION=eu-west-3 \
-//   OF_DDB_SESSIONS_TABLE=HuntazeOfSessions \
-//   OF_KMS_KEY_ID=arn:aws:kms:... \
-//   node scripts/of-put-cookies.mjs <userId> <cookies.json>
+// Minimal CLI to put encrypted OnlyFans cookies in DynamoDB via KMS (us-east-1)
+// Usage: OF_AWS_REGION=us-east-1 OF_DDB_SESSIONS_TABLE=HuntazeOfSessions OF_KMS_KEY_ID=arn:aws:kms:... \
+//        node scripts/of-put-cookies.mjs <userId> <cookies.json>
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -16,7 +13,7 @@ if (!userIdArg || !cookiesFileArg) {
   process.exit(1);
 }
 
-const REGION = process.env.OF_AWS_REGION || process.env.AWS_REGION || 'eu-west-3';
+const REGION = process.env.OF_AWS_REGION || process.env.AWS_REGION || 'us-east-1';
 const TABLE = process.env.OF_DDB_SESSIONS_TABLE;
 const KMS_KEY_ID = process.env.OF_KMS_KEY_ID;
 
@@ -33,17 +30,15 @@ const ddb = new DynamoDBClient({ region: REGION });
 const kms = new KMSClient({ region: REGION });
 
 try {
-  const enc = await kms.send(new EncryptCommand({
-    KeyId: KMS_KEY_ID,
-    Plaintext: Buffer.from(cookiesJson, 'utf-8'),
-  }));
-  const b64 = Buffer.from(enc.CiphertextBlob).toString('base64');
+  const enc = await kms.send(new EncryptCommand({ KeyId: KMS_KEY_ID, Plaintext: Buffer.from(cookiesJson, 'utf-8') }));
+  const b64 = Buffer.from(enc.Plaintext ? enc.Plaintext : enc.CiphertextBlob).toString('base64');
   await ddb.send(new PutItemCommand({
     TableName: TABLE,
     Item: {
       userId: { S: userId },
       cookiesCipherB64: { S: b64 },
       requiresAction: { BOOL: false },
+      linkState: { S: 'CONNECTED' },
       updatedAt: { S: new Date().toISOString() },
     }
   }));

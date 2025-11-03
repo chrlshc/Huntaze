@@ -198,7 +198,7 @@ const LiveDashboard: React.FC = () => {
             animate={{ scale: 1 }}
             className="text-6xl lg:text-7xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent"
           >
-            €{revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            €{revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </motion.div>
         </motion.div>
 
@@ -234,7 +234,7 @@ const LiveDashboard: React.FC = () => {
               >
                 {metric.label === 'Taux Rétention' 
                   ? `${metric.value.toFixed(1)}%`
-                  : metric.value.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
+                  : metric.value.toLocaleString('en-US', { maximumFractionDigits: 0 })
                 }
               </motion.div>
               <div className="text-sm text-gray-400 mt-1">{metric.label}</div>

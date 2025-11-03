@@ -1,0 +1,751 @@
+openapi: 3.0.3
+info:
+  title: Huntaze CRM API
+  description: |
+    API for managing creator CRM data including fans, conversations, messages, and analytics.
+    
+    ## Authentication
+    All endpoints require authentication via JWT token in cookies (`access_token` or `auth_token`).
+    
+    ## Rate Limiting
+    - Read endpoints: No limit
+    - Write endpoints: 60 requests per minute per user
+    
+    ## Data Types
+    - All monetary values are in cents (USD)
+    - All timestamps are ISO 8601 format
+    - All IDs are integers
+    
+  version: 1.4.2
+  contact:
+    name: Huntaze API Support
+    email: support@huntaze.com
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://app.huntaze.com/api
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Development server
+
+tags:
+  - name: Fans
+    description: Fan/subscriber management
+  - name: Conversations
+    description: Conversation management
+  - name: Messages
+    description: Message management
+  - name: Analytics
+    description: Analytics and metrics
+  - name: AI Config
+    description: AI configuration
+  - name: User Profile
+    description: User profile management
+  - name: Webhooks
+    description: Webhook endpoints for platform integrations
+
+paths:
+  /crm/fans:
+    get:
+      tags:
+        - Fans
+      summary: List all fans
+      description: Retrieve all fans for the authenticated user
+      operationId: listFans
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fans:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Fan'
+              examples:
+                success:
+                  value:
+                    fans:
+                      - id: 1
+                        user_id: 42
+                        name: "John Subscriber"
+                        platform: "onlyfans"
+                        platform_id: "of_john_123"
+                        handle: "@johnfan"
+                        tags: ["vip", "active"]
+                        value_cents: 25000
+                        created_at: "2025-10-31T10:00:00Z"
+                        updated_at: "2025-10-31T10:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
+    post:
+      tags:
+        - Fans
+      summary: Create a new fan
+      description: Create a new fan record for the authenticated user
+      operationId: createFan
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFanRequest'
+            examples:
+              basic:
+                value:
+                  name: "Sarah Mitchell"
+                  platform: "fansly"
+                  platform_id: "fansly_sarah_456"
+                  handle: "@sarahm"
+              withTags:
+                value:
+                  name: "Alex Thompson"
+                  platform: "onlyfans"
+                  platform_id: "of_alex_789"
+                  handle: "@alex_t"
+                  tags: ["vip", "whale"]
+                  value_cents: 50000
+      responses:
+        '201':
+          description: Fan created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fan:
+                    $ref: '#/components/schemas/Fan'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /crm/conversations:
+    get:
+      tags:
+        - Conversations
+      summary: List all conversations
+      description: Retrieve all conversations for the authenticated user
+      operationId: listConversations
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conversation'
+              examples:
+                success:
+                  value:
+                    conversations:
+                      - id: 1
+                        user_id: 42
+                        fan_id: 1
+                        platform: "onlyfans"
+                        platform_conversation_id: "conv_john_123"
+                        last_message_at: "2025-10-31T12:30:00Z"
+                        unread_count: 3
+                        created_at: "2025-10-31T10:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
+    post:
+      tags:
+        - Conversations
+      summary: Create a new conversation
+      description: Create a new conversation with a fan
+      operationId: createConversation
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConversationRequest'
+            examples:
+              basic:
+                value:
+                  fanId: 1
+                  platform: "onlyfans"
+      responses:
+        '201':
+          description: Conversation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation:
+                    $ref: '#/components/schemas/Conversation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /analytics/overview:
+    get:
+      tags:
+        - Analytics
+      summary: Get analytics overview
+      description: |
+        Retrieve comprehensive analytics including revenue, subscribers, response times, and AI automation metrics.
+        
+        **Note**: All numeric values from database queries are returned as strings and should be parsed as integers.
+      operationId: getAnalyticsOverview
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsOverview'
+              examples:
+                success:
+                  value:
+                    metrics:
+                      revenueMonthly: 24586
+                      activeSubscribers: 2847
+                      avgResponseSeconds: 72
+                      aiAutomationRate: 0.87
+                      change:
+                        revenue: 0.324
+                        subscribers: 0.123
+                        response: -0.25
+                        automation: 0.052
+                    topFans:
+                      - name: "Alex Thompson"
+                        username: "@alex_t"
+                        revenue: 2456
+                        messages: 145
+                        lastActive: "2m"
+                        badge: "vip"
+                        trend: 0.15
+                    platformDistribution:
+                      - platform: "onlyfans"
+                        share: 0.55
+                        revenue: 55896
+                      - platform: "fansly"
+                        share: 0.28
+                        revenue: 37374
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /webhooks/instagram:
+    post:
+      tags:
+        - Webhooks
+      summary: Instagram webhook endpoint
+      description: |
+        Receives webhook events from Instagram/Meta Graph API.
+        
+        **Events supported:**
+        - `media` - New posts
+        - `comments` - New comments
+        - `mentions` - Mentions in stories/posts
+        
+        **Security:**
+        - Signature verification using HMAC SHA-256
+        - Responds immediately with 200 (Meta requirement)
+        - Processes events asynchronously
+        
+        **Setup:**
+        1. Configure webhook in Meta Developer Console
+        2. Set `INSTAGRAM_WEBHOOK_SECRET` environment variable
+        3. Set `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` environment variable
+      operationId: instagramWebhook
+      security: []
+      parameters:
+        - name: x-hub-signature-256
+          in: header
+          required: false
+          schema:
+            type: string
+          description: HMAC SHA-256 signature for payload verification
+          example: "sha256=abc123..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstagramWebhookPayload'
+            examples:
+              mediaEvent:
+                summary: New media post
+                value:
+                  object: "instagram"
+                  entry:
+                    - id: "instagram_account_id"
+                      time: 1635724800
+                      changes:
+                        - field: "media"
+                          value:
+                            id: "media_id_123"
+                            media_type: "IMAGE"
+                            caption: "New post!"
+              commentEvent:
+                summary: New comment
+                value:
+                  object: "instagram"
+                  entry:
+                    - id: "instagram_account_id"
+                      time: 1635724800
+                      changes:
+                        - field: "comments"
+                          value:
+                            id: "comment_id_456"
+                            text: "Great content!"
+                            from:
+                              id: "user_id"
+                              username: "fan_username"
+              mentionEvent:
+                summary: Story mention
+                value:
+                  object: "instagram"
+                  entry:
+                    - id: "instagram_account_id"
+                      time: 1635724800
+                      changes:
+                        - field: "mentions"
+                          value:
+                            id: "mention_id_789"
+                            media_id: "story_id"
+      responses:
+        '200':
+          description: Webhook received successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid payload"
+        '401':
+          description: Invalid signature
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid signature"
+    
+    get:
+      tags:
+        - Webhooks
+      summary: Instagram webhook verification
+      description: |
+        Handles Meta webhook verification challenge.
+        
+        Meta sends a GET request with verification parameters when you configure the webhook.
+        This endpoint validates the token and returns the challenge to complete verification.
+        
+        **Setup:**
+        1. Set `INSTAGRAM_WEBHOOK_VERIFY_TOKEN` in environment variables
+        2. Configure webhook URL in Meta Developer Console
+        3. Meta will call this endpoint to verify
+      operationId: instagramWebhookVerify
+      security: []
+      parameters:
+        - name: hub.mode
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [subscribe]
+          description: Verification mode (always "subscribe")
+          example: "subscribe"
+        - name: hub.verify_token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Verification token (must match configured token)
+          example: "huntaze_instagram_webhook"
+        - name: hub.challenge
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Challenge string to echo back
+          example: "1234567890"
+      responses:
+        '200':
+          description: Verification successful
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Echo of the challenge parameter
+                example: "1234567890"
+        '403':
+          description: Verification failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Verification failed"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+      description: JWT authentication token stored in HTTP-only cookie
+
+  schemas:
+    Fan:
+      type: object
+      required:
+        - id
+        - user_id
+        - name
+        - platform
+        - platform_id
+      properties:
+        id:
+          type: integer
+          description: Unique fan identifier
+          example: 1
+        user_id:
+          type: integer
+          description: ID of the creator who owns this fan
+          example: 42
+        name:
+          type: string
+          description: Fan's display name
+          example: "John Subscriber"
+        platform:
+          type: string
+          enum: [onlyfans, fansly, patreon, instagram, tiktok]
+          description: Platform where the fan is from
+          example: "onlyfans"
+        platform_id:
+          type: string
+          description: Unique identifier on the platform
+          example: "of_john_123"
+        handle:
+          type: string
+          nullable: true
+          description: Fan's username/handle
+          example: "@johnfan"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for categorizing fans
+          example: ["vip", "active", "whale"]
+        value_cents:
+          type: integer
+          description: Total lifetime value in cents (USD)
+          example: 25000
+        created_at:
+          type: string
+          format: date-time
+          description: When the fan was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the fan was last updated
+
+    CreateFanRequest:
+      type: object
+      required:
+        - name
+        - platform
+        - platform_id
+      properties:
+        name:
+          type: string
+          description: Fan's display name
+          example: "Sarah Mitchell"
+        platform:
+          type: string
+          enum: [onlyfans, fansly, patreon, instagram, tiktok]
+          description: Platform where the fan is from
+          example: "fansly"
+        platform_id:
+          type: string
+          description: Unique identifier on the platform
+          example: "fansly_sarah_456"
+        handle:
+          type: string
+          description: Fan's username/handle
+          example: "@sarahm"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for categorizing fans
+          example: ["vip"]
+        value_cents:
+          type: integer
+          description: Initial lifetime value in cents (USD)
+          example: 0
+
+    Conversation:
+      type: object
+      required:
+        - id
+        - user_id
+        - fan_id
+        - platform
+      properties:
+        id:
+          type: integer
+          description: Unique conversation identifier
+          example: 1
+        user_id:
+          type: integer
+          description: ID of the creator
+          example: 42
+        fan_id:
+          type: integer
+          description: ID of the fan
+          example: 1
+        platform:
+          type: string
+          enum: [onlyfans, fansly, patreon, instagram, tiktok]
+          description: Platform where the conversation is happening
+          example: "onlyfans"
+        platform_conversation_id:
+          type: string
+          nullable: true
+          description: Platform-specific conversation ID
+          example: "conv_john_123"
+        last_message_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp of the last message
+        unread_count:
+          type: integer
+          description: Number of unread messages
+          example: 3
+        created_at:
+          type: string
+          format: date-time
+          description: When the conversation was created
+
+    CreateConversationRequest:
+      type: object
+      required:
+        - fanId
+        - platform
+      properties:
+        fanId:
+          type: integer
+          description: ID of the fan to start conversation with
+          example: 1
+        platform:
+          type: string
+          enum: [onlyfans, fansly, patreon, instagram, tiktok]
+          description: Platform for the conversation
+          example: "onlyfans"
+
+    AnalyticsOverview:
+      type: object
+      properties:
+        metrics:
+          type: object
+          properties:
+            revenueMonthly:
+              type: integer
+              description: Monthly revenue in cents
+              example: 24586
+            activeSubscribers:
+              type: integer
+              description: Number of active subscribers
+              example: 2847
+            avgResponseSeconds:
+              type: integer
+              description: Average response time in seconds
+              example: 72
+            aiAutomationRate:
+              type: number
+              format: float
+              description: Percentage of messages handled by AI (0-1)
+              example: 0.87
+            change:
+              type: object
+              description: Percentage changes from previous period
+              properties:
+                revenue:
+                  type: number
+                  example: 0.324
+                subscribers:
+                  type: number
+                  example: 0.123
+                response:
+                  type: number
+                  example: -0.25
+                automation:
+                  type: number
+                  example: 0.052
+        topFans:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              username:
+                type: string
+              revenue:
+                type: integer
+              messages:
+                type: integer
+              lastActive:
+                type: string
+              badge:
+                type: string
+              trend:
+                type: number
+        platformDistribution:
+          type: array
+          items:
+            type: object
+            properties:
+              platform:
+                type: string
+              share:
+                type: number
+              revenue:
+                type: integer
+
+    InstagramWebhookPayload:
+      type: object
+      required:
+        - object
+        - entry
+      properties:
+        object:
+          type: string
+          enum: [instagram]
+          description: Always "instagram" for Instagram webhooks
+          example: "instagram"
+        entry:
+          type: array
+          description: Array of webhook entries
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Instagram account ID
+                example: "instagram_account_id"
+              time:
+                type: integer
+                description: Unix timestamp of the event
+                example: 1635724800
+              changes:
+                type: array
+                description: Array of changes/events
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      enum: [media, comments, mentions]
+                      description: Type of event
+                      example: "media"
+                    value:
+                      type: object
+                      description: Event-specific data
+                      additionalProperties: true
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Not authenticated"
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Not authenticated"
+    
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            missingField:
+              value:
+                error: "fanId is required"
+            invalidUserId:
+              value:
+                error: "Invalid user ID"
+    
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Rate limit exceeded"
+    
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            generic:
+              value:
+                error: "Failed to list fans"
+            database:
+              value:
+                error: "Failed to load analytics"
