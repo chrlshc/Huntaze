@@ -2,6 +2,14 @@ import type { NextConfig } from 'next';
 
 const isExport = process.env.NEXT_OUTPUT_EXPORT === '1';
 
+// Legacy app redirects for backward compatibility
+const LEGACY_APP_REDIRECTS: [string, string][] = [
+  ['/app', '/dashboard'],
+  ['/app/:path*', '/dashboard/:path*'],
+  ['/old-dashboard', '/dashboard'],
+  ['/legacy/:path*', '/dashboard/:path*'],
+];
+
 const nextConfig: NextConfig = {
   // Core
   reactStrictMode: true,
