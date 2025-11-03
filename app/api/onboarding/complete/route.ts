@@ -11,7 +11,8 @@ export const runtime = 'nodejs';
 async function handler(request: NextRequest) {
   const requestId = crypto.randomUUID();
   const log = makeReqLogger({ requestId });
-  const authToken = cookies().get('access_token')?.value;
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get('access_token')?.value;
   
   if (!authToken) {
     const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });

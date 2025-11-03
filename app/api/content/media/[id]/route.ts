@@ -10,9 +10,10 @@ export const runtime = 'nodejs';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = request.headers.get('x-user-id');
     if (!userId) {
       return NextResponse.json(
@@ -21,7 +22,7 @@ export async function GET(
       );
     }
 
-    const media = await mediaAssetsRepository.findById(params.id);
+    const media = await mediaAssetsRepository.findById(id);
 
     if (!media) {
       return NextResponse.json(
@@ -38,7 +39,7 @@ export async function GET(
     }
 
     // Check if media is used in content
-    const isUsed = await mediaAssetsRepository.isUsedInContent(params.id);
+    const isUsed = await mediaAssetsRepository.isUsedInContent(id);
 
     return NextResponse.json({
       success: true,
@@ -63,9 +64,10 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = request.headers.get('x-user-id');
     if (!userId) {
       return NextResponse.json(
@@ -75,7 +77,7 @@ export async function DELETE(
     }
 
     // Delete media (includes all validations)
-    await mediaUploadService.deleteMedia(userId, params.id);
+    await mediaUploadService.deleteMedia(userId, id);
 
     return NextResponse.json({
       success: true,

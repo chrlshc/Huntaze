@@ -4,8 +4,9 @@ import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsReposito
 
 export const runtime = 'nodejs';
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: mediaId } = await params;
     const userId = request.headers.get('x-user-id');
     if (!userId) {
       return NextResponse.json(
@@ -13,8 +14,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         { status: 401 }
       );
     }
-
-    const mediaId = params.id;
     const media = await mediaAssetsRepository.findById(mediaId);
     
     if (!media || media.userId !== userId) {

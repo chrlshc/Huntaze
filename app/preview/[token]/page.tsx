@@ -2,7 +2,7 @@ import { query } from '@/lib/db/index';
 import { notFound } from 'next/navigation';
 
 interface PreviewPageProps {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }
 
 async function getContentByPreviewToken(token: string) {
@@ -60,7 +60,8 @@ async function getContentByPreviewToken(token: string) {
 }
 
 export default async function PreviewPage({ params }: PreviewPageProps) {
-  const content = await getContentByPreviewToken(params.token);
+  const { token } = await params;
+  const content = await getContentByPreviewToken(token);
 
   if (!content) {
     notFound();

@@ -21,9 +21,10 @@ const UpdateFanSchema = z.object({
 
 async function getHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getUserFromRequest(request);
     if (!user?.userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -34,7 +35,7 @@ async function getHandler(
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const fanId = parseInt(params.id, 10);
+    const fanId = parseInt(id, 10);
     if (isNaN(fanId)) {
       return NextResponse.json({ error: 'Invalid fan ID' }, { status: 400 });
     }
@@ -54,9 +55,10 @@ async function getHandler(
 
 async function putHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Rate limit write operations
     const ident = idFromRequestHeaders(request.headers);
     const rl = await checkRateLimit({ id: ident.id, limit: 60, windowSec: 60 });
@@ -74,7 +76,7 @@ async function putHandler(
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const fanId = parseInt(params.id, 10);
+    const fanId = parseInt(id, 10);
     if (isNaN(fanId)) {
       return NextResponse.json({ error: 'Invalid fan ID' }, { status: 400 });
     }
@@ -109,9 +111,10 @@ async function putHandler(
 
 async function deleteHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Rate limit write operations
     const ident = idFromRequestHeaders(request.headers);
     const rl = await checkRateLimit({ id: ident.id, limit: 60, windowSec: 60 });
@@ -129,7 +132,7 @@ async function deleteHandler(
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const fanId = parseInt(params.id, 10);
+    const fanId = parseInt(id, 10);
     if (isNaN(fanId)) {
       return NextResponse.json({ error: 'Invalid fan ID' }, { status: 400 });
     }

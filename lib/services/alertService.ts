@@ -237,6 +237,7 @@ class AlertService {
             ts: Math.floor(new Date(alert.timestamp).getTime() / 1000),
           }],
         }),
+        cache: 'no-store',
       });
     } catch (error) {
       logger.error('Failed to send Slack notification', {

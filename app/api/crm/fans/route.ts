@@ -4,6 +4,8 @@ import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 import { withMonitoring } from '@/lib/observability/bootstrap'
 
+export const dynamic = 'force-dynamic';
+
 async function getHandler(request: NextRequest) {
   try {
     const user = await getUserFromRequest(request);

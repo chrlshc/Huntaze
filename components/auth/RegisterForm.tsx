@@ -32,7 +32,19 @@ export function RegisterForm() {
         throw new Error(data.error || 'Registration failed');
       }
 
-      router.push('/dashboard');
+      // Initialize onboarding for new user
+      try {
+        await fetch('/api/onboarding/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (onboardingError) {
+        console.error('Failed to initialize onboarding:', onboardingError);
+        // Continue anyway - user can start onboarding later
+      }
+
+      // Redirect to onboarding
+      router.push('/onboarding/setup');
     } catch (err: any) {
       setError(err.message);
     } finally {

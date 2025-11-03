@@ -129,6 +129,7 @@ export class InstagramOAuthService {
     try {
       const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -170,6 +171,7 @@ export class InstagramOAuthService {
     try {
       const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -214,6 +216,7 @@ export class InstagramOAuthService {
     try {
       const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -247,7 +250,9 @@ export class InstagramOAuthService {
   async getAccountInfo(accessToken: string): Promise<InstagramAccountInfo> {
     try {
       // Get user ID
-      const meResponse = await fetch(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`);
+      const meResponse = await fetch(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`, {
+        cache: 'no-store',
+      });
       const meData = await meResponse.json();
 
       if (!meResponse.ok || meData.error) {
@@ -256,7 +261,8 @@ export class InstagramOAuthService {
 
       // Get user's pages with Instagram Business accounts
       const pagesResponse = await fetch(
-        `${FACEBOOK_GRAPH_URL}/me/accounts?fields=id,name,instagram_business_account{id,username}&access_token=${accessToken}`
+        `${FACEBOOK_GRAPH_URL}/me/accounts?fields=id,name,instagram_business_account{id,username}&access_token=${accessToken}`,
+        { cache: 'no-store' }
       );
       const pagesData = await pagesResponse.json();
 
@@ -308,7 +314,8 @@ export class InstagramOAuthService {
   }> {
     try {
       const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${igBusinessId}?fields=id,username,name,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`
+        `${FACEBOOK_GRAPH_URL}/${igBusinessId}?fields=id,username,name,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`,
+        { cache: 'no-store' }
       );
 
       const data = await response.json();
@@ -337,6 +344,7 @@ export class InstagramOAuthService {
         `${FACEBOOK_GRAPH_URL}/me/permissions?access_token=${accessToken}`,
         {
           method: 'DELETE',
+          cache: 'no-store',
         }
       );
 

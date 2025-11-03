@@ -10,9 +10,10 @@ export const runtime = 'nodejs';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = request.headers.get('x-user-id');
     if (!userId) {
       return NextResponse.json(
@@ -22,7 +23,7 @@ export async function POST(
     }
 
     // Get media
-    const media = await mediaAssetsRepository.findById(params.id);
+    const media = await mediaAssetsRepository.findById(id);
     if (!media) {
       return NextResponse.json(
         { error: { code: 'NOT_FOUND', message: 'Media not found' } },
@@ -65,7 +66,7 @@ export async function POST(
     // Save edited image
     const result = await imageEditService.saveEditedImage(
       userId,
-      params.id,
+      id,
       editedBuffer,
       { crop, resize, rotate, flip, adjustments, filters }
     );

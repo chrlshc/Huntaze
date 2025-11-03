@@ -18,9 +18,11 @@ export const runtime = 'nodejs';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { publishId: string } }
+  { params }: { params: Promise<{ publishId: string }> }
 ) {
   try {
+    const { publishId } = await params;
+    
     // Get authenticated user
     const user = await getUserFromRequest(request);
     if (!user) {
@@ -37,8 +39,6 @@ export async function GET(
         { status: 400 }
       );
     }
-
-    const { publishId } = params;
 
     if (!publishId) {
       return NextResponse.json(
