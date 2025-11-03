@@ -86,6 +86,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
+
+
   // Client bundle fallbacks
   webpack: (config, { isServer }) => {
     if (!isServer) {
