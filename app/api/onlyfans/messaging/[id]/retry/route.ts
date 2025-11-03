@@ -9,9 +9,10 @@ import { withMonitoring } from '@/lib/observability/bootstrap';
 
 async function postHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Rate limit retry operations
     const ident = idFromRequestHeaders(request.headers);
     const rl = await checkRateLimit({ id: ident.id, limit: 10, windowSec: 60 });
@@ -29,7 +30,7 @@ async function postHandler(
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const messageId = parseInt(params.id, 10);
+    const messageId = parseInt(id, 10);
     if (isNaN(messageId)) {
       return NextResponse.json({ error: 'Invalid message ID' }, { status: 400 });
     }

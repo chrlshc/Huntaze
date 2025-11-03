@@ -118,6 +118,7 @@ export class InstagramPublishService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(body),
+          cache: 'no-store',
         }
       );
 
@@ -187,6 +188,7 @@ export class InstagramPublishService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(body),
+          cache: 'no-store',
         }
       );
 
@@ -221,7 +223,8 @@ export class InstagramPublishService {
   ): Promise<ContainerStatusResponse> {
     try {
       const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${containerId}?fields=status_code&access_token=${accessToken}`
+        `${FACEBOOK_GRAPH_URL}/${containerId}?fields=status_code&access_token=${accessToken}`,
+        { cache: 'no-store' }
       );
 
       const data = await response.json();
@@ -304,6 +307,7 @@ export class InstagramPublishService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(body),
+          cache: 'no-store',
         }
       );
 
@@ -406,7 +410,8 @@ export class InstagramPublishService {
   }> {
     try {
       const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${mediaId}?fields=id,media_type,media_url,permalink,timestamp,caption&access_token=${accessToken}`
+        `${FACEBOOK_GRAPH_URL}/${mediaId}?fields=id,media_type,media_url,permalink,timestamp,caption&access_token=${accessToken}`,
+        { cache: 'no-store' }
       );
 
       const data = await response.json();

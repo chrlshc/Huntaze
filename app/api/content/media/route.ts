@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mediaAssetsRepository } from '@/lib/db/repositories/mediaAssetsRepository';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/content/media
  * Get user's media library with filters and pagination

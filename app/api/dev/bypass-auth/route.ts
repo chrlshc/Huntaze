@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Set auth cookies (access_token, refresh_token)
-    setAuthCookies(access, refresh);
+    await setAuthCookies(access, refresh);
 
     // Redirect based on onboarding status
     const redirectUrl = mockUser.onboardingCompleted 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       provider: 'dev',
     });
 
-    setAuthCookies(access, refresh);
+    await setAuthCookies(access, refresh);
 
     // Always go to dashboard for POST
     const base = new URL(request.url);

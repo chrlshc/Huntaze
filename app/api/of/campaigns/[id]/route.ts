@@ -8,15 +8,16 @@ const campaigns: any[] = [];
 // GET - Get campaign details with metrics
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const campaign = campaigns.find(c => c.id === params.id && c.userId === session.user!.id);
+    const campaign = campaigns.find(c => c.id === id && c.userId === session.user!.id);
     
     if (!campaign) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });

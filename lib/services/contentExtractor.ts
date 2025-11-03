@@ -46,6 +46,7 @@ export async function extractContentFromUrl(url: string): Promise<ExtractedConte
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; ContentBot/1.0)',
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
