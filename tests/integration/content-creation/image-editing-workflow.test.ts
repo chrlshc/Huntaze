@@ -94,7 +94,7 @@ describe('Image Editing Workflow - Integration Tests', () => {
       const { media } = await uploadResponse.json();
 
       // First edit: Crop
-      const crop Response = await fetch(`/api/content/media/${media.id}/edit`, {
+      const cropResponse = await fetch(`/api/content/media/${media.id}/edit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
