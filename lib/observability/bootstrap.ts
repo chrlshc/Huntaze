@@ -9,6 +9,11 @@ export type MonitorOpts = {
   sse?: boolean // hint for streaming responses; do not alter body
   rawBody?: boolean // hint for raw bodies (e.g., Stripe); do not touch body
   route?: string // optional override for displayed operation name
+  // Optional categorization for domain/feature level KPIs
+  domain?: 'onboarding' | 'analytics' | 'ai-team' | 'crm' | 'core'
+  feature?: string
+  // Optionally resolve a user id (for DAU/WAU/adoption)
+  getUserId?: (req: Request) => Promise<string | undefined> | string | undefined
 }
 
 function getRequestId(req: Request): string {
@@ -81,16 +86,24 @@ export function withMonitoring(nameOrHandler: string | Handler, maybeHandler?: H
       try { res.headers.set('X-Request-Id', requestId) } catch {}
 
       // Structured access log
+      let userId: string | undefined = undefined
+      try {
+        const maybe = opts?.getUserId?.(req)
+        userId = typeof (maybe as any)?.then === 'function' ? await (maybe as any) : (maybe as any)
+      } catch {}
       logStructured({
         level: 'info',
         event: 'api_request',
         service: process.env.MONITORING_SERVICE || 'api',
         route: path,
         operation,
+        domain: opts?.domain,
+        feature: opts?.feature,
         method,
         status: res.status,
         duration_ms: duration,
         requestId,
+        userId,
         timestamp: new Date().toISOString(),
       })
 
@@ -118,6 +131,8 @@ export function withMonitoring(nameOrHandler: string | Handler, maybeHandler?: H
         service: process.env.MONITORING_SERVICE || 'api',
         route: path,
         operation,
+        domain: opts?.domain,
+        feature: opts?.feature,
         method,
         error: message,
         error_name: nameErr,

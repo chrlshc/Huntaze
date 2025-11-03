@@ -1,87 +1,104 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { rateLimit } from '@/lib/rate-limit';
-import { generateToken, generateRefreshToken } from '@/lib/auth/jwt';
+import bcrypt from 'bcryptjs';
+import { SignJWT } from 'jose';
+import { query } from '@/lib/db';
+import { validateRegisterForm } from '@/lib/auth/validation';
+import { createVerificationToken } from '@/lib/auth/tokens';
+import { sendVerificationEmail } from '@/lib/email/ses';
 
-const schema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-export const runtime = 'nodejs';
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+);
 
 export async function POST(request: NextRequest) {
   try {
-    // Basic rate limit to reduce abuse of register endpoint
-    const limited = rateLimit(request, { windowMs: 60_000, max: 10 });
-    if (!limited.ok) {
-      return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 });
+    const body = await request.json();
+    const { name, email, password } = body;
+
+    // Validate input
+    const errors = validateRegisterForm({ name, email, password });
+    if (Object.keys(errors).length > 0) {
+      return NextResponse.json(
+        { error: Object.values(errors)[0] },
+        { status: 400 }
+      );
     }
 
-    let body: unknown;
+    // Check if user already exists
+    const existingUser = await query(
+      'SELECT id FROM users WHERE email = $1',
+      [email.toLowerCase()]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return NextResponse.json(
+        { error: 'Email already registered' },
+        { status: 400 }
+      );
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create user
+    const result = await query(
+      'INSERT INTO users (name, email, password_hash, email_verified) VALUES ($1, $2, $3, $4) RETURNING id, name, email, created_at',
+      [name, email.toLowerCase(), passwordHash, false]
+    );
+
+    const user = result.rows[0];
+
+    // Generate verification token
+    const verificationToken = await createVerificationToken(user.id, user.email);
+
+    // Send verification email
     try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
+      await sendVerificationEmail(user.email, user.name, verificationToken);
+      console.log('Verification email sent to:', user.email);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue anyway - user is created, they can request a new verification email
     }
 
-    const parsed = schema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
-    }
+    // Generate JWT token (user can still login but some features may be restricted)
+    const token = await new SignJWT({ userId: user.id, email: user.email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('7d')
+      .setIssuedAt()
+      .sign(JWT_SECRET);
 
-    const { name, email, password } = parsed.data;
+    // Store session
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    await query(
+      'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3)',
+      [user.id, token, expiresAt]
+    );
 
-    // In a real app, create the user in DB here and hash the password
-    // For now, simulate a new user id
-    const user = {
-      id: `user_${Math.random().toString(36).slice(2, 10)}`,
-      email,
-      name,
-      provider: 'email',
-    };
-
-    // Issue tokens
-    const access = await generateToken({
-      userId: user.id,
-      email: user.email,
-      name: user.name,
-      provider: user.provider,
-    });
-    const refresh = await generateRefreshToken({
-      userId: user.id,
-      email: user.email,
-      name: user.name,
-      provider: user.provider,
+    // Set cookie
+    const response = NextResponse.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        emailVerified: false,
+      },
+      message: 'Account created! Please check your email to verify your account.',
     });
 
-    const res = NextResponse.json({ success: true, user });
-
-    const baseCookie = {
+    response.cookies.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      path: '/',
-    };
-
-    res.cookies.set('access_token', access, { ...baseCookie, maxAge: 60 * 60 });
-    res.cookies.set('refresh_token', refresh, { ...baseCookie, maxAge: 60 * 60 * 24 * 7 });
-    // Legacy compatibility
-    res.cookies.set('auth_token', access, { ...baseCookie, maxAge: 60 * 60 });
-    // Ensure onboarding flow triggers
-    res.cookies.set('onboarding_completed', 'false', {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
       path: '/',
-      maxAge: 60 * 60 * 24 * 30,
     });
 
-    return res;
+    return response;
   } catch (error) {
-    console.error('Register error:', error);
-    return NextResponse.json({ error: 'Failed to register' }, { status: 500 });
+    console.error('Registration error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
-
