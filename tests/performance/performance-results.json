@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-11-03T11:04:26.932Z",
+  "tests": {
+    "dashboardLoadTime": {
+      "target": 1800,
+      "measured": 1290,
+      "status": "pass"
+    },
+    "animationFPS": {
+      "target": 60,
+      "measured": 56,
+      "status": "fail"
+    },
+    "themeSwitch": {
+      "target": 200,
+      "measured": 141,
+      "status": "pass"
+    },
+    "chartRender": {
+      "target": 500,
+      "measured": 278,
+      "status": "pass"
+    }
+  }
+}

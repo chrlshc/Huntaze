@@ -1,0 +1,41 @@
+{
+  "timestamp": "2025-11-03T11:02:42.603Z",
+  "testConfigs": {
+    "themes": [
+      "light",
+      "dark",
+      "system"
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "width": 375,
+        "height": 667
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      {
+        "name": "desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "pages": [
+      "/",
+      "/dashboard",
+      "/auth/login",
+      "/demo/button-interactions",
+      "/demo/modal-animations"
+    ]
+  },
+  "status": "manual-testing-required",
+  "notes": [
+    "Visual regression testing requires manual verification",
+    "Test each theme (light/dark/system) on each breakpoint",
+    "Verify consistent styling across all pages",
+    "Check for layout shifts and visual inconsistencies"
+  ]
+}

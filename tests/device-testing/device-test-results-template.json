@@ -1,0 +1,158 @@
+{
+  "timestamp": "2025-11-03T11:07:19.345Z",
+  "tester": "[Your Name]",
+  "results": [
+    {
+      "device": "iPhone SE",
+      "viewport": "375x667",
+      "scenarios": [
+        {
+          "name": "Theme Switching",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Responsive Navigation",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Dashboard Performance",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Form Interactions",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Animation Quality",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        }
+      ],
+      "overallStatus": "not_tested",
+      "notes": ""
+    },
+    {
+      "device": "iPhone 12",
+      "viewport": "390x844",
+      "scenarios": [
+        {
+          "name": "Theme Switching",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Responsive Navigation",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Dashboard Performance",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Form Interactions",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Animation Quality",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        }
+      ],
+      "overallStatus": "not_tested",
+      "notes": ""
+    },
+    {
+      "device": "iPad",
+      "viewport": "768x1024",
+      "scenarios": [
+        {
+          "name": "Theme Switching",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Responsive Navigation",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Dashboard Performance",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Form Interactions",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Animation Quality",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        }
+      ],
+      "overallStatus": "not_tested",
+      "notes": ""
+    },
+    {
+      "device": "Android Devices",
+      "viewport": "360-412px width",
+      "scenarios": [
+        {
+          "name": "Theme Switching",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Responsive Navigation",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Dashboard Performance",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Form Interactions",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        },
+        {
+          "name": "Animation Quality",
+          "status": "not_tested",
+          "notes": "",
+          "issues": []
+        }
+      ],
+      "overallStatus": "not_tested",
+      "notes": ""
+    }
+  ]
+}

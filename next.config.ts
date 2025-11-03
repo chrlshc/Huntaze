@@ -71,6 +71,9 @@ const nextConfig: NextConfig = {
     // Turbopack for faster development builds (Next.js 15)
     // Note: Enable with `next dev --turbo` command
     // turbo: {}, // Uncomment to enable Turbopack features
+    
+    // React Compiler (Next.js 15 + React 19)
+    reactCompiler: true,
   },
   
   // Performance optimizations

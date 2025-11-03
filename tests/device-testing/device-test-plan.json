@@ -1,0 +1,105 @@
+{
+  "timestamp": "2025-11-03T11:07:19.343Z",
+  "devices": [
+    {
+      "name": "iPhone SE",
+      "viewport": "375x667",
+      "category": "Small Mobile",
+      "testPoints": [
+        "Touch target sizes (44×44px minimum)",
+        "Text readability at small size",
+        "Navigation accessibility",
+        "Form usability",
+        "Theme switching functionality"
+      ]
+    },
+    {
+      "name": "iPhone 12",
+      "viewport": "390x844",
+      "category": "Standard Mobile",
+      "testPoints": [
+        "Responsive layout adaptation",
+        "Bottom navigation visibility",
+        "Swipe gestures functionality",
+        "Modal full-screen behavior",
+        "Animation performance"
+      ]
+    },
+    {
+      "name": "iPad",
+      "viewport": "768x1024",
+      "category": "Tablet",
+      "testPoints": [
+        "Responsive table behavior",
+        "Layout transitions between orientations",
+        "Touch interactions on larger screen",
+        "Dashboard component scaling",
+        "Chart rendering performance"
+      ]
+    },
+    {
+      "name": "Android Devices",
+      "viewport": "360-412px width",
+      "category": "Android Mobile",
+      "testPoints": [
+        "Cross-browser compatibility",
+        "Touch responsiveness",
+        "System theme integration",
+        "Performance on various Android versions",
+        "Keyboard behavior differences"
+      ]
+    }
+  ],
+  "testScenarios": [
+    {
+      "name": "Theme Switching",
+      "steps": [
+        "1. Open the application",
+        "2. Locate theme toggle in header",
+        "3. Switch between Light/Dark/System modes",
+        "4. Verify smooth transitions (<200ms)",
+        "5. Check all components adapt correctly"
+      ]
+    },
+    {
+      "name": "Responsive Navigation",
+      "steps": [
+        "1. Test desktop navigation on large screens",
+        "2. Verify bottom navigation appears on mobile",
+        "3. Test navigation item touch targets",
+        "4. Verify navigation hides/shows appropriately",
+        "5. Test navigation in both orientations"
+      ]
+    },
+    {
+      "name": "Dashboard Performance",
+      "steps": [
+        "1. Navigate to /dashboard",
+        "2. Measure page load time (<1.8s target)",
+        "3. Test animated number counters",
+        "4. Verify chart rendering (<500ms)",
+        "5. Test scroll performance and smoothness"
+      ]
+    },
+    {
+      "name": "Form Interactions",
+      "steps": [
+        "1. Navigate to /auth/login or /auth/register",
+        "2. Test input field touch targets",
+        "3. Verify keyboard behavior",
+        "4. Test form validation feedback",
+        "5. Check mobile-optimized input types"
+      ]
+    },
+    {
+      "name": "Animation Quality",
+      "steps": [
+        "1. Navigate to /demo/button-interactions",
+        "2. Test button hover/tap animations",
+        "3. Check animation frame rate (60fps target)",
+        "4. Test with reduced motion preference",
+        "5. Verify animations enhance UX"
+      ]
+    }
+  ]
+}
