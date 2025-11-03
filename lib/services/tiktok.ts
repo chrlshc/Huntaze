@@ -21,13 +21,13 @@ export class TikTokService {
   }
 
   async getAccessToken(): Promise<string | null> {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get('tiktok_access_token');
     return token?.value || null;
   }
 
   async getCurrentUser(): Promise<TikTokUser | null> {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userCookie = cookieStore.get('tiktok_user');
     
     if (!userCookie?.value) return null;
@@ -65,6 +65,7 @@ export class TikTokService {
             total_chunk_count: 1,
           },
         }),
+        cache: 'no-store',
       });
 
       const initData = await initResponse.json();
@@ -82,6 +83,7 @@ export class TikTokService {
           'Content-Range': `bytes 0-${videoFile.size - 1}/${videoFile.size}`,
         },
         body: videoFile,
+        cache: 'no-store',
       });
 
       if (!uploadResponse.ok) {
@@ -107,6 +109,7 @@ export class TikTokService {
           disable_comment: false,
           disable_stitch: false,
         }),
+        cache: 'no-store',
       });
 
       const publishData = await publishResponse.json();
@@ -126,7 +129,7 @@ export class TikTokService {
   }
 
   async disconnect(): Promise<void> {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.delete('tiktok_access_token');
     cookieStore.delete('tiktok_user');
   }

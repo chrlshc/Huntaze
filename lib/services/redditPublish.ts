@@ -124,6 +124,7 @@ export class RedditPublishService {
           'User-Agent': this.userAgent,
         },
         body: formData.toString(),
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -231,6 +232,7 @@ export class RedditPublishService {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
         },
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -290,6 +292,7 @@ export class RedditPublishService {
           'User-Agent': this.userAgent,
         },
         body: formData.toString(),
+        cache: 'no-store',
       });
 
       if (!response.ok) {
@@ -332,6 +335,7 @@ export class RedditPublishService {
           'User-Agent': this.userAgent,
         },
         body: formData.toString(),
+        cache: 'no-store',
       });
 
       const data = await response.json();
@@ -371,6 +375,7 @@ export class RedditPublishService {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
         },
+        cache: 'no-store',
       });
 
       const data = await response.json();

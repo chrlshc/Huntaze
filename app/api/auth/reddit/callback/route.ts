@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate state (CSRF protection)
-    const storedState = cookies().get('reddit_oauth_state')?.value;
+    const cookieStore = await cookies();
+    const storedState = cookieStore.get('reddit_oauth_state')?.value;
     if (!storedState || storedState !== state) {
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=invalid_state`
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Clear state cookie
-    cookies().delete('reddit_oauth_state');
+    cookieStore.delete('reddit_oauth_state');
 
     // Lazy import to avoid build-time instantiation
     const { redditOAuth } = await import('@/lib/services/redditOAuth');

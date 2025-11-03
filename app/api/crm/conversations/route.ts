@@ -3,6 +3,8 @@ import { ConversationsRepository, FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { withMonitoring } from '@/lib/observability/bootstrap';
 
+export const dynamic = 'force-dynamic';
+
 async function getHandler(request: NextRequest) {
   try {
     const user = await getUserFromRequest(request);

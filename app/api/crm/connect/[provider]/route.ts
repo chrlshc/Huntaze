@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { crmConnections, CrmProviderId } from '@/lib/services/crmConnections';
 import { getUserFromRequest } from '@/lib/auth/request';
 
-export async function POST(request: NextRequest, { params }: { params: { provider: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ provider: string }> }) {
   try {
+    const { provider: providerParam } = await params;
     const user = await getUserFromRequest(request);
     if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const userId = user.userId as string;
 
-    const provider = (params.provider || '').toLowerCase() as CrmProviderId;
+    const provider = (providerParam || '').toLowerCase() as CrmProviderId;
     if (!['inflow', 'supercreator'].includes(provider)) {
       return NextResponse.json({ error: 'Unknown provider' }, { status: 400 });
     }
@@ -44,13 +45,14 @@ export async function POST(request: NextRequest, { params }: { params: { provide
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { provider: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ provider: string }> }) {
   try {
+    const { provider: providerParam } = await params;
     const user = await getUserFromRequest(request);
     if (!user?.userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const userId = user.userId as string;
 
-    const provider = (params.provider || '').toLowerCase() as CrmProviderId;
+    const provider = (providerParam || '').toLowerCase() as CrmProviderId;
     const existing = (crmConnections.get(userId) || []).find((c) => c.provider === provider);
     return NextResponse.json({ connection: existing || null });
   } catch (error) {

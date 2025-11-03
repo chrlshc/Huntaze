@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { templatesRepository } from '@/lib/db/repositories/templatesRepository';
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: templateId } = await params;
     const userId = request.headers.get('x-user-id');
     if (!userId) {
       return NextResponse.json(
@@ -10,8 +11,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         { status: 401 }
       );
     }
-
-    const templateId = params.id;
     await templatesRepository.incrementUsage(templateId);
 
     return NextResponse.json({ success: true });
