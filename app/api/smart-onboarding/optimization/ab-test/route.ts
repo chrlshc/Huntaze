@@ -61,16 +61,16 @@ export async function POST(request: NextRequest) {
         });
         
       case 'record_result':
-        const { experimentId: expId, userId: uId, variationId, journey } = data;
+        const { experimentId: expId, userId: uId, variationId: varId, journey } = data;
         
-        if (!expId || !uId || !variationId || !journey) {
+        if (!expId || !uId || !varId || !journey) {
           return NextResponse.json(
             { error: 'Missing required fields: experimentId, userId, variationId, journey' },
             { status: 400 }
           );
         }
         
-        await optimizer.recordTestResult(expId, uId, variationId, journey);
+        await optimizer.recordTestResult(expId, uId, varId, journey);
         
         return NextResponse.json({
           success: true,

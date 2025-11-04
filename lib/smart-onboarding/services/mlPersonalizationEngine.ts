@@ -474,8 +474,9 @@ class TechnicalProficiencyAssessor {
     if (avgHelpRequests <= 2) return 0.4;
     return 0.2;
   }
-}// Learni
-ng Path Predictor
+}
+
+// Learning Path Predictor
 class LearningPathPredictor {
   private readonly pathTemplates: Record<PersonaType, Partial<LearningPath>> = {
     content_creator: {
@@ -1716,8 +1717,8 @@ export class MLPersonalizationEngineImpl implements MLPersonalizationEngine {
     }
   }
 }
-//
- Advanced Predictive Modeling for Learning Paths
+
+// Advanced Predictive Modeling for Learning Paths
 class AdvancedLearningPathPredictor {
   private readonly featureWeights = {
     user_behavior: 0.35,

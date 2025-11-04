@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db/index';
+import { query } from '@/lib/db';
 import { randomBytes } from 'crypto';
 
 export async function POST(request: NextRequest) {

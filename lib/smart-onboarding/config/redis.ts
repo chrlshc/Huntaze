@@ -369,6 +369,9 @@ export class SmartOnboardingCache {
 // Export singleton instance
 export const smartOnboardingCache = new SmartOnboardingCache();
 
+// Export Redis client for direct use
+export const redisClient = createRedisClient();
+
 // WebSocket event channels
 export const WEBSOCKET_CHANNELS = {
   USER_EVENTS: (userId: string) => `user:${userId}:events`,

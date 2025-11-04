@@ -204,9 +204,9 @@ export class OAuthAccountsRepository {
       `SELECT id, user_id, provider, open_id, scope, expires_at, metadata, created_at, updated_at
        FROM oauth_accounts
        WHERE expires_at > NOW()
-         AND expires_at <= NOW() + INTERVAL '${minutes} minutes'
+         AND expires_at <= NOW() + INTERVAL $1 || ' minutes'
        ORDER BY expires_at ASC`,
-      []
+      [minutes]
     );
 
     return result.rows.map(row => this.mapRowToAccount(row));
