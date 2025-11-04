@@ -1,7 +1,7 @@
 /**
  * Instagram OAuth Service
  * 
- * Implements Facebook OAuth 2.0 flow for Instagram Business/Creator accounts
+ * Implements Facebook OAuth 2.0 flow for Instagram Business/Creator accounts with integrated credential validation
  * Instagram uses Facebook OAuth because Instagram Business accounts are linked to Facebook Pages
  * 
  * @see https://developers.facebook.com/docs/instagram-api/overview
@@ -9,6 +9,7 @@
  */
 
 import crypto from 'crypto';
+import { InstagramCredentialValidator, InstagramCredentials } from '@/lib/validation';
 
 const FACEBOOK_AUTH_URL = 'https://www.facebook.com/v18.0/dialog/oauth';
 const FACEBOOK_TOKEN_URL = 'https://graph.facebook.com/v18.0/oauth/access_token';
@@ -63,34 +64,98 @@ export class InstagramOAuthService {
   private appId: string;
   private appSecret: string;
   private redirectUri: string;
+  private validator: InstagramCredentialValidator;
+  private validationCache: Map<string, { result: boolean; timestamp: number }> = new Map();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     this.appId = process.env.FACEBOOK_APP_ID || '';
     this.appSecret = process.env.FACEBOOK_APP_SECRET || '';
     this.redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI || '';
+    this.validator = new InstagramCredentialValidator();
 
     // Don't throw during construction to avoid build-time errors
     // Validation will happen when methods are called
   }
 
   /**
-   * Validate that credentials are configured
-   * @throws Error if credentials are missing
+   * Validate that credentials are configured and valid
+   * @throws Error if credentials are missing or invalid
    */
-  private validateCredentials(): void {
+  private async validateCredentials(): Promise<void> {
     if (!this.appId || !this.appSecret || !this.redirectUri) {
-      throw new Error('Instagram/Facebook OAuth credentials not configured');
+      throw new Error('Instagram/Facebook OAuth credentials not configured. Please set FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, and NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI environment variables.');
+    }
+
+    // Check validation cache first
+    const cacheKey = `${this.appId}:${this.appSecret}:${this.redirectUri}`;
+    const cached = this.validationCache.get(cacheKey);
+    
+    if (cached && (Date.now() - cached.timestamp) < this.CACHE_TTL) {
+      if (!cached.result) {
+        throw new Error('Instagram/Facebook OAuth credentials are invalid (cached result)');
+      }
+      return;
+    }
+
+    // Validate credentials using the validator
+    const credentials: InstagramCredentials = {
+      appId: this.appId,
+      appSecret: this.appSecret,
+      redirectUri: this.redirectUri,
+    };
+
+    try {
+      const result = await this.validator.validateCredentials(credentials);
+      
+      // Cache the result
+      this.validationCache.set(cacheKey, {
+        result: result.isValid,
+        timestamp: Date.now(),
+      });
+
+      if (!result.isValid) {
+        const errorMessages = result.errors.map(error => error.message).join(', ');
+        const suggestions = result.errors
+          .filter(error => error.suggestion)
+          .map(error => error.suggestion)
+          .join(' ');
+        
+        throw new Error(`Instagram/Facebook OAuth credentials validation failed: ${errorMessages}${suggestions ? ` Suggestions: ${suggestions}` : ''}`);
+      }
+
+      // Log warnings if any
+      if (result.warnings.length > 0) {
+        console.warn('Instagram OAuth credential warnings:', result.warnings.map(w => w.message).join(', '));
+      }
+    } catch (error) {
+      // Cache negative result for a shorter time
+      this.validationCache.set(cacheKey, {
+        result: false,
+        timestamp: Date.now(),
+      });
+      
+      throw error;
     }
   }
 
   /**
+   * Clear validation cache (useful for testing or credential updates)
+   */
+  clearValidationCache(): void {
+    this.validationCache.clear();
+  }
+
+  /**
    * Generate Facebook OAuth authorization URL for Instagram permissions
+   * Validates credentials before generating URL
    * 
    * @param permissions - OAuth permissions to request
    * @returns Authorization URL and state for CSRF protection
+   * @throws Error if credentials are invalid
    */
-  getAuthorizationUrl(permissions: string[] = DEFAULT_PERMISSIONS): InstagramAuthUrl {
-    this.validateCredentials();
+  async getAuthorizationUrl(permissions: string[] = DEFAULT_PERMISSIONS): Promise<InstagramAuthUrl> {
+    await this.validateCredentials();
     
     // Generate random state for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
@@ -111,13 +176,14 @@ export class InstagramOAuthService {
 
   /**
    * Exchange authorization code for short-lived access token
+   * Validates credentials before token exchange
    * 
    * @param code - Authorization code from Facebook
    * @returns Short-lived access token (expires in ~2 hours)
-   * @throws Error if exchange fails
+   * @throws Error if exchange fails or credentials are invalid
    */
   async exchangeCodeForTokens(code: string): Promise<InstagramTokens> {
-    this.validateCredentials();
+    await this.validateCredentials();
     
     const params = new URLSearchParams({
       client_id: this.appId,
@@ -371,8 +437,13 @@ function getInstagramOAuth(): InstagramOAuthService {
 
 // Export singleton instance (lazy)
 export const instagramOAuth = {
-  getAuthUrl: (...args: Parameters<InstagramOAuthService['getAuthUrl']>) => getInstagramOAuth().getAuthUrl(...args),
-  handleCallback: (...args: Parameters<InstagramOAuthService['handleCallback']>) => getInstagramOAuth().handleCallback(...args),
-  refreshAccessToken: (...args: Parameters<InstagramOAuthService['refreshAccessToken']>) => getInstagramOAuth().refreshAccessToken(...args),
+  getAuthorizationUrl: (...args: Parameters<InstagramOAuthService['getAuthorizationUrl']>) => getInstagramOAuth().getAuthorizationUrl(...args),
+  exchangeCodeForTokens: (...args: Parameters<InstagramOAuthService['exchangeCodeForTokens']>) => getInstagramOAuth().exchangeCodeForTokens(...args),
+  getLongLivedToken: (...args: Parameters<InstagramOAuthService['getLongLivedToken']>) => getInstagramOAuth().getLongLivedToken(...args),
+  refreshLongLivedToken: (...args: Parameters<InstagramOAuthService['refreshLongLivedToken']>) => getInstagramOAuth().refreshLongLivedToken(...args),
+  getAccountInfo: (...args: Parameters<InstagramOAuthService['getAccountInfo']>) => getInstagramOAuth().getAccountInfo(...args),
+  hasInstagramBusinessAccount: (...args: Parameters<InstagramOAuthService['hasInstagramBusinessAccount']>) => getInstagramOAuth().hasInstagramBusinessAccount(...args),
+  getInstagramAccountDetails: (...args: Parameters<InstagramOAuthService['getInstagramAccountDetails']>) => getInstagramOAuth().getInstagramAccountDetails(...args),
   revokeAccess: (...args: Parameters<InstagramOAuthService['revokeAccess']>) => getInstagramOAuth().revokeAccess(...args),
+  clearValidationCache: () => getInstagramOAuth().clearValidationCache(),
 };
