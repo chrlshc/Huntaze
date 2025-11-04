@@ -37,7 +37,11 @@
     "three:rollback": "node scripts/rollback-three-deps.js",
     "three:rollback:force": "node scripts/rollback-three-deps.js --force",
     "three:monitor": "node -e \"console.log('Three.js monitoring is active. Check /api/monitoring/three-js-errors for stats.')\"",
-    "amplify:validate": "node scripts/validate-amplify-build.js"
+    "amplify:validate": "node scripts/validate-amplify-build.js",
+    "staging:diagnose": "node scripts/staging-login-cli.js --diagnose",
+    "staging:validate": "node scripts/staging-login-cli.js --validate",
+    "staging:fix": "node scripts/staging-login-cli.js --fix",
+    "staging:rollback": "node scripts/staging-login-cli.js --rollback"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.876.0",
