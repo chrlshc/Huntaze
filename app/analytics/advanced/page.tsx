@@ -1,3 +1,5 @@
+import { SafeDateRenderer } from '@/components/hydration';
+
 'use client';
 
 /**
@@ -124,7 +126,7 @@ export default function AdvancedAnalyticsPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          <p>Last updated: {new Date().toLocaleString()}</p>
+          <p>Last updated: {<SafeDateRenderer date={new Date()} format="full" />}</p>
         </div>
       </div>
     </div>
