@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { LandingHeader } from '@/components/landing/LandingHeader';
-import { HeroSection } from '@/components/landing/HeroSection';
+import { SimpleHeroSection as HeroSection } from '@/components/landing/SimpleHeroSection';
 import { FeaturesGrid } from '@/components/landing/FeaturesGrid';
 import { FeaturesShowcase } from '@/components/landing/FeaturesShowcase';
 import { SocialProof } from '@/components/landing/SocialProof';
