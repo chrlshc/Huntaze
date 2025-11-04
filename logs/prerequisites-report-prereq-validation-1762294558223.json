@@ -1,0 +1,324 @@
+{
+  "validationId": "prereq-validation-1762294558223",
+  "timestamp": "2025-11-04T22:15:58.303Z",
+  "summary": {
+    "totalChecks": 39,
+    "totalPassed": 30,
+    "totalFailed": 9,
+    "successRate": 77
+  },
+  "categories": {
+    "environment": {
+      "passed": 3,
+      "failed": 4,
+      "checks": [
+        {
+          "name": "Variable DATABASE_URL",
+          "passed": false,
+          "message": "Manquante",
+          "details": "URL de la base de données requise pour le déploiement",
+          "timestamp": "2025-11-04T22:15:58.225Z"
+        },
+        {
+          "name": "Variable NEXTAUTH_SECRET",
+          "passed": false,
+          "message": "Manquante",
+          "details": "Secret NextAuth requise pour le déploiement",
+          "timestamp": "2025-11-04T22:15:58.226Z"
+        },
+        {
+          "name": "Variable NEXTAUTH_URL",
+          "passed": false,
+          "message": "Manquante",
+          "details": "URL NextAuth requise pour le déploiement",
+          "timestamp": "2025-11-04T22:15:58.226Z"
+        },
+        {
+          "name": "Variable NODE_ENV",
+          "passed": false,
+          "message": "Manquante",
+          "details": "Environnement Node.js requise pour le déploiement",
+          "timestamp": "2025-11-04T22:15:58.226Z"
+        },
+        {
+          "name": "Variable PRODUCTION_URL (optionnelle)",
+          "passed": true,
+          "message": "Non définie",
+          "details": "URL de production recommandée mais optionnelle",
+          "timestamp": "2025-11-04T22:15:58.226Z"
+        },
+        {
+          "name": "Variable STAGING_URL (optionnelle)",
+          "passed": true,
+          "message": "Non définie",
+          "details": "URL de staging recommandée mais optionnelle",
+          "timestamp": "2025-11-04T22:15:58.226Z"
+        },
+        {
+          "name": "Variable AWS_AMPLIFY_APP_ID (optionnelle)",
+          "passed": true,
+          "message": "Non définie",
+          "details": "ID application Amplify recommandée mais optionnelle",
+          "timestamp": "2025-11-04T22:15:58.226Z"
+        }
+      ]
+    },
+    "dependencies": {
+      "passed": 7,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "Fichier package.json",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.227Z"
+        },
+        {
+          "name": "Dépendance next",
+          "passed": "15.5",
+          "message": "Présente",
+          "details": "Version: 15.5",
+          "timestamp": "2025-11-04T22:15:58.227Z"
+        },
+        {
+          "name": "Dépendance react",
+          "passed": "^19.2.0",
+          "message": "Présente",
+          "details": "Version: ^19.2.0",
+          "timestamp": "2025-11-04T22:15:58.227Z"
+        },
+        {
+          "name": "Dépendance react-dom",
+          "passed": "^19.2.0",
+          "message": "Présente",
+          "details": "Version: ^19.2.0",
+          "timestamp": "2025-11-04T22:15:58.227Z"
+        },
+        {
+          "name": "Dépendance next-auth",
+          "passed": "^4.24.13",
+          "message": "Présente",
+          "details": "Version: ^4.24.13",
+          "timestamp": "2025-11-04T22:15:58.227Z"
+        },
+        {
+          "name": "Dossier node_modules",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.227Z"
+        },
+        {
+          "name": "NPM disponible",
+          "passed": true,
+          "message": "Installé",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.300Z"
+        }
+      ]
+    },
+    "components": {
+      "passed": 8,
+      "failed": 5,
+      "checks": [
+        {
+          "name": "HydrationErrorBoundary",
+          "passed": true,
+          "message": "Présent",
+          "details": "Chemin: components/hydration/HydrationErrorBoundary.tsx",
+          "timestamp": "2025-11-04T22:15:58.300Z"
+        },
+        {
+          "name": "HydrationErrorBoundary - Export",
+          "passed": true,
+          "message": "Export valide",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.301Z"
+        },
+        {
+          "name": "HydrationSafeWrapper",
+          "passed": true,
+          "message": "Présent",
+          "details": "Chemin: components/hydration/HydrationSafeWrapper.tsx",
+          "timestamp": "2025-11-04T22:15:58.301Z"
+        },
+        {
+          "name": "HydrationSafeWrapper - Export",
+          "passed": false,
+          "message": "Export manquant",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.301Z"
+        },
+        {
+          "name": "SSRDataProvider",
+          "passed": true,
+          "message": "Présent",
+          "details": "Chemin: components/hydration/SSRDataProvider.tsx",
+          "timestamp": "2025-11-04T22:15:58.301Z"
+        },
+        {
+          "name": "SSRDataProvider - Export",
+          "passed": false,
+          "message": "Export manquant",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.301Z"
+        },
+        {
+          "name": "SafeDateRenderer",
+          "passed": true,
+          "message": "Présent",
+          "details": "Chemin: components/hydration/SafeDateRenderer.tsx",
+          "timestamp": "2025-11-04T22:15:58.301Z"
+        },
+        {
+          "name": "SafeDateRenderer - Export",
+          "passed": false,
+          "message": "Export manquant",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.302Z"
+        },
+        {
+          "name": "SafeBrowserAPI",
+          "passed": true,
+          "message": "Présent",
+          "details": "Chemin: components/hydration/SafeBrowserAPI.tsx",
+          "timestamp": "2025-11-04T22:15:58.302Z"
+        },
+        {
+          "name": "SafeBrowserAPI - Export",
+          "passed": false,
+          "message": "Export manquant",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.302Z"
+        },
+        {
+          "name": "SafeRandomContent",
+          "passed": true,
+          "message": "Présent",
+          "details": "Chemin: components/hydration/SafeRandomContent.tsx",
+          "timestamp": "2025-11-04T22:15:58.302Z"
+        },
+        {
+          "name": "SafeRandomContent - Export",
+          "passed": false,
+          "message": "Export manquant",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.302Z"
+        },
+        {
+          "name": "Index des composants",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.302Z"
+        }
+      ]
+    },
+    "tests": {
+      "passed": 7,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "Dossier tests/unit/hydration",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "tests/unit/hydration - Fichiers de test",
+          "passed": true,
+          "message": "4 fichier(s) de test trouvé(s)",
+          "details": "Fichiers: comprehensive-hydration-tests.test.tsx, hydration-fixes-validation.test.tsx, hydration-recovery-system.test.tsx, hydration-safe-wrappers.test.tsx",
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Dossier tests/integration/hydration",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "tests/integration/hydration - Fichiers de test",
+          "passed": true,
+          "message": "1 fichier(s) de test trouvé(s)",
+          "details": "Fichiers: full-page-hydration.test.tsx",
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Dossier tests/e2e/hydration",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "tests/e2e/hydration - Fichiers de test",
+          "passed": true,
+          "message": "1 fichier(s) de test trouvé(s)",
+          "details": "Fichiers: real-world-scenarios.test.ts",
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Configuration vitest.setup.ts",
+          "passed": true,
+          "message": "Présente",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        }
+      ]
+    },
+    "configuration": {
+      "passed": 5,
+      "failed": 0,
+      "checks": [
+        {
+          "name": "Configuration Next.js (next.config.ts)",
+          "passed": true,
+          "message": "Présente",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Configuration Tailwind",
+          "passed": true,
+          "message": "Présente",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Configuration TypeScript",
+          "passed": true,
+          "message": "Présente",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Fichier .env.example",
+          "passed": true,
+          "message": "Présent",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        },
+        {
+          "name": "Configuration hydratation",
+          "passed": true,
+          "message": "Présente",
+          "details": null,
+          "timestamp": "2025-11-04T22:15:58.303Z"
+        }
+      ]
+    }
+  },
+  "readyForDeployment": false,
+  "recommendations": [
+    "Configurer les variables d'environnement manquantes",
+    "  - Variable DATABASE_URL: URL de la base de données requise pour le déploiement",
+    "  - Variable NEXTAUTH_SECRET: Secret NextAuth requise pour le déploiement",
+    "  - Variable NEXTAUTH_URL: URL NextAuth requise pour le déploiement",
+    "  - Variable NODE_ENV: Environnement Node.js requise pour le déploiement",
+    "Créer les composants d'hydratation manquants"
+  ]
+}

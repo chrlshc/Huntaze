@@ -1,3 +1,5 @@
+import { SafeDateRenderer } from '@/components/hydration';
+
 /**
  * Report Generation Service
  * 
@@ -238,7 +240,7 @@ export class ReportGenerationService {
     // Placeholder: In production, use a PDF library
     const text = `
 Performance Report
-Generated: ${new Date().toLocaleString()}
+Generated: ${<SafeDateRenderer date={new Date()} format="full" />}
 
 Total Followers: ${metrics.totalFollowers}
 Total Engagement: ${metrics.totalEngagement}

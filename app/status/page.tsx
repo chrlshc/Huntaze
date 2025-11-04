@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
 import { CheckCircle, AlertCircle, Activity, Shield, Database, Zap } from 'lucide-react'
+import { SafeDateRenderer } from '@/components/hydration';
+
 
 export const metadata: Metadata = {
   title: 'System Status - Huntaze',
@@ -87,7 +89,7 @@ export default function StatusPage() {
                   All Systems Operational
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">
-                  Last updated: {new Date().toLocaleString()}
+                  Last updated: {<SafeDateRenderer date={new Date()} format="full" />}
                 </p>
               </div>
             </div>

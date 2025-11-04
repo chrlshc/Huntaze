@@ -1,4 +1,6 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { SafeCurrentYear } from '@/components/hydration';
+
 
 const sesClient = new SESClient({
   region: process.env.AWS_REGION || 'us-east-1',
@@ -126,7 +128,7 @@ export async function sendVerificationEmail(email: string, name: string, token: 
                 Need help? Contact us at support@huntaze.com
               </p>
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                © ${new Date().getFullYear()} Huntaze. All rights reserved.
+                © ${<SafeCurrentYear fallback={<span>2024</span>} />} Huntaze. All rights reserved.
               </p>
             </td>
           </tr>
@@ -156,7 +158,7 @@ See you inside,
 — The Huntaze Team
 
 Need help? Contact us at support@huntaze.com
-© ${new Date().getFullYear()} Huntaze. All rights reserved.
+© ${<SafeCurrentYear fallback={<span>2024</span>} />} Huntaze. All rights reserved.
   `;
 
   return sendEmail({
@@ -267,7 +269,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
                 📚 Help Center • 🎥 Onboarding • 💬 Community • ✉️ support@huntaze.com
               </p>
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                © ${new Date().getFullYear()} Huntaze. All rights reserved.
+                © ${<SafeCurrentYear fallback={<span>2024</span>} />} Huntaze. All rights reserved.
               </p>
             </td>
           </tr>
@@ -311,7 +313,7 @@ Thanks for joining the beta 💙
 — The Huntaze Team
 
 Help Center • Onboarding • Community • support@huntaze.com
-© ${new Date().getFullYear()} Huntaze. All rights reserved.
+© ${<SafeCurrentYear fallback={<span>2024</span>} />} Huntaze. All rights reserved.
   `;
 
   return sendEmail({
