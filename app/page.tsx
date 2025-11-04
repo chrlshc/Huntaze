@@ -4,11 +4,11 @@ import React from 'react';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { SimpleHeroSection as HeroSection } from '@/components/landing/SimpleHeroSection';
 import { FeaturesGrid } from '@/components/landing/FeaturesGrid';
-import { FeaturesShowcase } from '@/components/landing/FeaturesShowcase';
-import { SocialProof } from '@/components/landing/SocialProof';
-import { PricingSection } from '@/components/landing/PricingSection';
-import { FAQSection } from '@/components/landing/FAQSection';
-import { FinalCTA } from '@/components/landing/FinalCTA';
+import { SimpleFeaturesShowcase as FeaturesShowcase } from '@/components/landing/SimpleFeaturesShowcase';
+import { SimpleSocialProof as SocialProof } from '@/components/landing/SimpleSocialProof';
+import { SimplePricingSection as PricingSection } from '@/components/landing/SimplePricingSection';
+import { SimpleFAQSection as FAQSection } from '@/components/landing/SimpleFAQSection';
+import { SimpleFinalCTA as FinalCTA } from '@/components/landing/SimpleFinalCTA';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { Zap, Users, TrendingUp, Shield, Sparkles, BarChart3 } from 'lucide-react';
 
