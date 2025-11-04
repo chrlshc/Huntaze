@@ -38,15 +38,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: false,
     isLoading: true
   });
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Check authentication status on mount
+  // Initialize hydration
   useEffect(() => {
-    checkAuth();
+    setIsHydrated(true);
   }, []);
 
-  // Handle route protection
+  // Check authentication status on mount (client-side only)
   useEffect(() => {
-    if (authState.isLoading) return;
+    if (!isHydrated) return;
+    
+    checkAuth();
+  }, [isHydrated]);
+
+  // Handle route protection (client-side only)
+  useEffect(() => {
+    if (!isHydrated || authState.isLoading) return;
 
     const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname?.startsWith(route));
     const isAuthRoute = AUTH_ROUTES.some(route => pathname?.startsWith(route));
@@ -60,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isAuthRoute && authState.isAuthenticated) {
       router.push('/dashboard');
     }
-  }, [authState.isAuthenticated, authState.isLoading, pathname, router]);
+  }, [authState.isAuthenticated, authState.isLoading, pathname, router, isHydrated]);
 
   const checkAuth = async () => {
     try {
@@ -110,6 +118,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = async (email: string, password: string, rememberMe?: boolean): Promise<boolean> => {
+    if (!isHydrated) return false;
+    
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -143,6 +153,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    if (!isHydrated) return false;
+    
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -176,6 +188,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    if (!isHydrated) return;
+    
     // Clear token
     localStorage.removeItem('auth_token');
     
