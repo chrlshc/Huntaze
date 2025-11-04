@@ -1,0 +1,66 @@
+# AWS Amplify Environment Variables - Staging Template
+# This template contains the standard configuration for staging environments
+
+# Database Configuration
+DATABASE_URL: "postgresql://username:password@staging-db.amazonaws.com:5432/staging_db"
+DATABASE_SSL: "true"
+DATABASE_POOL_SIZE: "10"
+
+# Authentication & Security
+JWT_SECRET: "staging-jwt-secret-minimum-32-characters-long"
+JWT_EXPIRES_IN: "24h"
+NEXTAUTH_SECRET: "staging-nextauth-secret"
+NEXTAUTH_URL: "https://staging.your-domain.com"
+
+# API Keys & External Services (Staging Keys)
+OPENAI_API_KEY: "sk-your-openai-staging-api-key"
+AZURE_OPENAI_API_KEY: "your-azure-openai-staging-key"
+AZURE_OPENAI_ENDPOINT: "https://your-staging-resource.openai.azure.com/"
+AZURE_OPENAI_API_VERSION: "2024-02-15-preview"
+
+# Social Media Integration (Staging Apps)
+TIKTOK_CLIENT_ID: "staging-tiktok-client-id"
+TIKTOK_CLIENT_SECRET: "staging-tiktok-client-secret"
+INSTAGRAM_CLIENT_ID: "staging-instagram-client-id"
+INSTAGRAM_CLIENT_SECRET: "staging-instagram-client-secret"
+REDDIT_CLIENT_ID: "staging-reddit-client-id"
+REDDIT_CLIENT_SECRET: "staging-reddit-client-secret"
+
+# Email Configuration (Staging SES)
+SMTP_HOST: "email-smtp.us-east-1.amazonaws.com"
+SMTP_PORT: "587"
+SMTP_USER: "your-staging-ses-smtp-username"
+SMTP_PASS: "your-staging-ses-smtp-password"
+FROM_EMAIL: "staging@your-domain.com"
+
+# Application Configuration
+NODE_ENV: "production"
+APP_URL: "https://staging.your-domain.com"
+API_URL: "https://staging-api.your-domain.com"
+FRONTEND_URL: "https://staging.your-domain.com"
+
+# Monitoring & Analytics (Staging)
+SENTRY_DSN: "https://your-staging-sentry-dsn@sentry.io/project-id"
+ANALYTICS_ID: "GA-STAGING-ID"
+LOG_LEVEL: "info"
+
+# Feature Flags
+ENABLE_ANALYTICS: "true"
+ENABLE_SOCIAL_INTEGRATIONS: "true"
+ENABLE_AI_FEATURES: "true"
+ENABLE_MONITORING: "true"
+
+# Performance & Caching
+REDIS_URL: "redis://staging-redis.cache.amazonaws.com:6379"
+CACHE_TTL: "1800"  # 30 minutes
+MAX_UPLOAD_SIZE: "10485760"  # 10MB
+
+# Security Headers
+CORS_ORIGIN: "https://staging.your-domain.com"
+RATE_LIMIT_MAX: "200"
+RATE_LIMIT_WINDOW: "900000"  # 15 minutes
+
+# Staging-specific
+ENABLE_DEBUG_LOGS: "true"
+MOCK_EXTERNAL_APIS: "false"
+STAGING_BANNER: "true"

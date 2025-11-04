@@ -1,0 +1,23 @@
+{
+  "schedule": "0 2 * * *",
+  "retentionDays": 30,
+  "maxBackups": 100,
+  "apps": [
+    {
+      "appId": "your-amplify-app-id-here",
+      "branches": ["main", "staging", "development"],
+      "description": "Main application environment variables"
+    }
+  ],
+  "notifications": {
+    "enabled": false,
+    "email": "devops@your-domain.com",
+    "webhook": ""
+  },
+  "cleanup": {
+    "enabled": true,
+    "schedule": "0 3 * * 0",
+    "retentionDays": 30,
+    "maxBackups": 100
+  }
+}

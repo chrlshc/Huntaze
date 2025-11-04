@@ -1,0 +1,203 @@
+# AWS Amplify Environment Variables - Documented Template
+# This template includes comprehensive documentation for each variable
+
+# =============================================================================
+# DATABASE CONFIGURATION
+# =============================================================================
+
+# PostgreSQL connection string
+# Format: postgresql://username:password@host:port/database
+# Example: postgresql://myuser:mypass@localhost:5432/mydb
+DATABASE_URL: "postgresql://username:password@host:5432/database"
+
+# Enable SSL for database connections (recommended for production)
+# Values: "true" or "false"
+DATABASE_SSL: "true"
+
+# Number of connections in the database pool
+# Recommended: 5-10 for development, 10-20 for staging, 20+ for production
+DATABASE_POOL_SIZE: "10"
+
+# =============================================================================
+# AUTHENTICATION & SECURITY
+# =============================================================================
+
+# JWT secret key for signing tokens
+# IMPORTANT: Must be at least 32 characters long
+# Generate with: openssl rand -base64 32
+JWT_SECRET: "your-jwt-secret-minimum-32-characters-long"
+
+# JWT token expiration time
+# Format: number + unit (d=days, h=hours, m=minutes, s=seconds)
+# Examples: "7d", "24h", "60m"
+JWT_EXPIRES_IN: "7d"
+
+# NextAuth.js secret for session encryption
+# IMPORTANT: Must be different from JWT_SECRET
+# Generate with: openssl rand -base64 24
+NEXTAUTH_SECRET: "your-nextauth-secret"
+
+# NextAuth.js canonical URL
+# Must match your domain exactly
+NEXTAUTH_URL: "https://your-domain.com"
+
+# =============================================================================
+# AI SERVICES CONFIGURATION
+# =============================================================================
+
+# OpenAI API key (optional, for OpenAI direct integration)
+# Format: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Leave empty if using Azure OpenAI exclusively
+OPENAI_API_KEY: ""
+
+# Azure OpenAI API key
+# Required for AI features
+AZURE_OPENAI_API_KEY: "your-azure-openai-api-key"
+
+# Azure OpenAI endpoint URL
+# Format: https://your-resource-name.openai.azure.com/
+AZURE_OPENAI_ENDPOINT: "https://your-resource.openai.azure.com/"
+
+# Azure OpenAI API version
+# Use latest stable version or preview for new features
+# Check Azure docs for available versions
+AZURE_OPENAI_API_VERSION: "2024-02-15-preview"
+
+# =============================================================================
+# SOCIAL MEDIA INTEGRATIONS
+# =============================================================================
+
+# TikTok Developer App Credentials
+# Register at: https://developers.tiktok.com/
+TIKTOK_CLIENT_ID: "your-tiktok-client-id"
+TIKTOK_CLIENT_SECRET: "your-tiktok-client-secret"
+
+# Instagram Basic Display API Credentials
+# Register at: https://developers.facebook.com/
+INSTAGRAM_CLIENT_ID: "your-instagram-client-id"
+INSTAGRAM_CLIENT_SECRET: "your-instagram-client-secret"
+
+# Reddit API Credentials
+# Register at: https://www.reddit.com/prefs/apps
+REDDIT_CLIENT_ID: "your-reddit-client-id"
+REDDIT_CLIENT_SECRET: "your-reddit-client-secret"
+
+# =============================================================================
+# EMAIL CONFIGURATION
+# =============================================================================
+
+# SMTP server hostname
+# AWS SES: email-smtp.region.amazonaws.com
+# Gmail: smtp.gmail.com
+SMTP_HOST: "email-smtp.us-east-1.amazonaws.com"
+
+# SMTP server port
+# Common ports: 587 (TLS), 465 (SSL), 25 (plain)
+SMTP_PORT: "587"
+
+# SMTP authentication username
+SMTP_USER: "your-smtp-username"
+
+# SMTP authentication password
+SMTP_PASS: "your-smtp-password"
+
+# Default "From" email address
+# Must be verified in your email service
+FROM_EMAIL: "noreply@your-domain.com"
+
+# =============================================================================
+# APPLICATION CONFIGURATION
+# =============================================================================
+
+# Node.js environment
+# Values: "development", "production", "test"
+NODE_ENV: "production"
+
+# Main application URL
+# Used for redirects and canonical URLs
+APP_URL: "https://your-domain.com"
+
+# API base URL
+# Can be same as APP_URL if API is integrated
+API_URL: "https://api.your-domain.com"
+
+# Frontend URL (for CORS and redirects)
+FRONTEND_URL: "https://your-domain.com"
+
+# =============================================================================
+# MONITORING & ANALYTICS
+# =============================================================================
+
+# Sentry DSN for error tracking (optional)
+# Register at: https://sentry.io/
+SENTRY_DSN: "https://your-sentry-dsn@sentry.io/project-id"
+
+# Google Analytics tracking ID (optional)
+# Format: GA-XXXXXXXXX-X or G-XXXXXXXXXX
+ANALYTICS_ID: "your-analytics-id"
+
+# Application logging level
+# Values: "error", "warn", "info", "debug"
+# Production: "warn" or "error", Development: "debug"
+LOG_LEVEL: "warn"
+
+# =============================================================================
+# FEATURE FLAGS
+# =============================================================================
+
+# Enable/disable analytics tracking
+# Values: "true" or "false"
+ENABLE_ANALYTICS: "true"
+
+# Enable/disable social media integrations
+ENABLE_SOCIAL_INTEGRATIONS: "true"
+
+# Enable/disable AI-powered features
+ENABLE_AI_FEATURES: "true"
+
+# Enable/disable monitoring and health checks
+ENABLE_MONITORING: "true"
+
+# =============================================================================
+# PERFORMANCE & CACHING
+# =============================================================================
+
+# Redis connection URL for caching
+# Format: redis://host:port or redis://user:pass@host:port
+REDIS_URL: "redis://your-redis-host:6379"
+
+# Cache time-to-live in seconds
+# Common values: 300 (5min), 1800 (30min), 3600 (1hr)
+CACHE_TTL: "3600"
+
+# Maximum file upload size in bytes
+# Examples: 1048576 (1MB), 10485760 (10MB), 52428800 (50MB)
+MAX_UPLOAD_SIZE: "10485760"
+
+# =============================================================================
+# SECURITY HEADERS
+# =============================================================================
+
+# CORS allowed origins
+# Use specific domain for production, "*" only for development
+CORS_ORIGIN: "https://your-domain.com"
+
+# Rate limiting: maximum requests per window
+RATE_LIMIT_MAX: "100"
+
+# Rate limiting: time window in milliseconds
+# 900000 = 15 minutes, 3600000 = 1 hour
+RATE_LIMIT_WINDOW: "900000"
+
+# =============================================================================
+# DEPLOYMENT NOTES
+# =============================================================================
+# 
+# 1. Replace all placeholder values with actual credentials
+# 2. Use different secrets for each environment (dev/staging/prod)
+# 3. Store sensitive values securely (AWS Secrets Manager, etc.)
+# 4. Validate configuration before deployment
+# 5. Test all integrations after deployment
+# 
+# For more information, see: docs/DEPLOYMENT_GUIDE.md
+# =============================================================================

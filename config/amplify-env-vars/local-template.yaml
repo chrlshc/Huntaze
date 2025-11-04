@@ -1,0 +1,68 @@
+# AWS Amplify Environment Variables - Local Development Template
+# This template contains the standard configuration for local development
+
+# Database Configuration (Local)
+DATABASE_URL: "postgresql://postgres:password@localhost:5432/huntaze_local"
+DATABASE_SSL: "false"
+DATABASE_POOL_SIZE: "3"
+
+# Authentication & Security (Local)
+JWT_SECRET: "local-development-jwt-secret-32-chars"
+JWT_EXPIRES_IN: "7d"
+NEXTAUTH_SECRET: "local-nextauth-secret"
+NEXTAUTH_URL: "http://localhost:3000"
+
+# API Keys & External Services (Test/Mock)
+OPENAI_API_KEY: "sk-test-key-or-leave-empty-for-mock"
+AZURE_OPENAI_API_KEY: ""
+AZURE_OPENAI_ENDPOINT: ""
+AZURE_OPENAI_API_VERSION: "2024-02-15-preview"
+
+# Social Media Integration (Test Apps)
+TIKTOK_CLIENT_ID: "test-tiktok-client-id"
+TIKTOK_CLIENT_SECRET: "test-tiktok-client-secret"
+INSTAGRAM_CLIENT_ID: "test-instagram-client-id"
+INSTAGRAM_CLIENT_SECRET: "test-instagram-client-secret"
+REDDIT_CLIENT_ID: "test-reddit-client-id"
+REDDIT_CLIENT_SECRET: "test-reddit-client-secret"
+
+# Email Configuration (Local - MailHog or similar)
+SMTP_HOST: "localhost"
+SMTP_PORT: "1025"
+SMTP_USER: ""
+SMTP_PASS: ""
+FROM_EMAIL: "test@localhost"
+
+# Application Configuration
+NODE_ENV: "development"
+APP_URL: "http://localhost:3000"
+API_URL: "http://localhost:3000/api"
+FRONTEND_URL: "http://localhost:3000"
+
+# Monitoring & Analytics (Disabled locally)
+SENTRY_DSN: ""
+ANALYTICS_ID: ""
+LOG_LEVEL: "debug"
+
+# Feature Flags (All enabled for testing)
+ENABLE_ANALYTICS: "false"
+ENABLE_SOCIAL_INTEGRATIONS: "true"
+ENABLE_AI_FEATURES: "true"
+ENABLE_MONITORING: "false"
+
+# Performance & Caching (Local Redis or memory)
+REDIS_URL: "redis://localhost:6379"
+CACHE_TTL: "60"  # 1 minute for quick testing
+MAX_UPLOAD_SIZE: "104857600"  # 100MB for local testing
+
+# Security Headers (Permissive for local)
+CORS_ORIGIN: "*"
+RATE_LIMIT_MAX: "10000"
+RATE_LIMIT_WINDOW: "900000"
+
+# Local Development Specific
+DEBUG: "true"
+VERBOSE_LOGGING: "true"
+MOCK_EXTERNAL_APIS: "true"
+SKIP_AUTH_IN_DEV: "false"
+HOT_RELOAD: "true"

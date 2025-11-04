@@ -1,0 +1,66 @@
+# AWS Amplify Environment Variables - Development Template
+# This template contains the standard configuration for development environments
+
+# Database Configuration
+DATABASE_URL: "postgresql://username:password@dev-db.amazonaws.com:5432/development_db"
+DATABASE_SSL: "false"
+DATABASE_POOL_SIZE: "5"
+
+# Authentication & Security
+JWT_SECRET: "dev-jwt-secret-min-32-characters-long"
+JWT_EXPIRES_IN: "24h"
+NEXTAUTH_SECRET: "dev-nextauth-secret"
+NEXTAUTH_URL: "https://dev.your-domain.com"
+
+# API Keys & External Services (Development/Test Keys)
+OPENAI_API_KEY: "sk-your-openai-dev-api-key"
+AZURE_OPENAI_API_KEY: "your-azure-openai-dev-key"
+AZURE_OPENAI_ENDPOINT: "https://your-dev-resource.openai.azure.com/"
+AZURE_OPENAI_API_VERSION: "2024-02-15-preview"
+
+# Social Media Integration (Development Apps)
+TIKTOK_CLIENT_ID: "your-tiktok-dev-client-id"
+TIKTOK_CLIENT_SECRET: "your-tiktok-dev-client-secret"
+INSTAGRAM_CLIENT_ID: "your-instagram-dev-client-id"
+INSTAGRAM_CLIENT_SECRET: "your-instagram-dev-client-secret"
+REDDIT_CLIENT_ID: "your-reddit-dev-client-id"
+REDDIT_CLIENT_SECRET: "your-reddit-dev-client-secret"
+
+# Email Configuration (Development)
+SMTP_HOST: "localhost"
+SMTP_PORT: "1025"
+SMTP_USER: ""
+SMTP_PASS: ""
+FROM_EMAIL: "dev@localhost"
+
+# Application Configuration
+NODE_ENV: "development"
+APP_URL: "https://dev.your-domain.com"
+API_URL: "https://dev-api.your-domain.com"
+FRONTEND_URL: "https://dev.your-domain.com"
+
+# Monitoring & Analytics (Development)
+SENTRY_DSN: ""  # Disabled in development
+ANALYTICS_ID: ""  # Disabled in development
+LOG_LEVEL: "debug"
+
+# Feature Flags
+ENABLE_ANALYTICS: "false"
+ENABLE_SOCIAL_INTEGRATIONS: "true"
+ENABLE_AI_FEATURES: "true"
+ENABLE_MONITORING: "false"
+
+# Performance & Caching
+REDIS_URL: "redis://localhost:6379"
+CACHE_TTL: "300"  # 5 minutes
+MAX_UPLOAD_SIZE: "52428800"  # 50MB for development
+
+# Security Headers (Relaxed for development)
+CORS_ORIGIN: "*"
+RATE_LIMIT_MAX: "1000"
+RATE_LIMIT_WINDOW: "900000"  # 15 minutes
+
+# Development-specific
+DEBUG: "true"
+VERBOSE_LOGGING: "true"
+MOCK_EXTERNAL_APIS: "false"

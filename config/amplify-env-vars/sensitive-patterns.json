@@ -1,0 +1,56 @@
+{
+  "sensitiveKeyPatterns": [
+    ".*SECRET.*",
+    ".*KEY.*",
+    ".*PASSWORD.*",
+    ".*TOKEN.*",
+    ".*CREDENTIAL.*",
+    ".*AUTH.*",
+    "DATABASE_URL",
+    ".*API_KEY.*",
+    ".*PRIVATE.*"
+  ],
+  "maskingRules": {
+    "shortValues": {
+      "maxLength": 8,
+      "maskPattern": "***"
+    },
+    "mediumValues": {
+      "maxLength": 32,
+      "maskPattern": "****..****",
+      "showFirst": 4,
+      "showLast": 4
+    },
+    "longValues": {
+      "maskPattern": "****..****",
+      "showFirst": 6,
+      "showLast": 6
+    }
+  },
+  "logMaskingPatterns": [
+    {
+      "pattern": "(SECRET|KEY|PASSWORD|TOKEN)=['\"]?([^'\"\\s]+)['\"]?",
+      "replacement": "$1=***MASKED***"
+    },
+    {
+      "pattern": "postgresql://[^:]+:([^@]+)@",
+      "replacement": "postgresql://***:***MASKED***@"
+    },
+    {
+      "pattern": "Bearer\\s+([A-Za-z0-9+/=]+)",
+      "replacement": "Bearer ***MASKED***"
+    }
+  ],
+  "environmentSpecificVariables": [
+    "NEXT_PUBLIC_APP_URL",
+    "APP_URL",
+    "FRONTEND_URL",
+    "BACKEND_URL",
+    "API_BASE_URL"
+  ],
+  "rotationCandidates": [
+    "JWT_SECRET",
+    "TOKEN_ENCRYPTION_KEY",
+    "AZURE_OPENAI_API_KEY"
+  ]
+}

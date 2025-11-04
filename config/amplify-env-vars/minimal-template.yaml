@@ -1,0 +1,32 @@
+# AWS Amplify Environment Variables - Minimal Template
+# This template contains only the essential variables required to run the application
+
+# Essential Database Configuration
+DATABASE_URL: "postgresql://username:password@host:5432/database"
+DATABASE_SSL: "true"
+
+# Essential Authentication
+JWT_SECRET: "your-jwt-secret-minimum-32-characters-long"
+NEXTAUTH_SECRET: "your-nextauth-secret-minimum-16-chars"
+NEXTAUTH_URL: "https://your-domain.com"
+
+# Essential Application Configuration
+NODE_ENV: "production"
+APP_URL: "https://your-domain.com"
+
+# Essential AI Configuration (if using AI features)
+AZURE_OPENAI_API_KEY: "your-azure-openai-api-key"
+AZURE_OPENAI_ENDPOINT: "https://your-resource.openai.azure.com/"
+AZURE_OPENAI_API_VERSION: "2024-02-15-preview"
+
+# Essential Email Configuration
+FROM_EMAIL: "noreply@your-domain.com"
+
+# Essential Feature Flags (minimal setup)
+ENABLE_ANALYTICS: "false"
+ENABLE_SOCIAL_INTEGRATIONS: "false"
+ENABLE_AI_FEATURES: "true"
+ENABLE_MONITORING: "false"
+
+# Note: This is a minimal configuration. For production use, 
+# please refer to production-template.yaml for complete setup.
