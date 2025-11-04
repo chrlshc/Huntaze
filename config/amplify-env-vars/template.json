@@ -1,0 +1,140 @@
+{
+  "version": "1.0",
+  "description": "AWS Amplify Environment Variables Configuration Template",
+  "environments": {
+    "staging": {
+      "variables": {
+        "DATABASE_URL": "postgresql://username:password@staging-db.amazonaws.com:5432/staging_db",
+        "DATABASE_SSL": "true",
+        "DATABASE_POOL_SIZE": "10",
+        "JWT_SECRET": "staging-jwt-secret-minimum-32-characters-long",
+        "JWT_EXPIRES_IN": "24h",
+        "NEXTAUTH_SECRET": "staging-nextauth-secret",
+        "NEXTAUTH_URL": "https://staging.your-domain.com",
+        "OPENAI_API_KEY": "sk-your-openai-staging-api-key",
+        "AZURE_OPENAI_API_KEY": "your-azure-openai-staging-key",
+        "AZURE_OPENAI_ENDPOINT": "https://your-staging-resource.openai.azure.com/",
+        "AZURE_OPENAI_API_VERSION": "2024-02-15-preview",
+        "TIKTOK_CLIENT_ID": "staging-tiktok-client-id",
+        "TIKTOK_CLIENT_SECRET": "staging-tiktok-client-secret",
+        "INSTAGRAM_CLIENT_ID": "staging-instagram-client-id",
+        "INSTAGRAM_CLIENT_SECRET": "staging-instagram-client-secret",
+        "REDDIT_CLIENT_ID": "staging-reddit-client-id",
+        "REDDIT_CLIENT_SECRET": "staging-reddit-client-secret",
+        "SMTP_HOST": "email-smtp.us-east-1.amazonaws.com",
+        "SMTP_PORT": "587",
+        "SMTP_USER": "your-ses-smtp-username",
+        "SMTP_PASS": "your-ses-smtp-password",
+        "FROM_EMAIL": "staging@your-domain.com",
+        "NODE_ENV": "production",
+        "APP_URL": "https://staging.your-domain.com",
+        "API_URL": "https://staging-api.your-domain.com",
+        "FRONTEND_URL": "https://staging.your-domain.com",
+        "SENTRY_DSN": "https://your-staging-sentry-dsn@sentry.io/project-id",
+        "ANALYTICS_ID": "GA-STAGING-ID",
+        "LOG_LEVEL": "info",
+        "ENABLE_ANALYTICS": "true",
+        "ENABLE_SOCIAL_INTEGRATIONS": "true",
+        "ENABLE_AI_FEATURES": "true",
+        "ENABLE_MONITORING": "true",
+        "REDIS_URL": "redis://staging-redis.cache.amazonaws.com:6379",
+        "CACHE_TTL": "1800",
+        "MAX_UPLOAD_SIZE": "10485760",
+        "CORS_ORIGIN": "https://staging.your-domain.com",
+        "RATE_LIMIT_MAX": "200",
+        "RATE_LIMIT_WINDOW": "900000"
+      },
+      "metadata": {
+        "description": "Staging environment configuration",
+        "lastUpdated": "2024-11-03T00:00:00Z",
+        "maintainer": "DevOps Team"
+      }
+    },
+    "production": {
+      "variables": {
+        "DATABASE_URL": "postgresql://username:password@prod-db.amazonaws.com:5432/production_db",
+        "DATABASE_SSL": "true",
+        "DATABASE_POOL_SIZE": "20",
+        "JWT_SECRET": "production-jwt-secret-must-be-different-and-secure-32-chars",
+        "JWT_EXPIRES_IN": "7d",
+        "NEXTAUTH_SECRET": "production-nextauth-secret-different-from-staging",
+        "NEXTAUTH_URL": "https://your-domain.com",
+        "OPENAI_API_KEY": "sk-your-openai-production-api-key",
+        "AZURE_OPENAI_API_KEY": "your-azure-openai-production-key",
+        "AZURE_OPENAI_ENDPOINT": "https://your-prod-resource.openai.azure.com/",
+        "AZURE_OPENAI_API_VERSION": "2024-02-15-preview",
+        "TIKTOK_CLIENT_ID": "production-tiktok-client-id",
+        "TIKTOK_CLIENT_SECRET": "production-tiktok-client-secret",
+        "INSTAGRAM_CLIENT_ID": "production-instagram-client-id",
+        "INSTAGRAM_CLIENT_SECRET": "production-instagram-client-secret",
+        "REDDIT_CLIENT_ID": "production-reddit-client-id",
+        "REDDIT_CLIENT_SECRET": "production-reddit-client-secret",
+        "SMTP_HOST": "email-smtp.us-east-1.amazonaws.com",
+        "SMTP_PORT": "587",
+        "SMTP_USER": "your-production-ses-smtp-username",
+        "SMTP_PASS": "your-production-ses-smtp-password",
+        "FROM_EMAIL": "noreply@your-domain.com",
+        "NODE_ENV": "production",
+        "APP_URL": "https://your-domain.com",
+        "API_URL": "https://api.your-domain.com",
+        "FRONTEND_URL": "https://your-domain.com",
+        "SENTRY_DSN": "https://your-production-sentry-dsn@sentry.io/project-id",
+        "ANALYTICS_ID": "GA-PRODUCTION-ID",
+        "LOG_LEVEL": "warn",
+        "ENABLE_ANALYTICS": "true",
+        "ENABLE_SOCIAL_INTEGRATIONS": "true",
+        "ENABLE_AI_FEATURES": "true",
+        "ENABLE_MONITORING": "true",
+        "REDIS_URL": "redis://prod-redis.cache.amazonaws.com:6379",
+        "CACHE_TTL": "3600",
+        "MAX_UPLOAD_SIZE": "10485760",
+        "CORS_ORIGIN": "https://your-domain.com",
+        "RATE_LIMIT_MAX": "100",
+        "RATE_LIMIT_WINDOW": "900000"
+      },
+      "metadata": {
+        "description": "Production environment configuration",
+        "lastUpdated": "2024-11-03T00:00:00Z",
+        "maintainer": "DevOps Team"
+      }
+    }
+  },
+  "validation": {
+    "required": [
+      "DATABASE_URL",
+      "JWT_SECRET",
+      "NEXTAUTH_SECRET",
+      "NEXTAUTH_URL",
+      "NODE_ENV",
+      "APP_URL"
+    ],
+    "formats": {
+      "DATABASE_URL": "^postgresql://[^:]+:[^@]+@[^:]+:[0-9]+/[^?]+$",
+      "JWT_SECRET": "^.{32,}$",
+      "NEXTAUTH_SECRET": "^.{16,}$",
+      "NEXTAUTH_URL": "^https://[a-zA-Z0-9.-]+$",
+      "NODE_ENV": "^(development|staging|production)$",
+      "OPENAI_API_KEY": "^(sk-[A-Za-z0-9]{48}|)$",
+      "AZURE_OPENAI_ENDPOINT": "^https://[a-zA-Z0-9-]+\\.openai\\.azure\\.com/$",
+      "FROM_EMAIL": "^[^@]+@[^@]+\\.[^@]+$",
+      "APP_URL": "^https://[a-zA-Z0-9.-]+$",
+      "REDIS_URL": "^redis://[^:]+:[0-9]+$"
+    },
+    "sensitive": [
+      "JWT_SECRET",
+      "NEXTAUTH_SECRET",
+      "OPENAI_API_KEY",
+      "AZURE_OPENAI_API_KEY",
+      "TIKTOK_CLIENT_SECRET",
+      "INSTAGRAM_CLIENT_SECRET",
+      "REDDIT_CLIENT_SECRET",
+      "SMTP_PASS",
+      "DATABASE_URL"
+    ]
+  },
+  "documentation": {
+    "setup": "https://docs.your-domain.com/setup",
+    "troubleshooting": "https://docs.your-domain.com/troubleshooting",
+    "security": "https://docs.your-domain.com/security"
+  }
+}

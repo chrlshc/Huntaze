@@ -1,0 +1,56 @@
+{
+  "amplify": {
+    "region": "us-east-1",
+    "apiVersion": "2017-07-25",
+    "endpoints": {
+      "amplify": "https://amplify.us-east-1.amazonaws.com"
+    },
+    "retryConfig": {
+      "maxRetries": 3,
+      "retryDelayOptions": {
+        "base": 300
+      }
+    },
+    "timeouts": {
+      "connectionTimeout": 60000,
+      "socketTimeout": 60000
+    }
+  },
+  "cli": {
+    "commands": {
+      "getApp": "aws amplify get-app",
+      "getBranch": "aws amplify get-branch",
+      "updateBranch": "aws amplify update-branch",
+      "listApps": "aws amplify list-apps",
+      "listBranches": "aws amplify list-branches"
+    },
+    "outputFormat": "json",
+    "region": "us-east-1"
+  },
+  "validation": {
+    "appIdPattern": "^d[a-z0-9]{12}$",
+    "branchNamePattern": "^[a-zA-Z0-9._-]+$",
+    "maxVariableNameLength": 255,
+    "maxVariableValueLength": 5500,
+    "reservedVariableNames": [
+      "AWS_ACCESS_KEY_ID",
+      "AWS_SECRET_ACCESS_KEY",
+      "AWS_SESSION_TOKEN",
+      "AWS_REGION",
+      "AWS_DEFAULT_REGION"
+    ]
+  },
+  "monitoring": {
+    "healthCheckInterval": 300000,
+    "alertThresholds": {
+      "validationFailureRate": 0.1,
+      "buildFailureRate": 0.2,
+      "connectivityFailureRate": 0.05
+    },
+    "retentionPeriod": {
+      "logs": "30d",
+      "metrics": "90d",
+      "backups": "1y"
+    }
+  }
+}
