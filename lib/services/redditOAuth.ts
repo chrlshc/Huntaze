@@ -1,13 +1,14 @@
 /**
  * Reddit OAuth Service
  * 
- * Implements Reddit OAuth 2.0 flow for content publishing
+ * Implements Reddit OAuth 2.0 flow for content publishing with integrated credential validation
  * 
  * @see https://github.com/reddit-archive/reddit/wiki/OAuth2
  * @see https://www.reddit.com/dev/api/oauth
  */
 
 import crypto from 'crypto';
+import { RedditCredentialValidator, RedditCredentials } from '@/lib/validation';
 
 const REDDIT_AUTH_URL = 'https://www.reddit.com/api/v1/authorize';
 const REDDIT_TOKEN_URL = 'https://www.reddit.com/api/v1/access_token';
@@ -52,39 +53,104 @@ export class RedditOAuthService {
   private clientSecret: string;
   private redirectUri: string;
   private userAgent: string;
+  private validator: RedditCredentialValidator;
+  private validationCache: Map<string, { result: boolean; timestamp: number }> = new Map();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     this.clientId = process.env.REDDIT_CLIENT_ID || '';
     this.clientSecret = process.env.REDDIT_CLIENT_SECRET || '';
     this.redirectUri = process.env.NEXT_PUBLIC_REDDIT_REDIRECT_URI || '';
-    this.userAgent = 'Huntaze/1.0.0';
+    this.userAgent = process.env.REDDIT_USER_AGENT || 'Huntaze/1.0.0';
+    this.validator = new RedditCredentialValidator();
 
     // Don't throw during construction to avoid build-time errors
     // Validation will happen when methods are called
   }
 
   /**
-   * Validate that credentials are configured
-   * @throws Error if credentials are missing
+   * Validate that credentials are configured and valid
+   * @throws Error if credentials are missing or invalid
    */
-  private validateCredentials(): void {
+  private async validateCredentials(): Promise<void> {
     if (!this.clientId || !this.clientSecret || !this.redirectUri) {
-      throw new Error('Reddit OAuth credentials not configured');
+      throw new Error('Reddit OAuth credentials not configured. Please set REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, NEXT_PUBLIC_REDDIT_REDIRECT_URI, and REDDIT_USER_AGENT environment variables.');
+    }
+
+    // Check validation cache first
+    const cacheKey = `${this.clientId}:${this.clientSecret}:${this.redirectUri}:${this.userAgent}`;
+    const cached = this.validationCache.get(cacheKey);
+    
+    if (cached && (Date.now() - cached.timestamp) < this.CACHE_TTL) {
+      if (!cached.result) {
+        throw new Error('Reddit OAuth credentials are invalid (cached result)');
+      }
+      return;
+    }
+
+    // Validate credentials using the validator
+    const credentials: RedditCredentials = {
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
+      redirectUri: this.redirectUri,
+      userAgent: this.userAgent,
+    };
+
+    try {
+      const result = await this.validator.validateCredentials(credentials);
+      
+      // Cache the result
+      this.validationCache.set(cacheKey, {
+        result: result.isValid,
+        timestamp: Date.now(),
+      });
+
+      if (!result.isValid) {
+        const errorMessages = result.errors.map(error => error.message).join(', ');
+        const suggestions = result.errors
+          .filter(error => error.suggestion)
+          .map(error => error.suggestion)
+          .join(' ');
+        
+        throw new Error(`Reddit OAuth credentials validation failed: ${errorMessages}${suggestions ? ` Suggestions: ${suggestions}` : ''}`);
+      }
+
+      // Log warnings if any
+      if (result.warnings.length > 0) {
+        console.warn('Reddit OAuth credential warnings:', result.warnings.map(w => w.message).join(', '));
+      }
+    } catch (error) {
+      // Cache negative result for a shorter time
+      this.validationCache.set(cacheKey, {
+        result: false,
+        timestamp: Date.now(),
+      });
+      
+      throw error;
     }
   }
 
   /**
+   * Clear validation cache (useful for testing or credential updates)
+   */
+  clearValidationCache(): void {
+    this.validationCache.clear();
+  }
+
+  /**
    * Generate Reddit OAuth authorization URL
+   * Validates credentials before generating URL
    * 
    * @param scopes - OAuth scopes to request
    * @param duration - 'temporary' (1 hour) or 'permanent' (refresh token)
    * @returns Authorization URL and state for CSRF protection
+   * @throws Error if credentials are invalid
    */
-  getAuthorizationUrl(
+  async getAuthorizationUrl(
     scopes: string[] = DEFAULT_SCOPES,
     duration: 'temporary' | 'permanent' = 'permanent'
-  ): RedditAuthUrl {
-    this.validateCredentials();
+  ): Promise<RedditAuthUrl> {
+    await this.validateCredentials();
     
     // Generate random state for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
@@ -106,13 +172,14 @@ export class RedditOAuthService {
 
   /**
    * Exchange authorization code for access and refresh tokens
+   * Validates credentials before token exchange
    * 
    * @param code - Authorization code from Reddit
    * @returns Access token, refresh token, and metadata
-   * @throws Error if exchange fails
+   * @throws Error if exchange fails or credentials are invalid
    */
   async exchangeCodeForTokens(code: string): Promise<RedditTokens> {
-    this.validateCredentials();
+    await this.validateCredentials();
     
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
@@ -339,8 +406,11 @@ function getRedditOAuth(): RedditOAuthService {
 
 // Export singleton instance (lazy)
 export const redditOAuth = {
-  getAuthUrl: (...args: Parameters<RedditOAuthService['getAuthUrl']>) => getRedditOAuth().getAuthUrl(...args),
-  handleCallback: (...args: Parameters<RedditOAuthService['handleCallback']>) => getRedditOAuth().handleCallback(...args),
+  getAuthorizationUrl: (...args: Parameters<RedditOAuthService['getAuthorizationUrl']>) => getRedditOAuth().getAuthorizationUrl(...args),
+  exchangeCodeForTokens: (...args: Parameters<RedditOAuthService['exchangeCodeForTokens']>) => getRedditOAuth().exchangeCodeForTokens(...args),
   refreshAccessToken: (...args: Parameters<RedditOAuthService['refreshAccessToken']>) => getRedditOAuth().refreshAccessToken(...args),
+  getUserInfo: (...args: Parameters<RedditOAuthService['getUserInfo']>) => getRedditOAuth().getUserInfo(...args),
+  getSubscribedSubreddits: (...args: Parameters<RedditOAuthService['getSubscribedSubreddits']>) => getRedditOAuth().getSubscribedSubreddits(...args),
   revokeAccess: (...args: Parameters<RedditOAuthService['revokeAccess']>) => getRedditOAuth().revokeAccess(...args),
+  clearValidationCache: () => getRedditOAuth().clearValidationCache(),
 };
