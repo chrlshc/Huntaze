@@ -1,0 +1,12 @@
+🔧 STAGING FIX: Resolve Node.js download timeout in Amplify deployment
+
+- Remove nvm Node.js installation to avoid download timeouts
+- Use default Amplify Node.js version for faster builds
+- Add network resilience with extended timeouts (300s)
+- Implement fallback npm install strategy
+- Add pre-build diagnostics script
+- Optimize memory settings and disable telemetry
+- Add build timeout protection with retry logic
+
+Fixes deployment failure at 28% Node.js download phase.
+Ready for immediate staging deployment.

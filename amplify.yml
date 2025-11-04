@@ -3,33 +3,42 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 20 && nvm use 20
+        - echo "🚀 Starting preBuild phase with network optimization"
+        # Use default Node.js to avoid download timeouts
+        - node --version
+        - npm --version
+        # Run deployment diagnostics
+        - node scripts/fix-staging-deployment.js
+        # Configure environment for stability
         - export NODE_OPTIONS="--max-old-space-size=6144"
         - export NPM_CONFIG_PROGRESS=false
         - export CI=true
-        - 'echo "[PREBUILD] node=$(node -v) npm=$(npm -v)"'
-        - echo "Memory optimization enabled"
-        - npm ci --no-audit --no-fund --silent || npm i --no-audit --no-fund --silent
-        - echo "PREBUILD_DONE"
+        - export NPM_CONFIG_TIMEOUT=300000
+        - export NPM_CONFIG_FETCH_TIMEOUT=300000
+        - export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+        - echo "📦 Installing dependencies with network resilience..."
+        # Try npm ci first, fallback to npm install if needed
+        - npm ci --no-audit --no-fund --silent --timeout=300000 || (echo "npm ci failed, trying npm install..." && npm install --no-audit --no-fund --silent --timeout=300000)
+        - echo "✅ PREBUILD_COMPLETED"
     build:
       commands:
-        - echo "BUILD_START - Hydration Corrections Deployment"
+        - echo "BUILD_START - Staging Deployment with Network Optimization"
         - export BUILD_REDIS_MOCK=1
         - export NODE_OPTIONS="--max-old-space-size=6144"
         - export NPM_CONFIG_PROGRESS=false
+        - export NEXT_TELEMETRY_DISABLED=1
+        - echo "Creating production environment configuration..."
         # Create minimal .env.production with fallback values
         - echo "DATABASE_URL=${DATABASE_URL:-postgresql://test:test@localhost:5432/test}" > .env.production
-        - echo "JWT_SECRET=${JWT_SECRET:-hydration-build-secret-2024}" >> .env.production
+        - echo "JWT_SECRET=${JWT_SECRET:-staging-build-secret-2024}" >> .env.production
         - 'echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://staging.huntaze.com}" >> .env.production'
         - 'echo "NEXTAUTH_URL=${NEXTAUTH_URL:-https://staging.huntaze.com}" >> .env.production'
         - 'echo "APP_URL=${APP_URL:-https://staging.huntaze.com}" >> .env.production'
-        - echo "[BUILD] Environment configured for hydration deployment"
-        # Skip DB operations for faster build
-        - echo "Skipping DB operations for hydration-focused build"
-        # Optimized build process
-        - echo "Starting optimized Next.js build for hydration corrections..."
-        - npm run build --silent
-        - echo "BUILD_COMPLETED - Hydration corrections deployed successfully"
+        - echo "NODE_ENV=production" >> .env.production
+        - echo "[BUILD] Environment configured for staging deployment"
+        - echo "Starting Next.js build with timeout protection..."
+        - timeout 900 npm run build --silent || (echo "Build timeout reached, retrying..." && npm run build --silent)
+        - echo "BUILD_COMPLETED - Staging deployment ready"
   artifacts:
     baseDirectory: .next
     files:
