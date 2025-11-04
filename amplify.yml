@@ -26,12 +26,10 @@ frontend:
           DATABASE_URL=${DATABASE_URL}
           JWT_SECRET=${JWT_SECRET}
           STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-          NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://main.d2yjqfqvvvvvvv.amplifyapp.com}
-          NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+          NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://d2gmcfr71gawhz.amplifyapp.com}
+          NEXTAUTH_URL=${NEXTAUTH_URL:-https://d2gmcfr71gawhz.amplifyapp.com}
           FROM_EMAIL=${FROM_EMAIL}
           AWS_REGION=${AWS_REGION}
-          NEXTAUTH_URL=${NEXTAUTH_URL}
-          AUTH_SECRET=${AUTH_SECRET}
           FACEBOOK_APP_ID=${FACEBOOK_APP_ID}
           FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}
           REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
@@ -39,11 +37,25 @@ frontend:
           TIKTOK_CLIENT_KEY=${TIKTOK_CLIENT_KEY}
           TIKTOK_CLIENT_SECRET=${TIKTOK_CLIENT_SECRET}
           NEXT_PUBLIC_TIKTOK_REDIRECT_URI=${NEXT_PUBLIC_TIKTOK_REDIRECT_URI}
-          APP_URL=${APP_URL:-https://main.d2yjqfqvvvvvvv.amplifyapp.com}
+          INSTAGRAM_APP_SECRET=${INSTAGRAM_APP_SECRET}
+          THREADS_APP_SECRET=${THREADS_APP_SECRET}
+          GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+          REDIS_URL=${REDIS_URL}
+          TOKEN_ENCRYPTION_KEY=${TOKEN_ENCRYPTION_KEY}
+          DATA_ENCRYPTION_KEY=${DATA_ENCRYPTION_KEY}
+          ENCRYPTION_KEY=${ENCRYPTION_KEY}
+          SESSION_SECRET=${SESSION_SECRET}
+          APP_URL=${APP_URL:-https://d2gmcfr71gawhz.amplifyapp.com}
           EOF
         - echo "[BUILD] wrote .env.production"
+        # Verify critical environment variables
+        - echo "Checking critical variables..."
+        - test -n "$DATABASE_URL" || (echo "ERROR: DATABASE_URL missing" && exit 1)
+        - test -n "$JWT_SECRET" || (echo "ERROR: JWT_SECRET missing" && exit 1)
+        - echo "Critical variables OK"
         # Initialize database tables if needed (now DATABASE_URL is available)
         - npm run db:init:safe || echo "DB already initialized"
+        - echo "Starting build..."
         - npm run build
         - echo "BUILD_DONE"
   artifacts:
