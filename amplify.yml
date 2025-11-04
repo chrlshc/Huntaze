@@ -15,19 +15,19 @@ frontend:
         # Create minimal .env.production with only critical variables
         - echo "DATABASE_URL=${DATABASE_URL}" > .env.production
         - echo "JWT_SECRET=${JWT_SECRET}" >> .env.production
-        - echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://staging.huntaze.com}" >> .env.production
-        - echo "NEXTAUTH_URL=${NEXTAUTH_URL:-https://staging.huntaze.com}" >> .env.production
-        - echo "APP_URL=${APP_URL:-https://staging.huntaze.com}" >> .env.production
+        - 'echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://staging.huntaze.com}" >> .env.production'
+        - 'echo "NEXTAUTH_URL=${NEXTAUTH_URL:-https://staging.huntaze.com}" >> .env.production'
+        - 'echo "APP_URL=${APP_URL:-https://staging.huntaze.com}" >> .env.production'
         - echo "[BUILD] Created minimal .env.production"
         # Verify critical variables exist
-        - test -n "$DATABASE_URL" || (echo "ERROR: DATABASE_URL missing" && exit 1)
-        - test -n "$JWT_SECRET" || (echo "ERROR: JWT_SECRET missing" && exit 1)
+        - 'test -n "$DATABASE_URL" || (echo "ERROR: DATABASE_URL missing" && exit 1)'
+        - 'test -n "$JWT_SECRET" || (echo "ERROR: JWT_SECRET missing" && exit 1)'
         - echo "Critical variables verified"
         # Skip DB init for now to speed up build
         - echo "Skipping DB init for debug build"
         # Build with verbose output
         - echo "Starting Next.js build..."
-        - npm run build 2>&1 | tee build.log || (echo "Build failed, showing last 50 lines:" && tail -50 build.log && exit 1)
+        - 'npm run build 2>&1 | tee build.log || (echo "Build failed, showing last 50 lines:" && tail -50 build.log && exit 1)'
         - echo "BUILD_COMPLETED_SUCCESSFULLY"
   artifacts:
     baseDirectory: .next
