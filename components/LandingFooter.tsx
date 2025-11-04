@@ -1,8 +1,10 @@
+import { SafeCurrentYear } from '@/components/hydration';
+
 export function LandingFooter() {
   return (
     <footer className="border-t border-white/10 py-8">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 px-6 text-xs text-gray-500 sm:flex-row sm:justify-between">
-        <p>© {new Date().getFullYear()} Huntaze. All rights reserved.</p>
+        <p>© {<SafeCurrentYear fallback={<span>2024</span>} />} Huntaze. All rights reserved.</p>
         <div className="flex gap-4">
           <a
             href="/privacy"

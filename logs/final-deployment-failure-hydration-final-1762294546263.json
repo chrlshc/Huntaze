@@ -1,0 +1,34 @@
+{
+  "deploymentId": "hydration-final-1762294546263",
+  "timestamp": "2025-11-04T22:15:58.306Z",
+  "status": "FAILED",
+  "error": "Command failed: node scripts/validate-deployment-prerequisites.js",
+  "duration": 12,
+  "phases": {
+    "preparation": {
+      "status": "completed",
+      "duration": 638,
+      "startTime": 1762294557339
+    },
+    "validation": {
+      "status": "failed",
+      "duration": 328,
+      "startTime": 1762294557977
+    },
+    "deployment": {
+      "status": "pending",
+      "duration": 0,
+      "startTime": null
+    },
+    "monitoring": {
+      "status": "pending",
+      "duration": 0,
+      "startTime": null
+    },
+    "finalization": {
+      "status": "pending",
+      "duration": 0,
+      "startTime": null
+    }
+  }
+}
