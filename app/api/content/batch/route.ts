@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { query, getClient } from '@/lib/db/index';
+import { query, getClient } from '@/lib/db';
 
 const MAX_BATCH_SIZE = 50;
 
