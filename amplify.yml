@@ -3,53 +3,26 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "🚀 Starting preBuild phase with network optimization"
-        # Use default Node.js to avoid download timeouts
-        - node --version
-        - npm --version
-        # Run deployment diagnostics
-        - node scripts/fix-staging-deployment.js
-        # Run pre-build validation
-        - node scripts/pre-build-validation.js
-        # Configure environment for stability
+        - node -v
+        - npm -v
         - export NODE_OPTIONS="--max-old-space-size=6144"
-        - export NPM_CONFIG_PROGRESS=false
-        - export CI=true
-        - export NPM_CONFIG_TIMEOUT=300000
-        - export NPM_CONFIG_FETCH_TIMEOUT=300000
-        - export NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
-        - echo "📦 Installing dependencies with network resilience..."
-        # Try npm ci first, fallback to npm install if needed
-        - npm ci --no-audit --no-fund --silent --timeout=300000 || (echo "npm ci failed, trying npm install..." && npm install --no-audit --no-fund --silent --timeout=300000)
-        - echo "✅ PREBUILD_COMPLETED"
+        - npm ci --no-audit --no-fund
     build:
       commands:
-        - echo "🔨 BUILD_START - Staging Deployment with Enhanced Stability"
-        - export BUILD_REDIS_MOCK=1
-        - export NODE_OPTIONS="--max-old-space-size=6144"
-        - export NPM_CONFIG_PROGRESS=false
+        - echo "=== BUILD START ==="
+        - export NODE_ENV=production
         - export NEXT_TELEMETRY_DISABLED=1
-        - export CI=true
-        - echo "📋 Creating production environment configuration..."
-        # Create comprehensive .env.production with all required variables
+        - export BUILD_REDIS_MOCK=1
+        - export SKIP_ENV_VALIDATION=1
+        # Create minimal .env.production
         - echo "DATABASE_URL=${DATABASE_URL:-postgresql://test:test@localhost:5432/test}" > .env.production
         - echo "JWT_SECRET=${JWT_SECRET:-staging-build-secret-2024}" >> .env.production
-        - echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://staging.huntaze.com}" >> .env.production
-        - echo "NEXTAUTH_URL=${NEXTAUTH_URL:-https://staging.huntaze.com}" >> .env.production
-        - echo "APP_URL=${APP_URL:-https://staging.huntaze.com}" >> .env.production
         - echo "NODE_ENV=production" >> .env.production
-        - echo "NEXTAUTH_SECRET=${JWT_SECRET:-staging-build-secret-2024}" >> .env.production
-        - echo "BUILD_REDIS_MOCK=1" >> .env.production
-        - echo "✅ Environment configured for staging deployment"
-        - echo "🔍 Validating environment before build..."
-        - node scripts/validate-env.js || echo "⚠️ Environment validation warnings (continuing with build)"
-        - echo "🚀 Starting Next.js build with enhanced error handling..."
-        # Set staging-specific build flags
-        - export NEXT_OUTPUT_EXPORT=0
-        - export SKIP_ENV_VALIDATION=1
-        # Run build with detailed logging
         - npm run build
-        - echo "✅ BUILD_COMPLETED - Staging deployment ready"
+        - echo "=== ARTIFACTS (post-build) ==="
+        - ls -lah .next || true
+        - test -d .next
+        - echo "=== BUILD COMPLETED ==="
   artifacts:
     baseDirectory: .next
     files:
