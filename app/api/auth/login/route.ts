@@ -22,6 +22,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // TEMPORARY: Check if we have a real DATABASE_URL
+    const hasRealDB = process.env.DATABASE_URL && 
+      !process.env.DATABASE_URL.includes('localhost') && 
+      !process.env.DATABASE_URL.includes('test:test');
+
+    if (!hasRealDB) {
+      // MOCK LOGIN for testing UI without real DB
+      console.log('MOCK LOGIN - No real DB configured');
+      
+      // Accept any email/password for demo
+      const mockUserId = Math.floor(Math.random() * 1000000);
+      const token = await new SignJWT({ 
+        userId: mockUserId, 
+        email: email.toLowerCase(),
+        mock: true 
+      })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('7d')
+        .setIssuedAt()
+        .sign(JWT_SECRET);
+
+      const response = NextResponse.json({
+        user: {
+          id: mockUserId,
+          name: 'Demo User',
+          email: email.toLowerCase(),
+        },
+        message: '🚧 DEMO MODE: Logged in (mock data - configure DATABASE_URL for real authentication)',
+      });
+
+      response.cookies.set('auth-token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        path: '/',
+      });
+
+      return response;
+    }
+
+    // REAL DB LOGIC (when DATABASE_URL is properly configured)
     // Find user
     const result = await query(
       'SELECT id, name, email, password_hash FROM users WHERE email = $1',
