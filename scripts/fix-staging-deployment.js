@@ -40,11 +40,27 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_APP_URL'
 ];
 
+const optionalEnvVars = [
+  'NEXTAUTH_SECRET',
+  'NEXTAUTH_URL',
+  'NODE_ENV',
+  'BUILD_REDIS_MOCK'
+];
+
 requiredEnvVars.forEach(envVar => {
   if (process.env[envVar]) {
     console.log(`✅ ${envVar} - Set`);
   } else {
     console.log(`⚠️  ${envVar} - Missing (will use fallback)`);
+  }
+});
+
+console.log('\n📋 Optional Environment Variables:');
+optionalEnvVars.forEach(envVar => {
+  if (process.env[envVar]) {
+    console.log(`✅ ${envVar} - Set (${process.env[envVar]})`);
+  } else {
+    console.log(`ℹ️  ${envVar} - Not set`);
   }
 });
 
@@ -57,3 +73,32 @@ console.log(`Heap Total: ${Math.round(memoryUsage.heapTotal / 1024 / 1024)}MB`);
 
 console.log('\n✅ Staging deployment diagnostics completed');
 console.log('🚀 Ready for deployment with optimized configuration');
+// C
+heck for common build issues
+console.log('\n🔧 Build Environment Validation:');
+
+// Check if package.json has build script
+try {
+  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  if (packageJson.scripts && packageJson.scripts.build) {
+    console.log('✅ Build script found in package.json');
+  } else {
+    console.log('❌ No build script found in package.json');
+  }
+} catch (error) {
+  console.log('❌ Error reading package.json:', error.message);
+}
+
+// Check Next.js config
+if (fs.existsSync('next.config.ts') || fs.existsSync('next.config.js')) {
+  console.log('✅ Next.js configuration file found');
+} else {
+  console.log('⚠️  No Next.js configuration file found');
+}
+
+// Check for TypeScript
+if (fs.existsSync('tsconfig.json')) {
+  console.log('✅ TypeScript configuration found');
+} else {
+  console.log('ℹ️  No TypeScript configuration (JavaScript project)');
+}
