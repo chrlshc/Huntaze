@@ -29,6 +29,7 @@ const STORAGE_KEY = 'theme-preference';
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Get OS preference
   const getSystemTheme = (): ResolvedTheme => {
@@ -46,6 +47,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Apply theme to document
   const applyTheme = (resolved: ResolvedTheme) => {
+    if (typeof window === 'undefined') return;
+    
     const root = document.documentElement;
     
     if (resolved === 'dark') {
@@ -59,8 +62,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setResolvedTheme(resolved);
   };
 
-  // Initialize theme from localStorage
+  // Initialize hydration
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // Initialize theme from localStorage (only after hydration)
+  useEffect(() => {
+    if (!isHydrated) return;
+    
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
       if (stored && ['light', 'dark', 'system'].includes(stored)) {
@@ -75,11 +85,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to load theme from localStorage:', error);
       applyTheme('light');
     }
-  }, []);
+  }, [isHydrated]);
 
   // Listen for OS preference changes
   useEffect(() => {
-    if (theme !== 'system') return;
+    if (!isHydrated || theme !== 'system') return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
@@ -98,10 +108,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       mediaQuery.addListener(handleChange);
       return () => mediaQuery.removeListener(handleChange);
     }
-  }, [theme]);
+  }, [theme, isHydrated]);
 
   // Set theme function
   const setTheme = (newTheme: Theme) => {
+    if (!isHydrated) return;
+    
     try {
       setThemeState(newTheme);
       localStorage.setItem(STORAGE_KEY, newTheme);
