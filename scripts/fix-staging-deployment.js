@@ -73,8 +73,8 @@ console.log(`Heap Total: ${Math.round(memoryUsage.heapTotal / 1024 / 1024)}MB`);
 
 console.log('\n✅ Staging deployment diagnostics completed');
 console.log('🚀 Ready for deployment with optimized configuration');
-// C
-heck for common build issues
+
+// Check for common build issues
 console.log('\n🔧 Build Environment Validation:');
 
 // Check if package.json has build script
