@@ -357,3 +357,17 @@ export const MONITORING_ALERTS = {
     severity: 'warning'
   }
 } as const;
+
+// Database connection for Smart Onboarding
+import { getPool } from '../../db';
+
+export const smartOnboardingDb = {
+  query: async (text: string, params?: any[]) => {
+    const pool = getPool();
+    return await pool.query(text, params);
+  },
+  getPool,
+  tables: SMART_ONBOARDING_TABLES,
+  cacheKeys: CACHE_KEYS,
+  cacheTtl: CACHE_TTL
+};

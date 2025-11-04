@@ -250,6 +250,16 @@ export const contentItemsRepository = {
   },
 };
 
+// Export individual functions for direct import
+export const createContentItem = contentItemsRepository.create;
+export const findContentItemById = contentItemsRepository.findById;
+export const findContentItemsByUser = contentItemsRepository.findByUser;
+export const findScheduledContentItems = contentItemsRepository.findScheduledDue;
+export const updateContentItem = contentItemsRepository.update;
+export const deleteContentItem = contentItemsRepository.delete;
+export const countContentItemsByUser = contentItemsRepository.countByUser;
+export const searchContentItems = contentItemsRepository.search;
+
 // Export as class for compatibility
 export class ContentItemsRepository {
   static create = contentItemsRepository.create;
