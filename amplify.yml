@@ -3,31 +3,16 @@ frontend:
   phases:
     preBuild:
       commands:
-        - node -v
-        - npm -v
-        - export NODE_OPTIONS="--max-old-space-size=6144"
-        - npm ci --no-audit --no-fund
+        - echo "FRONTEND PREBUILD STARTING"
+        - node -v && npm -v
+        - npm ci
     build:
       commands:
-        - echo "=== BUILD START ==="
-        - export NODE_ENV=production
-        - export NEXT_TELEMETRY_DISABLED=1
-        - export BUILD_REDIS_MOCK=1
+        - echo "FRONTEND BUILD STARTING"
         - export SKIP_ENV_VALIDATION=1
-        # Create minimal .env.production
-        - echo "DATABASE_URL=${DATABASE_URL:-postgresql://test:test@localhost:5432/test}" > .env.production
-        - echo "JWT_SECRET=${JWT_SECRET:-staging-build-secret-2024}" >> .env.production
-        - echo "NODE_ENV=production" >> .env.production
-        - npm run build
-        - echo "=== ARTIFACTS (post-build) ==="
-        - ls -lah .next || true
-        - test -d .next
-        - echo "=== BUILD COMPLETED ==="
+        - npx next build
+        - ls -la .next
   artifacts:
     baseDirectory: .next
     files:
       - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
-      - .next/cache/**/*
