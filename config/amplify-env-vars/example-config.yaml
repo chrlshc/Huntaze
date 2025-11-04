@@ -1,0 +1,64 @@
+version: "1.0"
+
+# Example configuration file for AWS Amplify Environment Variables
+# Copy this file and customize it for your specific environments
+
+environments:
+  # Staging environment configuration
+  staging:
+    variables:
+      DATABASE_URL: "postgresql://user:password@host:5432/database?schema=public"
+      JWT_SECRET: "your-jwt-secret-at-least-32-characters-long"
+      NODE_ENV: "production"
+      AZURE_OPENAI_API_KEY: "your-azure-openai-api-key"
+      AZURE_OPENAI_ENDPOINT: "https://your-resource.openai.azure.com"
+      AZURE_OPENAI_API_VERSION: "2024-05-01-preview"
+      AZURE_OPENAI_DEPLOYMENT: "gpt-4o"
+      AWS_REGION: "us-east-1"
+      FROM_EMAIL: "noreply@yourdomain.com"
+      NEXT_PUBLIC_APP_URL: "https://staging.yourdomain.com"
+      TOKEN_ENCRYPTION_KEY: "your-base64-encoded-encryption-key"
+    
+    # Optional: Override specific variables for this environment
+    overrides:
+      # Example: Use a different database for staging
+      # DATABASE_URL: "postgresql://staging-user:password@staging-host:5432/staging-db?schema=public"
+
+  # Production environment configuration
+  production:
+    variables:
+      DATABASE_URL: "postgresql://prod-user:prod-password@prod-host:5432/prod-database?schema=public"
+      JWT_SECRET: "production-jwt-secret-must-be-different-and-secure"
+      NODE_ENV: "production"
+      AZURE_OPENAI_API_KEY: "production-azure-openai-api-key"
+      AZURE_OPENAI_ENDPOINT: "https://your-prod-resource.openai.azure.com"
+      AZURE_OPENAI_API_VERSION: "2024-05-01-preview"
+      AZURE_OPENAI_DEPLOYMENT: "gpt-4o"
+      AWS_REGION: "us-east-1"
+      FROM_EMAIL: "noreply@yourdomain.com"
+      NEXT_PUBLIC_APP_URL: "https://yourdomain.com"
+      TOKEN_ENCRYPTION_KEY: "production-base64-encoded-encryption-key"
+
+# Validation rules for environment variables
+validation:
+  # List of required variables that must be present
+  required:
+    - DATABASE_URL
+    - JWT_SECRET
+    - NODE_ENV
+    - AZURE_OPENAI_API_KEY
+    - AZURE_OPENAI_ENDPOINT
+    - AZURE_OPENAI_API_VERSION
+    - AZURE_OPENAI_DEPLOYMENT
+  
+  # Format validation patterns (regex)
+  formats:
+    DATABASE_URL: "^postgresql://[^:]+:[^@]+@[^:]+:[0-9]+/[^?]+\\?schema=\\w+$"
+    JWT_SECRET: "^.{32,}$"
+    NODE_ENV: "^(development|staging|production)$"
+    AZURE_OPENAI_ENDPOINT: "^https://[a-zA-Z0-9-]+\\.openai\\.azure\\.com$"
+    AZURE_OPENAI_API_VERSION: "^\\d{4}-\\d{2}-\\d{2}(-preview)?$"
+    AWS_REGION: "^[a-z]{2}-[a-z]+-\\d{1}$"
+    FROM_EMAIL: "^[^@]+@[^@]+\\.[^@]+$"
+    NEXT_PUBLIC_APP_URL: "^https://[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    TOKEN_ENCRYPTION_KEY: "^[A-Za-z0-9+/]{43}=$"

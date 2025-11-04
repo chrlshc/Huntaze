@@ -1,0 +1,350 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Advanced Amplify Environment Variables Validation Schema",
+  "description": "Comprehensive validation schema with environment-specific rules",
+  "type": "object",
+  "definitions": {
+    "environmentType": {
+      "type": "string",
+      "enum": ["development", "staging", "production", "test"]
+    },
+    "booleanString": {
+      "type": "string",
+      "enum": ["true", "false"]
+    },
+    "positiveInteger": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "secureUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    }
+  },
+  "properties": {
+    "DATABASE_URL": {
+      "type": "string",
+      "pattern": "^postgresql://[^:]+:[^@]+@[^:]+:[0-9]+/[^/?]+(?:\\?[^\\s]*)?$",
+      "description": "PostgreSQL connection string with optional query parameters",
+      "examples": [
+        "postgresql://user:pass@localhost:5432/db",
+        "postgresql://user:pass@host:5432/db?schema=public&ssl=true"
+      ]
+    },
+    "DATABASE_SSL": {
+      "$ref": "#/definitions/booleanString",
+      "description": "Enable SSL for database connection"
+    },
+    "DATABASE_POOL_SIZE": {
+      "$ref": "#/definitions/positiveInteger",
+      "description": "Database connection pool size (1-100)",
+      "pattern": "^([1-9]|[1-9][0-9]|100)$"
+    },
+    "JWT_SECRET": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 256,
+      "description": "JWT secret key (32-256 characters)",
+      "pattern": "^[A-Za-z0-9+/=_-]+$"
+    },
+    "JWT_EXPIRES_IN": {
+      "type": "string",
+      "pattern": "^[0-9]+[dhms]$",
+      "description": "JWT expiration time (e.g., 7d, 24h, 60m, 3600s)"
+    },
+    "NEXTAUTH_SECRET": {
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 256,
+      "description": "NextAuth secret key (16-256 characters)"
+    },
+    "NEXTAUTH_URL": {
+      "$ref": "#/definitions/secureUrl",
+      "description": "NextAuth canonical URL (must use HTTPS in production)"
+    },
+    "OPENAI_API_KEY": {
+      "type": "string",
+      "anyOf": [
+        {
+          "pattern": "^sk-[A-Za-z0-9]{48}$",
+          "description": "Valid OpenAI API key"
+        },
+        {
+          "const": "",
+          "description": "Empty string (disabled)"
+        }
+      ]
+    },
+    "AZURE_OPENAI_API_KEY": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9]+$",
+      "description": "Azure OpenAI API key"
+    },
+    "AZURE_OPENAI_ENDPOINT": {
+      "type": "string",
+      "pattern": "^https://[a-zA-Z0-9-]+\\.openai\\.azure\\.com/?$",
+      "description": "Azure OpenAI endpoint URL"
+    },
+    "AZURE_OPENAI_API_VERSION": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}(-preview)?$",
+      "description": "Azure OpenAI API version (YYYY-MM-DD or YYYY-MM-DD-preview)"
+    },
+    "TIKTOK_CLIENT_ID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "TikTok application client ID"
+    },
+    "TIKTOK_CLIENT_SECRET": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "TikTok application client secret"
+    },
+    "INSTAGRAM_CLIENT_ID": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Instagram application client ID (numeric)"
+    },
+    "INSTAGRAM_CLIENT_SECRET": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Instagram application client secret"
+    },
+    "REDDIT_CLIENT_ID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Reddit application client ID"
+    },
+    "REDDIT_CLIENT_SECRET": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Reddit application client secret"
+    },
+    "SMTP_HOST": {
+      "type": "string",
+      "anyOf": [
+        {
+          "format": "hostname"
+        },
+        {
+          "format": "ipv4"
+        }
+      ],
+      "description": "SMTP server hostname or IP address"
+    },
+    "SMTP_PORT": {
+      "type": "string",
+      "pattern": "^(25|465|587|2525)$",
+      "description": "SMTP server port (common: 25, 465, 587, 2525)"
+    },
+    "SMTP_USER": {
+      "type": "string",
+      "description": "SMTP authentication username"
+    },
+    "SMTP_PASS": {
+      "type": "string",
+      "description": "SMTP authentication password"
+    },
+    "FROM_EMAIL": {
+      "$ref": "#/definitions/email",
+      "description": "Default sender email address"
+    },
+    "NODE_ENV": {
+      "$ref": "#/definitions/environmentType",
+      "description": "Node.js environment type"
+    },
+    "APP_URL": {
+      "$ref": "#/definitions/url",
+      "description": "Main application URL"
+    },
+    "API_URL": {
+      "$ref": "#/definitions/url",
+      "description": "API base URL"
+    },
+    "FRONTEND_URL": {
+      "$ref": "#/definitions/url",
+      "description": "Frontend application URL"
+    },
+    "SENTRY_DSN": {
+      "type": "string",
+      "anyOf": [
+        {
+          "pattern": "^https://[a-f0-9]+@[a-z0-9.-]+\\.ingest\\.sentry\\.io/[0-9]+$",
+          "description": "Valid Sentry DSN"
+        },
+        {
+          "const": "",
+          "description": "Empty string (disabled)"
+        }
+      ]
+    },
+    "ANALYTICS_ID": {
+      "type": "string",
+      "anyOf": [
+        {
+          "pattern": "^(GA-[0-9]+-[0-9]+|G-[A-Z0-9]+)$",
+          "description": "Google Analytics tracking ID"
+        },
+        {
+          "const": "",
+          "description": "Empty string (disabled)"
+        }
+      ]
+    },
+    "LOG_LEVEL": {
+      "type": "string",
+      "enum": ["error", "warn", "info", "debug"],
+      "description": "Application logging level"
+    },
+    "ENABLE_ANALYTICS": {
+      "$ref": "#/definitions/booleanString",
+      "description": "Enable analytics tracking"
+    },
+    "ENABLE_SOCIAL_INTEGRATIONS": {
+      "$ref": "#/definitions/booleanString",
+      "description": "Enable social media integrations"
+    },
+    "ENABLE_AI_FEATURES": {
+      "$ref": "#/definitions/booleanString",
+      "description": "Enable AI-powered features"
+    },
+    "ENABLE_MONITORING": {
+      "$ref": "#/definitions/booleanString",
+      "description": "Enable monitoring and health checks"
+    },
+    "REDIS_URL": {
+      "type": "string",
+      "pattern": "^redis://([^:]+:[^@]+@)?[^:]+:[0-9]+(/[0-9]+)?$",
+      "description": "Redis connection URL with optional auth and database"
+    },
+    "CACHE_TTL": {
+      "$ref": "#/definitions/positiveInteger",
+      "description": "Cache TTL in seconds"
+    },
+    "MAX_UPLOAD_SIZE": {
+      "$ref": "#/definitions/positiveInteger",
+      "description": "Maximum upload size in bytes"
+    },
+    "CORS_ORIGIN": {
+      "type": "string",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/url"
+        },
+        {
+          "const": "*",
+          "description": "Allow all origins (development only)"
+        }
+      ],
+      "description": "CORS allowed origin"
+    },
+    "RATE_LIMIT_MAX": {
+      "$ref": "#/definitions/positiveInteger",
+      "description": "Rate limit maximum requests"
+    },
+    "RATE_LIMIT_WINDOW": {
+      "$ref": "#/definitions/positiveInteger",
+      "description": "Rate limit window in milliseconds"
+    }
+  },
+  "required": [
+    "DATABASE_URL",
+    "JWT_SECRET",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NODE_ENV",
+    "APP_URL"
+  ],
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "NODE_ENV": {
+            "const": "production"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "NEXTAUTH_URL": {
+            "pattern": "^https://"
+          },
+          "APP_URL": {
+            "pattern": "^https://"
+          },
+          "CORS_ORIGIN": {
+            "not": {
+              "const": "*"
+            }
+          },
+          "LOG_LEVEL": {
+            "enum": ["error", "warn"]
+          }
+        },
+        "required": [
+          "AZURE_OPENAI_API_KEY",
+          "AZURE_OPENAI_ENDPOINT"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ENABLE_AI_FEATURES": {
+            "const": "true"
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": ["OPENAI_API_KEY"]
+          },
+          {
+            "required": ["AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT"]
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ENABLE_SOCIAL_INTEGRATIONS": {
+            "const": "true"
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": ["TIKTOK_CLIENT_ID", "TIKTOK_CLIENT_SECRET"]
+          },
+          {
+            "required": ["INSTAGRAM_CLIENT_ID", "INSTAGRAM_CLIENT_SECRET"]
+          },
+          {
+            "required": ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"]
+          }
+        ]
+      }
+    }
+  ]
+}
