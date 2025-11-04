@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ScrollReveal } from '@/components/animations/ScrollReveal';
+import { ScrollReveal } from '@/components/animations/SimpleScrollReveal';
 import { Check } from 'lucide-react';
 
 interface Feature {
