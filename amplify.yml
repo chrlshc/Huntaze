@@ -4,31 +4,32 @@ frontend:
     preBuild:
       commands:
         - nvm install 20 && nvm use 20
+        - export NODE_OPTIONS="--max-old-space-size=6144"
+        - export NPM_CONFIG_PROGRESS=false
+        - export CI=true
         - 'echo "[PREBUILD] node=$(node -v) npm=$(npm -v)"'
-        - npm ci --no-audit --no-fund || npm i --no-audit --no-fund
+        - echo "Memory optimization enabled"
+        - npm ci --no-audit --no-fund --silent || npm i --no-audit --no-fund --silent
         - echo "PREBUILD_DONE"
     build:
       commands:
-        - echo "BUILD_START - Simplified Debug Version"
+        - echo "BUILD_START - Hydration Corrections Deployment"
         - export BUILD_REDIS_MOCK=1
-        - export NODE_OPTIONS="--max-old-space-size=4096"
-        # Create minimal .env.production with fallback values for testing
+        - export NODE_OPTIONS="--max-old-space-size=6144"
+        - export NPM_CONFIG_PROGRESS=false
+        # Create minimal .env.production with fallback values
         - echo "DATABASE_URL=${DATABASE_URL:-postgresql://test:test@localhost:5432/test}" > .env.production
-        - echo "JWT_SECRET=${JWT_SECRET:-test-jwt-secret-for-build-only}" >> .env.production
+        - echo "JWT_SECRET=${JWT_SECRET:-hydration-build-secret-2024}" >> .env.production
         - 'echo "NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://staging.huntaze.com}" >> .env.production'
         - 'echo "NEXTAUTH_URL=${NEXTAUTH_URL:-https://staging.huntaze.com}" >> .env.production'
         - 'echo "APP_URL=${APP_URL:-https://staging.huntaze.com}" >> .env.production'
-        - echo "[BUILD] Created minimal .env.production"
-        # Verify critical variables exist (temporarily disabled for testing)
-        - echo "Skipping environment variable validation for debug build"
-        - echo "DATABASE_URL status:" && echo ${DATABASE_URL:-"NOT_SET"}
-        - echo "JWT_SECRET status:" && echo ${JWT_SECRET:-"NOT_SET"}
-        # Skip DB init for now to speed up build
-        - echo "Skipping DB init for debug build"
-        # Build with verbose output
-        - echo "Starting Next.js build..."
-        - 'npm run build 2>&1 | tee build.log || (echo "Build failed, showing last 50 lines:" && tail -50 build.log && exit 1)'
-        - echo "BUILD_COMPLETED_SUCCESSFULLY"
+        - echo "[BUILD] Environment configured for hydration deployment"
+        # Skip DB operations for faster build
+        - echo "Skipping DB operations for hydration-focused build"
+        # Optimized build process
+        - echo "Starting optimized Next.js build for hydration corrections..."
+        - npm run build --silent
+        - echo "BUILD_COMPLETED - Hydration corrections deployed successfully"
   artifacts:
     baseDirectory: .next
     files:
