@@ -39,3 +39,5 @@ next-env.d.ts
 server-output.log
 infra/terraform/.terraform/
 infra/terraform/production-hardening/.terraform/
+logs/*.json
+logs/*.log
