@@ -1,14 +1,7 @@
-import { SafeDateRenderer } from '@/components/hydration';
-
 'use client';
 
-/**
- * Advanced Analytics Dashboard Page
- * 
- * Displays unified analytics across all social platforms
- */
-
 import React, { useState, useEffect } from 'react';
+import { SafeDateRenderer } from '@/components/hydration';
 import { UnifiedMetricsCard } from '@/components/analytics/UnifiedMetricsCard';
 import { PlatformComparisonChart } from '@/components/analytics/PlatformComparisonChart';
 import { TopContentGrid } from '@/components/analytics/TopContentGrid';
