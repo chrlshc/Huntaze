@@ -1,55 +1,58 @@
 /**
  * Reddit OAuth Callback Endpoint
  * 
- * Handles Reddit OAuth callback, exchanges code for tokens, and stores in database
- * 
- * @route GET /api/auth/reddit/callback
+ * Handles Reddit OAuth callback for content publishing
+ * - Requires user authentication
+ * - Validates state using secure database storage (CSRF protection)
+ * - Exchanges code for tokens using tokenManager
+ * - Comprehensive error handling
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { oauthAccountsRepository } from '@/lib/db/repositories/oauthAccountsRepository';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/auth/getUserFromRequest';
+import { tokenManager } from '@/lib/services/tokenManager';
+import { oauthStateManager } from '@/lib/oauth/stateManager';
+import { handleCallbackError, createSuccessRedirect } from '@/lib/oauth/errorHandler';
 
 // Force dynamic rendering to avoid build-time evaluation
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const code = searchParams.get('code');
-    const state = searchParams.get('state');
-    const error = searchParams.get('error');
+  const searchParams = request.nextUrl.searchParams;
+  const code = searchParams.get('code');
+  const state = searchParams.get('state');
+  const error = searchParams.get('error');
+  const errorDescription = searchParams.get('error_description');
 
-    // Handle user denial or errors
+  try {
+    // Handle OAuth errors (user denied, etc.)
     if (error) {
-      const errorDescription = searchParams.get('error_description') || error;
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=${encodeURIComponent(errorDescription)}`
-      );
+      return handleCallbackError(error, request, 'reddit', errorDescription || undefined);
     }
 
     // Validate required parameters
     if (!code || !state) {
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=missing_parameters`
-      );
+      return handleCallbackError('missing_code', request, 'reddit');
     }
 
-    // Validate state (CSRF protection)
-    const cookieStore = await cookies();
-    const storedState = cookieStore.get('reddit_oauth_state')?.value;
-    if (!storedState || storedState !== state) {
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=invalid_state`
-      );
-    }
+    // Require user authentication
+    const user = await requireAuth(request);
 
-    // Clear state cookie
-    cookieStore.delete('reddit_oauth_state');
+    // Validate state using database (CSRF protection)
+    const isValidState = await oauthStateManager.validateAndConsumeState(
+      state,
+      user.id,
+      'reddit'
+    );
+    
+    if (!isValidState) {
+      return handleCallbackError('invalid_state', request, 'reddit');
+    }
 
     // Lazy import to avoid build-time instantiation
-    const { redditOAuth } = await import('@/lib/services/redditOAuth');
+    const { RedditOAuthService } = await import('@/lib/services/redditOAuth');
+    const redditOAuth = new RedditOAuthService();
 
     // Exchange code for tokens
     const tokens = await redditOAuth.exchangeCodeForTokens(code);
@@ -57,42 +60,35 @@ export async function GET(request: NextRequest) {
     // Get user info
     const userInfo = await redditOAuth.getUserInfo(tokens.access_token);
 
-    // TODO: Get actual user ID from session/JWT
-    // For now, using a placeholder
-    const userId = 1;
+    // Calculate expiry date (1 hour from now)
+    const expiresAt = new Date();
+    expiresAt.setSeconds(expiresAt.getSeconds() + tokens.expires_in);
 
-    // Calculate expiry time
-    const expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
-
-    // Store in database (create does upsert automatically)
-    await oauthAccountsRepository.create({
-      userId,
+    // Store tokens using tokenManager (encrypted)
+    await tokenManager.storeTokens({
+      userId: user.id,
       provider: 'reddit',
       openId: userInfo.id,
-      scope: tokens.scope,
-      accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token,
-      expiresAt,
-      metadata: {
-        username: userInfo.name,
-        icon_img: userInfo.icon_img,
-        link_karma: userInfo.link_karma,
-        comment_karma: userInfo.comment_karma,
-        created_utc: userInfo.created_utc,
+      tokens: {
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        expiresAt,
+        scope: tokens.scope,
+        metadata: {
+          username: userInfo.name,
+          icon_img: userInfo.icon_img,
+          link_karma: userInfo.link_karma,
+          comment_karma: userInfo.comment_karma,
+          created_utc: userInfo.created_utc,
+        },
       },
     });
 
     // Redirect to success page
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?success=true&username=${encodeURIComponent(userInfo.name)}`
-    );
+    return createSuccessRedirect(request, 'reddit', userInfo.name);
   } catch (error) {
     console.error('Reddit OAuth callback error:', error);
-
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/platforms/connect/reddit?error=${encodeURIComponent(
-        error instanceof Error ? error.message : 'oauth_failed'
-      )}`
-    );
+    return handleCallbackError('callback_failed', request, 'reddit', 
+      error instanceof Error ? error.message : undefined);
   }
 }

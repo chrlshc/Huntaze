@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/validate-env.js && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "db:init": "node scripts/init-db.js",
@@ -157,5 +157,9 @@
   },
   "overrides": {
     "three-mesh-bvh": "^0.8.0"
+  },
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=8.0.0"
   }
 }

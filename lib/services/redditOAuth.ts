@@ -56,6 +56,8 @@ export class RedditOAuthService {
   private validator: RedditCredentialValidator;
   private validationCache: Map<string, { result: boolean; timestamp: number }> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly MAX_RETRIES = 3;
+  private readonly RETRY_DELAY = 1000; // 1 second
 
   constructor() {
     this.clientId = process.env.REDDIT_CLIENT_ID || '';
@@ -138,6 +140,47 @@ export class RedditOAuthService {
   }
 
   /**
+   * Retry utility for API calls with exponential backoff
+   */
+  private async retryApiCall<T>(
+    operation: () => Promise<T>,
+    operationName: string,
+    maxRetries: number = this.MAX_RETRIES
+  ): Promise<T> {
+    let lastError: Error;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error');
+        
+        // Don't retry on authentication errors or client errors
+        if (lastError.message.includes('Invalid') || 
+            lastError.message.includes('unauthorized') ||
+            lastError.message.includes('400') ||
+            lastError.message.includes('401') ||
+            lastError.message.includes('403')) {
+          throw lastError;
+        }
+
+        if (attempt === maxRetries) {
+          console.error(`${operationName} failed after ${maxRetries} attempts:`, lastError);
+          throw lastError;
+        }
+
+        // Exponential backoff with jitter
+        const delay = this.RETRY_DELAY * Math.pow(2, attempt - 1) + Math.random() * 1000;
+        console.warn(`${operationName} attempt ${attempt} failed, retrying in ${delay}ms:`, lastError.message);
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
+    throw lastError!;
+  }
+
+  /**
    * Generate Reddit OAuth authorization URL
    * Validates credentials before generating URL
    * 
@@ -187,7 +230,7 @@ export class RedditOAuthService {
       redirect_uri: this.redirectUri,
     });
 
-    try {
+    return this.retryApiCall(async () => {
       // Reddit requires Basic Auth with client_id:client_secret
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
@@ -205,6 +248,11 @@ export class RedditOAuthService {
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
+        
         throw new Error(
           data.error_description || data.error || `Token exchange failed: ${response.status}`
         );
@@ -217,12 +265,7 @@ export class RedditOAuthService {
         refresh_token: data.refresh_token,
         scope: data.scope,
       };
-    } catch (error) {
-      console.error('Reddit token exchange error:', error);
-      throw new Error(
-        `Failed to exchange code for tokens: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Reddit token exchange');
   }
 
   /**
@@ -240,7 +283,7 @@ export class RedditOAuthService {
       refresh_token: refreshToken,
     });
 
-    try {
+    return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
       const response = await fetch(REDDIT_TOKEN_URL, {
@@ -257,6 +300,16 @@ export class RedditOAuthService {
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
+        
+        // Handle specific refresh errors
+        if (data.error === 'invalid_grant') {
+          throw new Error('Refresh token has expired or been revoked. Please reconnect your Reddit account.');
+        }
+        
         throw new Error(
           data.error_description || data.error || `Token refresh failed: ${response.status}`
         );
@@ -269,12 +322,7 @@ export class RedditOAuthService {
         refresh_token: refreshToken, // Reddit doesn't rotate refresh tokens
         scope: data.scope,
       };
-    } catch (error) {
-      console.error('Reddit token refresh error:', error);
-      throw new Error(
-        `Failed to refresh token: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Reddit token refresh');
   }
 
   /**
@@ -285,7 +333,7 @@ export class RedditOAuthService {
    * @throws Error if request fails
    */
   async getUserInfo(accessToken: string): Promise<RedditUserInfo> {
-    try {
+    return this.retryApiCall(async () => {
       const response = await fetch(`${REDDIT_API_URL}/api/v1/me`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -297,6 +345,9 @@ export class RedditOAuthService {
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
         throw new Error(data.message || data.error || 'Failed to get user info');
       }
 
@@ -308,12 +359,7 @@ export class RedditOAuthService {
         link_karma: data.link_karma,
         comment_karma: data.comment_karma,
       };
-    } catch (error) {
-      console.error('Reddit get user info error:', error);
-      throw new Error(
-        `Failed to get user info: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Reddit user info');
   }
 
   /**
@@ -328,7 +374,7 @@ export class RedditOAuthService {
     subscribers: number;
     public_description: string;
   }>> {
-    try {
+    return this.retryApiCall(async () => {
       const response = await fetch(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -340,6 +386,9 @@ export class RedditOAuthService {
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
         throw new Error(data.message || 'Failed to get subreddits');
       }
 
@@ -349,12 +398,7 @@ export class RedditOAuthService {
         subscribers: child.data.subscribers,
         public_description: child.data.public_description,
       }));
-    } catch (error) {
-      console.error('Reddit get subreddits error:', error);
-      throw new Error(
-        `Failed to get subreddits: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Reddit subreddits');
   }
 
   /**
