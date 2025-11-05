@@ -41,3 +41,4 @@ infra/terraform/.terraform/
 infra/terraform/production-hardening/.terraform/
 logs/*.json
 logs/*.log
+huntazee/
