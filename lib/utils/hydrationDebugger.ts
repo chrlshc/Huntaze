@@ -1,5 +1,7 @@
 'use client';
 
+import { hydrationErrorLogger } from '@/lib/services/hydrationErrorLogger';
+
 export interface HydrationMismatch {
   id: string;
   timestamp: Date;
@@ -28,6 +30,52 @@ class HydrationDebugger {
       this.isEnabled = true;
       this.setupGlobalErrorHandler();
       this.setupMutationObserver();
+    }
+  }
+
+  // Backwards-compatible logging helpers used by hydration-safe components
+  public logHydrationError(contextId: string, error: Error): void {
+    try {
+      const url = typeof window !== 'undefined' ? window.location.href : '';
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      hydrationErrorLogger.logHydrationError({
+        error,
+        errorInfo: { componentStack: `context:${contextId}` } as any,
+        isHydrationError: true,
+        url,
+        userAgent: ua,
+        timestamp: new Date(),
+      });
+    } catch (e) {
+      // Ensure this helper never throws
+      console.warn('logHydrationError fallback:', e);
+    }
+  }
+
+  public logHydrationSuccess(contextId: string): void {
+    if (process.env.NODE_ENV !== 'production') {
+      // Lightweight dev log to help trace hydration flow
+      console.debug(`[Hydration] success: ${contextId}`);
+    }
+  }
+
+  public logSSRDataHydration(hydrationId: string, data: any): void {
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug(`[SSRData] hydrated: ${hydrationId}`, { keys: Object.keys(data || {}) });
+    }
+  }
+
+  public logDataMismatch(hydrationId: string, payload: { server: any; client: any }): void {
+    try {
+      const differences = this.analyzeHtmlDifferences(
+        JSON.stringify(payload.server || {}),
+        JSON.stringify(payload.client || {})
+      );
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[SSRData] mismatch: ${hydrationId}`, { differencesCount: differences.length });
+      }
+    } catch {
+      // No-op if analysis fails
     }
   }
 
