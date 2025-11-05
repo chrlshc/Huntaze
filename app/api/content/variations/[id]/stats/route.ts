@@ -9,7 +9,7 @@ import { verifyAuth } from '@/lib/auth/jwt';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify authentication
@@ -21,6 +21,7 @@ export async function GET(
       );
     }
 
+    const params = await context.params;
     const contentId = params.id;
 
     // Get all variations for this content

@@ -19,7 +19,7 @@ const CreateMessageSchema = z.object({
 
 async function getHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getUserFromRequest(request);
@@ -71,7 +71,7 @@ async function getHandler(
 
 async function postHandler(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Rate limit write operations
