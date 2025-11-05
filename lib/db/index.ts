@@ -24,3 +24,6 @@ export default {
   getPool: dbGetPool,
   getClient: dbGetClient,
 };
+// Export db as named export for compatibility with existing imports
+export { db };
+export { default as db } from '../db';
