@@ -1,5 +1,4 @@
 import {
-  InterventionEffectivenessTracker,
   InterventionMetrics,
   EffectivenessReport,
   InterventionAnalytics,
@@ -11,7 +10,7 @@ import {
 import { logger } from '../../utils/logger';
 import { redisClient } from '../config/redis';
 
-export class InterventionEffectivenessTrackerImpl implements InterventionEffectivenessTracker {
+export class InterventionEffectivenessTrackerImpl {
   private metricsCache: Map<string, InterventionMetrics> = new Map();
   private aggregationInterval: number = 300000; // 5 minutes
 
@@ -638,5 +637,5 @@ export class InterventionEffectivenessTrackerImpl implements InterventionEffecti
 }
 
 // Export service instance
-export const interventionEffectivenessTracker = new InterventionEffectivenessTracker();
+export const interventionEffectivenessTracker = new InterventionEffectivenessTrackerImpl();
 export default interventionEffectivenessTracker;

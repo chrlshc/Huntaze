@@ -6,7 +6,7 @@ import {
   ChartBarIcon, 
   UsersIcon, 
   ClockIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
@@ -217,7 +217,7 @@ export const OnboardingAnalyticsDashboard: React.FC<OnboardingAnalyticsDashboard
           className="bg-white rounded-lg shadow p-6"
         >
           <div className="flex items-center">
-            <TrendingUpIcon className="w-8 h-8 text-yellow-600" />
+            <ArrowTrendingUpIcon className="w-8 h-8 text-yellow-600" />
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Engagement</p>
               <p className={`text-2xl font-bold ${getMetricColor(analyticsData.engagementScore, { good: 75, warning: 50 })}`}>

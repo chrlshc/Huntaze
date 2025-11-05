@@ -1,6 +1,5 @@
-// Database connection stub for deployment
-// TODO: Set up actual database connection when ready
-
-// Placeholder export to satisfy imports
-export const db = {} as any;
-export const sql = {} as any;
+// Re-export database utilities from the primary lib implementation's barrel.
+// Using the index ensures both named (query, getClient, getPool, db)
+// and default exports are available at the alias path `@/lib/db`.
+export * from '../../lib/db/index';
+export { default } from '../../lib/db/index';
