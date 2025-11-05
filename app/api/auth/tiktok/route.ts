@@ -1,18 +1,48 @@
+/**
+ * TikTok OAuth Init Endpoint
+ * 
+ * Initiates TikTok OAuth flow with proper authentication and state management
+ * Uses TikTokOAuthService for consistent credential validation
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/auth/getUserFromRequest';
+import { oauthStateManager } from '@/lib/oauth/stateManager';
+import { handleOAuthError } from '@/lib/oauth/errorHandler';
+
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  const appBase = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
-  const clientKey = process.env.TIKTOK_CLIENT_KEY || process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
-  const redirectUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI || `${appBase}/auth/tiktok/callback`;
-  const scopes = process.env.TIKTOK_SCOPES || 'user.info.basic,video.upload';
+  try {
+    // 1. Require user authentication
+    const user = await requireAuth(request);
 
-  if (!clientKey || !redirectUri) {
-    const fallback = new URL('/auth', request.url);
-    fallback.searchParams.set('error', 'tiktok_unavailable');
-    return NextResponse.redirect(fallback);
+    // 2. Lazy import TikTok OAuth service to avoid build-time instantiation
+    const { tiktokOAuth } = await import('@/lib/services/tiktokOAuth');
+
+    // 3. Generate authorization URL with state (includes credential validation)
+    const { url, state } = await tiktokOAuth.getAuthorizationUrl();
+
+    // 4. Store state in database for CSRF protection
+    await oauthStateManager.storeState(user.id, 'tiktok', 10); // 10 minutes expiry
+
+    // 5. Store state in secure cookie as backup
+    const response = NextResponse.redirect(url);
+    response.cookies.set('tiktok_oauth_state', state, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 600, // 10 minutes
+      path: '/',
+    });
+
+    return response;
+  } catch (error) {
+    console.error('TikTok OAuth init error:', error);
+    
+    // Use standardized error handler
+    return handleOAuthError(error as Error, request, 'tiktok');
   }
-  
-  const authUrl = `https://www.tiktok.com/auth/authorize/?client_key=${clientKey}&scope=${scopes}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}`;
-  
-  return NextResponse.redirect(authUrl);
 }

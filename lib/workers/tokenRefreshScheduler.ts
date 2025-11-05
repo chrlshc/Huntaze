@@ -128,21 +128,37 @@ export class TokenRefreshScheduler {
     // Get encrypted tokens
     const encryptedTokens = await oauthAccountsRepository.getEncryptedTokens(account.id);
 
-    if (!encryptedTokens || !encryptedTokens.refreshToken) {
-      throw new Error('No refresh token available');
+    if (!encryptedTokens) {
+      throw new Error('No tokens available');
     }
-
-    // Decrypt refresh token
-    const refreshToken = tokenEncryption.decryptRefreshToken(encryptedTokens.refreshToken);
 
     // Refresh based on provider
     switch (account.provider) {
       case 'tiktok':
+        if (!encryptedTokens.refreshToken) {
+          throw new Error('No refresh token available for TikTok');
+        }
+        // Decrypt refresh token
+        const refreshToken = tokenEncryption.decryptRefreshToken(encryptedTokens.refreshToken);
         await this.refreshTikTokAccount(account.id, refreshToken);
         break;
 
       case 'instagram':
-        await this.refreshInstagramAccount(account.id, refreshToken);
+        if (!encryptedTokens.accessToken) {
+          throw new Error('No access token available for Instagram');
+        }
+        // Decrypt access token (Instagram uses access token for refresh)
+        const accessToken = tokenEncryption.decryptAccessToken(encryptedTokens.accessToken);
+        await this.refreshInstagramAccount(account.id, accessToken);
+        break;
+
+      case 'reddit':
+        if (!encryptedTokens.refreshToken) {
+          throw new Error('No refresh token available for Reddit');
+        }
+        // Decrypt refresh token
+        const redditRefreshToken = tokenEncryption.decryptRefreshToken(encryptedTokens.refreshToken);
+        await this.refreshRedditAccount(account.id, redditRefreshToken);
         break;
 
       default:
@@ -171,13 +187,51 @@ export class TokenRefreshScheduler {
 
   /**
    * Refresh Instagram account tokens
-   * Instagram uses long-lived tokens (60 days) that can be refreshed
+   * Instagram uses long-lived tokens (60 days) that can be refreshed once per day
+   * Note: Instagram doesn't use refresh tokens - we refresh using the current access token
    */
-  private async refreshInstagramAccount(accountId: number, refreshToken: string): Promise<void> {
-    // TODO: Implement Instagram token refresh
-    // Instagram long-lived tokens can be refreshed before expiry
-    console.log(`Instagram token refresh not yet implemented for account ${accountId}`);
-    throw new Error('Instagram token refresh not yet implemented');
+  private async refreshInstagramAccount(accountId: number, accessToken: string): Promise<void> {
+    // Import Instagram OAuth service
+    const { InstagramOAuthService } = await import('@/lib/services/instagramOAuth');
+    const instagramOAuth = new InstagramOAuthService();
+
+    // Refresh using Instagram OAuth service
+    const refreshed = await instagramOAuth.refreshLongLivedToken(accessToken);
+
+    // Calculate new expiry (60 days from now)
+    const expiresAt = new Date(Date.now() + refreshed.expires_in * 1000);
+
+    // Update database with new tokens
+    await oauthAccountsRepository.updateTokens({
+      id: accountId,
+      accessToken: refreshed.access_token,
+      refreshToken: undefined, // Instagram doesn't use refresh tokens
+      expiresAt,
+    });
+  }
+
+  /**
+   * Refresh Reddit account tokens
+   * Reddit access tokens expire in 1 hour, but refresh tokens don't expire
+   */
+  private async refreshRedditAccount(accountId: number, refreshToken: string): Promise<void> {
+    // Import Reddit OAuth service
+    const { RedditOAuthService } = await import('@/lib/services/redditOAuth');
+    const redditOAuth = new RedditOAuthService();
+
+    // Refresh using Reddit OAuth service
+    const refreshed = await redditOAuth.refreshAccessToken(refreshToken);
+
+    // Calculate new expiry (1 hour from now)
+    const expiresAt = new Date(Date.now() + refreshed.expires_in * 1000);
+
+    // Update database with new tokens
+    await oauthAccountsRepository.updateTokens({
+      id: accountId,
+      accessToken: refreshed.access_token,
+      refreshToken: refreshed.refresh_token, // Reddit keeps the same refresh token
+      expiresAt,
+    });
   }
 
   /**

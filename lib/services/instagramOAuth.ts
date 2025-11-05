@@ -67,6 +67,8 @@ export class InstagramOAuthService {
   private validator: InstagramCredentialValidator;
   private validationCache: Map<string, { result: boolean; timestamp: number }> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly MAX_RETRIES = 3;
+  private readonly RETRY_DELAY = 1000; // 1 second
 
   constructor() {
     this.appId = process.env.FACEBOOK_APP_ID || '';
@@ -147,6 +149,45 @@ export class InstagramOAuthService {
   }
 
   /**
+   * Retry utility for API calls with exponential backoff
+   */
+  private async retryApiCall<T>(
+    operation: () => Promise<T>,
+    operationName: string,
+    maxRetries: number = this.MAX_RETRIES
+  ): Promise<T> {
+    let lastError: Error;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error');
+        
+        // Don't retry on authentication errors or client errors
+        if (lastError.message.includes('Invalid') || 
+            lastError.message.includes('unauthorized') ||
+            lastError.message.includes('400')) {
+          throw lastError;
+        }
+
+        if (attempt === maxRetries) {
+          console.error(`${operationName} failed after ${maxRetries} attempts:`, lastError);
+          throw lastError;
+        }
+
+        // Exponential backoff with jitter
+        const delay = this.RETRY_DELAY * Math.pow(2, attempt - 1) + Math.random() * 1000;
+        console.warn(`${operationName} attempt ${attempt} failed, retrying in ${delay}ms:`, lastError.message);
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
+    throw lastError!;
+  }
+
+  /**
    * Generate Facebook OAuth authorization URL for Instagram permissions
    * Validates credentials before generating URL
    * 
@@ -192,15 +233,23 @@ export class InstagramOAuthService {
       code,
     });
 
-    try {
+    return this.retryApiCall(async () => {
       const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
         cache: 'no-store',
+        headers: {
+          'User-Agent': 'Instagram-OAuth-Client/1.0',
+        },
       });
 
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
+        
         throw new Error(
           data.error?.message || data.error_description || `Token exchange failed: ${response.status}`
         );
@@ -211,12 +260,7 @@ export class InstagramOAuthService {
         token_type: data.token_type || 'bearer',
         expires_in: data.expires_in,
       };
-    } catch (error) {
-      console.error('Instagram token exchange error:', error);
-      throw new Error(
-        `Failed to exchange code for tokens: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Instagram token exchange');
   }
 
   /**
@@ -234,15 +278,23 @@ export class InstagramOAuthService {
       fb_exchange_token: shortLivedToken,
     });
 
-    try {
+    return this.retryApiCall(async () => {
       const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
         cache: 'no-store',
+        headers: {
+          'User-Agent': 'Instagram-OAuth-Client/1.0',
+        },
       });
 
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
+        
         throw new Error(
           data.error?.message || `Long-lived token exchange failed: ${response.status}`
         );
@@ -253,12 +305,7 @@ export class InstagramOAuthService {
         token_type: data.token_type || 'bearer',
         expires_in: data.expires_in, // 5184000 seconds = 60 days
       };
-    } catch (error) {
-      console.error('Instagram long-lived token error:', error);
-      throw new Error(
-        `Failed to get long-lived token: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Instagram long-lived token exchange');
   }
 
   /**
@@ -279,15 +326,28 @@ export class InstagramOAuthService {
       fb_exchange_token: token,
     });
 
-    try {
+    return this.retryApiCall(async () => {
       const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
         cache: 'no-store',
+        headers: {
+          'User-Agent': 'Instagram-OAuth-Client/1.0',
+        },
       });
 
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        // Handle rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
+        
+        // Handle specific refresh errors
+        if (data.error?.code === 190) {
+          throw new Error('Token has expired and cannot be refreshed. Please reconnect your Instagram account.');
+        }
+        
         throw new Error(
           data.error?.message || `Token refresh failed: ${response.status}`
         );
@@ -298,12 +358,7 @@ export class InstagramOAuthService {
         token_type: data.token_type || 'bearer',
         expires_in: data.expires_in,
       };
-    } catch (error) {
-      console.error('Instagram token refresh error:', error);
-      throw new Error(
-        `Failed to refresh token: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Instagram token refresh');
   }
 
   /**
@@ -314,25 +369,39 @@ export class InstagramOAuthService {
    * @throws Error if request fails
    */
   async getAccountInfo(accessToken: string): Promise<InstagramAccountInfo> {
-    try {
+    return this.retryApiCall(async () => {
       // Get user ID
       const meResponse = await fetch(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`, {
         cache: 'no-store',
+        headers: {
+          'User-Agent': 'Instagram-OAuth-Client/1.0',
+        },
       });
       const meData = await meResponse.json();
 
       if (!meResponse.ok || meData.error) {
+        if (meResponse.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
         throw new Error(meData.error?.message || 'Failed to get user info');
       }
 
       // Get user's pages with Instagram Business accounts
       const pagesResponse = await fetch(
         `${FACEBOOK_GRAPH_URL}/me/accounts?fields=id,name,instagram_business_account{id,username}&access_token=${accessToken}`,
-        { cache: 'no-store' }
+        { 
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/1.0',
+          },
+        }
       );
       const pagesData = await pagesResponse.json();
 
       if (!pagesResponse.ok || pagesData.error) {
+        if (pagesResponse.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
         throw new Error(pagesData.error?.message || 'Failed to get pages');
       }
 
@@ -341,12 +410,7 @@ export class InstagramOAuthService {
         access_token: accessToken,
         pages: pagesData.data || [],
       };
-    } catch (error) {
-      console.error('Instagram get account info error:', error);
-      throw new Error(
-        `Failed to get account info: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Instagram account info');
   }
 
   /**
@@ -378,25 +442,28 @@ export class InstagramOAuthService {
     follows_count: number;
     media_count: number;
   }> {
-    try {
+    return this.retryApiCall(async () => {
       const response = await fetch(
         `${FACEBOOK_GRAPH_URL}/${igBusinessId}?fields=id,username,name,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`,
-        { cache: 'no-store' }
+        { 
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/1.0',
+          },
+        }
       );
 
       const data = await response.json();
 
       if (!response.ok || data.error) {
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
         throw new Error(data.error?.message || 'Failed to get Instagram account details');
       }
 
       return data;
-    } catch (error) {
-      console.error('Instagram get account details error:', error);
-      throw new Error(
-        `Failed to get account details: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    }, 'Instagram account details');
   }
 
   /**

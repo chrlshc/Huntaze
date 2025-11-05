@@ -2,11 +2,13 @@
  * Instagram OAuth Init Endpoint
  * 
  * Initiates Facebook OAuth flow for Instagram Business/Creator accounts
- * Generates state for CSRF protection and redirects to Facebook OAuth
+ * Requires user authentication and uses secure state management
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/auth/getUserFromRequest';
+import { oauthStateManager } from '@/lib/oauth/stateManager';
+import { handleOAuthError } from '@/lib/oauth/errorHandler';
 
 // Force dynamic rendering to avoid build-time evaluation
 export const dynamic = 'force-dynamic';
@@ -14,41 +16,33 @@ export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
+    // Require user authentication
+    const user = await requireAuth(request);
+
     // Check OAuth credentials at runtime
     if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET || !process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI) {
       console.warn('Instagram OAuth credentials not configured');
-      const errorUrl = new URL('/platforms/connect/instagram', request.url);
-      errorUrl.searchParams.set('error', 'oauth_not_configured');
-      errorUrl.searchParams.set('message', 'Instagram OAuth is not configured. Please contact support.');
-      return NextResponse.redirect(errorUrl);
+      throw new Error('Instagram OAuth credentials not configured. Please contact support.');
     }
 
     // Lazy import to avoid build-time instantiation
-    const { instagramOAuth } = await import('@/lib/services/instagramOAuth');
+    const { InstagramOAuthService } = await import('@/lib/services/instagramOAuth');
+    const instagramOAuth = new InstagramOAuthService();
     
-    // Generate authorization URL with state
-    const { url, state } = instagramOAuth.getAuthorizationUrl();
+    // Generate secure state and store in database
+    const state = await oauthStateManager.storeState(user.id, 'instagram', 10);
 
-    // Store state in cookie for CSRF validation
-    const cookieStore = await cookies();
-    cookieStore.set('instagram_oauth_state', state, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 600, // 10 minutes
-      path: '/',
-    });
+    // Generate authorization URL with state
+    const { url } = await instagramOAuth.getAuthorizationUrl();
+    
+    // Add state to URL
+    const authUrl = new URL(url);
+    authUrl.searchParams.set('state', state);
 
     // Redirect to Facebook OAuth
-    return NextResponse.redirect(url);
+    return Response.redirect(authUrl.toString());
   } catch (error) {
     console.error('Instagram OAuth init error:', error);
-    
-    // Redirect to error page
-    const errorUrl = new URL('/platforms/connect/instagram', request.url);
-    errorUrl.searchParams.set('error', 'oauth_init_failed');
-    errorUrl.searchParams.set('message', error instanceof Error ? error.message : 'Unknown error');
-    
-    return NextResponse.redirect(errorUrl);
+    return handleOAuthError(error as Error, request, 'instagram');
   }
 }

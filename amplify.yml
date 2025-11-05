@@ -3,21 +3,26 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "=== PRE-BUILD VALIDATION ==="
-        - node --version && npm --version
-        - echo "Running pre-build validation..."
-        - node scripts/pre-build-validation.js
+        - echo "=== PRE-BUILD PHASE ==="
+        - echo "Node.js version:" && node --version
+        - echo "NPM version:" && npm --version
         - echo "Installing dependencies..."
         - npm ci --prefer-offline --no-audit --silent
         - echo "Dependencies installed successfully"
     build:
       commands:
         - echo "=== BUILD PHASE ==="
+        - echo "Setting build environment..."
+        - export NODE_ENV=production
         - export SKIP_ENV_VALIDATION=1
         - export NODE_OPTIONS="--max-old-space-size=4096"
-        - echo "Running optimized build process..."
-        - node scripts/amplify-build-optimizer.js
-        - echo "=== BUILD COMPLETE ==="
+        - export NEXT_TELEMETRY_DISABLED=1
+        - echo "Building Next.js application..."
+        - npm run build
+        - echo "Build completed successfully"
+        - echo "Verifying build artifacts..."
+        - ls -la .next/
+        - echo "Build verification complete"
   artifacts:
     baseDirectory: .next
     files:

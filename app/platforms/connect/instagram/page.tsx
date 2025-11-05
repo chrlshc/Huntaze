@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function InstagramConnectPage() {
   const searchParams = useSearchParams();
@@ -194,6 +195,27 @@ export default function InstagramConnectPage() {
             >
               Learn how to convert your account
             </a>
+          </p>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="text-center space-y-2">
+          <div className="flex justify-center space-x-6 text-sm">
+            <Link
+              href="/platforms/connect/tiktok"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Connect TikTok
+            </Link>
+            <Link
+              href="/platforms/connect/reddit"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Connect Reddit
+            </Link>
+          </div>
+          <p className="text-xs text-gray-500">
+            🔒 Your credentials are encrypted and stored securely
           </p>
         </div>
       </div>

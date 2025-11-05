@@ -2,17 +2,17 @@
  * Instagram OAuth Callback Endpoint
  * 
  * Handles Facebook OAuth callback for Instagram Business/Creator accounts
- * - Validates state (CSRF protection)
- * - Exchanges code for tokens
- * - Converts to long-lived token (60 days)
- * - Validates Instagram Business account
- * - Stores in database
+ * - Requires user authentication
+ * - Validates state using secure database storage (CSRF protection)
+ * - Exchanges code for tokens using tokenManager
+ * - Comprehensive error handling
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/auth/getUserFromRequest';
 import { tokenManager } from '@/lib/services/tokenManager';
-import { oauthAccountsRepository } from '@/lib/db/repositories/oauthAccountsRepository';
-import { cookies } from 'next/headers';
+import { oauthStateManager } from '@/lib/oauth/stateManager';
+import { handleCallbackError, createSuccessRedirect } from '@/lib/oauth/errorHandler';
 
 // Force dynamic rendering to avoid build-time evaluation
 export const dynamic = 'force-dynamic';
@@ -28,36 +28,31 @@ export async function GET(request: NextRequest) {
   try {
     // Handle OAuth errors (user denied, etc.)
     if (error) {
-      const errorUrl = new URL('/platforms/connect/instagram', request.url);
-      errorUrl.searchParams.set('error', error);
-      errorUrl.searchParams.set('message', errorDescription || 'Authorization failed');
-      return NextResponse.redirect(errorUrl);
+      return handleCallbackError(error, request, 'instagram', errorDescription || undefined);
     }
 
     // Validate required parameters
     if (!code || !state) {
-      const errorUrl = new URL('/platforms/connect/instagram', request.url);
-      errorUrl.searchParams.set('error', 'invalid_request');
-      errorUrl.searchParams.set('message', 'Missing code or state parameter');
-      return NextResponse.redirect(errorUrl);
+      return handleCallbackError('missing_code', request, 'instagram');
     }
 
-    // Validate state (CSRF protection)
-    const cookieStore = await cookies();
-    const storedState = cookieStore.get('instagram_oauth_state')?.value;
+    // Require user authentication
+    const user = await requireAuth(request);
+
+    // Validate state using database (CSRF protection)
+    const isValidState = await oauthStateManager.validateAndConsumeState(
+      state,
+      user.id,
+      'instagram'
+    );
     
-    if (!storedState || storedState !== state) {
-      const errorUrl = new URL('/platforms/connect/instagram', request.url);
-      errorUrl.searchParams.set('error', 'invalid_state');
-      errorUrl.searchParams.set('message', 'State validation failed. Please try again.');
-      return NextResponse.redirect(errorUrl);
+    if (!isValidState) {
+      return handleCallbackError('invalid_state', request, 'instagram');
     }
-
-    // Clear state cookie
-    cookieStore.delete('instagram_oauth_state');
 
     // Lazy import to avoid build-time instantiation
-    const { instagramOAuth } = await import('@/lib/services/instagramOAuth');
+    const { InstagramOAuthService } = await import('@/lib/services/instagramOAuth');
+    const instagramOAuth = new InstagramOAuthService();
 
     // Exchange code for short-lived token
     const shortLivedTokens = await instagramOAuth.exchangeCodeForTokens(code);
@@ -70,13 +65,7 @@ export async function GET(request: NextRequest) {
 
     // Validate that user has at least one Instagram Business account
     if (!instagramOAuth.hasInstagramBusinessAccount(accountInfo.pages)) {
-      const errorUrl = new URL('/platforms/connect/instagram', request.url);
-      errorUrl.searchParams.set('error', 'no_business_account');
-      errorUrl.searchParams.set(
-        'message',
-        'No Instagram Business or Creator account found. Please convert your Instagram account to a Business or Creator account and link it to a Facebook Page.'
-      );
-      return NextResponse.redirect(errorUrl);
+      return handleCallbackError('no_business_account', request, 'instagram');
     }
 
     // Get the first page with Instagram Business account
@@ -94,17 +83,13 @@ export async function GET(request: NextRequest) {
       longLivedToken.access_token
     );
 
-    // TODO: Get user ID from session/JWT
-    // For now, using a placeholder - this should come from authenticated user
-    const userId = 1; // Replace with actual user ID from session
-
     // Calculate expiry date (60 days from now)
     const expiresAt = new Date();
     expiresAt.setSeconds(expiresAt.getSeconds() + longLivedToken.expires_in);
 
-    // Store tokens in database
+    // Store tokens using tokenManager (encrypted)
     await tokenManager.storeTokens({
-      userId,
+      userId: user.id,
       provider: 'instagram',
       openId: accountInfo.user_id,
       tokens: {
@@ -127,21 +112,10 @@ export async function GET(request: NextRequest) {
     });
 
     // Redirect to success page
-    const successUrl = new URL('/platforms/connect/instagram', request.url);
-    successUrl.searchParams.set('success', 'true');
-    successUrl.searchParams.set('username', igBusinessAccount.username);
-    
-    return NextResponse.redirect(successUrl);
+    return createSuccessRedirect(request, 'instagram', igBusinessAccount.username);
   } catch (error) {
     console.error('Instagram OAuth callback error:', error);
-    
-    const errorUrl = new URL('/platforms/connect/instagram', request.url);
-    errorUrl.searchParams.set('error', 'callback_failed');
-    errorUrl.searchParams.set(
-      'message',
-      error instanceof Error ? error.message : 'Failed to complete authorization'
-    );
-    
-    return NextResponse.redirect(errorUrl);
+    return handleCallbackError('callback_failed', request, 'instagram', 
+      error instanceof Error ? error.message : undefined);
   }
 }
