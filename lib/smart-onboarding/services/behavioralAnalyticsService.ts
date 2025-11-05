@@ -25,7 +25,8 @@ import {
 } from '../types';
 import { TimeSeriesRepository } from '../repositories/base';
 import { smartOnboardingCache } from '../config/redis';
-import { WEBSOCKET_CHANNELS, PERFORMANCE_THRESHOLDS } from '../config/database';
+import { PERFORMANCE_THRESHOLDS } from '../config/database';
+import { WEBSOCKET_CHANNELS } from '../config/redis';
 
 // Behavior Events Repository
 class BehaviorEventsRepository extends TimeSeriesRepository<BehaviorEvent> {
@@ -970,3 +971,6 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
     return 0.5;
   }
 }
+// Export service instance
+export const behavioralAnalyticsService = new BehavioralAnalyticsServiceImpl();
+export default behavioralAnalyticsService;

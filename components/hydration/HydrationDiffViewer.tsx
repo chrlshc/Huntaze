@@ -344,4 +344,5 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
   );
 };
 
-export default HydrationDiffViewer;
+export default HydrationDiffViewer;export {
+ HydrationDiffViewer };
