@@ -356,7 +356,8 @@ export class BehaviorEventsRepository extends TimeSeriesRepository<BehaviorEvent
       }
     }
   }
-}// E
-xport repository instance
+}
+
+// Export repository instance
 export const behaviorEventsRepository = new BehaviorEventsRepository();
 export default behaviorEventsRepository;

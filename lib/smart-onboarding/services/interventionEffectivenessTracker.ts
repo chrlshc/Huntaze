@@ -635,7 +635,8 @@ export class InterventionEffectivenessTrackerImpl implements InterventionEffecti
       }
     }, this.aggregationInterval);
   }
-}// Exp
-ort service instance
+}
+
+// Export service instance
 export const interventionEffectivenessTracker = new InterventionEffectivenessTracker();
 export default interventionEffectivenessTracker;
