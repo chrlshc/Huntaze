@@ -42,7 +42,7 @@ export function HeroSection({ title, subtitle, ctaText, ctaHref, showVideo = tru
               {subtitle}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <Link
+              <a
                 href={ctaHref}
                 className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-lg font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
@@ -50,7 +50,7 @@ export function HeroSection({ title, subtitle, ctaText, ctaHref, showVideo = tru
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-              </Link>
+              </a>
               <Link
                 href="#features"
                 className="inline-flex items-center px-8 py-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-lg font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 border-2 border-gray-200 dark:border-gray-700 transition-all duration-200"
