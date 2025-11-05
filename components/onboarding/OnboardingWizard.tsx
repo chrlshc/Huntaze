@@ -20,6 +20,27 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Ordered list of steps for progress UI
+  const orderedSteps = [
+    'welcome',
+    'creator_assessment',
+    'goal_selection',
+    'first_platform',
+    'ai_configuration',
+    'additional_platforms',
+    'completion',
+  ] as const;
+
+  const stepTitles: Record<string, string> = {
+    welcome: 'Welcome',
+    creator_assessment: 'Assessment',
+    goal_selection: 'Goals',
+    first_platform: 'Connect Platform',
+    ai_configuration: 'Configure AI',
+    additional_platforms: 'More Platforms',
+    completion: 'Complete',
+  };
+
   useEffect(() => {
     loadProgress();
   }, [userId]);
@@ -92,12 +113,39 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
     );
   }
 
+  const currentStepIndex = Math.max(0, orderedSteps.indexOf(currentStep as any));
+  const stepsForTracker = orderedSteps.map((id, idx) => ({
+    id,
+    title: stepTitles[id] || id,
+    completed: completedSteps.includes(id) || idx < currentStepIndex,
+  }));
+
+  const handleBack = () => {
+    const prevIndex = Math.max(0, currentStepIndex - 1);
+    setCurrentStep(orderedSteps[prevIndex]);
+  };
+
+  const handleNext = () => {
+    // Default next completes current step to keep server state in sync when possible
+    handleStepComplete(currentStep);
+  };
+
+  const handleSkip = () => {
+    if (currentStep === 'additional_platforms') {
+      handleStepSkip('additional_platforms');
+    } else {
+      handleNext();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <ProgressTracker 
-          progress={progress}
-          completedSteps={completedSteps}
+        <ProgressTracker
+          steps={stepsForTracker}
+          currentStepIndex={currentStepIndex}
+          progressPercentage={progress || 0}
+          estimatedTimeRemaining={0}
         />
 
         <div className="bg-white rounded-2xl shadow-xl p-8 mt-8">
@@ -166,10 +214,15 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
           )}
         </div>
 
-        <StepNavigation 
-          currentStep={currentStep}
-          onBack={() => {/* Handle back navigation */}}
-          canGoBack={completedSteps.length > 0}
+        <StepNavigation
+          canGoBack={currentStepIndex > 0}
+          canGoNext={currentStepIndex < orderedSteps.length - 1}
+          canSkip={currentStep === 'additional_platforms'}
+          isLastStep={currentStepIndex >= orderedSteps.length - 1}
+          onBack={handleBack}
+          onNext={handleNext}
+          onSkip={handleSkip}
+          nextLabel={currentStepIndex >= orderedSteps.length - 2 ? 'Complete' : 'Continue'}
         />
       </div>
     </div>
