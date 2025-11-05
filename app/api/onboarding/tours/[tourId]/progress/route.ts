@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tourId: string } }
+  context: { params: Promise<{ tourId: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url);

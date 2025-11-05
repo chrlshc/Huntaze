@@ -240,7 +240,7 @@ export class ReportGenerationService {
     // Placeholder: In production, use a PDF library
     const text = `
 Performance Report
-Generated: ${<SafeDateRenderer date={new Date()} format="full" />}
+Generated: ${new Date().toLocaleDateString()}
 
 Total Followers: ${metrics.totalFollowers}
 Total Engagement: ${metrics.totalEngagement}

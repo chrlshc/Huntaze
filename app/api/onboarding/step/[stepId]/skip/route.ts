@@ -4,7 +4,7 @@ import { verifyAuth } from '@/lib/auth/jwt';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { stepId: string } }
+  context: { params: Promise<{ stepId: string }> }
 ) {
   try {
     const authResult = await verifyAuth(request);

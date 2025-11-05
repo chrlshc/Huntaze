@@ -8,7 +8,7 @@ import { verifyAuth } from '@/lib/auth/jwt';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify authentication

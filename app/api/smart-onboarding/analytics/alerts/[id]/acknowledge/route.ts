@@ -3,7 +3,7 @@ import { behavioralAnalyticsService } from '@/lib/smart-onboarding/services/beha
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const alertId = params.id;
