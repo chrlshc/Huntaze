@@ -351,4 +351,6 @@ class OnboardingProfileRepository {
   }
 }
 
-export default new OnboardingProfileRepository();
+// Provide both named and default exports for flexibility
+export const onboardingProfileRepository = new OnboardingProfileRepository();
+export default onboardingProfileRepository;

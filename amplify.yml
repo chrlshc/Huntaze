@@ -3,16 +3,26 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "FRONTEND PREBUILD STARTING"
-        - node -v && npm -v
-        - npm ci
+        - echo "=== PRE-BUILD VALIDATION ==="
+        - node --version && npm --version
+        - echo "Running pre-build validation..."
+        - node scripts/pre-build-validation.js
+        - echo "Installing dependencies..."
+        - npm ci --prefer-offline --no-audit --silent
+        - echo "Dependencies installed successfully"
     build:
       commands:
-        - echo "FRONTEND BUILD STARTING"
+        - echo "=== BUILD PHASE ==="
         - export SKIP_ENV_VALIDATION=1
-        - npx next build
-        - ls -la .next
+        - export NODE_OPTIONS="--max-old-space-size=4096"
+        - echo "Running optimized build process..."
+        - node scripts/amplify-build-optimizer.js
+        - echo "=== BUILD COMPLETE ==="
   artifacts:
     baseDirectory: .next
     files:
       - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ProgressTracker } from './ProgressTracker';
-import { StepNavigation } from './StepNavigation';
+import ProgressTracker from './ProgressTracker';
+import StepNavigation from './StepNavigation';
 import { CreatorAssessment } from './CreatorAssessment';
 import { GoalSelection } from './GoalSelection';
 import { PlatformConnection } from './PlatformConnection';
