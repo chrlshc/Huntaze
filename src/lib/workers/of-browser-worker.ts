@@ -12,11 +12,19 @@ export interface SendResult {
 
 async function loadChromium() {
   try {
-    // Prefer playwright-core; fallback to playwright
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const pw = (await import('playwright-core')).chromium || (await import('playwright')).chromium;
-    return pw;
-  } catch (e) {
+    // Use indirection to avoid static resolution during bundling
+    // eslint-disable-next-line no-new-func
+    const dynImport: (m: string) => Promise<any> = new Function('m', 'return import(m)') as any;
+    try {
+      const core = await dynImport('playwright-core');
+      if (core?.chromium) return core.chromium;
+    } catch {}
+    try {
+      const full = await dynImport('playwright');
+      if (full?.chromium) return full.chromium;
+    } catch {}
+    return null;
+  } catch {
     return null;
   }
 }

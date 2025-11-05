@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { SafeDateRenderer } from '@/components/hydration';
+import { SafeDateRenderer, SSRDataProvider } from '@/components/hydration';
 import { UnifiedMetricsCard } from '@/components/analytics/UnifiedMetricsCard';
 import { PlatformComparisonChart } from '@/components/analytics/PlatformComparisonChart';
 import { TopContentGrid } from '@/components/analytics/TopContentGrid';
@@ -50,6 +50,7 @@ export default function AdvancedAnalyticsPage() {
   };
 
   return (
+    <SSRDataProvider hydrationId="analytics-advanced">
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -123,5 +124,6 @@ export default function AdvancedAnalyticsPage() {
         </div>
       </div>
     </div>
+    </SSRDataProvider>
   );
 }

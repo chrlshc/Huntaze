@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChartBarIcon,
   UserGroupIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   CurrencyDollarIcon,
   ClockIcon,
   CheckCircleIcon,
@@ -253,7 +253,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
               className="bg-white rounded-lg shadow p-6"
             >
               <div className="flex items-center">
-                <TrendingUpIcon className="w-8 h-8 text-blue-600" />
+                <ArrowTrendingUpIcon className="w-8 h-8 text-blue-600" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Engagement Increase</p>
                   <p className="text-2xl font-bold text-gray-900">

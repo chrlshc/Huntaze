@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { CheckCircle, AlertCircle, Activity, Shield, Database, Zap } from 'lucide-react'
-import { SafeDateRenderer } from '@/components/hydration';
+import { SafeDateRenderer, SSRDataProvider } from '@/components/hydration';
 
 
 export const metadata: Metadata = {
@@ -67,7 +67,8 @@ const getStatusBgColor = (status: string) => {
 
 export default function StatusPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pt-24 pb-12">
+    <SSRDataProvider hydrationId="status-page">
+      <div className="min-h-screen bg-white dark:bg-gray-900 pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -177,6 +178,7 @@ export default function StatusPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </SSRDataProvider>
   )
 }
