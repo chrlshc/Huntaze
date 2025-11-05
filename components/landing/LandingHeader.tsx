@@ -52,12 +52,13 @@ export function LandingHeader({ logoSrc, showAuthButtons = true }: LandingHeader
               >
                 Login
               </Link>
-              <Link
+              <a
                 href="/auth/register"
                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors"
+                onClick={(e) => { try { /* fallback full nav */ } catch {} }}
               >
                 Sign Up
-              </Link>
+              </a>
             </nav>
           )}
           
@@ -91,13 +92,13 @@ export function LandingHeader({ logoSrc, showAuthButtons = true }: LandingHeader
             >
               Login
             </Link>
-            <Link
+            <a
               href="/auth/register"
               className="block px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-center transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Sign Up
-            </Link>
+            </a>
           </nav>
         </div>
       )}
