@@ -271,6 +271,6 @@ export function SafeDelayedContent({
     </SafeRandomContent>
   );
 }
-// Expor
-t par défaut
+
+// Export par défaut
 export default SafeRandomContent;
