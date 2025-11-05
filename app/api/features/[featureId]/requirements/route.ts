@@ -4,7 +4,7 @@ import { verifyAuth } from '@/lib/auth/jwt';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { featureId: string } }
+  context: { params: Promise<{ featureId: string }> }
 ) {
   try {
     const authResult = await verifyAuth(request);

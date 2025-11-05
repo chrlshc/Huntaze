@@ -62,28 +62,19 @@ const nextConfig: NextConfig = {
     unoptimized: isExport ? true : false,
   },
 
-  // CSS and build perf
-  experimental: {
-    optimizeCss: true,
-    // Disable optimizePackageImports to avoid dev chunk errors with RSC boundaries
-    // optimizePackageImports: ['framer-motion', 'lucide-react'],
-    
-    // Turbopack for faster development builds (Next.js 15)
-    // Note: Enable with `next dev --turbo` command
-    // turbo: {}, // Uncomment to enable Turbopack features
-  },
+  // Removed experimental features for stable builds
   
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // Allow local builds to proceed despite TS/ESLint issues (useful during UI iteration)
+  // Strict type checking for production builds
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
 

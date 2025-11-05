@@ -237,6 +237,34 @@ interface SafeDelayedContentProps {
   className?: string;
 }
 
+function DelayedContentInner({
+  delay,
+  children,
+  fallback,
+  className
+}: {
+  delay: number;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+  className?: string;
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  if (!isVisible) {
+    return fallback ? <div className={className}>{fallback}</div> : null;
+  }
+
+  return <div className={className}>{children}</div>;
+}
+
 export function SafeDelayedContent({
   children,
   minDelay = 0,
@@ -245,29 +273,21 @@ export function SafeDelayedContent({
   fallback,
   className
 }: SafeDelayedContentProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
   return (
     <SafeRandomContent
       seed={seed}
       min={minDelay}
       max={maxDelay}
     >
-      {(delay) => {
-        useEffect(() => {
-          const timer = setTimeout(() => {
-            setIsVisible(true);
-          }, delay);
-
-          return () => clearTimeout(timer);
-        }, [delay]);
-
-        if (!isVisible) {
-          return fallback ? <div className={className}>{fallback}</div> : null;
-        }
-
-        return <div className={className}>{children}</div>;
-      }}
+      {(delay) => (
+        <DelayedContentInner
+          delay={delay}
+          fallback={fallback}
+          className={className}
+        >
+          {children}
+        </DelayedContentInner>
+      )}
     </SafeRandomContent>
   );
 }
