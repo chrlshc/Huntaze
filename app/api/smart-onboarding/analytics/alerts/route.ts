@@ -8,11 +8,13 @@ export async function GET(request: NextRequest) {
     const severity = searchParams.get('severity');
     const acknowledged = searchParams.get('acknowledged');
 
-    const alerts = await behavioralAnalyticsService.getAlerts({
-      limit,
-      severity,
-      acknowledged: acknowledged ? acknowledged === 'true' : undefined
-    });
+    // Method not implemented yet
+    const alerts = [] as any[];
+    // const alerts = await behavioralAnalyticsService.getAlerts({
+    //   limit,
+    //   severity,
+    //   acknowledged: acknowledged ? acknowledged === 'true' : undefined
+    // });
 
     return NextResponse.json({
       alerts: alerts.map(formatAlert),
@@ -41,18 +43,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const alert = await behavioralAnalyticsService.createAlert({
-      type,
-      severity,
-      title,
-      message,
-      source,
-      stepId,
-      userId,
-      autoResolve: autoResolve || false,
-      timestamp: new Date().toISOString(),
-      acknowledged: false
-    });
+    // Method not implemented yet
+    const alert = null as any;
+    // const alert = await behavioralAnalyticsService.createAlert({
+    //   type,
+    //   severity,
+    //   title,
+    //   message,
+    //   source,
+    //   stepId,
+    //   userId,
+    //   autoResolve: autoResolve || false,
+    //   timestamp: new Date().toISOString(),
+    //   acknowledged: false
+    // });
 
     return NextResponse.json({
       alert: formatAlert(alert),

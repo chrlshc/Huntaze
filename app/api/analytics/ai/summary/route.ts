@@ -15,7 +15,7 @@ async function handler(req: NextRequest) {
   return NextResponse.json(s, { headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
 }
 
-export const GET = withMonitoring('analytics.ai.summary.get', handler, {
+export const GET = withMonitoring('analytics.ai.summary.get', handler as any, {
   domain: 'analytics',
   feature: 'summary_get',
   getUserId: (req) => (req.headers.get('x-user-id') || undefined),

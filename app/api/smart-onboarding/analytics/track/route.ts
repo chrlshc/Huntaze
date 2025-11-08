@@ -9,7 +9,7 @@ import { createApiResponse } from '@/lib/smart-onboarding/repositories/base';
 import { RATE_LIMITS } from '@/lib/smart-onboarding/config/database';
 import { smartOnboardingCache } from '@/lib/smart-onboarding/config/redis';
 
-const analyticsService = new BehavioralAnalyticsServiceImpl(db);
+const analyticsService = new BehavioralAnalyticsServiceImpl(db.getPool());
 
 export async function POST(request: NextRequest) {
   try {

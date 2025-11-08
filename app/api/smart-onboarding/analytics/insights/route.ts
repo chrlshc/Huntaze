@@ -8,7 +8,7 @@ import { db } from '@/lib/db';
 import { createApiResponse } from '@/lib/smart-onboarding/repositories/base';
 import { smartOnboardingCache } from '@/lib/smart-onboarding/config/redis';
 
-const analyticsService = new BehavioralAnalyticsServiceImpl(db);
+const analyticsService = new BehavioralAnalyticsServiceImpl(db.getPool());
 
 // Get behavioral insights for a user
 export async function GET(request: NextRequest) {

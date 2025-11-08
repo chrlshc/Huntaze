@@ -71,10 +71,10 @@ export async function GET(request: NextRequest) {
           services: errorBudgetStatuses.length,
           statuses: errorBudgetStatuses,
           summary: {
-            healthy: errorBudgetStatuses.filter(s => s.status === 'HEALTHY').length,
-            warning: errorBudgetStatuses.filter(s => s.status === 'WARNING').length,
-            critical: errorBudgetStatuses.filter(s => s.status === 'CRITICAL').length,
-            frozen: errorBudgetStatuses.filter(s => s.status === 'FROZEN').length
+            healthy: errorBudgetStatuses.filter(s => s?.status === 'HEALTHY').length,
+            warning: errorBudgetStatuses.filter(s => s?.status === 'WARNING').length,
+            critical: errorBudgetStatuses.filter(s => s?.status === 'CRITICAL').length,
+            frozen: errorBudgetStatuses.filter(s => s?.status === 'FROZEN').length
           }
         }
       }
@@ -96,9 +96,9 @@ export async function GET(request: NextRequest) {
           averageSwitchTime: calculateAverageSwitchTime(blueGreenDeployments)
         },
         errorBudget: {
-          averageBudgetRemaining: errorBudgetStatuses.reduce((sum, s) => sum + s.errorBudget, 0) / Math.max(1, errorBudgetStatuses.length),
-          servicesAtRisk: errorBudgetStatuses.filter(s => s.errorBudget < 0.25).length,
-          deploymentsBlocked: errorBudgetStatuses.filter(s => !s.deploymentAllowed).length
+          averageBudgetRemaining: errorBudgetStatuses.reduce((sum, s) => sum + (s?.errorBudget || 0), 0) / Math.max(1, errorBudgetStatuses.length),
+          servicesAtRisk: errorBudgetStatuses.filter(s => s && s.errorBudget < 0.25).length,
+          deploymentsBlocked: errorBudgetStatuses.filter(s => s && !s.deploymentAllowed).length
         }
       };
     }
@@ -107,8 +107,8 @@ export async function GET(request: NextRequest) {
     const hasFailedDeployments = [...canaryDeployments, ...blueGreenDeployments]
       .some(d => d.stage === 'FAILED' && (Date.now() - d.startTime) < 3600000); // Failed in last hour
     
-    const hasFrozenServices = errorBudgetStatuses.some(s => s.status === 'FROZEN');
-    const hasCriticalServices = errorBudgetStatuses.some(s => s.status === 'CRITICAL');
+    const hasFrozenServices = errorBudgetStatuses.some(s => s?.status === 'FROZEN');
+    const hasCriticalServices = errorBudgetStatuses.some(s => s?.status === 'CRITICAL');
 
     if (hasFailedDeployments || hasFrozenServices) {
       response.status = 'critical';

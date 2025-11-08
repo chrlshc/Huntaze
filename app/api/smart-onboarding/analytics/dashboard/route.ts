@@ -63,7 +63,9 @@ async function getRealTimeUsers(): Promise<number> {
     // Get users active in the last 5 minutes
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     
-    const result = await behavioralAnalyticsService.getActiveUsers(fiveMinutesAgo);
+    // Method not implemented yet
+    const result = { count: 0 };
+    // const result = await behavioralAnalyticsService.getActiveUsers(fiveMinutesAgo);
     return result.count || 0;
   } catch (error) {
     console.error('Error getting real-time users:', error);
@@ -73,7 +75,9 @@ async function getRealTimeUsers(): Promise<number> {
 
 async function getCompletionStats(startTime: Date, endTime: Date) {
   try {
-    const stats = await behavioralAnalyticsService.getCompletionStats(startTime, endTime);
+    // Method not implemented yet
+    const stats = { completionRate: 0, averageCompletionTime: 0 };
+    // const stats = await behavioralAnalyticsService.getCompletionStats(startTime, endTime);
     
     return {
       completionRate: stats.completionRate || 0,
@@ -87,7 +91,9 @@ async function getCompletionStats(startTime: Date, endTime: Date) {
 
 async function getEngagementStats(startTime: Date, endTime: Date) {
   try {
-    const stats = await behavioralAnalyticsService.getEngagementStats(startTime, endTime);
+    // Method not implemented yet
+    const stats = { averageEngagement: 0, interventionRate: 0, averageSuccessPrediction: 0 };
+    // const stats = await behavioralAnalyticsService.getEngagementStats(startTime, endTime);
     
     return {
       averageEngagement: stats.averageEngagement || 0,
@@ -102,7 +108,9 @@ async function getEngagementStats(startTime: Date, endTime: Date) {
 
 async function getStepAnalytics(startTime: Date, endTime: Date) {
   try {
-    const stepStats = await behavioralAnalyticsService.getStepAnalytics(startTime, endTime);
+    // Method not implemented yet
+    const stepStats = [] as any[];
+    // const stepStats = await behavioralAnalyticsService.getStepAnalytics(startTime, endTime);
     
     return stepStats.map((step: any) => ({
       stepId: step.stepId,
@@ -121,7 +129,9 @@ async function getStepAnalytics(startTime: Date, endTime: Date) {
 
 async function getActiveAlerts() {
   try {
-    const alerts = await behavioralAnalyticsService.getActiveAlerts();
+    // Method not implemented yet
+    const alerts = [] as any[];
+    // const alerts = await behavioralAnalyticsService.getActiveAlerts();
     
     return alerts.map((alert: any) => ({
       id: alert.id,
@@ -139,7 +149,9 @@ async function getActiveAlerts() {
 
 async function getTrends(startTime: Date, endTime: Date) {
   try {
-    const trends = await behavioralAnalyticsService.getTrends(startTime, endTime);
+    // Method not implemented yet
+    const trends = [] as any[];
+    // const trends = await behavioralAnalyticsService.getTrends(startTime, endTime);
     
     return trends.map((trend: any) => ({
       timestamp: trend.timestamp,

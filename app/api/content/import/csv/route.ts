@@ -6,7 +6,7 @@ import {
   CsvMapping 
 } from '@/lib/services/csvImporter';
 import { createContentItem } from '@/lib/db/repositories/contentItemsRepository';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 /**
  * POST /api/content/import/csv
@@ -15,15 +15,15 @@ import { verifyAuth } from '@/lib/auth/jwt';
 export async function POST(request: NextRequest) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.payload) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.payload.userId;
+    const userId = String(user.id);
     const body = await request.json();
     const { csvContent, mapping } = body;
 

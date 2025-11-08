@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
   const { AzureMultiAgentService } = await import('@/lib/services/azureMultiAgentService');
   
   // Initialize service as singleton
-  let multiAgentService: AzureMultiAgentService | null = null;
+  let multiAgentService: InstanceType<typeof AzureMultiAgentService> | null = null;
 
-  function getMultiAgentService(): AzureMultiAgentService {
+  function getMultiAgentService(): InstanceType<typeof AzureMultiAgentService> {
     if (!multiAgentService) {
       multiAgentService = new AzureMultiAgentService();
     }

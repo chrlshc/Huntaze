@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { onboardingEventsRepository } from '@/lib/db/repositories/onboardingEventsRepository';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.userId;
+    const userId = String(user.id);
     const body = await request.json();
     const { eventType, stepId, duration, metadata } = body;
 

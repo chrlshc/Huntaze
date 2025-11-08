@@ -15,7 +15,7 @@ export async function POST(
       );
     }
 
-    const { tourId } = params;
+    const { tourId } = await context.params;
 
     // Update or create tour progress as completed
     await db.query(

@@ -1,22 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { featureUnlocker } from '@/lib/services/featureUnlocker';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ featureId: string }> }
 ) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.userId;
-    const { featureId } = params;
+    const userId = String(user.id);
+    const resolvedParams = await context.params;
+    const { featureId } = resolvedParams;
 
     // Get feature
     const feature = featureUnlocker.getFeature(featureId);

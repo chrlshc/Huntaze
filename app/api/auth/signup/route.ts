@@ -12,7 +12,7 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const limited = rateLimit(request, { windowMs: 60_000, max: 10 });
+    const limited = await rateLimit(request, { windowMs: 60_000, max: 10 });
     if (!limited.ok) return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 });
 
     let body: unknown;

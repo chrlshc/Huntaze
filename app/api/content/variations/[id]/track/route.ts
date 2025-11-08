@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 /**
  * POST /api/content/variations/:id/track
@@ -12,16 +12,17 @@ export async function POST(
 ) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.payload) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.payload.userId;
-    const variationId = params.id;
+    const userId = String(user.id);
+    const resolvedParams = await context.params;
+    const variationId = resolvedParams.id;
     const body = await request.json();
     const { eventType, metadata } = body;
 

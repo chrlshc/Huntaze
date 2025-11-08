@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { onboardingOrchestrator } from '@/lib/services/onboardingOrchestrator';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function POST(request: NextRequest) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.userId;
+    const userId = String(user.id);
 
     // Start onboarding
     const progress = await onboardingOrchestrator.startOnboarding(userId);
