@@ -42,10 +42,10 @@ export async function GET(request: NextRequest) {
 async function calculateROIAnalysis(startDate: Date, endDate: Date) {
   try {
     // Fetch smart onboarding metrics
-    const smartOnboardingMetrics = await interventionEffectivenessTracker.getSmartOnboardingMetrics(startDate, endDate);
+    const smartOnboardingMetrics = await (interventionEffectivenessTracker as any).getSmartOnboardingMetrics(startDate, endDate);
     
     // Fetch traditional onboarding baseline (could be from historical data or A/B test control group)
-    const traditionalOnboardingMetrics = await interventionEffectivenessTracker.getTraditionalOnboardingBaseline();
+    const traditionalOnboardingMetrics = await (interventionEffectivenessTracker as any).getTraditionalOnboardingBaseline();
 
     // Calculate improvements
     const completionRateIncrease = smartOnboardingMetrics.completionRate - traditionalOnboardingMetrics.completionRate;

@@ -135,13 +135,13 @@ async function fetchMetricsForPeriod(startTime: Date, endTime: Date) {
 
     return {
       activeUsers: activeUsers.count || 0,
-      completionRate: completionStats.completionRate || 0,
-      engagementScore: engagementStats.averageEngagement || 0,
-      averageResponseTime: performanceStats.averageResponseTime || 0,
-      interventionRate: engagementStats.interventionRate || 0,
-      successPrediction: engagementStats.averageSuccessPrediction || 0,
-      errorRate: errorStats.errorRate || 0,
-      sessionDuration: engagementStats.averageSessionDuration || 0
+      completionRate: completionStats.rate || 0,
+      engagementScore: (engagementStats as any).averageEngagement || 0,
+      averageResponseTime: (performanceStats as any).averageResponseTime || 0,
+      interventionRate: (engagementStats as any).interventionRate || 0,
+      successPrediction: (engagementStats as any).averageSuccessPrediction || 0,
+      errorRate: errorStats.rate || 0,
+      sessionDuration: (engagementStats as any).averageSessionDuration || 0
     };
   } catch (error) {
     console.error('Error fetching metrics for period:', error);
