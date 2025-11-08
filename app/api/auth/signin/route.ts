@@ -6,7 +6,7 @@ import { rateLimit } from '@/lib/rate-limit';
 export async function POST(request: NextRequest) {
   try {
     // Basic rate limit to reduce abuse of signin endpoint
-    const limited = rateLimit(request, { windowMs: 60_000, max: 10 });
+    const limited = await rateLimit(request, { windowMs: 60_000, max: 10 });
     if (!limited.ok) {
       return NextResponse.json({ error: 'Too many attempts, try later' }, { status: 429 });
     }

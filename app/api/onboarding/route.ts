@@ -13,4 +13,4 @@ async function handler(req: Request) {
   return NextResponse.json({ ok: true });
 }
 
-export const POST = withMonitoring('onboarding.save', handler);
+export const POST = withMonitoring('onboarding.save', handler as any);

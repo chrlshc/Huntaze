@@ -15,7 +15,7 @@ async function handler(req: NextRequest) {
   return NextResponse.json({ status: 'accepted', correlation, counts: { contents: contents.length, platforms: platforms.length } }, { status: 202, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
 }
 
-export const POST = withMonitoring('ai-team.publish', handler)
+export const POST = withMonitoring('ai-team.publish', handler as any)
 export const GET = POST
 export const HEAD = POST
 

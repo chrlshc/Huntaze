@@ -9,7 +9,7 @@ async function handler() {
   return NextResponse.json({ processed })
 }
 
-export const GET = withMonitoring('cron.tiktok-status', handler)
+export const GET = withMonitoring('cron.tiktok-status', handler as any)
 export const POST = GET
 export const HEAD = GET
 

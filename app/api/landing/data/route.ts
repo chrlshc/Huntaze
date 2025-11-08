@@ -33,6 +33,7 @@ async function landingDataHandler(request: NextRequest) {
 
 // Apply caching to the handler
 export const GET = cacheApiResponse(landingDataHandler, {
-  ...CacheConfigs.landingPage,
   keyGenerator: () => 'api:landing:data',
+  ttl: 1800,
+  tags: ['landing'],
 });

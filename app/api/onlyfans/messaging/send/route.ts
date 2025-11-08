@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Generate message ID
-    const messageId = onlyFansRateLimiterService.generateMessageId();
+    const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // 5. Send message via rate limiter service
     const result = await onlyFansRateLimiterService.sendMessage({

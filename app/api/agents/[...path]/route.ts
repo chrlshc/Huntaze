@@ -17,7 +17,7 @@ function authorized(req: NextRequest) {
   return !!raw && raw === token
 }
 
-async function handler(req: NextRequest, ctx: { params: { path?: string[] } }) {
+async function handler(req: NextRequest, ctx: { params: Promise<{ path?: string[] }> }) {
   if (!enabled()) return new NextResponse('Not Found', { status: 404, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
   if (!authorized(req)) return new NextResponse('Unauthorized', { status: 401, headers: { 'WWW-Authenticate': 'Bearer', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
 
@@ -29,7 +29,8 @@ async function handler(req: NextRequest, ctx: { params: { path?: string[] } }) {
   const base = process.env.AGENTS_API_URL || ''
   if (!base) return new NextResponse('Bad Gateway', { status: 502 })
 
-  const path = (ctx.params.path || []).join('/')
+  const params = await ctx.params;
+  const path = (params.path || []).join('/')
   const url = `${base.replace(/\/$/,'')}/${path}`
   const method = req.method
   const body = method === 'GET' || method === 'HEAD' ? undefined : await req.text()

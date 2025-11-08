@@ -6,7 +6,7 @@ import { rateLimit } from '@/lib/rate-limit';
 export async function POST(request: NextRequest) {
   try {
     // Basic write-rate limit
-    const limited = rateLimit(request, { windowMs: 60_000, max: 20 });
+    const limited = await rateLimit(request, { windowMs: 60_000, max: 20 });
     if (!limited.ok) return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
 
     const user = await getUserFromRequest(request);

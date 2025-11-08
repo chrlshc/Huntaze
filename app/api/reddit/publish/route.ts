@@ -134,22 +134,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Submit post to Reddit
-    const result = await redditPublish.submit(
-      {
-        subreddit,
-        title,
-        kind,
-        url,
-        text,
+    // Submit post to Reddit based on kind
+    let result;
+    if (kind === 'link' && url) {
+      result = await redditPublish.submitLink(subreddit, title, url, accessToken, {
         nsfw,
         spoiler,
         sendReplies,
         flairId,
         flairText,
-      },
-      accessToken
-    );
+      });
+    } else if (kind === 'self' && text) {
+      result = await redditPublish.submitPost(subreddit, title, text, accessToken, {
+        nsfw,
+        spoiler,
+        sendReplies,
+        flairId,
+        flairText,
+      });
+    } else {
+      return NextResponse.json(
+        {
+          error: {
+            code: 'INVALID_POST_TYPE',
+            message: 'Invalid post type or missing required fields',
+          },
+        },
+        { status: 400 }
+      );
+    }
 
     // Store post in database for tracking
     await redditPostsRepository.create({

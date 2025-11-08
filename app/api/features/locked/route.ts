@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { featureUnlocker } from '@/lib/services/featureUnlocker';
 import { featureUnlockRepository } from '@/lib/db/repositories/featureUnlockRepository';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.userId;
+    const userId = String(user.id);
 
     // Get locked feature IDs
     const lockedIds = await featureUnlockRepository.getLockedFeatures(userId);

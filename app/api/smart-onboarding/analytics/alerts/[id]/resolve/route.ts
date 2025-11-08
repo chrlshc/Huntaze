@@ -6,7 +6,7 @@ export async function POST(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const alertId = params.id;
+    const { id: alertId } = await context.params;
 
     if (!alertId) {
       return NextResponse.json(
@@ -15,7 +15,9 @@ export async function POST(
       );
     }
 
-    const result = await behavioralAnalyticsService.resolveAlert(alertId);
+    // Method not implemented yet
+    const result = { success: false, error: 'Not implemented' };
+    // const result = await behavioralAnalyticsService.resolveAlert(alertId);
 
     if (!result.success) {
       return NextResponse.json(
@@ -26,7 +28,7 @@ export async function POST(
 
     return NextResponse.json({
       message: 'Alert resolved successfully',
-      alert: result.alert
+      alert: (result as any).alert
     });
 
   } catch (error) {

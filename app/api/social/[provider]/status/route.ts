@@ -10,8 +10,9 @@ function readCookie(req: NextRequest, keys: string[]): string | undefined {
   return undefined;
 }
 
-export async function GET(request: NextRequest, context: { params: { provider: string } }) {
-  const provider = (context.params.provider || '').toLowerCase() as Provider;
+export async function GET(request: NextRequest, context: { params: Promise<{ provider: string }> }) {
+  const params = await context.params;
+  const provider = (params.provider || '').toLowerCase() as Provider;
   try {
     let connected = false;
     let hint: string | undefined;

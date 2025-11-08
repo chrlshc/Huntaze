@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Failed to start game day:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to start game day' },
+      { success: false, error: (error as Error).message || 'Failed to start game day' },
       { status: 500 }
     );
   }
@@ -131,7 +131,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error('Failed to abort game day:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to abort game day' },
+      { success: false, error: (error as Error).message || 'Failed to abort game day' },
       { status: 500 }
     );
   }

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { onboardingEventsRepository } from '@/lib/db/repositories/onboardingEventsRepository';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     // Check if user is admin (you'd implement this check)
     // For now, we'll allow any authenticated user to see their own analytics
-    const userId = authResult.userId;
+    const userId = String(user.id);
 
     // Get query params for date range
     const { searchParams } = new URL(request.url);

@@ -16,7 +16,7 @@ export async function GET(
       );
     }
 
-    const { tourId } = params;
+    const { tourId } = await context.params;
 
     // Get tour progress from database
     const result = await db.query(
