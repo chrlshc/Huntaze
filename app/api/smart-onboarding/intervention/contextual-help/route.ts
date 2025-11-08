@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Contextual help API error:', error);
+    logger.error('Contextual help API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -165,7 +165,7 @@ export async function PUT(request: NextRequest) {
       }
     });
   } catch (error) {
-    logger.error('Help effectiveness tracking API error:', error);
+    logger.error('Help effectiveness tracking API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -241,7 +241,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Contextual help GET API error:', error);
+    logger.error('Contextual help GET API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in adaptive integration:', error);
     return NextResponse.json(
-      { error: 'Failed to process integration request', details: error.message },
+      { error: 'Failed to process integration request', details: (error as Error).message },
       { status: 500 }
     );
   }

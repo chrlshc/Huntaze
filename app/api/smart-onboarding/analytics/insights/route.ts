@@ -83,9 +83,9 @@ export async function POST(request: NextRequest) {
     // Filter by severity threshold if specified
     let filteredMetrics = struggleMetrics;
     if (severityThreshold !== 'low') {
-      const severityLevels = { low: 0, medium: 1, high: 2, critical: 3 };
-      const threshold = severityLevels[severityThreshold] || 1;
-      const currentLevel = severityLevels[struggleMetrics.severity] || 0;
+      const severityLevels: Record<string, number> = { low: 0, medium: 1, high: 2, critical: 3 };
+      const threshold = severityLevels[severityThreshold as string] || 1;
+      const currentLevel = severityLevels[struggleMetrics.severity as string] || 0;
       
       if (currentLevel < threshold) {
         filteredMetrics = {
@@ -111,7 +111,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate intervention suggestions if struggle detected
-    let interventionSuggestions = [];
+    let interventionSuggestions: Array<{
+      type: string;
+      priority: string;
+      title: string;
+      description: string;
+      estimatedImpact: number;
+      implementationComplexity: string;
+    }> = [];
     if (struggleMetrics.severity === 'high' || struggleMetrics.severity === 'critical') {
       interventionSuggestions = [
         {
@@ -132,7 +139,7 @@ export async function POST(request: NextRequest) {
         }
       ];
 
-      if (struggleMetrics.indicators.some(i => i.type === 'time_exceeded')) {
+      if (struggleMetrics.indicators.some((i: any) => i.type === 'time_exceeded')) {
         interventionSuggestions.push({
           type: 'time_extension',
           priority: 'medium',
@@ -259,14 +266,14 @@ export async function PATCH(request: NextRequest) {
     };
 
     // Add time range context
-    const timeRangeMs = {
+    const timeRangeMs: Record<string, number> = {
       '1h': 60 * 60 * 1000,
       '6h': 6 * 60 * 60 * 1000,
       '24h': 24 * 60 * 60 * 1000,
       '7d': 7 * 24 * 60 * 60 * 1000
     };
 
-    const rangeStart = new Date(Date.now() - (timeRangeMs[timeRange] || timeRangeMs['1h']));
+    const rangeStart = new Date(Date.now() - (timeRangeMs[timeRange as string] || timeRangeMs['1h']));
     const rangeEnd = new Date();
 
     return NextResponse.json(
