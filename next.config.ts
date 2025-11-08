@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
   
   // Note: swcMinify removed - it's now the default in Next.js 15
 
+  // File tracing configuration for standalone builds
+  // Helps handle route groups correctly
+  outputFileTracingRoot: process.cwd(),
+
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
     return [];
