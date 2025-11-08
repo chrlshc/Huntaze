@@ -32,7 +32,7 @@ async function getHandler(
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const conversationId = parseInt(params.id, 10);
+    const resolvedParams = await context.params; const conversationId = parseInt(resolvedParams.id, 10);
     if (isNaN(conversationId)) {
       return NextResponse.json({ error: 'Invalid conversation ID' }, { status: 400 });
     }
@@ -91,7 +91,7 @@ async function postHandler(
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const conversationId = parseInt(params.id, 10);
+    const resolvedParams = await context.params; const conversationId = parseInt(resolvedParams.id, 10);
     if (isNaN(conversationId)) {
       return NextResponse.json({ error: 'Invalid conversation ID' }, { status: 400 });
     }

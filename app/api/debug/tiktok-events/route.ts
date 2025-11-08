@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
   const limit = ident.kind === 'token' ? 60 : 30
   const { allowed, remaining, resetSec } = await checkRateLimit({ id: ident.id, limit, windowSec: 60 })
   if (!allowed) {
-    try { prom.counters.debugApiRateLimited.labels({ route: 'tiktok-events' }).inc() } catch {}
+    // Note: debugApiRateLimited counter not defined in prom.ts
+    // try { prom.counters.debugApiRateLimited.labels({ route: 'tiktok-events' }).inc() } catch {}
     return new NextResponse('Too Many Requests', {
       status: 429,
       headers: {

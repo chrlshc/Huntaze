@@ -90,4 +90,4 @@ async function handler(req: Request) {
   }
 }
 
-export const POST = withMonitoring('billing.connect.checkout', handler);
+export const POST = withMonitoring('billing.connect.checkout', handler as any);

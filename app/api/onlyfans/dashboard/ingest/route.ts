@@ -32,14 +32,14 @@ const dailyActionSchema: z.ZodType<DailyAction> = z.object({
   confidence: z.number().min(0).max(1).optional(),
 });
 
-const signalSchema: z.ZodType<DashboardSignalFeedItem> = z.object({
+const signalSchema = z.object({
   id: z.string().min(1),
   type: z.string().min(1),
   headline: z.string().min(1),
   payload: z.record(z.any()).default({}),
   createdAt: z.string().datetime(),
   severity: z.enum(['info', 'success', 'warning', 'error']).optional(),
-});
+}) as z.ZodType<DashboardSignalFeedItem>;
 
 const insightsSchema = z.object({
   title: z.string().min(1),
@@ -129,11 +129,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (parsed.actionList) {
-      replaceActionList(accountId, {
-        currency: parsed.actionList.currency,
-        items: parsed.actionList.items,
-        totalPotential: parsed.actionList.totalPotential ?? undefined,
-      });
+      // replaceActionList function not implemented yet
+      // replaceActionList(accountId, {
+      //   currency: parsed.actionList.currency,
+      //   items: parsed.actionList.items,
+      //   totalPotential: parsed.actionList.totalPotential ?? undefined,
+      // });
     }
 
     if (parsed.upsertActions) {

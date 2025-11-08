@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateVariationStats, determineWinner } from '@/lib/services/variationDistribution';
 import { query } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 /**
  * GET /api/content/variations/:id/stats
@@ -13,8 +13,8 @@ export async function GET(
 ) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.payload) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

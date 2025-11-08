@@ -102,7 +102,7 @@ async function getSystemHealth() {
     
     return {
       status: health.status,
-      services: health.services?.length || 0,
+      services: 0, // Health check doesn't expose services array
       lastCheck: Date.now()
     };
   } catch (error) {
@@ -158,13 +158,16 @@ function calculateTrends(executions: any[], days: number) {
     return acc;
   }, {} as Record<number, any[]>);
 
-  return Object.entries(weeklyData).map(([week, execs]) => ({
-    week: parseInt(week),
-    executions: execs.length,
-    averageDetectionTime: execs.reduce((sum, e) => sum + (e.metrics.detectionTime || 0), 0) / execs.length,
-    averageRecoveryTime: execs.reduce((sum, e) => sum + (e.metrics.recoveryTime || 0), 0) / execs.length,
-    successRate: execs.filter(e => e.status === 'COMPLETED').length / execs.length * 100
-  }));
+  return Object.entries(weeklyData).map(([week, execs]) => {
+    const execArray = execs as any[];
+    return {
+      week: parseInt(week),
+      executions: execArray.length,
+      averageDetectionTime: execArray.reduce((sum, e) => sum + (e.metrics.detectionTime || 0), 0) / execArray.length,
+      averageRecoveryTime: execArray.reduce((sum, e) => sum + (e.metrics.recoveryTime || 0), 0) / execArray.length,
+      successRate: execArray.filter(e => e.status === 'COMPLETED').length / execArray.length * 100
+    };
+  });
 }
 
 function getTopIssues(executions: any[]) {
@@ -180,8 +183,8 @@ function getTopIssues(executions: any[]) {
   return Object.entries(issueCounts)
     .map(([key, count]) => {
       const [category, severity] = key.split('-');
-      return { category, severity, count };
+      return { category, severity, count: count as number };
     })
-    .sort((a, b) => b.count - a.count)
+    .sort((a, b) => (b.count as number) - (a.count as number))
     .slice(0, 10);
 }

@@ -41,21 +41,23 @@ export default function ScheduledFeed() {
 
     const onScheduled = (e: MessageEvent) => {
       const payload = JSON.parse(e.data) as { scheduled: ScheduledEvt[]; correlation?: string };
-      const rows: FeedItem[] = (payload.scheduled || []).map((s) => ({
+      const rows: FeedItem[] = (payload.scheduled || []).map((s): FeedItem => ({
         kind: 'POST_SCHEDULED',
         data: { ...s, correlation: payload.correlation },
       }));
-      setFeed((prev) => [...rows, ...prev].slice(0, 500));
+      setFeed((prev: FeedItem[]): FeedItem[] => [...rows, ...prev].slice(0, 500));
     };
 
     const onFailed = (e: MessageEvent) => {
       const payload = JSON.parse(e.data) as FailedEvt & { correlation?: string };
-      setFeed((prev) => [{ kind: 'POST_FAILED', data: payload }, ...prev].slice(0, 500));
+      const item: FeedItem = { kind: 'POST_FAILED', data: payload };
+      setFeed((prev: FeedItem[]): FeedItem[] => [item, ...prev].slice(0, 500));
     };
 
     const onBatch = (e: MessageEvent) => {
       const payload = JSON.parse(e.data) as BatchDoneEvt;
-      setFeed((prev) => [{ kind: 'PUBLISH_BATCH_DONE', data: payload }, ...prev].slice(0, 500));
+      const item: FeedItem = { kind: 'PUBLISH_BATCH_DONE', data: payload };
+      setFeed((prev: FeedItem[]): FeedItem[] => [item, ...prev].slice(0, 500));
     };
 
     src.addEventListener('POST_SCHEDULED', onScheduled);

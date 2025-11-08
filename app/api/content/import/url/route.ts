@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { extractContentFromUrl, validateExtractedContent } from '@/lib/services/contentExtractor';
 import { createContentItem } from '@/lib/db/repositories/contentItemsRepository';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 /**
  * POST /api/content/import/url
@@ -10,15 +10,15 @@ import { verifyAuth } from '@/lib/auth/jwt';
 export async function POST(request: NextRequest) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.payload) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.payload.userId;
+    const userId = String(user.id);
     const body = await request.json();
     const { url } = body;
 
@@ -57,13 +57,13 @@ export async function POST(request: NextRequest) {
 
     // Create draft content item
     const contentItem = await createContentItem({
-      user_id: userId,
-      title: extractedContent.title,
-      content: extractedContent.content,
+      userId: userId,
+      text: extractedContent.content || extractedContent.title || '',
       status: 'draft',
       metadata: {
         source: 'url_import',
         sourceUrl: url,
+        title: extractedContent.title,
         extractedData: {
           description: extractedContent.description,
           author: extractedContent.author,

@@ -3,19 +3,19 @@ import { onboardingOrchestrator } from '@/lib/services/onboardingOrchestrator';
 import { onboardingProfileRepository } from '@/lib/db/repositories/onboardingProfileRepository';
 import { OnboardingGoal } from '@/lib/services/onboardingOrchestrator';
 import { CreatorLevel } from '@/lib/services/levelAssessor';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.userId;
+    const userId = String(user.id);
 
     // Get user profile
     const profile = await onboardingProfileRepository.findByUserId(userId);

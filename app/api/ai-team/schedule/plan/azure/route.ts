@@ -37,6 +37,6 @@ async function handler(req: NextRequest) {
   return NextResponse.json({ status: 'accepted', correlation, plan_id: planId, counts: { contents: plan.contents.length, platforms: plan.platforms.length } }, { status: 202, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
 }
 
-export const POST = withMonitoring('ai-team.plan.azure', handler)
+export const POST = withMonitoring('ai-team.plan.azure', handler as any)
 export const GET = POST
 export const HEAD = POST

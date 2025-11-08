@@ -34,7 +34,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { trim, captions, thumbnailTimestamp } = body;
 
     const response = await fetch(media.originalUrl);
-    let videoBuffer = Buffer.from(await response.arrayBuffer());
+    let videoBuffer = Buffer.from(await response.arrayBuffer()) as Buffer;
 
     if (trim) {
       videoBuffer = await videoEditService.trimVideo(videoBuffer, trim.startTime, trim.endTime);

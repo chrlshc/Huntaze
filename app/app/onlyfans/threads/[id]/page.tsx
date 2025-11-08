@@ -8,8 +8,9 @@ async function getInitial(id: string) {
   return res.json();
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const initial = await getInitial(params.id);
-  return <ThreadView threadId={params.id} initial={initial} />;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const initial = await getInitial(resolvedParams.id);
+  return <ThreadView threadId={resolvedParams.id} initial={initial} />;
 }
 

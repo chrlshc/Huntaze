@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { assignVariation, validateVariationDistribution } from '@/lib/services/variationDistribution';
 import { query } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 /**
  * POST /api/content/variations/:id/assign
@@ -13,15 +13,15 @@ export async function POST(
 ) {
   try {
     // Verify authentication
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.payload) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.payload.userId;
+    const userId = String(user.id);
     const params = await context.params;
     const contentId = params.id;
 

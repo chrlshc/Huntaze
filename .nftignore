@@ -1,0 +1,3 @@
+# Ignore missing client reference manifest files for route groups
+# These files may not be generated for all pages and that's okay
+**/page_client-reference-manifest.js

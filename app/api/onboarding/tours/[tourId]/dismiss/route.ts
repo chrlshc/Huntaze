@@ -15,7 +15,7 @@ export async function POST(
       );
     }
 
-    const { tourId } = params;
+    const { tourId } = await context.params;
 
     // Mark tour as permanently dismissed
     await db.query(

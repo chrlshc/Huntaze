@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   const limit = ident.kind === 'token' ? 60 : 30
   const rl = await checkRateLimit({ id: ident.id, limit, windowSec: 60 })
   if (!rl.allowed) {
-    try { prom.counters.debugApiRateLimited.labels({ route: 'twitter-track' }).inc() } catch {}
+    // try { prom.counters.debugApiRateLimited.labels({ route: 'twitter-track' }).inc() } catch {}
     return noindex(new NextResponse('Too Many Requests', {
       status: 429,
       headers: {
@@ -61,7 +61,7 @@ export async function DELETE(req: NextRequest) {
   const limit = ident.kind === 'token' ? 60 : 30
   const rl = await checkRateLimit({ id: ident.id, limit, windowSec: 60 })
   if (!rl.allowed) {
-    try { prom.counters.debugApiRateLimited.labels({ route: 'twitter-track' }).inc() } catch {}
+    // try { prom.counters.debugApiRateLimited.labels({ route: 'twitter-track' }).inc() } catch {}
     return noindex(new NextResponse('Too Many Requests', {
       status: 429,
       headers: {

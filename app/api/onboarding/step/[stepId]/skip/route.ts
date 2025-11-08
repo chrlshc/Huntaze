@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { onboardingOrchestrator } from '@/lib/services/onboardingOrchestrator';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ stepId: string }> }
 ) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid || !authResult.userId) {
+    const user = await getUserFromRequest(request);
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.userId;
-    const { stepId } = params;
+    const userId = String(user.id);
+    const { stepId } = await context.params;
 
     // Skip the step
     const result = await onboardingOrchestrator.skipStep(userId, stepId);

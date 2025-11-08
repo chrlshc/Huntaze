@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth/jwt';
+import { getUserFromRequest } from '@/lib/auth/getUserFromRequest';
 import { aiAdapter } from '@/lib/services/aiAdapter';
 import { onboardingProfileRepository } from '@/lib/db/repositories/onboardingProfileRepository';
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await verifyAuth(request);
+    const user = await getUserFromRequest(request);
     
-    if (!authResult.valid || !authResult.payload) {
+    if (!user) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.payload.userId;
+    const userId = String(user.id);
 
     // Get user's onboarding profile
     const profile = await onboardingProfileRepository.findByUserId(userId);
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Apply AI configuration based on creator level
-    const aiConfig = aiAdapter.configureForLevel(profile.creatorLevel);
+    const aiConfig = aiAdapter.getAIConfiguration(profile.creatorLevel);
 
     // Update AI config in database (assuming you have an AI config repository)
     // await aiConfigsRepository.updateForUser(userId, aiConfig);
@@ -38,8 +38,9 @@ export async function POST(request: NextRequest) {
         creatorLevel: profile.creatorLevel,
         aiConfig: {
           verbosity: aiConfig.verbosity,
-          helpFrequency: aiConfig.helpFrequency,
-          suggestionComplexity: aiConfig.suggestionComplexity
+          technicalLevel: aiConfig.technicalLevel,
+          maxTokens: aiConfig.maxTokens,
+          includeExamples: aiConfig.includeExamples
         },
         message: 'AI configuration applied successfully'
       }

@@ -15,7 +15,7 @@ export async function POST(
       );
     }
 
-    const { tourId, stepId } = params;
+    const { tourId, stepId } = await context.params;
 
     // Get current progress
     const currentProgress = await db.query(

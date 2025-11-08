@@ -43,7 +43,8 @@ export async function POST(req: Request) {
   } finally {
     try {
       const durSec = Number(process.hrtime.bigint() - t0) / 1e9
-      prom.histograms.messageReplyLatency.labels({ mode: 'ai' as any }).observe(durSec)
+      // Metric commented out - messageReplyLatency not defined in metrics
+      // prom.histograms.messageReplyLatency.labels({ mode: 'ai' as any }).observe(durSec)
     } catch {}
   }
 }
