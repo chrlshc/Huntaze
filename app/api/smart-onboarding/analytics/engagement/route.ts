@@ -193,10 +193,10 @@ export async function PUT(request: NextRequest) {
       overallTrend: timeSeries.length > 1 ? 
         (timeSeries[timeSeries.length - 1].avgEngagement > timeSeries[0].avgEngagement ? 'increasing' : 'decreasing') : 
         'stable',
-      averageEngagement: timeSeries.reduce((sum, point) => sum + point.avgEngagement, 0) / (timeSeries.length || 1),
+      averageEngagement: timeSeries.reduce((sum: number, point) => sum + point.avgEngagement, 0) / (timeSeries.length || 1),
       peakEngagement: Math.max(...timeSeries.map(point => point.avgEngagement), 0),
       lowestEngagement: Math.min(...timeSeries.map(point => point.avgEngagement), 1),
-      totalInteractions: timeSeries.reduce((sum, point) => sum + point.eventCount, 0)
+      totalInteractions: timeSeries.reduce((sum: number, point) => sum + point.eventCount, 0)
     };
 
     return NextResponse.json(
