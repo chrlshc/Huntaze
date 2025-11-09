@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       data: dashboardData
     });
   } catch (error) {
-    logger.error('Intervention dashboard API error:', error);
+    logger.error('Intervention dashboard API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
