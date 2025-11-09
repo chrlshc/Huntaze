@@ -83,7 +83,7 @@ async function generateDashboardData(startTime: Date, endTime: Date) {
       lastUpdated: new Date()
     };
   } catch (error) {
-    logger.error('Failed to generate dashboard data:', error);
+    logger.error('Failed to generate dashboard data:', error as any);
     throw error;
   }
 }
@@ -115,7 +115,7 @@ async function getRealTimeMetrics() {
       lastUpdated: new Date()
     };
   } catch (error) {
-    logger.error('Failed to get real-time metrics:', error);
+    logger.error('Failed to get real-time metrics:', error as any);
     return null;
   }
 }
@@ -163,7 +163,7 @@ async function getPerformanceTrends(startTime: Date, endTime: Date) {
 
     return trends;
   } catch (error) {
-    logger.error('Failed to get performance trends:', error);
+    logger.error('Failed to get performance trends:', error as any);
     return {
       effectiveness: [],
       successRate: [],
@@ -192,7 +192,7 @@ async function getHourlyMetrics(startTime: Date, endTime: Date) {
       escalationRate: 0
     };
   } catch (error) {
-    logger.error('Failed to get hourly metrics:', error);
+    logger.error('Failed to get hourly metrics:', error as any);
     return {};
   }
 }
