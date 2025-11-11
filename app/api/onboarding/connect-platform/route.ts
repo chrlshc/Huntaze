@@ -9,14 +9,14 @@ async function handler(request: NextRequest) {
   const log = makeReqLogger({ requestId });
   try {
     const { platform, action } = await request.json();
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.huntaze.com';
+    // Use relative paths to avoid environment mismatches
 
     if (action === 'connect') {
       const platformRoutes: Record<string, string> = {
-        instagram: `${baseUrl}/api/auth/instagram`,
-        tiktok: `${baseUrl}/api/auth/tiktok`,
-        reddit: `${baseUrl}/api/auth/reddit`,
-        onlyfans: `${baseUrl}/of-connect`
+        instagram: `/api/auth/instagram`,
+        tiktok: `/api/auth/tiktok`,
+        reddit: `/api/auth/reddit`,
+        onlyfans: `/of-connect`
       };
 
       if (platformRoutes[platform]) {
