@@ -28,22 +28,31 @@ export default function OnboardingGuard({ children }: OnboardingGuardProps) {
     }
 
     try {
+      // Quick client-side bypass via cookie (set by /api/force-complete-onboarding)
+      try {
+        const hasBypass = document.cookie.split('; ').some(c => c.startsWith('onboarding_completed=true'));
+        if (hasBypass) {
+          setShouldRender(true);
+          setIsChecking(false);
+          return;
+        }
+      } catch {}
+
       const response = await fetch('/api/onboarding/status');
-      
       if (response.ok) {
         const result = await response.json();
-        
         if (result.success) {
-          const isComplete = result.data.progressPercentage >= 100;
-          
+          const isComplete = Boolean(result.data?.isComplete) ||
+            (typeof result.data?.progressPercentage === 'number' && result.data.progressPercentage >= 100) ||
+            (typeof result.data?.progress === 'number' && result.data.progress >= 100);
+
           if (!isComplete) {
-            // Redirect to onboarding if not complete
             router.push('/onboarding/setup');
             return;
           }
         }
       }
-      
+
       setShouldRender(true);
     } catch (error) {
       console.error('Onboarding check failed:', error);
