@@ -174,6 +174,19 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
               >
                 Get Started
               </button>
+              <div className="mt-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      await fetch('/api/force-complete-onboarding');
+                    } catch {}
+                    onComplete?.();
+                  }}
+                  className="text-sm text-gray-500 hover:text-gray-700 underline"
+                >
+                  Skip onboarding for now
+                </button>
+              </div>
             </div>
           )}
 
