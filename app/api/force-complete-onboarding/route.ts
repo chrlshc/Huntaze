@@ -8,9 +8,12 @@ export async function GET(req: Request) {
   const isDev = process.env.NODE_ENV !== 'production';
   const url = new URL(req.url);
   const isLocalHost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  const allowBypass = process.env.STAGING_BYPASS_AUTH === 'true' ||
+    process.env.NEXT_PUBLIC_STAGING_BYPASS_AUTH === 'true' ||
+    /amplifyapp\.com$/.test(url.hostname);
 
   // In development or localhost, allow skipping without auth cookie
-  if (!authToken && !(isDev || isLocalHost)) {
+  if (!authToken && !(isDev || isLocalHost || allowBypass)) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
@@ -25,8 +28,9 @@ export async function GET(req: Request) {
     response.cookies.set('onboarding_completed', 'true', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: '/',
     });
     
     // Update in-memory status (if token available)

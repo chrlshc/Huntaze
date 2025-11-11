@@ -21,6 +21,8 @@ export default function OnboardingGuard({ children }: OnboardingGuardProps) {
     // Skip check for auth and onboarding pages
     if (pathname?.startsWith('/auth') || 
         pathname?.startsWith('/onboarding') ||
+        pathname === '/skip-onboarding' ||
+        pathname === '/complete-onboarding' ||
         pathname === '/') {
       setShouldRender(true);
       setIsChecking(false);
