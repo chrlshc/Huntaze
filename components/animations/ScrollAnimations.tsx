@@ -61,12 +61,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     visible: { 
       opacity: 1, 
       y: 0,
-      filter: 'blur(0px)',
-      transition: {
-        duration,
-        delay,
-        ease: "easeOut" as const
-      }
+      filter: 'blur(0px)'
     }
   };
 
@@ -126,11 +121,7 @@ export const StaggerChildren: React.FC<StaggerChildrenProps> = ({
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: staggerDelay,
-        delayChildren: 0.2
-      }
+      opacity: 1
     }
   };
 
@@ -143,11 +134,7 @@ export const StaggerChildren: React.FC<StaggerChildrenProps> = ({
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut" as const
-      }
+      scale: 1
     }
   };
 

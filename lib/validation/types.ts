@@ -32,6 +32,8 @@ export interface ValidationMetadata {
   responseTime: number;
   apiVersion?: string;
   permissions?: string[];
+  // Platform-specific metadata
+  businessAccountId?: string;
 }
 
 // Platform-specific credential interfaces

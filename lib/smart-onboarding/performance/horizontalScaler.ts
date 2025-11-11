@@ -1,10 +1,75 @@
-import { 
-  ScalingMetrics, 
-  ServiceInstance, 
-  LoadBalancingStrategy,
-  AutoScalingConfig,
-  PerformanceMetrics 
-} from '../types'
+// Type aliases for types not yet defined in ../types
+interface ScalingMetrics {
+  cpuUsage?: number
+  memoryUsage?: number
+  requestRate?: number
+  responseTime?: number
+  errorRate: number
+  serviceName: string
+  instanceCount: number
+  avgCpuUtilization: number
+  avgMemoryUtilization: number
+  avgResponseTime: number
+  totalRequests: number
+  timestamp: Date
+  lastScaleUpTime?: number
+  lastScaleDownTime?: number
+  scaleUpCount?: number
+  scaleDownCount?: number
+}
+interface ServiceInstance {
+  id: string
+  status: 'active' | 'inactive' | 'starting' | 'stopping' | 'healthy' | 'unhealthy' | 'draining'
+  health?: 'healthy' | 'unhealthy'
+  load?: number
+  serviceName?: string
+  host?: string
+  port?: number
+  createdAt?: Date
+  lastHealthCheck?: Date
+  activeConnections?: number
+  cpuUtilization?: number
+  memoryUtilization?: number
+  responseTime?: number
+  consecutiveFailures?: number
+  healthCheckTimer?: NodeJS.Timeout
+  requestCount?: number
+  errorCount?: number
+}
+interface LoadBalancingStrategy {
+  type?: 'round_robin' | 'least_connections' | 'weighted'
+  weights?: Record<string, number> | Map<string, number>
+  algorithm?: string
+  healthCheckEnabled?: boolean
+  healthCheckInterval?: number
+  failureThreshold?: number
+  recoveryThreshold?: number
+  sessionAffinity?: boolean
+  sessionAffinityDuration?: number
+  hashKey?: string
+}
+interface AutoScalingConfig {
+  minInstances: number
+  maxInstances: number
+  targetCPU?: number
+  targetCpuUtilization?: number
+  targetMemory?: number
+  targetMemoryUtilization?: number
+  scaleUpThreshold: number
+  scaleDownThreshold: number
+  cooldownPeriod?: number
+  scaleUpCooldown?: number
+  scaleDownCooldown?: number
+  metricsWindow?: number
+  enabled?: boolean
+}
+interface PerformanceMetrics {
+  queryId?: string
+  cacheHitRate?: number
+  averageLatency?: number
+  throughput?: number
+  errorRate?: number
+}
 
 export class HorizontalScaler {
   private serviceInstances: Map<string, ServiceInstance[]> = new Map()
@@ -228,9 +293,14 @@ export class HorizontalScaler {
 
   private weightedRoundRobinSelection(
     instances: ServiceInstance[], 
-    weights?: Map<string, number>
+    weights?: Record<string, number> | Map<string, number>
   ): ServiceInstance {
-    if (!weights || weights.size === 0) {
+    if (!weights) {
+      return this.roundRobinSelection(instances)
+    }
+
+    const weightsSize = weights instanceof Map ? weights.size : Object.keys(weights).length
+    if (weightsSize === 0) {
       return this.roundRobinSelection(instances)
     }
 
@@ -239,7 +309,9 @@ export class HorizontalScaler {
     const weightedInstances: { instance: ServiceInstance, weight: number }[] = []
 
     for (const instance of instances) {
-      const weight = weights.get(instance.id) || 1
+      const weight = weights instanceof Map 
+        ? (weights.get(instance.id) || 1)
+        : (weights[instance.id] || 1)
       totalWeight += weight
       weightedInstances.push({ instance, weight })
     }
@@ -364,7 +436,8 @@ export class HorizontalScaler {
       
       // Check cooldown period
       const lastScaleUp = this.scalingMetrics.get(serviceName)?.lastScaleUpTime
-      if (lastScaleUp && Date.now() - lastScaleUp < config.scaleUpCooldown * 1000) {
+      const cooldown = config.scaleUpCooldown || 300
+      if (lastScaleUp && Date.now() - lastScaleUp < cooldown * 1000) {
         console.log(`Scale up cooldown active for ${serviceName}`)
         return
       }
@@ -389,7 +462,8 @@ export class HorizontalScaler {
       
       // Check cooldown period
       const lastScaleDown = this.scalingMetrics.get(serviceName)?.lastScaleDownTime
-      if (lastScaleDown && Date.now() - lastScaleDown < config.scaleDownCooldown * 1000) {
+      const cooldown = config.scaleDownCooldown || 600
+      if (lastScaleDown && Date.now() - lastScaleDown < cooldown * 1000) {
         console.log(`Scale down cooldown active for ${serviceName}`)
         return
       }

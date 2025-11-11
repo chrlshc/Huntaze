@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { z } from 'zod';
 import { getStripe, STRIPE_PRICE_STARTER, STRIPE_PRICE_PRO, STRIPE_PRICE_SCALE } from '@/lib/stripe';
 import { makeReqLogger } from '@/lib/logger';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 const bodySchema = z.object({
   accountId: z.string().regex(/^acct_\w+$/), // Stripe connected account id
@@ -90,4 +89,4 @@ async function handler(req: Request) {
   }
 }
 
-export const POST = withMonitoring('billing.connect.checkout', handler as any);
+export const POST = handler as any;

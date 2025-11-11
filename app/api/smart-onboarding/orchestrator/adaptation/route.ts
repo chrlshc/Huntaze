@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error adapting journey:', error);
     return NextResponse.json(
-      { error: 'Failed to adapt journey', details: error.message },
+      { error: 'Failed to adapt journey', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
@@ -68,9 +68,9 @@ export async function GET(request: NextRequest) {
     // Get journey with adaptation history
     const journey = await orchestrator.getJourneyStatus(journeyId);
     
-    // Extract adaptation history
-    const adaptationHistory = journey.personalization?.adaptationHistory || [];
-    const interventionHistory = journey.personalization?.interventionHistory || [];
+    // Extract adaptation history directly from journey
+    const adaptationHistory = journey.adaptationHistory || [];
+    const interventionHistory = journey.interventions || [];
     
     return NextResponse.json({
       success: true,

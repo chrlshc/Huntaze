@@ -10,10 +10,17 @@ interface WorkerConfig {
   errorThreshold: number;
 }
 
+interface ProcessingStats {
+  totalProcessed: number;
+  totalErrors: number;
+  lastProcessedAt: Date;
+  averageProcessingTime: number;
+}
+
 export class DataProcessingWorker {
   private config: WorkerConfig;
   private isRunning = false;
-  private processingStats = {
+  private processingStats: ProcessingStats = {
     totalProcessed: 0,
     totalErrors: 0,
     lastProcessedAt: new Date(),
@@ -320,14 +327,14 @@ export class DataProcessingWorker {
   /**
    * Get worker statistics
    */
-  getStats(): typeof this.processingStats {
+  getStats(): ProcessingStats {
     return { ...this.processingStats };
   }
 
   /**
    * Get worker status
    */
-  getStatus(): { isRunning: boolean; config: WorkerConfig; stats: typeof this.processingStats } {
+  getStatus(): { isRunning: boolean; config: WorkerConfig; stats: ProcessingStats } {
     return {
       isRunning: this.isRunning,
       config: this.config,

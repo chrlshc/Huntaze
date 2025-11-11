@@ -352,14 +352,15 @@ export class HydrationProductionMonitor {
    * Enregistre une erreur d'hydratation
    */
   private recordHydrationError(error: any): void {
+    // Créer un objet Error si ce n'est pas déjà le cas
+    const errorObj = error instanceof Error 
+      ? error 
+      : new Error(error?.message || error?.toString() || 'Unknown hydration error');
+    
     hydrationMonitoringService.recordHydrationError(
       'unknown-component',
-      error.message || error.toString(),
-      {
-        stack: error.stack,
-        timestamp: Date.now(),
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
-      }
+      errorObj,
+      0 // retryCount
     );
   }
 

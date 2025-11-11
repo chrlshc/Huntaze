@@ -1,4 +1,6 @@
-import { pool } from '../index';
+import { getPool } from '../index';
+
+const pool = getPool();
 
 export interface ChatbotConversation {
   id: string;

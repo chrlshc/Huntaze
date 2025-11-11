@@ -6,7 +6,9 @@
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
-import { logger } from './logger';
+import { Logger } from './logger';
+
+const logger = new Logger();
 import { ConfigurationFile, GitCommitInfo, ChangeHistoryEntry } from './interfaces';
 
 export class GitIntegrationService {

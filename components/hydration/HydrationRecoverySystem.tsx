@@ -135,7 +135,7 @@ export function HydrationRecoverySystem({
       }));
       
       onRecoveryFailure?.(error);
-      hydrationDebugger.logRecoveryFailure(id, error, currentAttempt);
+      // hydrationDebugger.logRecoveryFailure(id, error, currentAttempt);
       
       // Afficher le fallback après le délai configuré
       fallbackTimeoutRef.current = setTimeout(() => {
@@ -158,7 +158,7 @@ export function HydrationRecoverySystem({
     }));
 
     onRecoveryAttempt?.(currentAttempt, error);
-    hydrationDebugger.logRecoveryAttempt(id, error, currentAttempt);
+    // hydrationDebugger.logRecoveryAttempt(id, error, currentAttempt);
 
     // Calculer le délai de retry
     const delay = calculateRetryDelay(currentAttempt);
@@ -188,7 +188,7 @@ export function HydrationRecoverySystem({
           }));
           
           onRecoverySuccess?.();
-          hydrationDebugger.logRecoverySuccess(id, currentAttempt);
+          // hydrationDebugger.logRecoverySuccess(id, currentAttempt);
           
         }, 100);
         
@@ -230,7 +230,7 @@ export function HydrationRecoverySystem({
     setIsHydrated(false);
     setTimeout(() => setIsHydrated(true), 100);
     
-    hydrationDebugger.logManualRecovery(id);
+    // hydrationDebugger.logManualRecovery(id);
   }, [enableManualRecovery, id]);
 
   // Gestion des erreurs d'hydratation

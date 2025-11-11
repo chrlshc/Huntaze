@@ -7,7 +7,9 @@ import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, statSy
 import { join, dirname, basename } from 'path';
 import { execSync } from 'child_process';
 import { createHash } from 'crypto';
-import { logger } from './logger';
+import { Logger } from './logger';
+
+const logger = new Logger();
 import { IAWSCLIWrapper } from './interfaces';
 import { BackupInfo, RestoreInfo, BackupMetadata, BackupVerificationResult } from './types';
 
@@ -62,21 +64,18 @@ export class BackupRestoreService {
       }
 
       const backupInfo: BackupInfo = {
-        backupId,
+        id: backupId,
         appId,
         branchName,
-        timestamp,
-        description: metadata.description,
-        filePath: backupPath,
-        size: this.getBackupSize(backupPath),
-        checksum: metadata.checksum,
-        variableCount: metadata.variableCount
+        timestamp: new Date(timestamp),
+        variableCount: metadata.variableCount,
+        checksum: metadata.checksum
       };
 
       logger.info(`Backup created successfully: ${backupId}`);
       return backupInfo;
     } catch (error) {
-      logger.error('Failed to create backup:', error);
+      logger.error('Failed to create backup:', error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -140,7 +139,7 @@ export class BackupRestoreService {
           targetBranch: branchName,
           timestamp: new Date().toISOString(),
           variablesRestored: Object.keys(variablesToRestore),
-          preRestoreBackupId: preRestoreBackup.backupId,
+          preRestoreBackupId: preRestoreBackup.id,
           success: true,
           dryRun: true
         };
@@ -159,7 +158,7 @@ export class BackupRestoreService {
         targetBranch: branchName,
         timestamp: new Date().toISOString(),
         variablesRestored: Object.keys(variablesToRestore),
-        preRestoreBackupId: preRestoreBackup.backupId,
+        preRestoreBackupId: preRestoreBackup.id,
         success: restoredCorrectly,
         dryRun: false
       };
@@ -172,7 +171,7 @@ export class BackupRestoreService {
 
       return restoreInfo;
     } catch (error) {
-      logger.error('Failed to restore from backup:', error);
+      logger.error('Failed to restore from backup:', error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -204,15 +203,12 @@ export class BackupRestoreService {
           const size = existsSync(backupPath) ? statSync(backupPath).size : 0;
 
           backups.push({
-            backupId: metadata.backupId,
+            id: metadata.backupId,
             appId: metadata.appId,
             branchName: metadata.branchName,
-            timestamp: metadata.timestamp,
-            description: metadata.description,
-            filePath: backupPath,
-            size,
-            checksum: metadata.checksum,
-            variableCount: metadata.variableCount
+            timestamp: new Date(metadata.timestamp),
+            variableCount: metadata.variableCount,
+            checksum: metadata.checksum
           });
         } catch (error) {
           logger.warn(`Failed to load backup metadata for ${backupId}:`, error);
@@ -221,7 +217,7 @@ export class BackupRestoreService {
 
       return backups.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
     } catch (error) {
-      logger.error('Failed to list backups:', error);
+      logger.error('Failed to list backups:', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }
@@ -254,7 +250,7 @@ export class BackupRestoreService {
 
       return deleted;
     } catch (error) {
-      logger.error(`Failed to delete backup ${backupId}:`, error);
+      logger.error(`Failed to delete backup ${backupId}:`, error instanceof Error ? error : new Error(String(error)));
       return false;
     }
   }
@@ -310,7 +306,7 @@ export class BackupRestoreService {
     } catch (error) {
       return {
         isValid: false,
-        errors: [`Verification failed: ${error.message}`]
+        errors: [`Verification failed: ${error instanceof Error ? error.message : String(error)}`]
       };
     }
   }
@@ -351,7 +347,7 @@ export class BackupRestoreService {
       const backupsToDelete = [...oldBackups, ...excessBackups];
 
       for (const backup of backupsToDelete) {
-        if (this.deleteBackup(backup.backupId)) {
+        if (this.deleteBackup(backup.id)) {
           deletedCount++;
         }
       }
@@ -362,7 +358,7 @@ export class BackupRestoreService {
 
       return deletedCount;
     } catch (error) {
-      logger.error('Failed to cleanup old backups:', error);
+      logger.error('Failed to cleanup old backups:', error instanceof Error ? error : new Error(String(error)));
       return 0;
     }
   }

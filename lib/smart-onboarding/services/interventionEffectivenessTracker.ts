@@ -1,14 +1,75 @@
-import {
-  InterventionMetrics,
-  EffectivenessReport,
-  InterventionAnalytics,
-  OptimizationSuggestion,
-  InterventionOutcome,
-  MetricsAggregation,
-  PerformanceIndicator
-} from '../interfaces/services';
+import { InterventionOutcome } from '../types';
 import { logger } from '../../utils/logger';
 import { redisClient } from '../config/redis';
+
+// Local analytics and metrics interfaces for effectiveness tracking
+interface InterventionMetrics {
+  interventionId: string;
+  userId: string;
+  outcome: InterventionOutcome;
+  timestamp: Date;
+  effectiveness: number; // 0..100
+  userSatisfaction: number; // 0..10
+  timeToResolution: number; // ms
+  completionRate: number; // 0 or 1 per outcome
+  escalationRequired: boolean;
+}
+
+interface EffectivenessReport {
+  id: string;
+  timeRange: { start: Date; end: Date };
+  filters?: any;
+  generatedAt: Date;
+  summary: any;
+  interventionTypes: any;
+  userSegments: any;
+  trends: any;
+  recommendations: string[];
+}
+
+interface PerformanceIndicator {
+  name: string;
+  value: number;
+  target: number;
+  status: 'good' | 'needs_improvement';
+}
+
+interface InterventionAnalytics {
+  id: string;
+  timeRange: { start: Date; end: Date };
+  userId?: string;
+  totalInterventions: number;
+  successRate: number;
+  averageEffectiveness: number;
+  averageResolutionTime: number;
+  userSatisfactionScore: number;
+  escalationRate: number;
+  patterns: any[];
+  performanceIndicators: PerformanceIndicator[];
+  generatedAt: Date;
+}
+
+interface OptimizationSuggestion {
+  id: string;
+  type: string;
+  priority: 'low' | 'medium' | 'high';
+  title: string;
+  description: string;
+  recommendation: string;
+  expectedImpact: 'low' | 'medium' | 'high';
+  implementationEffort: 'low' | 'medium' | 'high';
+  createdAt: Date;
+}
+
+interface MetricsAggregation {
+  timestamp: Date;
+  totalInterventions: number;
+  successRate: number;
+  averageEffectiveness: number;
+  averageResolutionTime: number;
+  averageUserSatisfaction: number;
+  escalationRate: number;
+}
 
 export class InterventionEffectivenessTrackerImpl {
   private metricsCache: Map<string, InterventionMetrics> = new Map();
@@ -25,16 +86,20 @@ export class InterventionEffectivenessTrackerImpl {
     outcome: InterventionOutcome
   ): Promise<void> {
     try {
+      const successful = this.isSuccessful(outcome);
+      const userSatisfaction = outcome.userFeedback?.rating ?? 0;
+      const escalated = Boolean(outcome.metadata?.escalated);
+
       const metrics: InterventionMetrics = {
         interventionId,
         userId,
         outcome,
         timestamp: new Date(),
         effectiveness: this.calculateEffectivenessScore(outcome),
-        userSatisfaction: outcome.userSatisfaction || 0,
+        userSatisfaction,
         timeToResolution: outcome.timeToResolution || 0,
-        completionRate: outcome.successful ? 1 : 0,
-        escalationRequired: outcome.escalated || false
+        completionRate: successful ? 1 : 0,
+        escalationRequired: escalated
       };
 
       // Store individual metrics
@@ -50,10 +115,10 @@ export class InterventionEffectivenessTrackerImpl {
         interventionId,
         userId,
         effectiveness: metrics.effectiveness,
-        successful: outcome.successful
+        successful
       });
     } catch (error) {
-      logger.error(`Failed to track intervention outcome:`, error);
+      logger.error(`Failed to track intervention outcome:`, undefined, error as Error);
       throw error;
     }
   }
@@ -92,7 +157,7 @@ export class InterventionEffectivenessTrackerImpl {
 
       return report;
     } catch (error) {
-      logger.error(`Failed to generate effectiveness report:`, error);
+      logger.error(`Failed to generate effectiveness report:`, undefined, error as Error);
       throw error;
     }
   }
@@ -134,7 +199,7 @@ export class InterventionEffectivenessTrackerImpl {
 
       return analytics;
     } catch (error) {
-      logger.error(`Failed to analyze intervention patterns:`, error);
+      logger.error(`Failed to analyze intervention patterns:`, undefined, error as Error);
       throw error;
     }
   }
@@ -191,7 +256,7 @@ export class InterventionEffectivenessTrackerImpl {
 
       return suggestions;
     } catch (error) {
-      logger.error(`Failed to get optimization suggestions:`, error);
+      logger.error(`Failed to get optimization suggestions:`, undefined, error as Error);
       throw error;
     }
   }
@@ -222,7 +287,7 @@ export class InterventionEffectivenessTrackerImpl {
         metricsCount: recentMetrics.length
       });
     } catch (error) {
-      logger.error(`Failed to update metrics aggregation:`, error);
+      logger.error(`Failed to update metrics aggregation:`, undefined, error as Error);
     }
   }
 
@@ -230,13 +295,13 @@ export class InterventionEffectivenessTrackerImpl {
     let score = 0;
 
     // Base score for success
-    if (outcome.successful) {
+    if (this.isSuccessful(outcome)) {
       score += 50;
     }
 
     // User satisfaction component (0-30 points)
-    if (outcome.userSatisfaction) {
-      score += (outcome.userSatisfaction / 10) * 30;
+    if (outcome.userFeedback?.rating !== undefined) {
+      score += (outcome.userFeedback.rating / 10) * 30;
     }
 
     // Time to resolution component (0-20 points)
@@ -247,7 +312,7 @@ export class InterventionEffectivenessTrackerImpl {
     }
 
     // Penalty for escalation
-    if (outcome.escalated) {
+    if (outcome.metadata?.escalated) {
       score -= 20;
     }
 
@@ -288,7 +353,7 @@ export class InterventionEffectivenessTrackerImpl {
 
     // Update aggregation
     aggregation.totalInterventions += 1;
-    if (metrics.outcome.successful) {
+    if (this.isSuccessful(metrics.outcome)) {
       aggregation.successfulInterventions += 1;
     }
     aggregation.totalEffectiveness += metrics.effectiveness;
@@ -358,7 +423,7 @@ export class InterventionEffectivenessTrackerImpl {
     const typeAnalysis: Record<string, any> = {};
 
     for (const metric of metrics) {
-      const type = metric.outcome.interventionType || 'unknown';
+      const type = (metric.outcome.metadata && metric.outcome.metadata.interventionType) || 'unknown';
       
       if (!typeAnalysis[type]) {
         typeAnalysis[type] = {
@@ -371,7 +436,7 @@ export class InterventionEffectivenessTrackerImpl {
       }
 
       typeAnalysis[type].count += 1;
-      if (metric.outcome.successful) {
+      if (this.isSuccessful(metric.outcome)) {
         typeAnalysis[type].successCount += 1;
       }
       typeAnalysis[type].totalEffectiveness += metric.effectiveness;
@@ -437,7 +502,7 @@ export class InterventionEffectivenessTrackerImpl {
 
   private calculateSuccessRate(metrics: InterventionMetrics[]): number {
     if (metrics.length === 0) return 0;
-    const successful = metrics.filter(m => m.outcome.successful).length;
+    const successful = metrics.filter(m => this.isSuccessful(m.outcome)).length;
     return successful / metrics.length;
   }
 
@@ -630,9 +695,13 @@ export class InterventionEffectivenessTrackerImpl {
       try {
         await this.updateMetricsAggregation();
       } catch (error) {
-        logger.error('Periodic aggregation failed:', error);
+        logger.error('Periodic aggregation failed:', undefined, error as Error);
       }
     }, this.aggregationInterval);
+  }
+
+  private isSuccessful(outcome: InterventionOutcome): boolean {
+    return outcome.userResponse === 'completed' || (outcome.completionImpact ?? 0) > 0;
   }
 }
 

@@ -23,7 +23,7 @@ export type TikTokJob = {
   updatedAt: number
 }
 
-function client(): Redis.Redis {
+function client(): Redis {
   const url = process.env.REDIS_URL!
   return new Redis(url)
 }
@@ -120,4 +120,3 @@ export async function popDueTikTokJobs(limit = 50): Promise<string[]> {
     redis.disconnect()
   }
 }
-

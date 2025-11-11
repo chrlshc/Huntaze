@@ -22,15 +22,18 @@ export default function SocialMediaModule() {
         Preview upcoming Instagram, TikTok, Reddit, and Twitter tasks managed by the AI scheduler.
       </p>
       <ul className="mt-4 space-y-2 text-xs text-gray-600">
-        {scheduled.slice(0, 5).map((event) => (
-          <li key={event.id} className="rounded-md border border-gray-100 bg-white p-2">
-            <span className="font-medium text-gray-900">{event.payload?.platform ?? 'Unknown platform'}</span>
-            <span className="ml-2 text-gray-500">
-              {event.payload?.time ?? new Date(event.createdAt).toLocaleTimeString()}
-            </span>
-          </li>
-        ))}
-        {!scheduled.length ? <li className="text-gray-400">No scheduled content. Plan your next campaign.</li> : null}
+        {scheduled.slice(0, 5).map((event) => {
+          const payload = event.payload as { platform?: string; time?: string } | undefined;
+          return (
+            <li key={event.id} className="rounded-md border border-gray-100 bg-white p-2">
+              <span className="font-medium text-gray-900">{payload?.platform ?? 'Unknown platform'}</span>
+              <span className="ml-2 text-gray-500">
+                {payload?.time ?? new Date(event.createdAt).toLocaleTimeString()}
+              </span>
+            </li>
+          );
+        })}
+        {!scheduled.length && <li className="text-gray-400">No scheduled content. Plan your next campaign.</li>}
       </ul>
     </ModuleCard>
   );

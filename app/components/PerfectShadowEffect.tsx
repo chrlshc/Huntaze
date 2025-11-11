@@ -50,11 +50,13 @@ export default function PerfectShadowEffect() {
       }
       
       resizeCanvas() {
+        if (!canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
       
       createShadowLines() {
+        if (!canvas) return;
         // Create lines that float AROUND the central content
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
@@ -86,6 +88,7 @@ export default function PerfectShadowEffect() {
       }
       
       createFloatingOrbs() {
+        if (!canvas) return;
         // Créer des orbes qui flottent autour
         for (let i = 0; i < 6; i++) {
           this.floatingOrbs.push({
@@ -124,6 +127,7 @@ export default function PerfectShadowEffect() {
       }
       
       drawShadowLine(line: any) {
+        if (!canvas || !ctx) return;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         const radius = 300;
@@ -179,6 +183,7 @@ export default function PerfectShadowEffect() {
       }
       
       drawFloatingOrb(orb: any) {
+        if (!canvas || !ctx) return;
         // Animer l'orbe
         orb.x += orb.vx;
         orb.y += orb.vy;
@@ -222,6 +227,7 @@ export default function PerfectShadowEffect() {
       }
       
       triggerEnergyBeam() {
+        if (!canvas) return;
         // Déclencher un faisceau d'énergie aléatoirement
         if (Math.random() > 0.98) {
           const beam = this.energyBeams.find((b: any) => !b.active);
@@ -262,7 +268,7 @@ export default function PerfectShadowEffect() {
       }
       
       drawEnergyBeam(beam: any) {
-        if (!beam.active) return;
+        if (!beam.active || !ctx || !canvas) return;
         
         beam.progress += beam.speed;
         if (beam.progress >= 1) {
@@ -308,6 +314,7 @@ export default function PerfectShadowEffect() {
       }
       
       animate = () => {
+        if (!ctx || !canvas) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         this.time++;

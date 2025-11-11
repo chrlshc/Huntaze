@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 import { outboxFetchUnsent, outboxMarkSent } from '@/src/lib/db/outboxRepo'
 import { putEvent } from '@/src/lib/aws/eventbridge'
 
@@ -21,7 +20,6 @@ async function handler(req: NextRequest) {
   return NextResponse.json({ sent }, { headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
 }
 
-export const POST = withMonitoring('admin.outbox.dispatch', handler as any)
+export const POST = handler as any
 export const GET = POST
 export const HEAD = POST
-

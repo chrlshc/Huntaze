@@ -276,11 +276,12 @@ const FeatureCard = ({ feature, index, isHovered, onHover }: any) => {
   const Icon = feature.icon;
   
   // Determine grid span based on size
-  const gridClass = {
+  const gridClassMap: Record<string, string> = {
     large: 'col-span-2 row-span-2',
     tall: 'col-span-1 row-span-2',
     small: 'col-span-1 row-span-1',
-  }[feature.size];
+  };
+  const gridClass = gridClassMap[feature.size as string] || gridClassMap.small;
 
   return (
     <div

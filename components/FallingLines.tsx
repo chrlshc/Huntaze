@@ -17,7 +17,7 @@ interface Line {
 
 export default function FallingLines() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
   const linesRef = useRef<Line[]>([]);
 
   useEffect(() => {

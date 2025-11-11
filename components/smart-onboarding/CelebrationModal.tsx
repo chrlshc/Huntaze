@@ -149,21 +149,12 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
     visible: { 
       opacity: 1, 
       scale: 1,
-      rotateY: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 25,
-        duration: 0.6
-      }
+      rotateY: 0
     },
     exit: { 
       opacity: 0, 
       scale: 0.8,
-      rotateY: 15,
-      transition: {
-        duration: 0.3
-      }
+      rotateY: 15
     }
   };
 
@@ -174,12 +165,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
     },
     celebrate: { 
       scale: [1, 1.2, 1],
-      rotate: [0, 10, -10, 0],
-      transition: {
-        duration: 1,
-        repeat: 2,
-        ease: "easeInOut"
-      }
+      rotate: [0, 10, -10, 0]
     },
     settle: { 
       scale: 1,
@@ -190,10 +176,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
   const confettiVariants = {
     hidden: { opacity: 0 },
     visible: { 
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      opacity: 1
     }
   };
 
@@ -206,11 +189,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
     visible: { 
       opacity: [0, 1, 1, 0],
       y: [0, 100, 200, 300],
-      rotate: [0, 180, 360, 540],
-      transition: {
-        duration: 3,
-        ease: "easeOut"
-      }
+      rotate: [0, 180, 360, 540]
     }
   };
 

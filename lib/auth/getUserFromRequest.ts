@@ -332,5 +332,4 @@ export function withRole<T extends any[]>(
   };
 }
 
-// Export types for use in other modules
-export type { AuthError };
+// Types are already exported above

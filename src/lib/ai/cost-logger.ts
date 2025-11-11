@@ -3,7 +3,7 @@
 type CostEvent = {
   when: Date
   plan: 'starter' | 'pro' | 'scale' | 'enterprise'
-  provider: 'openai' | 'anthropic'
+  provider: 'openai' | 'anthropic' | 'azure'
   model: string
   tier: 'economy' | 'standard' | 'premium'
   tokensIn: number

@@ -1,4 +1,4 @@
-import { PerformanceMetrics } from '../types'
+type PerformanceMetrics = any
 
 export class LoadTestRunner {
   private initialized: boolean = false
@@ -263,10 +263,10 @@ export class LoadTestRunner {
           connectionPoolUsage.push(poolUsage)
           
         } catch (error) {
-          if (error.message.includes('deadlock')) {
+          if ((error as any).message && (error as any).message.includes('deadlock')) {
             deadlockCount++
           }
-          console.error(`Database query error for query ${index}:`, error)
+          console.error(`Database query error for query ${index}:`, error as any)
         }
       })
 

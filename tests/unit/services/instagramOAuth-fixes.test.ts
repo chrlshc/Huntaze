@@ -8,16 +8,15 @@
  * - Token encryption via tokenManager
  */
 
+// Static imports must come before other statements in ESM
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { InstagramOAuthService } from '../../../lib/services/instagramOAuth';
 
-// Set environment variables BEFORE any imports
+// Set environment variables after imports
 process.env.FACEBOOK_APP_ID = 'test_app_id';
 process.env.FACEBOOK_APP_SECRET = 'test_app_secret';
 process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI = 'https://example.com/callback';
 process.env.JWT_SECRET = 'test_jwt_secret';
-
-// Import the service
-const { InstagramOAuthService } = await import('../../../lib/services/instagramOAuth');
 
 describe('Instagram OAuth Security Fixes - Unit Tests', () => {
   let service: InstagramOAuthService;
@@ -191,4 +190,7 @@ describe('Instagram OAuth Security Integration Status', () => {
     // This test confirms that the Instagram OAuth security fixes are in place
     expect(true).toBe(true);
   });
+});
+
+// Close outermost describe block
 });

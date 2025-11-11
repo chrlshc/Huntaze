@@ -45,7 +45,7 @@ export async function publishTikTok(opts: {
   const { publish_id, upload_url } = init.data || {};
 
   if (!opts.videoUrl && upload_url && opts.file) {
-    await fetch(upload_url, { method: "PUT", body: opts.file });
+    await fetch(upload_url, { method: "PUT", body: opts.file as any });
   }
 
   // For shadow/dry_run, we keep draft/init; for live, you may switch to Direct Post endpoint when audited.

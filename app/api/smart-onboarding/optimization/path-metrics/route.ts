@@ -1,10 +1,8 @@
 // Smart Onboarding - Path Effectiveness Metrics API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { DynamicPathOptimizerImpl } from '@/lib/smart-onboarding/services/dynamicPathOptimizer';
-import { PersonaType, UserPersona } from '@/lib/smart-onboarding/types';
-
-const optimizer = new DynamicPathOptimizerImpl();
+import { PersonaType } from '@/lib/smart-onboarding/services/dynamicPathOptimizerFacade';
+import { trackPathEffectiveness, getPathMetrics, runContinuousOptimization } from '@/lib/smart-onboarding/services/dynamicPathOptimizerFacade';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,12 +17,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Track path effectiveness
-    await optimizer.trackPathEffectiveness(
-      pathId,
-      userId,
-      persona as UserPersona,
-      journey
-    );
+    await trackPathEffectiveness(pathId, userId, persona as any, journey);
     
     return NextResponse.json({
       success: true,
@@ -37,7 +30,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error tracking path effectiveness:', error);
     return NextResponse.json(
-      { error: 'Failed to track path effectiveness', details: error.message },
+      { error: 'Failed to track path effectiveness', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
@@ -76,7 +69,7 @@ export async function GET(request: NextRequest) {
       
     } else if (pathId) {
       // Get metrics for specific path
-      const metrics = await optimizer.getPathMetrics(pathId, personaType);
+      const metrics = await getPathMetrics(pathId, personaType);
       
       return NextResponse.json({
         success: true,
@@ -108,7 +101,7 @@ export async function PUT(request: NextRequest) {
     
     if (action === 'run_optimization') {
       // Trigger continuous optimization
-      await optimizer.runContinuousOptimization();
+      await runContinuousOptimization();
       
       return NextResponse.json({
         success: true,

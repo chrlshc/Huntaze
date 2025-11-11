@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { InterventionEffectivenessTrackerImpl } from '@/lib/smart-onboarding/services/interventionEffectivenessTracker';
+import {
+  trackOutcome,
+  generateReport,
+  analyzePatterns,
+  getOptimizationSuggestions,
+  updateMetricsAggregation,
+} from '@/lib/smart-onboarding/services/interventionEffectivenessFacade';
 import { logger } from '@/lib/utils/logger';
 
-// Initialize service
-const effectivenessTracker = new InterventionEffectivenessTrackerImpl();
+// Facade-based minimal implementation
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +24,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        await effectivenessTracker.trackInterventionOutcome(interventionId, userId, outcome);
+        await trackOutcome({ interventionId, userId, outcome });
 
         return NextResponse.json({
           success: true,
@@ -39,13 +44,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const report = await effectivenessTracker.generateEffectivenessReport(
-          {
-            start: new Date(timeRange.start),
-            end: new Date(timeRange.end)
-          },
-          filters
-        );
+        const report = await generateReport({ start: new Date(timeRange.start), end: new Date(timeRange.end) }, filters);
 
         return NextResponse.json({
           success: true,
@@ -57,10 +56,7 @@ export async function POST(request: NextRequest) {
       case 'analyze_patterns':
         const { userIdForAnalysis, timeWindow } = body;
 
-        const analytics = await effectivenessTracker.analyzeInterventionPatterns(
-          userIdForAnalysis,
-          timeWindow
-        );
+        const analytics = await analyzePatterns(userIdForAnalysis, timeWindow);
 
         return NextResponse.json({
           success: true,
@@ -72,10 +68,7 @@ export async function POST(request: NextRequest) {
       case 'get_optimization_suggestions':
         const { interventionType, userSegment } = body;
 
-        const suggestions = await effectivenessTracker.getOptimizationSuggestions(
-          interventionType,
-          userSegment
-        );
+        const suggestions = await getOptimizationSuggestions(interventionType, userSegment);
 
         return NextResponse.json({
           success: true,
@@ -85,7 +78,7 @@ export async function POST(request: NextRequest) {
         });
 
       case 'update_aggregation':
-        await effectivenessTracker.updateMetricsAggregation();
+        await updateMetricsAggregation();
 
         return NextResponse.json({
           success: true,
@@ -99,7 +92,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Intervention effectiveness API error:', error);
+    logger.error('Intervention effectiveness API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -118,10 +111,7 @@ export async function GET(request: NextRequest) {
 
     switch (action) {
       case 'analytics':
-        const analytics = await effectivenessTracker.analyzeInterventionPatterns(
-          userId || undefined,
-          timeWindow ? parseInt(timeWindow) : undefined
-        );
+        const analytics = await analyzePatterns(userId || undefined, timeWindow ? parseInt(timeWindow) : undefined);
 
         return NextResponse.json({
           success: true,
@@ -131,10 +121,7 @@ export async function GET(request: NextRequest) {
         });
 
       case 'suggestions':
-        const suggestions = await effectivenessTracker.getOptimizationSuggestions(
-          interventionType || undefined,
-          userSegment || undefined
-        );
+        const suggestions = await getOptimizationSuggestions(interventionType || undefined, userSegment || undefined);
 
         return NextResponse.json({
           success: true,
@@ -150,9 +137,7 @@ export async function GET(request: NextRequest) {
           end: new Date()
         };
 
-        const quickReport = await effectivenessTracker.generateEffectivenessReport(
-          quickTimeRange
-        );
+        const quickReport = await generateReport(quickTimeRange);
 
         return NextResponse.json({
           success: true,
@@ -168,7 +153,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Intervention effectiveness GET API error:', error);
+    logger.error('Intervention effectiveness GET API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -183,7 +168,7 @@ export async function PUT(request: NextRequest) {
 
     switch (action) {
       case 'force_aggregation':
-        await effectivenessTracker.updateMetricsAggregation();
+        await updateMetricsAggregation();
 
         return NextResponse.json({
           success: true,
@@ -197,7 +182,7 @@ export async function PUT(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Intervention effectiveness PUT API error:', error);
+    logger.error('Intervention effectiveness PUT API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build-with-error-handling.js",
+    "build:lowdisk": "NEXT_DISABLE_WEBPACK_PERSISTENT_CACHE=1 node scripts/build-with-error-handling.js",
+    "build:next": "next build",
+    "build:validate": "node scripts/validate-build-config.js",
+    "build:verify": "node scripts/verify-standalone-output.js",
     "start": "next start",
     "lint": "next lint",
     "db:init": "node scripts/init-db.js",
@@ -19,6 +23,9 @@
     "check:env": "node scripts/validate-env.js",
     "test": "vitest run --exclude tests/smoke/**",
     "test:ui": "vitest",
+    "test:integration": "vitest run tests/integration",
+    "test:integration:watch": "vitest watch tests/integration",
+    "test:integration:coverage": "vitest run tests/integration --coverage",
     "test:visual": "percy exec -- node scripts/percy-test.js",
     "test:visual:ci": "PERCY_TOKEN=$PERCY_TOKEN percy exec -- node scripts/percy-test.js",
     "test:undici": "USE_UNDICI_MOCKS=1 vitest run --exclude tests/smoke/**",
@@ -41,7 +48,10 @@
     "staging:diagnose": "node scripts/staging-login-cli.js --diagnose",
     "staging:validate": "node scripts/staging-login-cli.js --validate",
     "staging:fix": "node scripts/staging-login-cli.js --fix",
-    "staging:rollback": "node scripts/staging-login-cli.js --rollback"
+    "staging:rollback": "node scripts/staging-login-cli.js --rollback",
+    "typecheck": "tsc -p tsconfig.typecheck.json --noEmit && tsc -p tsconfig.typecheck.api-proactive.json --noEmit",
+    "typecheck:perf": "tsc -p lib/smart-onboarding/performance/tsconfig.perf.json --noEmit",
+    "build:perf": "tsc -p lib/smart-onboarding/performance/tsconfig.perf.json"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.876.0",

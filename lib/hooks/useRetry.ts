@@ -102,7 +102,6 @@ export function useAutoRetry<T>(
   return {
     data,
     loading,
-    error: retry.error,
     retry: load,
     ...retry
   };

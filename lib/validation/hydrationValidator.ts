@@ -189,7 +189,8 @@ export class HydrationValidator {
     const files: string[] = [];
     
     for (const pattern of patterns) {
-      const matches = await glob(pattern, { 
+      const globAsync = glob as unknown as (pattern: string, options: any) => Promise<string[]>;
+      const matches = await globAsync(pattern, { 
         cwd: projectRoot,
         absolute: true,
         ignore: [
@@ -306,7 +307,8 @@ export class HydrationValidator {
    * Valide les composants hydration-safe existants
    */
   async validateHydrationComponents(projectRoot: string = process.cwd()): Promise<ValidationResult> {
-    const hydrationFiles = await glob('components/hydration/**/*.{tsx,ts}', {
+    const globAsync = glob as unknown as (pattern: string, options: any) => Promise<string[]>;
+    const hydrationFiles = await globAsync('components/hydration/**/*.{tsx,ts}', {
       cwd: projectRoot,
       absolute: true
     });

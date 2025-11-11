@@ -16,26 +16,26 @@ export { default as MotivationalElements } from './MotivationalElements';
 
 // Types
 export interface SmartOnboardingProps {
-  userId: string;
-  stepId: string;
-  onStepComplete: (stepId: string, data: any) => void;
-  onStepChange: (direction: 'next' | 'previous') => void;
+    userId: string;
+    stepId: string;
+    onStepComplete: (stepId: string, data: any) => void;
+    onStepChange: (direction: 'next' | 'previous') => void;
 }
 
 export interface InterventionConfig {
-  type: 'hint' | 'guidance' | 'tutorial';
-  trigger: 'struggle' | 'time' | 'manual';
-  content: {
-    title: string;
-    message: string;
-    steps?: string[];
-    actionLabel?: string;
-  };
+    type: 'hint' | 'guidance' | 'tutorial';
+    trigger: 'struggle' | 'time' | 'manual';
+    content: {
+        title: string;
+        message: string;
+        steps?: string[];
+        actionLabel?: string;
+    };
 }
 
 export interface FeedbackConfig {
-  enableRealTimeFeedback: boolean;
-  enableCelebrations: boolean;
-  enableMotivationalMessages: boolean;
-  feedbackFrequency: 'low' | 'medium' | 'high';
+    enableRealTimeFeedback: boolean;
+    enableCelebrations: boolean;
+    enableMotivationalMessages: boolean;
+    feedbackFrequency: 'low' | 'medium' | 'high';
 }

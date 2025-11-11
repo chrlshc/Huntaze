@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { LearningPathOptimizerImpl } from '@/lib/smart-onboarding/services/learningPathOptimizer';
+import {
+  optimizeLearningPath,
+  measurePathEffectiveness,
+  comparePaths,
+  updateCohortPerformance,
+} from '@/lib/smart-onboarding/services/learningPathOptimizerFacade';
 import { logger } from '@/lib/utils/logger';
 
-// Initialize service
-const learningPathOptimizer = new LearningPathOptimizerImpl();
+// Facade-based minimal implementation
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,12 +23,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const optimizedPath = await learningPathOptimizer.optimizeLearningPath(
-          userId,
-          currentPath,
-          userCohort,
-          performanceData
-        );
+        const optimizedPath = await optimizeLearningPath(userId, currentPath, userCohort, performanceData);
 
         return NextResponse.json({
           success: true,
@@ -41,11 +40,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const effectiveness = await learningPathOptimizer.measurePathEffectiveness(
-          pathId,
-          userOutcomes,
-          timeWindow || 86400000 // Default 24 hours
-        );
+        const effectiveness = await measurePathEffectiveness(pathId, userOutcomes, timeWindow || 86400000);
 
         return NextResponse.json({
           success: true,
@@ -64,11 +59,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const comparison = await learningPathOptimizer.comparePaths(
-          pathA,
-          pathB,
-          comparisonMetrics || ['completionRate', 'userSatisfactionScore', 'averageCompletionTime']
-        );
+        const comparison = await comparePaths(pathA, pathB, comparisonMetrics || ['completionRate', 'userSatisfactionScore', 'averageCompletionTime']);
 
         return NextResponse.json({
           success: true,
@@ -87,7 +78,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        await learningPathOptimizer.updateCohortPerformance(cohortId, cohortPerformanceData);
+        await updateCohortPerformance(cohortId, cohortPerformanceData);
 
         return NextResponse.json({
           success: true,
@@ -105,7 +96,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Learning path optimization API error:', error);
+    logger.error('Learning path optimization API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -197,7 +188,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Learning path optimization GET API error:', error);
+    logger.error('Learning path optimization GET API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

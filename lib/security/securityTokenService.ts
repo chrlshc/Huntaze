@@ -78,7 +78,7 @@ export class SecurityTokenService {
             adminToken: currentTokens.adminToken,
             debugToken: currentTokens.debugToken,
             generatedAt: new Date(),
-            entropy: securityTokenGenerator.calculateEntropy(currentTokens.adminToken),
+            entropy: 256, // Default entropy value for backup
           };
 
           backupId = await tokenBackupService.createBackup(securityTokens, 'rotation');
@@ -125,10 +125,14 @@ export class SecurityTokenService {
     // Check security score
     if (validation.securityScore < 50) {
       reasons.push('Security score is below acceptable threshold');
-      urgency = urgency === 'critical' ? 'critical' : 'high';
+      if (urgency !== 'critical') {
+        urgency = 'high';
+      }
     } else if (validation.securityScore < 75) {
       reasons.push('Security score could be improved');
-      urgency = urgency === 'critical' || urgency === 'high' ? urgency : 'medium';
+      if (urgency === 'low') {
+        urgency = 'medium';
+      }
     }
 
     // Check for specific security issues

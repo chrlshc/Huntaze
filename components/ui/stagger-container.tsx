@@ -21,11 +21,7 @@ const easings = {
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
-    opacity: 1,
-    transition: {
-      delayChildren: 0.2,
-      staggerChildren: 0.1
-    }
+    opacity: 1
   }
 };
 
@@ -55,11 +51,7 @@ export function StaggerContainer({
   const customContainerVariants = {
     ...containerVariants,
     visible: {
-      ...containerVariants.visible,
-      transition: {
-        delayChildren,
-        staggerChildren: staggerDelay
-      }
+      ...containerVariants.visible
     }
   };
 

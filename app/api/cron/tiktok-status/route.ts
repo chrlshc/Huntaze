@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 import { processDueTikTokStatusJobs } from '@/src/lib/tiktok/worker'
 
 export const runtime = 'nodejs'
@@ -9,7 +8,6 @@ async function handler() {
   return NextResponse.json({ processed })
 }
 
-export const GET = withMonitoring('cron.tiktok-status', handler as any)
+export const GET = handler as any
 export const POST = GET
 export const HEAD = GET
-

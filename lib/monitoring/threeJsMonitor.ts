@@ -97,6 +97,7 @@ class ThreeJsMonitor {
   private setupWebGLContextMonitoring(): void {
     // Monitor for WebGL context loss
     document.addEventListener('webglcontextlost', (event) => {
+      const webglEvent = event as WebGLContextEvent;
       this.logError({
         type: 'webgl',
         message: 'WebGL context lost',
@@ -104,7 +105,7 @@ class ThreeJsMonitor {
         userAgent: navigator.userAgent,
         url: window.location.href,
         context: {
-          reason: event.statusMessage || 'Unknown'
+          reason: webglEvent.statusMessage || 'Unknown'
         }
       });
     });

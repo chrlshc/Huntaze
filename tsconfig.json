@@ -41,6 +41,19 @@
     "huntaze-api/**/*",
     "site-web/**/*",
     "components/sections/shopify/**/*",
-    "src/lib/workers/**/*"
+    "src/lib/**/*",
+    "clients/**/*",
+    "infra/**/*",
+    "lib/amplify-env-vars/**/*",
+    "lib/smart-onboarding/**/*",
+    "lib/cache/**/*",
+    "lib/game-days/**/*",
+    "lib/load-shedding/**/*",
+    "lib/deployments/**/*",
+    "lib/recovery/**/*",
+    "lib/monitoring/**/*",
+    "lib/workers/**/*",
+    "scripts/**/*",
+    "app/api/cache/**/*"
   ]
 }

@@ -1,10 +1,7 @@
 // Smart Onboarding ML Personalization - Content Recommendations API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { MLPersonalizationEngineImpl } from '@/lib/smart-onboarding/services/mlPersonalizationEngine';
-import { smartOnboardingDb } from '@/lib/smart-onboarding/config/database';
-
-const mlEngine = new MLPersonalizationEngineImpl(smartOnboardingDb);
+import { generateContentRecommendations } from '@/lib/smart-onboarding/services/mlPersonalizationFacade';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Generate content recommendations
-    const recommendations = await mlEngine.generateContentRecommendations(userId, contentType);
+    const recommendations = await generateContentRecommendations(userId, contentType);
     
     return NextResponse.json({
       success: true,
@@ -56,7 +53,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Generate content recommendations
-    const recommendations = await mlEngine.generateContentRecommendations(userId, contentType);
+    const recommendations = await generateContentRecommendations(userId, contentType);
     
     return NextResponse.json({
       success: true,

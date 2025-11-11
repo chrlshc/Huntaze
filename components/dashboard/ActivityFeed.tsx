@@ -60,11 +60,7 @@ const defaultActivities: ActivityItem[] = [
 
 const containerVariants = {
   hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.06, // 60ms delay
-    },
-  },
+  show: {}
 };
 
 const itemVariants = {

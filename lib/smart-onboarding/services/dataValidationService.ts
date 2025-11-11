@@ -1,15 +1,20 @@
-import { BehaviorEvent, DataValidationResult, ValidationRule, DataQualityMetrics } from '../types';
+import { BehaviorEvent, DataValidationResult, DataQualityMetrics } from '../types';
 import { logger } from '../../utils/logger';
 
 interface ValidationConfig {
   strictMode: boolean;
-  customRules: ValidationRule[];
+  customRules: CustomValidationRule[];
   qualityThresholds: {
     minEngagementScore: number;
     maxTimeSpent: number;
     requiredFields: string[];
   };
 }
+
+type CustomValidationRule = {
+  id: string;
+  validate: (event: BehaviorEvent) => Promise<{ isValid: boolean; errors: string[] }> | { isValid: boolean; errors: string[] };
+};
 
 export class DataValidationService {
   private config: ValidationConfig;
@@ -264,7 +269,7 @@ export class DataValidationService {
     }
 
     // Check for suspicious patterns
-    if (event.interactionData?.timeSpent === 0 && event.eventType !== 'page_view') {
+    if (event.interactionData?.timeSpent === 0 && String(event.eventType) !== 'page_view') {
       warnings.push('Zero time spent on non-page-view event may indicate tracking error');
     }
 
@@ -376,7 +381,10 @@ export class DataValidationService {
       // Trim string fields
       if (cleanedEvent.id) cleanedEvent.id = cleanedEvent.id.trim();
       if (cleanedEvent.userId) cleanedEvent.userId = cleanedEvent.userId.trim();
-      if (cleanedEvent.eventType) cleanedEvent.eventType = cleanedEvent.eventType.trim().toLowerCase();
+      if (cleanedEvent.eventType) {
+        const t = String(cleanedEvent.eventType).trim().toLowerCase();
+        (cleanedEvent as any).eventType = t;
+      }
       if (cleanedEvent.stepId) cleanedEvent.stepId = cleanedEvent.stepId.trim();
 
       // Clean interaction data
@@ -391,20 +399,21 @@ export class DataValidationService {
         }
 
         // Remove empty arrays
+        // Keep empty arrays as-is to preserve type shape
         if (cleanedEvent.interactionData.mouseMovements?.length === 0) {
-          delete cleanedEvent.interactionData.mouseMovements;
+          // no-op
         }
-        
         if (cleanedEvent.interactionData.clickPatterns?.length === 0) {
-          delete cleanedEvent.interactionData.clickPatterns;
+          // no-op
         }
       }
 
       // Remove null/undefined values
-      Object.keys(cleanedEvent).forEach(key => {
-        const value = cleanedEvent[key as keyof BehaviorEvent];
+      const ce: any = cleanedEvent as any;
+      Object.keys(ce).forEach(key => {
+        const value = ce[key];
         if (value === null || value === undefined) {
-          delete cleanedEvent[key as keyof BehaviorEvent];
+          delete ce[key];
         }
       });
 
@@ -462,7 +471,7 @@ export class DataValidationService {
   /**
    * Add custom validation rule
    */
-  addCustomRule(rule: ValidationRule): void {
+  addCustomRule(rule: CustomValidationRule): void {
     this.config.customRules.push(rule);
   }
 

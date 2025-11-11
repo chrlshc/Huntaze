@@ -17,7 +17,7 @@ export function useFPSMonitor({
   const [isLowPerf, setIsLowPerf] = useState(false);
   const frameTimesRef = useRef<number[]>([]);
   const lastTimeRef = useRef(performance.now());
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let frameCount = 0;

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "extends": ["./.eslintrc.json"],
+  "rules": {
+    "@typescript-eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "prom-client",
+            "message": "❌ Import prom-client dynamically in handler: await import('prom-client'). Use lib/metrics-registry.ts for idempotent metrics."
+          },
+          {
+            "name": "@/lib/monitoring",
+            "message": "❌ withMonitoring is deprecated. Export handlers directly and use lib/metrics-registry.ts if metrics needed."
+          },
+          {
+            "name": "@/src/lib/prom",
+            "message": "❌ Use lib/metrics-registry.ts instead for centralized, idempotent metrics."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/monitoring*"],
+            "message": "❌ Avoid importing monitoring utilities. Use lib/metrics-registry.ts for metrics."
+          }
+        ]
+      }
+    ]
+  }
+}

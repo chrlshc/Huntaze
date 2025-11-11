@@ -1,7 +1,5 @@
-import { BehaviorEvent, InteractionEvent } from '../types';
+import { BehaviorEvent, BehaviorEventType, InteractionEvent, PersonaType } from '../types';
 import { logger } from '../../utils/logger';
-
-export type PersonaType = 'technical_expert' | 'business_user' | 'novice_user' | 'creative_professional' | 'social_media_manager';
 
 export interface SimulationScenario {
   persona: PersonaType;
@@ -166,6 +164,12 @@ export class UserPersonaSimulator {
       interactionData,
       engagementScore,
       contextualData: {
+        currentUrl: '/',
+        userAgent: 'simulator',
+        screenResolution: { width: 1920, height: 1080 },
+        viewportSize: { width: 1280, height: 720 },
+        deviceType: 'desktop',
+        browserInfo: { name: 'sim', version: '1.0', language: 'en', timezone: 'UTC' },
         simulationStep: state.currentStep,
         persona: state.scenario.persona,
         isSimulated: true
@@ -173,22 +177,22 @@ export class UserPersonaSimulator {
     };
   }
 
-  private selectEventType(persona: PersonaCharacteristics, stepName: string): string {
+  private selectEventType(persona: PersonaCharacteristics, stepName: string): BehaviorEventType {
     const random = Math.random();
     
     // Technical experts
     if (persona.technicalProficiency > 0.8) {
       if (random < 0.4) return 'click';
-      if (random < 0.7) return 'navigation';
-      if (random < 0.85) return 'feature_exploration';
-      return 'keyboard_shortcut';
+      if (random < 0.7) return 'keypress';
+      if (random < 0.85) return 'focus';
+      return 'mouse_movement';
     }
     
     // Novice users
     if (persona.technicalProficiency < 0.3) {
       if (random < 0.2) return 'hesitation';
       if (random < 0.4) return 'help_request';
-      if (random < 0.6) return 'tooltip_view';
+      if (random < 0.6) return 'hover';
       if (random < 0.8) return 'click';
       return 'backtrack';
     }
@@ -196,9 +200,9 @@ export class UserPersonaSimulator {
     // Business users and others
     if (random < 0.3) return 'click';
     if (random < 0.5) return 'scroll';
-    if (random < 0.7) return 'read';
-    if (random < 0.85) return 'navigation';
-    return 'form_input';
+    if (random < 0.7) return 'focus';
+    if (random < 0.85) return 'blur';
+    return 'keypress';
   }
 
   private generateInteractionData(persona: PersonaCharacteristics, eventType: string, stepName: string): any {
@@ -443,14 +447,14 @@ export class UserPersonaSimulator {
 
   private initializePersonaProfiles(): Record<PersonaType, PersonaCharacteristics> {
     return {
-      technical_expert: {
-        baseSpeed: 1.5,
-        explorationTendency: 0.8,
-        helpSeekingTendency: 0.1,
-        errorProneness: 0.1,
-        attentionSpan: 600000, // 10 minutes
-        technicalProficiency: 0.9,
-        patience: 0.6
+      content_creator: {
+        baseSpeed: 1.2,
+        explorationTendency: 0.9,
+        helpSeekingTendency: 0.3,
+        errorProneness: 0.2,
+        attentionSpan: 900000, // 15 minutes
+        technicalProficiency: 0.7,
+        patience: 0.8
       },
       business_user: {
         baseSpeed: 1.0,
@@ -461,7 +465,25 @@ export class UserPersonaSimulator {
         technicalProficiency: 0.6,
         patience: 0.7
       },
-      novice_user: {
+      influencer: {
+        baseSpeed: 1.5,
+        explorationTendency: 0.8,
+        helpSeekingTendency: 0.2,
+        errorProneness: 0.2,
+        attentionSpan: 420000, // 7 minutes
+        technicalProficiency: 0.8,
+        patience: 0.6
+      },
+      agency: {
+        baseSpeed: 1.5,
+        explorationTendency: 0.8,
+        helpSeekingTendency: 0.1,
+        errorProneness: 0.1,
+        attentionSpan: 600000, // 10 minutes
+        technicalProficiency: 0.9,
+        patience: 0.6
+      },
+      casual_user: {
         baseSpeed: 0.6,
         explorationTendency: 0.3,
         helpSeekingTendency: 0.8,
@@ -469,24 +491,6 @@ export class UserPersonaSimulator {
         attentionSpan: 300000, // 5 minutes
         technicalProficiency: 0.2,
         patience: 0.4
-      },
-      creative_professional: {
-        baseSpeed: 0.8,
-        explorationTendency: 0.9,
-        helpSeekingTendency: 0.3,
-        errorProneness: 0.2,
-        attentionSpan: 900000, // 15 minutes
-        technicalProficiency: 0.7,
-        patience: 0.8
-      },
-      social_media_manager: {
-        baseSpeed: 1.2,
-        explorationTendency: 0.7,
-        helpSeekingTendency: 0.2,
-        errorProneness: 0.2,
-        attentionSpan: 420000, // 7 minutes
-        technicalProficiency: 0.8,
-        patience: 0.6
       }
     };
   }

@@ -4,7 +4,7 @@ import { JobState } from './queue'
 const EVENTS_TTL_SECONDS = 30 * 24 * 60 * 60 // 30d
 const JOB_TTL_AFTER_TERMINAL_SECONDS = 7 * 24 * 60 * 60 // 7d
 
-function client(): Redis.Redis {
+function client(): Redis {
   const url = process.env.REDIS_URL!
   return new Redis(url)
 }

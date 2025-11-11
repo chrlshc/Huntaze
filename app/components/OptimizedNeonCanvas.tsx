@@ -70,7 +70,7 @@ export default function OptimizedNeonCanvas({
 
     // Optimized render function
     function render() {
-      if (!inView) return;
+      if (!inView || !ctx) return;
 
       // Clear with semi-transparent black for trail effect
       ctx.fillStyle = "rgba(11, 6, 20, 0.1)";

@@ -1,10 +1,7 @@
 // Smart Onboarding ML Personalization - Success Prediction API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { MLPersonalizationEngineImpl } from '@/lib/smart-onboarding/services/mlPersonalizationEngine';
-import { smartOnboardingDb } from '@/lib/smart-onboarding/config/database';
-
-const mlEngine = new MLPersonalizationEngineImpl(smartOnboardingDb);
+import { predictSuccessProbability, updateUserModel } from '@/lib/smart-onboarding/services/mlPersonalizationFacade';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Predict success probability
-    const successPrediction = await mlEngine.predictSuccessProbability(userId);
+    const successPrediction = await predictSuccessProbability(userId);
     
     return NextResponse.json({
       success: true,
@@ -52,10 +49,10 @@ export async function POST(request: NextRequest) {
     }
     
     // Update user model with new behavior data
-    await mlEngine.updateUserModel(userId, behaviorData);
+    await updateUserModel(userId, behaviorData);
     
     // Get updated success prediction
-    const successPrediction = await mlEngine.predictSuccessProbability(userId);
+    const successPrediction = await predictSuccessProbability(userId);
     
     return NextResponse.json({
       success: true,

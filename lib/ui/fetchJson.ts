@@ -3,7 +3,6 @@ import { toFriendlyError } from '@/lib/ui/friendlyError'
 export async function fetchJson(input: RequestInfo, init: RequestInit = {}) {
   const headers = new Headers(init.headers || {})
   if (!headers.has('x-request-id') && 'crypto' in globalThis) {
-    // @ts-expect-error runtime guard for older environments
     const rid = (globalThis.crypto as any)?.randomUUID?.() ?? String(Date.now())
     headers.set('x-request-id', rid)
   }
@@ -24,4 +23,3 @@ export async function fetchJson(input: RequestInfo, init: RequestInit = {}) {
   }
   return data
 }
-

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 import { z } from 'zod';
 
 // Validation schema for fan updates
@@ -150,20 +149,6 @@ async function deleteHandler(
   }
 }
 
-export const GET = withMonitoring('crm.fans.get_by_id', getHandler as any, {
-  domain: 'crm',
-  feature: 'fans_get',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
-
-export const PUT = withMonitoring('crm.fans.put', putHandler as any, {
-  domain: 'crm',
-  feature: 'fans_update',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
-
-export const DELETE = withMonitoring('crm.fans.delete', deleteHandler as any, {
-  domain: 'crm',
-  feature: 'fans_delete',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const GET = getHandler as any;
+export const PUT = putHandler as any;
+export const DELETE = deleteHandler as any;

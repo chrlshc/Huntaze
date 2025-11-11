@@ -5,7 +5,7 @@ import { getUserFromRequest } from '@/lib/auth/request';
 import { getPool } from '@/lib/db/index';
 import { OnlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
-import { withMonitoring } from '@/lib/observability/bootstrap';
+ 
 
 async function postHandler(
   request: NextRequest,
@@ -95,8 +95,4 @@ async function postHandler(
   }
 }
 
-export const POST = withMonitoring('onlyfans.messages.retry', postHandler as any, {
-  domain: 'crm',
-  feature: 'message_retry',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const POST = postHandler as any;

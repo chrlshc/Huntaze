@@ -1,13 +1,59 @@
 import {
-  ContextualHelpService,
   HelpContent,
   HelpLevel,
   HelpContext,
-  ProgressiveDisclosure,
-  HelpPersonalization,
-  HelpEffectiveness,
   AIHelpGenerator
 } from '../interfaces/services';
+// Local interfaces for contextual help (not previously exported)
+interface ProgressiveDisclosureLevel {
+  level: number;
+  type: 'hint' | 'guidance' | 'tutorial';
+  content: string;
+  trigger: string;
+  duration: number;
+}
+
+interface ProgressiveDisclosure {
+  id: string;
+  userId: string;
+  baseHelpId: string;
+  levels: ProgressiveDisclosureLevel[];
+  currentLevel: number;
+  createdAt: Date;
+}
+
+interface HelpPersonalization {
+  technicalProficiency: 'beginner' | 'intermediate' | 'advanced';
+  learningStyle: 'visual' | 'auditory' | 'kinesthetic' | 'reading' | 'mixed';
+  platformPreferences: string[];
+  preferredTone?: 'friendly' | 'formal' | 'concise' | 'casual' | 'professional';
+  languageLevel?: 'simple' | 'standard' | 'advanced';
+}
+
+interface HelpEffectiveness {
+  id: string;
+  userId: string;
+  helpContentId: string;
+  helpType: HelpContent['type'];
+  userResponse: {
+    helpful: boolean;
+    timeToResponse: number;
+    actionTaken?: string;
+    completedTask?: boolean;
+    requestedMoreHelp?: boolean;
+  };
+  effectiveness: number;
+  improvementSuggestions: string[];
+  trackedAt: Date;
+}
+
+interface ContextualHelpService {
+  generateContextualHelp(userId: string, context: HelpContext, userState: any): Promise<HelpContent>;
+  implementProgressiveDisclosure(userId: string, baseHelp: HelpContent, userInteraction: any): Promise<ProgressiveDisclosure>;
+  personalizeHelpContent(userId: string, baseContent: HelpContent, personalization: HelpPersonalization): Promise<HelpContent>;
+  trackHelpEffectiveness(userId: string, helpContent: HelpContent, userResponse: any): Promise<HelpEffectiveness>;
+  optimizeHelpContent(helpContentId: string, effectivenessData: HelpEffectiveness[]): Promise<HelpContent>;
+}
 import { logger } from '../../utils/logger';
 import { redisClient } from '../config/redis';
 
@@ -51,7 +97,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return helpContent;
     } catch (error) {
-      logger.error(`Failed to generate contextual help for user ${userId}:`, error);
+      logger.error(`Failed to generate contextual help for user ${userId}:`, undefined, error as Error);
       throw error;
     }
   }
@@ -112,7 +158,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return disclosure;
     } catch (error) {
-      logger.error(`Failed to implement progressive disclosure for user ${userId}:`, error);
+      logger.error(`Failed to implement progressive disclosure for user ${userId}:`, undefined, error as Error);
       throw error;
     }
   }
@@ -149,9 +195,9 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
       personalizedContent.format = this.selectOptimalFormat(personalization.learningStyle);
 
       // Add personalized examples
-      if (personalization.platformPreferences.length > 0) {
+    if (personalization.platformPreferences.length > 0) {
         personalizedContent.examples = await this.generatePersonalizedExamples(
-          baseContent.context,
+          baseContent.context || {},
           personalization.platformPreferences
         );
       }
@@ -165,7 +211,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return personalizedContent;
     } catch (error) {
-      logger.error(`Failed to personalize help content for user ${userId}:`, error);
+      logger.error(`Failed to personalize help content for user ${userId}:`, undefined, error as Error);
       throw error;
     }
   }
@@ -218,7 +264,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return effectiveness;
     } catch (error) {
-      logger.error(`Failed to track help effectiveness:`, error);
+      logger.error(`Failed to track help effectiveness:`, undefined, error as Error);
       throw error;
     }
   }
@@ -253,18 +299,18 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
       }
 
       if (analysis.needsMoreExamples) {
-        optimizedContent.examples = await this.generateMoreExamples(originalContent.context);
+        optimizedContent.examples = await this.generateMoreExamples(originalContent.context || {});
       }
 
       if (analysis.needsVisualAids) {
         optimizedContent.format = 'visual';
-        optimizedContent.visualAids = await this.generateVisualAids(originalContent.context);
+        optimizedContent.visualAids = await this.generateVisualAids(originalContent.context || {});
       }
 
       if (analysis.needsInteractivity) {
         optimizedContent.interactive = true;
         optimizedContent.interactiveElements = await this.generateInteractiveElements(
-          originalContent.context
+          originalContent.context || {}
         );
       }
 
@@ -280,7 +326,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return optimizedContent;
     } catch (error) {
-      logger.error(`Failed to optimize help content ${helpContentId}:`, error);
+      logger.error(`Failed to optimize help content ${helpContentId}:`, undefined, error as Error);
       throw error;
     }
   }

@@ -39,11 +39,13 @@ export default function HuntazeShadowEffect() {
       }
       
       resizeCanvas() {
+        if (!canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
       
       createLines() {
+        if (!canvas) return;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         const radius = 350;
@@ -65,6 +67,7 @@ export default function HuntazeShadowEffect() {
       }
       
       drawLine(line: any) {
+        if (!canvas || !ctx) return;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         
@@ -131,6 +134,7 @@ export default function HuntazeShadowEffect() {
       }
       
       animate = () => {
+        if (!ctx || !canvas) return;
         // Fond légèrement transparent pour créer un effet de traînée
         ctx.fillStyle = 'rgba(11, 6, 20, 0.1)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);

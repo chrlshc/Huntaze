@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRedis } from '@/src/lib/redis'
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit'
-import { prom } from '@/src/lib/prom'
 
 export const runtime = 'nodejs'
 
@@ -23,6 +22,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const { prom } = await import('@/src/lib/prom')
   const v = String(process.env.ENABLE_TWITTER || '').toLowerCase()
   const enabled = v === '1' || v === 'true' || v === 'yes' || v === 'on'
   if (!enabled) return noindex(new NextResponse('Not Found', { status: 404 }))
@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const { prom } = await import('@/src/lib/prom')
   const v = String(process.env.ENABLE_TWITTER || '').toLowerCase()
   const enabled = v === '1' || v === 'true' || v === 'yes' || v === 'on'
   if (!enabled) return noindex(new NextResponse('Not Found', { status: 404 }))

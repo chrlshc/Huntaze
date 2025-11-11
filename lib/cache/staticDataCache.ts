@@ -47,8 +47,8 @@ class StaticDataCache {
           features: this.getFeatures(),
           showcaseFeatures: this.getShowcaseFeatures(),
           stats: await this.getPlatformStats(),
-          testimonials: this.getTestimonials(),
-          pricingPlans: this.getPricingPlans(),
+          testimonials: await this.getTestimonials(),
+          pricingPlans: await this.getPricingPlans(),
           faqs: this.getFAQs(),
           metadata: {
             title: 'Huntaze - Grow Your Creator Business',

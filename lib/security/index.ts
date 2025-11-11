@@ -20,15 +20,10 @@ export {
   type TokenRotationResult,
 } from './securityTokenService';
 
-// Re-export commonly used types
-export type {
-  SecurityTokens,
-  TokenValidationResult,
-  TokenBackup,
-  BackupMetadata,
-  SecurityTokenValidationReport,
-  TokenRotationResult,
-} from './securityTokenGenerator';
+// Import instances for utility functions
+import { securityTokenGenerator, type SecurityTokens } from './securityTokenGenerator';
+import { tokenBackupService } from './tokenBackupService';
+import { securityTokenService } from './securityTokenService';
 
 // Utility functions for quick access
 export const generateSecureTokens = () => securityTokenGenerator.generateSecurityTokens();

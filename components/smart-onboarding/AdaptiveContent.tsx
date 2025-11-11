@@ -300,7 +300,7 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
               type={element.inputType || 'text'}
               placeholder={element.placeholder}
               onChange={(e) => {
-                setCompletionData(prev => ({
+                setCompletionData((prev: Record<string, any>) => ({
                   ...prev,
                   [element.id]: e.target.value
                 }));
@@ -331,7 +331,7 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
                         const index = checklistData.indexOf(item);
                         if (index > -1) checklistData.splice(index, 1);
                       }
-                      setCompletionData(prev => ({
+                      setCompletionData((prev: Record<string, any>) => ({
                         ...prev,
                         [element.id]: checklistData
                       }));

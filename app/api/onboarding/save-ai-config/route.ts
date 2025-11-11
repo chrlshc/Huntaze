@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mergeOnboarding, markStep } from '@/app/api/_store/onboarding';
 import crypto from 'crypto';
 import { makeReqLogger } from '@/lib/logger';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
 
@@ -63,4 +62,4 @@ async function handler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('onboarding.save-ai-config', handler as any);
+export const POST = handler as any;

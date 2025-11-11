@@ -78,6 +78,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
+    // Run ESLint during builds to catch issues early
     ignoreDuringBuilds: false,
   },
 
@@ -85,6 +86,13 @@ const nextConfig: NextConfig = {
 
   // Client bundle fallbacks
   webpack: (config, { isServer }) => {
+    // Allow disabling webpack's persistent cache in low-disk environments
+    const disableCache = process.env.NEXT_DISABLE_WEBPACK_PERSISTENT_CACHE === '1' || process.env.NEXT_DISABLE_WEBPACK_PERSISTENT_CACHE === 'true';
+    if (disableCache) {
+      // Disable webpack filesystem cache to reduce disk writes
+      // https://webpack.js.org/configuration/cache/
+      (config as any).cache = false;
+    }
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,

@@ -42,6 +42,11 @@ class MLModelManager {
 
   async predict(request: PredictionRequest): Promise<PredictionResult> {
     try {
+      // Validate model type
+      if (!request.modelType) {
+        throw new Error('Model type is required for prediction');
+      }
+
       // Get the appropriate model endpoint
       const endpoint = await this.getModelEndpoint(request.modelType);
       if (!endpoint) {
@@ -55,7 +60,7 @@ class MLModelManager {
       const result = await this.makePrediction(model, request);
       
       // Update endpoint metrics
-      this.updateEndpointMetrics(endpoint, true, result.responseTime);
+      this.updateEndpointMetrics(endpoint, true, result.responseTime || 0);
       
       return result;
 
@@ -63,9 +68,11 @@ class MLModelManager {
       logger.error('Prediction failed', { error, request });
       
       // Update endpoint metrics for failure
-      const endpoint = await this.getModelEndpoint(request.modelType);
-      if (endpoint) {
-        this.updateEndpointMetrics(endpoint, false, 0);
+      if (request.modelType) {
+        const endpoint = await this.getModelEndpoint(request.modelType);
+        if (endpoint) {
+          this.updateEndpointMetrics(endpoint, false, 0);
+        }
       }
       
       throw error;
@@ -86,17 +93,21 @@ class MLModelManager {
     // Load model from versioning service
     let model: MLModel;
     if (modelVersion) {
-      const versionData = await modelVersioningService.getVersion(modelVersion);
+      const versionData = await modelVersioningService.getVersion(modelType, modelVersion);
       if (!versionData) {
-        throw new Error(`Model version not found: ${modelVersion}`);
+        throw new Error(`Model version not found: ${modelType}@${modelVersion}`);
       }
       model = versionData.model;
     } else {
-      const currentVersion = await modelVersioningService.getCurrentProductionVersion(modelType);
-      if (!currentVersion) {
+      // Get latest production version
+      const versions = await modelVersioningService.listVersions(modelType, { 
+        tag: 'production',
+        limit: 1 
+      });
+      if (!versions || versions.length === 0) {
         throw new Error(`No production model available for type: ${modelType}`);
       }
-      model = currentVersion.model;
+      model = versions[0].model;
     }
 
     // Cache the model
@@ -240,9 +251,9 @@ class MLModelManager {
       const responseTime = Date.now() - startTime;
       
       return {
-        modelType: request.modelType,
+        userId: request.userId || 'anonymous',
+        predictions: { result: prediction },
         modelVersion: model.version,
-        prediction,
         confidence: 0.85 + Math.random() * 0.1,
         responseTime,
         timestamp: new Date()
