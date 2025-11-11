@@ -279,7 +279,7 @@ class OnboardingProfileRepository {
     `;
     
     const result = await pool.query(query, [level]);
-    return result.rows.map(row => this.mapRow(row));
+    return result.rows.map((row: any) => this.mapRow(row));
   }
 
   /**
