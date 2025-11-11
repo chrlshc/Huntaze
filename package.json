@@ -138,7 +138,12 @@
     "web-vitals": "^5.1.0",
     "webpack-bundle-analyzer": "^4.10.1",
     "zod": "^3.25.76",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "@tiptap/react": "^2.6.6",
+    "@tiptap/starter-kit": "^2.6.6",
+    "@tiptap/extension-link": "^2.6.6",
+    "@tiptap/extension-placeholder": "^2.6.6",
+    "@tiptap/extension-character-count": "^2.6.6"
   },
   "devDependencies": {
     "@mswjs/interceptors": "^0.25.16",
