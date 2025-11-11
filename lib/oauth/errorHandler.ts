@@ -275,15 +275,13 @@ export class OAuthErrorHandler {
       };
     }
 
-    // Create redirect URL with error parameters
-    const redirectUrl = new URL(baseUrl || '/platforms/connect');
-    redirectUrl.searchParams.set('error', oauthError.code);
-    redirectUrl.searchParams.set('message', oauthError.userMessage);
-    if (oauthError.suggestion) {
-      redirectUrl.searchParams.set('suggestion', oauthError.suggestion);
-    }
-
-    return NextResponse.redirect(redirectUrl);
+    // Create relative redirect URL with error parameters
+    const path = baseUrl && baseUrl.startsWith('/') ? baseUrl : `/platforms/connect/${platform ?? ''}`;
+    const params = new URLSearchParams();
+    params.set('error', oauthError.code);
+    params.set('message', oauthError.userMessage);
+    if (oauthError.suggestion) params.set('suggestion', oauthError.suggestion);
+    return NextResponse.redirect(`${path}?${params.toString()}`);
   }
 
   /**
@@ -313,15 +311,13 @@ export class OAuthErrorHandler {
       userAgent: request.headers.get('user-agent'),
     });
 
-    // Redirect to error page
-    const redirectUrl = new URL(`/platforms/connect/${platform}`, request.url);
-    redirectUrl.searchParams.set('error', oauthError.code);
-    redirectUrl.searchParams.set('message', oauthError.userMessage);
-    if (oauthError.suggestion) {
-      redirectUrl.searchParams.set('suggestion', oauthError.suggestion);
-    }
-
-    return NextResponse.redirect(redirectUrl);
+    // Redirect to error page (relative path)
+    const params = new URLSearchParams();
+    params.set('error', oauthError.code);
+    params.set('message', oauthError.userMessage);
+    if (oauthError.suggestion) params.set('suggestion', oauthError.suggestion);
+    const location = `/platforms/connect/${platform}?${params.toString()}`;
+    return NextResponse.redirect(location);
   }
 
   /**
@@ -431,8 +427,9 @@ export function handleCallbackError(
   platform?: string,
   errorDescription?: string
 ): NextResponse {
-  const baseUrl = new URL(`/platforms/connect/${platform}`, request.url).toString();
-  return OAuthErrorHandler.handleCallbackError(errorCode, errorDescription, platform, baseUrl);
+  // Use relative path to avoid leaking internal hosts like localhost
+  const relativePath = `/platforms/connect/${platform ?? ''}`;
+  return OAuthErrorHandler.handleCallbackError(errorCode, errorDescription, platform, relativePath);
 }
 
 /**
@@ -443,11 +440,8 @@ export function createSuccessRedirect(
   platform: string,
   username?: string
 ): NextResponse {
-  const successUrl = new URL(`/platforms/connect/${platform}`, request.url);
-  successUrl.searchParams.set('success', 'true');
-  if (username) {
-    successUrl.searchParams.set('username', username);
-  }
-  
-  return NextResponse.redirect(successUrl);
+  const params = new URLSearchParams({ success: 'true' });
+  if (username) params.set('username', username);
+  const location = `/platforms/connect/${platform}?${params.toString()}`;
+  return NextResponse.redirect(location);
 }
