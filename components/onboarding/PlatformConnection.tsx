@@ -59,10 +59,21 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
 
   const handleConnect = async (platformId: string) => {
     setConnecting(platformId);
-    
     try {
-      // Redirect to OAuth flow
-      window.location.href = `/api/auth/${platformId}/authorize?redirect=/onboarding/setup`;
+      // Ask backend for the correct auth URL (centralized mapping)
+      const res = await fetch('/api/onboarding/connect-platform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platform: platformId, action: 'connect' })
+      });
+
+      if (!res.ok) throw new Error(`Failed to initialize connection (${res.status})`);
+      const data = await res.json();
+
+      const target = data?.authUrl ||
+        (platformId === 'onlyfans' ? '/of-connect' : `/api/auth/${platformId}`);
+
+      window.location.href = target;
     } catch (error) {
       console.error('Failed to connect platform:', error);
       setConnecting(null);
