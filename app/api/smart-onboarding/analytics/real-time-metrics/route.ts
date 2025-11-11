@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { behavioralAnalyticsService } from '@/lib/smart-onboarding/services/behavioralAnalyticsService';
+// Facade-free minimal implementation (no heavy imports)
 
 export async function GET() {
   try {

@@ -1,10 +1,40 @@
 // Smart Onboarding System - Core Types and Interfaces
 
+// ============================================================================
+// BASE INTERFACES
+// ============================================================================
+
+/**
+ * Base interface for entities with unique identifiers
+ */
+export interface BaseEntity {
+  id: string;
+}
+
+/**
+ * Base interface for entities with timestamps
+ */
+export interface TimestampedEntity {
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+/**
+ * Base interface for user-associated entities
+ */
+export interface UserAssociatedEntity extends BaseEntity {
+  userId: string;
+}
+
+// ============================================================================
+// TYPE ALIASES
+// ============================================================================
+
 export type ProficiencyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 export type PersonaType = 'content_creator' | 'business_user' | 'influencer' | 'agency' | 'casual_user';
 export type LearningStyle = 'visual' | 'hands_on' | 'guided' | 'exploratory';
 export type ExperienceLevel = 'none' | 'basic' | 'intermediate' | 'advanced';
-export type BehaviorEventType = 'click' | 'scroll' | 'hover' | 'focus' | 'blur' | 'keypress' | 'mouse_movement' | 'hesitation' | 'backtrack';
+export type BehaviorEventType = 'click' | 'scroll' | 'hover' | 'focus' | 'blur' | 'keypress' | 'mouse_movement' | 'hesitation' | 'backtrack' | 'error' | 'help_request' | 'step_completed';
 export type InterventionTrigger = 'struggle_detected' | 'low_engagement' | 'confusion_pattern' | 'time_threshold' | 'error_frequency';
 
 // User Profile and Journey Models
@@ -52,9 +82,35 @@ export interface TimeConstraints {
 }
 
 // Onboarding Journey Models
-export interface OnboardingJourney {
-  id: string;
-  userId: string;
+
+/**
+ * Personalization data tracking intervention and adaptation history
+ */
+export interface PersonalizationData {
+  interventionHistory: Array<{
+    timestamp: Date;
+    interventions: any[];
+    stepIndex: number;
+  }>;
+  adaptationHistory: Array<{
+    timestamp: Date;
+    adaptation: AdaptationDecision;
+    stepIndex: number;
+    trigger: string;
+  }>;
+}
+
+/**
+ * Progress tracking data for journey completion metrics
+ */
+export interface ProgressData {
+  totalSteps: number;
+  completedSteps: number;
+  estimatedTimeRemaining: number;
+  engagementScore: number;
+}
+
+export interface OnboardingJourney extends UserAssociatedEntity, TimestampedEntity {
   currentStep: OnboardingStep;
   completedSteps: OnboardingStep[];
   personalizedPath: LearningPath;
@@ -67,19 +123,100 @@ export interface OnboardingJourney {
   lastActiveAt: Date;
   completedAt?: Date;
   status: 'active' | 'paused' | 'completed' | 'abandoned';
+  
+  // Additional properties for orchestrator compatibility
+  steps: OnboardingStep[];
+  currentStepIndex: number;
+  personalization: PersonalizationData;
+  progress: ProgressData;
+  metadata: Record<string, any>;
+}
+
+/**
+ * Represents the current context of a user's onboarding session
+ * Used for making context-aware decisions and adaptations
+ */
+export interface OnboardingContext {
+  userId: string;
+  sessionId: string;
+  currentStepId: string;
+  completedSteps: string[];
+  userProfile: UserProfile;
+  userPersona: UserPersona;
+  currentEngagement: number;
+  recentInteractions: InteractionEvent[];
+  strugglingIndicators: StruggleIndicator[];
+  timeInCurrentStep: number;
+  totalTimeSpent: number;
+  deviceContext: {
+    deviceType: 'desktop' | 'tablet' | 'mobile';
+    screenSize: { width: number; height: number };
+    browserInfo: BrowserInfo;
+  };
+  timestamp: Date;
+}
+
+/**
+ * Represents the final result of an onboarding journey
+ * Used for analyzing onboarding success and generating insights
+ */
+export interface OnboardingResult {
+  userId: string;
+  journeyId: string;
+  success: boolean;
+  completionRate: number;
+  totalTimeSpent: number;
+  stepsCompleted: number;
+  totalSteps: number;
+  finalEngagementScore: number;
+  interventionsUsed: number;
+  strugglesEncountered: number;
+  learningPathEffectiveness: number;
+  userSatisfaction?: number;
+  insights: {
+    strengths: string[];
+    weaknesses: string[];
+    recommendations: string[];
+  };
+  completedAt: Date;
+  metadata?: Record<string, any>;
 }
 
 export interface OnboardingStep {
   id: string;
-  type: 'introduction' | 'assessment' | 'tutorial' | 'practice' | 'configuration' | 'completion';
+  type: 'introduction' | 'assessment' | 'tutorial' | 'practice' | 'configuration' | 'completion' | 'preparation';
   title: string;
   description: string;
   content: StepContent;
   estimatedDuration: number;
+  estimatedTime?: number; // Alias for estimatedDuration
   prerequisites: string[];
   learningObjectives: string[];
   adaptationRules: AdaptationRule[];
   completionCriteria: CompletionCriteria;
+  result?: StepResult;
+  completedAt?: Date;
+  
+  // Additional properties for orchestrator compatibility
+  difficulty: number;
+  isOptional: boolean;
+  adaptationPoints: AdaptationPoint[];
+  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
+  startedAt?: Date;
+  
+  // Optional properties from OptimizedStep
+  personalizedContent?: PersonalizedContent;
+  adaptationTriggers?: AdaptationTrigger[];
+  successPrediction?: number;
+}
+
+export interface StepResult {
+  success: boolean;
+  timeSpent?: number;
+  expectedTime?: number;
+  engagementScore?: number;
+  errors?: Array<{ message: string; timestamp: Date }>;
+  completionData?: Record<string, any>;
 }
 
 export interface StepContent {
@@ -140,15 +277,34 @@ export interface AdaptationRule {
 }
 
 // Behavioral Analytics Models
-export interface BehaviorEvent {
-  id: string;
-  userId: string;
+export interface BehaviorEvent extends UserAssociatedEntity {
   timestamp: Date;
   eventType: BehaviorEventType;
   stepId: string;
   interactionData: InteractionData;
   engagementScore: number;
   contextualData: ContextualData;
+  // Optional enrichment fields populated by processing pipeline
+  sessionContext?: {
+    sessionId: string;
+    sessionDuration?: number;
+    previousSteps?: string[];
+    userAgent?: string;
+    deviceType?: string;
+  };
+  userContext?: {
+    technicalProficiency?: string;
+    learningStyle?: string;
+    platformPreferences?: string[];
+    previousExperience?: string;
+  };
+  temporalContext?: {
+    dayOfWeek?: number;
+    hourOfDay?: number;
+    isWeekend?: boolean;
+    timeZone?: string;
+  };
+  derivedMetrics?: any;
 }
 
 export interface InteractionData {
@@ -158,6 +314,8 @@ export interface InteractionData {
   scrollBehavior: ScrollBehavior;
   hesitationIndicators: HesitationMetric[];
   keyboardActivity?: KeyboardActivity[];
+  // Optional metrics used by data processors
+  engagementScore?: number;
 }
 
 export interface MouseMovement {
@@ -183,6 +341,10 @@ export interface ScrollBehavior {
   velocity: number;
   pauseDuration: number;
   timestamp: number;
+  // Optional extended metrics
+  totalDistance?: number;
+  rapidScrolling?: boolean;
+  focusedReading?: boolean;
 }
 
 export interface HesitationMetric {
@@ -207,6 +369,11 @@ export interface ContextualData {
   viewportSize: { width: number; height: number };
   deviceType: 'desktop' | 'tablet' | 'mobile';
   browserInfo: BrowserInfo;
+  simulationStep?: number;
+  persona?: PersonaType;
+  isSimulated?: boolean;
+  sessionId?: string;
+  journeyId?: string;
 }
 
 export interface BrowserInfo {
@@ -254,6 +421,8 @@ export interface LearningPath {
   adaptationPoints: AdaptationPoint[];
   createdAt: Date;
   version: number;
+  // Optional strategy label describing path variant (e.g., 'standard', 'accelerated')
+  strategy?: string;
 }
 
 export interface OptimizedStep extends OnboardingStep {
@@ -370,9 +539,7 @@ export interface EngagementRecommendation {
 }
 
 // Intervention Models
-export interface Intervention {
-  id: string;
-  userId: string;
+export interface Intervention extends UserAssociatedEntity, TimestampedEntity {
   type: 'proactive_help' | 'content_adjustment' | 'pace_change' | 'encouragement' | 'clarification';
   trigger: InterventionTrigger;
   content: InterventionContent;
@@ -420,11 +587,128 @@ export interface InterventionEffectiveness {
   userFeedback?: UserFeedback;
 }
 
+/**
+ * Represents the outcome of a delivered intervention
+ * Used for tracking intervention effectiveness and user response
+ */
+export interface InterventionOutcome {
+  interventionId: string;
+  userId: string;
+  userResponse: 'accepted' | 'dismissed' | 'ignored' | 'completed';
+  engagementChange: number;
+  completionImpact: number;
+  timeToResolution?: number;
+  userFeedback?: UserFeedback;
+  timestamp: Date;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Represents a planned intervention strategy
+ * Used for coordinating multiple interventions and tracking their execution
+ */
+export interface InterventionPlan extends UserAssociatedEntity, TimestampedEntity {
+  interventions: Intervention[];
+  strategy: 'immediate' | 'delayed' | 'conditional' | 'sequential';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  triggers: InterventionTrigger[];
+  expectedOutcome: {
+    engagementImprovement: number;
+    completionProbabilityIncrease: number;
+    estimatedTimeToResolution: number;
+  };
+  createdAt: Date;
+  status: 'pending' | 'active' | 'completed' | 'cancelled';
+}
+
+/**
+ * Historical record of interventions for a user
+ * Used for analyzing intervention patterns and effectiveness over time
+ */
+export interface InterventionHistory {
+  userId: string;
+  interventions: Intervention[];
+  totalInterventions: number;
+  acceptanceRate: number;
+  averageEffectiveness: number;
+  mostEffectiveTypes: string[];
+  timeRange: { start: Date; end: Date };
+}
+
 export interface UserFeedback {
   rating: number;
   comment?: string;
   helpful: boolean;
   timestamp: Date;
+  category?: 'content' | 'pacing' | 'difficulty' | 'clarity' | 'technical';
+}
+
+/**
+ * Represents contextual help content for users
+ * Used for providing targeted assistance based on user needs
+ */
+export interface HelpContent {
+  id: string;
+  type: 'tooltip' | 'tutorial' | 'documentation' | 'video' | 'interactive_guide' | 'faq';
+  title: string;
+  content: string;
+  media?: MediaContent[];
+  relatedTopics: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedTime: number;
+  helpfulness?: number;
+  tags: string[];
+  lastUpdated: Date;
+  // Optional extended fields used by contextual help services
+  level?: 'brief' | 'standard' | 'detailed';
+  priority?: 'low' | 'medium' | 'high';
+  createdAt?: Date;
+  context?: Record<string, any>;
+  personalizedFor?: string;
+  complexity?: 'simple' | 'standard' | 'detailed';
+  format?: 'text' | 'visual' | 'interactive' | string;
+  examples?: any[];
+  version?: number;
+  optimizedFrom?: string;
+  visualAids?: any[];
+  interactive?: boolean;
+  interactiveElements?: any[];
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Represents a complex issue that requires escalation
+ * Used for identifying problems that need human intervention
+ */
+export interface ComplexIssue {
+  id: string;
+  userId: string;
+  stepId: string;
+  description: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  context: Record<string, any>;
+  attemptedSolutions: string[];
+  userFrustrationLevel: number;
+  timestamp: Date;
+  category: 'technical' | 'content' | 'navigation' | 'understanding' | 'other';
+}
+
+/**
+ * Represents an escalation ticket for human support
+ * Used for tracking issues that have been escalated beyond automated help
+ */
+export interface EscalationTicket extends UserAssociatedEntity, TimestampedEntity {
+  issueId: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  category: string;
+  description: string;
+  context: Record<string, any>;
+  assignedTo?: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  createdAt: Date;
+  resolvedAt?: Date;
+  resolution?: string;
+  resolutionTime?: number;
 }
 
 // Struggle Detection Models
@@ -511,6 +795,34 @@ export interface BehaviorPattern {
   frequency: number;
   strength: number;
   contexts: string[];
+}
+
+/**
+ * Represents a user interaction event during onboarding
+ * Used for tracking and analyzing user behavior in real-time
+ */
+export interface InteractionEvent extends UserAssociatedEntity {
+  sessionId: string;
+  stepId: string;
+  timestamp: Date;
+  eventType: BehaviorEventType;
+  interactionData: InteractionData;
+  engagementScore: number;
+  contextualData: ContextualData;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Represents detected interaction patterns in user behavior
+ * Used for identifying behavioral trends and anomalies
+ */
+export interface InteractionPattern {
+  type: 'click_pattern' | 'scroll_pattern' | 'navigation_pattern' | 'hesitation_pattern' | 'engagement_pattern';
+  frequency: number;
+  confidence: number;
+  indicators: string[];
+  timeWindow: { start: Date; end: Date };
+  significance: 'low' | 'medium' | 'high';
 }
 
 export interface UserPreference {
@@ -805,4 +1117,504 @@ export interface FeatureVector {
   features: Record<string, number>;
   labels: Record<string, boolean | number | string>;
   metadata: Record<string, any>;
+}
+
+// ML Prediction Types
+export interface PredictionRequest {
+  userId: string;
+  features: Record<string, any>;
+  modelType?: string;
+  context?: Record<string, any>;
+}
+
+export interface PredictionResult {
+  userId: string;
+  predictions: Record<string, any>;
+  confidence: number;
+  modelVersion: string;
+  timestamp: Date;
+  responseTime?: number;
+  metadata?: Record<string, any>;
+}
+
+// ============================================================================
+// ANALYTICS AND MONITORING TYPES
+// ============================================================================
+
+/**
+ * Represents ML model performance metrics
+ * Used for monitoring and evaluating model effectiveness
+ */
+export interface ModelMetrics {
+  modelId: string;
+  modelType: string;
+  version: string;
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1Score: number;
+  trainingDate: Date;
+  lastEvaluated: Date;
+  sampleSize: number;
+  performanceTrend: 'improving' | 'stable' | 'declining';
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Represents a summary of a user monitoring session
+ * Used for analyzing session-level behavior and outcomes
+ */
+export interface SessionSummary {
+  sessionId: string;
+  userId: string;
+  startTime: Date;
+  endTime: Date;
+  duration: number;
+  stepsVisited: string[];
+  stepsCompleted: string[];
+  totalInteractions: number;
+  averageEngagement: number;
+  strugglesDetected: number;
+  interventionsTriggered: number;
+  outcome: 'completed' | 'abandoned' | 'paused';
+  insights: string[];
+}
+
+/**
+ * Represents real-time analytics dashboard data
+ * Used for displaying comprehensive user analytics
+ */
+export interface AnalyticsDashboard {
+  realTimeMetrics: {
+    activeUsers: number;
+    averageEngagement: number;
+    completionRate: number;
+    interventionRate: number;
+  };
+  engagementTrends: {
+    trend: 'increasing' | 'stable' | 'decreasing';
+    changeRate: number;
+    predictions: Array<{
+      timepoint: Date;
+      predictedScore: number;
+      confidence: number;
+      factors: Array<{
+        name: string;
+        value: number;
+        weight: number;
+        confidence: number;
+      }>;
+    }>;
+    anomalies: Array<{
+      type: 'spike' | 'drop' | 'plateau';
+      severity: number;
+      timestamp: Date;
+      possibleCauses: string[];
+    }>;
+  };
+  progressSummary: {
+    totalUsers: number;
+    completedJourneys: number;
+    averageCompletionTime: number;
+    topStruggles: string[];
+  };
+  alerts: Array<{
+    type: 'performance' | 'engagement' | 'system' | 'user_experience';
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    message: string;
+    timestamp: Date;
+    actionRequired: boolean;
+  }>;
+}
+
+// ============================================================================
+// PREDICTION AND OPTIMIZATION TYPES
+// ============================================================================
+
+/**
+ * Represents timing prediction for content delivery
+ * Used for optimizing when to present content to users
+ */
+export interface TimingPrediction {
+  contentId: string;
+  userId: string;
+  optimalTime: Date;
+  confidence: number;
+  factors: {
+    userEngagement: number;
+    timeOfDay: number;
+    dayOfWeek: number;
+    userAvailability: number;
+  };
+  alternativeTimes: Date[];
+}
+
+/**
+ * Represents effectiveness metrics for a learning path
+ * Used for evaluating and optimizing learning paths
+ */
+export interface PathEffectiveness {
+  pathId: string;
+  completionRate: number;
+  averageTimeToComplete: number;
+  averageEngagement: number;
+  userSatisfaction: number;
+  strugglesPerUser: number;
+  interventionsPerUser: number;
+  successRate: number;
+  cohortSize: number;
+  lastEvaluated: Date;
+  recommendations: string[];
+}
+
+/**
+ * Represents criteria for defining a user cohort
+ * Used for cohort-based analysis and insights
+ */
+export interface CohortCriteria {
+  personaTypes?: PersonaType[];
+  proficiencyLevels?: ProficiencyLevel[];
+  learningStyles?: LearningStyle[];
+  dateRange?: { start: Date; end: Date };
+  minEngagement?: number;
+  completionStatus?: ('completed' | 'active' | 'abandoned')[];
+  customFilters?: Record<string, any>;
+}
+
+/**
+ * Represents insights derived from cohort analysis
+ * Used for understanding patterns across user groups
+ */
+export interface CohortInsights {
+  cohortId: string;
+  criteria: CohortCriteria;
+  userCount: number;
+  metrics: {
+    averageCompletionRate: number;
+    averageEngagement: number;
+    averageTimeToComplete: number;
+    successRate: number;
+  };
+  patterns: {
+    commonStrugglePoints: string[];
+    effectiveInterventions: string[];
+    preferredContentTypes: string[];
+  };
+  recommendations: {
+    pathOptimizations: string[];
+    contentImprovements: string[];
+    interventionStrategies: string[];
+  };
+  generatedAt: Date;
+}
+
+/**
+ * Represents outcome data for model training
+ * Used for updating prediction models with real results
+ */
+export interface OutcomeData {
+  userId: string;
+  journeyId: string;
+  success: boolean;
+  completionTime: number;
+  engagementScore: number;
+  interventionsUsed: number;
+  pathId: string;
+  features: Record<string, any>;
+  timestamp: Date;
+}
+
+/**
+ * Represents performance data for a learning path
+ * Used for path optimization and improvement
+ */
+export interface PathPerformanceData {
+  pathId: string;
+  userOutcomes: OutcomeData[];
+  stepPerformance: {
+    stepId: string;
+    completionRate: number;
+    averageTime: number;
+    struggleRate: number;
+    skipRate: number;
+  }[];
+  overallMetrics: {
+    totalUsers: number;
+    completionRate: number;
+    averageEngagement: number;
+    successRate: number;
+  };
+  timeRange: { start: Date; end: Date };
+}
+
+// ============================================================================
+// PERFORMANCE OPTIMIZATION TYPES (for isolated perf module)
+// ============================================================================
+
+/**
+ * Metric point for time-series data
+ */
+export type MetricPoint = { ts: number; value: number };
+
+/**
+ * Real-time system metrics
+ */
+export type RealTimeMetrics = {
+  activeUsers: number;
+  avgLatencyMs: number;
+  errorRate: number; // 0..1
+};
+
+/**
+ * Engagement trend data
+ */
+export type EngagementTrend = { name: string; series: MetricPoint[] };
+
+/**
+ * Progress summary statistics
+ */
+export type ProgressSummary = {
+  completed: number;
+  inProgress: number;
+  blocked: number;
+};
+
+/**
+ * System alert
+ */
+export type Alert = {
+  code: string;
+  level: 'info' | 'warn' | 'error';
+  message: string;
+  ts: number;
+};
+
+/**
+ * Adaptation record
+ */
+export type Adaptation = {
+  ruleId: string;
+  reason: string;
+  ts: number;
+  delta?: Record<string, unknown>;
+};
+
+// ============================================================================
+// UTILITY TYPES
+// ============================================================================
+
+/**
+ * Deep partial type for nested objects
+ */
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+
+/**
+ * Non-empty array type
+ */
+export type NonEmptyArray<T> = [T, ...T[]];
+
+/**
+ * Cross-environment timer handle
+ */
+export type TimerHandle = ReturnType<typeof setInterval>;
+
+/**
+ * Performance task with abort signal support
+ */
+export type PerfTask = (signal?: AbortSignal) => Promise<void>;
+
+/**
+ * Event bus payload types
+ */
+export type PerfEvents = {
+  tick: { cpu: number; mem: number };
+  scale: { from: number; to: number };
+};
+
+export type EventName = keyof PerfEvents;
+export type EventPayload<K extends EventName> = PerfEvents[K];
+
+// ============================================================================
+// ML MODEL TYPES
+// ============================================================================
+
+/**
+ * ML Model interface
+ */
+export interface MLModel {
+  id: string;
+  type: string;
+  version: string;
+  status: 'training' | 'deployed' | 'archived';
+  metrics: ModelMetrics;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Training configuration for ML models
+ */
+export interface TrainingConfig {
+  modelType: string;
+  hyperparameters: Record<string, any>;
+  trainingDataQuery?: string;
+  validationSplit?: number;
+  evaluationMetrics?: string[];
+  maxTrainingTime?: number;
+}
+
+/**
+ * Result of a training job
+ */
+export interface TrainingResult {
+  model: MLModel;
+  metrics: ModelMetrics;
+  trainingConfig: TrainingConfig;
+  trainingDuration: number;
+  trainingDataHash?: string;
+}
+
+/**
+ * Deployment configuration for ML models
+ */
+export interface DeploymentConfig {
+  modelId: string;
+  version: string;
+  environment: 'development' | 'staging' | 'production';
+  rolloutStrategy?: 'immediate' | 'canary' | 'blue-green';
+  rolloutPercentage?: number;
+  healthCheckEndpoint?: string;
+  autoRollback?: boolean;
+}
+
+/**
+ * Deployment status type
+ */
+export type DeploymentStatus = 'pending' | 'deploying' | 'in_progress' | 'deployed' | 'completed' | 'failed' | 'rolling_back' | 'rolled_back' | 'rollback_failed';
+
+/**
+ * Deployment information
+ */
+export interface DeploymentInfo {
+  modelId: string;
+  version: string;
+  environment: string;
+  status: DeploymentStatus;
+  deployedAt?: Date;
+  healthStatus?: 'healthy' | 'unhealthy' | 'unknown';
+  errorMessage?: string;
+}
+
+/**
+ * Model version information
+ */
+export interface ModelVersion {
+  version: string;
+  modelId: string;
+  createdAt: Date;
+  model?: any;
+  modelData?: any;
+  config?: any;
+  metadata: ModelMetadata;
+  metrics: ModelMetrics;
+  parentVersion?: string;
+  checksum?: string;
+  status?: string;
+  deploymentStatus?: string;
+}
+
+/**
+ * Model metadata
+ */
+export interface ModelMetadata {
+  versionType: 'major' | 'minor' | 'patch';
+  description?: string;
+  author?: string;
+  tags?: string[];
+  [key: string]: any;
+}
+
+/**
+ * Version comparison result
+ */
+export interface VersionComparison {
+  modelId: string;
+  fromVersion: string;
+  toVersion: string;
+  metricsDiff?: Record<string, number>;
+  sizeDiff?: number;
+  createdAt: Date;
+  differences?: {
+    metrics: any;
+    config: any;
+    architecture: any;
+    performance: any;
+  };
+  compatibility?: string;
+  recommendation?: string;
+}
+
+/**
+ * Model lineage tracking
+ */
+export interface ModelLineage {
+  nodes: Array<{
+    id?: string;
+    version: string;
+    createdAt: Date;
+    metadata: ModelMetadata;
+  }>;
+  edges: Array<{
+    from: string;
+    to: string;
+    relationship?: 'parent' | 'branch' | 'merge';
+    type?: string;
+  }>;
+}
+
+/**
+ * Adaptation decision for onboarding journey
+ */
+export interface AdaptationDecision {
+  type: string;
+  action: string;
+  interventions?: any[];
+  reasoning?: string;
+  confidence?: number;
+  expectedImpact?: number;
+  parameters?: Record<string, any>;
+}
+
+/**
+ * Onboarding state
+ */
+export type OnboardingState = 'not_started' | 'in_progress' | 'completed' | 'paused' | 'abandoned';
+
+/**
+ * Journey status
+ */
+export type JourneyStatus = 'active' | 'completed' | 'paused' | 'abandoned';
+
+/**
+ * Step result
+ */
+export interface BasicStepResult {
+  stepId: string;
+  completed: boolean;
+  score?: number;
+  timeSpent: number;
+  errors?: number;
+  helpRequested?: boolean;
+}
+
+/**
+ * Prediction request
+ */
+export interface ModelPredictionRequest {
+  modelType: string;
+  userId?: string;
+  features: Record<string, any>;
+  context?: Record<string, any>;
 }

@@ -166,13 +166,20 @@ interface SafeScreenInfoProps {
 
 export function SafeScreenInfo({ children, fallback }: SafeScreenInfoProps) {
   const { screen, window: win, isClient } = useSafeBrowserAPI();
-  const [screenInfo, setScreenInfo] = useState({
+  const [screenInfo, setScreenInfo] = useState<{
+    width: number;
+    height: number;
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    orientation: 'unknown' | 'portrait' | 'landscape';
+  }>({
     width: 0,
     height: 0,
     isMobile: false,
     isTablet: false,
     isDesktop: true,
-    orientation: 'unknown' as const
+    orientation: 'unknown'
   });
 
   useEffect(() => {

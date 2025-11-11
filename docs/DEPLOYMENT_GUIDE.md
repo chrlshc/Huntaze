@@ -330,3 +330,213 @@ aws ses send-email \
 **Date de création :** 31 octobre 2025  
 **Dernière mise à jour :** 31 octobre 2025  
 **Status :** ✅ Prêt pour production
+
+
+## 🏗️ Standalone Build Process
+
+### Overview
+
+The application uses Next.js standalone output mode for optimized deployments. This creates a self-contained package with all dependencies.
+
+### Build Configuration
+
+The standalone output is configured in `next.config.ts`:
+
+```typescript
+export default {
+  output: 'standalone',
+  experimental: {
+    outputFileTracingRoot: path.join(__dirname, '../../'),
+    outputFileTracingIncludes: {
+      '/': ['./node_modules/**']
+    }
+  }
+}
+```
+
+### Building for Deployment
+
+#### Standard Build
+
+```bash
+npm run build
+```
+
+This command:
+1. Validates configuration (`build:validate`)
+2. Runs Next.js build with error handling
+3. Creates `.next/standalone` directory
+4. Includes all required dependencies
+
+#### Build Validation
+
+Before deploying, validate your build:
+
+```bash
+# Pre-build validation
+npm run build:validate
+
+# Post-build verification
+npm run build:verify
+```
+
+### Standalone Output Structure
+
+After building, the `.next/standalone` directory contains:
+
+```
+.next/standalone/
+├── server.js              # Entry point
+├── package.json           # Dependencies
+├── .next/                 # Build output
+│   ├── server/           # Server bundles
+│   ├── static/           # Static assets
+│   └── standalone/       # Standalone files
+├── public/               # Public assets
+└── node_modules/         # Required dependencies
+```
+
+### Deploying Standalone Build
+
+#### Local Testing
+
+Test the standalone build locally:
+
+```bash
+# Build the application
+npm run build
+
+# Navigate to standalone directory
+cd .next/standalone
+
+# Set environment variables
+export DATABASE_URL="your-database-url"
+export JWT_SECRET="your-jwt-secret"
+# ... other env vars
+
+# Start the server
+node server.js
+```
+
+The application will be available at `http://localhost:3000`
+
+#### AWS Amplify Deployment
+
+Amplify automatically handles the standalone build:
+
+1. **Build Settings** (amplify.yml):
+   ```yaml
+   version: 1
+   frontend:
+     phases:
+       preBuild:
+         commands:
+           - npm ci
+           - npm run build:validate
+       build:
+         commands:
+           - npm run build
+       postBuild:
+         commands:
+           - npm run build:verify
+     artifacts:
+       baseDirectory: .next
+       files:
+         - '**/*'
+     cache:
+       paths:
+         - node_modules/**/*
+         - .next/cache/**/*
+   ```
+
+2. **Environment Variables**: Set all required variables in Amplify Console
+
+3. **Deploy**: Push to your connected Git branch
+
+### Environment Variables for Standalone
+
+Required environment variables for standalone deployment:
+
+```bash
+# Database
+DATABASE_URL=postgresql://user:pass@host:5432/db
+
+# Authentication
+JWT_SECRET=your-secret-key
+
+# Email
+FROM_EMAIL=noreply@huntaze.com
+AWS_REGION=us-east-1
+
+# Application URLs
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+NEXT_PUBLIC_API_URL=https://your-domain.com/api
+```
+
+### Troubleshooting Standalone Builds
+
+If you encounter build issues:
+
+1. **Check Configuration**
+   ```bash
+   npm run build:validate
+   ```
+
+2. **Review Build Errors**
+   The build script provides detailed error messages and suggestions
+
+3. **Verify Output**
+   ```bash
+   npm run build:verify
+   ```
+
+4. **Consult Documentation**
+   See [BUILD_TROUBLESHOOTING.md](./BUILD_TROUBLESHOOTING.md) for detailed troubleshooting steps
+
+### Common Issues
+
+#### Missing Client Manifest Files
+
+**Error**: `ENOENT: no such file or directory, copyfile '.next/server/app/(landing)/page_client-reference-manifest.js'`
+
+**Solution**: Route groups have been refactored. The landing page is now at `app/page.tsx` as a server component.
+
+#### Incomplete Standalone Output
+
+**Solution**: Run `npm run build:verify` to check for missing files. Ensure all required paths are in `outputFileTracingIncludes`.
+
+#### Memory Issues During Build
+
+**Solution**: Increase Node.js memory:
+```bash
+NODE_OPTIONS="--max-old-space-size=4096" npm run build
+```
+
+### Performance Optimization
+
+The standalone build is optimized for:
+- Minimal bundle size (only required dependencies)
+- Fast cold starts
+- Efficient file tracing
+- Production-ready output
+
+### Monitoring Deployment
+
+After deployment, verify:
+
+1. **Health Check**: Visit `/api/health`
+2. **Routes**: Test all major routes
+3. **Database**: Verify database connectivity
+4. **Email**: Test email functionality
+5. **Authentication**: Test login/register flows
+
+### Rollback Procedure
+
+If deployment fails:
+
+1. Revert to previous Git commit
+2. Trigger new Amplify build
+3. Verify environment variables
+4. Check build logs for errors
+
+For detailed troubleshooting, see [BUILD_TROUBLESHOOTING.md](./BUILD_TROUBLESHOOTING.md)

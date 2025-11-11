@@ -15,7 +15,7 @@ const GradientMesh: React.FC<GradientMeshProps> = ({
   intensity = 1 
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationIdRef = useRef<number>();
+  const animationIdRef = useRef<number | undefined>(undefined);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
   const [isLowPerf, setIsLowPerf] = useState(false);
 

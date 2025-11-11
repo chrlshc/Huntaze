@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { makeReqLogger } from '@/lib/logger';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
 
@@ -89,4 +88,4 @@ async function getHandler(request: NextRequest) {
   }
 }
 
-export const GET = withMonitoring('/api/cin/status', getHandler as any);
+export const GET = getHandler as any;

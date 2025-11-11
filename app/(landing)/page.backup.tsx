@@ -10,6 +10,10 @@ import { FAQSection } from '@/components/landing/FAQSection';
 import { FinalCTA as FinalCTASection } from '@/components/landing/FinalCTA';
 import { Zap, Shield, TrendingUp, Users, BarChart, Sparkles } from 'lucide-react';
 
+// BACKUP: This file was moved from app/(landing)/page.tsx as part of Task 4.1
+// The route group structure was causing build issues with Next.js standalone output
+// The root app/page.tsx is now the primary landing page
+
 export default function LandingPage() {
   const features = [
     {

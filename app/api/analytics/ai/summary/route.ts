@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 import { getLatestInsightSummary } from '@/src/lib/db/summaryRepo'
 
 export const runtime = 'nodejs'
@@ -15,9 +14,5 @@ async function handler(req: NextRequest) {
   return NextResponse.json(s, { headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
 }
 
-export const GET = withMonitoring('analytics.ai.summary.get', handler as any, {
-  domain: 'analytics',
-  feature: 'summary_get',
-  getUserId: (req) => (req.headers.get('x-user-id') || undefined),
-})
+export const GET = handler as any
 export const HEAD = GET

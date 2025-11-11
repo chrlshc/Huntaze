@@ -1,6 +1,14 @@
 // Enterprise Analytics Events
 // Track high-intent actions for enterprise prospects
 
+declare global {
+  interface Window {
+    analytics?: {
+      track: (eventName: string, properties?: Record<string, any>) => void;
+    };
+  }
+}
+
 export const trackingEvents = {
   // Engagement signals (Low intent)
   demo_started: { 

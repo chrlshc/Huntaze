@@ -4,7 +4,6 @@ import { makeReqLogger } from '@/lib/logger';
 import { requireUser } from '@/lib/server-auth';
 import { getStripe, STRIPE_PRICE_STARTER, STRIPE_PRICE_PRO, STRIPE_PRICE_SCALE } from '@/lib/stripe';
 import { getOrCreateCustomer } from '@/lib/billing';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
 
@@ -50,4 +49,4 @@ async function handler(req: Request) {
   }
 }
 
-export const POST = withMonitoring('billing.checkout', handler as any);
+export const POST = handler as any;

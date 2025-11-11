@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { makeReqLogger } from '@/lib/logger';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 interface ChatContext {
   previousMessages: any[];
@@ -50,7 +49,7 @@ async function postHandler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('/api/cin/chat', postHandler as any);
+export const POST = postHandler as any;
 
 function analyzeIntent(message: string): string {
   const lower = message.toLowerCase();

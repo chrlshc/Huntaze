@@ -17,11 +17,7 @@ import {
   BehaviorPattern,
   UserPreference,
   DetectedLearningStyle,
-  BehaviorRecommendation,
-  RealTimeMetrics,
-  EngagementTrends,
-  ProgressSummary,
-  Alert
+  BehaviorRecommendation
 } from '../types';
 import { TimeSeriesRepository } from '../repositories/base';
 import { smartOnboardingCache } from '../config/redis';
@@ -382,8 +378,7 @@ class StruggleDetectionEngine {
 
   private detectRepeatedErrors(events: BehaviorEvent[]): StruggleIndicator | null {
     const errorEvents = events.filter(e => 
-      e.eventType === 'error' || 
-      e.interactionData.errorCount > 0
+      e.eventType === 'error'
     );
 
     const errorCount = errorEvents.length;
@@ -478,14 +473,16 @@ class StruggleDetectionEngine {
     return totalWeight > 0 ? weightedSum / totalWeight : 0;
   }
 
-  private getIndicatorWeight(type: string): number {
-    const weights = {
-      'time_exceeded': 0.3,
-      'repeated_errors': 0.4,
-      'backtracking': 0.2,
-      'hesitation': 0.1
+  private getIndicatorWeight(type: StruggleIndicator['type']): number {
+    const weights: Record<StruggleIndicator['type'], number> = {
+      time_exceeded: 0.3,
+      repeated_errors: 0.4,
+      backtracking: 0.2,
+      hesitation: 0.1,
+      help_seeking: 0.15,
+      abandonment_risk: 0.5
     };
-    return weights[type] || 0.1;
+    return weights[type] ?? 0.1;
   }
 
   private determineSeverity(score: number): 'low' | 'medium' | 'high' | 'critical' {
@@ -584,16 +581,11 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
       const behaviorEvent: Omit<BehaviorEvent, 'id'> = {
         userId,
         timestamp: new Date(),
-        eventType: event.type as any,
-        stepId: event.data.stepId || '',
-        interactionData: event.data,
+        eventType: event.eventType,
+        stepId: event.stepId || '',
+        interactionData: event.interactionData,
         engagementScore: 0, // Will be calculated
-        contextualData: {
-          sessionId: event.data.sessionId,
-          journeyId: event.data.journeyId,
-          userAgent: event.data.userAgent,
-          ...event.data.context
-        }
+        contextualData: event.contextualData || {}
       };
 
       // Get recent events to calculate engagement score
@@ -665,8 +657,10 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
       // Calculate average engagement score
       const averageScore = events.reduce((sum, event) => sum + event.engagementScore, 0) / events.length;
 
-      // Determine trend
-      const trend = this.calculateEngagementTrend(events);
+      // Determine trend and map to EngagementAnalysis type
+      const rawTrend = this.calculateEngagementTrend(events);
+      const trend: EngagementAnalysis['trend'] =
+        rawTrend === 'increasing' ? 'improving' : rawTrend === 'decreasing' ? 'declining' : 'stable';
 
       // Identify patterns
       const patterns = this.identifyEngagementPatterns(events);
@@ -738,11 +732,11 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
         id: event.id,
         userId: event.userId,
         timestamp: event.timestamp,
-        eventType: event.type as any,
-        stepId: event.data.stepId || '',
-        interactionData: event.data,
+        eventType: event.eventType,
+        stepId: event.stepId || '',
+        interactionData: event.interactionData,
         engagementScore: 0,
-        contextualData: event.data.context || {}
+        contextualData: event.contextualData || {}
       }));
 
       return this.engagementEngine.calculateEngagementScore(behaviorEvents);
@@ -772,24 +766,34 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
       const events = await this.behaviorEventsRepo.getSessionEvents(sessionId);
       
       // Calculate session summary
-      const duration = events.length > 0 
+      const duration = events.length > 1 
         ? events[events.length - 1].timestamp.getTime() - events[0].timestamp.getTime()
         : 0;
 
+      const startTime = events[0]?.timestamp ?? new Date();
+      const endTime = events[events.length - 1]?.timestamp ?? startTime;
       const avgEngagement = events.length > 0
         ? events.reduce((sum, e) => sum + e.engagementScore, 0) / events.length
         : 0.5;
 
       const struggles = await this.detectStruggleIndicators(userId);
+      const stepsVisited = Array.from(new Set(events.map(e => e.stepId))).filter(Boolean);
+      const stepsCompleted: string[] = [];
 
       const summary: SessionSummary = {
         sessionId,
         userId,
+        startTime,
+        endTime,
         duration,
-        interactions: events.length,
-        engagementScore: avgEngagement,
-        completedSteps: new Set(events.map(e => e.stepId)).size,
-        struggles: [struggles]
+        stepsVisited,
+        stepsCompleted,
+        totalInteractions: events.length,
+        averageEngagement: avgEngagement,
+        strugglesDetected: struggles.indicators.length,
+        interventionsTriggered: 0,
+        outcome: 'paused',
+        insights: []
       };
 
       await smartOnboardingCache.endUserSession(userId, sessionId);
@@ -807,7 +811,7 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
       const recentEvents = await this.behaviorEventsRepo.getRecentEvents(userId, 60);
       const currentEngagement = await smartOnboardingCache.getEngagementScore(userId) || 0.5;
 
-      const realTimeMetrics: RealTimeMetrics = {
+      const realTimeMetrics: AnalyticsDashboard['realTimeMetrics'] = {
         activeUsers: this.activeSessions.size,
         averageEngagement: currentEngagement,
         completionRate: 0.85, // This would be calculated from actual data
@@ -815,7 +819,7 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
       };
 
       // Get engagement trends
-      const engagementTrends: EngagementTrends = {
+      const engagementTrends: AnalyticsDashboard['engagementTrends'] = {
         trend: this.calculateEngagementTrend(recentEvents),
         changeRate: 0.05, // This would be calculated
         predictions: [],
@@ -823,14 +827,14 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
       };
 
       // Get progress summary
-      const progressSummary: ProgressSummary = {
+      const progressSummary: AnalyticsDashboard['progressSummary'] = {
         totalUsers: 1, // This would be from actual data
         completedJourneys: 0,
         averageCompletionTime: 0,
         topStruggles: ['navigation', 'form_completion', 'content_understanding']
       };
 
-      const alerts: Alert[] = [];
+      const alerts: AnalyticsDashboard['alerts'] = [];
       if (currentEngagement < 0.4) {
         alerts.push({
           type: 'engagement',
@@ -972,5 +976,6 @@ export class BehavioralAnalyticsServiceImpl implements BehavioralAnalyticsServic
   }
 }
 // Export service instance
-export const behavioralAnalyticsService = new BehavioralAnalyticsServiceImpl();
+import { smartOnboardingDb } from '../config/database';
+export const behavioralAnalyticsService = new BehavioralAnalyticsServiceImpl(smartOnboardingDb.getPool());
 export default behavioralAnalyticsService;

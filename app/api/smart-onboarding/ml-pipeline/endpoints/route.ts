@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { modelDeploymentService } from '../../../../../lib/smart-onboarding/services/modelDeploymentService';
+import { mlPipelineFacade } from '../../../../../lib/smart-onboarding/services/mlPipelineFacade';
 import { logger } from '../../../../../lib/utils/logger';
 
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const endpoints = await modelDeploymentService.getModelEndpoints(modelType);
+    const endpoints = await mlPipelineFacade.getModelEndpoints(modelType);
     
     return NextResponse.json({ endpoints });
 
@@ -47,7 +47,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    await modelDeploymentService.updateTrafficSplit(modelType, trafficSplits);
+    await mlPipelineFacade.updateTrafficSplit(modelType, trafficSplits);
 
     logger.info(`Traffic split updated for ${modelType}`, { trafficSplits });
 

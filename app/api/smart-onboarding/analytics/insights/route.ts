@@ -2,41 +2,45 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/config';
-import { BehavioralAnalyticsServiceImpl } from '@/lib/smart-onboarding/services/behavioralAnalyticsService';
-import { db } from '@/lib/db';
-import { createApiResponse } from '@/lib/smart-onboarding/repositories/base';
-import { smartOnboardingCache } from '@/lib/smart-onboarding/config/redis';
-
-const analyticsService = new BehavioralAnalyticsServiceImpl(db.getPool());
+// Using getServerSession without explicit authOptions to avoid pulling heavy types
+import {
+  generateBehavioralInsights,
+  detectStruggleIndicators,
+  getDashboardData,
+  startMonitoring,
+  stopMonitoring,
+  analyzeEngagementPatterns,
+  getEngagementScore,
+} from '@/lib/smart-onboarding/services/behavioralAnalyticsFacade';
+import { createApiResponse } from '@/lib/smart-onboarding/utils/apiResponse';
 
 // Get behavioral insights for a user
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const session = (await getServerSession()) as any;
+    const userId = (session as any)?.user?.id as string | undefined;
+    if (!userId) {
       return NextResponse.json(
         createApiResponse(null, 'Authentication required'),
         { status: 401 }
       );
     }
 
-    const userId = session.user.id;
     const { searchParams } = new URL(request.url);
     const includeStruggleAnalysis = searchParams.get('includeStruggle') === 'true';
     const includeDashboard = searchParams.get('includeDashboard') === 'true';
 
     // Generate behavioral insights
-    const insights = await analyticsService.generateBehavioralInsights(userId);
+    const insights = await generateBehavioralInsights(userId);
 
     let struggleMetrics = null;
     if (includeStruggleAnalysis) {
-      struggleMetrics = await analyticsService.detectStruggleIndicators(userId);
+      struggleMetrics = await detectStruggleIndicators(userId);
     }
 
     let dashboardData = null;
     if (includeDashboard) {
-      dashboardData = await analyticsService.getDashboardData(userId);
+      dashboardData = await getDashboardData(userId);
     }
 
     return NextResponse.json(
@@ -61,15 +65,15 @@ export async function GET(request: NextRequest) {
 // Get struggle detection analysis
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const session = (await getServerSession()) as any;
+    const userId = (session as any)?.user?.id as string | undefined;
+    if (!userId) {
       return NextResponse.json(
         createApiResponse(null, 'Authentication required'),
         { status: 401 }
       );
     }
 
-    const userId = session.user.id;
     const body = await request.json();
     const { 
       realTimeAnalysis = true,
@@ -78,7 +82,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Detect current struggle indicators
-    const struggleMetrics = await analyticsService.detectStruggleIndicators(userId);
+    const struggleMetrics = await detectStruggleIndicators(userId);
 
     // Filter by severity threshold if specified
     let filteredMetrics = struggleMetrics;
@@ -100,8 +104,8 @@ export async function POST(request: NextRequest) {
     // Get real-time engagement if requested
     let realTimeData = null;
     if (realTimeAnalysis) {
-      const engagementScore = await smartOnboardingCache.getEngagementScore(userId);
-      const recentAnalysis = await analyticsService.analyzeEngagementPatterns(userId, 10); // Last 10 minutes
+      const engagementScore = await getEngagementScore(userId);
+      const recentAnalysis = await analyzeEngagementPatterns(userId, 10); // Last 10 minutes
       
       realTimeData = {
         currentEngagement: engagementScore || 0.5,
@@ -174,15 +178,15 @@ export async function POST(request: NextRequest) {
 // Start/stop monitoring session
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const session = (await getServerSession()) as any;
+    const userId = (session as any)?.user?.id as string | undefined;
+    if (!userId) {
       return NextResponse.json(
         createApiResponse(null, 'Authentication required'),
         { status: 401 }
       );
     }
 
-    const userId = session.user.id;
     const body = await request.json();
     const { action, sessionId } = body;
 
@@ -194,7 +198,7 @@ export async function PUT(request: NextRequest) {
     }
 
     if (action === 'start') {
-      await analyticsService.startMonitoring(userId, sessionId);
+      await startMonitoring(userId, sessionId);
       
       return NextResponse.json(
         createApiResponse({
@@ -207,7 +211,7 @@ export async function PUT(request: NextRequest) {
       );
 
     } else if (action === 'stop') {
-      const sessionSummary = await analyticsService.stopMonitoring(userId, sessionId);
+      const sessionSummary = await stopMonitoring(userId, sessionId);
       
       return NextResponse.json(
         createApiResponse({
@@ -237,15 +241,15 @@ export async function PUT(request: NextRequest) {
 // Get dashboard data for analytics overview
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const session = (await getServerSession()) as any;
+    const userId = (session as any)?.user?.id as string | undefined;
+    if (!userId) {
       return NextResponse.json(
         createApiResponse(null, 'Authentication required'),
         { status: 401 }
       );
     }
 
-    const userId = session.user.id;
     const body = await request.json();
     const { 
       includeAlerts = true,
@@ -255,7 +259,7 @@ export async function PATCH(request: NextRequest) {
     } = body;
 
     // Get comprehensive dashboard data
-    const dashboardData = await analyticsService.getDashboardData(userId);
+    const dashboardData = await getDashboardData(userId);
 
     // Filter data based on request parameters
     const filteredData = {

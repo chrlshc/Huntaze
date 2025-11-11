@@ -1,27 +1,57 @@
-import { RedisManager } from '../config/redis'
+import { SmartOnboardingCache, createRedisClient } from '../config/redis'
+import type Redis from 'ioredis'
 import { 
   UserPersona, 
-  MLPrediction, 
   OnboardingJourney, 
-  BehaviorEvent,
-  CacheStrategy,
-  PerformanceMetrics 
+  BehaviorEvent
 } from '../types'
 
+// Type aliases for types not yet defined in ../types
+type MLPrediction = any
+interface CacheStrategy {
+  ttl: number
+  maxSize?: number
+  evictionPolicy?: 'LRU' | 'TTL' | 'LFU'
+  compressionEnabled?: boolean
+  prefetchEnabled?: boolean
+  invalidationRules?: string[]
+}
+interface PerformanceMetrics {
+  cacheHitRate: number
+  averageLatency: number
+  throughput: number
+  errorRate: number
+}
+
 export class CacheOptimizer {
-  private redisManager: RedisManager
+  private cacheManager: SmartOnboardingCache
+  private redisClient: Redis
   private cacheHitRates: Map<string, number> = new Map()
   private cacheStrategies: Map<string, CacheStrategy> = new Map()
 
   constructor() {
-    this.redisManager = new RedisManager()
+    this.redisClient = createRedisClient()
+    this.cacheManager = new SmartOnboardingCache(this.redisClient)
     this.initializeCacheStrategies()
   }
 
   async initialize(): Promise<void> {
-    await this.redisManager.initialize()
+    // Cache manager is already initialized in constructor
     await this.setupCacheWarmup()
     console.log('Cache Optimizer initialized successfully')
+  }
+
+  // Generic cache methods using Redis client directly
+  private async setWithTTL(key: string, value: string, ttl: number): Promise<void> {
+    await this.redisClient.setex(key, ttl, value)
+  }
+
+  private async get(key: string): Promise<string | null> {
+    return await this.redisClient.get(key)
+  }
+
+  private async cleanup(): Promise<void> {
+    await this.cleanup()
   }
 
   private initializeCacheStrategies(): void {
@@ -86,7 +116,7 @@ export class CacheOptimizer {
         ? await this.compressData(prediction)
         : JSON.stringify(prediction)
 
-      await this.redisManager.setWithTTL(cacheKey, serializedPrediction, strategy.ttl)
+      await this.setWithTTL(cacheKey, serializedPrediction, strategy.ttl)
       
       // Update cache metrics
       this.updateCacheMetrics('ml-predictions', 'write')
@@ -105,7 +135,7 @@ export class CacheOptimizer {
     const strategy = this.cacheStrategies.get('ml-predictions')!
     
     try {
-      const cachedData = await this.redisManager.get(cacheKey)
+      const cachedData = await this.get(cacheKey)
       
       if (cachedData) {
         this.updateCacheMetrics('ml-predictions', 'hit')
@@ -133,7 +163,7 @@ export class CacheOptimizer {
     const strategy = this.cacheStrategies.get('user-personas')!
     
     try {
-      await this.redisManager.setWithTTL(
+      await this.setWithTTL(
         cacheKey, 
         JSON.stringify(persona), 
         strategy.ttl
@@ -155,7 +185,7 @@ export class CacheOptimizer {
     const cacheKey = `persona:${userId}`
     
     try {
-      const cachedData = await this.redisManager.get(cacheKey)
+      const cachedData = await this.get(cacheKey)
       
       if (cachedData) {
         this.updateCacheMetrics('user-personas', 'hit')
@@ -182,7 +212,7 @@ export class CacheOptimizer {
         ? await this.compressData(journey)
         : JSON.stringify(journey)
 
-      await this.redisManager.setWithTTL(cacheKey, serializedJourney, strategy.ttl)
+      await this.setWithTTL(cacheKey, serializedJourney, strategy.ttl)
       this.updateCacheMetrics('onboarding-journeys', 'write')
       
     } catch (error) {
@@ -195,7 +225,7 @@ export class CacheOptimizer {
     const strategy = this.cacheStrategies.get('onboarding-journeys')!
     
     try {
-      const cachedData = await this.redisManager.get(cacheKey)
+      const cachedData = await this.get(cacheKey)
       
       if (cachedData) {
         this.updateCacheMetrics('onboarding-journeys', 'hit')
@@ -231,7 +261,7 @@ export class CacheOptimizer {
         ? await this.compressData(analytics)
         : JSON.stringify(analytics)
 
-      await this.redisManager.setWithTTL(cacheKey, serializedAnalytics, strategy.ttl)
+      await this.setWithTTL(cacheKey, serializedAnalytics, strategy.ttl)
       this.updateCacheMetrics('behavioral-analytics', 'write')
       
     } catch (error) {
@@ -247,7 +277,7 @@ export class CacheOptimizer {
     const strategy = this.cacheStrategies.get('behavioral-analytics')!
     
     try {
-      const cachedData = await this.redisManager.get(cacheKey)
+      const cachedData = await this.get(cacheKey)
       
       if (cachedData) {
         this.updateCacheMetrics('behavioral-analytics', 'hit')
@@ -279,7 +309,7 @@ export class CacheOptimizer {
     const strategy = this.cacheStrategies.get('intervention-content')!
     
     try {
-      await this.redisManager.setWithTTL(
+      await this.setWithTTL(
         cacheKey, 
         JSON.stringify(content), 
         strategy.ttl
@@ -299,7 +329,7 @@ export class CacheOptimizer {
     const cacheKey = `intervention:${contentType}:${contextHash}`
     
     try {
-      const cachedData = await this.redisManager.get(cacheKey)
+      const cachedData = await this.get(cacheKey)
       
       if (cachedData) {
         this.updateCacheMetrics('intervention-content', 'hit')
@@ -339,7 +369,7 @@ export class CacheOptimizer {
 
   private async warmupMLPredictions(): Promise<void> {
     // Preload common ML prediction patterns
-    const commonPersonaTypes = ['NOVICE_CREATOR', 'EXPERT_CREATOR', 'BUSINESS_USER']
+    const commonPersonaTypes = ['content_creator', 'influencer', 'business_user']
     
     for (const personaType of commonPersonaTypes) {
       const cacheKey = `ml:persona-classification:warmup:${personaType}`
@@ -350,7 +380,7 @@ export class CacheOptimizer {
         timestamp: new Date()
       }
       
-      await this.redisManager.setWithTTL(
+      await this.setWithTTL(
         cacheKey, 
         JSON.stringify(mockPrediction), 
         3600
@@ -375,7 +405,7 @@ export class CacheOptimizer {
         timestamp: new Date()
       }
       
-      await this.redisManager.setWithTTL(
+      await this.setWithTTL(
         cacheKey, 
         JSON.stringify(mockContent), 
         14400
@@ -387,12 +417,12 @@ export class CacheOptimizer {
     // Preload common user persona templates
     const commonPersonas = [
       {
-        personaType: 'NOVICE_CREATOR',
+        personaType: 'content_creator',
         confidenceScore: 0.8,
         characteristics: [{ trait: 'technical_proficiency', value: 'low' }]
       },
       {
-        personaType: 'EXPERT_CREATOR',
+        personaType: 'influencer',
         confidenceScore: 0.9,
         characteristics: [{ trait: 'technical_proficiency', value: 'high' }]
       }
@@ -400,7 +430,7 @@ export class CacheOptimizer {
     
     for (const persona of commonPersonas) {
       const cacheKey = `persona:template:${persona.personaType}`
-      await this.redisManager.setWithTTL(
+      await this.setWithTTL(
         cacheKey, 
         JSON.stringify(persona), 
         7200
@@ -444,12 +474,12 @@ export class CacheOptimizer {
     // Predict likely ML requests based on persona
     const predictions = []
     
-    if (persona.personaType === 'NOVICE_CREATOR') {
+    if (persona.personaType === 'content_creator' || persona.personaType === 'casual_user') {
       predictions.push(
         { type: 'success-prediction', context: 'onboarding-start' },
         { type: 'learning-path-optimization', context: 'basic-features' }
       )
-    } else if (persona.personaType === 'EXPERT_CREATOR') {
+    } else if (persona.personaType === 'influencer' || persona.personaType === 'agency') {
       predictions.push(
         { type: 'learning-path-optimization', context: 'advanced-features' },
         { type: 'content-recommendations', context: 'platform-integration' }
@@ -503,7 +533,9 @@ export class CacheOptimizer {
         break
       case 'optimize_memory':
         strategy.compressionEnabled = true
-        strategy.maxSize = Math.floor(strategy.maxSize * 0.8)
+        if (strategy.maxSize) {
+          strategy.maxSize = Math.floor(strategy.maxSize * 0.8)
+        }
         break
     }
     
@@ -517,7 +549,7 @@ export class CacheOptimizer {
 
   private async cleanupCache(): Promise<void> {
     // Clean up expired and unused cache entries
-    await this.redisManager.cleanup()
+    await this.cleanup()
   }
 
   private async setupCacheWarmup(): Promise<void> {

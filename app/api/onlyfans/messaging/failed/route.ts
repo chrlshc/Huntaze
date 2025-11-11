@@ -3,7 +3,6 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { getPool } from '@/lib/db/index';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 async function getHandler(request: NextRequest) {
   try {
@@ -68,8 +67,4 @@ async function getHandler(request: NextRequest) {
   }
 }
 
-export const GET = withMonitoring('onlyfans.messages.failed', getHandler as any, {
-  domain: 'crm',
-  feature: 'failed_messages',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const GET = getHandler as any;

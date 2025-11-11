@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Sparkles, 
+import {
+  ArrowLeft,
+  Sparkles,
   AlertCircle,
   Info
 } from 'lucide-react';

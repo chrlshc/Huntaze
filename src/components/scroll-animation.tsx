@@ -37,12 +37,7 @@ export default function ScrollAnimation({
         hidden: { opacity: 0, y },
         visible: { 
           opacity: 1, 
-          y: 0,
-          transition: {
-            duration,
-            delay,
-            ease: [0.22, 1, 0.36, 1]
-          }
+          y: 0
         }
       }}
       className={className}

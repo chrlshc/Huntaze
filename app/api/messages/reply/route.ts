@@ -3,7 +3,6 @@ import { generateWithPlan } from '@/src/lib/ai/llm'
 import type { PolicyInput } from '@/src/lib/ai/routing-policy'
 import { getAccountPlan, getAccountId, getFanSegment, detectRisk } from '@/src/lib/server'
 import { consumeMessageCredits } from '@/src/lib/ai/credits'
-import { prom } from '@/src/lib/prom'
 
 export async function POST(req: Request) {
   const t0 = process.hrtime.bigint()
@@ -36,7 +35,7 @@ export async function POST(req: Request) {
     // Consume one message credit (if packs available). Uncovered > 0 implies overage/policy coverage.
     try { await consumeMessageCredits(accountId, 1) } catch {}
 
-    try { prom.counters.messagesSent.labels({ mode: 'ai' as any }).inc(1) } catch {}
+    try { const { prom } = await import('@/src/lib/prom'); prom.counters.messagesSent.labels({ mode: 'ai' as any }).inc(1) } catch {}
     return NextResponse.json(out)
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Generation failed' }, { status: 500 })

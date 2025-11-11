@@ -2,35 +2,31 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/config';
-import { BehavioralAnalyticsServiceImpl } from '@/lib/smart-onboarding/services/behavioralAnalyticsService';
-import { db } from '@/lib/db';
-import { createApiResponse } from '@/lib/smart-onboarding/repositories/base';
-import { RATE_LIMITS } from '@/lib/smart-onboarding/config/database';
-import { smartOnboardingCache } from '@/lib/smart-onboarding/config/redis';
-
-const analyticsService = new BehavioralAnalyticsServiceImpl(db.getPool());
+// Using getServerSession without explicit authOptions to avoid pulling heavy types
+import { createApiResponse } from '@/lib/smart-onboarding/utils/apiResponse';
+import {
+  checkRateLimit,
+  trackInteraction,
+  getEngagementScore,
+  BehaviorEventType,
+} from '@/lib/smart-onboarding/services/behavioralAnalyticsFacade';
 
 export async function POST(request: NextRequest) {
   try {
     // Get user session
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const session = (await getServerSession()) as any;
+    const userId = (session as any)?.user?.id as string | undefined;
+    if (!userId) {
       return NextResponse.json(
         createApiResponse(null, 'Authentication required'),
         { status: 401 }
       );
     }
 
-    const userId = session.user.id;
 
     // Rate limiting
     const rateLimitKey = `behavior_tracking:${userId}`;
-    const rateLimit = await smartOnboardingCache.checkRateLimit(
-      rateLimitKey,
-      RATE_LIMITS.TRACK_INTERACTION,
-      60 // 1 minute window
-    );
+    const rateLimit = await checkRateLimit(rateLimitKey, 60, 60);
 
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -38,7 +34,7 @@ export async function POST(request: NextRequest) {
         { 
           status: 429,
           headers: {
-            'X-RateLimit-Limit': RATE_LIMITS.TRACK_INTERACTION.toString(),
+            'X-RateLimit-Limit': '60',
             'X-RateLimit-Remaining': rateLimit.remaining.toString(),
             'X-RateLimit-Reset': new Date(rateLimit.resetTime).toISOString()
           }
@@ -57,40 +53,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate event structure
+    // Validate event structure and create properly typed InteractionEvent
     const interactionEvent = {
       id: event.id || `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       userId,
-      type: event.type,
-      data: {
-        stepId: event.stepId,
-        sessionId: event.sessionId,
-        journeyId: event.journeyId,
+      sessionId: event.sessionId || `session_${Date.now()}`,
+      stepId: event.stepId || 'unknown',
+      timestamp: new Date(event.timestamp || Date.now()),
+      eventType: (event.type as BehaviorEventType) || 'interaction',
+      interactionData: {
         timeSpent: event.timeSpent || 0,
         mouseMovements: event.mouseMovements || [],
         clickPatterns: event.clickPatterns || [],
         scrollBehavior: event.scrollBehavior || {},
         hesitationIndicators: event.hesitationIndicators || [],
-        keyboardActivity: event.keyboardActivity || [],
-        context: {
-          currentUrl: event.currentUrl,
-          referrer: event.referrer,
-          userAgent: request.headers.get('user-agent') || '',
-          screenResolution: event.screenResolution || {},
-          viewportSize: event.viewportSize || {},
-          deviceType: event.deviceType || 'desktop',
-          browserInfo: event.browserInfo || {}
-        },
-        ...event.data
+        keyboardActivity: event.keyboardActivity || []
       },
-      timestamp: new Date(event.timestamp || Date.now())
+      engagementScore: event.engagementScore || 0.5,
+      contextualData: {
+        currentUrl: event.currentUrl || '',
+        referrer: event.referrer || '',
+        userAgent: request.headers.get('user-agent') || '',
+        screenResolution: event.screenResolution || {},
+        viewportSize: event.viewportSize || {},
+        deviceType: event.deviceType || 'desktop',
+        browserInfo: event.browserInfo || {}
+      },
+      metadata: event.data || {}
     };
 
     // Track the interaction
-    await analyticsService.trackInteraction(userId, interactionEvent);
+    await trackInteraction(userId, interactionEvent);
 
     // Get updated engagement score
-    const engagementScore = await smartOnboardingCache.getEngagementScore(userId);
+    const engagementScore = await getEngagementScore(userId);
 
     return NextResponse.json(
       createApiResponse({
@@ -113,23 +109,19 @@ export async function POST(request: NextRequest) {
 // Batch tracking endpoint
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const session = (await getServerSession()) as any;
+    const userId = (session as any)?.user?.id as string | undefined;
+    if (!userId) {
       return NextResponse.json(
         createApiResponse(null, 'Authentication required'),
         { status: 401 }
       );
     }
 
-    const userId = session.user.id;
 
     // Rate limiting for batch operations
     const rateLimitKey = `batch_tracking:${userId}`;
-    const rateLimit = await smartOnboardingCache.checkRateLimit(
-      rateLimitKey,
-      10, // 10 batch requests per minute
-      60
-    );
+    const rateLimit = await checkRateLimit(rateLimitKey, 10, 60);
 
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -162,18 +154,33 @@ export async function PUT(request: NextRequest) {
         const interactionEvent = {
           id: event.id || `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           userId,
-          type: event.type,
-          data: {
-            ...event.data,
-            context: {
-              userAgent: request.headers.get('user-agent') || '',
-              ...event.data?.context
-            }
+          sessionId: event.sessionId || `session_${Date.now()}`,
+          stepId: event.stepId || 'unknown',
+          timestamp: new Date(event.timestamp || Date.now()),
+          eventType: (event.type as BehaviorEventType) || 'interaction',
+          interactionData: {
+            timeSpent: event.timeSpent || 0,
+            mouseMovements: event.mouseMovements || [],
+            clickPatterns: event.clickPatterns || [],
+            scrollBehavior: event.scrollBehavior || {},
+            hesitationIndicators: event.hesitationIndicators || [],
+            keyboardActivity: event.keyboardActivity || []
           },
-          timestamp: new Date(event.timestamp || Date.now())
+          engagementScore: event.engagementScore || 0.5,
+          contextualData: {
+            currentUrl: event.currentUrl || '',
+            referrer: event.referrer || '',
+            userAgent: request.headers.get('user-agent') || '',
+            screenResolution: event.screenResolution || {},
+            viewportSize: event.viewportSize || {},
+            deviceType: event.deviceType || 'desktop',
+            browserInfo: event.browserInfo || {},
+            ...event.data?.context
+          },
+          metadata: event.data || {}
         };
 
-        await analyticsService.trackInteraction(userId, interactionEvent);
+        await trackInteraction(userId, interactionEvent);
         results.push({ eventId: interactionEvent.id, success: true });
       } catch (error) {
         console.error('Error tracking individual event:', error);
@@ -181,7 +188,7 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    const engagementScore = await smartOnboardingCache.getEngagementScore(userId);
+    const engagementScore = await getEngagementScore(userId);
 
     return NextResponse.json(
       createApiResponse({

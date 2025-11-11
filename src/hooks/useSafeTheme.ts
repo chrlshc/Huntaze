@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from 'react';
-import { ThemeContext } from '@/src/contexts/ThemeContext';
+import { ThemeContext } from '@/components/theme-provider';
 
 // Safe version of useTheme that doesn't throw errors
 export const useSafeTheme = () => {

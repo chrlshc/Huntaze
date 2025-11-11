@@ -2,12 +2,45 @@
 
 import { Pool } from 'pg';
 import { TimeSeriesRepository } from './base';
-import { BehaviorEvent, StruggleIndicator, EngagementMetric } from '../types';
+import { BehaviorEvent, StruggleIndicator, EngagementMetric, ProcessedBehaviorData } from '../types';
 import { SMART_ONBOARDING_TABLES } from '../config/database';
 
 export class BehaviorEventsRepository extends TimeSeriesRepository<BehaviorEvent> {
   constructor(db: Pool) {
     super(db, SMART_ONBOARDING_TABLES.BEHAVIOR_EVENTS);
+  }
+
+  // Store processed behavioral data (lightweight persistence)
+  async storeProcessedEvent(data: ProcessedBehaviorData): Promise<void> {
+    // For now, persist minimal fields into the same events table as an audit log
+    // by creating a synthetic event with type 'processed'. This can be replaced
+    // by a dedicated processed-data table when available.
+    try {
+      const row = {
+        user_id: data.userId,
+        session_id: data.sessionId,
+        journey_id: null,
+        step_id: data.stepId || null,
+        event_type: 'processed',
+        interaction_data: JSON.stringify({ interactionMetrics: data.interactionMetrics }),
+        engagement_score: data.interactionMetrics.engagementScore,
+        contextual_data: JSON.stringify({ contextData: data.contextData, processing: data.processingMetadata }),
+        timestamp: data.timestamp
+      } as any;
+
+      const columns = Object.keys(row);
+      const values = Object.values(row);
+      const placeholders = values.map((_, i) => `$${i + 1}`);
+
+      const query = `
+        INSERT INTO ${this.tableName} (${columns.join(', ')})
+        VALUES (${placeholders.join(', ')})
+      `;
+      await this.db.query(query, values);
+    } catch (error) {
+      // Best effort: log and continue
+      console.warn('storeProcessedEvent failed:', error instanceof Error ? error.message : String(error));
+    }
   }
 
   protected mapRowToEntity(row: any): BehaviorEvent {
@@ -253,10 +286,10 @@ export class BehaviorEventsRepository extends TimeSeriesRepository<BehaviorEvent
     const result = await this.db.query(query, [userId, startTime, endTime]);
     
     // Analyze patterns from interaction data
-    const mouseMovements = [];
-    const clicks = [];
-    const scrolls = [];
-    const hesitations = [];
+    const mouseMovements: any[] = [];
+    const clicks: any[] = [];
+    const scrolls: any[] = [];
+    const hesitations: any[] = [];
 
     result.rows.forEach(row => {
       const data = row.interaction_data;
@@ -352,12 +385,19 @@ export class BehaviorEventsRepository extends TimeSeriesRepository<BehaviorEvent
       try {
         await this.db.query(indexQuery);
       } catch (error) {
-        console.warn('Index creation warning:', error.message);
+        console.warn('Index creation warning:', error instanceof Error ? error.message : String(error));
       }
     }
   }
 }
 
-// Export repository instance
-export const behaviorEventsRepository = new BehaviorEventsRepository();
+// Export repository factory function
+import { smartOnboardingDb } from '../config/database';
+
+export const createBehaviorEventsRepository = () => {
+  return new BehaviorEventsRepository(smartOnboardingDb.getPool());
+};
+
+// Export singleton instance
+export const behaviorEventsRepository = createBehaviorEventsRepository();
 export default behaviorEventsRepository;

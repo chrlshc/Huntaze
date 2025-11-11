@@ -1,12 +1,51 @@
 import { cn } from "@/lib/utils"
 
+interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'text' | 'circular' | 'rectangular' | 'rounded';
+  width?: number | string;
+  height?: number | string;
+  lines?: number;
+}
+
 function Skeleton({
   className,
+  variant = 'rectangular',
+  width,
+  height,
+  lines,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: SkeletonProps) {
+  const variantClasses = {
+    text: 'h-4 rounded',
+    circular: 'rounded-full',
+    rectangular: 'rounded-md',
+    rounded: 'rounded-lg'
+  };
+
+  const style: React.CSSProperties = {
+    ...(width && { width: typeof width === 'number' ? `${width}px` : width }),
+    ...(height && { height: typeof height === 'number' ? `${height}px` : height })
+  };
+
+  if (lines && lines > 1) {
+    return (
+      <div className="space-y-2">
+        {Array.from({ length: lines }).map((_, i) => (
+          <div
+            key={i}
+            className={cn("animate-pulse bg-muted", variantClasses[variant], className)}
+            style={style}
+            {...props}
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-muted", className)}
+      className={cn("animate-pulse bg-muted", variantClasses[variant], className)}
+      style={style}
       {...props}
     />
   )

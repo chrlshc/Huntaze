@@ -137,11 +137,7 @@ export function ScrollRevealList({
 }: ScrollRevealListProps) {
   const containerVariants: Variants = {
     hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: staggerDelay,
-      },
-    },
+    visible: {}
   };
 
   const itemVariants = directionVariants[direction];

@@ -331,7 +331,7 @@ class BlueGreenController {
           name: checkName,
           status: 'TIMEOUT',
           duration: Date.now() - startTime,
-          message: `Health check timed out: ${error.message}`,
+          message: `Health check timed out: ${error instanceof Error ? error.message : String(error)}`,
           timestamp: Date.now()
         });
       }
@@ -361,7 +361,7 @@ class BlueGreenController {
         name: checkName,
         success: false,
         duration: Date.now() - startTime,
-        message: `Validation error: ${error.message}`,
+        message: `Validation error: ${error instanceof Error ? error.message : String(error)}`,
         timestamp: Date.now()
       };
     }

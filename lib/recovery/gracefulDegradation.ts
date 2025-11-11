@@ -312,7 +312,11 @@ export const setupDefaultDegradationRules = () => {
       try {
         const { getCircuitBreakerMetrics } = await import('./circuitBreaker');
         const apiMetrics = getCircuitBreakerMetrics('external-api');
-        return apiMetrics.failureRate > 50;
+        // Type guard: apiMetrics is CircuitBreakerMetrics when name is provided
+        if (typeof apiMetrics === 'object' && apiMetrics !== null && 'failureRate' in apiMetrics) {
+          return (apiMetrics as { failureRate: number }).failureRate > 50;
+        }
+        return false;
       } catch {
         return false;
       }

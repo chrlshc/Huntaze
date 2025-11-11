@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 import { useAppState, type HuntazeModule } from '@/contexts/AppStateContext';
 
@@ -10,7 +10,7 @@ interface SidebarItem {
   module: HuntazeModule;
   href: string;
   label: string;
-  icon: (props: ComponentProps<'svg'>) => JSX.Element;
+  icon: (props: ComponentProps<'svg'>) => ReactElement;
 }
 
 const NAV_ITEMS: SidebarItem[] = [

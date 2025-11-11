@@ -167,7 +167,8 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
           errors.push('Time spent cannot be negative');
         }
         
-        if (event.interactionData.engagementScore < 0 || event.interactionData.engagementScore > 100) {
+        const engagementScore = event.interactionData.engagementScore ?? 0;
+        if (engagementScore < 0 || engagementScore > 100) {
           errors.push('Engagement score must be between 0 and 100');
         }
       }

@@ -371,6 +371,9 @@ export class FeatureUnlockerService {
   ): Promise<boolean> {
     switch (condition.type) {
       case 'platform_connection':
+        if (Array.isArray(condition.requirement)) {
+          return false; // Platform connection doesn't support array requirements
+        }
         return this.checkPlatformConnection(userId, condition.requirement);
 
       case 'step_completion':
@@ -398,7 +401,8 @@ export class FeatureUnlockerService {
     requirement: string | number
   ): Promise<boolean> {
     try {
-      const accounts = await oauthAccountsRepository.findByUserId(userId);
+      const userIdNum = parseInt(userId, 10);
+      const accounts = await oauthAccountsRepository.findByUser(userIdNum);
       
       if (typeof requirement === 'number') {
         return accounts.length >= requirement;

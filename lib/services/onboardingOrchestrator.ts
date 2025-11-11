@@ -125,9 +125,7 @@ export class OnboardingOrchestratorService {
       userId,
       creatorLevel: 'beginner',
       primaryGoals: [],
-      completedSteps: [],
-      currentStep: 'welcome',
-      progressPercentage: 0
+      customPath: []
     });
 
     // Initialize feature unlock state with all features locked
@@ -211,7 +209,7 @@ export class OnboardingOrchestratorService {
 
     return {
       userId,
-      currentStep: profile.currentStep,
+      currentStep: profile.currentStep || 'welcome',
       completedSteps: profile.completedSteps,
       skippedSteps: profile.skippedSteps || [],
       progress: profile.progressPercentage,
@@ -442,7 +440,7 @@ export class OnboardingOrchestratorService {
     await onboardingEventsRepository.create({
       userId,
       eventType: 'onboarding_resumed',
-      stepId: profile.currentStep
+      stepId: profile.currentStep || undefined
     });
 
     return this.getProgress(userId);

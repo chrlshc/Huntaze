@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { OnlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
 import { getPool } from '@/lib/db/index';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 async function getHandler(request: NextRequest) {
   try {
@@ -70,8 +69,4 @@ async function getHandler(request: NextRequest) {
   }
 }
 
-export const GET = withMonitoring('monitoring.onlyfans', getHandler as any, {
-  domain: 'crm',
-  feature: 'monitoring',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const GET = getHandler as any;

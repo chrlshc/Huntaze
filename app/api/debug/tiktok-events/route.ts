@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { getRedis } from '@/src/lib/redis'
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit'
-import { prom } from '@/src/lib/prom'
 
 export const dynamic = 'force-dynamic'
 

@@ -1,8 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import type { ListChildComponentProps } from 'react-window';
-import { useCallback, useMemo, type ReactNode } from 'react';
+import { useCallback, useMemo, type ReactNode, type CSSProperties } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -21,6 +20,12 @@ type RowData<T> = {
   module: string;
 };
 
+type ListChildProps<T> = {
+  index: number;
+  style: CSSProperties;
+  data: T;
+};
+
 export function VirtualizedList<T>({
   items,
   height,
@@ -32,7 +37,7 @@ export function VirtualizedList<T>({
   const itemData = useMemo<RowData<T>>(() => ({ items, renderItem, module }), [items, renderItem, module]);
 
   const Row = useCallback(
-    ({ index, style, data }: ListChildComponentProps<RowData<T>>) => {
+    ({ index, style, data }: ListChildProps<RowData<T>>) => {
       const { items: rowItems, renderItem: rowRenderer, module: moduleName } = data;
       return (
         <div
@@ -50,14 +55,15 @@ export function VirtualizedList<T>({
     [],
   );
 
-  const ListComp: any = dynamic(async () => (await import('react-window')).FixedSizeList as any, {
-    ssr: false,
-    // Render a simple placeholder while loading the list component
-    loading: () => <div style={{ height, width: '100%' }} />,
-  });
+  const ListComp: any = dynamic(
+    () => import('react-window').then((mod: any) => mod.FixedSizeList || mod.default?.FixedSizeList || mod),
+    {
+      ssr: false,
+      loading: () => <div style={{ height, width: '100%' }} />
+    }
+  );
 
   return (
-    // @ts-expect-error dynamic component has any props
     <ListComp
       height={height}
       itemCount={items.length}

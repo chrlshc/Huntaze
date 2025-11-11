@@ -43,10 +43,7 @@ export function ValuesSection() {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      opacity: 1
     }
   };
 
@@ -54,11 +51,7 @@ export function ValuesSection() {
     hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut" as const
-      }
+      y: 0
     }
   };
 

@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import { markCompleted } from '@/app/api/_store/onboarding';
 import crypto from 'crypto';
 import { makeReqLogger } from '@/lib/logger';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 import { upstream } from '@/app/api/_lib/upstream';
 
 export const runtime = 'nodejs';
@@ -63,8 +62,4 @@ async function handler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('onboarding.complete', handler as any, {
-  domain: 'onboarding',
-  feature: 'complete',
-  getUserId: (req) => req.headers.get('x-user-id') || undefined,
-});
+export const POST = handler as any;

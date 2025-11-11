@@ -145,6 +145,25 @@ export class DataWarehouseService {
   }
 
   /**
+   * Update data catalog/metadata for discoverability and lineage
+   */
+  private async updateDataCatalog(batch: ProcessedBehaviorData[]): Promise<void> {
+    try {
+      // Minimal stub: track lastUpdated and counts in Redis for observability
+      const key = 'dw:data_catalog:behavioral_events';
+      const snapshot = {
+        lastUpdated: new Date().toISOString(),
+        lastBatchSize: batch.length,
+        sampleEventType: batch[0]?.eventType ?? null
+      };
+      await redisClient.setex(key, 3600, JSON.stringify(snapshot));
+      logger.debug('Data catalog updated', snapshot as any);
+    } catch (error) {
+      logger.error('Failed to update data catalog', { error });
+    }
+  }
+
+  /**
    * Store raw behavioral data in partitioned tables
    */
   private async storeRawData(batch: ProcessedBehaviorData[]): Promise<void> {
@@ -681,6 +700,23 @@ export class DataWarehouseService {
         } as FeatureVector;
       }
     });
+  }
+
+  /**
+   * Execute a query against the data warehouse
+   */
+  async executeQuery(query: string, params: any[] = []): Promise<any[]> {
+    const client = await this.dbPool.connect();
+    
+    try {
+      const result = await client.query(query, params);
+      return result.rows;
+    } catch (error) {
+      logger.error('Failed to execute warehouse query', { error, query });
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   /**

@@ -92,31 +92,26 @@ export const AdaptiveOnboardingStep: React.FC<AdaptiveOnboardingStepProps> = ({
     initial: { opacity: 1, scale: 1 },
     adapting: { 
       opacity: 0.7, 
-      scale: 0.98,
-      transition: { duration: 0.3 }
+      scale: 0.98
     },
     adapted: { 
       opacity: 1, 
-      scale: 1,
-      transition: { duration: 0.3 }
+      scale: 1
     }
   };
 
   const contentVariants = {
     enter: { 
       opacity: 0, 
-      y: 20,
-      transition: { duration: 0.4, ease: "easeOut" }
+      y: 20
     },
     center: { 
       opacity: 1, 
-      y: 0,
-      transition: { duration: 0.4, ease: "easeOut" }
+      y: 0
     },
     exit: { 
       opacity: 0, 
-      y: -20,
-      transition: { duration: 0.3, ease: "easeIn" }
+      y: -20
     }
   };
 

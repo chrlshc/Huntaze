@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ReturningUserOptimizerImpl } from '@/lib/smart-onboarding/services/returningUserOptimizer';
+import {
+  persistUserSession,
+  recoverUserProgress,
+  analyzeAbandonmentReasons,
+  generateReEngagementStrategy,
+  trackReturnUserMetrics,
+} from '@/lib/smart-onboarding/services/returningUserOptimizerFacade';
 import { logger } from '@/lib/utils/logger';
 
-// Initialize service
-const returningUserOptimizer = new ReturningUserOptimizerImpl();
+// Facade-based minimal implementation
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +31,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const persistence = await returningUserOptimizer.persistUserSession(userId, sessionData);
+        const persistence = await persistUserSession(userId, sessionData);
 
         return NextResponse.json({
           success: true,
@@ -43,7 +48,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const recovery = await returningUserOptimizer.recoverUserProgress(userId, newSessionId);
+        const recovery = await recoverUserProgress(userId, newSessionId);
 
         return NextResponse.json({
           success: true,
@@ -60,10 +65,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const abandonmentAnalysis = await returningUserOptimizer.analyzeAbandonmentReasons(
-          userId,
-          sessionData
-        );
+        const abandonmentAnalysis = await analyzeAbandonmentReasons(userId, sessionData);
 
         return NextResponse.json({
           success: true,
@@ -80,10 +82,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const reengagementStrategy = await returningUserOptimizer.generateReEngagementStrategy(
-          userId,
-          returnProfile
-        );
+        const reengagementStrategy = await generateReEngagementStrategy(userId, returnProfile);
 
         return NextResponse.json({
           success: true,
@@ -101,11 +100,7 @@ export async function POST(request: NextRequest) {
         }
 
         const { recoveryData } = body;
-        const returnMetrics = await returningUserOptimizer.trackReturnUserMetrics(
-          userId,
-          sessionData,
-          recoveryData
-        );
+        const returnMetrics = await trackReturnUserMetrics(userId, sessionData, recoveryData);
 
         return NextResponse.json({
           success: true,
@@ -121,7 +116,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Returning user optimization API error:', error);
+    logger.error('Returning user optimization API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -200,7 +195,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Returning user optimization GET API error:', error);
+    logger.error('Returning user optimization GET API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -251,7 +246,7 @@ export async function DELETE(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Returning user optimization DELETE API error:', error);
+    logger.error('Returning user optimization DELETE API error:', undefined, error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

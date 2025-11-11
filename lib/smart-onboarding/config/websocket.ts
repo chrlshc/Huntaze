@@ -1,15 +1,25 @@
 // Smart Onboarding System - WebSocket Configuration and Real-time Communication
+// TODO: Install socket.io package to enable real-time features
 
-import { Server as SocketIOServer } from 'socket.io';
-import { Server as HTTPServer } from 'http';
-import { WEBSOCKET_EVENTS, WEBSOCKET_CHANNELS } from './redis';
-import { smartOnboardingCache } from './redis';
-import type { 
-  OnboardingEvent, 
-  SystemEvent, 
-  BehaviorEvent, 
-  InteractionEvent 
-} from '../types';
+// import { Server as SocketIOServer } from 'socket.io';
+// import { Server as HTTPServer } from 'http';
+// import { WEBSOCKET_EVENTS, WEBSOCKET_CHANNELS } from './redis';
+// import { smartOnboardingCache } from './redis';
+// import type { 
+//   OnboardingEvent, 
+//   SystemEvent, 
+//   BehaviorEvent, 
+//   InteractionEvent 
+// } from '../types';
+
+// Stub constants and types
+const WEBSOCKET_EVENTS = {} as any;
+const WEBSOCKET_CHANNELS = {} as any;
+const smartOnboardingCache = {} as any;
+type OnboardingEvent = any;
+type SystemEvent = any;
+type BehaviorEvent = any;
+type InteractionEvent = any;
 
 // WebSocket server configuration
 export const WEBSOCKET_CONFIG = {
@@ -35,18 +45,28 @@ export const EVENT_RATE_LIMITS = {
 
 // Smart Onboarding WebSocket Manager
 export class SmartOnboardingWebSocket {
-  private io: SocketIOServer;
+  private io: any; // Stub for SocketIOServer
   private userSessions: Map<string, Set<string>> = new Map(); // userId -> Set of socketIds
   private socketUsers: Map<string, string> = new Map(); // socketId -> userId
   
-  constructor(server: HTTPServer) {
-    this.io = new SocketIOServer(server, WEBSOCKET_CONFIG);
-    this.setupEventHandlers();
-    this.setupRedisSubscriptions();
+  constructor(server: any) {
+    // TODO: Uncomment when socket.io is installed
+    // this.io = new SocketIOServer(server, WEBSOCKET_CONFIG);
+    // Create a stub for this.io
+    this.io = {
+      on: () => {},
+      emit: () => {},
+      to: () => ({ emit: () => {} }),
+      sockets: { sockets: { size: 0 } },
+      close: () => {}
+    };
+    // this.setupEventHandlers();
+    // this.setupRedisSubscriptions();
+    console.warn('WebSocket support disabled - socket.io not installed');
   }
   
   private setupEventHandlers() {
-    this.io.on('connection', (socket) => {
+    this.io.on('connection', (socket: any) => {
       console.log(`Smart Onboarding WebSocket client connected: ${socket.id}`);
       
       // Handle user authentication and session setup
@@ -242,7 +262,7 @@ export class SmartOnboardingWebSocket {
       });
       
       // Handle disconnection
-      socket.on('disconnect', async (reason) => {
+      socket.on('disconnect', async (reason: any) => {
         console.log(`Smart Onboarding WebSocket client disconnected: ${socket.id}, reason: ${reason}`);
         
         const userId = this.socketUsers.get(socket.id);
@@ -276,7 +296,7 @@ export class SmartOnboardingWebSocket {
       WEBSOCKET_CHANNELS.CONTENT_UPDATES,
       WEBSOCKET_CHANNELS.ML_MODEL_UPDATES,
       WEBSOCKET_CHANNELS.EXPERIMENT_EVENTS
-    ], (channel, message) => {
+    ], (channel: any, message: any) => {
       this.handleRedisEvent(channel, message);
     });
   }
@@ -538,6 +558,6 @@ export interface WebSocketEvents {
 }
 
 // Export singleton instance creator
-export const createSmartOnboardingWebSocket = (server: HTTPServer): SmartOnboardingWebSocket => {
+export const createSmartOnboardingWebSocket = (server: any): SmartOnboardingWebSocket => {
   return new SmartOnboardingWebSocket(server);
 };

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mlModelManager } from '../../../../../lib/smart-onboarding/services/mlModelManager';
+import { mlPipelineFacade } from '../../../../../lib/smart-onboarding/services/mlPipelineFacade';
 import { PredictionRequest } from '../../../../../lib/smart-onboarding/types';
 import { logger } from '../../../../../lib/utils/logger';
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Make prediction
-    const result = await mlModelManager.predict(predictionRequest);
+    const result = await mlPipelineFacade.predict(predictionRequest);
 
     return NextResponse.json({
       success: true,
@@ -57,14 +57,14 @@ export async function GET(request: NextRequest) {
 
     if (action === 'stats') {
       // Get model statistics
-      const stats = await mlModelManager.getModelStats(modelType || undefined);
+      const stats = await mlPipelineFacade.getModelStats(modelType || undefined);
       return NextResponse.json({ stats });
     }
 
     if (action === 'warmup') {
       // Warmup models
       const modelTypes = modelType ? [modelType] : ['persona_classification', 'success_prediction', 'engagement_scoring', 'path_optimization'];
-      await mlModelManager.warmupModels(modelTypes);
+      await mlPipelineFacade.warmupModels(modelTypes);
       
       return NextResponse.json({
         success: true,

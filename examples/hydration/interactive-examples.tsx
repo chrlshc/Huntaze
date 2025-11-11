@@ -134,7 +134,7 @@ function DateExamples() {
           <div>Année: <SafeDateRenderer date={new Date()} format="year" /></div>
           <div>Date: <SafeDateRenderer date={new Date()} format="date" /></div>
           <div>Heure: <SafeDateRenderer date={new Date()} format="time" /></div>
-          <div>Complet: <SafeDateRenderer date={new Date()} format="datetime" /></div>
+          <div>Complet: <SafeDateRenderer date={new Date()} format="full" /></div>
         </div>
       </ExampleCard>
     </ExampleSection>
@@ -511,8 +511,8 @@ function AdvancedExamples() {
 
 // Exemple de géolocalisation
 function GeolocationWeatherExample() {
-  const [location, setLocation] = useState(null);
-  const [weather, setWeather] = useState(null);
+  const [location, setLocation] = useState<{ lat: string; lng: string } | null>(null);
+  const [weather, setWeather] = useState<{ temperature: number; condition: string } | null>(null);
 
   return (
     <div className="p-4 bg-blue-50 border border-blue-200 rounded">
@@ -579,7 +579,7 @@ function SystemThemeExample() {
               const mediaQuery = api.window.matchMedia('(prefers-color-scheme: dark)');
               setSystemTheme(mediaQuery.matches ? 'dark' : 'light');
               
-              const handler = (e) => setSystemTheme(e.matches ? 'dark' : 'light');
+              const handler = (e: MediaQueryListEvent) => setSystemTheme(e.matches ? 'dark' : 'light');
               mediaQuery.addEventListener('change', handler);
               
               return () => mediaQuery.removeEventListener('change', handler);
@@ -624,7 +624,11 @@ function SystemThemeExample() {
 }
 
 // Composants utilitaires
-function ExampleSection({ title, description, children }) {
+function ExampleSection({ title, description, children }: { 
+  title: string; 
+  description: string; 
+  children: React.ReactNode;
+}) {
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
       <header className="mb-6">
@@ -638,7 +642,12 @@ function ExampleSection({ title, description, children }) {
   );
 }
 
-function ExampleCard({ title, description, code, children }) {
+function ExampleCard({ title, description, code, children }: { 
+  title: string; 
+  description?: string; 
+  code?: string; 
+  children: React.ReactNode;
+}) {
   const [showCode, setShowCode] = useState(false);
 
   return (

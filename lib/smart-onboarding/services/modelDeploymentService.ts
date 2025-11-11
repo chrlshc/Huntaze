@@ -176,9 +176,9 @@ class ModelDeploymentService {
     logger.info(`Validating model for deployment: ${deployment.modelVersion}`);
     
     // Get model from versioning service
-    const modelVersion = await modelVersioningService.getVersion(deployment.modelVersion);
+    const modelVersion = await modelVersioningService.getVersion(deployment.modelType, deployment.modelVersion);
     if (!modelVersion) {
-      throw new Error(`Model version not found: ${deployment.modelVersion}`);
+      throw new Error(`Model version not found: ${deployment.modelType}:${deployment.modelVersion}`);
     }
 
     // Validate model metrics meet deployment criteria
@@ -388,26 +388,30 @@ class ModelDeploymentService {
     }
 
     // Update production version in versioning service
-    await modelVersioningService.setProductionVersion(deployment.modelType, deployment.modelVersion);
+    // TODO: Implement setProductionVersion in modelVersioningService
+    // await modelVersioningService.setProductionVersion(deployment.modelType, deployment.modelVersion);
     
-    logger.info(`Deployment completed and production version updated: ${deployment.modelVersion}`);
+    logger.info(`Deployment completed: ${deployment.modelVersion}`);
   }
 
   private async performRollback(deployment: DeploymentJob): Promise<void> {
     logger.info(`Performing rollback for deployment: ${deployment.id}`);
     
     // Get previous production version
-    const previousVersion = await modelVersioningService.getPreviousProductionVersion(deployment.modelType);
+    // TODO: Implement getPreviousProductionVersion in modelVersioningService
+    const previousVersion = null; // await modelVersioningService.getPreviousProductionVersion(deployment.modelType);
     
     if (previousVersion) {
       // Switch traffic back to previous version
-      await this.updateTrafficSplit(deployment.modelType, {
-        [previousVersion.version]: 100,
-        [deployment.modelVersion]: 0
-      });
+      // TODO: Implement traffic split and production version restoration
+      // await this.updateTrafficSplit(deployment.modelType, {
+      //   [previousVersion.version]: 100,
+      //   [deployment.modelVersion]: 0
+      // });
       
       // Restore previous production version
-      await modelVersioningService.setProductionVersion(deployment.modelType, previousVersion.version);
+      // await modelVersioningService.setProductionVersion(deployment.modelType, previousVersion.version);
+      logger.info('Rollback to previous version would be performed here');
     }
     
     // Remove failed endpoint

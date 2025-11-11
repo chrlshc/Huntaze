@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
         flairText,
       });
     } else if (kind === 'self' && text) {
-      result = await redditPublish.submitPost(subreddit, title, text, accessToken, {
+      result = await redditPublish.submitText(subreddit, title, text, accessToken, {
         nsfw,
         spoiler,
         sendReplies,

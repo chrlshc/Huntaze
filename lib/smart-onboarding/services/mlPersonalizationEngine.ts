@@ -11,6 +11,7 @@ import {
   UserPersona,
   LearningPath,
   BehaviorEvent,
+  BehaviorEventType,
   InteractionPattern,
   ProficiencyLevel,
   SuccessPrediction,
@@ -22,8 +23,6 @@ import {
 } from '../types';
 import { smartOnboardingCache } from '../config/redis';
 import { ML_MODEL_TYPES } from '../config/database';
-import { Path } from 'three';
-import { Path } from 'three';
 
 // User Persona Classifier
 class UserPersonaClassifier {
@@ -425,54 +424,71 @@ class TechnicalProficiencyAssessor {
   }
 
   private assessNavigationEfficiency(patterns: InteractionPattern[]): number {
-    // Simplified assessment - in real implementation, this would analyze actual navigation patterns
-    const avgClicksPerTask = patterns.reduce((sum, p) => sum + (p.clickCount || 0), 0) / patterns.length;
+    // Assess navigation efficiency based on pattern types and frequency
+    const navigationPatterns = patterns.filter(p => p.type === 'navigation_pattern');
+    if (navigationPatterns.length === 0) return 0.5;
     
-    if (avgClicksPerTask <= 3) return 1.0; // Very efficient
-    if (avgClicksPerTask <= 5) return 0.8; // Efficient
-    if (avgClicksPerTask <= 8) return 0.6; // Moderate
-    if (avgClicksPerTask <= 12) return 0.4; // Inefficient
-    return 0.2; // Very inefficient
+    // Higher frequency of efficient navigation patterns indicates better proficiency
+    const avgFrequency = navigationPatterns.reduce((sum, p) => sum + p.frequency, 0) / navigationPatterns.length;
+    const avgConfidence = navigationPatterns.reduce((sum, p) => sum + p.confidence, 0) / navigationPatterns.length;
+    
+    // Combine frequency and confidence for efficiency score
+    const efficiencyScore = (avgFrequency * 0.6 + avgConfidence * 0.4);
+    
+    return Math.min(1, efficiencyScore);
   }
 
   private assessCompletionSpeed(patterns: InteractionPattern[]): number {
-    const avgCompletionTime = patterns.reduce((sum, p) => sum + (p.completionTime || 0), 0) / patterns.length;
+    // Assess completion speed based on engagement patterns
+    const engagementPatterns = patterns.filter(p => p.type === 'engagement_pattern');
+    if (engagementPatterns.length === 0) return 0.5;
     
-    // Normalize based on expected completion times (in seconds)
-    if (avgCompletionTime <= 30) return 1.0;
-    if (avgCompletionTime <= 60) return 0.8;
-    if (avgCompletionTime <= 120) return 0.6;
-    if (avgCompletionTime <= 300) return 0.4;
-    return 0.2;
+    // High frequency engagement patterns with high confidence indicate faster completion
+    const avgFrequency = engagementPatterns.reduce((sum, p) => sum + p.frequency, 0) / engagementPatterns.length;
+    const highSignificance = engagementPatterns.filter(p => p.significance === 'high').length / engagementPatterns.length;
+    
+    return Math.min(1, avgFrequency * 0.5 + highSignificance * 0.5);
   }
 
   private assessErrorFrequency(patterns: InteractionPattern[]): number {
-    const avgErrors = patterns.reduce((sum, p) => sum + (p.errorCount || 0), 0) / patterns.length;
+    // Assess error frequency based on hesitation patterns (indicator of confusion/errors)
+    const hesitationPatterns = patterns.filter(p => p.type === 'hesitation_pattern');
+    if (hesitationPatterns.length === 0) return 1.0; // No hesitation = no errors
     
-    if (avgErrors === 0) return 1.0;
-    if (avgErrors <= 1) return 0.8;
-    if (avgErrors <= 2) return 0.6;
-    if (avgErrors <= 4) return 0.4;
-    return 0.2;
+    // More hesitation patterns with high significance indicate more errors
+    const hesitationRatio = hesitationPatterns.length / patterns.length;
+    const highSignificanceRatio = hesitationPatterns.filter(p => p.significance === 'high').length / Math.max(1, hesitationPatterns.length);
+    
+    // Invert the score (less hesitation = higher proficiency)
+    return Math.max(0, 1 - (hesitationRatio * 0.6 + highSignificanceRatio * 0.4));
   }
 
   private assessFeatureUsage(patterns: InteractionPattern[]): number {
-    const advancedFeatureUsage = patterns.filter(p => p.usedAdvancedFeatures).length;
-    const usageRatio = advancedFeatureUsage / patterns.length;
+    // Assess feature usage based on click patterns with high confidence
+    const clickPatterns = patterns.filter(p => p.type === 'click_pattern');
+    if (clickPatterns.length === 0) return 0.3;
+    
+    // High confidence click patterns indicate deliberate, advanced feature usage
+    const highConfidenceClicks = clickPatterns.filter(p => p.confidence > 0.7).length;
+    const usageRatio = highConfidenceClicks / patterns.length;
     
     return Math.min(1, usageRatio * 2); // Scale up to reward advanced feature usage
   }
 
   private assessHelpSeekingBehavior(patterns: InteractionPattern[]): number {
-    const helpRequests = patterns.reduce((sum, p) => sum + (p.helpRequests || 0), 0);
-    const avgHelpRequests = helpRequests / patterns.length;
+    // Assess help-seeking behavior based on scroll patterns (searching for help)
+    const scrollPatterns = patterns.filter(p => p.type === 'scroll_pattern');
+    if (scrollPatterns.length === 0) return 0.8; // No excessive scrolling = good proficiency
     
-    // Lower help requests indicate higher proficiency
-    if (avgHelpRequests === 0) return 1.0;
-    if (avgHelpRequests <= 0.5) return 0.8;
-    if (avgHelpRequests <= 1) return 0.6;
-    if (avgHelpRequests <= 2) return 0.4;
-    return 0.2;
+    // Excessive scrolling with high significance may indicate searching for help
+    const excessiveScrolling = scrollPatterns.filter(p => 
+      p.significance === 'high' && p.frequency > 0.7
+    ).length;
+    
+    const scrollRatio = excessiveScrolling / patterns.length;
+    
+    // Lower scroll ratio indicates higher proficiency (less help-seeking)
+    return Math.max(0.2, 1 - scrollRatio * 1.5);
   }
 }
 
@@ -695,7 +711,7 @@ class AdvancedContentRecommendationEngine {
     const alternatives = this.generateContextualAlternatives(persona, contentType, context);
     
     return {
-      stepId: context.currentStep,
+      stepId: context.currentStepId,
       recommendations: topRecommendations,
       reasoning,
       confidence: this.calculateAdvancedConfidence(persona, topRecommendations, behaviorHistory),
@@ -712,7 +728,15 @@ class AdvancedContentRecommendationEngine {
       ];
     }
     
-    return this.contentDatabase[contentType] || [];
+    // Type-safe content type access
+    const validTypes = ['videos', 'interactive', 'text'] as const;
+    type ValidContentType = typeof validTypes[number];
+    
+    if (validTypes.includes(contentType as ValidContentType)) {
+      return this.contentDatabase[contentType as ValidContentType] || [];
+    }
+    
+    return [];
   }
 
   private async scoreContentCandidates(
@@ -876,7 +900,7 @@ class AdvancedContentRecommendationEngine {
       primaryFactors,
       userPersona: persona.personaType,
       learningStyle: this.inferLearningStyleFromBehavior(behaviorHistory),
-      currentContext: context.currentStep,
+      currentContext: context.currentStepId,
       historicalPerformance: this.calculateHistoricalPerformance(behaviorHistory),
       adaptationTriggers: this.identifyAdaptationTriggers(behaviorHistory),
       confidenceFactors: this.extractConfidenceFactors(persona, recommendations)
@@ -983,7 +1007,7 @@ class AdvancedContentRecommendationEngine {
     };
     
     const userObjectives = personaObjectives[persona.personaType] || [];
-    const matchingObjectives = content.learningObjectives.filter(obj => userObjectives.includes(obj));
+    const matchingObjectives = content.learningObjectives.filter((obj: string) => userObjectives.includes(obj));
     
     return matchingObjectives.length / Math.max(content.learningObjectives.length, userObjectives.length);
   }
@@ -997,12 +1021,13 @@ class AdvancedContentRecommendationEngine {
   private calculateAverageSessionLength(behaviorHistory: BehaviorEvent[]): number {
     if (behaviorHistory.length === 0) return 300; // 5 minutes default
     
-    const sessionLengths = new Map();
+    const sessionLengths = new Map<string, Date[]>();
     behaviorHistory.forEach(event => {
-      if (!sessionLengths.has(event.sessionId)) {
-        sessionLengths.set(event.sessionId, []);
+      const sessionId = event.sessionContext?.sessionId || 'default';
+      if (!sessionLengths.has(sessionId)) {
+        sessionLengths.set(sessionId, []);
       }
-      sessionLengths.get(event.sessionId).push(event.timestamp);
+      sessionLengths.get(sessionId)!.push(event.timestamp);
     });
     
     let totalLength = 0;
@@ -1021,15 +1046,28 @@ class AdvancedContentRecommendationEngine {
 
   private getRecentContentTypePreferences(behaviorHistory: BehaviorEvent[]): Record<string, number> {
     const recentEvents = behaviorHistory.slice(0, 20); // Last 20 events
-    const typeCount = {};
+    const typeCount: Record<string, number> = {};
     
     recentEvents.forEach(event => {
-      const contentType = event.interactionData.contentType || 'unknown';
+      // Infer content type from event type and interaction patterns
+      let contentType = 'unknown';
+      
+      // Infer based on interaction patterns
+      if (event.interactionData.timeSpent > 300) {
+        contentType = 'text'; // Long time = reading
+      } else if (event.interactionData.clickPatterns.length > 5) {
+        contentType = 'interactive'; // Many clicks = interactive
+      } else if (event.eventType === 'click' || event.eventType === 'hover') {
+        contentType = 'interactive';
+      } else {
+        contentType = 'video'; // Default
+      }
+      
       typeCount[contentType] = (typeCount[contentType] || 0) + 1;
     });
     
     const total = recentEvents.length;
-    const preferences = {};
+    const preferences: Record<string, number> = {};
     
     Object.keys(typeCount).forEach(type => {
       preferences[type] = typeCount[type] / total;
@@ -1038,10 +1076,18 @@ class AdvancedContentRecommendationEngine {
     return preferences;
   }
 
+  private inferContentTypeFromEvent(event: BehaviorEvent): string {
+    // Infer content type from interaction patterns
+    if (event.interactionData.timeSpent > 300) return 'text';
+    if (event.interactionData.clickPatterns.length > 5) return 'interactive';
+    if (event.eventType === 'click' || event.eventType === 'hover') return 'interactive';
+    return 'video';
+  }
+
   private calculateSimilarContentEngagement(content: any, behaviorHistory: BehaviorEvent[]): number {
     const contentType = this.inferContentType(content);
     const similarEvents = behaviorHistory.filter(e => 
-      e.interactionData.contentType === contentType
+      this.inferContentTypeFromEvent(e) === contentType
     );
     
     if (similarEvents.length === 0) return 0.5;
@@ -1050,14 +1096,29 @@ class AdvancedContentRecommendationEngine {
   }
 
   private calculateDifficultyCompletionRate(difficulty: number, behaviorHistory: BehaviorEvent[]): number {
-    const difficultyEvents = behaviorHistory.filter(e => 
-      e.interactionData.difficulty === difficulty
-    );
+    // Estimate difficulty from hesitation indicators and time spent
+    const difficultyEvents = behaviorHistory.filter(e => {
+      const estimatedDifficulty = this.estimateDifficultyFromEvent(e);
+      return Math.abs(estimatedDifficulty - difficulty) <= 1;
+    });
     
     if (difficultyEvents.length === 0) return 0.5;
     
-    const completedEvents = difficultyEvents.filter(e => e.eventType === 'step_completed');
+    // High engagement score indicates completion
+    const completedEvents = difficultyEvents.filter(e => e.engagementScore > 0.6);
     return completedEvents.length / difficultyEvents.length;
+  }
+
+  private estimateDifficultyFromEvent(event: BehaviorEvent): number {
+    // Estimate difficulty based on hesitation and time spent
+    const hesitationCount = event.interactionData.hesitationIndicators.length;
+    const timeSpent = event.interactionData.timeSpent;
+    
+    // More hesitation and time = higher difficulty
+    if (hesitationCount > 5 || timeSpent > 600) return 4;
+    if (hesitationCount > 3 || timeSpent > 300) return 3;
+    if (hesitationCount > 1 || timeSpent > 120) return 2;
+    return 1;
   }
 
   private calculateTimePreferenceAlignment(content: any, behaviorHistory: BehaviorEvent[]): number {
@@ -1075,10 +1136,10 @@ class AdvancedContentRecommendationEngine {
   }
 
   private inferLearningStyleFromBehavior(behaviorHistory: BehaviorEvent[]): string {
-    const contentTypeEngagement = {};
+    const contentTypeEngagement: Record<string, number[]> = {};
     
     behaviorHistory.forEach(event => {
-      const contentType = event.interactionData.contentType;
+      const contentType = this.inferContentTypeFromEvent(event);
       if (contentType) {
         if (!contentTypeEngagement[contentType]) {
           contentTypeEngagement[contentType] = [];
@@ -1128,7 +1189,7 @@ class AdvancedContentRecommendationEngine {
       triggers.push('high_error_rate');
     }
     
-    const helpRequests = behaviorHistory.filter(e => e.eventType === 'help_requested').length;
+    const helpRequests = behaviorHistory.filter(e => e.eventType === 'help_request').length;
     if (helpRequests > behaviorHistory.length * 0.3) {
       triggers.push('frequent_help_requests');
     }
@@ -1200,7 +1261,7 @@ class ContentRecommendationEngine {
     const reasoning = this.generateReasoning(persona, contentType, context);
     
     return {
-      stepId: context.currentStep,
+      stepId: context.currentStepId,
       recommendations,
       reasoning,
       confidence: this.calculateConfidence(persona, recommendations),
@@ -1209,7 +1270,7 @@ class ContentRecommendationEngine {
   }
 
   private getRecommendationsForPersona(persona: UserPersona, contentType: string): any[] {
-    const baseRecommendations = {
+    const baseRecommendations: Record<PersonaType, any[]> = {
       content_creator: [
         {
           contentId: 'creator_tutorial_video',
@@ -1234,7 +1295,42 @@ class ContentRecommendationEngine {
           personalizationFactors: ['efficiency_focus', 'roi_oriented']
         }
       ],
-      // Add other persona types...
+      influencer: [
+        {
+          contentId: 'influencer_growth_guide',
+          type: 'video',
+          title: 'Influencer Growth Strategies',
+          description: 'Maximize your reach and engagement',
+          estimatedTime: 4,
+          difficulty: 2,
+          relevanceScore: 0.9,
+          personalizationFactors: ['social_focus', 'engagement_oriented']
+        }
+      ],
+      agency: [
+        {
+          contentId: 'agency_management_guide',
+          type: 'interactive',
+          title: 'Multi-Client Management',
+          description: 'Efficiently manage multiple client accounts',
+          estimatedTime: 6,
+          difficulty: 3,
+          relevanceScore: 0.95,
+          personalizationFactors: ['advanced_features', 'scalability']
+        }
+      ],
+      casual_user: [
+        {
+          contentId: 'casual_quick_start',
+          type: 'text',
+          title: 'Simple Getting Started Guide',
+          description: 'Easy introduction to the platform',
+          estimatedTime: 2,
+          difficulty: 1,
+          relevanceScore: 0.85,
+          personalizationFactors: ['simplicity', 'quick_wins']
+        }
+      ]
     };
 
     return baseRecommendations[persona.personaType] || [];
@@ -1245,7 +1341,7 @@ class ContentRecommendationEngine {
       primaryFactors: [`persona_${persona.personaType}`, `content_${contentType}`],
       userPersona: persona.personaType,
       learningStyle: 'visual', // This would be determined from persona
-      currentContext: context.currentStep,
+      currentContext: context.currentStepId,
       historicalPerformance: 0.8 // This would be calculated from past interactions
     };
   }
@@ -1397,9 +1493,42 @@ export class MLPersonalizationEngineImpl implements MLPersonalizationEngine {
       
       const context: OnboardingContext = {
         userId,
-        currentStep: 'current', // This would be determined from actual context
+        currentStepId: 'current',
         sessionId: 'session',
-        userAgent: '',
+        completedSteps: [],
+        userProfile: {
+          id: userId,
+          email: '',
+          socialConnections: [],
+          technicalProficiency: persona.experienceLevel,
+          contentCreationGoals: [],
+          platformPreferences: [],
+          learningStyle: 'visual',
+          timeConstraints: {
+            availableHoursPerWeek: 10,
+            preferredTimeSlots: [],
+            urgencyLevel: 'medium'
+          },
+          previousExperience: persona.experienceLevel,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        userPersona: persona,
+        currentEngagement: 0.5,
+        recentInteractions: [],
+        strugglingIndicators: [],
+        timeInCurrentStep: 0,
+        totalTimeSpent: 0,
+        deviceContext: {
+          deviceType: 'desktop',
+          screenSize: { width: 1920, height: 1080 },
+          browserInfo: {
+            name: 'unknown',
+            version: '1.0',
+            language: 'en',
+            timezone: 'UTC'
+          }
+        },
         timestamp: new Date()
       };
       
@@ -1505,16 +1634,84 @@ export class MLPersonalizationEngineImpl implements MLPersonalizationEngine {
 
   // Helper methods
   private extractInteractionPatterns(behaviorData: BehaviorEvent[]): InteractionPattern[] {
-    return behaviorData.map(event => ({
-      userId: event.userId,
-      stepId: event.stepId,
-      completionTime: event.interactionData.timeSpent || 0,
-      clickCount: event.interactionData.clickPatterns?.length || 0,
-      errorCount: event.eventType === 'error' ? 1 : 0,
-      helpRequests: event.eventType === 'help_requested' ? 1 : 0,
-      usedAdvancedFeatures: event.interactionData.advancedFeatureUsed || false,
-      timestamp: event.timestamp
-    }));
+    // Group events by type to identify patterns
+    const patternMap = new Map<string, BehaviorEvent[]>();
+    
+    behaviorData.forEach(event => {
+      const patternType = this.determinePatternType(event);
+      if (!patternMap.has(patternType)) {
+        patternMap.set(patternType, []);
+      }
+      patternMap.get(patternType)!.push(event);
+    });
+
+    // Convert grouped events into InteractionPattern objects
+    const patterns: InteractionPattern[] = [];
+    
+    patternMap.forEach((events, patternType) => {
+      const timeWindow = {
+        start: events[0].timestamp,
+        end: events[events.length - 1].timestamp
+      };
+      
+      patterns.push({
+        type: patternType as any,
+        frequency: events.length / behaviorData.length,
+        confidence: this.calculatePatternConfidence(events, behaviorData.length),
+        indicators: this.extractPatternIndicators(events),
+        timeWindow,
+        significance: this.determineSignificance(events.length, behaviorData.length)
+      });
+    });
+
+    return patterns;
+  }
+
+  private determinePatternType(event: BehaviorEvent): string {
+    if (event.eventType === 'click') return 'click_pattern';
+    if (event.eventType === 'scroll') return 'scroll_pattern';
+    if (event.interactionData.hesitationIndicators.length > 0) return 'hesitation_pattern';
+    if (event.engagementScore > 0.7) return 'engagement_pattern';
+    return 'navigation_pattern';
+  }
+
+  private calculatePatternConfidence(events: BehaviorEvent[], totalEvents: number): number {
+    const frequency = events.length / totalEvents;
+    const consistency = this.calculateEventConsistency(events);
+    return Math.min(1, (frequency + consistency) / 2);
+  }
+
+  private calculateEventConsistency(events: BehaviorEvent[]): number {
+    if (events.length < 2) return 0.5;
+    
+    const engagementScores = events.map(e => e.engagementScore);
+    const avgScore = engagementScores.reduce((sum, s) => sum + s, 0) / engagementScores.length;
+    const variance = engagementScores.reduce((sum, s) => sum + Math.pow(s - avgScore, 2), 0) / engagementScores.length;
+    
+    return Math.max(0, 1 - variance);
+  }
+
+  private extractPatternIndicators(events: BehaviorEvent[]): string[] {
+    const indicators: string[] = [];
+    
+    const avgEngagement = events.reduce((sum, e) => sum + e.engagementScore, 0) / events.length;
+    if (avgEngagement > 0.7) indicators.push('high_engagement');
+    if (avgEngagement < 0.3) indicators.push('low_engagement');
+    
+    const hasErrors = events.some(e => e.eventType === 'error');
+    if (hasErrors) indicators.push('errors_present');
+    
+    const avgTimeSpent = events.reduce((sum, e) => sum + (e.interactionData.timeSpent || 0), 0) / events.length;
+    if (avgTimeSpent > 60) indicators.push('extended_time');
+    
+    return indicators;
+  }
+
+  private determineSignificance(eventCount: number, totalEvents: number): 'low' | 'medium' | 'high' {
+    const ratio = eventCount / totalEvents;
+    if (ratio > 0.3) return 'high';
+    if (ratio > 0.1) return 'medium';
+    return 'low';
   }
 
   private async updatePersonaWithBehavior(
@@ -1703,13 +1900,19 @@ export class MLPersonalizationEngineImpl implements MLPersonalizationEngine {
       return result.rows.map(row => ({
         id: row.id,
         userId: row.user_id,
-        sessionId: row.session_id,
         stepId: row.step_id,
-        eventType: row.event_type,
-        timestamp: row.timestamp,
-        interactionData: JSON.parse(row.interaction_data || '{}'),
+        eventType: row.event_type as BehaviorEventType,
+        timestamp: new Date(row.timestamp),
+        interactionData: JSON.parse(row.interaction_data || '{"mouseMovements":[],"clickPatterns":[],"scrollBehavior":[],"keystrokes":[],"formInteractions":[]}'),
         engagementScore: row.engagement_score || 0.5,
-        metadata: JSON.parse(row.metadata || '{}')
+        contextualData: JSON.parse(row.metadata || '{"currentUrl":"","pageLoadTime":0,"networkCondition":"good","screenResolution":{"width":1920,"height":1080}}'),
+        sessionContext: {
+          sessionId: row.session_id,
+          sessionDuration: 0,
+          previousSteps: [],
+          userAgent: '',
+          deviceType: 'desktop'
+        }
       }));
     } catch (error) {
       console.error('Error fetching user behavior history:', error);
@@ -1799,7 +2002,7 @@ class AdvancedLearningPathPredictor {
       contextualFactors: {
         timeOfDay: new Date().getHours(),
         sessionLength: context.sessionId ? await this.getSessionLength(context.sessionId) : 0,
-        deviceType: this.inferDeviceType(context.userAgent),
+        deviceType: context.deviceContext.deviceType,
         previousSessions: await this.getPreviousSessionCount(userId)
       },
       
@@ -2055,14 +2258,15 @@ class AdvancedLearningPathPredictor {
 
   private calculateErrorRecoveryRate(behaviorHistory: BehaviorEvent[]): number {
     const errorEvents = behaviorHistory.filter(e => e.eventType === 'error');
-    const recoveryEvents = behaviorHistory.filter(e => e.eventType === 'error_resolved');
+    const completedSteps = behaviorHistory.filter(e => e.eventType === 'step_completed');
     
     if (errorEvents.length === 0) return 1.0; // No errors is perfect recovery
-    return recoveryEvents.length / errorEvents.length;
+    // Estimate recovery by comparing errors to completed steps
+    return completedSteps.length / Math.max(1, errorEvents.length + completedSteps.length);
   }
 
   private analyzeHelpSeekingBehavior(behaviorHistory: BehaviorEvent[]): number {
-    const helpEvents = behaviorHistory.filter(e => e.eventType === 'help_requested');
+    const helpEvents = behaviorHistory.filter(e => e.eventType === 'help_request');
     return helpEvents.length / Math.max(1, behaviorHistory.length);
   }
 
@@ -2072,26 +2276,30 @@ class AdvancedLearningPathPredictor {
   }
 
   private inferLearningStyle(persona: UserPersona, behaviorHistory: BehaviorEvent[]): string {
-    // Analyze behavior to infer learning style
-    const videoInteractions = behaviorHistory.filter(e => e.interactionData.contentType === 'video').length;
-    const textInteractions = behaviorHistory.filter(e => e.interactionData.contentType === 'text').length;
-    const interactiveElements = behaviorHistory.filter(e => e.interactionData.contentType === 'interactive').length;
+    // Analyze behavior to infer learning style based on interaction patterns
+    const clickEvents = behaviorHistory.filter(e => e.eventType === 'click').length;
+    const scrollEvents = behaviorHistory.filter(e => e.eventType === 'scroll').length;
+    const hoverEvents = behaviorHistory.filter(e => e.eventType === 'hover').length;
 
-    if (videoInteractions > textInteractions && videoInteractions > interactiveElements) {
-      return 'visual';
-    } else if (interactiveElements > videoInteractions && interactiveElements > textInteractions) {
+    // More clicks and hovers suggest hands-on learning
+    if (clickEvents > scrollEvents && clickEvents > hoverEvents) {
       return 'hands_on';
-    } else {
-      return 'reading';
+    } 
+    // More scrolling suggests reading/visual learning
+    else if (scrollEvents > clickEvents) {
+      return 'visual';
+    } 
+    else {
+      return 'guided';
     }
   }
 
   private assessMotivationLevel(persona: UserPersona, behaviorHistory: BehaviorEvent[]): number {
-    // Assess motivation based on engagement patterns and goal-oriented behavior
-    const goalEvents = behaviorHistory.filter(e => e.eventType === 'goal_progress');
+    // Assess motivation based on engagement patterns and step completion
+    const completedSteps = behaviorHistory.filter(e => e.eventType === 'step_completed');
     const avgEngagement = this.calculateAverageEngagement(behaviorHistory);
     
-    return Math.min(1, (goalEvents.length / 10 + avgEngagement) / 2);
+    return Math.min(1, (completedSteps.length / 10 + avgEngagement) / 2);
   }
 
   private async getHistoricalPerformanceData(personaType: PersonaType): Promise<any> {
@@ -2215,7 +2423,7 @@ class AdvancedLearningPathPredictor {
   private calculateGoalAlignment(path: LearningPath, personaCharacteristics: any): number {
     // Calculate how well the path aligns with user goals
     // This is a simplified implementation
-    const personaGoalAlignment = {
+    const personaGoalAlignment: Record<string, number> = {
       content_creator: 0.8,
       business_user: 0.9,
       influencer: 0.75,
@@ -2223,7 +2431,7 @@ class AdvancedLearningPathPredictor {
       casual_user: 0.7
     };
     
-    return personaGoalAlignment[personaCharacteristics.personaType] || 0.7;
+    return personaGoalAlignment[personaCharacteristics.personaType as string] || 0.7;
   }
 
   private calculateComplexityMatch(path: LearningPath, personaCharacteristics: any): number {

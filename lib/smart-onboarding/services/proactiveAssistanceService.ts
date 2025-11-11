@@ -8,23 +8,21 @@ import {
   AssistanceConfig
 } from '../interfaces/services';
 import { BehavioralAnalyticsService } from './behavioralAnalyticsService';
-import { InterventionEngineImpl } from './interventionEngine';
+// Note: Do not import the legacy InterventionEngine here to keep it out of the type graph
 import { logger } from '../../utils/logger';
 import { redisClient } from '../config/redis';
 
 export class ProactiveAssistanceServiceImpl implements ProactiveAssistanceService {
   private behavioralAnalytics: BehavioralAnalyticsService;
-  private interventionEngine: InterventionEngineImpl;
   private assistanceConfig: AssistanceConfig;
   private activeAssistance: Map<string, ProactiveAction[]> = new Map();
 
   constructor(
     behavioralAnalytics: BehavioralAnalyticsService,
-    interventionEngine: InterventionEngineImpl,
+    _interventionEngine?: unknown,
     config?: AssistanceConfig
   ) {
     this.behavioralAnalytics = behavioralAnalytics;
-    this.interventionEngine = interventionEngine;
     this.assistanceConfig = config || this.getDefaultConfig();
   }
 

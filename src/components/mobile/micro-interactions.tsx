@@ -193,7 +193,7 @@ export function LongPressAction({
   onAction: (value: string) => void;
 }) {
   const [showActions, setShowActions] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handlePressStart = () => {
     timeoutRef.current = setTimeout(() => {

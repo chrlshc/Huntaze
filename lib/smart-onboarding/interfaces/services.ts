@@ -1,6 +1,7 @@
 // Smart Onboarding System - Service Interfaces
 
 import {
+  PersonaType,
   UserProfile,
   OnboardingJourney,
   OnboardingStep,
@@ -23,8 +24,75 @@ import {
   EscalationTicket,
   InterventionOutcome,
   SuccessPrediction,
-  ApiResponse
+  Intervention,
+  InterventionTiming,
+  BehaviorPattern,
+  StepContent,
+  PersonalizedContent,
+  ContentVariation,
+  UserFeedback,
+  AdaptationTrigger,
+  EngagementRecommendation,
+  ModelMetrics,
+  SessionSummary,
+  AnalyticsDashboard,
+  InterventionHistory,
+  TimingPrediction,
+  PathEffectiveness,
+  CohortCriteria,
+  CohortInsights,
+  OutcomeData,
+  PathPerformanceData,
+  CompletionCriteria,
+  ValidationRule
 } from '../types';
+
+// Re-export commonly used types from ../types for convenience
+export type {
+  OnboardingContext,
+  UserProfile,
+  OnboardingJourney,
+  OnboardingStep,
+  InteractionEvent,
+  StruggleMetrics,
+  InterventionPlan,
+  OnboardingResult,
+  UserPersona,
+  LearningPath,
+  BehaviorEvent,
+  ContentRecommendation,
+  InteractionPattern,
+  ProficiencyLevel,
+  EngagementAnalysis,
+  BehavioralInsights,
+  InterventionTrigger,
+  HelpContent,
+  ComplexIssue,
+  EscalationTicket,
+  InterventionOutcome,
+  SuccessPrediction,
+  Intervention,
+  InterventionTiming,
+  BehaviorPattern,
+  StepContent,
+  PersonalizedContent,
+  ContentVariation,
+  UserFeedback,
+  AdaptationTrigger,
+  EngagementRecommendation,
+  ModelMetrics,
+  SessionSummary,
+  AnalyticsDashboard,
+  InterventionHistory,
+  TimingPrediction,
+  PathEffectiveness,
+  CohortCriteria,
+  CohortInsights,
+  OutcomeData,
+  PathPerformanceData,
+  CompletionCriteria,
+  ValidationRule
+};
 
 // Core Smart Onboarding Service Interface
 export interface SmartOnboardingService {
@@ -359,71 +427,11 @@ export interface ContextualHelpSystem {
 }
 
 // Supporting Types for Service Interfaces
-export interface InteractionEvent {
-  id: string;
-  userId: string;
-  type: string;
-  data: Record<string, any>;
-  timestamp: Date;
-}
+// Note: Core types like InteractionEvent, OnboardingContext, InterventionPlan, and OnboardingResult
+// are now imported from '../types' to avoid duplication
 
-export interface OnboardingContext {
-  userId: string;
-  currentStep: string;
-  sessionId: string;
-  userAgent: string;
-  timestamp: Date;
-}
-
-export interface InterventionPlan {
-  interventions: Intervention[];
-  priority: number;
-  timing: InterventionTiming;
-  expectedOutcome: string;
-}
-
-export interface OnboardingResult {
-  userId: string;
-  completionStatus: 'completed' | 'partial' | 'abandoned';
-  completionTime: number;
-  stepsCompleted: number;
-  totalSteps: number;
-  finalEngagementScore: number;
-  insights: OnboardingInsights;
-}
-
-export interface ModelMetrics {
-  accuracy: number;
-  precision: number;
-  recall: number;
-  f1Score: number;
-  lastUpdated: Date;
-}
-
-export interface SessionSummary {
-  sessionId: string;
-  userId: string;
-  duration: number;
-  interactions: number;
-  engagementScore: number;
-  completedSteps: number;
-  struggles: StruggleMetrics[];
-}
-
-export interface AnalyticsDashboard {
-  realTimeMetrics: RealTimeMetrics;
-  engagementTrends: EngagementTrends;
-  progressSummary: ProgressSummary;
-  alerts: Alert[];
-}
-
-export interface InterventionHistory {
-  userId: string;
-  interventions: Intervention[];
-  totalInterventions: number;
-  successRate: number;
-  averageEffectiveness: number;
-}
+// ModelMetrics, SessionSummary, AnalyticsDashboard, and InterventionHistory
+// are now imported from '../types' to avoid duplication
 
 export interface InterventionRecommendation {
   type: string;
@@ -433,48 +441,8 @@ export interface InterventionRecommendation {
   timing: InterventionTiming;
 }
 
-export interface TimingPrediction {
-  optimalTime: Date;
-  confidence: number;
-  factors: TimingFactor[];
-}
-
-export interface PathEffectiveness {
-  pathId: string;
-  completionRate: number;
-  averageTime: number;
-  userSatisfaction: number;
-  learningOutcomes: LearningOutcome[];
-}
-
-export interface CohortCriteria {
-  persona: PersonaType[];
-  proficiency: ProficiencyLevel[];
-  timeframe: { start: Date; end: Date };
-}
-
-export interface CohortInsights {
-  cohortSize: number;
-  averagePerformance: number;
-  commonPatterns: BehaviorPattern[];
-  recommendations: CohortRecommendation[];
-}
-
-export interface OutcomeData {
-  userId: string;
-  pathId: string;
-  completed: boolean;
-  completionTime: number;
-  satisfaction: number;
-  learningAchieved: number;
-}
-
-export interface PathPerformanceData {
-  pathId: string;
-  userMetrics: UserMetric[];
-  stepMetrics: StepMetric[];
-  overallEffectiveness: number;
-}
+// TimingPrediction, PathEffectiveness, CohortCriteria, CohortInsights,
+// OutcomeData, and PathPerformanceData are now imported from '../types' to avoid duplication
 
 export interface PathExperiment {
   name: string;
@@ -756,14 +724,97 @@ export interface ContentImprovement {
   impact: number;
 }
 
-export interface CompletionCriteria {
-  type: 'time_based' | 'interaction_based' | 'assessment_based';
-  threshold: number;
-  conditions: string[];
+// CompletionCriteria and ValidationRule are now imported from '../types' to avoid duplication
+
+// AI Help Generator Interface
+export interface AIHelpGenerator {
+  /**
+   * Generate contextual help content based on user state and context
+   */
+  generateHelp(context: HelpContext, userState: any): Promise<HelpContent>;
+
+  /**
+   * Simplify text for beginner users
+   */
+  simplifyText(text: string): Promise<string>;
+
+  /**
+   * Enhance text with more technical details for advanced users
+   */
+  enhanceText(text: string): Promise<string>;
+
+  /**
+   * Simplify language and vocabulary
+   */
+  simplifyLanguage(text: string): Promise<string>;
+
+  /**
+   * Generate practical examples for the current context
+   */
+  generateExamples(context: any, count?: number): Promise<any[]>;
+
+  /**
+   * Generate visual aid suggestions
+   */
+  generateVisualAids(context: any): Promise<any[]>;
+
+  /**
+   * Generate interactive element suggestions
+   */
+  generateInteractiveElements(context: any): Promise<any[]>;
 }
 
-export interface ValidationRule {
-  type: 'required' | 'pattern' | 'custom';
-  value?: string | RegExp;
+// Help Context Interface
+export interface HelpContext {
+  currentStep: string;
+  userAction?: string;
+  difficulty?: 'low' | 'medium' | 'high';
+  topic?: string;
+  userLevel?: string;
+  stepId?: string;
+}
+
+// Help Level Type
+export type HelpLevel = 'brief' | 'standard' | 'detailed';
+
+// Adaptive Onboarding Integration Interface
+export interface AdaptiveOnboardingIntegration {
+  /**
+   * Migrate user from existing onboarding to smart onboarding
+   */
+  migrateUser(userId: string, existingState: any): Promise<MigrationResult>;
+
+  /**
+   * Synchronize state between systems
+   */
+  synchronizeState(userId: string): Promise<void>;
+
+  /**
+   * Handle fallback to existing system
+   */
+  fallbackToExisting(userId: string, reason: string): Promise<void>;
+
+  /**
+   * Check if smart onboarding is available
+   */
+  isSmartOnboardingAvailable(): Promise<boolean>;
+
+  /**
+   * Get unified onboarding state
+   */
+  getUnifiedState(userId: string): Promise<OnboardingJourney>;
+}
+
+// Migration Result Interface
+export interface MigrationResult {
+  success: boolean;
+  userId: string;
   message: string;
+  migratedData: {
+    profile: UserProfile;
+    journey: OnboardingJourney;
+    persona: UserPersona;
+  } | null;
+  warnings: string[];
+  errors: string[];
 }

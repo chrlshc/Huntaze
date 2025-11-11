@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { SimpleHeroSection as HeroSection } from '@/components/landing/SimpleHeroSection';
@@ -12,6 +10,8 @@ import { SimpleFinalCTA as FinalCTA } from '@/components/landing/SimpleFinalCTA'
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { Zap, Users, TrendingUp, Shield, Sparkles, BarChart3 } from 'lucide-react';
 
+// Server Component - No 'use client' directive
+// All interactive components are marked with 'use client' in their own files
 export default function HomePage() {
   const features = [
     {

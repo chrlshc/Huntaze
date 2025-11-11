@@ -406,10 +406,11 @@ function getRedditPublish(): RedditPublishService {
 
 // Export singleton instance (lazy)
 export const redditPublish = {
-  submitPost: (...args: Parameters<RedditPublishService['submitPost']>) => getRedditPublish().submitPost(...args),
+  submit: (...args: Parameters<RedditPublishService['submit']>) => getRedditPublish().submit(...args),
   submitLink: (...args: Parameters<RedditPublishService['submitLink']>) => getRedditPublish().submitLink(...args),
-  submitImage: (...args: Parameters<RedditPublishService['submitImage']>) => getRedditPublish().submitImage(...args),
-  submitVideo: (...args: Parameters<RedditPublishService['submitVideo']>) => getRedditPublish().submitVideo(...args),
-  getSubreddits: (...args: Parameters<RedditPublishService['getSubreddits']>) => getRedditPublish().getSubreddits(...args),
+  submitText: (...args: Parameters<RedditPublishService['submitText']>) => getRedditPublish().submitText(...args),
+  getPostInfo: (...args: Parameters<RedditPublishService['getPostInfo']>) => getRedditPublish().getPostInfo(...args),
+  deletePost: (...args: Parameters<RedditPublishService['deletePost']>) => getRedditPublish().deletePost(...args),
+  editPost: (...args: Parameters<RedditPublishService['editPost']>) => getRedditPublish().editPost(...args),
   getSubredditRules: (...args: Parameters<RedditPublishService['getSubredditRules']>) => getRedditPublish().getSubredditRules(...args),
 };

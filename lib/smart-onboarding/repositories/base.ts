@@ -51,7 +51,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     const cacheKey = this.getCacheKey(id);
     
     // Try cache first
-    const cached = await smartOnboardingCache.redis.get(cacheKey);
+    const cached = await smartOnboardingCache.get(cacheKey);
     if (cached) {
       return JSON.parse(cached);
     }
@@ -67,7 +67,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     const entity = this.mapRowToEntity(result.rows[0]);
     
     // Cache the result
-    await smartOnboardingCache.redis.setex(
+    await smartOnboardingCache.setex(
       cacheKey, 
       this.cacheTTL, 
       JSON.stringify(entity)
@@ -82,7 +82,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     
     // Try cache first (only for simple queries)
     if (!filters || Object.keys(filters).length <= 2) {
-      const cached = await smartOnboardingCache.redis.get(cacheKey);
+      const cached = await smartOnboardingCache.get(cacheKey);
       if (cached) {
         return JSON.parse(cached);
       }
@@ -107,7 +107,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     
     // Cache simple queries
     if (!filters || Object.keys(filters).length <= 2) {
-      await smartOnboardingCache.redis.setex(
+      await smartOnboardingCache.setex(
         cacheKey,
         this.cacheTTL,
         JSON.stringify(entities)
@@ -119,7 +119,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
   
   // Create with cache invalidation
   async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
-    const row = this.mapEntityToRow(data);
+    const row = this.mapEntityToRow(data as Partial<T>);
     const columns = Object.keys(row);
     const values = Object.values(row);
     const placeholders = values.map((_, index) => `$${index + 1}`);
@@ -135,7 +135,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     
     // Cache the new entity
     const cacheKey = this.getCacheKey(entity.id);
-    await smartOnboardingCache.redis.setex(
+    await smartOnboardingCache.setex(
       cacheKey,
       this.cacheTTL,
       JSON.stringify(entity)
@@ -175,7 +175,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     
     // Update cache
     const cacheKey = this.getCacheKey(id);
-    await smartOnboardingCache.redis.setex(
+    await smartOnboardingCache.setex(
       cacheKey,
       this.cacheTTL,
       JSON.stringify(entity)
@@ -195,7 +195,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     if (result.rowCount && result.rowCount > 0) {
       // Remove from cache
       const cacheKey = this.getCacheKey(id);
-      await smartOnboardingCache.redis.del(cacheKey);
+      await smartOnboardingCache.del(cacheKey);
       
       // Invalidate list caches
       await this.invalidateListCaches();
@@ -212,7 +212,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
     
     // Try to get from cache first
     const cacheKeys = ids.map(id => this.getCacheKey(id));
-    const cached = await smartOnboardingCache.redis.mget(...cacheKeys);
+    const cached = await smartOnboardingCache.mget(...cacheKeys);
     
     const results: T[] = [];
     const missingIds: string[] = [];
@@ -235,7 +235,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
       results.push(...dbResults);
       
       // Cache the missing items
-      const pipeline = smartOnboardingCache.redis.pipeline();
+      const pipeline = smartOnboardingCache.pipeline();
       dbResults.forEach(entity => {
         const cacheKey = this.getCacheKey(entity.id);
         pipeline.setex(cacheKey, this.cacheTTL, JSON.stringify(entity));
@@ -257,7 +257,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
       const results: T[] = [];
       
       for (const item of items) {
-        const row = this.mapEntityToRow(item);
+        const row = this.mapEntityToRow(item as Partial<T>);
         const columns = Object.keys(row);
         const values = Object.values(row);
         const placeholders = values.map((_, index) => `$${index + 1}`);
@@ -276,7 +276,7 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
       await client.query('COMMIT');
       
       // Cache all created entities
-      const pipeline = smartOnboardingCache.redis.pipeline();
+      const pipeline = smartOnboardingCache.pipeline();
       results.forEach(entity => {
         const cacheKey = this.getCacheKey(entity.id);
         pipeline.setex(cacheKey, this.cacheTTL, JSON.stringify(entity));
@@ -299,16 +299,16 @@ export abstract class CachedRepository<T extends { id: string }> implements Base
   // Utility methods
   protected async invalidateListCaches(): Promise<void> {
     const pattern = `${this.cachePrefix}:list:*`;
-    const keys = await smartOnboardingCache.redis.keys(pattern);
+    const keys = await smartOnboardingCache.keys(pattern);
     
     if (keys.length > 0) {
-      await smartOnboardingCache.redis.del(...keys);
+      await smartOnboardingCache.del(...keys);
     }
   }
   
   protected async invalidateCache(id: string): Promise<void> {
     const cacheKey = this.getCacheKey(id);
-    await smartOnboardingCache.redis.del(cacheKey);
+    await smartOnboardingCache.del(cacheKey);
     await this.invalidateListCaches();
   }
   
@@ -365,7 +365,7 @@ export abstract class TimeSeriesRepository<T extends { id: string; timestamp: Da
   
   // Insert single event
   async insert(data: Omit<T, 'id'>): Promise<T> {
-    const row = this.mapEntityToRow(data);
+    const row = this.mapEntityToRow(data as Omit<T, 'id'>);
     const columns = Object.keys(row);
     const values = Object.values(row);
     const placeholders = values.map((_, index) => `$${index + 1}`);
@@ -391,7 +391,7 @@ export abstract class TimeSeriesRepository<T extends { id: string; timestamp: Da
     const valueGroups: string[] = [];
     
     items.forEach((item, itemIndex) => {
-      const row = this.mapEntityToRow(item);
+      const row = this.mapEntityToRow(item as Omit<T, 'id'>);
       const group = columns.map((_, colIndex) => {
         const paramIndex = itemIndex * columns.length + colIndex + 1;
         values.push(row[columns[colIndex]]);

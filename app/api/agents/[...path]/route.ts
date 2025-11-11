@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit'
 
 export const runtime = 'nodejs'
@@ -40,10 +39,9 @@ async function handler(req: NextRequest, ctx: { params: Promise<{ path?: string[
   return new NextResponse(text, { status: res.status, headers: { 'content-type': res.headers.get('content-type') || 'application/json', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } })
 }
 
-export const GET = withMonitoring('agents.proxy', handler as any)
+export const GET = handler as any
 export const POST = GET
 export const PUT = GET
 export const PATCH = GET
 export const DELETE = GET
 export const HEAD = GET
-

@@ -55,13 +55,17 @@ export default function SkeletonDemo() {
             {/* Text */}
             <div>
               <h3 className="text-sm font-medium text-theme-muted mb-2">Text (Single Line)</h3>
-              <Skeleton variant="text" />
+              <Skeleton className="h-4 w-full" />
             </div>
 
             {/* Multiple Lines */}
             <div>
               <h3 className="text-sm font-medium text-theme-muted mb-2">Text (Multiple Lines)</h3>
-              <Skeleton variant="text" lines={3} />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
             </div>
 
             {/* Circular */}
@@ -92,11 +96,21 @@ export default function SkeletonDemo() {
         <section className="bg-theme-surface rounded-xl p-6 border border-theme-border">
           <h2 className="text-xl font-semibold text-theme-text mb-4">Card Skeleton</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-theme-bg rounded-lg border border-theme-border">
-              <SkeletonCard showAvatar={true} lines={3} />
+            <div className="bg-theme-bg rounded-lg border border-theme-border p-4">
+              <div className="flex items-start gap-3">
+                <Skeleton variant="circular" width={48} height={48} />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+              </div>
             </div>
-            <div className="bg-theme-bg rounded-lg border border-theme-border">
-              <SkeletonCard showAvatar={false} lines={2} />
+            <div className="bg-theme-bg rounded-lg border border-theme-border p-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+              </div>
             </div>
           </div>
         </section>
@@ -106,7 +120,17 @@ export default function SkeletonDemo() {
           <h2 className="text-xl font-semibold text-theme-text mb-4">List Skeleton</h2>
           <div className="bg-theme-bg rounded-lg border border-theme-border p-4">
             {isLoading ? (
-              <SkeletonList items={5} showAvatar={true} />
+              <div className="space-y-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton variant="circular" width={48} height={48} />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-1/3" />
+                      <Skeleton className="h-3 w-2/3" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((item) => (
@@ -130,7 +154,15 @@ export default function SkeletonDemo() {
           <h2 className="text-xl font-semibold text-theme-text mb-4">Table Skeleton</h2>
           <div className="bg-theme-bg rounded-lg border border-theme-border p-4">
             {isLoading ? (
-              <SkeletonTable rows={5} columns={4} />
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex gap-3">
+                    {[1, 2, 3, 4].map((j) => (
+                      <Skeleton key={j} className="h-8 flex-1" />
+                    ))}
+                  </div>
+                ))}
+              </div>
             ) : (
               <table className="w-full">
                 <thead>

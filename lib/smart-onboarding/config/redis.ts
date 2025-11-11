@@ -314,7 +314,42 @@ export class SmartOnboardingCache {
     return { allowed, remaining, resetTime };
   }
   
+  // Generic cache operations (for base repository use)
+  async get(key: string): Promise<string | null> {
+    return await this.redis.get(key);
+  }
+  
+  async set(key: string, value: string): Promise<void> {
+    await this.redis.set(key, value);
+  }
+  
+  async setex(key: string, seconds: number, value: string): Promise<void> {
+    await this.redis.setex(key, seconds, value);
+  }
+  
+  async del(...keys: string[]): Promise<void> {
+    if (keys.length > 0) {
+      await this.redis.del(...keys);
+    }
+  }
+  
+  async mget(...keys: string[]): Promise<(string | null)[]> {
+    return await this.redis.mget(...keys);
+  }
+  
+  async keys(pattern: string): Promise<string[]> {
+    return await this.redis.keys(pattern);
+  }
+  
+  pipeline() {
+    return this.redis.pipeline();
+  }
+
   // Health check
+  async ping(): Promise<string> {
+    return await this.redis.ping();
+  }
+
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; latency: number; error?: string }> {
     const start = Date.now();
     

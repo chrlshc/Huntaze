@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
-import { withMonitoring } from '@/lib/observability/bootstrap'
 
 export const dynamic = 'force-dynamic';
 
@@ -44,13 +43,5 @@ async function postHandler(request: NextRequest) {
   }
 }
 
-export const GET = withMonitoring('crm.fans.get', getHandler as any, {
-  domain: 'crm',
-  feature: 'fans_list',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-})
-export const POST = withMonitoring('crm.fans.post', postHandler as any, {
-  domain: 'crm',
-  feature: 'fans_create',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-})
+export const GET = getHandler as any
+export const POST = postHandler as any

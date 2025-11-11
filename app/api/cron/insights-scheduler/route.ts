@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 import { processInsightsSchedule } from '@/src/lib/insights/schedulerWorker'
 import { seedFromTrackedSets } from '@/src/lib/insights/scheduler'
 
@@ -19,7 +18,6 @@ async function handler() {
   return NextResponse.json(res, { headers: { 'cache-control': 'no-store', 'X-Robots-Tag': 'noindex' } })
 }
 
-export const GET = withMonitoring('cron.insights-scheduler', handler as any)
+export const GET = handler as any
 export const POST = GET
 export const HEAD = GET
-

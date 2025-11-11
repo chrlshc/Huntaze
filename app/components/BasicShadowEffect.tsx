@@ -28,6 +28,10 @@ export default function BasicShadowEffect() {
 
     // Simple animation loop
     function animate() {
+        if (!ctx || !canvas) return;
+         if (!ctx || !canvas) return;
+         if (!ctx || !canvas) return;
+      
       // Clear canvas with dark background
       ctx.fillStyle = 'rgba(10, 6, 20, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);

@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in journey management:', error);
     return NextResponse.json(
-      { error: 'Failed to manage journey', details: error.message },
+      { error: 'Failed to manage journey', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

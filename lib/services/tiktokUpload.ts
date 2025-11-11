@@ -325,7 +325,7 @@ function getTikTokUpload(): TikTokUploadService {
 
 // Export singleton instance (lazy)
 export const tiktokUpload = {
-  uploadVideo: (...args: Parameters<TikTokUploadService['uploadVideo']>) => getTikTokUpload().uploadVideo(...args),
-  getPublishStatus: (...args: Parameters<TikTokUploadService['getPublishStatus']>) => getTikTokUpload().getPublishStatus(...args),
-  clearRateLimitTracker: (...args: Parameters<TikTokUploadService['clearRateLimitTracker']>) => getTikTokUpload().clearRateLimitTracker(...args),
+  initUpload: (...args: Parameters<TikTokUploadService['initUpload']>) => getTikTokUpload().initUpload(...args),
+  uploadChunk: (...args: Parameters<TikTokUploadService['uploadChunk']>) => getTikTokUpload().uploadChunk(...args),
+  getStatus: (...args: Parameters<TikTokUploadService['getStatus']>) => getTikTokUpload().getStatus(...args),
 };

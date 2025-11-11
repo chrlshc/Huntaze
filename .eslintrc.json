@@ -12,7 +12,19 @@
     "@typescript-eslint/no-require-imports": "off",
     "@next/next/no-sync-scripts": "off",
     "@next/next/no-html-link-for-pages": "off",
-    "prefer-const": "warn"
+    "prefer-const": "warn",
+    "no-restricted-imports": ["error", {
+      "paths": [
+        {
+          "name": "prom-client",
+          "message": "Importez dynamiquement dans le handler (await import('prom-client')) ou utilisez @/lib/metrics-registry pour éviter les erreurs de build."
+        },
+        {
+          "name": "@/lib/monitoring",
+          "message": "withMonitoring est deprecated. Utilisez des imports dynamiques ou @/lib/metrics-registry."
+        }
+      ]
+    }]
   },
   "overrides": [
     {

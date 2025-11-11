@@ -150,9 +150,10 @@ export class AzureMultiAgentService {
 
     switch (action) {
       case 'get_fans': {
+        const fans = await FansRepository.listFans(userId);
         const limit = params.limit || 20;
-        const fans = await FansRepository.getFansByUserId(userId, limit);
-        return { fans, count: fans.length };
+        const limitedFans = fans.slice(0, limit);
+        return { fans: limitedFans, count: limitedFans.length };
       }
 
       case 'send_message': {
@@ -166,12 +167,12 @@ export class AzureMultiAgentService {
       }
 
       case 'create_campaign': {
-        const campaign = await CampaignsRepository.createCampaign({
-          user_id: userId,
+        const campaign = await CampaignsRepository.createCampaign(userId, {
           name: params.name || 'New Campaign',
-          message_template: params.message,
-          target_fans: params.fanIds || [],
-          status: 'draft'
+          type: 'bulk_message',
+          status: 'draft',
+          template: { message: params.message },
+          targetAudience: { fanIds: params.fanIds || [] }
         });
         return {
           campaignId: campaign.id,
@@ -181,13 +182,16 @@ export class AzureMultiAgentService {
       }
 
       case 'get_fan_stats': {
-        const fans = await FansRepository.getFansByUserId(userId);
+        const fans = await FansRepository.listFans(userId);
         const totalFans = fans.length;
         const activeToday = Math.floor(totalFans * 0.3); // Placeholder calculation
-        const topSpenders = fans.slice(0, 5).map(fan => ({
-          username: fan.username,
-          totalSpent: fan.total_spent || 0
-        }));
+        const topSpenders = fans
+          .sort((a, b) => (b.valueCents || 0) - (a.valueCents || 0))
+          .slice(0, 5)
+          .map(fan => ({
+            username: fan.handle || fan.name,
+            totalSpent: (fan.valueCents || 0) / 100 // Convert cents to dollars
+          }));
 
         return {
           totalFans,
@@ -241,19 +245,21 @@ export class AzureMultiAgentService {
 
     switch (action) {
       case 'create_content': {
-        const content = await ContentItemsRepository.createContentItem({
-          user_id: userId,
-          title: params.title || 'Untitled',
-          caption: params.caption || '',
-          content_type: params.type || 'text',
-          platforms: params.platforms || ['instagram'],
-          hashtags: params.hashtags || [],
-          status: 'draft'
+        const content = await ContentItemsRepository.create({
+          userId: userId.toString(),
+          text: params.caption || params.title || 'Untitled content',
+          status: 'draft',
+          category: params.type || 'general',
+          metadata: {
+            title: params.title,
+            platforms: params.platforms || ['instagram'],
+            hashtags: params.hashtags || []
+          }
         });
         return {
           contentId: content.id,
           status: 'created',
-          type: content.content_type
+          type: content.category
         };
       }
 
@@ -346,31 +352,21 @@ export class AzureMultiAgentService {
 
     switch (action) {
       case 'publish_tiktok': {
-        const tiktokService = new TikTokUploadService();
-        const result = await tiktokService.uploadVideo({
-          userId,
-          videoPath: params.videoPath || params.videoUrl,
-          title: params.title,
-          description: params.description
-        });
+        // Placeholder for TikTok publishing
+        // TODO: Implement proper TikTok upload flow using initUpload
         return {
-          success: true,
-          publishId: result.publishId,
+          success: false,
+          error: 'TikTok publishing not yet implemented',
           platform: 'tiktok'
         };
       }
 
       case 'publish_instagram': {
-        const instagramService = new InstagramPublishService();
-        const result = await instagramService.publishPost({
-          userId,
-          mediaUrl: params.mediaUrl,
-          caption: params.caption,
-          type: params.type || 'feed'
-        });
+        // Placeholder for Instagram publishing
+        // TODO: Implement proper Instagram publish flow
         return {
-          success: true,
-          postId: result.postId,
+          success: false,
+          error: 'Instagram publishing not yet implemented',
           platform: 'instagram'
         };
       }
@@ -436,12 +432,13 @@ export class AzureMultiAgentService {
 
     switch (action) {
       case 'get_overview': {
-        const overview = await AnalyticsRepository.getOverview(userId);
+        // Placeholder for analytics overview
+        // TODO: Implement proper analytics using AnalyticsRepository instance
         return {
-          totalRevenue: overview.revenue || 0,
-          totalFans: overview.fans || 0,
-          contentPieces: overview.content || 0,
-          engagement: overview.engagement || 0
+          totalRevenue: 0,
+          totalFans: 0,
+          contentPieces: 0,
+          engagement: 0
         };
       }
 
