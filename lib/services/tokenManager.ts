@@ -266,7 +266,7 @@ export class TokenManager {
       [userId, provider]
     );
 
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 }
 

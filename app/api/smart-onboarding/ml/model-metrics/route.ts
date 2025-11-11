@@ -1,15 +1,12 @@
 // Smart Onboarding ML Personalization - Model Metrics and Management API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { MLPersonalizationEngineImpl } from '@/lib/smart-onboarding/services/mlPersonalizationEngine';
-import { smartOnboardingDb } from '@/lib/smart-onboarding/config/database';
-
-const mlEngine = new MLPersonalizationEngineImpl(smartOnboardingDb);
+import { getModelMetrics, retrainModels } from '@/lib/smart-onboarding/services/mlPersonalizationFacade';
 
 export async function GET(request: NextRequest) {
   try {
     // Get model performance metrics
-    const metrics = await mlEngine.getModelMetrics();
+    const metrics = await getModelMetrics();
     
     return NextResponse.json({
       success: true,
@@ -42,10 +39,10 @@ export async function POST(request: NextRequest) {
       }
       
       // Retrain models with new data
-      await mlEngine.retrainModels(trainingData);
+      await retrainModels(trainingData);
       
       // Get updated metrics
-      const metrics = await mlEngine.getModelMetrics();
+      const metrics = await getModelMetrics();
       
       return NextResponse.json({
         success: true,
@@ -57,12 +54,12 @@ export async function POST(request: NextRequest) {
       
     } else if (action === 'validate') {
       // Validate current models
-      const metrics = await mlEngine.getModelMetrics();
+      const metrics = await getModelMetrics();
       
       const validation = {
         isHealthy: metrics.accuracy > 0.7 && metrics.f1Score > 0.7,
-        recommendations: [],
-        issues: []
+        recommendations: [] as string[],
+        issues: [] as string[]
       };
       
       if (metrics.accuracy < 0.7) {

@@ -1,23 +1,51 @@
-import { DatabaseManager } from '../config/database'
-import { 
-  QueryOptimization, 
-  IndexStrategy, 
-  PartitionStrategy,
-  PerformanceMetrics 
-} from '../types'
+// import { DatabaseManager } from '../config/database'
+import { smartOnboardingDb } from '../config/database'
+import type { Pool } from 'pg'
+
+// Type aliases for types not yet defined in ../types
+interface QueryOptimization {
+  originalQuery: string
+  optimizedQuery: string
+  expectedImprovement?: number
+  estimatedImprovement?: number
+  indexRequired?: string[] | boolean
+  partitioningRequired?: boolean
+}
+interface IndexStrategy {
+  tableName: string
+  columns: string[]
+  indexType: string
+}
+interface PartitionStrategy {
+  tableName: string
+  partitionKey: string
+  partitionType: string
+}
+interface PerformanceMetrics {
+  queryId?: string
+  cacheHitRate?: number
+  hitRatio?: number
+  averageLatency?: number
+  averageExecutionTime?: number
+  throughput?: number
+  totalExecutions?: number
+  totalTime?: number
+  rowsReturned?: number
+  errorRate?: number
+}
 
 export class DatabaseOptimizer {
-  private dbManager: DatabaseManager
+  private dbPool: Pool
   private queryPerformanceMetrics: Map<string, PerformanceMetrics> = new Map()
   private optimizedQueries: Map<string, QueryOptimization> = new Map()
 
   constructor() {
-    this.dbManager = new DatabaseManager()
+    this.dbPool = smartOnboardingDb.getPool()
     this.initializeOptimizations()
   }
 
   async initialize(): Promise<void> {
-    await this.dbManager.initialize()
+    // Database pool is already initialized
     await this.setupIndexes()
     await this.setupPartitioning()
     await this.optimizeQueries()
@@ -165,7 +193,7 @@ export class DatabaseOptimizer {
         ON ${tableName} (${columnList})
       `
       
-      await this.dbManager.executeQuery(query)
+      await this.dbPool.query(query)
       console.log(`Created index ${indexName} on ${tableName}`)
       
     } catch (error) {
@@ -239,7 +267,7 @@ export class DatabaseOptimizer {
         FOR VALUES FROM ('${startDate.toISOString()}') TO ('${endDate.toISOString()}')
       `
       
-      await this.dbManager.executeQuery(query)
+      await this.dbPool.query(query)
       console.log(`Created partition ${partitionName}`)
       
     } catch (error) {
@@ -284,7 +312,7 @@ export class DatabaseOptimizer {
       WHERE timestamp >= NOW() - INTERVAL '30 days'
       GROUP BY user_id
     `
-    await this.dbManager.executeQuery(userEngagementView)
+    await this.dbPool.query(userEngagementView)
 
     // ML Predictions Summary View
     const mlPredictionsView = `
@@ -298,7 +326,7 @@ export class DatabaseOptimizer {
       FROM ml_predictions
       ORDER BY user_id, prediction_type, created_at DESC
     `
-    await this.dbManager.executeQuery(mlPredictionsView)
+    await this.dbPool.query(mlPredictionsView)
 
     // Onboarding Progress View
     const onboardingProgressView = `
@@ -316,7 +344,7 @@ export class DatabaseOptimizer {
       LEFT JOIN intervention_logs il ON oj.user_id = il.user_id
       GROUP BY oj.user_id, oj.current_step, oj.progress_percentage, oj.status
     `
-    await this.dbManager.executeQuery(onboardingProgressView)
+    await this.dbPool.query(onboardingProgressView)
   }
 
   private async createMaterializedViews(): Promise<void> {
@@ -334,7 +362,7 @@ export class DatabaseOptimizer {
       GROUP BY DATE(timestamp)
       ORDER BY date DESC
     `
-    await this.dbManager.executeQuery(dailyEngagementMV)
+    await this.dbPool.query(dailyEngagementMV)
 
     // Weekly ML Performance Materialized View
     const weeklyMLPerformanceMV = `
@@ -350,7 +378,7 @@ export class DatabaseOptimizer {
       GROUP BY DATE_TRUNC('week', created_at), prediction_type
       ORDER BY week DESC, prediction_type
     `
-    await this.dbManager.executeQuery(weeklyMLPerformanceMV)
+    await this.dbPool.query(weeklyMLPerformanceMV)
 
     // Setup automatic refresh for materialized views
     await this.setupMaterializedViewRefresh()
@@ -371,7 +399,7 @@ export class DatabaseOptimizer {
 
   private async setupQueryMonitoring(): Promise<void> {
     // Enable query performance monitoring
-    await this.dbManager.executeQuery('CREATE EXTENSION IF NOT EXISTS pg_stat_statements')
+    await this.dbPool.query('CREATE EXTENSION IF NOT EXISTS pg_stat_statements')
     
     // Setup query performance tracking
     console.log('Query performance monitoring enabled')
@@ -394,8 +422,9 @@ export class DatabaseOptimizer {
         propagateCreateError: false
       }
 
-      await this.dbManager.updateConnectionPool(poolConfig)
-      console.log('Connection pool optimized successfully')
+      // Note: Pool configuration is set at initialization time
+      // await this.dbPool.updateConnectionPool(poolConfig)
+      console.log('Connection pool configuration prepared (requires restart to apply)')
 
     } catch (error) {
       console.error('Error optimizing connection pool:', error)
@@ -450,7 +479,8 @@ export class DatabaseOptimizer {
       LIMIT 20
     `
     
-    return await this.dbManager.executeQuery(query)
+    const result = await this.dbPool.query(query)
+    return result.rows
   }
 
   // Database Maintenance
@@ -488,7 +518,7 @@ export class DatabaseOptimizer {
     ]
 
     for (const table of tables) {
-      await this.dbManager.executeQuery(`ANALYZE ${table}`)
+      await this.dbPool.query(`ANALYZE ${table}`)
       console.log(`Updated statistics for ${table}`)
     }
   }
@@ -501,7 +531,7 @@ export class DatabaseOptimizer {
     ]
 
     for (const table of tables) {
-      await this.dbManager.executeQuery(`VACUUM ANALYZE ${table}`)
+      await this.dbPool.query(`VACUUM ANALYZE ${table}`)
       console.log(`Vacuumed ${table}`)
     }
   }
@@ -511,7 +541,7 @@ export class DatabaseOptimizer {
     const tables = ['behavioral_events', 'onboarding_journeys']
 
     for (const table of tables) {
-      await this.dbManager.executeQuery(`REINDEX TABLE ${table}`)
+      await this.dbPool.query(`REINDEX TABLE ${table}`)
       console.log(`Reindexed ${table}`)
     }
   }
@@ -564,13 +594,13 @@ export class DatabaseOptimizer {
     const startTime = Date.now()
     
     try {
-      const result = await this.dbManager.executeQuery(optimization.optimizedQuery, params)
+      const queryResult = await this.dbPool.query(optimization.optimizedQuery, params)
       const executionTime = Date.now() - startTime
       
       // Track performance metrics
-      this.trackQueryPerformance(queryName, executionTime, result.length)
+      this.trackQueryPerformance(queryName, executionTime, queryResult.rows.length)
       
-      return result
+      return queryResult.rows
 
     } catch (error) {
       console.error(`Error executing optimized query ${queryName}:`, error)

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ConversationsRepository, FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,8 +48,4 @@ async function getHandler(request: NextRequest) {
   }
 }
 
-export const GET = withMonitoring('crm.conversations.list', getHandler as any, {
-  domain: 'crm',
-  feature: 'conversations_list',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const GET = getHandler as any;

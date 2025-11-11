@@ -10,7 +10,7 @@ interface ThemeContextType {
   resolvedTheme: 'light' | 'dark'
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const defaultTheme = (process.env.NEXT_PUBLIC_DEFAULT_THEME as Theme) || 'light'

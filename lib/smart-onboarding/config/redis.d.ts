@@ -1,0 +1,92 @@
+import Redis from 'ioredis';
+export declare const REDIS_CONFIG: {
+    readonly host: string;
+    readonly port: number;
+    readonly password: string | undefined;
+    readonly db: number;
+    readonly retryDelayOnFailover: 100;
+    readonly maxRetriesPerRequest: 3;
+    readonly lazyConnect: true;
+    readonly keepAlive: 30000;
+    readonly family: 4;
+    readonly keyPrefix: "huntaze:smart_onboarding:";
+};
+export declare const createRedisClient: () => Redis;
+export declare class SmartOnboardingCache {
+    private redis;
+    constructor(redisClient?: Redis);
+    getUserProfile(userId: string): Promise<any>;
+    setUserProfile(userId: string, profile: any): Promise<void>;
+    getUserJourney(userId: string): Promise<any>;
+    setUserJourney(userId: string, journey: any): Promise<void>;
+    getUserPersona(userId: string): Promise<any>;
+    setUserPersona(userId: string, persona: any): Promise<void>;
+    getEngagementScore(userId: string): Promise<number | null>;
+    setEngagementScore(userId: string, score: number): Promise<void>;
+    getLearningPath(pathId: string): Promise<any>;
+    setLearningPath(pathId: string, path: any): Promise<void>;
+    getStepContent(stepId: string): Promise<any>;
+    setStepContent(stepId: string, content: any): Promise<void>;
+    getContentRecommendations(userId: string, stepId: string): Promise<any>;
+    setContentRecommendations(userId: string, stepId: string, recommendations: any): Promise<void>;
+    getModelPredictions(userId: string, modelType: string): Promise<any>;
+    setModelPredictions(userId: string, modelType: string, predictions: any): Promise<void>;
+    getSuccessPrediction(userId: string): Promise<any>;
+    setSuccessPrediction(userId: string, prediction: any): Promise<void>;
+    getSystemMetrics(): Promise<any>;
+    setSystemMetrics(metrics: any): Promise<void>;
+    getActiveExperiments(): Promise<any>;
+    setActiveExperiments(experiments: any): Promise<void>;
+    getModelPerformance(modelId: string): Promise<any>;
+    setModelPerformance(modelId: string, performance: any): Promise<void>;
+    invalidateUserCache(userId: string): Promise<void>;
+    warmupUserCache(userId: string, data: {
+        profile?: any;
+        journey?: any;
+        persona?: any;
+        engagementScore?: number;
+        successPrediction?: any;
+    }): Promise<void>;
+    startUserSession(userId: string, sessionId: string): Promise<void>;
+    updateSessionActivity(sessionId: string): Promise<void>;
+    endUserSession(userId: string, sessionId: string): Promise<void>;
+    getUserActiveSessions(userId: string): Promise<string[]>;
+    publishEvent(channel: string, event: any): Promise<void>;
+    subscribeToEvents(channels: string[], callback: (channel: string, message: any) => void): Promise<Redis>;
+    checkRateLimit(key: string, limit: number, windowSeconds: number): Promise<{
+        allowed: boolean;
+        remaining: number;
+        resetTime: number;
+    }>;
+    get(key: string): Promise<string | null>;
+    set(key: string, value: string): Promise<void>;
+    setex(key: string, seconds: number, value: string): Promise<void>;
+    del(...keys: string[]): Promise<void>;
+    mget(...keys: string[]): Promise<(string | null)[]>;
+    keys(pattern: string): Promise<string[]>;
+    pipeline(): import("ioredis").ChainableCommander;
+    ping(): Promise<string>;
+    healthCheck(): Promise<{
+        status: 'healthy' | 'unhealthy';
+        latency: number;
+        error?: string;
+    }>;
+    cleanup(): Promise<void>;
+    disconnect(): Promise<void>;
+}
+export declare const smartOnboardingCache: SmartOnboardingCache;
+export declare const redisClient: Redis;
+export declare const WEBSOCKET_CHANNELS: {
+    readonly USER_EVENTS: (userId: string) => string;
+    readonly SYSTEM_EVENTS: "system:events";
+    readonly ENGAGEMENT_ALERTS: "engagement:alerts";
+    readonly INTERVENTION_EVENTS: "intervention:events";
+    readonly CONTENT_UPDATES: "content:updates";
+    readonly ML_MODEL_UPDATES: "ml:model_updates";
+    readonly EXPERIMENT_EVENTS: "experiments:events";
+};
+export declare const CACHE_WARMING_STRATEGIES: {
+    readonly NEW_USER: (userId: string, cache: SmartOnboardingCache) => Promise<void>;
+    readonly RETURNING_USER: (userId: string, cache: SmartOnboardingCache) => Promise<void>;
+    readonly HIGH_ENGAGEMENT: (userId: string, cache: SmartOnboardingCache) => Promise<void>;
+};

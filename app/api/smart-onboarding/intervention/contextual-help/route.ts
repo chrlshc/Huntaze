@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ContextualHelpServiceImpl } from '@/lib/smart-onboarding/services/contextualHelpService';
-import { AIHelpGeneratorImpl } from '@/lib/smart-onboarding/services/aiHelpGenerator';
+import {
+  generateContextualHelp,
+  implementProgressiveDisclosure,
+  personalizeHelpContent,
+  optimizeHelpContent,
+  generateExamples,
+  generateVisualAids,
+  generateInteractiveElements,
+  trackHelpEffectiveness,
+} from '@/lib/smart-onboarding/services/contextualHelpFacade';
 import { logger } from '@/lib/utils/logger';
 
-// Initialize services
-const aiHelpGenerator = new AIHelpGeneratorImpl();
-const contextualHelpService = new ContextualHelpServiceImpl(aiHelpGenerator);
+// Façade-based implementation to keep type surface minimal
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,11 +34,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const helpContent = await contextualHelpService.generateContextualHelp(
-          userId,
-          context,
-          userState || {}
-        );
+        const helpContent = await generateContextualHelp(userId, context, userState || {});
 
         return NextResponse.json({
           success: true,
@@ -59,11 +61,7 @@ export async function POST(request: NextRequest) {
           context: context || {}
         };
 
-        const progressiveDisclosure = await contextualHelpService.implementProgressiveDisclosure(
-          userId,
-          baseHelp as any,
-          userInteraction || {}
-        );
+        const progressiveDisclosure = await implementProgressiveDisclosure(userId, baseHelp as any, userInteraction || {});
 
         return NextResponse.json({
           success: true,
@@ -82,11 +80,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const personalizedContent = await contextualHelpService.personalizeHelpContent(
-          userId,
-          baseContent,
-          personalization
-        );
+        const personalizedContent = await personalizeHelpContent(userId, baseContent, personalization);
 
         return NextResponse.json({
           success: true,
@@ -105,10 +99,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const optimizedContent = await contextualHelpService.optimizeHelpContent(
-          helpContentId,
-          effectivenessData
-        );
+        const optimizedContent = await optimizeHelpContent(helpContentId, effectivenessData);
 
         return NextResponse.json({
           success: true,
@@ -152,11 +143,7 @@ export async function PUT(request: NextRequest) {
       createdAt: new Date()
     };
 
-    const effectiveness = await contextualHelpService.trackHelpEffectiveness(
-      userId,
-      helpContent as any,
-      userResponse
-    );
+    const effectiveness = await trackHelpEffectiveness(userId, helpContent as any, userResponse);
 
     return NextResponse.json({
       success: true,
@@ -195,7 +182,7 @@ export async function GET(request: NextRequest) {
         };
         const count = parseInt(searchParams.get('count') || '3');
 
-        const examples = await aiHelpGenerator.generateExamples(context, count);
+        const examples = await generateExamples(context, count);
 
         return NextResponse.json({
           success: true,
@@ -210,7 +197,7 @@ export async function GET(request: NextRequest) {
           topic: searchParams.get('topic') || 'general'
         };
 
-        const visualAids = await aiHelpGenerator.generateVisualAids(visualContext);
+        const visualAids = await generateVisualAids(visualContext);
 
         return NextResponse.json({
           success: true,
@@ -225,7 +212,7 @@ export async function GET(request: NextRequest) {
           topic: searchParams.get('topic') || 'general'
         };
 
-        const interactiveElements = await aiHelpGenerator.generateInteractiveElements(interactiveContext);
+        const interactiveElements = await generateInteractiveElements(interactiveContext);
 
         return NextResponse.json({
           success: true,

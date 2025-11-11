@@ -10,8 +10,8 @@ import {
 import {
   UserProfile,
   UserPersona,
-  OnboardingState,
-  LearningPath
+  LearningPath,
+  OnboardingStep
 } from '../types';
 import { smartOnboardingDb } from '../config/database';
 import { smartOnboardingCache } from '../config/redis';
@@ -98,14 +98,12 @@ class FallbackMechanismManager {
   async syncWithExistingService(userId: string, smartJourney: OnboardingJourney): Promise<void> {
     try {
       // Sync progress with existing service
-      for (const step of smartJourney.steps) {
-        if (step.status === 'completed') {
-          await this.existingService.updateOnboardingProgress(
-            userId, 
-            step.id, 
-            true
-          );
-        }
+      for (const step of smartJourney.completedSteps) {
+        await this.existingService.updateOnboardingProgress(
+          userId, 
+          step.id, 
+          true
+        );
       }
 
       // If journey is completed, mark as complete in existing service
@@ -294,7 +292,9 @@ class DataMigrationManager {
           success: true,
           userId,
           migratedData: null,
-          message: 'No existing data to migrate'
+          message: 'No existing data to migrate',
+          warnings: [],
+          errors: []
         };
       }
 
@@ -312,17 +312,20 @@ class DataMigrationManager {
         userId,
         migratedData: smartOnboardingData,
         message: validationResult.message,
-        warnings: validationResult.warnings
+        warnings: validationResult.warnings,
+        errors: validationResult.errors || []
       };
 
     } catch (error) {
       console.error('Error migrating user data:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
         userId,
         migratedData: null,
-        message: `Migration failed: ${error.message}`,
-        error: error.message
+        message: `Migration failed: ${errorMessage}`,
+        warnings: [],
+        errors: [errorMessage]
       };
     }
   }
@@ -339,12 +342,14 @@ class DataMigrationManager {
         await new Promise(resolve => setTimeout(resolve, 100));
         
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         results.push({
           success: false,
           userId,
           migratedData: null,
-          message: `Batch migration failed: ${error.message}`,
-          error: error.message
+          message: `Batch migration failed: ${errorMessage}`,
+          warnings: [],
+          errors: [errorMessage]
         });
       }
     }
@@ -389,20 +394,24 @@ class DataMigrationManager {
     // Convert profile to UserProfile format
     const userProfile: UserProfile = {
       id: profile.user_id,
+      email: profile.email || '',
       technicalProficiency: this.mapProficiencyLevel(profile.technical_level),
       previousExperience: this.mapExperienceLevel(profile.experience_level),
       learningStyle: this.mapLearningStyle(profile.learning_preferences),
       timeConstraints: {
         urgencyLevel: profile.urgency_level || 'medium',
-        availableTime: profile.available_time || 30
+        availableHoursPerWeek: profile.available_time || 10,
+        preferredTimeSlots: []
       },
       contentCreationGoals: this.parseGoals(profile.goals),
       platformPreferences: this.parsePlatformPreferences(profile.platforms),
-      socialConnections: []
+      socialConnections: [],
+      createdAt: profile.created_at || new Date(),
+      updatedAt: profile.updated_at || new Date()
     };
 
     // Convert events to behavior events
-    const behaviorEvents = events.map(event => ({
+    const behaviorEvents = events.map((event: any) => ({
       id: event.id,
       userId: event.user_id,
       sessionId: event.session_id || 'migrated',
@@ -415,7 +424,7 @@ class DataMigrationManager {
     }));
 
     // Convert unlocks to journey progress
-    const completedSteps = unlocks.map(unlock => ({
+    const completedSteps = unlocks.map((unlock: any) => ({
       stepId: unlock.feature_id,
       completedAt: unlock.unlocked_at,
       method: 'migration'
@@ -514,7 +523,7 @@ class DataMigrationManager {
 
   // Mapping helper methods
   private mapProficiencyLevel(level: string): any {
-    const mapping = {
+    const mapping: Record<string, string> = {
       'novice': 'beginner',
       'basic': 'beginner',
       'intermediate': 'intermediate',
@@ -525,7 +534,7 @@ class DataMigrationManager {
   }
 
   private mapExperienceLevel(level: string): any {
-    const mapping = {
+    const mapping: Record<string, string> = {
       'none': 'none',
       'some': 'basic',
       'moderate': 'intermediate',
@@ -558,19 +567,26 @@ class DataMigrationManager {
     }
   }
 
-  private parsePlatformPreferences(platformsString: string): string[] {
+  private parsePlatformPreferences(platformsString: string): any[] {
     if (!platformsString) return [];
     
     try {
       const platforms = JSON.parse(platformsString);
-      return Array.isArray(platforms) ? platforms : [];
+      const platformArray = Array.isArray(platforms) ? platforms : [];
+      return platformArray.map((platform, index) => ({
+        platform: typeof platform === 'string' ? platform : platform.name || 'unknown',
+        priority: typeof platform === 'object' && platform.priority ? platform.priority : index + 1
+      }));
     } catch {
-      return platformsString.split(',').map(p => p.trim());
+      return platformsString.split(',').map((p, index) => ({
+        platform: p.trim(),
+        priority: index + 1
+      }));
     }
   }
 
   private mapEventType(originalType: string): string {
-    const mapping = {
+    const mapping: Record<string, string> = {
       'step_start': 'step_started',
       'step_complete': 'step_completed',
       'feature_unlock': 'feature_unlocked',
@@ -644,7 +660,8 @@ class CompatibilityLayer {
       await this.db.query(viewQuery, [userId]);
     } catch (error) {
       // View might already exist, which is fine
-      console.log('Compatibility view already exists or creation failed:', error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.log('Compatibility view already exists or creation failed:', errorMessage);
     }
   }
 
@@ -713,13 +730,233 @@ export class AdaptiveOnboardingIntegrationImpl implements AdaptiveOnboardingInte
   private existingService: ExistingOnboardingService;
 
   constructor(existingService: ExistingOnboardingService) {
-    this.db = smartOnboardingDb;
+    this.db = smartOnboardingDb.getPool();
     this.existingService = existingService;
     this.fallbackManager = new FallbackMechanismManager(this.db, existingService);
     this.migrationManager = new DataMigrationManager(this.db);
     this.compatibilityLayer = new CompatibilityLayer(this.db);
   }
 
+  // Implement required interface methods
+  async migrateUser(userId: string, existingState: any): Promise<MigrationResult> {
+    return await this.migrationManager.migrateUserData(userId);
+  }
+
+  async synchronizeState(userId: string): Promise<void> {
+    await this.compatibilityLayer.syncBidirectionally(userId, 'to_smart');
+    await this.compatibilityLayer.syncBidirectionally(userId, 'from_smart');
+  }
+
+  async fallbackToExisting(userId: string, reason: string): Promise<void> {
+    // Create a minimal context for fallback
+    const context: Partial<OnboardingContext> = {
+      userId,
+      sessionId: `fallback_${Date.now()}`,
+      currentStepId: '',
+      completedSteps: [],
+      currentEngagement: 0,
+      recentInteractions: [],
+      strugglingIndicators: [],
+      timeInCurrentStep: 0,
+      totalTimeSpent: 0
+    };
+    await this.fallbackManager.executeFallback(userId, context as OnboardingContext);
+  }
+
+  async isSmartOnboardingAvailable(): Promise<boolean> {
+    const health = await this.fallbackManager['checkSmartOnboardingHealth']();
+    return health.isHealthy;
+  }
+
+  async getUnifiedState(userId: string): Promise<OnboardingJourney> {
+    const status = await this.getIntegrationStatus(userId);
+    
+    if (status.smartOnboardingActive) {
+      // Get smart onboarding journey
+      const query = `SELECT * FROM smart_onboarding_journeys WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`;
+      const result = await this.db.query(query, [userId]);
+      
+      if (result.rows.length > 0) {
+        const row = result.rows[0];
+        return this.convertRowToJourney(row);
+      }
+    }
+    
+    // Fallback to existing system
+    const existingState = await this.existingService.getUserOnboardingState(userId);
+    return this.convertExistingToJourney(userId, existingState);
+  }
+
+  private convertRowToJourney(row: any): OnboardingJourney {
+    // Create a minimal OnboardingJourney that matches the interface
+    const currentStep: OnboardingStep = {
+      id: row.current_step_id || 'unknown',
+      type: 'introduction',
+      title: 'Current Step',
+      description: '',
+      content: {},
+      estimatedDuration: 0,
+      prerequisites: [],
+      learningObjectives: [],
+      adaptationRules: [],
+      completionCriteria: {
+        type: 'task_based',
+        conditions: [],
+        threshold: 1
+      },
+      difficulty: 1,
+      isOptional: false,
+      adaptationPoints: [],
+      status: 'pending'
+    };
+
+    // Attempt to reconstruct steps and indices from stored data
+    const parsedCompletedSteps: any[] = JSON.parse(row.completed_steps || '[]');
+    const parsedPersonalizedPath: any = JSON.parse(row.personalized_path || '{}');
+    const parsedEngagementHistory: any[] = JSON.parse(row.engagement_history || '[]');
+
+    const steps: OnboardingStep[] = Array.isArray(parsedPersonalizedPath?.steps)
+      ? (parsedPersonalizedPath.steps as OnboardingStep[])
+      : ([...parsedCompletedSteps, currentStep] as OnboardingStep[]);
+
+    const currentStepIndex = typeof row.current_step_index === 'number'
+      ? row.current_step_index
+      : Math.max(0, steps.findIndex((s) => s?.id === currentStep.id));
+
+    const avgEngagement = parsedEngagementHistory.length
+      ? (parsedEngagementHistory.reduce((sum: number, e: any) => sum + (e?.score || 0), 0) / parsedEngagementHistory.length)
+      : 0;
+
+    const progressTotal = steps.length || 1;
+    const progressCompleted = Array.isArray(parsedCompletedSteps) ? parsedCompletedSteps.length : 0;
+
+    return {
+      id: row.id,
+      userId: row.user_id,
+      currentStep,
+      completedSteps: parsedCompletedSteps as OnboardingStep[],
+      personalizedPath: parsedPersonalizedPath as LearningPath,
+      engagementHistory: parsedEngagementHistory,
+      interventions: JSON.parse(row.interventions || '[]'),
+      predictedSuccessRate: row.predicted_success_rate || 0.5,
+      estimatedCompletionTime: row.estimated_completion_time || 0,
+      adaptationHistory: JSON.parse(row.adaptation_history || '[]'),
+      startedAt: row.started_at || row.created_at,
+      lastActiveAt: row.last_active_at || row.updated_at,
+      completedAt: row.completed_at,
+      status: row.status || 'active',
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      // Required orchestrator-compatible fields
+      steps,
+      currentStepIndex: currentStepIndex >= 0 ? currentStepIndex : 0,
+      personalization: {
+        interventionHistory: [],
+        adaptationHistory: [],
+      },
+      progress: {
+        totalSteps: progressTotal,
+        completedSteps: progressCompleted,
+        estimatedTimeRemaining: Math.max(progressTotal - progressCompleted - 1, 0) * (currentStep.estimatedDuration || 0),
+        engagementScore: avgEngagement,
+      },
+      metadata: row.metadata ? JSON.parse(row.metadata) : {}
+    };
+  }
+
+  private convertExistingToJourney(userId: string, existingState: any): OnboardingJourney {
+    const currentStep: OnboardingStep = {
+      id: existingState.currentStepId || 'unknown',
+      type: 'introduction',
+      title: 'Current Step',
+      description: '',
+      content: {},
+      estimatedDuration: 0,
+      prerequisites: [],
+      learningObjectives: [],
+      adaptationRules: [],
+      completionCriteria: {
+        type: 'task_based',
+        conditions: [],
+        threshold: 1
+      },
+      difficulty: 1,
+      isOptional: false,
+      adaptationPoints: [],
+      status: 'pending'
+    };
+
+    // Build basic arrays and counters for required fields
+    const completedStepsArr = (existingState.completedSteps || []).map((stepId: string) => ({
+      id: stepId,
+      type: 'introduction' as const,
+      title: stepId,
+      description: '',
+      content: {},
+      estimatedDuration: 0,
+      prerequisites: [],
+      learningObjectives: [],
+      adaptationRules: [],
+      completionCriteria: {
+        type: 'task_based' as const,
+        conditions: [],
+        threshold: 1
+      }
+    })) as OnboardingStep[];
+
+    const personalizedPath = {
+      pathId: `legacy_path_${userId}`,
+      steps: [] as any[],
+      estimatedDuration: 0,
+      difficultyProgression: [],
+      personalizedContent: [],
+      adaptationPoints: [],
+      createdAt: new Date(),
+      version: 1
+    } as LearningPath;
+
+    const steps: OnboardingStep[] = (personalizedPath.steps as unknown as OnboardingStep[]).length
+      ? (personalizedPath.steps as unknown as OnboardingStep[])
+      : ([...completedStepsArr, currentStep] as OnboardingStep[]);
+
+    const progressTotal = steps.length || 1;
+    const progressCompleted = completedStepsArr.length;
+
+    return {
+      id: `legacy_${userId}`,
+      userId,
+      currentStep,
+      completedSteps: completedStepsArr,
+      personalizedPath,
+      engagementHistory: [],
+      interventions: [],
+      predictedSuccessRate: 0.5,
+      estimatedCompletionTime: 0,
+      adaptationHistory: [],
+      startedAt: existingState.createdAt || new Date(),
+      lastActiveAt: new Date(),
+      completedAt: existingState.completed ? new Date() : undefined,
+      status: existingState.completed ? 'completed' : 'active',
+      createdAt: existingState.createdAt || new Date(),
+      updatedAt: new Date(),
+      // Required orchestrator-compatible fields
+      steps,
+      currentStepIndex: Math.max(0, steps.findIndex((s) => s?.id === currentStep.id)),
+      personalization: {
+        interventionHistory: [],
+        adaptationHistory: [],
+      },
+      progress: {
+        totalSteps: progressTotal,
+        completedSteps: progressCompleted,
+        estimatedTimeRemaining: Math.max(progressTotal - progressCompleted - 1, 0) * (currentStep.estimatedDuration || 0),
+        engagementScore: 0,
+      },
+      metadata: {}
+    };
+  }
+
+  // Additional helper methods
   async checkFallbackNeeded(userId: string, context: OnboardingContext): Promise<boolean> {
     return await this.fallbackManager.shouldUseFallback(userId, context);
   }
@@ -788,12 +1025,13 @@ export class AdaptiveOnboardingIntegrationImpl implements AdaptiveOnboardingInte
 
     } catch (error) {
       console.error('Error getting integration status:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         userId,
         smartOnboardingActive: false,
         migrationStatus: 'error',
         syncStatus: 'error',
-        error: error.message
+        error: errorMessage
       };
     }
   }

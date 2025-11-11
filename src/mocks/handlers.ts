@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 
-const json = (data: unknown, init?: ResponseInit) => HttpResponse.json(data, init);
+const json = (data: any, init?: ResponseInit) => HttpResponse.json(data as any, init);
 
 export const igHandlers = [
   http.post<never, URLSearchParams | undefined>(

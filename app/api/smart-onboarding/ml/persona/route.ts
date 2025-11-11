@@ -1,11 +1,8 @@
 // Smart Onboarding ML Personalization - User Persona Analysis API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { MLPersonalizationEngineImpl } from '@/lib/smart-onboarding/services/mlPersonalizationEngine';
-import { smartOnboardingDb } from '@/lib/smart-onboarding/config/database';
-import { UserProfile } from '@/lib/smart-onboarding/types';
-
-const mlEngine = new MLPersonalizationEngineImpl(smartOnboardingDb);
+import { analyzeUserProfile } from '@/lib/smart-onboarding/services/mlPersonalizationFacade';
+type UserProfile = Record<string, unknown> & { id?: string; technicalProficiency?: string };
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Analyze user profile and generate persona
-    const persona = await mlEngine.analyzeUserProfile(profileData);
+    const persona = await analyzeUserProfile(profileData);
     
     return NextResponse.json({
       success: true,
@@ -49,9 +46,8 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Get cached persona or return null if not found
-    const { smartOnboardingCache } = await import('@/lib/smart-onboarding/config/redis');
-    const persona = await smartOnboardingCache.getUserPersona(userId);
+    // Placeholder: no cache lookup in façade mode
+    const persona = null;
     
     return NextResponse.json({
       success: true,

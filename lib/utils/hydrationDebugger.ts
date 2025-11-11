@@ -330,7 +330,7 @@ class HydrationDebugger {
 
   private checkForHydrationMismatches(element: Element) {
     // Check if element has hydration warning attributes
-    if (element.hasAttribute && element.hasAttribute('data-reactroot')) {
+    if (element.hasAttribute('data-reactroot')) {
       // This is a React root, check for mismatches
       this.validateElementHydration(element);
     }
@@ -347,7 +347,7 @@ class HydrationDebugger {
     }
 
     // Check for client-only attributes
-    if (element.hasAttribute && this.hasClientOnlyAttributes(element)) {
+    if (this.hasClientOnlyAttributes(element)) {
       issues.push('Contains client-only attributes');
     }
 

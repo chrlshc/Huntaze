@@ -13,7 +13,7 @@ export type AppSection = {
   href: string;
   icon: any;
   enabled?: boolean;
-  badgeKey?: 'messages.unread' | 'fans.new' | 'campaigns.active' | 'integrations.missing';
+  badgeKey?: 'messages.unread' | 'fans.new' | 'campaigns.active' | 'integrations.missing' | 'analytics.alerts';
 };
 
 // Minimal, real features backed by auth/integrations

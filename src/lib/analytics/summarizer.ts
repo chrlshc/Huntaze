@@ -2,7 +2,6 @@ import { getRedis } from '@/src/lib/redis'
 import { callAzureOpenAI } from '@/src/lib/ai/providers/azure'
 import { insertInsightSummary } from '@/src/lib/db/summaryRepo'
 import { outboxInsert } from '@/src/lib/db/outboxRepo'
-import { prom } from '@/src/lib/prom'
 
 type Platform = 'instagram' | 'tiktok'
 
@@ -76,6 +75,7 @@ function aggregateTt(items: Array<{ id: string; views?: number; likes?: number; 
 }
 
 export async function runAiInsightsSummarizer(opts: { accountId: string; period: '1d'|'7d'|'28d'; platform: Platform }) {
+  const { prom } = await import('@/src/lib/prom')
   const started = Date.now()
   const platform = opts.platform
   const nowSec = toSec(Date.now())

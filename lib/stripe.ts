@@ -12,7 +12,7 @@ export async function getStripe(): Promise<Stripe> {
   if (!key) {
     throw Object.assign(new Error('Stripe not configured'), { code: 'E_STRIPE_MISSING_KEY' })
   }
-  stripeSingleton = new Stripe(key, { apiVersion: '2024-06-20' })
+  // Use a Stripe API version compatible with the installed SDK typings
+  stripeSingleton = new Stripe(key, { apiVersion: '2023-10-16' })
   return stripeSingleton
 }
-

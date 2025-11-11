@@ -42,7 +42,7 @@ export class RedisOutbox {
       setTimeout(() => { this.memory!.delete(k); }, ttlSec * 1000).unref?.();
       return true;
     }
-    const res = await this.redis!.set(k, JSON.stringify(value), "NX", "EX", ttlSec);
+    const res = await (this.redis as any).set(k, JSON.stringify(value), "NX", "EX", ttlSec);
     return res === "OK";
   }
 

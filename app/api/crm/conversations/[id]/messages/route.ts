@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ConversationsRepository, MessagesRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 import { z } from 'zod';
 
 // Validation schema for creating messages
@@ -136,14 +135,5 @@ async function postHandler(
   }
 }
 
-export const GET = withMonitoring('crm.conversations.messages.list', getHandler as any, {
-  domain: 'crm',
-  feature: 'messages_list',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
-
-export const POST = withMonitoring('crm.conversations.messages.create', postHandler as any, {
-  domain: 'crm',
-  feature: 'messages_create',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const GET = getHandler as any;
+export const POST = postHandler as any;

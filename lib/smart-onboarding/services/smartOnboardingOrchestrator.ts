@@ -1,18 +1,25 @@
-// Smart Onboarding System - Main Orchestrator Service
+/**
+ * Smart Onboarding System - Main Orchestrator Service
+ * 
+ * Handles onboarding journey orchestration with AI-driven personalization
+ * 
+ * @module SmartOnboardingOrchestrator
+ */
 
 import { Pool } from 'pg';
 import { 
-  SmartOnboardingOrchestrator,
   OnboardingContext,
-  OnboardingJourney,
-  JourneyStep,
-  AdaptationDecision
+  OnboardingJourney
 } from '../interfaces/services';
 import {
   UserProfile,
   UserPersona,
   LearningPath,
   BehaviorEvent,
+  InteractionEvent,
+  InteractionPattern,
+  OnboardingStep,
+  AdaptationDecision,
   OnboardingState,
   JourneyStatus,
   StepResult,
@@ -23,6 +30,52 @@ import { MLPersonalizationEngineImpl } from './mlPersonalizationEngine';
 import { BehavioralAnalyticsServiceImpl } from './behavioralAnalyticsService';
 import { smartOnboardingCache } from '../config/redis';
 import { smartOnboardingDb } from '../config/database';
+import { retryWithBackoff, RetryOptions } from '../utils/retryStrategy';
+import { logger } from '@/lib/utils/logger';
+
+/**
+ * API Response Types for type safety
+ */
+interface APIResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+}
+
+// Type aliases for API responses
+type JourneyAPIResponse = APIResponse<OnboardingJourney>;
+type AdaptationAPIResponse = APIResponse<AdaptationDecision>;
+
+/**
+ * Error codes for API operations
+ */
+enum OrchestratorErrorCode {
+  JOURNEY_NOT_FOUND = 'JOURNEY_NOT_FOUND',
+  INVALID_STATE = 'INVALID_STATE',
+  DATABASE_ERROR = 'DATABASE_ERROR',
+  ML_ENGINE_ERROR = 'ML_ENGINE_ERROR',
+  CACHE_ERROR = 'CACHE_ERROR',
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  NETWORK_ERROR = 'NETWORK_ERROR'
+}
+
+/**
+ * Custom error class for orchestrator operations
+ */
+class OrchestratorError extends Error {
+  constructor(
+    public code: OrchestratorErrorCode,
+    message: string,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'OrchestratorError';
+  }
+}
 
 // Journey State Manager
 class JourneyStateManager {
@@ -35,67 +88,137 @@ class JourneyStateManager {
   async createJourney(userId: string, persona: UserPersona, learningPath: LearningPath): Promise<OnboardingJourney> {
     const journeyId = `journey_${userId}_${Date.now()}`;
     
-    const journey: OnboardingJourney = {
-      id: journeyId,
+    logger.info('Creating onboarding journey', {
       userId,
-      status: 'active',
-      currentStepIndex: 0,
-      steps: this.initializeJourneySteps(learningPath),
-      personalization: {
-        persona,
-        learningPath,
+      journeyId,
+      personaType: persona.personaType,
+      pathStrategy: learningPath.strategy
+    });
+
+    try {
+      const steps = this.initializeJourneySteps(learningPath);
+      
+      const journey: OnboardingJourney = {
+        id: journeyId,
+        userId,
+        status: 'active',
+        currentStep: steps[0],
+        completedSteps: [],
+        personalizedPath: learningPath,
+        engagementHistory: [],
+        interventions: [],
+        predictedSuccessRate: 0.7,
+        estimatedCompletionTime: learningPath.estimatedDuration,
         adaptationHistory: [],
-        interventionHistory: []
-      },
-      progress: {
-        completedSteps: 0,
-        totalSteps: learningPath.steps.length,
-        estimatedTimeRemaining: learningPath.estimatedDuration,
-        engagementScore: 0.5,
-        difficultyLevel: 1
-      },
-      metadata: {
         startedAt: new Date(),
         lastActiveAt: new Date(),
-        version: '1.0'
-      }
-    };
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        
+        // Initialize new properties
+        steps,
+        currentStepIndex: 0,
+        personalization: {
+          interventionHistory: [],
+          adaptationHistory: []
+        },
+        progress: {
+          totalSteps: steps.length,
+          completedSteps: 0,
+          estimatedTimeRemaining: learningPath.estimatedDuration,
+          engagementScore: 0.5
+        },
+        metadata: {
+          lastActiveAt: new Date()
+        }
+      };
 
-    // Store journey in database
-    await this.storeJourney(journey);
-    
-    // Cache journey for quick access
-    await smartOnboardingCache.setOnboardingJourney(journeyId, journey);
-    
-    return journey;
+      // Store journey in database with retry
+      await retryWithBackoff(
+        () => this.storeJourney(journey),
+        { maxRetries: 3, initialDelay: 1000 }
+      );
+      
+      // Cache journey for quick access (non-critical, don't fail on error)
+      try {
+        // TODO: Implement setOnboardingJourney in cache
+        // await smartOnboardingCache.setOnboardingJourney(journeyId, journey);
+      } catch (cacheError) {
+        logger.warn('Failed to cache journey', { journeyId, error: cacheError });
+      }
+      
+      logger.info('Journey created successfully', { journeyId, stepCount: steps.length });
+      return journey;
+
+    } catch (error) {
+      logger.error('Failed to create journey', { userId, journeyId, error });
+      throw new OrchestratorError(
+        OrchestratorErrorCode.DATABASE_ERROR,
+        'Failed to create onboarding journey',
+        { userId, error: error instanceof Error ? error.message : String(error) }
+      );
+    }
   }
 
   async updateJourneyState(journeyId: string, updates: Partial<OnboardingJourney>): Promise<OnboardingJourney> {
-    // Get current journey
-    let journey = await smartOnboardingCache.getOnboardingJourney(journeyId);
-    if (!journey) {
-      journey = await this.loadJourneyFromDb(journeyId);
-    }
+    logger.debug('Updating journey state', { journeyId, updates: Object.keys(updates) });
 
-    if (!journey) {
-      throw new Error(`Journey ${journeyId} not found`);
-    }
+    try {
+      // Get current journey with retry
+      let journey = await retryWithBackoff(
+        () => this.loadJourneyFromDb(journeyId),
+        { maxRetries: 2, initialDelay: 500 }
+      );
 
-    // Apply updates
-    const updatedJourney = {
-      ...journey,
-      ...updates,
-      metadata: {
-        ...journey.metadata,
-        lastActiveAt: new Date()
+      if (!journey) {
+        throw new OrchestratorError(
+          OrchestratorErrorCode.JOURNEY_NOT_FOUND,
+          `Journey not found: ${journeyId}`,
+          { journeyId }
+        );
       }
-    };
 
-    // Update cache and database
-    await smartOnboardingCache.setOnboardingJourney(journeyId, updatedJourney);
-    await this.storeJourney(updatedJourney);
+      // Apply updates with proper metadata merging
+      const updatedJourney = {
+        ...journey,
+        ...updates,
+        metadata: {
+          ...(journey.metadata || {}),
+          ...(updates.metadata || {}),
+          lastActiveAt: new Date()
+        },
+        updatedAt: new Date()
+      };
 
-    return updatedJourney;
+      // Update database with retry
+      await retryWithBackoff(
+        () => this.storeJourney(updatedJourney),
+        { maxRetries: 3, initialDelay: 1000 }
+      );
+
+      // Update cache (non-critical)
+      try {
+        // TODO: Implement setOnboardingJourney in cache
+        // await smartOnboardingCache.setOnboardingJourney(journeyId, updatedJourney);
+      } catch (cacheError) {
+        logger.warn('Failed to update journey cache', { journeyId, error: cacheError });
+      }
+
+      logger.info('Journey state updated', { journeyId, status: updatedJourney.status });
+      return updatedJourney;
+
+    } catch (error) {
+      if (error instanceof OrchestratorError) {
+        throw error;
+      }
+      
+      logger.error('Failed to update journey state', { journeyId, error });
+      throw new OrchestratorError(
+        OrchestratorErrorCode.DATABASE_ERROR,
+        'Failed to update journey state',
+        { journeyId, error: error instanceof Error ? error.message : String(error) }
+      );
+    }
   }
 
   async progressToNextStep(journeyId: string, stepResult: StepResult): Promise<OnboardingJourney> {
@@ -134,36 +257,77 @@ class JourneyStateManager {
   }
 
   async getJourney(journeyId: string): Promise<OnboardingJourney> {
-    let journey = await smartOnboardingCache.getOnboardingJourney(journeyId);
-    if (!journey) {
-      journey = await this.loadJourneyFromDb(journeyId);
-      if (journey) {
-        await smartOnboardingCache.setOnboardingJourney(journeyId, journey);
+    logger.debug('Fetching journey', { journeyId });
+
+    try {
+      // Try cache first (TODO: implement cache methods)
+      // let journey = await smartOnboardingCache.getOnboardingJourney(journeyId);
+      
+      // Load from database with retry
+      let journey = await retryWithBackoff(
+        () => this.loadJourneyFromDb(journeyId),
+        { maxRetries: 2, initialDelay: 500 }
+      );
+
+      if (!journey) {
+        throw new OrchestratorError(
+          OrchestratorErrorCode.JOURNEY_NOT_FOUND,
+          `Journey not found: ${journeyId}`,
+          { journeyId }
+        );
       }
-    }
 
-    if (!journey) {
-      throw new Error(`Journey ${journeyId} not found`);
-    }
+      // Update cache (non-critical)
+      try {
+        // TODO: Implement setOnboardingJourney in cache
+        // await smartOnboardingCache.setOnboardingJourney(journeyId, journey);
+      } catch (cacheError) {
+        logger.warn('Failed to cache journey', { journeyId, error: cacheError });
+      }
 
-    return journey;
+      return journey;
+
+    } catch (error) {
+      if (error instanceof OrchestratorError) {
+        throw error;
+      }
+      
+      logger.error('Failed to fetch journey', { journeyId, error });
+      throw new OrchestratorError(
+        OrchestratorErrorCode.DATABASE_ERROR,
+        'Failed to fetch journey',
+        { journeyId, error: error instanceof Error ? error.message : String(error) }
+      );
+    }
   }
 
-  private initializeJourneySteps(learningPath: LearningPath): JourneyStep[] {
+  private initializeJourneySteps(learningPath: LearningPath): OnboardingStep[] {
     return learningPath.steps.map((step, index) => ({
       id: step.id,
       type: step.type,
       title: step.title || `Step ${index + 1}`,
       description: step.description || '',
       content: step.content || {},
-      estimatedTime: step.estimatedTime || 5,
+      estimatedDuration: step.estimatedDuration || step.estimatedTime || 5,
+      estimatedTime: step.estimatedTime || step.estimatedDuration || 5,
+      prerequisites: step.prerequisites || [],
+      learningObjectives: step.learningObjectives || [],
+      adaptationRules: step.adaptationRules || [],
+      completionCriteria: step.completionCriteria || {
+        type: 'interaction_based' as const,
+        threshold: 1,
+        conditions: []
+      },
       difficulty: step.difficulty || 1,
       isOptional: step.isOptional || false,
       adaptationPoints: step.adaptationPoints || [],
-      status: 'pending',
+      status: 'pending' as const,
       startedAt: undefined,
       completedAt: undefined,
-      result: undefined
+      result: undefined,
+      personalizedContent: step.personalizedContent,
+      adaptationTriggers: step.adaptationTriggers,
+      successPrediction: step.successPrediction
     }));
   }
 
@@ -208,15 +372,34 @@ class JourneyStateManager {
     }
 
     const row = result.rows[0];
+    const steps = JSON.parse(row.steps);
+    const personalization = JSON.parse(row.personalization);
+    const progress = JSON.parse(row.progress);
+    const metadata = JSON.parse(row.metadata);
+    
     return {
       id: row.id,
       userId: row.user_id,
       status: row.status,
       currentStepIndex: row.current_step_index,
-      steps: JSON.parse(row.steps),
-      personalization: JSON.parse(row.personalization),
-      progress: JSON.parse(row.progress),
-      metadata: JSON.parse(row.metadata)
+      steps,
+      personalization,
+      progress,
+      metadata,
+      // Required properties from OnboardingJourney interface
+      currentStep: steps[row.current_step_index] || steps[0],
+      completedSteps: steps.filter((s: any) => s.status === 'completed'),
+      personalizedPath: JSON.parse(row.personalized_path || '{}'),
+      engagementHistory: JSON.parse(row.engagement_history || '[]'),
+      interventions: JSON.parse(row.interventions || '[]'),
+      predictedSuccessRate: row.predicted_success_rate || 0.7,
+      estimatedCompletionTime: row.estimated_completion_time || 0,
+      adaptationHistory: JSON.parse(row.adaptation_history || '[]'),
+      startedAt: new Date(row.started_at),
+      lastActiveAt: new Date(row.last_active_at),
+      completedAt: row.completed_at ? new Date(row.completed_at) : undefined,
+      createdAt: new Date(row.created_at),
+      updatedAt: new Date(row.updated_at)
     };
   }
 }
@@ -259,8 +442,8 @@ class AIStepProgressionEngine {
       successRate: stepResult.success ? 1 : 0,
       engagementLevel: stepResult.engagementScore || 0.5,
       errorCount: stepResult.errors?.length || 0,
-      helpRequests: behaviorData.filter(e => e.eventType === 'help_requested').length,
-      strugglingIndicators: []
+      helpRequests: behaviorData.filter(e => e.eventType === 'help_request').length,
+      strugglingIndicators: [] as string[]
     };
 
     // Identify struggling indicators
@@ -285,18 +468,21 @@ class AIStepProgressionEngine {
 
   private async assessUserState(userId: string, behaviorData: BehaviorEvent[]): Promise<any> {
     // Get current engagement and proficiency
-    const engagementScore = await this.analyticsService.calculateEngagementScore(userId, behaviorData);
-    const currentProficiency = await this.mlEngine.assessTechnicalProficiency(
-      behaviorData.map(e => ({
-        userId: e.userId,
-        stepId: e.stepId,
-        clickCount: e.interactionData.clickPatterns?.length || 0,
-        errorCount: e.eventType === 'error' ? 1 : 0,
-        helpRequests: e.eventType === 'help_requested' ? 1 : 0,
-        usedAdvancedFeatures: e.interactionData.advancedFeatureUsed || false,
-        timestamp: e.timestamp
-      }))
-    );
+    const interactionEvents: InteractionEvent[] = behaviorData.map(e => ({
+      id: e.id,
+      userId: e.userId,
+      sessionId: (e.contextualData as any)?.sessionId || '',
+      stepId: e.stepId,
+      timestamp: e.timestamp,
+      eventType: e.eventType,
+      interactionData: e.interactionData,
+      engagementScore: e.engagementScore || 0,
+      contextualData: e.contextualData
+    }));
+
+    const engagementScore = await this.analyticsService.calculateEngagementScore(interactionEvents);
+    const interactionPatterns = this.toInteractionPatterns(behaviorData);
+    const currentProficiency = await this.mlEngine.assessTechnicalProficiency(interactionPatterns);
 
     return {
       engagementScore,
@@ -305,6 +491,44 @@ class AIStepProgressionEngine {
       motivationLevel: this.assessMotivationLevel(behaviorData),
       frustrationLevel: this.assessFrustrationLevel(behaviorData)
     };
+  }
+
+  // Map raw behavior events to coarse interaction patterns for proficiency assessment
+  private toInteractionPatterns(events: BehaviorEvent[]): InteractionPattern[] {
+    if (!events.length) {
+      const now = new Date();
+      return [{
+        type: 'engagement_pattern',
+        frequency: 0,
+        confidence: 0.5,
+        indicators: [],
+        timeWindow: { start: now, end: now },
+        significance: 'low'
+      }];
+    }
+
+    const start = events[0].timestamp;
+    const end = events[events.length - 1].timestamp;
+    const durationSec = Math.max(1, (end.getTime() - start.getTime()) / 1000);
+    const freqPerMin = (events.length / durationSec) * 60;
+    const errorCount = events.filter(e => e.eventType === 'error').length;
+    const helpCount = events.filter(e => e.eventType === 'help_request').length;
+
+    const significance: InteractionPattern['significance'] =
+      freqPerMin > 10 || errorCount > 5 ? 'high' : freqPerMin > 3 ? 'medium' : 'low';
+
+    const indicators: string[] = [];
+    if (errorCount > 0) indicators.push('error_activity');
+    if (helpCount > 0) indicators.push('help_seeking');
+
+    return [{
+      type: 'engagement_pattern',
+      frequency: freqPerMin,
+      confidence: 0.7,
+      indicators,
+      timeWindow: { start, end },
+      significance
+    }];
   }
 
   private async checkInterventionTriggers(
@@ -459,25 +683,22 @@ class AIStepProgressionEngine {
   }
 
   private assessMotivationLevel(behaviorData: BehaviorEvent[]): number {
-    const goalProgressEvents = behaviorData.filter(e => e.eventType === 'goal_progress');
     const completionEvents = behaviorData.filter(e => e.eventType === 'step_completed');
-    
-    const motivationScore = (goalProgressEvents.length * 0.3 + completionEvents.length * 0.7) / behaviorData.length;
-    return Math.min(1, motivationScore * 2);
+    const motivationScore = completionEvents.length / Math.max(1, behaviorData.length);
+    return Math.max(0, Math.min(1, motivationScore));
   }
 
   private assessFrustrationLevel(behaviorData: BehaviorEvent[]): number {
     const errorEvents = behaviorData.filter(e => e.eventType === 'error');
-    const helpEvents = behaviorData.filter(e => e.eventType === 'help_requested');
-    const backtrackEvents = behaviorData.filter(e => e.eventType === 'step_backtrack');
-    
-    const frustrationScore = (errorEvents.length * 0.4 + helpEvents.length * 0.3 + backtrackEvents.length * 0.3) / behaviorData.length;
-    return Math.min(1, frustrationScore * 3);
+    const helpEvents = behaviorData.filter(e => e.eventType === 'help_request');
+    const backtrackEvents = behaviorData.filter(e => e.eventType === 'backtrack');
+    const frustrationScore = (errorEvents.length * 0.4 + helpEvents.length * 0.3 + backtrackEvents.length * 0.3) / Math.max(1, behaviorData.length);
+    return Math.max(0, Math.min(1, frustrationScore));
   }
 }
 
 // Main Smart Onboarding Orchestrator Implementation
-export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestrator {
+export class SmartOnboardingOrchestratorImpl {
   private db: Pool;
   private mlEngine: MLPersonalizationEngineImpl;
   private analyticsService: BehavioralAnalyticsServiceImpl;
@@ -485,7 +706,7 @@ export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestra
   private progressionEngine: AIStepProgressionEngine;
 
   constructor() {
-    this.db = smartOnboardingDb;
+    this.db = smartOnboardingDb.getPool();
     this.mlEngine = new MLPersonalizationEngineImpl(this.db);
     this.analyticsService = new BehavioralAnalyticsServiceImpl(this.db);
     this.journeyManager = new JourneyStateManager(this.db);
@@ -500,10 +721,41 @@ export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestra
       // Create onboarding context
       const context: OnboardingContext = {
         userId,
-        currentStep: 'start',
         sessionId: `session_${userId}_${Date.now()}`,
-        userAgent: '', // Would be provided by client
-        timestamp: new Date()
+        currentStepId: 'start',
+        completedSteps: [],
+        userProfile: {
+          id: userId,
+          email: '',
+          socialConnections: [],
+          technicalProficiency: 'beginner',
+          contentCreationGoals: [],
+          platformPreferences: [],
+          learningStyle: 'visual',
+          timeConstraints: { availableHoursPerWeek: 0, preferredTimeSlots: [], urgencyLevel: 'low' },
+          previousExperience: 'none',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        userPersona: {
+          personaType: 'casual_user',
+          confidenceScore: 0.5,
+          characteristics: [],
+          predictedBehaviors: [],
+          recommendedApproach: { pacing: 'medium', complexity: 'simple', interactivity: 'medium', supportLevel: 'moderate' },
+          lastUpdated: new Date(),
+        },
+        currentEngagement: 0.5,
+        recentInteractions: [],
+        strugglingIndicators: [],
+        timeInCurrentStep: 0,
+        totalTimeSpent: 0,
+        deviceContext: {
+          deviceType: 'desktop',
+          screenSize: { width: 1920, height: 1080 },
+          browserInfo: { name: 'unknown', version: '1.0', language: 'en', timezone: 'UTC' },
+        },
+        timestamp: new Date(),
       };
       
       // Predict optimal learning path
@@ -577,7 +829,7 @@ export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestra
       
       // Log adaptation
       await this.logJourneyEvent(journeyId, 'real_time_adaptation', {
-        trigger: trigger.type,
+        trigger: trigger,
         adaptation: adaptation.type,
         reason: adaptation.reasoning
       });
@@ -690,13 +942,22 @@ export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestra
     
     if (decision.action === 'add_preparation_step') {
       // Insert preparation step
-      const preparationStep: JourneyStep = {
+      const preparationStep: OnboardingStep = {
         id: `prep_${currentStep.id}`,
         type: 'preparation',
         title: 'Preparation Step',
         description: 'Additional preparation before the main step',
-        content: decision.parameters,
+        content: (decision.parameters as any) || {},
+        estimatedDuration: 3,
         estimatedTime: 3,
+        prerequisites: [],
+        learningObjectives: [],
+        adaptationRules: [],
+        completionCriteria: {
+          type: 'interaction_based',
+          threshold: 1,
+          conditions: []
+        },
         difficulty: Math.max(1, currentStep.difficulty - 1),
         isOptional: false,
         adaptationPoints: [],
@@ -724,8 +985,8 @@ export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestra
     behaviorData: BehaviorEvent[]
   ): Promise<AdaptationDecision> {
     // Simplified real-time adaptation logic
-    switch (trigger.type) {
-      case 'engagement_drop':
+    switch (trigger) {
+      case 'low_engagement':
         return {
           type: 'intervention',
           action: 'boost_engagement',
@@ -739,7 +1000,7 @@ export class SmartOnboardingOrchestratorImpl implements SmartOnboardingOrchestra
           expectedImpact: 0.3
         };
         
-      case 'error_spike':
+      case 'error_frequency':
         return {
           type: 'intervention',
           action: 'provide_assistance',

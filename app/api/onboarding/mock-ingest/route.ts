@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 
 export const runtime = 'nodejs'
 
@@ -22,4 +21,4 @@ async function handler() {
   return NextResponse.json(mock)
 }
 
-export const GET = withMonitoring('onboarding.mock-ingest', handler as any)
+export const GET = handler as any

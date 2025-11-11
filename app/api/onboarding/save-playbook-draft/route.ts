@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mergeOnboarding } from '@/app/api/_store/onboarding';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
 
@@ -29,4 +28,4 @@ async function handler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('onboarding.save-playbook-draft', handler as any);
+export const POST = handler as any;

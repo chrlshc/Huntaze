@@ -444,10 +444,9 @@ function getInstagramPublish(): InstagramPublishService {
 
 // Export singleton instance (lazy)
 export const instagramPublish = {
-  publishPost: (...args: Parameters<InstagramPublishService['publishPost']>) => getInstagramPublish().publishPost(...args),
-  publishStory: (...args: Parameters<InstagramPublishService['publishStory']>) => getInstagramPublish().publishStory(...args),
-  publishReel: (...args: Parameters<InstagramPublishService['publishReel']>) => getInstagramPublish().publishReel(...args),
   publishCarousel: (...args: Parameters<InstagramPublishService['publishCarousel']>) => getInstagramPublish().publishCarousel(...args),
   publishMedia: (...args: Parameters<InstagramPublishService['publishMedia']>) => getInstagramPublish().publishMedia(...args),
   getMediaDetails: (...args: Parameters<InstagramPublishService['getMediaDetails']>) => getInstagramPublish().getMediaDetails(...args),
+  createContainer: (...args: Parameters<InstagramPublishService['createContainer']>) => getInstagramPublish().createContainer(...args),
+  publishContainer: (...args: Parameters<InstagramPublishService['publishContainer']>) => getInstagramPublish().publishContainer(...args),
 };

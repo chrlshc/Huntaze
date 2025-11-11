@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { modelVersioningService } from '../../../../../lib/smart-onboarding/services/modelVersioningService';
+import { mlPipelineFacade } from '../../../../../lib/smart-onboarding/services/mlPipelineFacade';
 import { logger } from '../../../../../lib/utils/logger';
 
 export async function POST(request: NextRequest) {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const version = await modelVersioningService.createVersion(
+        const version = await mlPipelineFacade.createVersion(
           modelId,
           modelData,
           metadata,
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const tag = await modelVersioningService.createTag(
+        const tag = await mlPipelineFacade.createTag(
           tagModelId,
           tagName,
           tagVersion,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const branch = await modelVersioningService.createBranch(
+        const branch = await mlPipelineFacade.createBranch(
           branchModelId,
           branchName,
           baseVersion,
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const rollbackVersion = await modelVersioningService.rollbackToVersion(
+        const rollbackVersion = await mlPipelineFacade.rollbackToVersion(
           rollbackModelId,
           targetVersion
         );
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const importedVersion = await modelVersioningService.importVersion(importData);
+        const importedVersion = await mlPipelineFacade.importVersion(importData);
         
         return NextResponse.json({
           success: true,
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const modelVersion = await modelVersioningService.getVersion(modelId, version);
+        const modelVersion = await mlPipelineFacade.getVersion(modelId, version);
         
         return NextResponse.json({
           success: true,
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
           status: searchParams.get('status') || undefined
         };
 
-        const versions = await modelVersioningService.listVersions(modelId, options);
+        const versions = await mlPipelineFacade.listVersions(modelId, options);
         
         return NextResponse.json({
           success: true,
@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const comparison = await modelVersioningService.compareVersions(
+        const comparison = await mlPipelineFacade.compareVersions(
           modelId,
           fromVersion,
           toVersion
@@ -210,7 +210,7 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const lineage = await modelVersioningService.getModelLineage(modelId);
+        const lineage = await mlPipelineFacade.getModelLineage(modelId);
         
         return NextResponse.json({
           success: true,
@@ -226,10 +226,19 @@ export async function GET(request: NextRequest) {
         }
 
         const format = searchParams.get('format') as 'json' | 'binary' || 'json';
-        const exportData = await modelVersioningService.exportVersion(modelId, version, format);
+        const exportResult = await mlPipelineFacade.exportVersion(modelId, version, format);
+        
+        // Check if export was successful
+        if (!exportResult.success || !exportResult.data) {
+          return NextResponse.json(
+            { error: exportResult.error?.message || 'Export failed' },
+            { status: 500 }
+          );
+        }
         
         if (format === 'binary') {
-          return new NextResponse(exportData, {
+          // For binary format, exportResult.data should be a Buffer or Uint8Array
+          return new NextResponse(exportResult.data as BodyInit, {
             headers: {
               'Content-Type': 'application/octet-stream',
               'Content-Disposition': `attachment; filename="${modelId}_${version}.bin"`
@@ -239,7 +248,7 @@ export async function GET(request: NextRequest) {
         
         return NextResponse.json({
           success: true,
-          exportData
+          exportData: exportResult.data
         });
 
       default:
@@ -272,7 +281,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await modelVersioningService.deleteVersion(modelId, version, force);
+    await mlPipelineFacade.deleteVersion(modelId, version, force);
     
     return NextResponse.json({
       success: true,

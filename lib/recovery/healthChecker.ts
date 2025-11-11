@@ -67,12 +67,13 @@ class HealthChecker {
       this.lastResults.set(name, result);
       return result;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       const result: HealthCheckResult = {
         status: HealthStatus.UNHEALTHY,
-        message: `Health check failed: ${error.message}`,
+        message: `Health check failed: ${errorMessage}`,
         timestamp: Date.now(),
         duration: Date.now() - startTime,
-        metadata: { error: error.message }
+        metadata: { error: errorMessage }
       };
       
       this.lastResults.set(name, result);
@@ -185,12 +186,13 @@ export const setupDefaultHealthChecks = () => {
           duration: Date.now() - startTime
         };
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         return {
           status: HealthStatus.UNHEALTHY,
-          message: `Database connection failed: ${error.message}`,
+          message: `Database connection failed: ${errorMessage}`,
           timestamp: Date.now(),
           duration: 0,
-          metadata: { error: error.message }
+          metadata: { error: errorMessage }
         };
       }
     }
@@ -208,7 +210,7 @@ export const setupDefaultHealthChecks = () => {
         const testValue = Date.now().toString();
         
         // Test cache write and read
-        await cacheManager.set(testKey, testValue, 10);
+        await cacheManager.set(testKey, testValue, { ttl: 10 });
         const retrieved = await cacheManager.get(testKey);
         
         if (retrieved === testValue) {
@@ -227,12 +229,13 @@ export const setupDefaultHealthChecks = () => {
           };
         }
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         return {
           status: HealthStatus.DEGRADED,
-          message: `Cache check failed: ${error.message}`,
+          message: `Cache check failed: ${errorMessage}`,
           timestamp: Date.now(),
           duration: 0,
-          metadata: { error: error.message }
+          metadata: { error: errorMessage }
         };
       }
     }
@@ -294,12 +297,13 @@ export const setupDefaultHealthChecks = () => {
           duration: 0
         };
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         return {
           status: HealthStatus.DEGRADED,
-          message: `Disk check failed: ${error.message}`,
+          message: `Disk check failed: ${errorMessage}`,
           timestamp: Date.now(),
           duration: 0,
-          metadata: { error: error.message }
+          metadata: { error: errorMessage }
         };
       }
     }

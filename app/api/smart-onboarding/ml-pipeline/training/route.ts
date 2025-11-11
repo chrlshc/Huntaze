@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mlTrainingPipeline, TrainingPipelineConfig } from '../../../../../lib/smart-onboarding/services/mlTrainingPipeline';
+import { mlPipelineFacade } from '../../../../../lib/smart-onboarding/services/mlPipelineFacade';
+import { TrainingPipelineConfig } from '../../../../../lib/smart-onboarding/services/mlTrainingPipeline';
 import { logger } from '../../../../../lib/utils/logger';
 
 export async function POST(request: NextRequest) {
@@ -25,15 +26,15 @@ export async function POST(request: NextRequest) {
 
     // Set defaults for optional fields
     const trainingConfig: TrainingPipelineConfig = {
-      validationSplit: 0.2,
-      evaluationMetrics: ['accuracy', 'precision', 'recall', 'f1Score'],
-      retrainingThreshold: 0.05,
-      maxTrainingTime: 3600000, // 1 hour
-      ...config
+      ...config,
+      validationSplit: config.validationSplit ?? 0.2,
+      evaluationMetrics: config.evaluationMetrics ?? ['accuracy', 'precision', 'recall', 'f1Score'],
+      retrainingThreshold: config.retrainingThreshold ?? 0.05,
+      maxTrainingTime: config.maxTrainingTime ?? 3600000 // 1 hour
     };
 
     // Schedule training job
-    const jobId = await mlTrainingPipeline.scheduleTraining(trainingConfig);
+    const jobId = await mlPipelineFacade.scheduleTraining(trainingConfig);
 
     logger.info(`Training job scheduled: ${jobId}`, { config: trainingConfig });
 
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
 
     if (jobId) {
       // Get specific job status
-      const job = await mlTrainingPipeline.getTrainingStatus(jobId);
+      const job = await mlPipelineFacade.getTrainingStatus(jobId);
       if (!job) {
         return NextResponse.json(
           { error: 'Training job not found' },
@@ -71,8 +72,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get training history
-    const history = await mlTrainingPipeline.getTrainingHistory(modelType || undefined);
-    const queueStatus = await mlTrainingPipeline.getQueueStatus();
+    const history = await mlPipelineFacade.getTrainingHistory(modelType || undefined);
+    const queueStatus = await mlPipelineFacade.getQueueStatus();
 
     return NextResponse.json({
       history,
@@ -100,7 +101,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const cancelled = await mlTrainingPipeline.cancelTraining(jobId);
+    const cancelled = await mlPipelineFacade.cancelTraining(jobId);
     
     if (!cancelled) {
       return NextResponse.json(

@@ -200,7 +200,7 @@ class CanaryController {
 
   private async collectMetrics(deployment: CanaryDeployment): Promise<CanaryMetrics> {
     // In a real implementation, this would collect metrics from Prometheus/monitoring system
-    const { metricsCollector } = await import('@/lib/monitoring/telemetry');
+    // const { goldenSignals } = await import('@/lib/monitoring/telemetry');
     
     const serviceName = deployment.config.serviceName;
     const version = deployment.config.version;

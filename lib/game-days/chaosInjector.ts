@@ -95,7 +95,7 @@ class ChaosInjector {
     } catch (error) {
       failure.status = 'FAILED';
       this.failureHistory.push(failure);
-      throw new Error(`Failed to inject ${type}: ${error.message}`);
+      throw new Error(`Failed to inject ${type}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -404,13 +404,14 @@ class ChaosInjector {
   }
 
   private getExpectedBehavior(type: FailureType): string {
-    const behaviors = {
+    const behaviors: Record<FailureType, string> = {
       [FailureType.SERVICE_TERMINATION]: 'Service becomes unavailable, circuit breakers should open',
       [FailureType.NETWORK_LATENCY]: 'Increased response times, potential timeouts',
       [FailureType.NETWORK_PARTITION]: 'Service isolation, split-brain scenarios',
       [FailureType.RESOURCE_EXHAUSTION]: 'Performance degradation, potential OOM kills',
       [FailureType.DATABASE_FAILURE]: 'Database queries fail, read replicas may be used',
       [FailureType.CACHE_FAILURE]: 'Cache misses, fallback to database',
+      [FailureType.DISK_FAILURE]: 'Disk I/O failures, storage unavailable',
       [FailureType.MEMORY_LEAK]: 'Gradual memory increase, eventual OOM',
       [FailureType.CPU_SPIKE]: 'High CPU usage, request queuing',
       [FailureType.CONFIGURATION_CORRUPTION]: 'Service misconfiguration, startup failures'
@@ -420,13 +421,14 @@ class ChaosInjector {
   }
 
   private getRecoveryProcedure(type: FailureType): string {
-    const procedures = {
+    const procedures: Record<FailureType, string> = {
       [FailureType.SERVICE_TERMINATION]: 'Restart service, verify health checks',
       [FailureType.NETWORK_LATENCY]: 'Remove traffic control rules',
       [FailureType.NETWORK_PARTITION]: 'Restore network connectivity',
       [FailureType.RESOURCE_EXHAUSTION]: 'Kill resource-consuming processes',
       [FailureType.DATABASE_FAILURE]: 'Restart database connections',
       [FailureType.CACHE_FAILURE]: 'Restart cache service',
+      [FailureType.DISK_FAILURE]: 'Check disk health, restore from backup',
       [FailureType.MEMORY_LEAK]: 'Stop leak process, restart if needed',
       [FailureType.CPU_SPIKE]: 'Kill CPU-intensive processes',
       [FailureType.CONFIGURATION_CORRUPTION]: 'Restore original configuration'
@@ -436,17 +438,18 @@ class ChaosInjector {
   }
 
   private getBlastRadius(type: FailureType): 'MINIMAL' | 'LIMITED' | 'MODERATE' | 'EXTENSIVE' {
-    const radii = {
+    const radii: Record<FailureType, 'MINIMAL' | 'LIMITED' | 'MODERATE' | 'EXTENSIVE'> = {
       [FailureType.SERVICE_TERMINATION]: 'MODERATE',
       [FailureType.NETWORK_LATENCY]: 'LIMITED',
       [FailureType.NETWORK_PARTITION]: 'EXTENSIVE',
       [FailureType.RESOURCE_EXHAUSTION]: 'MODERATE',
       [FailureType.DATABASE_FAILURE]: 'EXTENSIVE',
       [FailureType.CACHE_FAILURE]: 'LIMITED',
+      [FailureType.DISK_FAILURE]: 'EXTENSIVE',
       [FailureType.MEMORY_LEAK]: 'MINIMAL',
       [FailureType.CPU_SPIKE]: 'LIMITED',
       [FailureType.CONFIGURATION_CORRUPTION]: 'MODERATE'
-    } as const;
+    };
 
     return radii[type] || 'MODERATE';
   }

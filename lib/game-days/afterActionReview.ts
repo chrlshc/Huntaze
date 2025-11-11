@@ -672,7 +672,7 @@ Overall Assessment: ${this.getOverallAssessment(aar)}
 export const aarManager = new AfterActionReviewManager();
 
 // Convenience functions
-export const scheduleAAR = (gameDay: any, templateId?: string, facilitator?: string, scheduledAt?: number) =>
+export const scheduleAAR = (gameDay: any, templateId: string = 'standard', facilitator: string, scheduledAt: number) =>
   aarManager.scheduleAAR(gameDay, templateId, facilitator, scheduledAt);
 
 export const conductAAR = (aarId: string) =>

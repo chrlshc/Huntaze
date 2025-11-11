@@ -236,7 +236,7 @@ class ScenarioRunner {
     } catch (error) {
       execution.status = ScenarioStatus.FAILED;
       execution.endTime = Date.now();
-      this.logEvent(execution, 'ERROR', 'SYSTEM', `Scenario failed: ${error.message}`);
+      this.logEvent(execution, 'ERROR', 'SYSTEM', `Scenario failed: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
@@ -275,13 +275,13 @@ class ScenarioRunner {
           severity: 'MEDIUM',
           category: 'PROCESS',
           description: `Step validation failed: ${step.name}`,
-          impact: validationResults.reason,
+          impact: validationResults.reason || 'Validation failed',
           discoveredAt: Date.now()
         });
       }
 
     } catch (error) {
-      this.logEvent(execution, 'ERROR', 'STEP', `Step failed: ${step.name} - ${error.message}`);
+      this.logEvent(execution, 'ERROR', 'STEP', `Step failed: ${step.name} - ${error instanceof Error ? error.message : String(error)}`);
       
       // Record critical issue
       execution.issues.push({
@@ -289,7 +289,7 @@ class ScenarioRunner {
         severity: 'HIGH',
         category: 'TECHNICAL',
         description: `Step execution failed: ${step.name}`,
-        impact: error.message,
+        impact: error instanceof Error ? error.message : String(error),
         discoveredAt: Date.now()
       });
 
@@ -303,18 +303,24 @@ class ScenarioRunner {
     }
 
     // Import chaos injector for failure injection
-    const { chaosInjector } = await import('./chaosInjector');
+    const { chaosInjector, FailureType } = await import('./chaosInjector');
     
     switch (step.type) {
       case 'INJECTION':
-        await chaosInjector.injectFailure(step.command, step.duration * 60 * 1000);
+        // Parse command as "TYPE:TARGET" or use defaults
+        const [failureType, target] = (step.command || '').split(':');
+        await chaosInjector.injectFailure(
+          (failureType as any) || FailureType.SERVICE_TERMINATION,
+          target || 'default-service',
+          step.duration * 60 * 1000
+        );
         break;
       case 'RECOVERY':
-        await chaosInjector.stopFailure(step.command);
+        await chaosInjector.stopFailure(step.command || '');
         break;
       default:
         // Execute generic command
-        await this.executeCommand(step.command);
+        await this.executeCommand(step.command || '');
     }
   }
 
@@ -338,7 +344,7 @@ class ScenarioRunner {
     };
   }
 
-  private async shouldAbort(execution: GameDayExecution, scenario: GameDayScenario): boolean {
+  private async shouldAbort(execution: GameDayExecution, scenario: GameDayScenario): Promise<boolean> {
     // Check time limits
     const elapsed = Date.now() - execution.startTime;
     if (elapsed > scenario.safetyControls.maxDuration * 60 * 1000) {

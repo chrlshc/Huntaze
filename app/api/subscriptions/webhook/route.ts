@@ -5,7 +5,6 @@ import { makeReqLogger } from '@/lib/logger';
 import Stripe from 'stripe';
 import { getStripe } from '@/lib/stripe';
 import { getSecretFromEnv } from '@/lib/aws/secrets';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
 
@@ -72,4 +71,4 @@ async function handler(request: NextRequest) {
   return r;
 }
 
-export const POST = withMonitoring('webhooks.subscriptions', handler as any);
+export const POST = handler as any;

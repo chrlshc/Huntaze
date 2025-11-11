@@ -20,6 +20,7 @@ export default function SimpleNeonTest() {
     let frame = 0;
     
     function draw() {
+      if (!ctx || !canvas) return;
       frame++;
       
       // Clear canvas with dark background

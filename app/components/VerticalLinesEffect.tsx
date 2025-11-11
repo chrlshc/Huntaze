@@ -19,6 +19,7 @@ export default function VerticalLinesEffect() {
 
     // Create random vertical lines
     function createLine() {
+      if (!canvas) return null;
       return {
         x: Math.random() * canvas.width,
         y: -100,
@@ -33,11 +34,14 @@ export default function VerticalLinesEffect() {
     // Initialize with some lines
     for (let i = 0; i < 5; i++) {
       const line = createLine();
-      line.y = Math.random() * canvas.height;
-      lines.push(line);
+      if (line && canvas) {
+        line.y = Math.random() * canvas.height;
+        lines.push(line);
+      }
     }
 
     function animate() {
+      if (!ctx || !canvas) return;
       // Clear canvas with fade effect
       ctx.fillStyle = 'rgba(11, 6, 20, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);

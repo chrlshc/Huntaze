@@ -147,9 +147,8 @@ function getTikTokService(): TikTokService {
 
 // Export singleton instance (lazy)
 export const tiktokService = {
-  getAuthUrl: (...args: Parameters<TikTokService['getAuthUrl']>) => getTikTokService().getAuthUrl(...args),
-  handleCallback: (...args: Parameters<TikTokService['handleCallback']>) => getTikTokService().handleCallback(...args),
-  getUserInfo: (...args: Parameters<TikTokService['getUserInfo']>) => getTikTokService().getUserInfo(...args),
+  getAccessToken: (...args: Parameters<TikTokService['getAccessToken']>) => getTikTokService().getAccessToken(...args),
+  getCurrentUser: (...args: Parameters<TikTokService['getCurrentUser']>) => getTikTokService().getCurrentUser(...args),
   uploadVideo: (...args: Parameters<TikTokService['uploadVideo']>) => getTikTokService().uploadVideo(...args),
   disconnect: (...args: Parameters<TikTokService['disconnect']>) => getTikTokService().disconnect(...args),
 };

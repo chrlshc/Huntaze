@@ -8,6 +8,7 @@ export type Fan = {
   handle?: string;
   email?: string;
   phone?: string;
+  avatar?: string | null;
   tags?: string[];
   valueCents?: number;
   lastSeenAt?: string | null;

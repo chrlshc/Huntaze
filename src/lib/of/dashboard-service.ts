@@ -46,10 +46,12 @@ function withMetadata(
 function broadcast(accountId: string, event: DashboardStreamEvent) {
   const listenersForAccount = listeners.get(accountId);
   if (!listenersForAccount?.size) return;
-  const payload = clone(event.payload);
+  // Preserve the discriminated union shape by casting the cloned payload back
+  const payload = clone(event.payload) as typeof event.payload;
   for (const listener of listenersForAccount) {
     try {
-      listener({ ...event, payload });
+      const clonedEvent: DashboardStreamEvent = { ...event, payload } as DashboardStreamEvent;
+      listener(clonedEvent);
     } catch (error) {
       console.error('onlyfans.dashboard.broadcast.error', error);
     }

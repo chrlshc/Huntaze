@@ -203,31 +203,18 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
     animate: { 
       opacity: 1, 
       scale: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 25
-      }
+      y: 0
     },
     exit: { 
       opacity: 0, 
       scale: 0.8,
-      y: -20,
-      transition: {
-        duration: 0.2
-      }
+      y: -20
     }
   };
 
   const pulseVariants = {
     pulse: {
-      scale: [1, 1.05, 1],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
+      scale: [1, 1.05, 1]
     }
   };
 

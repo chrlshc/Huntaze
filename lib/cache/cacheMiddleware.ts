@@ -25,7 +25,7 @@ export function withCache(config: CacheConfig = {}) {
   ) {
     const method = descriptor.value!;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (this: any, ...args: any[]) {
       const req = args[0] as NextRequest;
       
       // Generate cache key

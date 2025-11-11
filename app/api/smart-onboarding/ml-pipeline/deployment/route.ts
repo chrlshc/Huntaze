@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { modelDeploymentService, DeploymentStrategy } from '../../../../../lib/smart-onboarding/services/modelDeploymentService';
+import { mlPipelineFacade } from '../../../../../lib/smart-onboarding/services/mlPipelineFacade';
+import { DeploymentStrategy } from '../../../../../lib/smart-onboarding/services/modelDeploymentService';
 import { logger } from '../../../../../lib/utils/logger';
 
 export async function POST(request: NextRequest) {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Start deployment
-    const deploymentId = await modelDeploymentService.deployModel(
+    const deploymentId = await mlPipelineFacade.deployModel(
       modelType,
       modelVersion,
       deploymentStrategy
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
 
     if (deploymentId) {
       // Get specific deployment status
-      const deployment = await modelDeploymentService.getDeploymentStatus(deploymentId);
+      const deployment = await mlPipelineFacade.getDeploymentStatus(deploymentId);
       if (!deployment) {
         return NextResponse.json(
           { error: 'Deployment not found' },
@@ -81,12 +82,12 @@ export async function GET(request: NextRequest) {
 
     if (active) {
       // Get active deployments
-      const activeDeployments = await modelDeploymentService.getActiveDeployments();
+      const activeDeployments = await mlPipelineFacade.getActiveDeployments();
       return NextResponse.json({ deployments: activeDeployments });
     }
 
     // Get deployment history
-    const history = await modelDeploymentService.getDeploymentHistory(modelType || undefined);
+    const history = await mlPipelineFacade.getDeploymentHistory(modelType || undefined);
     
     return NextResponse.json({ deployments: history });
 
@@ -111,7 +112,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const rolledBack = await modelDeploymentService.rollbackDeployment(deploymentId);
+    const rolledBack = await mlPipelineFacade.rollbackDeployment(deploymentId);
     
     if (!rolledBack) {
       return NextResponse.json(

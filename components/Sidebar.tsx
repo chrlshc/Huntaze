@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactElement } from "react";
 
 type NavItem = {
   href: string;
   label: string;
-  icon: (props: ComponentProps<"svg">) => JSX.Element;
+  icon: (props: ComponentProps<"svg">) => ReactElement;
 };
 
 const navItems: NavItem[] = [

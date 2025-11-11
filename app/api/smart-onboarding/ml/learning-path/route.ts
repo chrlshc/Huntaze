@@ -1,11 +1,8 @@
 // Smart Onboarding ML Personalization - Learning Path Prediction API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { MLPersonalizationEngineImpl } from '@/lib/smart-onboarding/services/mlPersonalizationEngine';
-import { smartOnboardingDb } from '@/lib/smart-onboarding/config/database';
-import { OnboardingContext } from '@/lib/smart-onboarding/interfaces/services';
-
-const mlEngine = new MLPersonalizationEngineImpl(smartOnboardingDb);
+import { predictOptimalPath } from '@/lib/smart-onboarding/services/mlPersonalizationFacade';
+type OnboardingContext = { currentStepId?: string; [key: string]: unknown };
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Predict optimal learning path
-    const learningPath = await mlEngine.predictOptimalPath(userId, context);
+    const learningPath = await predictOptimalPath(userId, context);
     
     return NextResponse.json({
       success: true,

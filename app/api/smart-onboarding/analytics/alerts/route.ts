@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { behavioralAnalyticsService } from '@/lib/smart-onboarding/services/behavioralAnalyticsService';
+// Facade-free minimal implementation (no heavy imports)
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const severity = searchParams.get('severity');
     const acknowledged = searchParams.get('acknowledged');
 
-    // Method not implemented yet
+    // Minimal placeholder alerts; wire to service later
     const alerts = [] as any[];
     // const alerts = await behavioralAnalyticsService.getAlerts({
     //   limit,
@@ -43,8 +43,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Method not implemented yet
-    const alert = null as any;
+    // Minimal created alert echo
+    const alert = {
+      id: `alert_${Date.now()}`,
+      type,
+      severity,
+      title,
+      message,
+      source,
+      stepId,
+      userId,
+      autoResolve: Boolean(autoResolve),
+      acknowledged: false,
+      timestamp: new Date().toISOString(),
+      resolvedAt: undefined
+    } as any;
     // const alert = await behavioralAnalyticsService.createAlert({
     //   type,
     //   severity,

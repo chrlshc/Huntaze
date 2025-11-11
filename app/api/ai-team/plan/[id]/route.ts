@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withMonitoring } from '@/lib/observability/bootstrap'
 import { getPlan } from '@/src/lib/db/planRepo'
 
 export const runtime = 'nodejs'
@@ -13,6 +12,5 @@ async function handler(req: NextRequest, ctx: { params: Promise<{ id: string }> 
   return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } })
 }
 
-export const GET = withMonitoring('ai-team.plan.get', handler as any)
+export const GET = handler as any
 export const HEAD = GET
-

@@ -85,7 +85,8 @@ class AutoHealingManager {
       message = success ? 'Healing action completed successfully' : 'Healing action failed';
     } catch (error) {
       success = false;
-      message = `Healing action threw error: ${error.message}`;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      message = `Healing action threw error: ${errorMessage}`;
     }
 
     const duration = Date.now() - startTime;
@@ -232,15 +233,16 @@ export const setupDefaultHealingActions = () => {
       try {
         const { db } = await import('@/lib/db');
         
-        // Close existing connections
-        await db.end();
+        // Get the pool
+        const pool = db.getPool();
+        
+        // End existing connections
+        await pool.end();
         
         // Wait a moment
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Reconnect
-        await db.connect();
-        
+        // The pool will automatically reconnect on next query
         // Test connection
         await db.query('SELECT 1');
         
@@ -265,7 +267,7 @@ export const setupDefaultHealingActions = () => {
         const { cacheManager } = await import('@/lib/cache/cacheManager');
         
         // Clear cache
-        await cacheManager.clear();
+        await cacheManager.flush();
         
         // Warm critical caches
         await warmCriticalCaches();
@@ -293,9 +295,9 @@ export const setupDefaultHealingActions = () => {
           global.gc();
         }
 
-        // Clear non-essential caches
+        // Clear caches to free memory
         const { cacheManager } = await import('@/lib/cache/cacheManager');
-        await cacheManager.clearNonEssential();
+        await cacheManager.flush();
 
         // Check if memory usage improved
         const memUsage = process.memoryUsage();

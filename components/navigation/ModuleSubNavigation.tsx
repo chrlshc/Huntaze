@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { useAppState, type HuntazeModule } from '@/contexts/AppStateContext';
 
 interface SubNavItem {
-  module: HuntazeModule;
   href: string;
   label: string;
 }

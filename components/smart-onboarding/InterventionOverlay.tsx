@@ -146,20 +146,12 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({
     visible: { 
       opacity: 1, 
       scale: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30
-      }
+      y: 0
     },
     exit: { 
       opacity: 0, 
       scale: 0.8,
-      y: 20,
-      transition: {
-        duration: 0.2
-      }
+      y: 20
     }
   };
 
@@ -170,11 +162,7 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({
     },
     expanded: { 
       height: 'auto',
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut"
-      }
+      opacity: 1
     }
   };
 

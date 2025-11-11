@@ -48,11 +48,13 @@ export default function ExactShadowEffect() {
       }
       
       resizeCanvas() {
+        if (!canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
       
       createShadowLines() {
+        if (!canvas) return;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         const radius = 300;
@@ -74,6 +76,7 @@ export default function ExactShadowEffect() {
       }
       
       createFloatingOrbs() {
+        if (!canvas) return;
         for (let i = 0; i < 5; i++) {
           this.floatingOrbs.push({
             x: Math.random() * canvas.width,
@@ -105,6 +108,7 @@ export default function ExactShadowEffect() {
       }
       
       drawShadowLine(line: any) {
+        if (!canvas || !ctx) return;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         
@@ -159,6 +163,7 @@ export default function ExactShadowEffect() {
       }
       
       drawFloatingOrb(orb: any) {
+        if (!canvas || !ctx) return;
         orb.x += orb.vx;
         orb.y += orb.vy;
         
@@ -192,6 +197,7 @@ export default function ExactShadowEffect() {
       }
       
       triggerEnergyBeam() {
+        if (!canvas) return;
         if (Math.random() > 0.98 && !this.isMobile) {
           const beam = this.energyBeams.find((b: any) => !b.active);
           if (beam) {
@@ -228,7 +234,7 @@ export default function ExactShadowEffect() {
       }
       
       drawEnergyBeam(beam: any) {
-        if (!beam.active) return;
+        if (!beam.active || !canvas || !ctx) return;
         
         beam.progress += beam.speed;
         if (beam.progress >= 1) {
@@ -264,6 +270,7 @@ export default function ExactShadowEffect() {
       }
       
       animate = () => {
+        if (!ctx || !canvas) return;
         // Clear canvas each frame
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         

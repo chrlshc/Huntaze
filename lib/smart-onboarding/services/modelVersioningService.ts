@@ -740,7 +740,8 @@ export class ModelVersioningService {
       if (node) {
         path.unshift(node);
         const parentEdge = registry.lineage.edges.find(e => e.to === currentVersion);
-        currentVersion = parentEdge?.from || null;
+        currentVersion = parentEdge?.from ?? '';
+        if (!currentVersion) break;
       } else {
         break;
       }
@@ -755,7 +756,12 @@ export class ModelVersioningService {
   }
 
   private deepCompare(objA: any, objB: any): any {
-    const changes = { added: [], removed: [], modified: [], breaking: [] };
+    const changes: { added: string[]; removed: string[]; modified: any[]; breaking: any[] } = { 
+      added: [], 
+      removed: [], 
+      modified: [], 
+      breaking: [] 
+    };
     
     // Simple deep comparison implementation
     const keysA = Object.keys(objA || {});

@@ -10,7 +10,7 @@ interface LazyImageProps {
   height: number;
   className?: string;
   priority?: boolean;
-  placeholder?: string;
+  placeholder?: 'blur' | 'empty';
 }
 
 export default function LazyImage({

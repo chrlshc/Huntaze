@@ -19,7 +19,7 @@ export function useAutoSave<T>({
 }: UseAutoSaveOptions) {
   const [status, setStatus] = useState<AutoSaveStatus>({ status: 'idle' });
   const [data, setData] = useState<T | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const isSavingRef = useRef(false);
 
   const save = useCallback(async (dataToSave: T) => {

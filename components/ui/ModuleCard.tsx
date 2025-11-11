@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, memo, useCallback, useMemo } from 'react';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 import type { HuntazeModule } from '@/contexts/AppStateContext';
 import { cn } from '@/lib/utils';
@@ -142,7 +142,7 @@ function areEqual(prev: ModuleCardProps, next: ModuleCardProps) {
 const MemoizedModuleCard = memo(ModuleCardBase, areEqual);
 
 type ModuleCardComponent = typeof MemoizedModuleCard & {
-  Skeleton: (props: { module: HuntazeModule }) => JSX.Element;
+  Skeleton: (props: { module: HuntazeModule }) => ReactElement;
 };
 
 export const ModuleCard = MemoizedModuleCard as ModuleCardComponent;

@@ -45,8 +45,8 @@ export const onboardingEventsRepository = {
   async create({
     userId,
     eventType,
-    stepId = null,
-    duration = null,
+    stepId,
+    duration,
     metadata = {}
   }: CreateEventParams): Promise<OnboardingEvent> {
     const result = await query(

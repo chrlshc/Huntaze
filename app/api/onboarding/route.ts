@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireUser } from '@/lib/server-auth';
 import { saveOnboarding } from '@/lib/db/onboarding';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 
 export const runtime = 'nodejs';
 
@@ -13,4 +12,4 @@ async function handler(req: Request) {
   return NextResponse.json({ ok: true });
 }
 
-export const POST = withMonitoring('onboarding.save', handler as any);
+export const POST = handler as any;

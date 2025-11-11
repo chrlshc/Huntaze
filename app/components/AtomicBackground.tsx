@@ -59,8 +59,8 @@ export default function AtomicBackground({ className = '' }: AtomicBackgroundPro
       pulseSpeed: number;
 
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.x = Math.random() * (canvas?.width || 0);
+        this.y = Math.random() * (canvas?.height || 0);
         this.vx = (Math.random() - 0.5) * config.particleSpeed;
         this.vy = (Math.random() - 0.5) * config.particleSpeed;
         this.radius = Math.random() * 3 + 1;
@@ -77,25 +77,28 @@ export default function AtomicBackground({ className = '' }: AtomicBackgroundPro
         this.y += this.vy;
 
         // Bounce off edges
-        if (this.x < 0 || this.x > canvas.width) {
+        const canvasWidth = canvas?.width || 0;
+        const canvasHeight = canvas?.height || 0;
+        
+        if (this.x < 0 || this.x > canvasWidth) {
           this.vx *= -1;
-          this.x = Math.max(0, Math.min(canvas.width, this.x));
+          this.x = Math.max(0, Math.min(canvasWidth, this.x));
         }
-        if (this.y < 0 || this.y > canvas.height) {
+        if (this.y < 0 || this.y > canvasHeight) {
           this.vy *= -1;
-          this.y = Math.max(0, Math.min(canvas.height, this.y));
+          this.y = Math.max(0, Math.min(canvasHeight, this.y));
         }
 
         // Pulse effect
         this.pulsePhase += this.pulseSpeed;
       }
 
-      draw() {
+      draw(context: CanvasRenderingContext2D) {
         const currentGlowRadius = this.glowRadius + Math.sin(this.pulsePhase) * 5;
         const currentOpacity = this.opacity + Math.sin(this.pulsePhase) * 0.2;
 
         // Draw glow
-        const gradient = ctx.createRadialGradient(
+        const gradient = context.createRadialGradient(
           this.x, this.y, 0,
           this.x, this.y, currentGlowRadius
         );
@@ -103,25 +106,25 @@ export default function AtomicBackground({ className = '' }: AtomicBackgroundPro
         gradient.addColorStop(0.4, `rgba(255, 20, 147, ${currentOpacity * 0.3})`);
         gradient.addColorStop(1, 'transparent');
 
-        ctx.save();
-        ctx.fillStyle = gradient;
-        ctx.fillRect(
+        context.save();
+        context.fillStyle = gradient;
+        context.fillRect(
           this.x - currentGlowRadius,
           this.y - currentGlowRadius,
           currentGlowRadius * 2,
           currentGlowRadius * 2
         );
-        ctx.restore();
+        context.restore();
 
         // Draw center particle
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        ctx.restore();
+        context.save();
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        context.fillStyle = this.color;
+        context.shadowColor = this.color;
+        context.shadowBlur = 10;
+        context.fill();
+        context.restore();
       }
     }
 
@@ -174,7 +177,7 @@ export default function AtomicBackground({ className = '' }: AtomicBackgroundPro
     // Animation loop
     const animate = () => {
       // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
 
       // Update and draw particles
       particles.forEach(particle => {
@@ -186,7 +189,7 @@ export default function AtomicBackground({ className = '' }: AtomicBackgroundPro
 
       // Draw particles
       particles.forEach(particle => {
-        particle.draw();
+        particle.draw(ctx);
       });
 
       animationId = requestAnimationFrame(animate);

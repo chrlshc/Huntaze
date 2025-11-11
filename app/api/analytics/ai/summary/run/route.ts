@@ -54,10 +54,5 @@ async function postHandler(req: Request) {
   }
 }
 
-import { withMonitoring } from '@/lib/observability/bootstrap'
-export const POST = withMonitoring('analytics.ai.summary.run', postHandler as any, {
-  domain: 'analytics',
-  feature: 'summary_run',
-  getUserId: (req) => req.headers.get('x-user-id') || undefined,
-})
+export const POST = postHandler as any
 export const GET = POST

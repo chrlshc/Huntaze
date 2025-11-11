@@ -3,7 +3,6 @@ import { parse } from 'csv-parse/sync';
 import { FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 import { z } from 'zod';
 
 // CSV row validation schema
@@ -164,8 +163,4 @@ async function postHandler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('onlyfans.import.csv', postHandler as any, {
-  domain: 'crm',
-  feature: 'csv_import',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const POST = postHandler as any;

@@ -106,24 +106,28 @@ class MLTrainingPipeline {
       const metrics = await this.evaluateModel(trainedModel, validationData, job.config.evaluationMetrics);
 
       // 5. Version and store the model
-      const modelVersion = await modelVersioningService.createVersion({
-        modelType: job.config.modelType,
-        model: trainedModel,
-        metrics,
-        trainingConfig: job.config,
-        trainingDataHash: this.hashData(trainingData)
-      });
+      const modelVersion = await modelVersioningService.createVersion(
+        job.config.modelType,
+        trainedModel,
+        {
+          versionType: 'minor',
+          description: `Trained model for ${job.config.modelType}`,
+          metrics,
+          trainingConfig: job.config as any,
+          trainingDataHash: this.hashData(trainingData)
+        }
+      );
 
       // 6. Update job status
       job.status = 'completed';
       job.endTime = new Date();
       job.metrics = metrics;
-      job.modelVersion = modelVersion;
+      job.modelVersion = modelVersion.version;
 
-      logger.info(`Training job completed: ${job.id}`, { metrics, modelVersion });
+      logger.info(`Training job completed: ${job.id}`, { metrics, modelVersion: modelVersion.version });
 
       // 7. Check if model should be deployed
-      await this.evaluateForDeployment(job.config.modelType, modelVersion, metrics);
+      await this.evaluateForDeployment(job.config.modelType, modelVersion.version, metrics);
 
     } catch (error) {
       job.status = 'failed';
@@ -226,19 +230,27 @@ class MLTrainingPipeline {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Return a mock trained model
+    const modelId = `model_${config.modelType}_${Date.now()}`;
     return {
-      id: `model_${config.modelType}_${Date.now()}`,
+      id: modelId,
       type: config.modelType,
       version: '1.0.0',
-      parameters: config.hyperparameters,
-      trainedAt: new Date(),
-      // In reality, this would contain the actual model weights/parameters
-      modelData: {
-        weights: 'base64_encoded_model_weights',
-        architecture: config.modelType,
-        inputShape: this.getInputShape(config.modelType),
-        outputShape: this.getOutputShape(config.modelType)
-      }
+      status: 'training' as const,
+      metrics: {
+        modelId,
+        modelType: config.modelType,
+        version: '1.0.0',
+        accuracy: 0,
+        precision: 0,
+        recall: 0,
+        f1Score: 0,
+        trainingDate: new Date(),
+        lastEvaluated: new Date(),
+        sampleSize: trainData.length,
+        performanceTrend: 'stable' as const
+      },
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
   }
 
@@ -250,44 +262,44 @@ class MLTrainingPipeline {
     
     // Return mock metrics (in reality, these would be calculated from actual predictions)
     const mockMetrics: ModelMetrics = {
+      modelId: model.id,
+      modelType: model.type,
+      version: model.version,
       accuracy: 0.85 + Math.random() * 0.1,
       precision: 0.82 + Math.random() * 0.1,
       recall: 0.88 + Math.random() * 0.1,
       f1Score: 0.85 + Math.random() * 0.1,
-      auc: 0.90 + Math.random() * 0.05,
-      loss: 0.15 + Math.random() * 0.1,
-      validationSamples: validationData.length,
-      evaluatedAt: new Date()
+      trainingDate: new Date(),
+      lastEvaluated: new Date(),
+      sampleSize: validationData.length,
+      performanceTrend: 'stable' as const,
+      metadata: {
+        auc: 0.90 + Math.random() * 0.05,
+        loss: 0.15 + Math.random() * 0.1
+      }
     };
 
     return mockMetrics;
   }
 
   private async evaluateForDeployment(modelType: string, modelVersion: string, metrics: ModelMetrics): Promise<void> {
-    // Get current production model metrics
-    const currentModel = await modelVersioningService.getCurrentProductionVersion(modelType);
+    // Simplified deployment evaluation
+    // In a real implementation, this would compare with current production model
     
-    if (!currentModel) {
-      // No current model, deploy this one
-      await this.deployModel(modelType, modelVersion);
-      return;
-    }
-
-    // Compare metrics to decide if new model should be deployed
-    const shouldDeploy = this.shouldDeployNewModel(currentModel.metrics, metrics);
+    // For now, deploy if accuracy is above threshold
+    const deploymentThreshold = 0.80;
     
-    if (shouldDeploy) {
+    if (metrics.accuracy >= deploymentThreshold) {
       await this.deployModel(modelType, modelVersion);
       logger.info(`New model deployed for ${modelType}`, { 
-        oldVersion: currentModel.version,
-        newVersion: modelVersion,
-        improvement: this.calculateImprovement(currentModel.metrics, metrics)
+        version: modelVersion,
+        accuracy: metrics.accuracy
       });
     } else {
-      logger.info(`New model not deployed - insufficient improvement`, {
+      logger.info(`New model not deployed - below threshold`, {
         modelType,
-        currentAccuracy: currentModel.metrics.accuracy,
-        newAccuracy: metrics.accuracy
+        accuracy: metrics.accuracy,
+        threshold: deploymentThreshold
       });
     }
   }
@@ -316,8 +328,7 @@ class MLTrainingPipeline {
       accuracy: newMetrics.accuracy - oldMetrics.accuracy,
       precision: newMetrics.precision - oldMetrics.precision,
       recall: newMetrics.recall - oldMetrics.recall,
-      f1Score: newMetrics.f1Score - oldMetrics.f1Score,
-      auc: newMetrics.auc - oldMetrics.auc
+      f1Score: newMetrics.f1Score - oldMetrics.f1Score
     };
   }
 

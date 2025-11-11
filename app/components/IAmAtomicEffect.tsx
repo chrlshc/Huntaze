@@ -31,6 +31,7 @@ export default function IAmAtomicEffect() {
     }
 
     function animate() {
+      if (!ctx || !canvas) return;
       // Clear with very light fade for trail effect
       ctx.fillStyle = 'rgba(11, 6, 20, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);

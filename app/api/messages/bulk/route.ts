@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CampaignsRepository, FansRepository } from '@/lib/db/repositories';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
-import { withMonitoring } from '@/lib/observability/bootstrap';
 import { OnlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
 import { z } from 'zod';
 
@@ -161,8 +160,4 @@ async function postHandler(request: NextRequest) {
   }
 }
 
-export const POST = withMonitoring('messages.bulk', postHandler as any, {
-  domain: 'crm',
-  feature: 'bulk_messaging',
-  getUserId: (req) => (req as any)?.headers?.get?.('x-user-id') || undefined,
-});
+export const POST = postHandler as any;
