@@ -200,7 +200,7 @@ async function retryWithBackoff<T>(
   correlationId: string
 ): Promise<T> {
   let lastError: Error | undefined;
-  let delay = RETRY_CONFIG.initialDelayMs;
+  let delay: number = RETRY_CONFIG.initialDelayMs;
   
   for (let attempt = 1; attempt <= RETRY_CONFIG.maxAttempts; attempt++) {
     try {
