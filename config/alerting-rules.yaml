@@ -1,0 +1,116 @@
+# Prometheus Alerting Rules for Huntaze Onboarding System
+
+groups:
+  - name: onboarding_critical
+    interval: 1m
+    rules:
+      # Critical: 5xx error rate > 1% for 5 minutes
+      - alert: OnboardingHighErrorRate
+        expr: |
+          (
+            rate(onboarding_api_errors_total{status="5xx"}[5m])
+            /
+            rate(onboarding_api_requests_total[5m])
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          service: onboarding
+          destination: pagerduty
+        annotations:
+          summary: "High 5xx error rate in onboarding system"
+          description: "5xx error rate is {{ $value | humanizePercentage }} (threshold: 1%)"
+          runbook: "https://docs.huntaze.com/runbooks/onboarding#high-error-rate"
+          dashboard: "https://grafana.huntaze.com/d/onboarding"
+
+      # Critical: Availability < 99% for 10 minutes
+      - alert: OnboardingLowAvailability
+        expr: |
+          (
+            sum(rate(onboarding_api_requests_total{status="2xx"}[10m]))
+            /
+            sum(rate(onboarding_api_requests_total[10m]))
+          ) < 0.99
+        for: 10m
+        labels:
+          severity: critical
+          service: onboarding
+          destination: pagerduty
+        annotations:
+          summary: "Onboarding system availability below SLO"
+          description: "Availability is {{ $value | humanizePercentage }} (target: 99.9%)"
+          runbook: "https://docs.huntaze.com/runbooks/onboarding#low-availability"
+
+  - name: onboarding_warnings
+    interval: 1m
+    rules:
+      # Warning: p95 latency > 500ms for 10 minutes
+      - alert: OnboardingHighLatency
+        expr: |
+          histogram_quantile(0.95,
+            rate(onboarding_api_latency_ms_bucket[5m])
+          ) > 500
+        for: 10m
+        labels:
+          severity: warning
+          service: onboarding
+          destination: slack
+        annotations:
+          summary: "High API latency in onboarding system"
+          description: "p95 latency is {{ $value }}ms on {{$labels.route}} (threshold: 500ms)"
+          runbook: "https://docs.huntaze.com/runbooks/onboarding#high-latency"
+
+      # Warning: 409 rate > 10% for 10 minutes
+      - alert: OnboardingHigh409Rate
+        expr: |
+          (
+            rate(onboarding_gating_blocked_total[5m])
+            /
+            rate(onboarding_api_requests_total[5m])
+          ) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+          service: onboarding
+          destination: slack
+        annotations:
+          summary: "High 409 gating response rate"
+          description: "409 rate is {{ $value | humanizePercentage }} on {{$labels.route}} (threshold: 10%)"
+          runbook: "https://docs.huntaze.com/runbooks/onboarding#high-409-rate"
+          note: "High 409 rates may indicate UX issues or misconfigured steps"
+
+      # Warning: Cache hit rate < 60% for 15 minutes
+      - alert: OnboardingLowCacheHitRate
+        expr: |
+          (
+            rate(onboarding_cache_hits_total[5m])
+            /
+            (rate(onboarding_cache_hits_total[5m]) + rate(onboarding_cache_misses_total[5m]))
+          ) < 0.60
+        for: 15m
+        labels:
+          severity: warning
+          service: onboarding
+          destination: slack
+        annotations:
+          summary: "Low cache hit rate in onboarding system"
+          description: "Cache hit rate is {{ $value | humanizePercentage }} (threshold: 60%)"
+          runbook: "https://docs.huntaze.com/runbooks/onboarding#low-cache-hit-rate"
+
+      # Warning: Analytics drop rate > 5% for 15 minutes
+      - alert: OnboardingHighAnalyticsDropRate
+        expr: |
+          (
+            rate(onboarding_analytics_drops_total[5m])
+            /
+            rate(onboarding_analytics_events_total[5m])
+          ) > 0.05
+        for: 15m
+        labels:
+          severity: warning
+          service: onboarding
+          destination: slack
+        annotations:
+          summary: "High analytics event drop rate"
+          description: "Analytics drop rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+          runbook: "https://docs.huntaze.com/runbooks/onboarding#analytics-drops"
