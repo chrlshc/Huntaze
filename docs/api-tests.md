@@ -275,7 +275,598 @@ it('should not expose sensitive information', async () => {
 })
 ```
 
-### 2. Future Endpoints
+### 2. /api/store/publish Endpoint
+
+**Purpose:** Publish user's store to make it live (requires payment configuration)
+
+#### Scenario 2.1: Successful Store Publish
+
+**Given**: User is authenticated and has completed payments setup  
+**When**: POST request to /api/store/publish  
+**Then**: 
+- Returns 200 OK
+- Content-Type is application/json
+- Response contains success, message, storeUrl, correlationId
+- Store is marked as published in database
+
+```typescript
+it('should publish store successfully when payments completed', async () => {
+  const response = await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token-with-payments',
+      'Content-Type': 'application/json'
+    }
+  })
+  
+  expect(response.status).toBe(200)
+  expect(response.headers.get('content-type')).toMatch(/application\/json/)
+  
+  const json = await response.json()
+  expect(json.success).toBe(true)
+  expect(json.storeUrl).toMatch(/^https?:\/\//)
+  expect(json.correlationId).toMatch(/^[0-9a-f-]{36}$/)
+})
+```
+
+#### Scenario 2.2: Gating - Payments Not Completed
+
+**Given**: User is authenticated but has NOT completed payments setup  
+**When**: POST request to /api/store/publish  
+**Then**: 
+- Returns 409 Conflict
+- Response contains PRECONDITION_REQUIRED error
+- Response includes missingStep: 'payments'
+- Response includes action guidance (open_modal)
+
+```typescript
+it('should block publish when payments not completed', async () => {
+  const response = await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token-no-payments',
+      'Content-Type': 'application/json'
+    }
+  })
+  
+  expect(response.status).toBe(409)
+  
+  const json = await response.json()
+  expect(json.error).toBe('PRECONDITION_REQUIRED')
+  expect(json.missingStep).toBe('payments')
+  expect(json.action.type).toBe('open_modal')
+  expect(json.action.modal).toBe('payments_setup')
+})
+```
+
+#### Scenario 2.3: Unauthorized Access
+
+**Given**: User is not authenticated  
+**When**: POST request to /api/store/publish  
+**Then**: Returns 401 Unauthorized
+
+```typescript
+it('should reject unauthenticated requests', async () => {
+  const response = await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST'
+  })
+  
+  expect(response.status).toBe(401)
+  
+  const json = await response.json()
+  expect(json.error).toBe('Unauthorized')
+})
+```
+
+#### Scenario 2.4: Method Not Allowed
+
+**Given**: Server is running  
+**When**: GET/PUT/DELETE request to /api/store/publish  
+**Then**: Returns 405 Method Not Allowed
+
+```typescript
+it('should reject non-POST methods', async () => {
+  const methods = ['GET', 'PUT', 'DELETE']
+  
+  for (const method of methods) {
+    const response = await fetch(`${BASE_URL}/api/store/publish`, { method })
+    expect(response.status).toBe(405)
+  }
+})
+```
+
+#### Scenario 2.5: Concurrent Publish Attempts
+
+**Given**: User is authenticated with payments completed  
+**When**: Multiple concurrent POST requests to /api/store/publish  
+**Then**: 
+- All requests complete without crashes
+- Each request has unique correlationId
+- Idempotency is maintained (no duplicate publishes)
+
+```typescript
+it('should handle concurrent publish attempts', async () => {
+  const requests = Array.from({ length: 5 }, () =>
+    fetch(`${BASE_URL}/api/store/publish`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer test-token-with-payments',
+        'Content-Type': 'application/json'
+      }
+    })
+  )
+  
+  const responses = await Promise.all(requests)
+  
+  responses.forEach(response => {
+    expect([200, 409]).toContain(response.status)
+  })
+  
+  const jsons = await Promise.all(responses.map(r => r.json()))
+  const correlationIds = jsons.map(j => j.correlationId)
+  const uniqueIds = new Set(correlationIds)
+  
+  expect(uniqueIds.size).toBe(correlationIds.length)
+})
+```
+
+#### Scenario 2.6: Performance Validation
+
+**Given**: Server is running  
+**When**: POST request to /api/store/publish  
+**Then**: Response time < 5s (target: < 2s)
+
+```typescript
+it('should respond within acceptable time', async () => {
+  const start = Date.now()
+  await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    }
+  })
+  const duration = Date.now() - start
+  
+  expect(duration).toBeLessThan(5000)
+})
+```
+
+#### Scenario 2.7: Error Handling
+
+**Given**: Internal server error occurs  
+**When**: POST request to /api/store/publish  
+**Then**: 
+- Returns 500 Internal Server Error
+- Response is JSON with error message
+- Response includes correlationId for debugging
+- No sensitive information exposed
+
+```typescript
+it('should handle internal errors gracefully', async () => {
+  // Mock scenario that triggers internal error
+  const response = await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token-trigger-error',
+      'Content-Type': 'application/json'
+    }
+  })
+  
+  if (response.status === 500) {
+    const json = await response.json()
+    expect(json).toHaveProperty('error')
+    expect(json).toHaveProperty('correlationId')
+    
+    const text = JSON.stringify(json).toLowerCase()
+    expect(text).not.toContain('password')
+    expect(text).not.toContain('secret')
+  }
+})
+```
+
+#### Scenario 2.8: Schema Validation
+
+**Given**: Server is running  
+**When**: POST request to /api/store/publish  
+**Then**: Response matches expected Zod schema
+
+```typescript
+import { z } from 'zod'
+
+const SuccessSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  storeUrl: z.string().url(),
+  correlationId: z.string().uuid()
+})
+
+const GatingSchema = z.object({
+  error: z.literal('PRECONDITION_REQUIRED'),
+  message: z.string(),
+  missingStep: z.string(),
+  action: z.object({
+    type: z.enum(['open_modal', 'redirect']),
+    modal: z.string().optional(),
+    prefill: z.record(z.any()).optional()
+  }),
+  correlationId: z.string().uuid()
+})
+
+it('should return valid response schema', async () => {
+  const response = await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    }
+  })
+  
+  const json = await response.json()
+  
+  if (response.status === 200) {
+    const result = SuccessSchema.safeParse(json)
+    expect(result.success).toBe(true)
+  } else if (response.status === 409) {
+    const result = GatingSchema.safeParse(json)
+    expect(result.success).toBe(true)
+  }
+})
+```
+
+#### Scenario 2.9: Security Validation
+
+**Given**: Server is running  
+**When**: POST request with malicious input  
+**Then**: 
+- Input is sanitized
+- No XSS vectors in response
+- No SQL injection possible
+- Security headers present
+
+```typescript
+it('should sanitize malicious input', async () => {
+  const response = await fetch(`${BASE_URL}/api/store/publish`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json',
+      'X-Malicious-Header': '<script>alert("xss")</script>'
+    }
+  })
+  
+  const json = await response.json()
+  const text = JSON.stringify(json)
+  
+  expect(text).not.toContain('<script>')
+  expect(text).not.toContain('javascript:')
+})
+```
+
+### 3. /api/admin/feature-flags Endpoint
+
+**Purpose:** Admin API for managing feature flags configuration
+
+#### Scenario 3.1: Successful Feature Flags Retrieval
+
+**Given**: User is authenticated as admin  
+**When**: GET request to /api/admin/feature-flags  
+**Then**: 
+- Returns 200 OK
+- Content-Type is application/json
+- Response contains flags object with enabled, rolloutPercentage
+- Response includes correlationId for tracing
+
+```typescript
+it('should return current feature flags for admin', async () => {
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    headers: {
+      'Authorization': 'Bearer admin-token'
+    }
+  })
+  
+  expect(response.status).toBe(200)
+  expect(response.headers.get('content-type')).toMatch(/application\/json/)
+  
+  const json = await response.json()
+  expect(json.flags).toBeDefined()
+  expect(json.flags.enabled).toBeDefined()
+  expect(json.flags.rolloutPercentage).toBeGreaterThanOrEqual(0)
+  expect(json.flags.rolloutPercentage).toBeLessThanOrEqual(100)
+  expect(json.correlationId).toMatch(/^[0-9a-f-]{36}$/)
+})
+```
+
+#### Scenario 3.2: Successful Feature Flags Update
+
+**Given**: User is authenticated as admin  
+**When**: POST request to /api/admin/feature-flags with valid updates  
+**Then**: 
+- Returns 200 OK
+- Response contains success: true
+- Response includes updated flags
+- Changes are persisted
+
+```typescript
+it('should update feature flags successfully', async () => {
+  const updates = {
+    enabled: true,
+    rolloutPercentage: 75,
+    markets: ['FR', 'DE']
+  }
+  
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer admin-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updates)
+  })
+  
+  expect(response.status).toBe(200)
+  
+  const json = await response.json()
+  expect(json.success).toBe(true)
+  expect(json.flags.enabled).toBe(updates.enabled)
+  expect(json.flags.rolloutPercentage).toBe(updates.rolloutPercentage)
+  expect(json.flags.markets).toEqual(updates.markets)
+})
+```
+
+#### Scenario 3.3: Unauthorized Access
+
+**Given**: User is not authenticated  
+**When**: GET/POST request to /api/admin/feature-flags  
+**Then**: Returns 401 Unauthorized
+
+```typescript
+it('should reject unauthenticated requests', async () => {
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`)
+  expect([401, 403]).toContain(response.status)
+})
+```
+
+#### Scenario 3.4: Non-Admin Access
+
+**Given**: User is authenticated but not admin  
+**When**: GET/POST request to /api/admin/feature-flags  
+**Then**: Returns 403 Forbidden
+
+```typescript
+it('should reject non-admin users', async () => {
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    headers: {
+      'Authorization': 'Bearer regular-user-token'
+    }
+  })
+  
+  expect([403]).toContain(response.status)
+})
+```
+
+#### Scenario 3.5: Invalid Rollout Percentage
+
+**Given**: User is authenticated as admin  
+**When**: POST request with rolloutPercentage < 0 or > 100  
+**Then**: 
+- Returns 400 Bad Request
+- Error message indicates invalid rolloutPercentage
+
+```typescript
+it('should reject invalid rollout percentage', async () => {
+  const invalidValues = [-1, 101, 150, -50]
+  
+  for (const value of invalidValues) {
+    const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer admin-token',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rolloutPercentage: value })
+    })
+    
+    expect(response.status).toBe(400)
+    const json = await response.json()
+    expect(json.error).toContain('Invalid rolloutPercentage')
+  }
+})
+```
+
+#### Scenario 3.6: Empty Update Request
+
+**Given**: User is authenticated as admin  
+**When**: POST request with empty body or no valid fields  
+**Then**: 
+- Returns 400 Bad Request
+- Error message indicates no valid updates
+
+```typescript
+it('should reject empty updates', async () => {
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer admin-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+  })
+  
+  expect(response.status).toBe(400)
+  const json = await response.json()
+  expect(json.error).toContain('No valid updates provided')
+})
+```
+
+#### Scenario 3.7: Concurrent Updates
+
+**Given**: Multiple admin users updating flags simultaneously  
+**When**: Concurrent POST requests to /api/admin/feature-flags  
+**Then**: 
+- All requests complete without crashes
+- Final state is consistent
+- Each request has unique correlationId
+
+```typescript
+it('should handle concurrent updates', async () => {
+  const requests = Array.from({ length: 5 }, (_, i) =>
+    fetch(`${BASE_URL}/api/admin/feature-flags`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer admin-token',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rolloutPercentage: 10 + (i * 10) })
+    })
+  )
+  
+  const responses = await Promise.all(requests)
+  
+  responses.forEach(response => {
+    expect([200, 201]).toContain(response.status)
+  })
+  
+  // Verify final state is consistent
+  const finalResponse = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    headers: { 'Authorization': 'Bearer admin-token' }
+  })
+  
+  const json = await finalResponse.json()
+  expect(typeof json.flags.rolloutPercentage).toBe('number')
+})
+```
+
+#### Scenario 3.8: Idempotence
+
+**Given**: User is authenticated as admin  
+**When**: Same update is sent multiple times  
+**Then**: 
+- All requests succeed
+- Final state matches the update
+- No side effects from repeated updates
+
+```typescript
+it('should be idempotent', async () => {
+  const updates = { enabled: true, rolloutPercentage: 50 }
+  
+  const response1 = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer admin-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updates)
+  })
+  
+  const response2 = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer admin-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updates)
+  })
+  
+  const json1 = await response1.json()
+  const json2 = await response2.json()
+  
+  expect(json1.flags.enabled).toBe(json2.flags.enabled)
+  expect(json1.flags.rolloutPercentage).toBe(json2.flags.rolloutPercentage)
+})
+```
+
+#### Scenario 3.9: Schema Validation
+
+**Given**: Server is running  
+**When**: GET/POST request to /api/admin/feature-flags  
+**Then**: Response matches expected Zod schema
+
+```typescript
+import { z } from 'zod'
+
+const FlagsSchema = z.object({
+  enabled: z.boolean(),
+  rolloutPercentage: z.number().min(0).max(100),
+  markets: z.array(z.string()).optional(),
+  userWhitelist: z.array(z.string()).optional()
+})
+
+const GetResponseSchema = z.object({
+  flags: FlagsSchema,
+  correlationId: z.string().uuid()
+})
+
+const PostResponseSchema = z.object({
+  success: z.boolean(),
+  flags: FlagsSchema,
+  correlationId: z.string().uuid()
+})
+
+it('should return valid GET response schema', async () => {
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    headers: { 'Authorization': 'Bearer admin-token' }
+  })
+  
+  const json = await response.json()
+  const result = GetResponseSchema.safeParse(json)
+  expect(result.success).toBe(true)
+})
+
+it('should return valid POST response schema', async () => {
+  const response = await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer admin-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ enabled: true })
+  })
+  
+  const json = await response.json()
+  const result = PostResponseSchema.safeParse(json)
+  expect(result.success).toBe(true)
+})
+```
+
+#### Scenario 3.10: Performance Validation
+
+**Given**: Server is running  
+**When**: GET/POST request to /api/admin/feature-flags  
+**Then**: 
+- GET responds within 500ms
+- POST responds within 1s
+
+```typescript
+it('should respond quickly to GET requests', async () => {
+  const start = Date.now()
+  await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    headers: { 'Authorization': 'Bearer admin-token' }
+  })
+  const duration = Date.now() - start
+  
+  expect(duration).toBeLessThan(500)
+})
+
+it('should respond quickly to POST requests', async () => {
+  const start = Date.now()
+  await fetch(`${BASE_URL}/api/admin/feature-flags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer admin-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ enabled: true })
+  })
+  const duration = Date.now() - start
+  
+  expect(duration).toBeLessThan(1000)
+})
+```
+
+---
+
+### 4. Future Endpoints
 
 As new API endpoints are added, follow this template:
 
