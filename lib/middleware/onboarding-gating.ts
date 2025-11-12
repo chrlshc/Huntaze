@@ -34,10 +34,16 @@ export interface GatingConfig {
  * Default messages for common steps
  */
 const DEFAULT_MESSAGES: Record<string, string> = {
-  email_verification: 'Vous devez vérifier votre email avant de continuer',
-  payments: 'Vous devez configurer les paiements avant de publier votre boutique',
-  theme: 'Vous devez configurer un thème avant de publier',
-  product: 'Vous devez ajouter au moins un produit avant de publier'
+  email_verification: 'You must verify your email before continuing',
+  payments: 'You must set up payments before you can publish',
+  theme: 'You must configure a theme before publishing',
+  product: 'You must add at least one product before publishing',
+  // Legacy Huntaze path
+  creator_assessment: 'Complete the quick assessment to personalize your experience',
+  goal_selection: 'Choose your goals to shape your setup path',
+  platforms_connect: 'Connect at least one platform before using this feature',
+  ai_setup: 'Configure your AI assistant before continuing',
+  autopilot_enable: 'Enable growth autopilot to activate automated campaigns'
 };
 
 /**
@@ -52,6 +58,27 @@ const DEFAULT_ACTIONS: Record<string, GatingBlockedResponse['action']> = {
     type: 'open_modal',
     modal: 'payments_setup',
     prefill: {}
+  },
+  // Legacy Huntaze path
+  creator_assessment: {
+    type: 'redirect',
+    url: '/onboarding/assessment'
+  },
+  goal_selection: {
+    type: 'redirect',
+    url: '/onboarding/goals'
+  },
+  platforms_connect: {
+    type: 'redirect',
+    url: '/connect/platforms'
+  },
+  ai_setup: {
+    type: 'redirect',
+    url: '/settings/ai'
+  },
+  autopilot_enable: {
+    type: 'redirect',
+    url: '/autopilot'
   },
   theme: {
     type: 'redirect',
@@ -84,7 +111,7 @@ function isNonCriticalRoute(path: string): boolean {
  */
 function getStepMessage(stepId: string, customMessage?: string): string {
   return customMessage || DEFAULT_MESSAGES[stepId] || 
-    `Vous devez compléter l'étape "${stepId}" avant de continuer`;
+    `You need to complete the "${stepId}" step before continuing`;
 }
 
 /**
@@ -254,7 +281,7 @@ export async function requireStep(
     return NextResponse.json(
       {
         error: 'PRECONDITION_REQUIRED',
-        message: 'Impossible de vérifier les prérequis. Veuillez réessayer.',
+        message: 'Unable to verify prerequisites. Please try again.',
         missingStep: requiredStep,
         action: { type: 'redirect' as const, url: '/onboarding' },
         correlationId

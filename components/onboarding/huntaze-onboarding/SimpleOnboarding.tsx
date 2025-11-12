@@ -5,6 +5,9 @@
  * 
  * Clean Shopify-style onboarding with questions and options.
  * Each question is a separate card with checkboxes.
+ * 
+ * NOTE: For the new 4-step wizard, use SetupWizard.tsx instead.
+ * This component is kept for backward compatibility.
  */
 
 import * as React from 'react';
@@ -24,16 +27,16 @@ interface Question {
 
 const QUESTIONS: Question[] = [
   {
-    id: 'selling_channels',
-    question: 'Where would you like to sell?',
-    subtitle: "We'll make sure you're set up to sell in these places",
+    id: 'huntaze_setup',
+    question: 'What should we set up first?',
+    subtitle: "We'll tailor Huntaze to your growth workflow",
     options: [
-      { id: 'online_store', title: 'An online store', description: 'Create a fully customizable website' },
-      { id: 'retail_store', title: 'In person at a retail store', description: 'Brick-and-mortar stores' },
-      { id: 'events', title: 'In person at events', description: 'Markets, fairs, and pop-ups' },
-      { id: 'existing_site', title: 'An existing website or blog', description: 'Add a Buy Button to your website' },
-      { id: 'social', title: 'Social media', description: 'Reach customers on Facebook, Instagram, TikTok, and more' },
-      { id: 'marketplaces', title: 'Online marketplaces', description: 'List products on Etsy, Amazon, and more' },
+      { id: 'platforms', title: 'Connect platforms', description: 'Instagram, TikTok, Reddit, X and more' },
+      { id: 'ai', title: 'AI assistant', description: 'Tone, reply rules and safety rails' },
+      { id: 'autopilot', title: 'Growth autopilot', description: 'Campaigns, sequences and smart triggers' },
+      { id: 'crm', title: 'Audience import', description: 'Contacts, labels and segments' },
+      { id: 'branding', title: 'Branding & profile', description: 'Logo, colors and bio' },
+      { id: 'analytics', title: 'Insights', description: 'Enable tracking and dashboards' },
     ],
   },
 ];
@@ -81,14 +84,14 @@ export default function SimpleOnboarding({ onComplete, onSkip }: SimpleOnboardin
 
   return (
     <div className="relative">
-      {/* Layered cards behind for Shopify effect */}
+      {/* Layered cards behind for Shopify effect - now with dark theme */}
       <div 
         aria-hidden 
-        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0,0,0,0.45)] -z-10" 
+        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 to-pink-950/40 backdrop-blur-sm shadow-[0_8px_40px_rgba(167,139,250,0.15)] -z-10" 
       />
       <div 
         aria-hidden 
-        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0,0,0,0.35)] -z-10" 
+        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 to-pink-950/30 backdrop-blur-sm shadow-[0_8px_40px_rgba(244,114,182,0.12)] -z-10" 
       />
 
       {/* Main card */}
@@ -96,13 +99,13 @@ export default function SimpleOnboarding({ onComplete, onSkip }: SimpleOnboardin
         role="dialog" 
         aria-labelledby="onb-title" 
         aria-describedby="onb-sub" 
-        className="relative rounded-2xl bg-white text-neutral-900 shadow-2xl ring-1 ring-black/5 p-5 sm:p-6 md:p-8"
+        className="relative rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-950 text-white shadow-2xl ring-1 ring-violet-500/20 p-5 sm:p-6 md:p-8"
       >
         <header className="mb-5 md:mb-6">
-          <h1 id="onb-title" className="text-xl md:text-2xl font-semibold">
+          <h1 id="onb-title" className="text-xl md:text-2xl font-semibold text-white">
             {question.question}
           </h1>
-          <p id="onb-sub" className="mt-1 text-sm text-neutral-600">
+          <p id="onb-sub" className="mt-1 text-sm text-neutral-400">
             {question.subtitle}
           </p>
         </header>
@@ -124,25 +127,25 @@ export default function SimpleOnboarding({ onComplete, onSkip }: SimpleOnboardin
                     }
                   }}
                   className={[
-                    'w-full text-left rounded-xl border p-4 md:p-5',
+                    'w-full text-left rounded-xl border p-4 md:p-5 transition-all',
                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400',
                     isActive
-                      ? 'border-violet-400/40 bg-violet-50'
-                      : 'border-neutral-200 hover:border-neutral-300',
+                      ? 'border-violet-500/60 bg-violet-500/10 shadow-lg shadow-violet-500/20'
+                      : 'border-neutral-700 hover:border-violet-500/40 bg-neutral-800/50',
                   ].join(' ')}
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="font-medium text-neutral-900">{opt.title}</p>
-                      <p className="text-sm text-neutral-600">{opt.description}</p>
+                      <p className="font-medium text-white">{opt.title}</p>
+                      <p className="text-sm text-neutral-400">{opt.description}</p>
                     </div>
                     <span
                       aria-hidden
                       className={[
-                        'inline-flex h-6 w-6 items-center justify-center rounded-md border',
+                        'inline-flex h-6 w-6 items-center justify-center rounded-md border transition-all',
                         isActive
-                          ? 'border-violet-600 bg-violet-600 text-white'
-                          : 'border-neutral-300 bg-white',
+                          ? 'border-violet-500 bg-violet-500 text-white shadow-lg shadow-violet-500/50'
+                          : 'border-neutral-600 bg-neutral-800',
                       ].join(' ')}
                     >
                       {isActive ? (
@@ -174,13 +177,13 @@ export default function SimpleOnboarding({ onComplete, onSkip }: SimpleOnboardin
         <footer className="mt-5 md:mt-6 flex items-center justify-between">
           <button
             onClick={onSkip}
-            className="text-sm font-medium text-violet-600 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 rounded-md px-1"
+            className="text-sm font-medium text-violet-400 hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 rounded-md px-1 transition-colors"
           >
             Skip customized setup →
           </button>
           <button
             onClick={handleNext}
-            className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-white shadow bg-violet-600 hover:bg-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
+            className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-white shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 transition-all"
           >
             Next
             <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden>

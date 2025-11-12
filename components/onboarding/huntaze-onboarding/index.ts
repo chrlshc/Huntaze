@@ -1,15 +1,9 @@
-/**
- * Shopify-Style Onboarding Components
- * 
- * Export all onboarding components for easy importing.
- */
-
+// Huntaze Onboarding Components
+export { default as SetupWizard } from './SetupWizard';
+export { default as SimpleOnboarding } from './SimpleOnboarding';
 export { default as SetupGuide } from './SetupGuide';
-export { default as SetupGuideContainer } from './SetupGuideContainer';
-export { default as StepItem } from './StepItem';
 export { default as ProgressIndicator } from './ProgressIndicator';
-export { default as CompletionNudge } from './CompletionNudge';
-export { default as GuardRailModal } from './GuardRailModal';
-export { ShopifyBackdrop } from './ShopifyBackdrop';
 export { useOnboarding } from './useOnboarding';
-export * from './types';
+
+// Types
+export type { SetupGuideProps } from './types';

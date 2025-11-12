@@ -17,6 +17,10 @@ export interface OnboardingStep {
   roleRestricted?: UserRole;
   completedAt?: string;
   completedBy?: string;
+  // Optional UX metadata to highlight value
+  badge?: string;            // e.g., "Quick win", "ROI+"
+  impact?: 'Low' | 'Medium' | 'High';
+  timeEstimate?: string;     // e.g., "2 min", "5 min"
 }
 
 export interface SetupGuideProps {

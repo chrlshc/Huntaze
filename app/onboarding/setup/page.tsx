@@ -83,10 +83,10 @@ export default function OnboardingSetupPage() {
           {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Welcome to Huntaze
+              Launch Huntaze Autopilot
             </h1>
             <p className="text-xl text-gray-600 mb-4">
-              Set up your platform in a few simple steps
+              Flip the switches below and start making money while you sleep
             </p>
             <button
               onClick={handleSkip}
