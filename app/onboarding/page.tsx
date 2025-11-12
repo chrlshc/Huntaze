@@ -3,16 +3,15 @@
 /**
  * Onboarding Page
  * 
- * Main onboarding flow using the new Huntaze onboarding system.
- * Displays the setup guide with all 8 steps for new users.
+ * Main onboarding flow using simple Shopify-style questions.
  * 
  * Requirements: 1.1, 1.2, 1.3
  */
 
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { SetupGuideContainer } from '@/components/onboarding/huntaze-onboarding';
 import { ShopifyBackdrop } from '@/components/onboarding/huntaze-onboarding/ShopifyBackdrop';
+import SimpleOnboarding from '@/components/onboarding/huntaze-onboarding/SimpleOnboarding';
 
 export default function OnboardingPage() {
   const searchParams = useSearchParams();
@@ -37,54 +36,20 @@ export default function OnboardingPage() {
     router.push('/join');
   }, [token, router]);
 
-  const handleLearnMore = (stepId: string) => {
-    console.log('[Onboarding] Learn more:', stepId);
-    // TODO: Open help modal or documentation
+  const handleComplete = (answers: Record<string, string[]>) => {
+    console.log('[Onboarding] Answers:', answers);
+    // TODO: Save answers to backend
+    router.push('/dashboard');
   };
 
-  const handleComplete = () => {
+  const handleSkip = () => {
     router.push('/dashboard');
   };
 
   return (
     <ShopifyBackdrop accent1="#a78bfa" accent2="#f472b6">
-      <div className="w-full max-w-2xl">
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-white mb-3">
-            Welcome to Huntaze
-          </h1>
-          <p className="text-base text-gray-400">
-            Set up your platform in a few simple steps
-          </p>
-          <button
-            onClick={handleComplete}
-            className="mt-4 text-sm text-gray-400 hover:text-gray-300 underline transition-colors"
-          >
-            Skip onboarding for now
-          </button>
-        </div>
-
-        {/* Onboarding Guide */}
-        <SetupGuideContainer
-          userId="demo-user"
-          userRole="owner"
-          market="US"
-          onLearnMore={handleLearnMore}
-          onError={(error) => {
-            console.error('[Onboarding] Error:', error);
-          }}
-        />
-
-        {/* Complete Button */}
-        <div className="mt-8 text-center">
-          <button
-            onClick={handleComplete}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-100 text-gray-900 rounded-lg font-medium transition-colors text-sm"
-          >
-            Go to Dashboard
-          </button>
-        </div>
+      <div className="w-full max-w-3xl">
+        <SimpleOnboarding onComplete={handleComplete} onSkip={handleSkip} />
       </div>
     </ShopifyBackdrop>
   );
