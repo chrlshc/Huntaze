@@ -103,7 +103,7 @@ async function requireStep(
     // Fail closed for critical routes
     return {
       error: 'PRECONDITION_REQUIRED',
-      message: 'Impossible de vérifier les prérequis. Veuillez réessayer.',
+      message: 'Unable to verify prerequisites. Please try again.',
       missingStep: requiredStep,
       action: { type: 'redirect' as const, url: '/onboarding' },
       correlationId: 'error-correlation-id',
@@ -354,7 +354,7 @@ describe('Gating Logic', () => {
       expect(result).not.toBeNull();
       expect(result?.error).toBe('PRECONDITION_REQUIRED');
       expect(result?.message).toBe(
-        'Impossible de vérifier les prérequis. Veuillez réessayer.'
+        'Unable to verify prerequisites. Please try again.'
       );
     });
 

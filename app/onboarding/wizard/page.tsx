@@ -9,7 +9,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import SetupWizard from '@/components/onboarding/huntaze-onboarding/SetupWizard';
+import SetupWizardSimple from '@/components/onboarding/huntaze-onboarding/SetupWizardSimple';
 import { ShopifyBackdrop } from '@/components/ui';
 
 export default function WizardPage() {
@@ -98,7 +98,7 @@ export default function WizardPage() {
               </div>
             </div>
           ) : (
-            <SetupWizard onComplete={handleComplete} onSkip={handleSkip} />
+            <SetupWizardSimple onComplete={handleComplete} onSkip={handleSkip} />
           )}
         </div>
       </div>
