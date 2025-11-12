@@ -26,6 +26,42 @@ interface OnboardingState {
   error: Error | null;
 }
 
+// Default fallback steps when API fails
+const DEFAULT_STEPS: OnboardingStep[] = [
+  {
+    id: 'theme',
+    title: 'Customize your theme',
+    description: 'Choose colors and branding for your store',
+    status: 'todo',
+    required: false,
+    version: 1,
+  },
+  {
+    id: 'domain',
+    title: 'Set up your domain',
+    description: 'Connect a custom domain to your store',
+    status: 'todo',
+    required: false,
+    version: 1,
+  },
+  {
+    id: 'payments',
+    title: 'Configure payments',
+    description: 'Set up payment methods for your customers',
+    status: 'todo',
+    required: true,
+    version: 1,
+  },
+  {
+    id: 'products',
+    title: 'Add your first product',
+    description: 'Create and publish your first product',
+    status: 'todo',
+    required: false,
+    version: 1,
+  },
+];
+
 export function useOnboarding({
   userId,
   market,
@@ -67,7 +103,14 @@ export function useOnboarding({
       });
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Unknown error');
-      setState((prev) => ({ ...prev, loading: false, error: err }));
+      // Use default steps as fallback
+      setState({
+        steps: DEFAULT_STEPS,
+        progress: 0,
+        loading: false,
+        error: null, // Don't show error, just use fallback
+      });
+      console.warn('[Onboarding] API failed, using default steps:', err.message);
       onError?.(err);
     }
   }, [market, onError]);
