@@ -31,8 +31,8 @@ export default function WizardPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to complete wizard');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Service temporarily unavailable');
       }
 
       const config = await response.json();
@@ -54,9 +54,14 @@ export default function WizardPage() {
       router.push('/dashboard?wizard_complete=true');
     } catch (err) {
       console.error('Wizard error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Service temporarily unavailable');
       setIsSubmitting(false);
     }
+  };
+
+  const handleContinueAnyway = () => {
+    // Continue to dashboard even if wizard failed
+    router.push('/dashboard?wizard_skipped=true');
   };
 
   const handleSkip = () => {
@@ -74,14 +79,22 @@ export default function WizardPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-2xl">
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
-              <p className="text-sm font-medium">Error: {error}</p>
-              <button
-                onClick={() => setError(null)}
-                className="mt-2 text-xs underline hover:no-underline"
-              >
-                Dismiss
-              </button>
+            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+              <p className="text-sm font-medium text-red-400 mb-3">{error}</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleContinueAnyway}
+                  className="flex-1 px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-sm font-medium transition-all"
+                >
+                  Continue to Dashboard
+                </button>
+                <button
+                  onClick={() => setError(null)}
+                  className="px-4 py-2 rounded-lg border border-neutral-700 hover:border-neutral-600 text-neutral-400 text-sm transition-all"
+                >
+                  Try Again
+                </button>
+              </div>
             </div>
           )}
 
