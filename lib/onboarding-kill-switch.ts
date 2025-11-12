@@ -138,6 +138,11 @@ export async function subscribeToKillSwitchUpdates(): Promise<void> {
     // Subscribe to updates
     await redis.subscribe(KILL_SWITCH_CHANNEL, (message) => {
       try {
+        if (typeof message !== 'string') {
+          console.error('[Kill Switch] Invalid message type:', typeof message);
+          return;
+        }
+        
         const update = JSON.parse(message);
         cachedKillSwitch = update.active;
         cacheTimestamp = Date.now();
