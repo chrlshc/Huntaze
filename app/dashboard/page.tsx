@@ -6,6 +6,7 @@ import StatsOverview from '@/components/dashboard/StatsOverview';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import QuickActions from '@/components/dashboard/QuickActions';
 import PerformanceCharts from '@/components/dashboard/PerformanceCharts';
+import { SetupGuideContainer } from '@/components/onboarding/huntaze-onboarding';
 
 /**
  * Dashboard Page
@@ -38,6 +39,18 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content - Left Column (2/3) */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Onboarding Guide */}
+            <Suspense fallback={<OnboardingSkeleton />}>
+              <SetupGuideContainer
+                userId="demo-user"
+                userRole="owner"
+                market="FR"
+                onLearnMore={(stepId) => {
+                  console.log('[Dashboard] Learn more:', stepId);
+                }}
+              />
+            </Suspense>
+
             {/* Stats Overview */}
             <Suspense fallback={<StatsOverviewSkeleton />}>
               <StatsOverview />
@@ -83,6 +96,23 @@ export default function DashboardPage() {
 }
 
 // Loading Skeletons
+function OnboardingSkeleton() {
+  return (
+    <div className="bg-theme-surface rounded-2xl p-4 border border-theme-border animate-pulse">
+      <div className="flex items-center justify-between mb-4">
+        <div className="h-6 bg-theme-border rounded w-40"></div>
+        <div className="h-4 bg-theme-border rounded w-20"></div>
+      </div>
+      <div className="h-2 bg-theme-border rounded mb-4"></div>
+      <div className="space-y-2">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-20 bg-theme-border rounded-xl"></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function StatsOverviewSkeleton() {
   return (
     <div className="bg-theme-surface rounded-xl p-6 border border-theme-border animate-pulse">
