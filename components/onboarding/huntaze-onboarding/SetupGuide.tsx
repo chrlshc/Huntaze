@@ -22,26 +22,26 @@ export default function SetupGuide({
 }: SetupGuideProps) {
   return (
     <div className="relative">
-      {/* Layered cards behind for Shopify effect */}
+      {/* Layered cards behind for Shopify effect - dark theme */}
       <div 
         aria-hidden 
-        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0,0,0,0.45)] -z-10" 
+        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 to-pink-950/40 backdrop-blur-sm shadow-[0_8px_40px_rgba(167,139,250,0.15)] -z-10" 
       />
       <div 
         aria-hidden 
-        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0,0,0,0.35)] -z-10" 
+        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 to-pink-950/30 backdrop-blur-sm shadow-[0_8px_40px_rgba(244,114,182,0.12)] -z-10" 
       />
       
       {/* Main card */}
-      <div className="relative rounded-2xl bg-white text-neutral-900 shadow-2xl ring-1 ring-black/5 p-5 sm:p-6 md:p-8">
+      <div className="relative rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-950 text-white shadow-2xl ring-1 ring-violet-500/20 p-5 sm:p-6 md:p-8">
         {/* Header */}
         <header className="mb-5 md:mb-6">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl md:text-2xl font-semibold">
-              Setup Guide
+            <h2 className="text-xl md:text-2xl font-semibold text-white">
+              Growth Setup
             </h2>
             <span 
-              className="text-sm font-medium text-neutral-600"
+              className="text-sm font-medium text-neutral-400"
               aria-label={`${progress} percent complete`}
             >
               {progress}% complete
@@ -50,7 +50,7 @@ export default function SetupGuide({
 
           {/* Progress Bar */}
           <div 
-            className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden"
+            className="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden"
             role="progressbar"
             aria-valuenow={progress}
             aria-valuemin={0}
@@ -58,7 +58,7 @@ export default function SetupGuide({
             aria-label="Setup progress"
           >
             <div
-              className="bg-green-600 h-1.5 rounded-full transition-all duration-500 ease-out"
+              className="bg-gradient-to-r from-violet-500 to-pink-500 h-1.5 rounded-full transition-all duration-500 ease-out shadow-lg shadow-violet-500/50"
               style={{ 
                 width: `${progress}%`,
               }}
@@ -82,7 +82,7 @@ export default function SetupGuide({
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-20 rounded-xl bg-neutral-100 animate-pulse"
+                className="h-20 rounded-xl bg-neutral-800/50 animate-pulse"
                 aria-label="Loading steps"
               />
             ))}
