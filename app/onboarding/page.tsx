@@ -68,10 +68,10 @@ export default function OnboardingPage() {
           {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Bienvenue sur Huntaze
+              Welcome to Huntaze
             </h1>
             <p className="text-xl text-gray-600">
-              Configurez votre plateforme en quelques étapes simples
+              Set up your platform in a few simple steps
             </p>
           </div>
 
@@ -79,8 +79,11 @@ export default function OnboardingPage() {
           <SetupGuideContainer
             userId="demo-user"
             userRole="owner"
-            market="FR"
+            market="US"
             onLearnMore={handleLearnMore}
+            onError={(error) => {
+              console.error('[Onboarding] Error:', error);
+            }}
           />
 
           {/* Complete Button */}
@@ -89,7 +92,7 @@ export default function OnboardingPage() {
               onClick={handleComplete}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
             >
-              Aller au tableau de bord
+              Go to Dashboard
             </button>
           </div>
         </div>
