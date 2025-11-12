@@ -71,10 +71,10 @@ export default function ShopifyStyleOnboardingPage() {
       <div className="border-b border-border-default bg-surface-raised">
         <div className="container mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold text-content-primary">
-            Configuration Huntaze
+            Huntaze Setup
           </h1>
           <p className="text-sm text-content-secondary mt-1">
-            Guide de configuration flexible pour démarrer rapidement
+            Flexible setup guide to get started quickly
           </p>
         </div>
       </div>
@@ -109,27 +109,27 @@ export default function ShopifyStyleOnboardingPage() {
             {/* Demo Info Card */}
             <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
-                📊 État de la démo
+                📊 Demo status
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-content-secondary">Progression:</span>
+                  <span className="text-content-secondary">Progress:</span>
                   <span className="font-medium text-content-primary">{mockProgress}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-content-secondary">Étapes restantes:</span>
+                  <span className="text-content-secondary">Steps remaining:</span>
                   <span className="font-medium text-content-primary">{mockRemainingSteps}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-content-secondary">Reports utilisés:</span>
+                  <span className="text-content-secondary">Snoozes used:</span>
                   <span className="font-medium text-content-primary">{snoozeCount}/3</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-content-secondary">Rôle:</span>
+                  <span className="text-content-secondary">Role:</span>
                   <span className="font-medium text-content-primary capitalize">{mockUser.role}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-content-secondary">Marché:</span>
+                  <span className="text-content-secondary">Market:</span>
                   <span className="font-medium text-content-primary">{mockUser.market}</span>
                 </div>
               </div>
@@ -138,17 +138,17 @@ export default function ShopifyStyleOnboardingPage() {
             {/* Demo Actions Card */}
             <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
-                🎮 Actions de test
+                🎮 Test actions
               </h3>
               <div className="space-y-2">
                 <button
                   onClick={simulateGatedAction}
                   className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium"
                 >
-                  Tester Guard-Rail Modal
+                  Test Guard-Rail Modal
                 </button>
                 <p className="text-xs text-content-secondary">
-                  Simule une action bloquée nécessitant une configuration préalable
+                  Simulates a blocked action requiring prior setup
                 </p>
               </div>
             </div>
@@ -156,32 +156,32 @@ export default function ShopifyStyleOnboardingPage() {
             {/* Features Card */}
             <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
-                ✨ Fonctionnalités
+                ✨ Features
               </h3>
               <ul className="space-y-2 text-sm text-content-secondary">
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
-                  <span>Onboarding non-bloquant</span>
+                  <span>Non-blocking onboarding</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
-                  <span>Étapes skip/snooze</span>
+                  <span>Skip/snooze steps</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
-                  <span>Guard-rails contextuels</span>
+                  <span>Contextual guard-rails</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
-                  <span>Permissions par rôle</span>
+                  <span>Role-based permissions</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
-                  <span>Accessibilité WCAG 2.1 AA</span>
+                  <span>WCAG 2.1 AA accessibility</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
-                  <span>Responsive mobile-first</span>
+                  <span>Mobile-first responsive</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 dark:text-green-400">✓</span>
@@ -209,11 +209,11 @@ export default function ShopifyStyleOnboardingPage() {
         {/* Documentation Link */}
         <div className="mt-8 p-4 rounded-xl border border-border-default bg-surface-muted">
           <p className="text-sm text-content-secondary">
-            📚 <strong>Documentation:</strong> Voir{' '}
+            📚 <strong>Documentation:</strong> See{' '}
             <code className="px-2 py-1 bg-surface-raised rounded text-xs">
               components/onboarding/shopify-style/README.md
             </code>{' '}
-            pour plus d'informations sur l'utilisation et l'intégration.
+            for more information on usage and integration.
           </p>
         </div>
       </div>
@@ -227,7 +227,7 @@ export default function ShopifyStyleOnboardingPage() {
         onClose={() => setShowGuardRail(false)}
         onComplete={() => {
           setShowGuardRail(false);
-          alert('Configuration complétée! En production, ceci mettrait à jour l\'état de l\'étape.');
+          alert('Setup completed! In production, this would update the step status.');
         }}
         correlationId="demo-correlation-id-123"
       />

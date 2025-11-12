@@ -110,7 +110,7 @@ export default function GuardRailModal({
       }
     } catch (err) {
       setRetryCount(prev => prev + 1);
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError('Something went wrong. Please try again.');
       console.error('[GuardRailModal] Action failed:', err, { correlationId });
     } finally {
       setLoading(false);
@@ -151,14 +151,14 @@ export default function GuardRailModal({
                 id="guard-rail-title"
                 className="text-lg font-semibold text-content-primary"
               >
-                Configuration requise
+                Setup required
               </h2>
             </div>
             <button
               ref={closeButtonRef}
               onClick={onClose}
               className="p-1 text-content-secondary hover:text-content-primary hover:bg-surface-muted rounded-lg transition-colors"
-              aria-label="Fermer"
+              aria-label="Close"
             >
               <X className="w-5 h-5" aria-hidden="true" />
             </button>
@@ -184,7 +184,7 @@ export default function GuardRailModal({
 
             {correlationId && (
               <p className="text-xs text-content-secondary">
-                ID de corrélation: {correlationId.slice(0, 8)}
+                Correlation ID: {correlationId.slice(0, 8)}
               </p>
             )}
           </div>
@@ -197,7 +197,7 @@ export default function GuardRailModal({
               size="md"
               disabled={loading}
             >
-              Annuler
+              Cancel
             </Button>
             <Button
               onClick={handleAction}
@@ -205,7 +205,7 @@ export default function GuardRailModal({
               size="md"
               loading={loading}
             >
-              {retryCount > 0 ? 'Réessayer' : 'Configurer maintenant'}
+              {retryCount > 0 ? 'Retry' : 'Set up now'}
             </Button>
           </div>
         </div>

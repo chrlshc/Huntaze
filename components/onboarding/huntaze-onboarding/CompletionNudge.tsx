@@ -71,10 +71,10 @@ export default function CompletionNudge({
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-content-primary">
-            Terminer la configuration ({remainingSteps})
+            Unlock Autopilot ({remainingSteps})
           </p>
           <p className="text-sm text-content-secondary">
-            Complétez les étapes restantes pour profiter pleinement de Huntaze
+            Turn on the top revenue drivers and let Huntaze sell for you
           </p>
         </div>
       </div>
@@ -87,10 +87,10 @@ export default function CompletionNudge({
             variant="ghost"
             size="sm"
             className="text-primary hover:bg-primary/10"
-            aria-label="Masquer pendant 7 jours"
+            aria-label="Snooze for 7 days"
           >
             <Clock className="w-4 h-4 mr-1" aria-hidden="true" />
-            Masquer 7 jours
+            Snooze 7 days
           </Button>
         )}
         
@@ -103,7 +103,7 @@ export default function CompletionNudge({
         <button
           onClick={handleDismiss}
           className="p-1.5 text-content-secondary hover:text-content-primary hover:bg-surface-muted rounded-lg transition-colors"
-          aria-label="Fermer"
+          aria-label="Close"
         >
           <X className="w-5 h-5" aria-hidden="true" />
         </button>
