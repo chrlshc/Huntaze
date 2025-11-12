@@ -1,0 +1,131 @@
+{
+  "dashboard": {
+    "title": "Huntaze Onboarding System",
+    "tags": ["onboarding", "production"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Overview - Active Users & Completion Rate",
+        "type": "stat",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 4 },
+        "targets": [
+          {
+            "expr": "onboarding_active_users_gauge",
+            "legendFormat": "Active Users"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "API Latency (p95)",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 4, "w": 24, "h": 8 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(onboarding_api_latency_ms_bucket[5m]))",
+            "legendFormat": "{{route}} - {{method}}"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency" }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "params": [500], "type": "gt" },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "params": [], "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "frequency": "1m",
+          "handler": 1,
+          "name": "High API Latency",
+          "noDataState": "no_data",
+          "notifications": []
+        }
+      },
+      {
+        "id": 3,
+        "title": "Error Rates (5xx vs 4xx)",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(onboarding_api_errors_total{status=\"5xx\"}[5m])",
+            "legendFormat": "5xx Errors"
+          },
+          {
+            "expr": "rate(onboarding_api_errors_total{status=\"4xx\"}[5m])",
+            "legendFormat": "4xx Errors"
+          }
+        ]
+      }
+    ]
+  }
+}
+,
+      {
+        "id": 4,
+        "title": "Gating - 409 Response Rate by Route",
+        "type": "graph",
+        "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(onboarding_gating_blocked_total[5m])",
+            "legendFormat": "{{route}} - {{step}}"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Cache Performance",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(onboarding_cache_hits_total[5m]) / (rate(onboarding_cache_hits_total[5m]) + rate(onboarding_cache_misses_total[5m]))",
+            "legendFormat": "Cache Hit Rate"
+          }
+        ],
+        "yaxes": [
+          { "format": "percentunit", "label": "Hit Rate", "min": 0, "max": 1 }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Analytics Drop Rate",
+        "type": "graph",
+        "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(onboarding_analytics_drops_total[5m]) / rate(onboarding_analytics_events_total[5m])",
+            "legendFormat": "Drop Rate"
+          }
+        ],
+        "yaxes": [
+          { "format": "percentunit", "label": "Drop Rate", "min": 0, "max": 1 }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "SLO Compliance",
+        "type": "table",
+        "gridPos": { "x": 0, "y": 28, "w": 24, "h": 8 },
+        "targets": [
+          {
+            "expr": "onboarding_slo_compliance",
+            "format": "table",
+            "instant": true
+          }
+        ]
+      }
+    ]
+  }
+}
