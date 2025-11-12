@@ -33,27 +33,16 @@ export default function StepItem({
   };
 
   return (
-    <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-xl border border-border-default p-3 hover:bg-surface-muted/50 transition-colors gap-3">
+    <li className="flex flex-col sm:flex-row sm:items-start sm:justify-between px-5 py-4 hover:bg-gray-50 transition-colors gap-3">
       {/* Step Info */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="font-medium text-content-primary">{step.title}</p>
-          
-          {/* Required Badge */}
-          {step.required && (
-            <span 
-              className="text-xs rounded bg-danger/10 text-danger px-2 py-0.5 border border-danger/20 whitespace-nowrap"
-              role="status"
-              aria-label="Required step"
-            >
-              Required
-            </span>
-          )}
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <h3 className="font-medium text-gray-900 text-sm">{step.title}</h3>
           
           {/* Done Icon */}
           {step.status === 'done' && (
             <CheckCircle 
-              className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" 
+              className="w-4 h-4 text-green-600 flex-shrink-0" 
               aria-label="Completed"
             />
           )}
@@ -61,7 +50,7 @@ export default function StepItem({
           {/* Skipped Badge */}
           {step.status === 'skipped' && (
             <span 
-              className="text-xs rounded bg-surface-muted text-content-secondary px-2 py-0.5 border border-border-default whitespace-nowrap"
+              className="text-xs rounded-full bg-gray-100 text-gray-600 px-2 py-0.5 whitespace-nowrap"
               role="status"
               aria-label="Skipped step"
             >
@@ -72,14 +61,14 @@ export default function StepItem({
         
         {/* Description */}
         {step.description && (
-          <p className="text-sm text-content-secondary mt-1">
+          <p className="text-sm text-gray-600 leading-relaxed">
             {step.description}
           </p>
         )}
         
         {/* Role Restriction Message */}
         {!canModify && (
-          <p className="text-sm text-primary mt-1 flex items-center gap-1">
+          <p className="text-sm text-blue-600 mt-2 flex items-center gap-1">
             <Info className="w-4 h-4" aria-hidden="true" />
             Ask the owner
           </p>
@@ -87,50 +76,39 @@ export default function StepItem({
         
         {/* Completion Info */}
         {step.status === 'done' && step.completedAt && (
-          <p className="text-xs text-content-secondary mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Completed on {new Date(step.completedAt).toLocaleDateString('en-US')}
           </p>
         )}
       </div>
 
       {/* Action Buttons */}
-      {canModify && (
-        <div className="flex gap-2 flex-wrap sm:flex-nowrap sm:ml-4">
-          {/* Complete Button */}
-          {step.status !== 'done' && (
-            <Button
-              onClick={() => handleUpdate('done')}
-              disabled={loading}
-              variant="outline"
-              size="sm"
-              className="border-primary text-primary hover:bg-primary/10"
-              aria-label={`Complete ${step.title}`}
-            >
-              Do it
-            </Button>
-          )}
-
+      {canModify && step.status === 'todo' && (
+        <div className="flex gap-2 flex-shrink-0">
           {/* Skip Button */}
-          {!step.required && step.status !== 'skipped' && (
+          {!step.required && (
             <Button
               onClick={() => handleUpdate('skipped')}
               disabled={loading}
-              variant="outline"
+              variant="ghost"
               size="sm"
+              className="text-gray-700 hover:bg-gray-100 text-sm font-normal"
               aria-label={`Skip ${step.title} for now (you can return to it from the dashboard)`}
             >
-              Skip
+              Skip for now
             </Button>
           )}
 
-          {/* Learn More Button */}
+          {/* Complete Button */}
           <Button
-            onClick={() => onLearnMore(step.id)}
-            variant="ghost"
+            onClick={() => handleUpdate('done')}
+            disabled={loading}
+            variant="default"
             size="sm"
-            aria-label={`Learn more about ${step.title}`}
+            className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-normal px-4"
+            aria-label={`Complete ${step.title}`}
           >
-            Learn more
+            {loading ? 'Loading...' : step.required ? 'Set up' : 'Do it'}
           </Button>
         </div>
       )}
