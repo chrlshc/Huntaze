@@ -46,33 +46,23 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full opacity-20 blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full opacity-20 blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="relative z-10 pt-16 pb-12 px-4 pb-safe">
-        <div className="max-w-4xl mx-auto">
-          {/* Logo */}
-          <div className="flex justify-center mb-12">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-600/25">
-                <span className="text-white font-bold text-2xl">H</span>
-              </div>
-              <span className="text-2xl font-bold text-gray-900">Huntaze</span>
-            </div>
-          </div>
-
+    <div className="min-h-screen bg-gray-900">
+      <div className="pt-12 pb-12 px-4">
+        <div className="max-w-2xl mx-auto">
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl font-semibold text-white mb-3">
               Welcome to Huntaze
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-base text-gray-400">
               Set up your platform in a few simple steps
             </p>
+            <button
+              onClick={handleComplete}
+              className="mt-4 text-sm text-gray-400 hover:text-gray-300 underline transition-colors"
+            >
+              Skip onboarding for now
+            </button>
           </div>
 
           {/* Onboarding Guide */}
@@ -90,7 +80,7 @@ export default function OnboardingPage() {
           <div className="mt-8 text-center">
             <button
               onClick={handleComplete}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-100 text-gray-900 rounded-lg font-medium transition-colors text-sm"
             >
               Go to Dashboard
             </button>
