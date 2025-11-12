@@ -87,16 +87,16 @@ export default function SetupGuideContainer({
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-content-primary mb-1">
-              Erreur de chargement
+              Loading Error
             </h3>
             <p className="text-sm text-content-secondary mb-3">
-              {error.message || 'Impossible de charger le guide de configuration'}
+              {error.message || 'Unable to load setup guide'}
             </p>
             <button
               onClick={retry}
               className="text-sm font-medium text-primary hover:text-primary-hover underline"
             >
-              Réessayer
+              Retry
             </button>
           </div>
         </div>
