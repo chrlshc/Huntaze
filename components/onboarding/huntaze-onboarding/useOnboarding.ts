@@ -34,6 +34,7 @@ const DEFAULT_STEPS: OnboardingStep[] = [
     description: 'Choose colors and branding for your store',
     status: 'todo',
     required: false,
+    weight: 1,
     version: 1,
   },
   {
@@ -42,6 +43,7 @@ const DEFAULT_STEPS: OnboardingStep[] = [
     description: 'Connect a custom domain to your store',
     status: 'todo',
     required: false,
+    weight: 2,
     version: 1,
   },
   {
@@ -50,6 +52,7 @@ const DEFAULT_STEPS: OnboardingStep[] = [
     description: 'Set up payment methods for your customers',
     status: 'todo',
     required: true,
+    weight: 3,
     version: 1,
   },
   {
@@ -58,6 +61,7 @@ const DEFAULT_STEPS: OnboardingStep[] = [
     description: 'Create and publish your first product',
     status: 'todo',
     required: false,
+    weight: 4,
     version: 1,
   },
 ];
