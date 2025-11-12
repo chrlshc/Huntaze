@@ -21,10 +21,10 @@ interface ProgressIndicatorProps {
 }
 
 const MILESTONES = [
-  { value: 25, label: 'Bon début!', icon: '🎯' },
-  { value: 50, label: 'À mi-chemin!', icon: '🚀' },
-  { value: 75, label: 'Presque fini!', icon: '⭐' },
-  { value: 100, label: 'Terminé!', icon: '🎉' },
+  { value: 25, label: 'Great start!', icon: '🎯' },
+  { value: 50, label: 'Halfway there!', icon: '🚀' },
+  { value: 75, label: 'Almost done!', icon: '⭐' },
+  { value: 100, label: 'Complete!', icon: '🎉' },
 ];
 
 export default function ProgressIndicator({
@@ -61,12 +61,12 @@ export default function ProgressIndicator({
         <div className="flex items-center gap-2">
           <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
           <span className="text-content-secondary">
-            {completedSteps} sur {totalSteps} étapes
+            {completedSteps} of {totalSteps} steps
           </span>
         </div>
         <span 
           className="font-semibold text-content-primary"
-          aria-label={`${progress} pourcent complété`}
+          aria-label={`${progress} percent complete`}
         >
           {progress}%
         </span>
@@ -80,7 +80,7 @@ export default function ProgressIndicator({
           aria-valuenow={progress}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label="Progression de la configuration"
+          aria-label="Setup progress"
         >
           {/* Animated Progress Fill */}
           <div
@@ -140,8 +140,8 @@ export default function ProgressIndicator({
         aria-live="polite" 
         aria-atomic="true"
       >
-        Progression: {progress}%. {completedSteps} étapes complétées sur {totalSteps}.
-        {totalSteps - completedSteps > 0 && ` ${totalSteps - completedSteps} étapes restantes.`}
+        Progress: {progress}%. {completedSteps} steps completed out of {totalSteps}.
+        {totalSteps - completedSteps > 0 && ` ${totalSteps - completedSteps} steps remaining.`}
       </div>
 
       <style jsx>{`
