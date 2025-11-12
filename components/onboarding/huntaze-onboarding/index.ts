@@ -1,5 +1,6 @@
 // Huntaze Onboarding Components
 export { default as SetupWizard } from './SetupWizard';
+export { default as SetupWizardSimple } from './SetupWizardSimple';
 export { default as SimpleOnboarding } from './SimpleOnboarding';
 export { default as SetupGuide } from './SetupGuide';
 export { default as SetupGuideContainer } from './SetupGuideContainer';

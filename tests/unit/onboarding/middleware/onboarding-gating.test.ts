@@ -84,7 +84,7 @@ class OnboardingGatingMiddleware {
 
       return {
         error: 'PRECONDITION_REQUIRED',
-        message: 'Impossible de vérifier les prérequis. Veuillez réessayer.',
+        message: 'Unable to verify prerequisites. Please try again.',
         missingStep: requiredStep,
         correlationId,
       };
@@ -224,7 +224,7 @@ describe('Onboarding Gating Middleware', () => {
       expect(result).not.toBeNull();
       expect(result?.error).toBe('PRECONDITION_REQUIRED');
       expect(result?.message).toBe(
-        'Impossible de vérifier les prérequis. Veuillez réessayer.'
+        'Unable to verify prerequisites. Please try again.'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
