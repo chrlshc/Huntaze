@@ -1,0 +1,199 @@
+# Database Backup Configuration for Huntaze Onboarding
+# 
+# This configuration defines the backup strategy including:
+# - Continuous backup schedule
+# - Retention policies
+# - Point-in-time recovery settings
+
+version: "1.0"
+service: "huntaze-onboarding"
+
+# Backup Schedule
+schedule:
+  # Daily snapshots at 2 AM UTC
+  daily_snapshot:
+    enabled: true
+    time: "02:00"
+    timezone: "UTC"
+    
+  # Weekly full backups on Sunday at 3 AM UTC
+  weekly_full:
+    enabled: true
+    day: "sunday"
+    time: "03:00"
+    timezone: "UTC"
+    
+  # Pre-migration backups (manual trigger)
+  pre_migration:
+    enabled: true
+    trigger: "manual"
+
+# Retention Policy
+retention:
+  # Keep daily snapshots for 30 days
+  daily_snapshots:
+    count: 30
+    unit: "days"
+    
+  # Keep weekly backups for 12 weeks (3 months)
+  weekly_backups:
+    count: 12
+    unit: "weeks"
+    
+  # Keep monthly backups for 12 months (1 year)
+  monthly_backups:
+    count: 12
+    unit: "months"
+    
+  # Pre-migration backups kept indefinitely
+  pre_migration_backups:
+    retention: "indefinite"
+
+# Point-in-Time Recovery (PITR)
+pitr:
+  enabled: true
+  
+  # WAL (Write-Ahead Log) archiving
+  wal_archiving:
+    enabled: true
+    archive_mode: "on"
+    archive_command: "test ! -f /backups/wal/%f && cp %p /backups/wal/%f"
+    
+  # Recovery window (how far back we can restore)
+  recovery_window:
+    duration: 7
+    unit: "days"
+    
+  # WAL retention
+  wal_retention:
+    duration: 7
+    unit: "days"
+
+# Backup Storage
+storage:
+  # Primary backup location
+  primary:
+    type: "local"
+    path: "/backups"
+    
+  # Secondary backup location (optional)
+  secondary:
+    type: "s3"
+    bucket: "huntaze-db-backups"
+    region: "eu-west-1"
+    prefix: "onboarding/"
+    enabled: false  # Enable for production
+    
+  # Compression
+  compression:
+    enabled: true
+    algorithm: "gzip"
+    level: 6  # 1-9, higher = better compression but slower
+
+# Backup Verification
+verification:
+  # Verify backup integrity weekly
+  enabled: true
+  schedule: "weekly"
+  day: "monday"
+  time: "04:00"
+  
+  # Test restore on staging
+  test_restore:
+    enabled: true
+    frequency: "weekly"
+    environment: "staging"
+
+# Notifications
+notifications:
+  # Notify on backup success
+  on_success:
+    enabled: false
+    channels: ["slack"]
+    
+  # Notify on backup failure
+  on_failure:
+    enabled: true
+    channels: ["slack", "email", "pagerduty"]
+    recipients:
+      - "ops-team@huntaze.com"
+      
+  # Notify on verification failure
+  on_verification_failure:
+    enabled: true
+    channels: ["slack", "email", "pagerduty"]
+    recipients:
+      - "ops-team@huntaze.com"
+
+# Backup Monitoring
+monitoring:
+  # Track backup metrics
+  metrics:
+    enabled: true
+    
+    # Metrics to track
+    track:
+      - backup_duration_seconds
+      - backup_size_bytes
+      - backup_success_total
+      - backup_failure_total
+      - verification_success_total
+      - verification_failure_total
+      
+  # Alerts
+  alerts:
+    # Alert if backup fails
+    - name: "backup_failed"
+      condition: "backup_failure_total > 0"
+      severity: "critical"
+      
+    # Alert if backup takes too long
+    - name: "backup_slow"
+      condition: "backup_duration_seconds > 1800"  # 30 minutes
+      severity: "warning"
+      
+    # Alert if verification fails
+    - name: "verification_failed"
+      condition: "verification_failure_total > 0"
+      severity: "critical"
+
+# Backup Tables
+tables:
+  # Tables to include in backups
+  include:
+    - "onboarding_step_definitions"
+    - "user_onboarding"
+    - "onboarding_events"
+    
+  # Backup order (for restore)
+  order:
+    - "onboarding_step_definitions"  # First (no dependencies)
+    - "user_onboarding"              # Second (depends on step_definitions)
+    - "onboarding_events"            # Third (depends on user_onboarding)
+
+# Restore Configuration
+restore:
+  # Restore validation
+  validation:
+    enabled: true
+    checks:
+      - "table_exists"
+      - "row_count"
+      - "foreign_keys"
+      - "indexes"
+      
+  # Post-restore actions
+  post_restore:
+    - "ANALYZE onboarding_step_definitions"
+    - "ANALYZE user_onboarding"
+    - "ANALYZE onboarding_events"
+    - "REINDEX TABLE onboarding_step_definitions"
+    - "REINDEX TABLE user_onboarding"
+    - "REINDEX TABLE onboarding_events"
+
+# Documentation
+documentation:
+  backup_procedure: "https://docs.huntaze.com/operations/backup-procedure"
+  restore_procedure: "https://docs.huntaze.com/operations/restore-procedure"
+  pitr_guide: "https://docs.huntaze.com/operations/point-in-time-recovery"
+  runbook: "https://docs.huntaze.com/runbooks/database-backup"

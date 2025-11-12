@@ -1,0 +1,200 @@
+# Service Level Objectives (SLOs) for Huntaze Onboarding System
+# These SLOs define the performance and reliability targets for production
+
+version: "1.0"
+service: "huntaze-onboarding"
+
+# Global SLO settings
+global:
+  measurement_window: "30d"  # 30-day rolling window for availability
+  evaluation_interval: "1h"  # Calculate SLO compliance every hour
+
+# Service Level Objectives
+slos:
+  # Latency SLOs
+  - name: "api_latency_get_onboarding"
+    description: "p95 latency for GET /api/onboarding endpoint"
+    metric: "onboarding_api_latency_ms"
+    labels:
+      route: "/api/onboarding"
+      method: "GET"
+    percentile: 95
+    target: 300  # milliseconds
+    threshold: 500  # warning threshold
+    window: "5m"
+    severity: "warning"
+    
+  - name: "api_latency_patch_step"
+    description: "p95 latency for PATCH /api/onboarding/steps/:id endpoint"
+    metric: "onboarding_api_latency_ms"
+    labels:
+      route: "/api/onboarding/steps/:id"
+      method: "PATCH"
+    percentile: 95
+    target: 300  # milliseconds
+    threshold: 500  # warning threshold
+    window: "5m"
+    severity: "warning"
+    
+  - name: "api_latency_snooze"
+    description: "p95 latency for POST /api/onboarding/snooze endpoint"
+    metric: "onboarding_api_latency_ms"
+    labels:
+      route: "/api/onboarding/snooze"
+      method: "POST"
+    percentile: 95
+    target: 300  # milliseconds
+    threshold: 500  # warning threshold
+    window: "5m"
+    severity: "warning"
+
+  # Error Rate SLOs
+  - name: "error_rate_5xx"
+    description: "5xx error rate across all onboarding endpoints"
+    metric: "onboarding_api_errors_total"
+    labels:
+      status: "5xx"
+    target: 0.005  # 0.5% error rate
+    threshold: 0.01  # 1% warning threshold
+    window: "5m"
+    severity: "critical"
+    
+  - name: "error_rate_4xx"
+    description: "4xx error rate across all onboarding endpoints"
+    metric: "onboarding_api_errors_total"
+    labels:
+      status: "4xx"
+    target: 0.05  # 5% error rate
+    threshold: 0.10  # 10% warning threshold
+    window: "5m"
+    severity: "warning"
+
+  # Availability SLO
+  - name: "availability"
+    description: "Overall system availability (uptime)"
+    metric: "onboarding_uptime_percent"
+    target: 99.9  # 99.9% uptime
+    threshold: 99.5  # warning threshold
+    window: "30d"
+    severity: "critical"
+    allowed_downtime_per_month: "43m"  # ~43 minutes per 30 days
+
+  # Gating Performance SLO
+  - name: "gating_409_rate"
+    description: "Rate of 409 responses from gating middleware"
+    metric: "onboarding_gating_blocked_total"
+    target: 0.10  # 10% of requests
+    threshold: 0.20  # 20% warning threshold
+    window: "10m"
+    severity: "warning"
+    note: "High 409 rates may indicate UX issues or misconfigured steps"
+
+  # Cache Performance SLO
+  - name: "cache_hit_rate"
+    description: "Redis cache hit rate for onboarding queries"
+    metric: "onboarding_cache_hit_rate"
+    target: 0.80  # 80% cache hit rate
+    threshold: 0.60  # 60% warning threshold
+    window: "15m"
+    severity: "warning"
+
+  # Analytics Reliability SLO
+  - name: "analytics_drop_rate"
+    description: "Rate of failed analytics event tracking"
+    metric: "onboarding_analytics_drops_total"
+    target: 0.05  # 5% drop rate
+    threshold: 0.10  # 10% warning threshold
+    window: "15m"
+    severity: "warning"
+
+# SLO Compliance Reporting
+reporting:
+  # Where to send SLO compliance reports
+  destinations:
+    - type: "slack"
+      channel: "#onboarding-slo"
+      frequency: "daily"
+      
+    - type: "email"
+      recipients:
+        - "ops-team@huntaze.com"
+      frequency: "weekly"
+      
+  # What to include in reports
+  include:
+    - current_compliance
+    - trend_7d
+    - trend_30d
+    - violations_count
+    - time_to_recovery
+
+# Alert Configuration
+alerts:
+  # Critical alerts (PagerDuty)
+  critical:
+    - slo: "error_rate_5xx"
+      condition: "breach"
+      duration: "5m"
+      destination: "pagerduty"
+      
+    - slo: "availability"
+      condition: "breach"
+      duration: "10m"
+      destination: "pagerduty"
+      
+  # Warning alerts (Slack)
+  warning:
+    - slo: "api_latency_get_onboarding"
+      condition: "threshold"
+      duration: "10m"
+      destination: "slack"
+      
+    - slo: "api_latency_patch_step"
+      condition: "threshold"
+      duration: "10m"
+      destination: "slack"
+      
+    - slo: "gating_409_rate"
+      condition: "threshold"
+      duration: "10m"
+      destination: "slack"
+      
+    - slo: "cache_hit_rate"
+      condition: "threshold"
+      duration: "15m"
+      destination: "slack"
+      
+    - slo: "analytics_drop_rate"
+      condition: "threshold"
+      duration: "15m"
+      destination: "slack"
+
+# Error Budget
+error_budget:
+  # How much downtime/errors are acceptable per period
+  calculation_method: "consumption_based"
+  
+  budgets:
+    - slo: "availability"
+      period: "30d"
+      budget: 0.1  # 0.1% downtime allowed (43 minutes)
+      
+    - slo: "error_rate_5xx"
+      period: "30d"
+      budget: 0.5  # 0.5% error rate allowed
+      
+  # Actions when error budget is exhausted
+  policies:
+    - condition: "budget_exhausted"
+      action: "freeze_deployments"
+      notify: ["ops-team@huntaze.com"]
+      
+    - condition: "budget_50_percent"
+      action: "notify"
+      notify: ["product-team@huntaze.com"]
+
+# Documentation
+documentation:
+  runbook_url: "https://docs.huntaze.com/runbooks/onboarding"
+  dashboard_url: "https://grafana.huntaze.com/d/onboarding"
+  incident_response: "https://docs.huntaze.com/incident-response"
