@@ -29,12 +29,19 @@ import { OnboardingEventsRepository } from '@/lib/db/repositories/onboarding-eve
 
 /**
  * Retry configuration for transient failures
+ * 
+ * @property maxAttempts - Maximum number of retry attempts (default: 3)
+ * @property initialDelayMs - Initial delay before first retry in milliseconds (default: 100ms)
+ * @property maxDelayMs - Maximum delay between retries in milliseconds (default: 1000ms)
+ * @property backoffFactor - Exponential backoff multiplier (default: 2x)
+ * @property timeoutMs - Maximum time to wait for a single operation (default: 5000ms)
  */
 const RETRY_CONFIG = {
   maxAttempts: 3,
   initialDelayMs: 100,
   maxDelayMs: 1000,
-  backoffFactor: 2
+  backoffFactor: 2,
+  timeoutMs: 5000
 } as const;
 
 /**
@@ -121,6 +128,34 @@ export interface TrackingResult {
   correlationId: string;
   error?: string;
   retryCount?: number;
+  debounced?: boolean;
+  skippedReason?: 'no_consent' | 'debounced' | 'validation_error';
+}
+
+/**
+ * API Response types for external integrations
+ */
+export interface AnalyticsAPIResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+  correlationId: string;
+  timestamp: string;
+}
+
+/**
+ * Batch tracking response
+ */
+export interface BatchTrackingResponse {
+  totalEvents: number;
+  successCount: number;
+  failureCount: number;
+  results: TrackingResult[];
+  correlationId: string;
 }
 
 /**
@@ -192,7 +227,52 @@ export function generateCorrelationId(): string {
 }
 
 /**
- * Retry helper with exponential backoff
+ * Timeout wrapper for async operations
+ */
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  context: string
+): Promise<T> {
+  let timeoutId: NodeJS.Timeout;
+  
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`${context} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+  
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    clearTimeout(timeoutId!);
+  }
+}
+
+/**
+ * Check if error is retryable (transient network/database error)
+ */
+function isRetryableError(error: Error): boolean {
+  const retryablePatterns = [
+    /ECONNREFUSED/i,
+    /ETIMEDOUT/i,
+    /ENOTFOUND/i,
+    /ENETUNREACH/i,
+    /connection.*terminated/i,
+    /connection.*reset/i,
+    /deadlock/i,
+    /lock.*timeout/i,
+    /too many connections/i
+  ];
+  
+  return retryablePatterns.some(pattern => pattern.test(error.message));
+}
+
+/**
+ * Retry helper with exponential backoff and timeout
+ * 
+ * Automatically retries transient failures (network, database locks) but
+ * fails fast on validation errors or non-retryable errors.
  */
 async function retryWithBackoff<T>(
   fn: () => Promise<T>,
@@ -204,13 +284,19 @@ async function retryWithBackoff<T>(
   
   for (let attempt = 1; attempt <= RETRY_CONFIG.maxAttempts; attempt++) {
     try {
-      return await fn();
+      // Wrap operation with timeout
+      return await withTimeout(
+        fn(),
+        RETRY_CONFIG.timeoutMs,
+        context
+      );
     } catch (error) {
       lastError = error as Error;
       
-      // Don't retry on validation errors or final attempt
+      // Don't retry on validation errors, non-retryable errors, or final attempt
       if (
         error instanceof AnalyticsError ||
+        !isRetryableError(lastError) ||
         attempt === RETRY_CONFIG.maxAttempts
       ) {
         throw error;
@@ -219,6 +305,8 @@ async function retryWithBackoff<T>(
       console.warn(`[Analytics] ${context} failed (attempt ${attempt}/${RETRY_CONFIG.maxAttempts})`, {
         correlationId,
         error: lastError.message,
+        errorType: lastError.name,
+        retryable: isRetryableError(lastError),
         nextRetryIn: `${delay}ms`
       });
       
@@ -234,18 +322,41 @@ async function retryWithBackoff<T>(
 }
 
 /**
+ * In-memory cache for consent checks to reduce database load
+ * Cache expires after 5 minutes
+ */
+const consentCache = new Map<string, { granted: boolean; expiresAt: number }>();
+const CONSENT_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
  * Check if user has given analytics consent (GDPR compliance)
+ * 
+ * Uses in-memory cache to reduce database load. Cache expires after 5 minutes.
  * 
  * @param userId - User ID to check consent for
  * @returns Promise<boolean> - True if user has given consent
  * 
  * @throws {AnalyticsError} On database errors after retries
+ * 
+ * @example
+ * ```typescript
+ * const hasConsent = await checkAnalyticsConsent('user-123');
+ * if (hasConsent) {
+ *   await trackEvent(...);
+ * }
+ * ```
  */
 export async function checkAnalyticsConsent(userId: string): Promise<boolean> {
   const correlationId = generateCorrelationId();
   
+  // Check cache first
+  const cached = consentCache.get(userId);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.granted;
+  }
+  
   try {
-    return await retryWithBackoff(
+    const granted = await retryWithBackoff(
       async () => {
         const pool = getPool();
         
@@ -270,6 +381,14 @@ export async function checkAnalyticsConsent(userId: string): Promise<boolean> {
       correlationId
     );
     
+    // Update cache
+    consentCache.set(userId, {
+      granted,
+      expiresAt: Date.now() + CONSENT_CACHE_TTL_MS
+    });
+    
+    return granted;
+    
   } catch (error) {
     console.error('[Analytics] Failed to check consent after retries', {
       userId,
@@ -285,7 +404,59 @@ export async function checkAnalyticsConsent(userId: string): Promise<boolean> {
 }
 
 /**
- * Track an onboarding event with retry logic
+ * Clear consent cache for a specific user or all users
+ * 
+ * @param userId - Optional user ID to clear cache for. If not provided, clears all cache.
+ * 
+ * @example
+ * ```typescript
+ * // Clear cache for specific user after consent update
+ * await updateUserConsent(userId, true);
+ * clearConsentCache(userId);
+ * 
+ * // Clear all cache
+ * clearConsentCache();
+ * ```
+ */
+export function clearConsentCache(userId?: string): void {
+  if (userId) {
+    consentCache.delete(userId);
+  } else {
+    consentCache.clear();
+  }
+}
+
+/**
+ * Debounce map for event tracking to prevent duplicate events
+ * Key format: `${userId}:${eventType}:${stepId}`
+ */
+const eventDebounceMap = new Map<string, number>();
+const EVENT_DEBOUNCE_MS = 1000; // 1 second
+
+/**
+ * Check if event should be debounced
+ */
+function shouldDebounceEvent(
+  userId: string,
+  eventType: string,
+  stepId?: string
+): boolean {
+  const key = `${userId}:${eventType}:${stepId || 'none'}`;
+  const lastTracked = eventDebounceMap.get(key);
+  
+  if (lastTracked && Date.now() - lastTracked < EVENT_DEBOUNCE_MS) {
+    return true; // Debounce
+  }
+  
+  eventDebounceMap.set(key, Date.now());
+  return false;
+}
+
+/**
+ * Track an onboarding event with retry logic and debouncing
+ * 
+ * Automatically debounces duplicate events within 1 second to prevent
+ * accidental double-tracking from rapid user interactions.
  * 
  * @param userId - User ID
  * @param event - Event payload
@@ -344,6 +515,24 @@ export async function trackOnboardingEvent(
       );
     }
     
+    // Debounce duplicate events (unless forced)
+    const stepId = 'stepId' in event ? event.stepId : undefined;
+    if (!forceTrack && shouldDebounceEvent(userId, event.type, stepId)) {
+      console.log('[Analytics] Event debounced (duplicate within 1s)', {
+        userId,
+        eventType: event.type,
+        stepId,
+        correlationId
+      });
+      
+      return {
+        success: true,
+        correlationId,
+        debounced: true,
+        skippedReason: 'debounced'
+      };
+    }
+    
     // Check GDPR consent unless skipped or event is essential
     if (!skipConsentCheck && !forceTrack && !isEssentialEvent(event.type)) {
       const hasConsent = await checkAnalyticsConsent(userId);
@@ -358,13 +547,12 @@ export async function trackOnboardingEvent(
         return {
           success: true,
           correlationId,
-          error: 'No consent - event skipped'
+          skippedReason: 'no_consent'
         };
       }
     }
     
-    // Extract step ID and version from event if present
-    const stepId = 'stepId' in event ? event.stepId : undefined;
+    // Extract step ID and version from event if present (already extracted above for debouncing)
     const version = 'version' in event ? event.version : undefined;
     
     // Combine event data with metadata
@@ -436,15 +624,19 @@ export async function trackOnboardingEvent(
 /**
  * Track multiple events in batch with parallel execution
  * 
+ * Tracks events in parallel for better performance. Returns detailed summary
+ * of successes and failures. Partial failures are allowed - some events may
+ * succeed while others fail.
+ * 
  * @param userId - User ID
  * @param events - Array of events to track
  * @param metadata - Shared metadata for all events
  * @param options - Tracking options
- * @returns Promise<TrackingResult[]> - Results for each event
+ * @returns Promise<BatchTrackingResponse> - Detailed batch tracking results
  * 
  * @example
  * ```typescript
- * const results = await trackOnboardingEvents(
+ * const response = await trackOnboardingEvents(
  *   userId,
  *   [
  *     { type: 'onboarding.step_started', stepId: 'payments', version: 1, entrypoint: 'dashboard' },
@@ -452,9 +644,13 @@ export async function trackOnboardingEvent(
  *   ]
  * );
  * 
- * const failedEvents = results.filter(r => !r.success);
- * if (failedEvents.length > 0) {
- *   console.warn(`${failedEvents.length} events failed to track`);
+ * console.log(`Tracked ${response.successCount}/${response.totalEvents} events`);
+ * 
+ * if (response.failureCount > 0) {
+ *   console.warn(`${response.failureCount} events failed to track`);
+ *   response.results
+ *     .filter(r => !r.success)
+ *     .forEach(r => console.error(`Failed: ${r.error}`));
  * }
  * ```
  */
@@ -463,34 +659,72 @@ export async function trackOnboardingEvents(
   events: OnboardingEvent[],
   metadata?: EventMetadata,
   options: TrackEventOptions = {}
-): Promise<TrackingResult[]> {
+): Promise<BatchTrackingResponse> {
+  const batchCorrelationId = metadata?.correlationId || generateCorrelationId();
+  
+  console.log('[Analytics] Starting batch event tracking', {
+    userId,
+    eventCount: events.length,
+    correlationId: batchCorrelationId
+  });
+  
   // Track events in parallel with Promise.allSettled to handle partial failures
   const results = await Promise.allSettled(
-    events.map(event => trackOnboardingEvent(userId, event, metadata, options))
+    events.map((event, index) => 
+      trackOnboardingEvent(
+        userId, 
+        event, 
+        { 
+          ...metadata, 
+          correlationId: `${batchCorrelationId}-${index}` 
+        }, 
+        options
+      )
+    )
   );
   
   // Convert settled promises to tracking results
-  return results.map((result, index) => {
+  const trackingResults: TrackingResult[] = results.map((result, index) => {
     if (result.status === 'fulfilled') {
       return result.value;
     } else {
       const event = events[index];
-      const correlationId = metadata?.correlationId || generateCorrelationId();
+      const eventCorrelationId = `${batchCorrelationId}-${index}`;
       
       console.error('[Analytics] Batch event tracking failed', {
         userId,
         eventType: event.type,
-        correlationId,
+        correlationId: eventCorrelationId,
         error: result.reason
       });
       
       return {
         success: false,
-        correlationId,
+        correlationId: eventCorrelationId,
         error: result.reason instanceof Error ? result.reason.message : String(result.reason)
       };
     }
   });
+  
+  // Calculate summary
+  const successCount = trackingResults.filter(r => r.success).length;
+  const failureCount = trackingResults.filter(r => !r.success).length;
+  
+  console.log('[Analytics] Batch event tracking completed', {
+    userId,
+    totalEvents: events.length,
+    successCount,
+    failureCount,
+    correlationId: batchCorrelationId
+  });
+  
+  return {
+    totalEvents: events.length,
+    successCount,
+    failureCount,
+    results: trackingResults,
+    correlationId: batchCorrelationId
+  };
 }
 
 /**
@@ -735,6 +969,42 @@ export interface UserEventStats {
   eventsByType: Record<string, number>;
   lastEventAt?: Date;
   correlationId: string;
+}
+
+/**
+ * Create standardized API response
+ * 
+ * @param success - Whether operation succeeded
+ * @param data - Response data (if successful)
+ * @param error - Error details (if failed)
+ * @param correlationId - Correlation ID for tracing
+ * @returns Standardized API response object
+ * 
+ * @example
+ * ```typescript
+ * // Success response
+ * return createAPIResponse(true, { userId: '123' }, null, correlationId);
+ * 
+ * // Error response
+ * return createAPIResponse(false, null, {
+ *   code: 'VALIDATION_ERROR',
+ *   message: 'Invalid user ID'
+ * }, correlationId);
+ * ```
+ */
+export function createAPIResponse<T = any>(
+  success: boolean,
+  data: T | null,
+  error: { code: string; message: string; details?: any } | null,
+  correlationId: string
+): AnalyticsAPIResponse<T> {
+  return {
+    success,
+    data: data ?? undefined,
+    error: error ?? undefined,
+    correlationId,
+    timestamp: new Date().toISOString()
+  };
 }
 
 /**
