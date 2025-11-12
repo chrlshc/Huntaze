@@ -54,7 +54,7 @@ export default function OnboardingSetupPage() {
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement...</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -83,16 +83,16 @@ export default function OnboardingSetupPage() {
           {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Bienvenue sur Huntaze
+              Welcome to Huntaze
             </h1>
             <p className="text-xl text-gray-600 mb-4">
-              Configurez votre plateforme en quelques étapes simples
+              Set up your platform in a few simple steps
             </p>
             <button
               onClick={handleSkip}
               className="text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
             >
-              Passer l'onboarding pour l'instant
+              Skip onboarding for now
             </button>
           </div>
 
@@ -100,8 +100,12 @@ export default function OnboardingSetupPage() {
           <SetupGuideContainer
             userId={userId}
             userRole="owner"
-            market="FR"
+            market="US"
             onLearnMore={handleLearnMore}
+            onError={(error) => {
+              console.error('[Onboarding] Error:', error);
+              // Continue anyway - don't block user
+            }}
           />
 
           {/* Complete Button */}
@@ -110,7 +114,7 @@ export default function OnboardingSetupPage() {
               onClick={() => router.push('/dashboard')}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-600/25 transition-all"
             >
-              Aller au tableau de bord
+              Go to Dashboard
             </button>
           </div>
         </div>
