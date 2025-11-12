@@ -44,9 +44,9 @@ export default function StepItem({
             <span 
               className="text-xs rounded bg-danger/10 text-danger px-2 py-0.5 border border-danger/20 whitespace-nowrap"
               role="status"
-              aria-label="Étape obligatoire"
+              aria-label="Required step"
             >
-              Obligatoire
+              Required
             </span>
           )}
           
@@ -54,7 +54,7 @@ export default function StepItem({
           {step.status === 'done' && (
             <CheckCircle 
               className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" 
-              aria-label="Complété"
+              aria-label="Completed"
             />
           )}
           
@@ -63,9 +63,9 @@ export default function StepItem({
             <span 
               className="text-xs rounded bg-surface-muted text-content-secondary px-2 py-0.5 border border-border-default whitespace-nowrap"
               role="status"
-              aria-label="Étape passée"
+              aria-label="Skipped step"
             >
-              Passé
+              Skipped
             </span>
           )}
         </div>
@@ -81,14 +81,14 @@ export default function StepItem({
         {!canModify && (
           <p className="text-sm text-primary mt-1 flex items-center gap-1">
             <Info className="w-4 h-4" aria-hidden="true" />
-            Demander à l'owner
+            Ask the owner
           </p>
         )}
         
         {/* Completion Info */}
         {step.status === 'done' && step.completedAt && (
           <p className="text-xs text-content-secondary mt-1">
-            Complété le {new Date(step.completedAt).toLocaleDateString('fr-FR')}
+            Completed on {new Date(step.completedAt).toLocaleDateString('en-US')}
           </p>
         )}
       </div>
@@ -104,9 +104,9 @@ export default function StepItem({
               variant="outline"
               size="sm"
               className="border-primary text-primary hover:bg-primary/10"
-              aria-label={`Compléter ${step.title}`}
+              aria-label={`Complete ${step.title}`}
             >
-              Faire
+              Do it
             </Button>
           )}
 
@@ -117,9 +117,9 @@ export default function StepItem({
               disabled={loading}
               variant="outline"
               size="sm"
-              aria-label={`Passer ${step.title} pour l'instant (vous pourrez y revenir depuis le tableau de bord)`}
+              aria-label={`Skip ${step.title} for now (you can return to it from the dashboard)`}
             >
-              Passer
+              Skip
             </Button>
           )}
 
@@ -128,9 +128,9 @@ export default function StepItem({
             onClick={() => onLearnMore(step.id)}
             variant="ghost"
             size="sm"
-            aria-label={`En savoir plus sur ${step.title}`}
+            aria-label={`Learn more about ${step.title}`}
           >
-            En savoir plus
+            Learn more
           </Button>
         </div>
       )}

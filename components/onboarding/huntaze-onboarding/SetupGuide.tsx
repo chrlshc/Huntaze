@@ -25,13 +25,13 @@ export default function SetupGuide({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-content-primary">
-          Guide de démarrage
+          Setup Guide
         </h2>
         <span 
           className="text-sm text-content-secondary"
-          aria-label={`${progress} pourcent complété`}
+          aria-label={`${progress} percent complete`}
         >
-          {progress}% complété
+          {progress}% complete
         </span>
       </div>
 
@@ -43,7 +43,7 @@ export default function SetupGuide({
           aria-valuenow={progress}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label="Progression de la configuration"
+          aria-label="Setup progress"
         >
           <div
             className="bg-primary h-2 rounded-full transition-all duration-500 ease-out"
@@ -61,7 +61,7 @@ export default function SetupGuide({
           aria-live="polite" 
           aria-atomic="true"
         >
-          {progress}% de la configuration complétée. {steps.filter(s => s.status === 'todo').length} étapes restantes.
+          {progress}% of setup complete. {steps.filter(s => s.status === 'todo').length} steps remaining.
         </div>
       </div>
 
@@ -72,7 +72,7 @@ export default function SetupGuide({
             <div
               key={i}
               className="h-20 rounded-xl border border-border-default bg-surface-muted animate-pulse"
-              aria-label="Chargement des étapes"
+              aria-label="Loading steps"
             />
           ))}
         </div>
@@ -94,7 +94,7 @@ export default function SetupGuide({
       {!loading && steps.length === 0 && (
         <div className="text-center py-8">
           <p className="text-content-secondary text-sm">
-            Aucune étape de configuration disponible
+            No setup steps available
           </p>
         </div>
       )}
