@@ -10,5 +10,6 @@ export { default as StepItem } from './StepItem';
 export { default as ProgressIndicator } from './ProgressIndicator';
 export { default as CompletionNudge } from './CompletionNudge';
 export { default as GuardRailModal } from './GuardRailModal';
+export { ShopifyBackdrop } from './ShopifyBackdrop';
 export { useOnboarding } from './useOnboarding';
 export * from './types';
