@@ -1,144 +1,82 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import { SignJWT } from 'jose';
+import { hash } from 'bcryptjs';
 import { query } from '@/lib/db';
-import { validateRegisterForm } from '@/lib/auth/validation';
-import { createVerificationToken } from '@/lib/auth/tokens';
-import { sendVerificationEmail } from '@/lib/email/ses';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, password } = body;
+    const { fullName, email, password } = await request.json();
 
-    // Validate input
-    const errors = validateRegisterForm({ name, email, password });
-    if (Object.keys(errors).length > 0) {
+    // Validation
+    if (!fullName || !email || !password) {
       return NextResponse.json(
-        { error: Object.values(errors)[0] },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // TEMPORARY: Check if we have a real DATABASE_URL
-    const hasRealDB = process.env.DATABASE_URL && 
-      !process.env.DATABASE_URL.includes('localhost') && 
-      !process.env.DATABASE_URL.includes('test:test');
-
-    if (!hasRealDB) {
-      // MOCK RESPONSE for testing UI without real DB
-      console.log('MOCK REGISTRATION - No real DB configured');
-      
-      // Generate a mock JWT token
-      const mockUserId = Math.floor(Math.random() * 1000000);
-      const token = await new SignJWT({ 
-        userId: mockUserId, 
-        email: email.toLowerCase(),
-        mock: true 
-      })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('7d')
-        .setIssuedAt()
-        .sign(JWT_SECRET);
-
-      const response = NextResponse.json({
-        user: {
-          id: mockUserId,
-          name: name,
-          email: email.toLowerCase(),
-          emailVerified: false,
-        },
-        message: '🚧 DEMO MODE: Account created (mock data - configure DATABASE_URL for real registration)',
-      });
-
-      response.cookies.set('auth-token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60, // 7 days
-        path: '/',
-      });
-
-      return response;
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
     }
 
-    // REAL DB LOGIC (when DATABASE_URL is properly configured)
+    // Password validation
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'Password must be at least 8 characters' },
+        { status: 400 }
+      );
+    }
+
     // Check if user already exists
-    const existingUser = await query(
-      'SELECT id FROM users WHERE email = $1',
-      [email.toLowerCase()]
+    const existingUserResult = await query(
+      'SELECT id FROM users WHERE LOWER(email) = LOWER($1)',
+      [email]
     );
 
-    if (existingUser.rows.length > 0) {
+    if (existingUserResult.rows.length > 0) {
       return NextResponse.json(
-        { error: 'Email already registered' },
-        { status: 400 }
+        { error: 'User with this email already exists' },
+        { status: 409 }
       );
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+    const hashedPassword = await hash(password, 12);
 
     // Create user
-    const result = await query(
-      'INSERT INTO users (name, email, password_hash, email_verified) VALUES ($1, $2, $3, $4) RETURNING id, name, email, created_at',
-      [name, email.toLowerCase(), passwordHash, false]
+    const userResult = await query(
+      `INSERT INTO users (email, name, password, created_at, updated_at) 
+       VALUES (LOWER($1), $2, $3, NOW(), NOW()) 
+       RETURNING id, email, name, created_at`,
+      [email, fullName, hashedPassword]
     );
 
-    const user = result.rows[0];
+    const user = userResult.rows[0];
 
-    // Generate verification token
-    const verificationToken = await createVerificationToken(user.id, user.email);
+    console.log('[Auth] User registered:', {
+      userId: user.id,
+      email: user.email,
+      timestamp: new Date().toISOString(),
+    });
 
-    // Send verification email
-    try {
-      await sendVerificationEmail(user.email, user.name, verificationToken);
-      console.log('Verification email sent to:', user.email);
-    } catch (emailError) {
-      console.error('Failed to send verification email:', emailError);
-      // Continue anyway - user is created, they can request a new verification email
-    }
-
-    // Generate JWT token (user can still login but some features may be restricted)
-    const token = await new SignJWT({ userId: user.id, email: user.email })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('7d')
-      .setIssuedAt()
-      .sign(JWT_SECRET);
-
-    // Store session
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-    await query(
-      'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3)',
-      [user.id, token, expiresAt]
-    );
-
-    // Set cookie
-    const response = NextResponse.json({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        emailVerified: false,
+    return NextResponse.json(
+      {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        },
       },
-      message: 'Account created! Please check your email to verify your account.',
-    });
-
-    response.cookies.set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-      path: '/',
-    });
-
-    return response;
+      { status: 201 }
+    );
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('[Auth] Registration error:', error);
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
