@@ -221,7 +221,8 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Google Button */}
+            {/* Google Button - Temporarily disabled during Auth.js v5 migration */}
+            {false && (
             <button
               type="button"
               onClick={handleGoogleAuth}
@@ -248,13 +249,16 @@ export default function AuthPage() {
               </svg>
               {isLogin ? 'Sign in with Google' : 'Sign up with Google'}
             </button>
+            )}
 
-            {/* Divider */}
+            {/* Divider - Hidden when Google OAuth is disabled */}
+            {false && (
             <div className="flex items-center gap-3 my-4">
               <div className="flex-1 h-px bg-gray-300"></div>
               <span className="text-gray-500 text-xs font-medium">OR</span>
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
+            )}
 
             {/* Email Field */}
             <div>
