@@ -92,9 +92,11 @@ const nextConfig: NextConfig = {
   },
 
   // Strict type checking for production builds
-  // Temporarily disabled due to component interface mismatches
+  // TODO: Enable type checking incrementally and fix errors
+  // Currently disabled due to component interface mismatches
+  // Set to false and run: npx tsc --noEmit to see all errors
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true, // TODO: Change to false after fixing type errors
   },
 
 
