@@ -1,7 +1,14 @@
+/**
+ * Auth API - Email Verification
+ * 
+ * GET /api/auth/verify-email?token=xxx
+ * 
+ * Verifies user email address using verification token
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { verifyEmailToken, deleteVerificationToken } from '@/lib/auth/tokens';
-import { sendWelcomeEmail } from '@/lib/email/ses';
+import { sendWelcomeEmail } from '@/lib/services/email/ses';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,54 +22,69 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verify the token
-    const verification = await verifyEmailToken(token);
+    // Find user with this token
+    const result = await query(
+      `SELECT id, email, name, email_verified, email_verification_expires 
+       FROM users 
+       WHERE email_verification_token = $1`,
+      [token]
+    );
 
-    if (!verification) {
+    if (result.rows.length === 0) {
       return NextResponse.json(
-        { error: 'Invalid or expired verification token' },
+        { error: 'Invalid verification token' },
         { status: 400 }
       );
     }
 
-    const { userId, email } = verification;
+    const user = result.rows[0];
 
-    // Update user's email_verified status
-    await query(
-      'UPDATE users SET email_verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
-      [userId]
-    );
-
-    // Delete the verification token
-    await deleteVerificationToken(userId);
-
-    // Get user details for welcome email
-    const userResult = await query(
-      'SELECT name, email FROM users WHERE id = $1',
-      [userId]
-    );
-
-    if (userResult.rows.length > 0) {
-      const user = userResult.rows[0];
-      
-      // Send welcome email
-      try {
-        await sendWelcomeEmail(user.email, user.name);
-        console.log('Welcome email sent to:', user.email);
-      } catch (emailError) {
-        console.error('Failed to send welcome email:', emailError);
-        // Continue anyway - email is verified
-      }
+    // Check if already verified
+    if (user.email_verified) {
+      return NextResponse.redirect(
+        new URL('/auth?verified=already', request.url)
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Email verified successfully!',
+    // Check if token expired
+    if (new Date() > new Date(user.email_verification_expires)) {
+      return NextResponse.json(
+        { error: 'Verification token has expired' },
+        { status: 400 }
+      );
+    }
+
+    // Verify email
+    await query(
+      `UPDATE users 
+       SET email_verified = NOW(), 
+           email_verification_token = NULL, 
+           email_verification_expires = NULL,
+           updated_at = NOW()
+       WHERE id = $1`,
+      [user.id]
+    );
+
+    console.log('[Auth] Email verified:', {
+      userId: user.id,
+      email: user.email,
+      timestamp: new Date().toISOString(),
     });
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail(user.email, user.name).catch((error) => {
+      console.error('[Auth] Failed to send welcome email:', error);
+    });
+
+    // Redirect to success page
+    return NextResponse.redirect(
+      new URL('/auth?verified=success', request.url)
+    );
   } catch (error) {
-    console.error('Email verification error:', error);
+    console.error('[Auth] Email verification error:', error);
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to verify email' },
       { status: 500 }
     );
   }

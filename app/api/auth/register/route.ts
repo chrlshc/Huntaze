@@ -1,84 +1,120 @@
+/**
+ * Auth API - User Registration
+ * 
+ * POST /api/auth/register
+ * 
+ * Handles user registration with:
+ * - Input validation
+ * - Error handling with retry logic
+ * - Structured logging with correlation IDs
+ * - User-friendly error messages
+ * 
+ * @see docs/api/auth-register.md
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
-import { hash } from 'bcryptjs';
-import { query } from '@/lib/db';
+import { registrationService } from '@/lib/services/auth/register';
+import { authLogger } from '@/lib/services/auth/logger';
+import type { RegisterRequest, RegisterResponse } from '@/lib/services/auth/types';
 
+/**
+ * Register a new user
+ * 
+ * @param request - Next.js request object
+ * @returns JSON response with user data or error
+ * 
+ * @example
+ * ```typescript
+ * // Request
+ * POST /api/auth/register
+ * {
+ *   "fullName": "John Doe",
+ *   "email": "john@example.com",
+ *   "password": "SecurePass123!"
+ * }
+ * 
+ * // Success Response (201)
+ * {
+ *   "success": true,
+ *   "user": {
+ *     "id": "123",
+ *     "email": "john@example.com",
+ *     "name": "John Doe"
+ *   },
+ *   "message": "Account created successfully"
+ * }
+ * 
+ * // Error Response (400/409/500)
+ * {
+ *   "error": "User-friendly error message",
+ *   "type": "USER_EXISTS",
+ *   "correlationId": "auth-1234567890-abc123"
+ * }
+ * ```
+ */
 export async function POST(request: NextRequest) {
+  const correlationId = authLogger.generateCorrelationId();
+  const startTime = Date.now();
+
   try {
-    const { fullName, email, password } = await request.json();
+    // Parse request body
+    const body = await request.json();
+    const data: RegisterRequest = {
+      fullName: body.fullName,
+      email: body.email,
+      password: body.password,
+    };
 
-    // Validation
-    if (!fullName || !email || !password) {
+    authLogger.info('Registration request received', {
+      correlationId,
+      email: data.email,
+    });
+
+    // Register user
+    const result: RegisterResponse = await registrationService.register(data);
+
+    const duration = Date.now() - startTime;
+    authLogger.info('Registration request completed', {
+      correlationId,
+      userId: result.user.id,
+      duration,
+    });
+
+    return NextResponse.json(result, { status: 201 });
+  } catch (error: any) {
+    const duration = Date.now() - startTime;
+
+    // Handle structured errors
+    if (error.type) {
+      authLogger.warn('Registration request failed', {
+        correlationId,
+        type: error.type,
+        statusCode: error.statusCode,
+        duration,
+      });
+
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        {
+          error: error.userMessage || error.message,
+          type: error.type,
+          correlationId: error.correlationId,
+        },
+        { status: error.statusCode || 500 }
       );
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-
-    // Password validation
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters' },
-        { status: 400 }
-      );
-    }
-
-    // Check if user already exists
-    const existingUserResult = await query(
-      'SELECT id FROM users WHERE LOWER(email) = LOWER($1)',
-      [email]
-    );
-
-    if (existingUserResult.rows.length > 0) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
-      );
-    }
-
-    // Hash password
-    const hashedPassword = await hash(password, 12);
-
-    // Create user
-    const userResult = await query(
-      `INSERT INTO users (email, name, password, created_at, updated_at) 
-       VALUES (LOWER($1), $2, $3, NOW(), NOW()) 
-       RETURNING id, email, name, created_at`,
-      [email, fullName, hashedPassword]
-    );
-
-    const user = userResult.rows[0];
-
-    console.log('[Auth] User registered:', {
-      userId: user.id,
-      email: user.email,
-      timestamp: new Date().toISOString(),
+    // Handle unexpected errors
+    authLogger.error('Registration request error', error, {
+      correlationId,
+      duration,
     });
 
     return NextResponse.json(
       {
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        },
+        error: 'An unexpected error occurred. Please try again.',
+        type: 'INTERNAL_ERROR',
+        correlationId,
       },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('[Auth] Registration error:', error);
-    
-    return NextResponse.json(
-      { error: 'Internal server error' },
       { status: 500 }
     );
   }
