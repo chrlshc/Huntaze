@@ -10,6 +10,7 @@ frontend:
         - mkdir -p .next/standalone/.next
         - cp -r .next/static .next/standalone/.next/static
         - cp -r .next/*.json .next/standalone/.next/
+        - cp .next/required-server-files.json .next/standalone/
         - cp -r public .next/standalone/public
   artifacts:
     baseDirectory: .next/standalone
