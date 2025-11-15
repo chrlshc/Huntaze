@@ -69,7 +69,7 @@ export class RegistrationService {
 
       // Sanitize inputs
       const email = sanitizeEmail(data.email);
-      const name = sanitizeName(data.fullName);
+      const name = data.fullName ? sanitizeName(data.fullName) : email.split('@')[0];
 
       // Check if user exists (with retry)
       const existingUser = await this.checkUserExists(email, correlationId);
