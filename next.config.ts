@@ -14,13 +14,10 @@ const nextConfig: NextConfig = {
   // Core
   reactStrictMode: true,
   compress: true,
-  output: isExport ? 'export' : 'standalone',
+  // Remove output: 'standalone' for Amplify - it handles this automatically
+  // output: isExport ? 'export' : 'standalone',
   
   // Note: swcMinify removed - it's now the default in Next.js 15
-
-  // File tracing configuration for standalone builds
-  // Helps handle route groups correctly
-  outputFileTracingRoot: process.cwd(),
 
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
@@ -83,7 +80,8 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
-    unoptimized: isExport ? true : false,
+    // Amplify handles image optimization
+    unoptimized: true,
   },
 
   // Removed experimental features for stable builds
