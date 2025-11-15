@@ -45,33 +45,36 @@ describe('TikTokOAuthService - Unit Tests', () => {
         expect(service).toBeInstanceOf(TikTokOAuthService);
       });
 
-      it('should throw error if TIKTOK_CLIENT_KEY is missing', () => {
+      it('should throw error if TIKTOK_CLIENT_KEY is missing', async () => {
         const originalKey = process.env.TIKTOK_CLIENT_KEY;
         delete process.env.TIKTOK_CLIENT_KEY;
         
-        expect(() => new TikTokOAuthService()).toThrow(
+        const testService = new TikTokOAuthService();
+        await expect(testService.getAuthorizationUrl()).rejects.toThrow(
           'TikTok OAuth credentials not configured'
         );
         
         process.env.TIKTOK_CLIENT_KEY = originalKey;
       });
 
-      it('should throw error if TIKTOK_CLIENT_SECRET is missing', () => {
+      it('should throw error if TIKTOK_CLIENT_SECRET is missing', async () => {
         const originalSecret = process.env.TIKTOK_CLIENT_SECRET;
         delete process.env.TIKTOK_CLIENT_SECRET;
         
-        expect(() => new TikTokOAuthService()).toThrow(
+        const testService = new TikTokOAuthService();
+        await expect(testService.getAuthorizationUrl()).rejects.toThrow(
           'TikTok OAuth credentials not configured'
         );
         
         process.env.TIKTOK_CLIENT_SECRET = originalSecret;
       });
 
-      it('should throw error if NEXT_PUBLIC_TIKTOK_REDIRECT_URI is missing', () => {
+      it('should throw error if NEXT_PUBLIC_TIKTOK_REDIRECT_URI is missing', async () => {
         const originalUri = process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI;
         delete process.env.NEXT_PUBLIC_TIKTOK_REDIRECT_URI;
         
-        expect(() => new TikTokOAuthService()).toThrow(
+        const testService = new TikTokOAuthService();
+        await expect(testService.getAuthorizationUrl()).rejects.toThrow(
           'TikTok OAuth credentials not configured'
         );
         
@@ -80,8 +83,8 @@ describe('TikTokOAuthService - Unit Tests', () => {
     });
 
     describe('getAuthorizationUrl()', () => {
-      it('should generate authorization URL with default scopes', () => {
-        const result = service.getAuthorizationUrl();
+      it('should generate authorization URL with default scopes', async () => {
+        const result = await service.getAuthorizationUrl();
         
         expect(result).toHaveProperty('url');
         expect(result).toHaveProperty('state');
@@ -93,31 +96,31 @@ describe('TikTokOAuthService - Unit Tests', () => {
         expect(result.url).toContain(`state=${result.state}`);
       });
 
-      it('should generate authorization URL with custom scopes', () => {
+      it('should generate authorization URL with custom scopes', async () => {
         const customScopes = ['user.info.basic', 'video.publish'];
-        const result = service.getAuthorizationUrl(customScopes);
+        const result = await service.getAuthorizationUrl(customScopes);
         
         expect(result.url).toContain('scope=user.info.basic%2Cvideo.publish');
       });
 
-      it('should generate unique state for each call (CSRF protection)', () => {
-        const result1 = service.getAuthorizationUrl();
-        const result2 = service.getAuthorizationUrl();
+      it('should generate unique state for each call (CSRF protection)', async () => {
+        const result1 = await service.getAuthorizationUrl();
+        const result2 = await service.getAuthorizationUrl();
         
         expect(result1.state).not.toBe(result2.state);
         expect(result1.state).toHaveLength(64); // 32 bytes = 64 hex chars
         expect(result2.state).toHaveLength(64);
       });
 
-      it('should generate cryptographically secure state', () => {
-        const result = service.getAuthorizationUrl();
+      it('should generate cryptographically secure state', async () => {
+        const result = await service.getAuthorizationUrl();
         
         // State should be hex string
         expect(result.state).toMatch(/^[0-9a-f]{64}$/);
       });
 
-      it('should handle empty scopes array', () => {
-        const result = service.getAuthorizationUrl([]);
+      it('should handle empty scopes array', async () => {
+        const result = await service.getAuthorizationUrl([]);
         
         expect(result.url).toContain('scope=');
         expect(result.state).toBeTruthy();

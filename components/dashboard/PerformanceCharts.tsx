@@ -91,3 +91,5 @@ export default function PerformanceCharts({ data = defaultData }: PerformanceCha
     </div>
   );
 }
+
+export { PerformanceCharts };

@@ -3,7 +3,7 @@
  * Génère des suggestions de messages intelligentes basées sur le contexte
  */
 
-import { logger } from '@/lib/utils/logger';
+import { logger } from '../utils/logger';
 
 export interface MessageContext {
   fanName: string;

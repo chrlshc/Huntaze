@@ -2,7 +2,7 @@
  * Tests unitaires pour le validateur d'hydratation
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi as jest } from 'vitest';
 import { HydrationValidator } from '@/lib/validation/hydrationValidator';
 import { writeFileSync, unlinkSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
@@ -244,7 +244,7 @@ describe('HydrationValidator', () => {
 
       // Mock glob pour retourner notre fichier de test
       const originalGlob = require('glob').glob;
-      jest.spyOn(require('glob'), 'glob').mockResolvedValue([wrapperFile]);
+      vi.spyOn(require('glob'), 'glob').mockResolvedValue([wrapperFile]);
 
       const result = await validator.validateHydrationComponents(testDir);
       

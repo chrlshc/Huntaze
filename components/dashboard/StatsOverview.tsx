@@ -122,3 +122,5 @@ export default function StatsOverview({ stats = defaultStats }: StatsOverviewPro
     </motion.div>
   );
 }
+
+export { StatsOverview };

@@ -1,11 +1,23 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { resolveRateLimit } from '@/src/lib/rateLimits'
+import { resolveRateLimit } from './src/lib/rateLimits'
+import { extractIdentity } from './lib/services/rate-limiter/identity'
+import { resolveRateLimitPolicy } from './lib/services/rate-limiter/policy'
+import { rateLimiter } from './lib/services/rate-limiter/rate-limiter'
+import { buildRateLimitResponse, addRateLimitHeaders, formatPolicyDescription } from './lib/services/rate-limiter/headers'
+
 // Optional Edge-compatible rate limiting via Upstash. Enabled when env present.
 let upstashReady = Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
 let upstashMod: { Redis: any; Ratelimit: any } | null = null
 
+// Rate limiting enabled by default, can be disabled via env
+const rateLimitingEnabled = process.env.RATE_LIMIT_ENABLED !== 'false'
+
 export const config = {
-  matcher: ['/debug/:path*', '/api/debug/:path*'],
+  // Expand matcher to cover all API routes
+  matcher: [
+    '/api/:path*',
+    '/debug/:path*',
+  ],
 }
 
 function ctEq(a: string, b: string) { // constant-time compare
@@ -43,9 +55,70 @@ function okBasic(req: NextRequest) {
 export default async function middleware(req: NextRequest) {
   const pathname = new URL(req.url).pathname
 
+  // ============================================================================
+  // Comprehensive Rate Limiting (New System)
+  // ============================================================================
+  
+  if (rateLimitingEnabled && pathname.startsWith('/api/')) {
+    try {
+      // Extract identity from request
+      const identity = await extractIdentity(req)
+      
+      // Resolve rate limit policy for this endpoint and identity
+      const policy = resolveRateLimitPolicy(pathname, identity)
+      
+      // If policy is null, it means the identity is whitelisted
+      if (policy) {
+        // Check rate limit
+        const result = await rateLimiter.check(identity, pathname, policy)
+        
+        if (!result.allowed) {
+          // Rate limit exceeded - return 429
+          const policyDesc = formatPolicyDescription(
+            policy.perMinute,
+            policy.perHour,
+            policy.perDay
+          )
+          
+          console.warn('[RateLimit] Request blocked', {
+            identity: identity.type,
+            endpoint: pathname,
+            limit: result.limit,
+            remaining: result.remaining,
+          })
+          
+          return buildRateLimitResponse(result, policyDesc)
+        }
+        
+        // Request allowed - add rate limit headers to response
+        const response = NextResponse.next()
+        const policyDesc = formatPolicyDescription(
+          policy.perMinute,
+          policy.perHour,
+          policy.perDay
+        )
+        addRateLimitHeaders(response.headers, result, policyDesc)
+        
+        // Continue to next middleware/handler
+        return response
+      }
+    } catch (error) {
+      // Log error but don't block request (fail-open)
+      console.error('[RateLimit] Error in rate limiting middleware', {
+        error: error instanceof Error ? error.message : String(error),
+        pathname,
+      })
+      // Continue without rate limiting
+    }
+  }
+
+  // ============================================================================
+  // Legacy Rate Limiting (Debug Endpoints Only)
+  // ============================================================================
+  
   // Edge rate-limit if Upstash configured and we have a config for this path
   const cfg = resolveRateLimit(pathname)
-  if (upstashReady && cfg) {
+  if (upstashReady && cfg && pathname.startsWith('/debug')) {
     try {
       if (!upstashMod) {
         const { Redis } = (await import('@upstash/redis')) as any
@@ -79,15 +152,27 @@ export default async function middleware(req: NextRequest) {
     } catch {}
   }
 
-  const authed = okBasic(req) || okBearerOrHeader(req)
-  if (authed) {
-    const res = NextResponse.next()
-    // Extra safety: advise no indexing for any debug paths
-    res.headers.set('X-Robots-Tag', 'noindex')
-    return res
+  // ============================================================================
+  // Debug Endpoint Authentication
+  // ============================================================================
+  
+  if (pathname.startsWith('/debug')) {
+    const authed = okBasic(req) || okBearerOrHeader(req)
+    if (authed) {
+      const res = NextResponse.next()
+      // Extra safety: advise no indexing for any debug paths
+      res.headers.set('X-Robots-Tag', 'noindex')
+      return res
+    }
+
+    // For browser UX, trigger Basic Auth prompt
+    const headers = new Headers({ 'WWW-Authenticate': 'Basic realm="Debug"' })
+    return new NextResponse('Unauthorized', { status: 401, headers })
   }
 
-  // For browser UX, trigger Basic Auth prompt
-  const headers = new Headers({ 'WWW-Authenticate': 'Basic realm="Debug"' })
-  return new NextResponse('Unauthorized', { status: 401, headers })
+  // ============================================================================
+  // Default: Allow Request
+  // ============================================================================
+  
+  return NextResponse.next()
 }

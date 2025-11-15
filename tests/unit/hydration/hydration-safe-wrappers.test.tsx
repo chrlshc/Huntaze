@@ -12,12 +12,12 @@ import {
 } from '@/components/hydration';
 
 // Mock du debugger d'hydratation
-jest.mock('@/lib/utils/hydrationDebugger', () => ({
+vi.mock('@/lib/utils/hydrationDebugger', () => ({
   hydrationDebugger: {
-    logHydrationSuccess: jest.fn(),
-    logHydrationError: jest.fn(),
-    logDataMismatch: jest.fn(),
-    logSSRDataHydration: jest.fn()
+    logHydrationSuccess: vi.fn(),
+    logHydrationError: vi.fn(),
+    logDataMismatch: vi.fn(),
+    logSSRDataHydration: vi.fn()
   }
 }));
 
@@ -39,7 +39,7 @@ describe('HydrationSafeWrapper', () => {
   });
 
   it('should handle hydration errors gracefully', async () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
     
     const TestComponent = () => (
       <HydrationSafeWrapper 

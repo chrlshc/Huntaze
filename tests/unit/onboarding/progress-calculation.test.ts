@@ -2,7 +2,7 @@
  * Unit tests for onboarding progress calculation logic
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi as jest } from 'vitest';
 
 // Mock types
 interface MockStep {

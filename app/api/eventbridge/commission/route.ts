@@ -1,9 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+// Lazy Stripe initialization to avoid build-time errors
+let stripe: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('Stripe secret key not configured');
+    }
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    });
+  }
+  return stripe;
+}
 
 // This endpoint is triggered monthly to add commission charges
 export async function POST(request: NextRequest) {
@@ -34,7 +49,7 @@ export async function POST(request: NextRequest) {
       const customerId = await getStripeCustomerId(userId);
       
       // Create invoice item for next billing cycle
-      await stripe.invoiceItems.create({
+      await getStripe().invoiceItems.create({
         customer: customerId,
         amount: Math.round(commission * 100), // Convert to cents
         currency: 'usd',

@@ -866,7 +866,328 @@ it('should respond quickly to POST requests', async () => {
 
 ---
 
-### 4. Future Endpoints
+### 4. /api/ai/suggestions Endpoint
+
+**Purpose:** Generate AI-powered message suggestions for OnlyFans creators
+
+#### Scenario 4.1: Successful Suggestion Generation
+
+**Given**: User is authenticated and provides valid fan/creator IDs  
+**When**: POST request to /api/ai/suggestions  
+**Then**: 
+- Returns 200 OK
+- Content-Type is application/json
+- Response contains suggestions array
+- Each suggestion has text, tone, confidence
+- Metadata includes count, duration, correlationId
+
+```typescript
+it('should generate suggestions successfully', async () => {
+  const response = await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fanId: 'fan-123',
+      creatorId: 'creator-456',
+      lastMessage: 'Hey, how are you?',
+      messageCount: 10,
+      fanValueCents: 5000
+    })
+  })
+  
+  expect(response.status).toBe(200)
+  
+  const json = await response.json()
+  expect(json.success).toBe(true)
+  expect(json.suggestions).toBeInstanceOf(Array)
+  expect(json.suggestions.length).toBeGreaterThan(0)
+  expect(json.metadata.correlationId).toBeDefined()
+})
+```
+
+#### Scenario 4.2: Missing Required Fields
+
+**Given**: User is authenticated  
+**When**: POST request without fanId or creatorId  
+**Then**: 
+- Returns 400 Bad Request
+- Error message indicates missing fields
+- Response includes correlationId
+
+```typescript
+it('should reject request without fanId', async () => {
+  const response = await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      creatorId: 'creator-456'
+    })
+  })
+  
+  expect(response.status).toBe(400)
+  
+  const json = await response.json()
+  expect(json.error).toBe('Missing required fields')
+  expect(json.details).toContain('fanId')
+})
+```
+
+#### Scenario 4.3: Unauthorized Access
+
+**Given**: User is not authenticated  
+**When**: POST request to /api/ai/suggestions  
+**Then**: Returns 401 Unauthorized
+
+```typescript
+it('should reject unauthenticated requests', async () => {
+  const response = await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fanId: 'fan-123',
+      creatorId: 'creator-456'
+    })
+  })
+  
+  expect([401, 403]).toContain(response.status)
+})
+```
+
+#### Scenario 4.4: Method Not Allowed
+
+**Given**: Server is running  
+**When**: GET/PUT/DELETE request to /api/ai/suggestions  
+**Then**: Returns 405 Method Not Allowed
+
+```typescript
+it('should reject non-POST methods', async () => {
+  const methods = ['PUT', 'DELETE']
+  
+  for (const method of methods) {
+    const response = await fetch(`${BASE_URL}/api/ai/suggestions`, { 
+      method,
+      headers: { 'Authorization': 'Bearer test-token' }
+    })
+    expect(response.status).toBe(405)
+  }
+})
+```
+
+#### Scenario 4.5: Health Check Endpoint
+
+**Given**: Server is running  
+**When**: GET request to /api/ai/suggestions  
+**Then**: 
+- Returns 200 OK or 503 Service Unavailable
+- Response includes status and circuit breaker states
+- Timestamp is included
+
+```typescript
+it('should return health status', async () => {
+  const response = await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'GET'
+  })
+  
+  expect([200, 503]).toContain(response.status)
+  
+  const json = await response.json()
+  expect(json.status).toMatch(/^(healthy|unhealthy)$/)
+  expect(json.circuitBreakers).toBeDefined()
+  expect(json.timestamp).toBeDefined()
+})
+```
+
+#### Scenario 4.6: Concurrent Request Handling
+
+**Given**: User is authenticated  
+**When**: Multiple concurrent POST requests  
+**Then**: 
+- All requests complete without crashes
+- Each has unique correlationId
+- No race conditions occur
+
+```typescript
+it('should handle concurrent requests', async () => {
+  const requests = Array.from({ length: 10 }, (_, i) =>
+    fetch(`${BASE_URL}/api/ai/suggestions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer test-token',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fanId: `fan-${i}`,
+        creatorId: 'creator-456'
+      })
+    })
+  )
+  
+  const responses = await Promise.all(requests)
+  
+  responses.forEach(response => {
+    expect([200, 429, 500]).toContain(response.status)
+  })
+  
+  const jsons = await Promise.all(responses.map(r => r.json()))
+  const correlationIds = jsons.map(j => j.metadata?.correlationId || j.correlationId)
+  const uniqueIds = new Set(correlationIds.filter(Boolean))
+  
+  expect(uniqueIds.size).toBe(correlationIds.filter(Boolean).length)
+})
+```
+
+#### Scenario 4.7: Performance Validation
+
+**Given**: Server is running  
+**When**: POST request to /api/ai/suggestions  
+**Then**: Response time < 5s (target: < 2s)
+
+```typescript
+it('should respond within acceptable time', async () => {
+  const start = Date.now()
+  
+  await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fanId: 'fan-123',
+      creatorId: 'creator-456'
+    })
+  })
+  
+  const duration = Date.now() - start
+  expect(duration).toBeLessThan(5000)
+})
+```
+
+#### Scenario 4.8: Response Schema Validation
+
+**Given**: Server is running  
+**When**: POST request to /api/ai/suggestions  
+**Then**: Response matches expected Zod schema
+
+```typescript
+import { z } from 'zod'
+
+const SuggestionSchema = z.object({
+  text: z.string(),
+  tone: z.enum(['flirty', 'friendly', 'professional', 'playful']),
+  confidence: z.number().min(0).max(1),
+  reasoning: z.string().optional()
+})
+
+const SuccessResponseSchema = z.object({
+  success: z.literal(true),
+  suggestions: z.array(SuggestionSchema),
+  metadata: z.object({
+    count: z.number(),
+    duration: z.number(),
+    correlationId: z.string()
+  })
+})
+
+it('should return valid response schema', async () => {
+  const response = await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fanId: 'fan-123',
+      creatorId: 'creator-456'
+    })
+  })
+  
+  const json = await response.json()
+  
+  if (response.status === 200) {
+    const result = SuccessResponseSchema.safeParse(json)
+    expect(result.success).toBe(true)
+  }
+})
+```
+
+#### Scenario 4.9: Security Validation
+
+**Given**: Server is running  
+**When**: POST request with malicious input  
+**Then**: 
+- Input is sanitized
+- No XSS vectors in response
+- No sensitive information exposed
+
+```typescript
+it('should sanitize XSS attempts', async () => {
+  const response = await fetch(`${BASE_URL}/api/ai/suggestions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer test-token',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fanId: '<script>alert("xss")</script>',
+      creatorId: 'creator-456',
+      lastMessage: '<img src=x onerror=alert(1)>'
+    })
+  })
+  
+  const json = await response.json()
+  const text = JSON.stringify(json)
+  
+  expect(text).not.toContain('<script>')
+  expect(text).not.toContain('onerror=')
+})
+```
+
+#### Scenario 4.10: Rate Limiting
+
+**Given**: User makes excessive requests  
+**When**: 100 POST requests in rapid succession  
+**Then**: 
+- Some requests return 429 Too Many Requests
+- Rate limit headers are included
+- Service remains stable
+
+```typescript
+it('should enforce rate limits', async () => {
+  const requests = Array.from({ length: 100 }, () =>
+    fetch(`${BASE_URL}/api/ai/suggestions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer test-token',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fanId: 'fan-rate-limit',
+        creatorId: 'creator-456'
+      })
+    })
+  )
+  
+  const responses = await Promise.all(requests)
+  const statusCodes = responses.map(r => r.status)
+  const rateLimited = statusCodes.filter(s => s === 429).length
+  
+  // Should have some rate limiting
+  expect(rateLimited).toBeGreaterThan(0)
+})
+```
+
+---
+
+### 5. Future Endpoints
 
 As new API endpoints are added, follow this template:
 

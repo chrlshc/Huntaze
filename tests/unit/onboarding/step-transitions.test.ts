@@ -2,7 +2,7 @@
  * Unit tests for step transition validation logic
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 
 type StepStatus = 'todo' | 'done' | 'skipped';
 
