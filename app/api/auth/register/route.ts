@@ -17,6 +17,10 @@ import { registrationService } from '@/lib/services/auth/register';
 import { authLogger } from '@/lib/services/auth/logger';
 import type { RegisterRequest, RegisterResponse } from '@/lib/services/auth/types';
 
+// Force Node.js runtime (required for database connections)
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 /**
  * Register a new user
  * 

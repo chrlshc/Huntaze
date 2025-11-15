@@ -47,7 +47,6 @@
     "@heroicons/react": "^2.2.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
-
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.4",
     "@types/react-dom": "^19.2.3",
@@ -64,7 +63,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.553.0",
     "next": "^16.0.3",
-    "next-auth": "^4.24.13",
+    "next-auth": "^5.0.0-beta.30",
     "nodemailer": "^7.0.10",
     "openai": "^6.9.0",
     "pg": "^8.16.3",
@@ -86,6 +85,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
+    "@tailwindcss/postcss": "^4.1.17",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -97,7 +97,6 @@
     "jsdom": "^27.2.0",
     "playwright": "^1.56.1",
     "postcss": "^8.5.6",
-    "@tailwindcss/postcss": "^4.1.17",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
     "vitest": "^4.0.8"

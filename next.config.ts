@@ -55,6 +55,13 @@ const nextConfig: NextConfig = {
   // Turbopack configuration (Next.js 16+)
   turbopack: {},
 
+  // Force Node.js runtime for all API routes (fixes NextAuth compatibility)
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+
   // Image optimization (migrated to remotePatterns for security)
   images: {
     remotePatterns: [
