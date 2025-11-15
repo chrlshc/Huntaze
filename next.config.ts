@@ -1,7 +1,5 @@
 import type { NextConfig } from 'next';
 
-const isExport = process.env.NEXT_OUTPUT_EXPORT === '1';
-
 // Legacy app redirects for backward compatibility
 const LEGACY_APP_REDIRECTS: [string, string][] = [
   ['/app', '/dashboard'],
@@ -14,10 +12,8 @@ const nextConfig: NextConfig = {
   // Core
   reactStrictMode: true,
   compress: true,
-  // Remove output: 'standalone' for Amplify - it handles this automatically
-  // output: isExport ? 'export' : 'standalone',
   
-  // Note: swcMinify removed - it's now the default in Next.js 15
+  // Note: swcMinify removed - it's now the default in Next.js 16
 
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
