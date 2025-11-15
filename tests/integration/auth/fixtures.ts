@@ -205,3 +205,203 @@ export async function measureTime<T>(fn: () => Promise<T>): Promise<{ result: T;
   const duration = Date.now() - start;
   return { result, duration };
 }
+
+/**
+ * NextAuth-specific fixtures
+ */
+
+export interface TestSession {
+  sessionToken: string;
+  userId: string;
+  expires: Date;
+}
+
+export interface TestAccount {
+  id: string;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  access_token?: string;
+  refresh_token?: string;
+  expires_at?: number;
+  token_type?: string;
+  scope?: string;
+}
+
+/**
+ * Create test session
+ */
+export async function createTestSession(
+  userId: string,
+  options: Partial<TestSession> = {}
+): Promise<TestSession> {
+  const sessionToken = options.sessionToken || `test-session-${Math.random().toString(36).substring(7)}`;
+  const expires = options.expires || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+  const session = await prisma.session.create({
+    data: {
+      sessionToken,
+      userId,
+      expires,
+    },
+  });
+
+  return {
+    sessionToken: session.sessionToken,
+    userId: session.userId,
+    expires: session.expires,
+  };
+}
+
+/**
+ * Create test OAuth account
+ */
+export async function createTestAccount(
+  userId: string,
+  provider: string = 'google',
+  options: Partial<TestAccount> = {}
+): Promise<TestAccount> {
+  const account = await prisma.account.create({
+    data: {
+      userId,
+      type: options.type || 'oauth',
+      provider,
+      providerAccountId: options.providerAccountId || `provider-${Math.random().toString(36).substring(7)}`,
+      access_token: options.access_token,
+      refresh_token: options.refresh_token,
+      expires_at: options.expires_at,
+      token_type: options.token_type || 'Bearer',
+      scope: options.scope,
+    },
+  });
+
+  return {
+    id: account.id,
+    userId: account.userId,
+    type: account.type,
+    provider: account.provider,
+    providerAccountId: account.providerAccountId,
+    access_token: account.access_token || undefined,
+    refresh_token: account.refresh_token || undefined,
+    expires_at: account.expires_at || undefined,
+    token_type: account.token_type || undefined,
+    scope: account.scope || undefined,
+  };
+}
+
+/**
+ * Clean up test sessions
+ */
+export async function cleanupTestSessions() {
+  return await prisma.session.deleteMany({
+    where: {
+      sessionToken: {
+        startsWith: 'test-session-',
+      },
+    },
+  });
+}
+
+/**
+ * Clean up test accounts
+ */
+export async function cleanupTestAccounts() {
+  return await prisma.account.deleteMany({
+    where: {
+      providerAccountId: {
+        startsWith: 'provider-',
+      },
+    },
+  });
+}
+
+/**
+ * Clean up all test data
+ */
+export async function cleanupTestData() {
+  await cleanupTestSessions();
+  await cleanupTestAccounts();
+  await cleanupTestUsers();
+}
+
+/**
+ * OAuth provider test data
+ */
+export const oauthProviders = {
+  google: {
+    provider: 'google',
+    type: 'oauth',
+    scope: 'openid email profile',
+    token_type: 'Bearer',
+  },
+  instagram: {
+    provider: 'instagram',
+    type: 'oauth',
+    scope: 'instagram_basic,pages_show_list',
+    token_type: 'Bearer',
+  },
+  tiktok: {
+    provider: 'tiktok',
+    type: 'oauth',
+    scope: 'user.info.basic,video.upload',
+    token_type: 'Bearer',
+  },
+  reddit: {
+    provider: 'reddit',
+    type: 'oauth',
+    scope: 'identity,submit,read',
+    token_type: 'bearer',
+  },
+};
+
+/**
+ * Generate mock OAuth tokens
+ */
+export function generateMockOAuthTokens(provider: string) {
+  return {
+    access_token: `mock_access_token_${provider}_${Math.random().toString(36).substring(7)}`,
+    refresh_token: `mock_refresh_token_${provider}_${Math.random().toString(36).substring(7)}`,
+    expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour
+    token_type: 'Bearer',
+    scope: oauthProviders[provider as keyof typeof oauthProviders]?.scope || '',
+  };
+}
+
+/**
+ * Validate session response
+ */
+export function validateSessionResponse(data: any) {
+  return (
+    typeof data === 'object' &&
+    (data.user === undefined || typeof data.user === 'object') &&
+    (data.expires === undefined || typeof data.expires === 'string')
+  );
+}
+
+/**
+ * Validate CSRF token response
+ */
+export function validateCSRFResponse(data: any) {
+  return (
+    typeof data === 'object' &&
+    typeof data.csrfToken === 'string' &&
+    data.csrfToken.length > 0
+  );
+}
+
+/**
+ * Validate providers response
+ */
+export function validateProvidersResponse(data: any) {
+  return (
+    typeof data === 'object' &&
+    Object.keys(data).length > 0 &&
+    Object.values(data).every((provider: any) => 
+      typeof provider === 'object' &&
+      typeof provider.id === 'string' &&
+      typeof provider.name === 'string' &&
+      typeof provider.type === 'string'
+    )
+  );
+}
