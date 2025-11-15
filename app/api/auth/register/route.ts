@@ -28,7 +28,6 @@ import type { RegisterRequest, RegisterResponse } from '@/lib/services/auth/type
  * // Request
  * POST /api/auth/register
  * {
- *   "fullName": "John Doe",
  *   "email": "john@example.com",
  *   "password": "SecurePass123!"
  * }
@@ -60,7 +59,6 @@ export async function POST(request: NextRequest) {
     // Parse request body
     const body = await request.json();
     const data: RegisterRequest = {
-      fullName: body.fullName,
       email: body.email,
       password: body.password,
     };
