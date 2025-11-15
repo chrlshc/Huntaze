@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 export default function AuthPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(false);
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -68,7 +67,7 @@ export default function AuthPage() {
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fullName, email, password }),
+          body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
@@ -116,7 +115,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+    <div className="h-screen bg-white flex flex-col lg:flex-row overflow-hidden">
       {/* LEFT SIDE - HERO (Hidden on Mobile) */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 relative overflow-hidden items-center justify-center p-12">
         {/* Animated background shapes */}
@@ -168,18 +167,18 @@ export default function AuthPage() {
       </div>
 
       {/* RIGHT SIDE - FORM */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 lg:p-12 bg-white">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 lg:p-8 bg-white overflow-y-auto">
+        <div className="w-full max-w-md my-auto">
           {/* Mobile Header */}
-          <div className="lg:hidden mb-8 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white mb-4">
-              <span className="text-lg font-bold">H</span>
+          <div className="lg:hidden mb-4 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white mb-2">
+              <span className="text-base font-bold">H</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Huntaze</h2>
+            <h2 className="text-xl font-bold text-gray-900">Huntaze</h2>
           </div>
 
           {/* Tab Toggle */}
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-8">
+          <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6">
             <button
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-2.5 px-4 rounded-md font-semibold text-sm transition-all duration-200 ${
@@ -203,22 +202,22 @@ export default function AuthPage() {
           </div>
 
           {/* Headline */}
-          <div className="mb-8">
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-6">
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">
               {isLogin ? 'Welcome back' : 'Create your account'}
             </h1>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-xs">
               {isLogin
                 ? 'Sign in to your Huntaze account'
                 : 'Join 500+ creators already scaling their revenue'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {/* Error Message */}
             {error && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="p-2 rounded-lg bg-red-50 border border-red-200">
+                <p className="text-xs text-red-600">{error}</p>
               </div>
             )}
 
@@ -227,7 +226,7 @@ export default function AuthPage() {
               type="button"
               onClick={handleGoogleAuth}
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-lg border border-gray-300 hover:border-gray-400 bg-white text-gray-900 font-semibold text-sm transition-all duration-200 hover:shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 px-4 rounded-lg border border-gray-300 hover:border-gray-400 bg-white text-gray-900 font-semibold text-sm transition-all duration-200 hover:shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -251,33 +250,15 @@ export default function AuthPage() {
             </button>
 
             {/* Divider */}
-            <div className="flex items-center gap-3 my-6">
+            <div className="flex items-center gap-3 my-4">
               <div className="flex-1 h-px bg-gray-300"></div>
               <span className="text-gray-500 text-xs font-medium">OR</span>
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
 
-            {/* Full Name Field (Register only) */}
-            {!isLogin && (
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-semibold text-gray-900 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-gray-900 placeholder-gray-500 transition-colors duration-200"
-                  required
-                />
-              </div>
-            )}
-
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="email" className="block text-xs font-semibold text-gray-900 mb-1.5">
                 Email Address
               </label>
               <input
@@ -286,14 +267,14 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-gray-900 placeholder-gray-500 transition-colors duration-200"
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-sm text-gray-900 placeholder-gray-500 transition-colors duration-200"
                 required
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="password" className="block text-xs font-semibold text-gray-900 mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -303,23 +284,23 @@ export default function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-gray-900 placeholder-gray-500 transition-colors duration-200"
+                  className="w-full px-3 py-2.5 pr-10 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-sm text-gray-900 placeholder-gray-500 transition-colors duration-200"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* Password Strength (Register only) */}
               {!isLogin && password && (
-                <div className="mt-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className="mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${passwordStrength.color}`}
                         style={{
@@ -328,26 +309,17 @@ export default function AuthPage() {
                       ></div>
                     </div>
                     {passwordStrength.label && (
-                      <span className={`text-xs font-semibold ${passwordStrength.color.replace('bg-', 'text-')}`}>
+                      <span className={`text-[10px] font-semibold ${passwordStrength.color.replace('bg-', 'text-')}`}>
                         {passwordStrength.label}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500">
-                    Use 8+ characters with uppercase, numbers, and symbols
-                  </p>
-                </div>
-              )}
-
-              {isLogin && (
-                <div className="mt-3">
-                  <p className="text-xs text-gray-600">Must be at least 8 characters</p>
                 </div>
               )}
             </div>
 
             {/* Checkbox - Remember Me or Agree Terms */}
-            <div className="flex items-start gap-2 pt-2">
+            <div className="flex items-start gap-2 pt-1">
               {isLogin ? (
                 <>
                   <input
@@ -355,9 +327,9 @@ export default function AuthPage() {
                     id="rememberMe"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-purple-600 cursor-pointer mt-0.5"
+                    className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 cursor-pointer mt-0.5"
                   />
-                  <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+                  <label htmlFor="rememberMe" className="text-xs text-gray-600 cursor-pointer">
                     Remember me for 30 days
                   </label>
                 </>
@@ -368,9 +340,9 @@ export default function AuthPage() {
                     id="agreeTerms"
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-purple-600 cursor-pointer mt-0.5"
+                    className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 cursor-pointer mt-0.5"
                   />
-                  <label htmlFor="agreeTerms" className="text-sm text-gray-600">
+                  <label htmlFor="agreeTerms" className="text-xs text-gray-600">
                     I agree to the{' '}
                     <a href="#" className="text-purple-600 hover:text-purple-700 font-semibold">
                       Terms
@@ -387,7 +359,7 @@ export default function AuthPage() {
             {/* Forgot Password Link (Login only) */}
             {isLogin && (
               <div className="text-right">
-                <a href="#" className="text-sm text-purple-600 hover:text-purple-700 font-semibold">
+                <a href="#" className="text-xs text-purple-600 hover:text-purple-700 font-semibold">
                   Forgot password?
                 </a>
               </div>
@@ -397,7 +369,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={isLoading || (!isLogin && !agreeTerms)}
-              className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-base transition-all duration-200 transform hover:shadow-lg mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 px-4 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm transition-all duration-200 transform hover:shadow-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -414,7 +386,7 @@ export default function AuthPage() {
           </form>
 
           {/* Footer Link */}
-          <p className="text-center text-gray-600 text-sm mt-6">
+          <p className="text-center text-gray-600 text-xs mt-4">
             {isLogin ? "Don't have an account? " : 'Already have an account? '}
             <button
               type="button"
@@ -426,9 +398,9 @@ export default function AuthPage() {
           </p>
 
           {/* Security Badge */}
-          <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-gray-200">
-            <div className="flex items-center gap-1 text-gray-500 text-xs">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-1 text-gray-500 text-[10px]">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"

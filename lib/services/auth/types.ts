@@ -50,7 +50,7 @@ export interface AuthError extends Error {
 // ============================================================================
 
 export interface RegisterRequest {
-  fullName: string;
+  fullName?: string;
   email: string;
   password: string;
 }

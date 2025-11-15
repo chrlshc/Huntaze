@@ -29,22 +29,24 @@ const NAME_MAX_LENGTH = 100;
 export function validateRegisterRequest(data: RegisterRequest): ValidationResult {
   const errors: ValidationError[] = [];
 
-  // Validate fullName
-  if (!data.fullName || typeof data.fullName !== 'string') {
-    errors.push({
-      field: 'fullName',
-      message: 'Full name is required',
-    });
-  } else if (data.fullName.trim().length < NAME_MIN_LENGTH) {
-    errors.push({
-      field: 'fullName',
-      message: `Name must be at least ${NAME_MIN_LENGTH} characters`,
-    });
-  } else if (data.fullName.length > NAME_MAX_LENGTH) {
-    errors.push({
-      field: 'fullName',
-      message: `Name must not exceed ${NAME_MAX_LENGTH} characters`,
-    });
+  // Validate fullName (optional)
+  if (data.fullName) {
+    if (typeof data.fullName !== 'string') {
+      errors.push({
+        field: 'fullName',
+        message: 'Full name must be a string',
+      });
+    } else if (data.fullName.trim().length < NAME_MIN_LENGTH) {
+      errors.push({
+        field: 'fullName',
+        message: `Name must be at least ${NAME_MIN_LENGTH} characters`,
+      });
+    } else if (data.fullName.length > NAME_MAX_LENGTH) {
+      errors.push({
+        field: 'fullName',
+        message: `Name must not exceed ${NAME_MAX_LENGTH} characters`,
+      });
+    }
   }
 
   // Validate email
