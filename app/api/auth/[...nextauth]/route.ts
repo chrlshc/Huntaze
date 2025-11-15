@@ -111,25 +111,49 @@ async function authenticateUser(
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // TODO: Replace with actual authentication service call
-      // Example: const response = await fetch('/api/auth/verify', { ... });
+      const { query } = await import('@/lib/db');
+      const { compare } = await import('bcryptjs');
+
+      // Find user by email
+      const result = await query(
+        `SELECT id, email, name, password, role, creator_id 
+         FROM users 
+         WHERE LOWER(email) = LOWER($1)`,
+        [email]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error('Invalid credentials');
+      }
+
+      const user = result.rows[0];
+
+      if (!user.password) {
+        throw new Error('Invalid credentials');
+      }
+
+      // Verify password
+      const isValidPassword = await compare(password, user.password);
       
-      // Placeholder implementation
-      // In production, this should call your user service/database
-      const user: ExtendedUser = {
-        id: '1',
-        email,
-        name: 'User',
-        role: 'creator',
+      if (!isValidPassword) {
+        throw new Error('Invalid credentials');
+      }
+
+      const authenticatedUser: ExtendedUser = {
+        id: user.id.toString(),
+        email: user.email,
+        name: user.name,
+        role: user.role || 'creator',
+        creatorId: user.creator_id?.toString() || undefined,
       };
 
       console.log('[NextAuth] Authentication successful:', {
-        userId: user.id,
-        email: user.email,
+        userId: authenticatedUser.id,
+        email: authenticatedUser.email,
         correlationId,
       });
 
-      return user;
+      return authenticatedUser;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
       
