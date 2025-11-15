@@ -3,9 +3,25 @@ import Stripe from 'stripe';
 import { getUserFromRequest } from '@/lib/auth/request';
 import { rateLimit } from '@/lib/rate-limit';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+// Lazy Stripe initialization to avoid build-time errors
+let stripe: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripe) {
+    const secretKey = process.env.STRIPE_SECRET_KEY || '';
+    if (!secretKey) {
+      throw new Error('Stripe secret key not configured');
+    }
+    stripe = new Stripe(secretKey, {
+      apiVersion: '2023-10-16',
+    });
+  }
+  return stripe;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +57,7 @@ export async function POST(request: NextRequest) {
     // Create Stripe checkout session (idempotent)
     const idempotencyKey = `checkout_${userId}_${planId}`;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer_email: email,
       payment_method_types: ['card'],
       line_items: [

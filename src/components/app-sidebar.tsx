@@ -30,6 +30,7 @@ import {
 import { useSSE } from "@/hooks/useSSE";
 import { useSSECounter } from "@/src/hooks/useSSECounter";
 import { AnimatePresence, motion } from "framer-motion";
+import { SafeBadge } from "@/components/hydration/SafeBadge";
 import "./nav-styles.css";
 
 type BadgeConfig = { type: "unread" | "alerts"; url: string };
@@ -248,14 +249,11 @@ export default function AppSidebar() {
           <Icon aria-hidden className="nav-item-icon" />
           <span className="nav-item-label">{item.label}</span>
           {item.badge && count > 0 && (
-            <span
-              className={`nav-badge ${count > 0 ? "nav-badge-pulse" : ""}`}
-              role="status"
-              aria-label={`${count} ${item.badge.type === "unread" ? "new messages" : "alerts"}`}
-              suppressHydrationWarning
-            >
-              {count > 99 ? "99+" : count}
-            </span>
+            <SafeBadge
+              count={count}
+              type={item.badge.type}
+              maxCount={99}
+            />
           )}
         </div>
       </Link>

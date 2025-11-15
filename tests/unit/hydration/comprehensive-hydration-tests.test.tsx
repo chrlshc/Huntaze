@@ -21,22 +21,22 @@ import {
 } from '@/components/hydration';
 
 // Mock des services externes
-jest.mock('@/lib/utils/hydrationDebugger', () => ({
+vi.mock('@/lib/utils/hydrationDebugger', () => ({
   hydrationDebugger: {
-    logHydrationSuccess: jest.fn(),
-    logHydrationError: jest.fn(),
-    logDataMismatch: jest.fn(),
-    logSSRDataHydration: jest.fn(),
-    logRecoveryAttempt: jest.fn(),
-    logRecoverySuccess: jest.fn(),
-    logRecoveryFailure: jest.fn(),
-    logManualRecovery: jest.fn()
+    logHydrationSuccess: vi.fn(),
+    logHydrationError: vi.fn(),
+    logDataMismatch: vi.fn(),
+    logSSRDataHydration: vi.fn(),
+    logRecoveryAttempt: vi.fn(),
+    logRecoverySuccess: vi.fn(),
+    logRecoveryFailure: vi.fn(),
+    logManualRecovery: vi.fn()
   }
 }));
 
-jest.mock('@/lib/services/hydrationMonitoringService', () => ({
+vi.mock('@/lib/services/hydrationMonitoringService', () => ({
   hydrationMonitoringService: {
-    getMetrics: jest.fn(() => ({
+    getMetrics: vi.fn(() => ({
       totalHydrations: 100,
       successfulHydrations: 95,
       failedHydrations: 5,
@@ -44,20 +44,20 @@ jest.mock('@/lib/services/hydrationMonitoringService', () => ({
       errorRate: 0.05,
       recoverySuccessRate: 0.8
     })),
-    getRecentErrors: jest.fn(() => []),
-    getRecentAlerts: jest.fn(() => []),
-    generateHealthReport: jest.fn(() => ({
+    getRecentErrors: vi.fn(() => []),
+    getRecentAlerts: vi.fn(() => []),
+    generateHealthReport: vi.fn(() => ({
       status: 'healthy',
       metrics: {},
       recentErrors: [],
       recentAlerts: [],
       recommendations: ['Système fonctionnel']
     })),
-    onAlert: jest.fn(() => () => {}),
-    recordHydrationError: jest.fn(),
-    recordHydrationSuccess: jest.fn(),
-    startHydration: jest.fn(() => 'test-id'),
-    recordRecoverySuccess: jest.fn()
+    onAlert: vi.fn(() => () => {}),
+    recordHydrationError: vi.fn(),
+    recordHydrationSuccess: vi.fn(),
+    startHydration: vi.fn(() => 'test-id'),
+    recordRecoverySuccess: vi.fn()
   }
 }));
 
@@ -76,7 +76,7 @@ describe('Comprehensive Hydration Tests', () => {
   describe('6.1 Unit Tests for Hydration Components', () => {
     describe('HydrationSafeWrapper', () => {
       it('should handle hydration lifecycle correctly', async () => {
-        const onHydrationError = jest.fn();
+        const onHydrationError = vi.fn();
         const TestComponent = () => (
           <HydrationSafeWrapper onHydrationError={onHydrationError}>
             <div data-testid="content">Hydrated Content</div>
@@ -121,7 +121,7 @@ describe('Comprehensive Hydration Tests', () => {
       });
 
       it('should handle errors gracefully', async () => {
-        const onError = jest.fn();
+        const onError = vi.fn();
         const ErrorComponent = () => {
           throw new Error('Test error');
         };
@@ -588,8 +588,8 @@ describe('Comprehensive Hydration Tests', () => {
 
   describe('6.3 Error Recovery and Edge Cases', () => {
     it('should handle hydration errors gracefully', async () => {
-      const onRecoveryAttempt = jest.fn();
-      const onRecoveryFailure = jest.fn();
+      const onRecoveryAttempt = vi.fn();
+      const onRecoveryFailure = vi.fn();
 
       const ProblematicComponent = () => {
         // Simuler un composant qui pourrait causer des erreurs d'hydratation

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { OnlyFansAPI, decryptApiKey } from '@/lib/integrations/onlyfans';
 import { CommissionTracker } from '@/lib/billing/commission-tracker';
 
+// Force dynamic rendering to avoid build-time evaluation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // This endpoint should be called monthly by a cron job
 // Trigger via scheduled job (e.g., AWS EventBridge or GitHub Actions)
 export async function POST(request: NextRequest) {

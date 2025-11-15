@@ -10,6 +10,7 @@ import {
   Plus
 } from 'lucide-react';
 import { useSSECounter } from '@/src/hooks/useSSECounter';
+import { SafeNotificationBadge } from '@/components/hydration/SafeBadge';
 import './nav-styles.css';
 
 const navItems = [
@@ -69,12 +70,10 @@ export default function MobileBottomNav() {
               <div className="relative">
                 <Icon className="bottom-nav-item-icon" aria-hidden="true" />
                 {item.badge && unreadCount > 0 && (
-                  <span 
+                  <SafeNotificationBadge 
+                    count={unreadCount}
                     className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px] leading-[18px] text-white bg-danger rounded-full text-center"
-                    suppressHydrationWarning
-                  >
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
+                  />
                 )}
               </div>
               <span className="bottom-nav-item-label">{item.label}</span>
