@@ -1,8 +1,19 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
+// Lazy Stripe initialization to avoid build-time errors
+let stripe: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('Stripe secret key not configured');
+    }
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    });
+  }
+  return stripe;
+}
 
 interface CreatorEarnings {
   userId: string;
@@ -33,6 +44,7 @@ export class CommissionTracker {
     
     try {
       // Get user's Stripe subscription
+      const stripe = getStripe();
       const subscriptions = await stripe.subscriptions.list({
         limit: 1,
         // In production, lookup by user's stripe customer ID
@@ -79,6 +91,7 @@ export class CommissionTracker {
    */
   static async createCommissionCharge(charge: CommissionCharge) {
     try {
+      const stripe = getStripe();
       // Option 1: Use Invoice Items for next invoice
       const invoiceItem = await stripe.invoiceItems.create({
         customer: await this.getCustomerId(charge.userId),

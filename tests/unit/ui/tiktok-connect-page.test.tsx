@@ -8,31 +8,31 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import TikTokConnectPage from '@/app/platforms/connect/tiktok/page';
 
 // Mock Next.js navigation hooks
-jest.mock('next/navigation', () => ({
-  useSearchParams: jest.fn(),
-  useRouter: jest.fn(),
+vi.mock('next/navigation', () => ({
+  useSearchParams: vi.fn(),
+  useRouter: vi.fn(),
 }));
 
 // Mock window.location.href
 delete (window as any).location;
 window.location = { href: '' } as any;
 
-const mockUseSearchParams = useSearchParams as jest.MockedFunction<typeof useSearchParams>;
-const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
+const mockUseSearchParams = useSearchParams as any<typeof useSearchParams>;
+const mockUseRouter = useRouter as any<typeof useRouter>;
 
 describe('TikTokConnectPage', () => {
-  const mockPush = jest.fn();
-  const mockGet = jest.fn();
+  const mockPush = vi.fn();
+  const mockGet = vi.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseRouter.mockReturnValue({
       push: mockPush,
-      back: jest.fn(),
-      forward: jest.fn(),
-      refresh: jest.fn(),
-      replace: jest.fn(),
-      prefetch: jest.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
     });
     mockUseSearchParams.mockReturnValue({
       get: mockGet,
@@ -137,7 +137,7 @@ describe('TikTokConnectPage', () => {
         return null;
       });
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation();
 
       render(<TikTokConnectPage />);
 

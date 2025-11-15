@@ -9,11 +9,11 @@ import { oauthAccountsRepository } from '@/lib/db/repositories/oauthAccountsRepo
 import { tokenEncryption } from '@/lib/services/tokenEncryption';
 
 // Mock dependencies
-jest.mock('@/lib/db/repositories/oauthAccountsRepository');
-jest.mock('@/lib/services/tokenEncryption');
-jest.mock('@/lib/services/instagramOAuth', () => ({
-  InstagramOAuthService: jest.fn().mockImplementation(() => ({
-    refreshLongLivedToken: jest.fn(),
+vi.mock('@/lib/db/repositories/oauthAccountsRepository');
+vi.mock('@/lib/services/tokenEncryption');
+vi.mock('@/lib/services/instagramOAuth', () => ({
+  InstagramOAuthService: vi.fn().mockImplementation(() => ({
+    refreshLongLivedToken: vi.fn(),
   })),
 }));
 

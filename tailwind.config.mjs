@@ -1,4 +1,3 @@
-import { type Config } from 'tailwindcss';
 import {
   accentPalette,
   borderColors,
@@ -201,4 +200,4 @@ export default {
     },
   },
   plugins: [],
-} satisfies Config;
+};

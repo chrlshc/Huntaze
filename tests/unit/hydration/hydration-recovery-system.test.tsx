@@ -10,27 +10,27 @@ import { hydrationMonitoringService } from '@/lib/services/hydrationMonitoringSe
 import { hydrationRetryManager } from '@/lib/utils/hydrationRetryManager';
 
 // Mock des services
-jest.mock('@/lib/services/hydrationMonitoringService', () => ({
+vi.mock('@/lib/services/hydrationMonitoringService', () => ({
   hydrationMonitoringService: {
-    getMetrics: jest.fn(),
-    getRecentErrors: jest.fn(),
-    getRecentAlerts: jest.fn(),
-    generateHealthReport: jest.fn(),
-    onAlert: jest.fn(),
-    recordHydrationError: jest.fn(),
-    recordHydrationSuccess: jest.fn(),
-    startHydration: jest.fn(),
-    recordRecoverySuccess: jest.fn()
+    getMetrics: vi.fn(),
+    getRecentErrors: vi.fn(),
+    getRecentAlerts: vi.fn(),
+    generateHealthReport: vi.fn(),
+    onAlert: vi.fn(),
+    recordHydrationError: vi.fn(),
+    recordHydrationSuccess: vi.fn(),
+    startHydration: vi.fn(),
+    recordRecoverySuccess: vi.fn()
   }
 }));
 
-jest.mock('@/lib/utils/hydrationRetryManager', () => ({
+vi.mock('@/lib/utils/hydrationRetryManager', () => ({
   hydrationRetryManager: {
-    executeWithRetry: jest.fn(),
-    getComponentStats: jest.fn(),
-    getGlobalStats: jest.fn(),
-    resetContext: jest.fn(),
-    forceCloseCircuitBreaker: jest.fn()
+    executeWithRetry: vi.fn(),
+    getComponentStats: vi.fn(),
+    getGlobalStats: vi.fn(),
+    resetContext: vi.fn(),
+    forceCloseCircuitBreaker: vi.fn()
   }
 }));
 
@@ -54,8 +54,8 @@ describe('HydrationRecoverySystem', () => {
   });
 
   it('should show recovery UI when hydration fails', async () => {
-    const onRecoveryAttempt = jest.fn();
-    const onRecoveryFailure = jest.fn();
+    const onRecoveryAttempt = vi.fn();
+    const onRecoveryFailure = vi.fn();
 
     const TestComponent = () => (
       <HydrationRecoverySystem
@@ -119,7 +119,7 @@ describe('HydrationRecoverySystem', () => {
 
   it('should preserve user state during recovery', async () => {
     // Mock des fonctions de préservation d'état
-    const mockScrollTo = jest.fn();
+    const mockScrollTo = vi.fn();
     Object.defineProperty(window, 'scrollTo', { value: mockScrollTo });
     Object.defineProperty(window, 'scrollX', { value: 100 });
     Object.defineProperty(window, 'scrollY', { value: 200 });
@@ -351,7 +351,7 @@ describe('Integration Tests', () => {
   });
 
   it('should handle complete recovery workflow', async () => {
-    const onRecoverySuccess = jest.fn();
+    const onRecoverySuccess = vi.fn();
     
     const TestComponent = () => (
       <div>

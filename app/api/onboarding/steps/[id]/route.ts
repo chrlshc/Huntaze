@@ -79,13 +79,13 @@ function logInfo(context: string, metadata?: Record<string, any>) {
  */
 async function patchHandler(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<UpdateStepResponse | ErrorResponse>> {
   const correlationId = crypto.randomUUID();
   
   try {
     const user = await requireUser();
-    const stepId = params.id;
+    const { id: stepId } = await params;
     
     // Parse and validate request body
     let body: UpdateStepRequest;

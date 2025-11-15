@@ -16,21 +16,21 @@ const mockWindow = {
   scrollX: 0,
   scrollY: 100,
   location: { href: 'http://localhost:3000' },
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-  open: jest.fn()
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+  open: vi.fn()
 };
 
 const mockDocument = {
   title: 'Test Page',
   body: document.createElement('body'),
   head: document.createElement('head'),
-  createElement: jest.fn(() => document.createElement('div')),
-  getElementById: jest.fn(),
-  querySelector: jest.fn(),
-  querySelectorAll: jest.fn(),
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn()
+  createElement: vi.fn(() => document.createElement('div')),
+  getElementById: vi.fn(),
+  querySelector: vi.fn(),
+  querySelectorAll: vi.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn()
 };
 
 // Mock de window et document

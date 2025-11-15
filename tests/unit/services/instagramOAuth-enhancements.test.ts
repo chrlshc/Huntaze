@@ -11,14 +11,14 @@
 import { InstagramOAuthService } from '@/lib/services/instagramOAuth';
 
 // Mock fetch globally
-global.fetch = jest.fn();
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+global.fetch = vi.fn();
+const mockFetch = fetch as any;
 
 // Mock console methods
 const consoleSpy = {
-  error: jest.spyOn(console, 'error').mockImplementation(),
-  warn: jest.spyOn(console, 'warn').mockImplementation(),
-  log: jest.spyOn(console, 'log').mockImplementation(),
+  error: vi.spyOn(console, 'error').mockImplementation(),
+  warn: vi.spyOn(console, 'warn').mockImplementation(),
+  log: vi.spyOn(console, 'log').mockImplementation(),
 };
 
 describe('InstagramOAuthService - Phase 3 Enhancements', () => {
@@ -38,7 +38,7 @@ describe('InstagramOAuthService - Phase 3 Enhancements', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Token Refresh Functionality', () => {
@@ -102,7 +102,7 @@ describe('InstagramOAuthService - Phase 3 Enhancements', () => {
   describe('Retry Logic with Exponential Backoff', () => {
     beforeEach(() => {
       // Mock setTimeout to avoid actual delays in tests
-      jest.spyOn(global, 'setTimeout').mockImplementation((callback) => {
+      vi.spyOn(global, 'setTimeout').mockImplementation((callback) => {
         if (typeof callback === 'function') {
           callback();
         }
@@ -111,7 +111,7 @@ describe('InstagramOAuthService - Phase 3 Enhancements', () => {
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      vi.restoreAllMocks();
     });
 
     it('should retry failed requests with exponential backoff', async () => {

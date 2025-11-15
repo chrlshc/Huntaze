@@ -2,7 +2,7 @@
  * Unit tests for UserOnboardingRepository
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi as jest } from 'vitest';
 
 // Mock Pool type
 interface MockPool {

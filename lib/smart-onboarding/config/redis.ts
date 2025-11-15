@@ -17,8 +17,14 @@ export const REDIS_CONFIG = {
   keyPrefix: 'huntaze:smart_onboarding:',
 } as const;
 
-// Create Redis client instance
+// Create Redis client instance (safe for build time)
 export const createRedisClient = (): Redis => {
+  // Skip Redis initialization during build
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    console.warn('Skipping Redis initialization during build');
+    return null as any; // Will be properly initialized at runtime
+  }
+  
   const redis = new Redis(REDIS_CONFIG);
   
   redis.on('connect', () => {
@@ -404,8 +410,15 @@ export class SmartOnboardingCache {
 // Export singleton instance
 export const smartOnboardingCache = new SmartOnboardingCache();
 
-// Export Redis client for direct use
-export const redisClient = createRedisClient();
+// Export Redis client for direct use (lazy initialization to avoid build errors)
+let _redisClient: Redis | null = null;
+
+export const redisClient = (() => {
+  if (!_redisClient && process.env.NEXT_PHASE !== 'phase-production-build') {
+    _redisClient = createRedisClient();
+  }
+  return _redisClient;
+})() as Redis;
 
 // WebSocket event channels
 export const WEBSOCKET_CHANNELS = {

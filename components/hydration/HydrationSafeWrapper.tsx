@@ -1,164 +1,182 @@
 'use client';
 
-import React, { useState, useEffect, ReactNode } from 'react';
-import { hydrationDebugger } from '@/lib/utils/hydrationDebugger';
+import { ReactNode, useEffect, useState } from 'react';
+
+/**
+ * HydrationSafeWrapper Component
+ * 
+ * Prevents hydration mismatches by only rendering children on the client side.
+ * Provides a fallback for server-side rendering.
+ * 
+ * Usage:
+ * ```tsx
+ * <HydrationSafeWrapper fallback={<div>Loading...</div>}>
+ *   <ClientOnlyComponent />
+ * </HydrationSafeWrapper>
+ * ```
+ */
 
 interface HydrationSafeWrapperProps {
   children: ReactNode;
   fallback?: ReactNode;
-  suppressHydrationWarning?: boolean;
-  onHydrationError?: (error: Error) => void;
-  className?: string;
-  id?: string;
+  /**
+   * If true, will render children on server but with hydration suppression
+   * Use only when you need SEO content but have minor hydration differences
+   */
+  suppressWarning?: boolean;
 }
 
-/**
- * HydrationSafeWrapper - Composant wrapper pour gérer l'hydratation de manière sécurisée
- * 
- * Ce composant résout les problèmes d'hydratation en:
- * 1. Détectant si le rendu se fait côté serveur ou client
- * 2. Fournissant des fallbacks pendant l'hydratation
- * 3. Gérant les erreurs d'hydratation de manière gracieuse
- * 4. Permettant le rendu progressif des composants client-only
- */
 export function HydrationSafeWrapper({
   children,
   fallback = null,
-  suppressHydrationWarning = false,
-  onHydrationError,
-  className,
-  id
+  suppressWarning = false,
 }: HydrationSafeWrapperProps) {
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [hydrationError, setHydrationError] = useState<Error | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    try {
-      // Marquer comme hydraté après le premier rendu client
-      setIsHydrated(true);
-      
-      // Logger l'hydratation réussie
-      hydrationDebugger.logHydrationSuccess(id || 'anonymous-wrapper');
-    } catch (error) {
-      const hydrationError = error instanceof Error ? error : new Error('Unknown hydration error');
-      setHydrationError(hydrationError);
-      
-      // Logger l'erreur d'hydratation
-      hydrationDebugger.logHydrationError(id || 'anonymous-wrapper', hydrationError);
-      
-      // Appeler le callback d'erreur si fourni
-      onHydrationError?.(hydrationError);
-    }
-  }, [id, onHydrationError]);
-
-  // Si une erreur d'hydratation s'est produite, afficher le fallback
-  if (hydrationError) {
-    return (
-      <div 
-        className={`hydration-error-fallback ${className || ''}`}
-        id={id}
-        data-hydration-error="true"
-      >
-        {fallback || (
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm text-yellow-800">
-              Contenu en cours de chargement...
-            </p>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Pendant l'hydratation, afficher le fallback si fourni
-  if (!isHydrated && fallback) {
-    return (
-      <div 
-        className={`hydration-loading ${className || ''}`}
-        id={id}
-        data-hydration-state="loading"
-      >
-        {fallback}
-      </div>
-    );
-  }
-
-  // Une fois hydraté, afficher le contenu normal
-  return (
-    <div 
-      className={className}
-      id={id}
-      data-hydration-state="complete"
-      suppressHydrationWarning={suppressHydrationWarning}
-    >
-      {children}
-    </div>
-  );
-}
-
-/**
- * Hook pour détecter l'état d'hydratation
- */
-export function useHydration() {
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
+    setIsClient(true);
   }, []);
 
-  return isHydrated;
+  // Server-side: render fallback
+  if (!isClient) {
+    return <>{fallback}</>;
+  }
+
+  // Client-side: render children
+  if (suppressWarning) {
+    return <div suppressHydrationWarning>{children}</div>;
+  }
+
+  return <>{children}</>;
 }
 
 /**
- * Composant pour le rendu client-only avec fallback serveur
+ * ClientOnly Component
+ * 
+ * Simpler version that only renders on client, no fallback
  */
-interface ClientOnlyProps {
-  children: ReactNode;
-  fallback?: ReactNode;
-  className?: string;
+export function ClientOnly({ children }: { children: ReactNode }) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient ? <>{children}</> : null;
 }
 
-export function ClientOnly({ children, fallback, className }: ClientOnlyProps) {
-  const isHydrated = useHydration();
+/**
+ * SafeBrowserAPI Component
+ * 
+ * Provides safe access to browser APIs with hydration protection
+ */
+interface SafeBrowserAPIProps {
+  children: (api: {
+    window: Window;
+    document: Document;
+    localStorage: Storage;
+    sessionStorage: Storage;
+  }) => ReactNode;
+  fallback?: ReactNode;
+}
 
-  if (!isHydrated) {
-    return fallback ? (
-      <div className={className} data-client-only="loading">
-        {fallback}
-      </div>
-    ) : null;
+export function SafeBrowserAPI({ children, fallback = null }: SafeBrowserAPIProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient || typeof window === 'undefined') {
+    return <>{fallback}</>;
   }
 
   return (
-    <div className={className} data-client-only="ready">
-      {children}
-    </div>
+    <>
+      {children({
+        window,
+        document,
+        localStorage: window.localStorage,
+        sessionStorage: window.sessionStorage,
+      })}
+    </>
   );
 }
 
 /**
- * HOC pour wrapper automatiquement les composants avec HydrationSafeWrapper
+ * SafeCurrentYear Component
+ * 
+ * Renders current year with hydration safety
  */
-export function withHydrationSafety<P extends object>(
-  Component: React.ComponentType<P>,
-  options?: {
-    fallback?: ReactNode;
-    suppressHydrationWarning?: boolean;
-  }
-) {
-  const WrappedComponent = (props: P) => (
-    <HydrationSafeWrapper
-      fallback={options?.fallback}
-      suppressHydrationWarning={options?.suppressHydrationWarning}
-    >
-      <Component {...props} />
-    </HydrationSafeWrapper>
-  );
+export function SafeCurrentYear() {
+  const [year, setYear] = useState<number | null>(null);
 
-  WrappedComponent.displayName = `withHydrationSafety(${Component.displayName || Component.name})`;
-  
-  return WrappedComponent;
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
+  // Server-side: render placeholder
+  if (year === null) {
+    return <span suppressHydrationWarning>{new Date().getFullYear()}</span>;
+  }
+
+  // Client-side: render actual year
+  return <span>{year}</span>;
 }
 
-// Export par défaut
-export default HydrationSafeWrapper;
+/**
+ * SafeRandomContent Component
+ * 
+ * Renders random content with hydration safety
+ */
+interface SafeRandomContentProps {
+  options: string[];
+  fallback?: string;
+}
+
+export function SafeRandomContent({ options, fallback }: SafeRandomContentProps) {
+  const [content, setContent] = useState<string | null>(null);
+
+  useEffect(() => {
+    setContent(options[Math.floor(Math.random() * options.length)]);
+  }, [options]);
+
+  // Server-side: render fallback
+  if (content === null) {
+    return <span>{fallback || options[0]}</span>;
+  }
+
+  // Client-side: render random content
+  return <span>{content}</span>;
+}
+
+/**
+ * SafeConditionalRender Component
+ * 
+ * Conditionally renders based on client-side conditions
+ */
+interface SafeConditionalRenderProps {
+  condition: () => boolean;
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+export function SafeConditionalRender({
+  condition,
+  children,
+  fallback = null,
+}: SafeConditionalRenderProps) {
+  const [shouldRender, setShouldRender] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setShouldRender(condition());
+  }, [condition]);
+
+  // Server-side: render fallback
+  if (shouldRender === null) {
+    return <>{fallback}</>;
+  }
+
+  // Client-side: render based on condition
+  return shouldRender ? <>{children}</> : <>{fallback}</>;
+}
