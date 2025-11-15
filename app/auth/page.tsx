@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function JoinPage() {
+export default function AuthPage() {
   const router = useRouter();
   
   useEffect(() => {
-    // Redirect to register page
+    // Redirect to register page by default
     router.replace('/auth/register');
   }, [router]);
   
