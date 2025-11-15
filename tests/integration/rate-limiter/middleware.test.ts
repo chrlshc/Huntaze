@@ -7,7 +7,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 import './setup'; // Import setup to initialize mocks
-import middleware from '../../../middleware';
+import proxy from '../../../proxy';
+
+// Alias for backward compatibility in tests
+const middleware = proxy;
 
 describe('Middleware Rate Limiting Integration', () => {
   describe('Rate Limit Enforcement', () => {

@@ -52,7 +52,7 @@ function okBasic(req: NextRequest) {
   }
 }
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const pathname = new URL(req.url).pathname
 
   // ============================================================================
