@@ -1,5 +1,7 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
-**/node_modules
+/node_modules
 /.pnp
 .pnp.js
 
@@ -24,8 +26,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env
-.env.production
+.env.migration
 
 # vercel
 .vercel
@@ -34,11 +35,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# logs
-*.log
-server-output.log
-infra/terraform/.terraform/
-infra/terraform/production-hardening/.terraform/
-logs/*.json
-logs/*.log
-huntazee/
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# backups
+backup_*.sql
