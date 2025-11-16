@@ -409,6 +409,17 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const preferredRegion = 'auto';
 
+// Add error boundary for initialization
+if (typeof window === 'undefined') {
+  console.log('[NextAuth] Server-side initialization', {
+    hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
+    hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
+    hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
+    hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    hasDatabaseUrl: !!process.env.DATABASE_URL,
+  });
+}
+
 // Request timeout (10 seconds)
 const REQUEST_TIMEOUT_MS = 10000;
 
