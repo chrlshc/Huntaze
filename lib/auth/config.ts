@@ -63,7 +63,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           // Query user from database
           const result = await query(
-            'SELECT id, email, name, password_hash, email_verified FROM users WHERE email = $1',
+            'SELECT id, email, name, password, email_verified FROM users WHERE email = $1',
             [credentials.email]
           );
 
@@ -79,7 +79,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // Verify password
           const isValidPassword = await bcrypt.compare(
             credentials.password as string,
-            user.password_hash
+            user.password
           );
 
           if (!isValidPassword) {
@@ -89,13 +89,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null;
           }
 
-          // Check if email is verified
-          if (!user.email_verified) {
-            logger.warn('Authorization failed: Email not verified', {
+          // Note: Email verification is optional for now
+          // Users can login even if email is not verified
+          // This allows immediate access after registration
+          if (user.email_verified === false) {
+            logger.info('User login with unverified email', {
               email: credentials.email,
               userId: user.id,
             });
-            return null;
           }
 
           const duration = Date.now() - startTime;
