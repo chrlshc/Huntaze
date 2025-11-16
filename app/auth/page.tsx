@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function AuthPage() {
@@ -61,8 +61,22 @@ export default function AuthPage() {
           return;
         }
 
-        // Redirect to dashboard on success
-        router.push('/dashboard');
+        // Get session to check onboarding status
+        const session = await getSession();
+        console.log('[Auth] Login session:', {
+          hasSession: !!session,
+          userId: session?.user?.id,
+          onboardingCompleted: session?.user?.onboardingCompleted,
+        });
+        
+        // Redirect based on onboarding status
+        if (session?.user?.onboardingCompleted === true) {
+          console.log('[Auth] Onboarding completed, redirecting to /dashboard');
+          router.push('/dashboard');
+        } else {
+          console.log('[Auth] Onboarding not completed, redirecting to /onboarding');
+          router.push('/onboarding');
+        }
       } else {
         // Register new user
         console.log('🔵 Starting registration...', { email });

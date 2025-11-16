@@ -13,6 +13,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { createLogger } from '@/lib/utils/logger';
 import { query } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import '@/lib/types/auth'; // Import type augmentation
 
 // Create logger for NextAuth operations
 const logger = createLogger('nextauth');
@@ -61,9 +62,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null;
           }
 
-          // Query user from database
+          // Query user from database (including onboarding_completed)
           const result = await query(
-            'SELECT id, email, name, password, email_verified FROM users WHERE email = $1',
+            'SELECT id, email, name, password, email_verified, onboarding_completed FROM users WHERE email = $1',
             [credentials.email]
           );
 
@@ -103,6 +104,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           logger.info('Authorization successful', {
             userId: user.id,
             email: user.email,
+            onboardingCompleted: user.onboarding_completed,
             duration,
           });
 
@@ -110,6 +112,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             id: user.id.toString(),
             email: user.email,
             name: user.name,
+            // Default to false for new users (they need to complete onboarding)
+            // Only existing users without the column will get true
+            onboardingCompleted: user.onboarding_completed !== null ? user.onboarding_completed : false,
           };
         } catch (error) {
           const duration = Date.now() - startTime;
@@ -127,14 +132,46 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const startTime = Date.now();
       
       try {
+        // Add onboarding status when user signs in
         if (user) {
           token.id = user.id;
+          // Set onboardingCompleted, defaulting to false for new users
+          token.onboardingCompleted = user.onboardingCompleted ?? false;
           logger.info('JWT token created', {
             userId: user.id,
+            onboardingCompleted: token.onboardingCompleted,
             trigger,
             duration: Date.now() - startTime,
           });
         }
+        
+        // Refresh onboarding status on 'update' trigger
+        if (trigger === 'update' && token.id) {
+          try {
+            const result = await query(
+              'SELECT onboarding_completed FROM users WHERE id = $1',
+              [token.id]
+            );
+            
+            if (result.rows.length > 0) {
+              const onboardingStatus = result.rows[0].onboarding_completed;
+              token.onboardingCompleted = onboardingStatus !== null ? onboardingStatus : false;
+              logger.info('JWT token refreshed', {
+                userId: token.id,
+                onboardingCompleted: token.onboardingCompleted,
+                trigger,
+                duration: Date.now() - startTime,
+              });
+            }
+          } catch (refreshError) {
+            logger.error('JWT refresh error', refreshError as Error, {
+              userId: token.id,
+              trigger,
+            });
+            // Keep existing token value on error
+          }
+        }
+        
         return token;
       } catch (error) {
         logger.error('JWT callback error', error as Error, {
@@ -150,8 +187,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       try {
         if (session.user) {
           session.user.id = token.id as string;
+          session.user.onboardingCompleted = token.onboardingCompleted as boolean;
           logger.info('Session created', {
             userId: token.id,
+            onboardingCompleted: token.onboardingCompleted,
             duration: Date.now() - startTime,
           });
         }
