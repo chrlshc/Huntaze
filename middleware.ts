@@ -1,9 +1,77 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { resolveRateLimit } from './src/lib/rateLimits'
-import { extractIdentity } from './lib/services/rate-limiter/identity'
-import { resolveRateLimitPolicy } from './lib/services/rate-limiter/policy'
-import { rateLimiter } from './lib/services/rate-limiter/rate-limiter'
-import { buildRateLimitResponse, addRateLimitHeaders, formatPolicyDescription } from './lib/services/rate-limiter/headers'
+import { createLogger } from './lib/utils/logger'
+
+const logger = createLogger('middleware')
+
+// ============================================================================
+// Task 3.3: Lazy Loading for Rate Limiter Modules
+// ============================================================================
+
+// Cache for dynamically loaded rate limiter modules
+let rateLimiterModules: {
+  extractIdentity?: any;
+  resolveRateLimitPolicy?: any;
+  rateLimiter?: any;
+  buildRateLimitResponse?: any;
+  addRateLimitHeaders?: any;
+  formatPolicyDescription?: any;
+} | null = null
+
+// Flag to track if module loading has failed (avoid repeated attempts)
+let rateLimiterLoadFailed = false
+
+/**
+ * Lazy load rate limiter modules with graceful failure handling
+ * Caches loaded modules for performance
+ */
+async function loadRateLimiterModules() {
+  // Return cached modules if already loaded
+  if (rateLimiterModules) {
+    return rateLimiterModules
+  }
+
+  // Don't retry if previous load failed
+  if (rateLimiterLoadFailed) {
+    return null
+  }
+
+  try {
+    // Dynamic imports for all rate limiter dependencies
+    const [identityModule, policyModule, rateLimiterModule, headersModule] = await Promise.all([
+      import('./lib/services/rate-limiter/identity'),
+      import('./lib/services/rate-limiter/policy'),
+      import('./lib/services/rate-limiter/rate-limiter'),
+      import('./lib/services/rate-limiter/headers'),
+    ])
+
+    // Cache the loaded modules
+    rateLimiterModules = {
+      extractIdentity: identityModule.extractIdentity,
+      resolveRateLimitPolicy: policyModule.resolveRateLimitPolicy,
+      rateLimiter: rateLimiterModule.rateLimiter,
+      buildRateLimitResponse: headersModule.buildRateLimitResponse,
+      addRateLimitHeaders: headersModule.addRateLimitHeaders,
+      formatPolicyDescription: headersModule.formatPolicyDescription,
+    }
+
+    logger.info('Rate limiter modules loaded successfully', {
+      cached: true,
+    })
+
+    return rateLimiterModules
+  } catch (error) {
+    // Mark as failed to avoid repeated attempts
+    rateLimiterLoadFailed = true
+    
+    logger.error('Failed to load rate limiter modules', error instanceof Error ? error : new Error(String(error)), {
+      willRetry: false,
+      impact: 'rate-limiting-disabled',
+    })
+    
+    return null
+  }
+}
 
 // Optional Edge-compatible rate limiting via Upstash. Enabled when env present.
 let upstashReady = Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
@@ -56,59 +124,94 @@ export default async function middleware(req: NextRequest) {
   const pathname = new URL(req.url).pathname
 
   // ============================================================================
-  // Comprehensive Rate Limiting (New System)
+  // Bypass diagnostic and auth routes (Task 3.1)
+  // ============================================================================
+  
+  // Skip rate limiting for diagnostic routes and auth routes
+  // This ensures critical routes are never blocked by rate limiting
+  if (pathname.startsWith('/api/ping') || 
+      pathname.startsWith('/api/health-check') || 
+      pathname.startsWith('/api/auth/')) {
+    logger.info('Bypassing rate limit for diagnostic/auth route', {
+      pathname,
+      method: req.method,
+      reason: pathname.startsWith('/api/auth/') ? 'auth-route' : 'diagnostic-route',
+    });
+    return NextResponse.next();
+  }
+
+  // ============================================================================
+  // Comprehensive Rate Limiting (New System) - Task 3.2 & 3.3
   // ============================================================================
   
   if (rateLimitingEnabled && pathname.startsWith('/api/')) {
     try {
+      // Task 3.3: Lazy load rate limiter modules
+      const modules = await loadRateLimiterModules()
+      
+      // If modules failed to load, fail open (allow request)
+      if (!modules) {
+        logger.warn('Rate limiter modules unavailable - allowing request', {
+          pathname,
+          method: req.method,
+          reason: 'module-load-failed',
+        })
+        return NextResponse.next()
+      }
+
       // Extract identity from request
-      const identity = await extractIdentity(req)
+      const identity = await modules.extractIdentity(req)
       
       // Resolve rate limit policy for this endpoint and identity
-      const policy = resolveRateLimitPolicy(pathname, identity)
+      const policy = modules.resolveRateLimitPolicy(pathname, identity)
       
       // If policy is null, it means the identity is whitelisted
       if (policy) {
         // Check rate limit
-        const result = await rateLimiter.check(identity, pathname, policy)
+        const result = await modules.rateLimiter.check(identity, pathname, policy)
         
         if (!result.allowed) {
           // Rate limit exceeded - return 429
-          const policyDesc = formatPolicyDescription(
+          const policyDesc = modules.formatPolicyDescription(
             policy.perMinute,
             policy.perHour,
             policy.perDay
           )
           
-          console.warn('[RateLimit] Request blocked', {
-            identity: identity.type,
+          logger.warn('Rate limit exceeded - request blocked', {
+            identityType: identity.type,
             endpoint: pathname,
+            method: req.method,
             limit: result.limit,
             remaining: result.remaining,
+            resetTime: result.reset,
           })
           
-          return buildRateLimitResponse(result, policyDesc)
+          return modules.buildRateLimitResponse(result, policyDesc)
         }
         
         // Request allowed - add rate limit headers to response
         const response = NextResponse.next()
-        const policyDesc = formatPolicyDescription(
+        const policyDesc = modules.formatPolicyDescription(
           policy.perMinute,
           policy.perHour,
           policy.perDay
         )
-        addRateLimitHeaders(response.headers, result, policyDesc)
+        modules.addRateLimitHeaders(response.headers, result, policyDesc)
         
         // Continue to next middleware/handler
         return response
       }
     } catch (error) {
-      // Log error but don't block request (fail-open)
-      console.error('[RateLimit] Error in rate limiting middleware', {
-        error: error instanceof Error ? error.message : String(error),
+      // CRITICAL: Fail-open strategy - log error but allow request to continue
+      // This ensures rate limiter errors never block legitimate requests
+      logger.error('Rate limiting error - allowing request (fail-open)', error instanceof Error ? error : new Error(String(error)), {
         pathname,
+        method: req.method,
+        errorType: error instanceof Error ? error.constructor.name : typeof error,
+        failOpenStrategy: 'allow-request',
       })
-      // Continue without rate limiting
+      // Continue without rate limiting - request is allowed
     }
   }
 
