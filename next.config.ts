@@ -118,6 +118,16 @@ const nextConfig: NextConfig = {
       // https://webpack.js.org/configuration/cache/
       (config as any).cache = false;
     }
+    
+    // Fix NextAuth v5 + Next.js 16 ESM compatibility issue
+    // NextAuth tries to import 'next/server' without .js extension
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'next/server': require.resolve('next/server'),
+      };
+    }
+    
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
