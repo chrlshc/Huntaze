@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering - this page uses NextAuth
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { signIn, getSession } from 'next-auth/react';
