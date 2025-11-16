@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSession, SessionProvider } from 'next-auth/react';
 import { ShopifyBackdrop } from '@/components/onboarding/huntaze-onboarding/ShopifyBackdrop';
 import SimpleOnboarding from '@/components/onboarding/huntaze-onboarding/SimpleOnboarding';
 
-export default function OnboardingClient() {
+function OnboardingContent() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isReady, setIsReady] = useState(false);
@@ -102,5 +102,14 @@ export default function OnboardingClient() {
         <SimpleOnboarding onComplete={handleComplete} onSkip={handleSkip} />
       </div>
     </ShopifyBackdrop>
+  );
+}
+
+
+export default function OnboardingClient() {
+  return (
+    <SessionProvider>
+      <OnboardingContent />
+    </SessionProvider>
   );
 }
