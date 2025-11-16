@@ -94,6 +94,44 @@ Get current authenticated user
 }
 ```
 
+### POST /api/onboard/complete
+Mark user onboarding as complete
+
+**Authentication:** Required (NextAuth session)
+
+**Request:**
+```json
+{
+  "answers": {
+    "platforms": ["instagram", "tiktok"],
+    "goals": ["grow_audience", "monetize"],
+    "content_types": ["photos", "videos"]
+  },
+  "skipped": false
+}
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Onboarding completed successfully"
+}
+```
+
+**Response (Unauthorized):**
+```json
+{
+  "error": "Unauthorized"
+}
+```
+
+**Notes:**
+- This endpoint updates the `onboarding_completed` field in the database
+- If `skipped` is true, answers are not saved
+- User must be authenticated via NextAuth session
+- After completion, users are redirected to the dashboard
+
 ## Security Features
 
 - ✅ Passwords hashed with bcrypt (10 rounds)

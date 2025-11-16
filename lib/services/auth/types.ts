@@ -104,6 +104,7 @@ export interface DatabaseUser {
   email: string;
   name: string;
   password: string;
+  onboarding_completed?: boolean;
   created_at: Date;
   updated_at?: Date;
 }

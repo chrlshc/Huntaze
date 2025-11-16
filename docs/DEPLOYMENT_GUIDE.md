@@ -143,6 +143,69 @@ git push origin main
      ✓ email_verification_tokens (6 columns)
    ```
 
+## 🔐 Authentication and Onboarding Flow
+
+### Overview
+
+The application implements a seamless authentication and onboarding flow:
+
+1. **New User Registration** → Onboarding → Dashboard
+2. **Existing User Login** (incomplete onboarding) → Onboarding → Dashboard
+3. **Existing User Login** (completed onboarding) → Dashboard
+
+### Key Features
+
+- **Session-Based Authentication**: Uses NextAuth.js for secure session management
+- **Onboarding Tracking**: Database flag tracks completion status
+- **Smart Routing**: Automatic redirect based on onboarding status
+- **Backward Compatible**: Existing users bypass onboarding
+
+### Environment Variables
+
+Ensure these NextAuth variables are set in Amplify:
+
+```bash
+NEXTAUTH_URL=https://your-domain.amplifyapp.com
+NEXTAUTH_SECRET=your-nextauth-secret-key-change-in-production
+```
+
+Generate a secure NEXTAUTH_SECRET:
+
+```bash
+openssl rand -base64 32
+```
+
+### Testing the Flow
+
+After deployment, test the complete authentication flow:
+
+#### Test 1: New User Registration
+```bash
+# 1. Visit /auth
+# 2. Fill registration form
+# 3. Submit
+# Expected: Redirect to /onboarding
+# 4. Complete onboarding
+# Expected: Redirect to /dashboard
+```
+
+#### Test 2: Login with Incomplete Onboarding
+```bash
+# 1. Create user with onboarding_completed = false
+# 2. Visit /auth and login
+# Expected: Redirect to /onboarding
+# 3. Complete onboarding
+# Expected: Redirect to /dashboard
+```
+
+#### Test 3: Login with Completed Onboarding
+```bash
+# 1. Login with existing user
+# Expected: Direct redirect to /dashboard
+```
+
+For detailed flow documentation, see [docs/AUTH_FLOW.md](./AUTH_FLOW.md).
+
 ## 🧪 Tests Post-Déploiement
 
 ### 1. Test d'Inscription
@@ -287,18 +350,82 @@ Dans AWS Console → SES → Reputation dashboard :
 - Emails sent
 - Emails delivered
 
+## 🗄️ Database Migrations
+
+### Onboarding Completed Column Migration
+
+Before deploying the authentication and onboarding flow updates, you must run the database migration to add the `onboarding_completed` column.
+
+#### For Staging
+
+```bash
+# Connect to staging database
+psql -h staging-db-host -U your-user -d huntaze
+
+# Run the migration
+\i migrations/001_add_onboarding_completed.sql
+
+# Verify the migration
+SELECT column_name, data_type, column_default 
+FROM information_schema.columns
+WHERE table_name = 'users' AND column_name = 'onboarding_completed';
+```
+
+#### For Production
+
+```bash
+# Connect to production database
+psql -h huntaze-postgres-production.c2ryoow8c5m4.us-east-1.rds.amazonaws.com \
+     -U huntazeadmin -d huntaze
+
+# Run the migration
+\i migrations/001_add_onboarding_completed.sql
+
+# Verify the migration
+SELECT 
+  COUNT(*) as total_users,
+  COUNT(CASE WHEN onboarding_completed = true THEN 1 END) as completed,
+  COUNT(CASE WHEN onboarding_completed = false THEN 1 END) as incomplete
+FROM users;
+```
+
+#### What This Migration Does
+
+1. **Adds Column**: Creates `onboarding_completed BOOLEAN DEFAULT false`
+2. **Backfills Data**: Sets existing users to `onboarding_completed = true` (backward compatibility)
+3. **Creates Index**: Adds index on `onboarding_completed` for performance
+4. **Adds Documentation**: Adds column comment
+
+#### Rollback (if needed)
+
+```sql
+-- Drop the index
+DROP INDEX IF EXISTS idx_users_onboarding_completed;
+
+-- Drop the column
+ALTER TABLE users DROP COLUMN IF EXISTS onboarding_completed;
+```
+
+**⚠️ WARNING**: Rollback will permanently delete all onboarding status data.
+
+For detailed migration documentation, see [migrations/README.md](../migrations/README.md) and [migrations/DEPLOYMENT_GUIDE.md](../migrations/DEPLOYMENT_GUIDE.md).
+
 ## 🎯 Checklist de Déploiement
 
 Avant de déployer en production :
 
 - [ ] RDS instance démarrée et accessible
 - [ ] Tables créées (users, sessions, email_verification_tokens)
+- [ ] **Migration onboarding_completed exécutée**
+- [ ] **Migration vérifiée (colonne existe et index créé)**
 - [ ] Variables d'environnement configurées dans Amplify
 - [ ] AWS SES domaine vérifié
 - [ ] AWS SES sorti du sandbox mode
 - [ ] Permissions IAM configurées
 - [ ] Tests d'inscription effectués
 - [ ] Tests de vérification effectués
+- [ ] **Tests du flux d'onboarding effectués**
+- [ ] **Tests de redirection après login effectués**
 - [ ] Emails reçus et vérifiés
 - [ ] Design des emails validé
 - [ ] Monitoring CloudWatch activé
