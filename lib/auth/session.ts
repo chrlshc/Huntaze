@@ -4,8 +4,7 @@
  * Server-side session helpers with comprehensive error handling
  */
 
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/lib/auth/config';
 import type { ExtendedSession, ExtendedUser } from './types';
 import { AuthError } from './types';
 import { logAuthError } from './errors';
@@ -22,7 +21,7 @@ import type { NextRequest } from 'next/server';
  */
 export async function getSession(): Promise<ExtendedSession | null> {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     return session as ExtendedSession | null;
   } catch (error) {
     logAuthError(AuthError.JWT_ERROR, {
@@ -43,7 +42,7 @@ export async function getSessionFromRequest(
   request: NextRequest
 ): Promise<ExtendedSession | null> {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     return session as ExtendedSession | null;
   } catch (error) {
     logAuthError(AuthError.JWT_ERROR, {
