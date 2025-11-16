@@ -1,90 +1,115 @@
 /**
- * Auth API - Email Verification
+ * Email Verification API Route
  * 
- * GET /api/auth/verify-email?token=xxx
- * 
- * Verifies user email address using verification token
+ * Verifies user email address using token sent via email
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyEmailToken, deleteVerificationToken } from '@/lib/auth/tokens';
 import { query } from '@/lib/db';
 import { sendWelcomeEmail } from '@/lib/services/email/ses';
+import { createLogger } from '@/lib/utils/logger';
+
+const logger = createLogger('auth-verify-email');
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  const correlationId = `verify-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+
   try {
-    const searchParams = request.nextUrl.searchParams;
+    // Get token from query params
+    const { searchParams } = new URL(request.url);
     const token = searchParams.get('token');
 
     if (!token) {
+      logger.warn('Verification failed: Missing token', { correlationId });
       return NextResponse.json(
-        { error: 'Verification token is required' },
+        {
+          error: {
+            code: 'MISSING_TOKEN',
+            message: 'Verification token is required',
+            correlationId,
+          },
+        },
         { status: 400 }
       );
     }
 
-    // Find user with this token
-    const result = await query(
-      `SELECT id, email, name, email_verified, email_verification_expires 
-       FROM users 
-       WHERE email_verification_token = $1`,
-      [token]
-    );
+    // Verify token
+    const verification = await verifyEmailToken(token);
 
-    if (result.rows.length === 0) {
+    if (!verification) {
+      logger.warn('Verification failed: Invalid or expired token', {
+        correlationId,
+        token: token.substring(0, 8) + '...',
+      });
       return NextResponse.json(
-        { error: 'Invalid verification token' },
+        {
+          error: {
+            code: 'INVALID_TOKEN',
+            message: 'Invalid or expired verification token',
+            correlationId,
+          },
+        },
         { status: 400 }
       );
     }
 
-    const user = result.rows[0];
+    const { userId, email } = verification;
 
-    // Check if already verified
-    if (user.email_verified) {
-      return NextResponse.redirect(
-        new URL('/auth?verified=already', request.url)
-      );
-    }
-
-    // Check if token expired
-    if (new Date() > new Date(user.email_verification_expires)) {
-      return NextResponse.json(
-        { error: 'Verification token has expired' },
-        { status: 400 }
-      );
-    }
-
-    // Verify email
+    // Update user email_verified status
     await query(
-      `UPDATE users 
-       SET email_verified = NOW(), 
-           email_verification_token = NULL, 
-           email_verification_expires = NULL,
-           updated_at = NOW()
-       WHERE id = $1`,
-      [user.id]
+      'UPDATE users SET email_verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+      [userId]
     );
 
-    console.log('[Auth] Email verified:', {
-      userId: user.id,
-      email: user.email,
-      timestamp: new Date().toISOString(),
-    });
+    // Delete verification token
+    await deleteVerificationToken(userId);
+
+    // Get user name for welcome email
+    const userResult = await query(
+      'SELECT name FROM users WHERE id = $1',
+      [userId]
+    );
+
+    const userName = userResult.rows[0]?.name || 'User';
 
     // Send welcome email (non-blocking)
-    sendWelcomeEmail(user.email, user.name).catch((error) => {
-      console.error('[Auth] Failed to send welcome email:', error);
+    sendWelcomeEmail(email, userName).catch((error) => {
+      logger.error('Failed to send welcome email', error as Error, {
+        userId,
+        email,
+        correlationId,
+      });
     });
 
-    // Redirect to success page
+    const duration = Date.now() - startTime;
+    logger.info('Email verified successfully', {
+      userId,
+      email,
+      duration,
+      correlationId,
+    });
+
+    // Redirect to success page or login
     return NextResponse.redirect(
-      new URL('/auth?verified=success', request.url)
+      new URL('/auth?verified=true', request.url)
     );
   } catch (error) {
-    console.error('[Auth] Email verification error:', error);
-    
+    const duration = Date.now() - startTime;
+    logger.error('Email verification error', error as Error, {
+      duration,
+      correlationId,
+    });
+
     return NextResponse.json(
-      { error: 'Failed to verify email' },
+      {
+        error: {
+          code: 'VERIFICATION_ERROR',
+          message: 'An error occurred during email verification',
+          correlationId,
+        },
+      },
       { status: 500 }
     );
   }
