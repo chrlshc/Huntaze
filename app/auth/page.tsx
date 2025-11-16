@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 
 export default function AuthPage() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(false);
+  // Force login mode in staging (no DATABASE_URL for registration)
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -177,7 +178,8 @@ export default function AuthPage() {
             <h2 className="text-xl font-bold text-gray-900">Huntaze</h2>
           </div>
 
-          {/* Tab Toggle */}
+          {/* Tab Toggle - Hidden in staging (registration disabled) */}
+          {false && (
           <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6">
             <button
               onClick={() => setIsLogin(false)}
@@ -200,6 +202,7 @@ export default function AuthPage() {
               Sign In
             </button>
           </div>
+          )}
 
           {/* Headline */}
           <div className="mb-6">
@@ -389,7 +392,8 @@ export default function AuthPage() {
             </button>
           </form>
 
-          {/* Footer Link */}
+          {/* Footer Link - Hidden in staging */}
+          {false && (
           <p className="text-center text-gray-600 text-xs mt-4">
             {isLogin ? "Don't have an account? " : 'Already have an account? '}
             <button
@@ -400,6 +404,7 @@ export default function AuthPage() {
               {isLogin ? 'Create one' : 'Sign in'}
             </button>
           </p>
+          )}
 
           {/* Security Badge */}
           <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-gray-200">
