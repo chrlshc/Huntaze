@@ -14,6 +14,13 @@ const nextConfig: NextConfig = {
   compress: true,
   
   // Note: swcMinify removed - it's now the default in Next.js 16
+  
+  // Explicitly expose environment variables for NextAuth
+  // AWS Amplify requires this to make env vars available at runtime
+  env: {
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || '',
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || process.env.AUTH_URL || '',
+  },
 
   // Let Amplify set edge/static headers; avoid duplication here
   async headers() {
