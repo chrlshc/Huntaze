@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
   const correlationId = authLogger.generateCorrelationId();
   const startTime = Date.now();
 
+  try {
     const body = await request.json();
     const data: RegisterRequest = {
       email: body.email,
