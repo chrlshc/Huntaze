@@ -65,6 +65,7 @@ export default function AuthPage() {
         router.push('/dashboard');
       } else {
         // Register new user
+        console.log('🔵 Starting registration...', { email });
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -72,6 +73,7 @@ export default function AuthPage() {
         });
 
         const data = await response.json();
+        console.log('🔵 Registration response:', { status: response.status, data });
 
         if (!response.ok) {
           setError(data.error || 'Registration failed');
@@ -79,21 +81,41 @@ export default function AuthPage() {
           return;
         }
 
+        // Show success message briefly
+        setError('Account created! Logging you in...');
+        
+        // Wait a moment for the user to see the success message
+        await new Promise(resolve => setTimeout(resolve, 500));
+
         // Auto-login after registration
+        console.log('🔵 Attempting auto-login...');
         const result = await signIn('credentials', {
           email,
           password,
           redirect: false,
         });
 
+        console.log('🔵 Login result:', result);
+
         if (result?.error) {
-          setError('Registration successful, but login failed. Please try logging in.');
+          console.error('🔴 Login failed:', result.error);
+          setError('Registration successful, but login failed. Please try logging in manually.');
           setIsLoading(false);
+          // Switch to login tab
+          setIsLogin(true);
           return;
         }
 
-        // Redirect to onboarding
-        router.push('/onboarding');
+        if (result?.ok) {
+          console.log('✅ Login successful, redirecting to onboarding...');
+          // Redirect to onboarding
+          router.push('/onboarding');
+        } else {
+          console.error('🔴 Unexpected login result:', result);
+          setError('Registration successful, but login failed. Please try logging in manually.');
+          setIsLoading(false);
+          setIsLogin(true);
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
