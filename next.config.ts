@@ -62,6 +62,11 @@ const nextConfig: NextConfig = {
     },
   },
 
+  // Explicitly mark next-auth as external package to prevent webpack bundling issues
+  // This ensures NextAuth v5 works correctly in serverless environments
+  // Note: In Next.js 16, this was moved from experimental.serverComponentsExternalPackages
+  serverExternalPackages: ['next-auth'],
+
   // Image optimization (migrated to remotePatterns for security)
   images: {
     remotePatterns: [
@@ -91,7 +96,8 @@ const nextConfig: NextConfig = {
   
   // Performance optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    // Only remove console logs in production environment, keep them in staging for debugging
+    removeConsole: process.env.NODE_ENV === 'production' && process.env.AMPLIFY_ENV === 'production',
   },
 
   // Strict type checking for production builds
