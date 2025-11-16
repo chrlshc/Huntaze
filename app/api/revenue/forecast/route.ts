@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/lib/auth/config';;
 import type { RevenueForecastResponse } from '@/lib/services/revenue/types';
 
 /**
@@ -10,7 +9,7 @@ import type { RevenueForecastResponse } from '@/lib/services/revenue/types';
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     
     if (!session) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });

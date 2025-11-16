@@ -1,7 +1,7 @@
 // Smart Onboarding Analytics - Behavioral Insights API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/lib/auth/config';;
 // Using getServerSession without explicit authOptions to avoid pulling heavy types
 import {
   generateBehavioralInsights,
@@ -17,7 +17,7 @@ import { createApiResponse } from '@/lib/smart-onboarding/utils/apiResponse';
 // Get behavioral insights for a user
 export async function GET(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 // Get struggle detection analysis
 export async function POST(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
 // Start/stop monitoring session
 export async function PUT(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(
@@ -241,7 +241,7 @@ export async function PUT(request: NextRequest) {
 // Get dashboard data for analytics overview
 export async function PATCH(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(

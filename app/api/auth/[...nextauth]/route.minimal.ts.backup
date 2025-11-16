@@ -1,0 +1,48 @@
+/**
+ * NextAuth v4 - MINIMAL VERSION (Backup/Fallback)
+ * 
+ * This is a simplified version without custom error handling,
+ * retry logic, or database authentication.
+ * 
+ * Use this if the full version continues to fail.
+ */
+
+import NextAuth, { AuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+/**
+ * Minimal NextAuth configuration
+ * Only Google OAuth, no credentials provider
+ */
+export const authOptions: AuthOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+    }),
+  ],
+  pages: {
+    signIn: '/auth',
+    error: '/auth',
+  },
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
+};
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
