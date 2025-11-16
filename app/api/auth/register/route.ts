@@ -59,26 +59,6 @@ export async function POST(request: NextRequest) {
   const correlationId = authLogger.generateCorrelationId();
   const startTime = Date.now();
 
-  // Check if DATABASE_URL is configured
-  if (!process.env.DATABASE_URL) {
-    authLogger.warn('Registration attempted without DATABASE_URL', {
-      correlationId,
-      environment: process.env.NODE_ENV,
-    });
-    
-    return NextResponse.json(
-      {
-        error: 'Registration is not available in this environment. Please use NextAuth sign-in instead.',
-        type: 'SERVICE_UNAVAILABLE',
-        correlationId,
-        hint: 'Configure DATABASE_URL environment variable to enable registration',
-      },
-      { status: 503 }
-    );
-  }
-
-  try {
-    // Parse request body
     const body = await request.json();
     const data: RegisterRequest = {
       email: body.email,
