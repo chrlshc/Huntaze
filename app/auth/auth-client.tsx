@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
-import { signIn, getSession } from 'next-auth/react';
+import { signIn, getSession, SessionProvider } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-export default function AuthClient() {
+function AuthContent() {
   const router = useRouter();
   // Allow both login and registration now that DB is connected
   const [isLogin, setIsLogin] = useState(true);
@@ -475,5 +475,14 @@ export default function AuthClient() {
         }
       `}</style>
     </div>
+  );
+}
+
+
+export default function AuthClient() {
+  return (
+    <SessionProvider>
+      <AuthContent />
+    </SessionProvider>
   );
 }
