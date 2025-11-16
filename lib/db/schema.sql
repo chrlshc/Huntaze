@@ -4,6 +4,7 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255),
   avatar_url VARCHAR(500),
+  onboarding_completed BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -45,6 +46,7 @@ CREATE TABLE login_attempts (
 
 -- Indexes for performance
 CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_onboarding_completed ON users(onboarding_completed);
 CREATE INDEX idx_oauth_accounts_user_id ON oauth_accounts(user_id);
 CREATE INDEX idx_oauth_accounts_provider ON oauth_accounts(provider, provider_account_id);
 CREATE INDEX idx_sessions_user_id ON sessions(user_id);

@@ -5,6 +5,43 @@
  */
 
 // ============================================================================
+// NextAuth Module Augmentation
+// ============================================================================
+
+import type { DefaultSession } from 'next-auth';
+import type {} from 'next-auth/jwt';
+
+declare module 'next-auth' {
+  /**
+   * Extended Session interface with onboarding status
+   */
+  interface Session {
+    user: {
+      id: string;
+      onboardingCompleted: boolean;
+    } & DefaultSession['user'];
+  }
+
+  /**
+   * Extended User interface with onboarding status
+   */
+  interface User {
+    id: string;
+    onboardingCompleted: boolean;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  /**
+   * Extended JWT interface with onboarding status
+   */
+  interface JWT {
+    id: string;
+    onboardingCompleted: boolean;
+  }
+}
+
+// ============================================================================
 // Error Types
 // ============================================================================
 
@@ -104,6 +141,7 @@ export interface User {
   password?: string;
   role?: string;
   creator_id?: string;
+  onboarding_completed?: boolean;
   created_at?: Date;
   updated_at?: Date;
 }

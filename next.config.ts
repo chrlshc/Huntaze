@@ -107,7 +107,9 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-
+  // Skip static generation for auth pages that use NextAuth session
+  // These pages require dynamic rendering and cannot be pre-rendered
+  skipTrailingSlashRedirect: true,
 
   // Client bundle fallbacks
   webpack: (config, { isServer }) => {

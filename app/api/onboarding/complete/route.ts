@@ -1,65 +1,98 @@
+/**
+ * Onboarding Completion API
+ * 
+ * Marks user onboarding as complete and optionally saves onboarding answers.
+ * Uses NextAuth session-based authentication.
+ * 
+ * Requirements: 2.2, 4.2, 4.3
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { markCompleted } from '@/app/api/_store/onboarding';
-import crypto from 'crypto';
-import { makeReqLogger } from '@/lib/logger';
-import { upstream } from '@/app/api/_lib/upstream';
+import { getSession } from '@/lib/auth/session';
+import { query } from '@/lib/db';
+import { createLogger } from '@/lib/utils/logger';
+
+const logger = createLogger('onboarding-complete');
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-async function handler(request: NextRequest) {
-  const requestId = crypto.randomUUID();
-  const log = makeReqLogger({ requestId });
-  const cookieStore = await cookies();
-  const authToken = cookieStore.get('access_token')?.value;
+export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   
-  if (!authToken) {
-    const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
-    r.headers.set('X-Request-Id', requestId);
-    return r;
-  }
-
   try {
-    // Attempt to update onboarding status in backend if configured
-    try {
-      const resp = await upstream('/users/onboarding', {
-        method: 'PUT',
-        body: JSON.stringify({
-          profileSetup: true,
-          businessSetup: true,
-          platformsSetup: true,
-          aiSetup: true,
-          planSetup: true,
-          completed: true,
-        }),
+    // Verify authentication using NextAuth session
+    const session = await getSession();
+    
+    if (!session?.user?.id) {
+      logger.warn('Onboarding completion failed: Unauthorized', {
+        hasSession: !!session,
+        duration: Date.now() - startTime,
       });
-      if (!resp.ok) {
-        log.warn('onboarding_backend_update_failed');
-      }
-    } catch (e) {
-      log.warn('onboarding_backend_unreachable');
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
-    // Update local in-memory status for demo/dev
-    try { markCompleted(authToken); } catch {}
+    // Parse request body
+    const body = await request.json().catch(() => ({}));
+    const { answers, skipped } = body;
 
-    // Return a response that also sets the bypass cookie used by middleware
-    const response = NextResponse.json({ success: true, requestId });
-    response.cookies.set('onboarding_completed', 'true', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+    // Update onboarding_completed status in database
+    await query(
+      'UPDATE users SET onboarding_completed = true WHERE id = $1',
+      [session.user.id]
+    );
+
+    // Optionally save onboarding answers to database
+    if (answers && !skipped) {
+      try {
+        // Check if onboarding_answers table exists and save answers
+        await query(
+          `INSERT INTO onboarding_answers (user_id, answers, created_at, updated_at)
+           VALUES ($1, $2, NOW(), NOW())
+           ON CONFLICT (user_id) 
+           DO UPDATE SET answers = $2, updated_at = NOW()`,
+          [session.user.id, JSON.stringify(answers)]
+        );
+        
+        logger.info('Onboarding answers saved', {
+          userId: session.user.id,
+          answerCount: Object.keys(answers).length,
+          duration: Date.now() - startTime,
+        });
+      } catch (answerError) {
+        // Log error but don't fail the request if answers table doesn't exist
+        logger.warn('Failed to save onboarding answers', {
+          userId: session.user.id,
+          error: answerError instanceof Error ? answerError.message : String(answerError),
+        });
+      }
+    }
+
+    logger.info('Onboarding completed successfully', {
+      userId: session.user.id,
+      email: session.user.email,
+      skipped: !!skipped,
+      hasAnswers: !!answers,
+      duration: Date.now() - startTime,
     });
-    response.headers.set('X-Request-Id', requestId);
-    return response;
-  } catch (error: any) {
-    log.error('onboarding_complete_failed', { error: error?.message || 'unknown_error' });
-    const r = NextResponse.json({ error: 'Failed to complete onboarding', requestId }, { status: 500 });
-    r.headers.set('X-Request-Id', requestId);
-    return r;
+
+    // Return success response
+    return NextResponse.json({
+      success: true,
+      message: 'Onboarding completed successfully',
+    });
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    logger.error('Onboarding completion error', error as Error, {
+      duration,
+    });
+    
+    return NextResponse.json(
+      { error: 'Failed to complete onboarding' },
+      { status: 500 }
+    );
   }
 }
-
-export const POST = handler as any;

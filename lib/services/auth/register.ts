@@ -210,8 +210,8 @@ export class RegistrationService {
     return this.retryOperation(
       async () => {
         const result = await query(
-          `INSERT INTO users (email, name, password, email_verification_token, email_verification_expires, created_at, updated_at) 
-           VALUES (LOWER($1), $2, $3, $4, $5, NOW(), NOW()) 
+          `INSERT INTO users (email, name, password, email_verification_token, email_verification_expires, onboarding_completed, created_at, updated_at) 
+           VALUES (LOWER($1), $2, $3, $4, $5, false, NOW(), NOW()) 
            RETURNING id, email, name, created_at`,
           [email, name, hashedPassword, verificationToken, tokenExpiry]
         );
