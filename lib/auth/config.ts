@@ -3,15 +3,16 @@
  * Compatible with Next.js 16
  * 
  * SERVERLESS-OPTIMIZED VERSION
- * - No external dependencies (no DB, bcrypt, Redis)
- * - JWT-only session strategy
- * - Test credentials for staging validation
+ * - JWT-only session strategy (no session DB)
+ * - Database validation for credentials
  * - Structured logging with correlation IDs
  */
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { createLogger } from '@/lib/utils/logger';
+import { query } from '@/lib/db';
+import bcrypt from 'bcryptjs';
 
 // Create logger for NextAuth operations
 const logger = createLogger('nextauth');
@@ -60,12 +61,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null;
           }
 
-          // Test credentials - accept any valid email/password for staging
-          const user = {
-            id: `test-user-${Date.now()}`,
-            email: credentials.email as string,
-            name: 'Test User',
-          };
+          // Query user from database
+          const result = await query(
+            'SELECT id, email, name, password_hash, email_verified FROM users WHERE email = $1',
+            [credentials.email]
+          );
+
+          if (result.rows.length === 0) {
+            logger.warn('Authorization failed: User not found', {
+              email: credentials.email,
+            });
+            return null;
+          }
+
+          const user = result.rows[0];
+
+          // Verify password
+          const isValidPassword = await bcrypt.compare(
+            credentials.password as string,
+            user.password_hash
+          );
+
+          if (!isValidPassword) {
+            logger.warn('Authorization failed: Invalid password', {
+              email: credentials.email,
+            });
+            return null;
+          }
+
+          // Check if email is verified
+          if (!user.email_verified) {
+            logger.warn('Authorization failed: Email not verified', {
+              email: credentials.email,
+              userId: user.id,
+            });
+            return null;
+          }
 
           const duration = Date.now() - startTime;
           logger.info('Authorization successful', {
@@ -74,7 +105,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             duration,
           });
 
-          return user;
+          return {
+            id: user.id.toString(),
+            email: user.email,
+            name: user.name,
+          };
         } catch (error) {
           const duration = Date.now() - startTime;
           logger.error('Authorization error', error as Error, {
