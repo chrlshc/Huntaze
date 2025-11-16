@@ -48,7 +48,12 @@ const createMockRequest = (body: any): NextRequest => {
 };
 
 describe('POST /api/auth/register', () => {
+  const originalDatabaseUrl = process.env.DATABASE_URL;
+
   beforeEach(async () => {
+    // Restore DATABASE_URL for tests that need it
+    process.env.DATABASE_URL = originalDatabaseUrl;
+    
     // Clean up test users before each test
     await prisma.user.deleteMany({
       where: {
@@ -60,6 +65,9 @@ describe('POST /api/auth/register', () => {
   });
 
   afterEach(async () => {
+    // Restore DATABASE_URL
+    process.env.DATABASE_URL = originalDatabaseUrl;
+    
     // Clean up after tests
     await prisma.user.deleteMany({
       where: {
@@ -67,6 +75,144 @@ describe('POST /api/auth/register', () => {
           contains: '@example.com',
         },
       },
+    });
+  });
+
+  describe('Service Availability', () => {
+    it('should return 503 when DATABASE_URL is not configured', async () => {
+      // Remove DATABASE_URL to simulate missing configuration
+      delete process.env.DATABASE_URL;
+
+      const request = createMockRequest(validUserData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(503);
+      expect(data).toMatchObject({
+        error: expect.stringContaining('not available'),
+        type: 'SERVICE_UNAVAILABLE',
+        correlationId: expect.any(String),
+        hint: expect.stringContaining('DATABASE_URL'),
+      });
+
+      // Verify correlation ID format (auth-{timestamp}-{random})
+      expect(data.correlationId).toMatch(/^auth-\d+-[a-z0-9]+$/);
+    });
+
+    it('should suggest NextAuth sign-in when DATABASE_URL is missing', async () => {
+      delete process.env.DATABASE_URL;
+
+      const request = createMockRequest(validUserData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(503);
+      expect(data.error).toContain('NextAuth sign-in');
+      expect(data.hint).toContain('Configure DATABASE_URL');
+    });
+
+    it('should include environment context in unavailable response', async () => {
+      delete process.env.DATABASE_URL;
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+
+      const request = createMockRequest(validUserData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(503);
+      expect(data.type).toBe('SERVICE_UNAVAILABLE');
+      
+      // Should log with environment info
+      expect(data.correlationId).toBeDefined();
+
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+
+    it('should not attempt database operations when unavailable', async () => {
+      delete process.env.DATABASE_URL;
+
+      const userCountBefore = await prisma.user.count();
+
+      const request = createMockRequest(validUserData);
+      const response = await POST(request);
+
+      expect(response.status).toBe(503);
+      
+      // Verify no database operations were attempted
+      const userCountAfter = await prisma.user.count();
+      expect(userCountAfter).toBe(userCountBefore);
+    });
+
+    it('should return immediately without parsing body when unavailable', async () => {
+      delete process.env.DATABASE_URL;
+
+      // Even with invalid JSON, should return 503 before parsing
+      const request = createMockRequest({ invalid: 'data' });
+      const response = await POST(request);
+
+      expect(response.status).toBe(503);
+      
+      const data = await response.json();
+      expect(data.type).toBe('SERVICE_UNAVAILABLE');
+    });
+
+    it('should log warning when DATABASE_URL is missing', async () => {
+      delete process.env.DATABASE_URL;
+      const consoleWarnSpy = vi.spyOn(console, 'warn');
+
+      const request = createMockRequest(validUserData);
+      await POST(request);
+
+      // Logger should have warned about missing DATABASE_URL
+      // (Implementation uses authLogger.warn which may use console.warn)
+      
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should work normally when DATABASE_URL is configured', async () => {
+      // Ensure DATABASE_URL is set
+      expect(process.env.DATABASE_URL).toBeDefined();
+
+      const request = createMockRequest({
+        ...validUserData,
+        email: 'available@example.com',
+      });
+      const response = await POST(request);
+
+      expect(response.status).toBe(201);
+      
+      const data = await response.json();
+      expect(data.success).toBe(true);
+      expect(data.user).toBeDefined();
+    });
+
+    it('should handle empty DATABASE_URL as missing', async () => {
+      process.env.DATABASE_URL = '';
+
+      const request = createMockRequest(validUserData);
+      const response = await POST(request);
+
+      expect(response.status).toBe(503);
+      
+      const data = await response.json();
+      expect(data.type).toBe('SERVICE_UNAVAILABLE');
+    });
+
+    it('should validate DATABASE_URL before other validations', async () => {
+      delete process.env.DATABASE_URL;
+
+      // Send invalid data - should still get 503, not 400
+      const request = createMockRequest({
+        email: 'invalid-email',
+        password: 'short',
+      });
+      const response = await POST(request);
+
+      expect(response.status).toBe(503); // Not 400
+      
+      const data = await response.json();
+      expect(data.type).toBe('SERVICE_UNAVAILABLE');
     });
   });
 

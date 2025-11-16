@@ -31,6 +31,9 @@ export enum AuthErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
   TIMEOUT_ERROR = 'TIMEOUT_ERROR',
   
+  // Service Availability
+  SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
+  
   // Generic
   INTERNAL_ERROR = 'INTERNAL_ERROR',
 }
@@ -63,6 +66,11 @@ export interface RegisterResponse {
     name: string;
   };
   message?: string;
+  correlationId?: string;
+  metadata?: {
+    emailVerificationRequired?: boolean;
+    emailSent?: boolean;
+  };
 }
 
 export interface User {

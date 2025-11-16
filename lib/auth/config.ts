@@ -16,6 +16,13 @@ import { createLogger } from '@/lib/utils/logger';
 // Create logger for NextAuth operations
 const logger = createLogger('nextauth');
 
+// Log environment variable status at initialization
+logger.info('NextAuth initialization', {
+  hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET || !!process.env.AUTH_SECRET,
+  hasNextAuthUrl: !!process.env.NEXTAUTH_URL || !!process.env.AUTH_URL,
+  nodeEnv: process.env.NODE_ENV,
+});
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: 'jwt', // JWT-only for serverless compatibility

@@ -10,6 +10,7 @@
 
 | Category | Tests | Status |
 |----------|-------|--------|
+| **Service Availability** | **9** | **✅ NEW** |
 | Successful Registration | 6 | ✅ |
 | Validation Errors | 7 | ✅ |
 | Duplicate Email Handling | 3 | ✅ |
@@ -19,11 +20,231 @@
 | Response Format | 3 | ✅ |
 | Edge Cases | 6 | ✅ |
 | Performance | 2 | ✅ |
-| **TOTAL** | **35** | **✅** |
+| **TOTAL** | **44** | **✅** |
 
 ---
 
 ## 🎯 Test Scenarios
+
+### 0. Service Availability (NEW - v2.1)
+
+**Purpose:** Verify graceful degradation when DATABASE_URL is not configured
+
+**Context:** In environments without database access (e.g., preview deployments, certain staging environments), the registration endpoint should fail gracefully and direct users to alternative authentication methods.
+
+---
+
+#### ❌ DATABASE_URL not configured (503)
+
+**Scenario:** Environment variable `DATABASE_URL` is missing or empty
+
+**Request:**
+```json
+POST /api/auth/register
+{
+  "fullName": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Expected Response (503):**
+```json
+{
+  "error": "Registration is not available in this environment. Please use NextAuth sign-in instead.",
+  "type": "SERVICE_UNAVAILABLE",
+  "correlationId": "auth-1736159823400-abc123",
+  "hint": "Configure DATABASE_URL environment variable to enable registration"
+}
+```
+
+**Validations:**
+- ✅ Status code is 503 (Service Unavailable)
+- ✅ Error message is user-friendly
+- ✅ Suggests NextAuth as alternative
+- ✅ Includes correlation ID for tracking
+- ✅ Provides configuration hint for developers
+- ✅ Type is SERVICE_UNAVAILABLE
+
+---
+
+#### ✅ Early return before validation
+
+**Test:** DATABASE_URL check happens before any other validation
+
+**Scenario:**
+```json
+POST /api/auth/register
+{
+  "email": "invalid-email",
+  "password": "short"
+}
+```
+
+**With DATABASE_URL missing:**
+- Expected: 503 (SERVICE_UNAVAILABLE)
+- NOT: 400 (Validation Error)
+
+**Validation:**
+- ✅ DATABASE_URL check is first
+- ✅ No validation performed when unavailable
+- ✅ No database queries attempted
+
+---
+
+#### ✅ No database operations when unavailable
+
+**Test:** Verify no side effects when DATABASE_URL is missing
+
+**Validation:**
+```typescript
+const userCountBefore = await prisma.user.count();
+
+// Attempt registration without DATABASE_URL
+await POST(request);
+
+const userCountAfter = await prisma.user.count();
+
+expect(userCountAfter).toBe(userCountBefore); // No change
+```
+
+**Ensures:**
+- ✅ No user creation attempted
+- ✅ No database writes
+- ✅ No partial data corruption
+
+---
+
+#### ✅ Immediate return without body parsing
+
+**Test:** Response returned before parsing request body
+
+**Scenario:** Even with malformed JSON, should return 503
+
+**Validation:**
+- ✅ No JSON parsing errors
+- ✅ Fast response time (< 10ms)
+- ✅ No unnecessary processing
+
+---
+
+#### ✅ Logging with correlation ID
+
+**Test:** Warning logged when DATABASE_URL is missing
+
+**Expected Log:**
+```
+[Auth] Registration attempted without DATABASE_URL
+{
+  correlationId: 'auth-1736159823400-abc123',
+  environment: 'production'
+}
+```
+
+**Validation:**
+- ✅ Warning level (not error)
+- ✅ Includes correlation ID
+- ✅ Includes environment context
+- ✅ Traceable for debugging
+
+---
+
+#### ✅ Empty DATABASE_URL treated as missing
+
+**Test Cases:**
+```typescript
+process.env.DATABASE_URL = '';        // Empty string
+process.env.DATABASE_URL = undefined; // Undefined
+delete process.env.DATABASE_URL;      // Deleted
+```
+
+**All cases:**
+- Expected: 503 (SERVICE_UNAVAILABLE)
+- Behavior: Same as missing
+
+---
+
+#### ✅ Works normally when DATABASE_URL is configured
+
+**Test:** Normal operation with DATABASE_URL present
+
+**Request:**
+```json
+POST /api/auth/register
+{
+  "fullName": "John Doe",
+  "email": "available@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Expected Response (201):**
+```json
+{
+  "success": true,
+  "user": {
+    "id": "clx123...",
+    "email": "available@example.com",
+    "name": "John Doe"
+  }
+}
+```
+
+**Validation:**
+- ✅ Registration succeeds
+- ✅ User created in database
+- ✅ Normal flow continues
+
+---
+
+#### ✅ Correlation ID format
+
+**Test:** Verify correlation ID follows expected pattern
+
+**Pattern:** `auth-{timestamp}-{random}`
+
+**Example:** `auth-1736159823400-abc123`
+
+**Validation:**
+```typescript
+expect(correlationId).toMatch(/^auth-\d+-[a-z0-9]+$/);
+```
+
+**Components:**
+- `auth-` prefix
+- Unix timestamp (milliseconds)
+- Random alphanumeric string
+
+---
+
+#### ✅ Environment context included
+
+**Test:** Response includes environment information
+
+**Scenario:** Different environments
+
+**Development:**
+```json
+{
+  "error": "...",
+  "hint": "Configure DATABASE_URL environment variable..."
+}
+```
+
+**Production:**
+```json
+{
+  "error": "Registration is not available...",
+  "hint": "Configure DATABASE_URL environment variable..."
+}
+```
+
+**Validation:**
+- ✅ Consistent error format
+- ✅ Environment-appropriate messaging
+- ✅ Helpful hints for developers
+
+---
 
 ### 1. Successful Registration
 

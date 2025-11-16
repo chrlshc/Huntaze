@@ -6,6 +6,9 @@ frontend:
         - npm ci --include=dev --legacy-peer-deps || npm install --include=dev --legacy-peer-deps
     build:
       commands:
+        # Debug: Print environment variables (masked)
+        - echo "NEXTAUTH_SECRET is set:" $(if [ -n "$NEXTAUTH_SECRET" ]; then echo "YES"; else echo "NO"; fi)
+        - echo "NEXTAUTH_URL is set:" $(if [ -n "$NEXTAUTH_URL" ]; then echo "YES"; else echo "NO"; fi)
         # Use webpack explicitly (NextAuth v5 compatibility handled via build script)
         - npm run build
   artifacts:

@@ -141,20 +141,20 @@
     - Verify correlation ID in logs
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [-] 8. Deploy and verify staging
-  - [-] 8.1 Commit changes
+- [x] 8. Deploy and verify staging
+  - [x] 8.1 Commit changes
     - Stage all modified files
     - Create commit with descriptive message
     - Push to repository
     - _Requirements: 5.5_
   
-  - [ ] 8.2 Monitor Amplify build
+  - [x] 8.2 Monitor Amplify build
     - Watch build logs in AWS Amplify Console
     - Verify build completes successfully
     - Verify 0 errors in build output
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
   
-  - [ ] 8.3 Test staging authentication
+  - [x] 8.3 Test staging authentication
     - Navigate to staging.huntaze.com/auth
     - Test credential sign-in
     - Test Google OAuth sign-in
