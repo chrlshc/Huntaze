@@ -154,6 +154,23 @@ export function generateRandomUser(): TestUser {
 }
 
 /**
+ * Generate valid credentials for testing
+ */
+export function generateValidCredentials(): TestUser {
+  return generateRandomUser();
+}
+
+/**
+ * Generate invalid credentials for testing
+ */
+export function generateInvalidCredentials() {
+  return {
+    email: 'invalid-email',
+    password: 'short',
+  };
+}
+
+/**
  * Generate multiple random users
  */
 export function generateRandomUsers(count: number): TestUser[] {
