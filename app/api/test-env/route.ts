@@ -17,6 +17,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/utils/logger';
 
 // ============================================================================
 // Types
@@ -44,32 +45,7 @@ interface TestEnvResponse {
 // Utilities
 // ============================================================================
 
-/**
- * Generate correlation ID for request tracing
- */
-function generateCorrelationId(): string {
-  return `test-env-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-}
-
-/**
- * Log request with correlation ID
- */
-function logRequest(correlationId: string, message: string, meta?: Record<string, any>) {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] [TestEnv] [${correlationId}] ${message}`, meta || {});
-}
-
-/**
- * Log error with correlation ID
- */
-function logError(correlationId: string, error: Error, meta?: Record<string, any>) {
-  const timestamp = new Date().toISOString();
-  console.error(`[${timestamp}] [TestEnv] [${correlationId}] ERROR:`, {
-    message: error.message,
-    stack: error.stack,
-    ...meta,
-  });
-}
+const logger = createLogger('test-env-api');
 
 /**
  * Get environment status safely
@@ -96,10 +72,9 @@ function getEnvStatus(): EnvStatus {
  */
 export async function GET(request: NextRequest): Promise<NextResponse<TestEnvResponse>> {
   const startTime = Date.now();
-  const correlationId = generateCorrelationId();
 
   try {
-    logRequest(correlationId, 'Test environment request received', {
+    const correlationId = logger.info('Test environment request received', {
       url: request.url,
       method: request.method,
     });
@@ -114,14 +89,14 @@ export async function GET(request: NextRequest): Promise<NextResponse<TestEnvRes
     if (!envStatus.hasDatabaseUrl) missingVars.push('DATABASE_URL');
 
     if (missingVars.length > 0) {
-      logRequest(correlationId, 'Missing critical environment variables', {
+      logger.warn('Missing critical environment variables', {
         missing: missingVars,
       });
     }
 
     const duration = Date.now() - startTime;
 
-    logRequest(correlationId, 'Test environment request successful', {
+    logger.info('Test environment request successful', {
       duration,
       missingVars: missingVars.length,
     });
@@ -145,8 +120,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<TestEnvRes
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
-    logError(
-      correlationId,
+    const correlationId = logger.error(
+      'Test environment request failed',
       error instanceof Error ? error : new Error(errorMessage),
       { duration }
     );
