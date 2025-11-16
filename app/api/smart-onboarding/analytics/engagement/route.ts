@@ -1,7 +1,7 @@
 // Smart Onboarding Analytics - Engagement Analysis API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/lib/auth/config';;
 // Using getServerSession without explicit authOptions to avoid heavy imports
 import { createApiResponse } from '@/lib/smart-onboarding/utils/apiResponse';
 import { getEngagementScore, analyzeEngagementPatterns } from '@/lib/smart-onboarding/services/behavioralAnalyticsFacade';
@@ -9,7 +9,7 @@ import { getEngagementScore, analyzeEngagementPatterns } from '@/lib/smart-onboa
 // Get current engagement score
 export async function GET(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 // Update engagement thresholds (admin only)
 export async function POST(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
 // Get engagement trends over time
 export async function PUT(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(

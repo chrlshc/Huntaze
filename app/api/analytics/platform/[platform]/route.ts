@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { metricsAggregationService } from '@/lib/services/metricsAggregationService';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/lib/auth/config';;
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +28,7 @@ export async function GET(
     const { platform } = await params;
     
     // Get authenticated user
-    const session = await getServerSession();
+    const session = await auth();
     
     if (!session?.user?.id) {
       return NextResponse.json(

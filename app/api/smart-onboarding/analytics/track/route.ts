@@ -1,7 +1,7 @@
 // Smart Onboarding Analytics - Event Tracking API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/lib/auth/config';;
 // Using getServerSession without explicit authOptions to avoid pulling heavy types
 import { createApiResponse } from '@/lib/smart-onboarding/utils/apiResponse';
 import {
@@ -14,7 +14,7 @@ import {
 export async function POST(request: NextRequest) {
   try {
     // Get user session
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
 // Batch tracking endpoint
 export async function PUT(request: NextRequest) {
   try {
-    const session = (await getServerSession()) as any;
+    const session = (await auth()) as any;
     const userId = (session as any)?.user?.id as string | undefined;
     if (!userId) {
       return NextResponse.json(

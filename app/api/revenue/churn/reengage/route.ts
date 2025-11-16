@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/lib/auth/config';;
 
 /**
  * POST /api/revenue/churn/reengage
@@ -8,7 +8,7 @@ import { getServerSession } from 'next-auth';
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await auth();
     
     if (!session?.user?.id) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
