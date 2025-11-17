@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { ShopifyShell } from "@/components/ShopifyShell";
 
 export default function OffersPage() {
