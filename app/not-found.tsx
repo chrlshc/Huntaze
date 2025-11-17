@@ -1,12 +1,11 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Home, Search, ArrowLeft } from 'lucide-react'
 import PremiumButton from '@/components/premium-button'
-
-// Disable static generation for this page
-export const dynamic = 'force-dynamic'
 
 export default function NotFound() {
   return (
