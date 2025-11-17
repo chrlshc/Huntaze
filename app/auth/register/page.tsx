@@ -1,15 +1,9 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// Force dynamic rendering to avoid static prerender issues
+export const dynamic = 'force-dynamic';
 
 export default function RegisterRedirect() {
-  const router = useRouter();
-  
-  useEffect(() => {
-    // Redirect to unified auth page
-    router.replace('/auth');
-  }, [router]);
-  
-  return null;
+  // Server-side redirect to unified auth page
+  redirect('/auth');
 }
