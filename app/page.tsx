@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import React from 'react';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { SimpleHeroSection as HeroSection } from '@/components/landing/SimpleHeroSection';
