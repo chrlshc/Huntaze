@@ -1,0 +1,19 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Validating build before commit..."
+
+# Run build validation
+npm run build:validate
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Build failed! Fix errors before committing."
+  echo "💡 Check .kiro/build-logs/ for details"
+  echo "⚠️  Use 'git commit --no-verify' to bypass (not recommended)"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Build successful! Proceeding with commit..."
+exit 0
