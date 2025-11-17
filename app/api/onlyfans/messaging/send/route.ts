@@ -9,7 +9,7 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 import { onlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
 import { logger } from '@/lib/utils/logger';
@@ -28,26 +28,22 @@ type SendMessageRequest = z.infer<typeof SendMessageSchema>;
 export async function POST(request: NextRequest) {
   try {
     // 1. Authentication
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      logger.warn('OnlyFans send message: Unauthorized request');
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
+
+    const userId = authResult.user.id;
 
     // 2. Rate limiting (60 req/min per user)
     const ident = idFromRequestHeaders(request.headers);
     const rl = await checkRateLimit({ 
-      id: `onlyfans-send:${user.userId}`, 
+      id: `onlyfans-send:${userId}`, 
       limit: 60, 
       windowSec: 60 
     });
     
     if (!rl.allowed) {
       logger.warn('OnlyFans send message: Rate limit exceeded', {
-        userId: user.userId,
+        userId,
       });
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
@@ -69,7 +65,7 @@ export async function POST(request: NextRequest) {
         }));
         
         logger.warn('OnlyFans send message: Validation failed', {
-          userId: user.userId,
+          userId,
           errors,
         });
         
@@ -90,7 +86,7 @@ export async function POST(request: NextRequest) {
     // 5. Send message via rate limiter service
     const result = await onlyFansRateLimiterService.sendMessage({
       messageId,
-      userId: user.userId,
+      userId,
       recipientId: validated.recipientId,
       content: validated.content,
       mediaUrls: validated.mediaUrls,
@@ -101,7 +97,7 @@ export async function POST(request: NextRequest) {
     // 6. Handle result
     if (result.status === 'failed') {
       logger.error('OnlyFans send message: Failed to queue message', {
-        userId: user.userId,
+        userId,
         messageId,
         error: result.error,
       });
@@ -128,7 +124,7 @@ export async function POST(request: NextRequest) {
 
     // 7. Success - message queued
     logger.info('OnlyFans send message: Message queued successfully', {
-      userId: user.userId,
+      userId,
       messageId,
       recipientId: validated.recipientId,
     });

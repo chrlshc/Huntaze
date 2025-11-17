@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { onlyFansAISuggestions } from '@/lib/services/onlyfans-ai-suggestions.service';
 import { logger } from '@/lib/utils/logger';
 import { z } from 'zod';
@@ -21,20 +21,15 @@ const SuggestionsRequestSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Authentication
-    const user = await getUserFromRequest(request);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
 
     // Parse and validate request body
     const body = await request.json();
     const validatedData = SuggestionsRequestSchema.parse(body);
 
     logger.info('Generating AI suggestions for OnlyFans fan', {
-      userId: user.userId,
+      userId: authResult.user.id,
       fanId: validatedData.fanId,
       fanName: validatedData.fanName,
     });
@@ -50,7 +45,7 @@ export async function POST(request: NextRequest) {
     });
 
     logger.info('AI suggestions generated successfully', {
-      userId: user.userId,
+      userId: authResult.user.id,
       fanId: validatedData.fanId,
       suggestionsCount: suggestions.length,
     });

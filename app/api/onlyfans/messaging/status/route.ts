@@ -8,21 +8,17 @@
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { onlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
 import { logger } from '@/lib/utils/logger';
 
 export async function GET(request: NextRequest) {
   try {
     // 1. Authentication
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      logger.warn('OnlyFans queue status: Unauthorized request');
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
+
+    const userId = authResult.user.id;
 
     // 2. Get queue status from service
     const queueStatus = await onlyFansRateLimiterService.getQueueStatus();
@@ -54,7 +50,7 @@ export async function GET(request: NextRequest) {
     };
 
     logger.info('OnlyFans queue status: Status retrieved', {
-      userId: user.userId,
+      userId,
       queueDepth: queueStatus.queueDepth,
       dlqCount: queueStatus.dlqCount,
     });

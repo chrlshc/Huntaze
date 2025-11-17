@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
-import { signIn, getSession, SessionProvider } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { signIn, getSession } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function AuthContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
   // Allow both login and registration now that DB is connected
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -16,6 +18,16 @@ function AuthContent() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Check for error messages in URL params (e.g., session expiration)
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'session_expired') {
+      setError('Your session has expired. Please log in again.');
+    } else if (errorParam === 'unauthorized') {
+      setError('Authentication required. Please log in.');
+    }
+  }, [searchParams]);
 
   // Calculer la force du mot de passe
   const getPasswordStrength = () => {
@@ -52,13 +64,26 @@ function AuthContent() {
         const result = await signIn('credentials', {
           email,
           password,
+          rememberMe: rememberMe.toString(), // Pass rememberMe flag
           redirect: false,
         });
 
         if (result?.error) {
-          setError('Invalid email or password');
+          // Handle different error types
+          if (result.error === 'CredentialsSignin') {
+            setError('Invalid email or password');
+          } else {
+            setError('Authentication failed. Please try again.');
+          }
+          console.error('[Auth] Login error:', result.error);
           setIsLoading(false);
           return;
+        }
+
+        // Clean up legacy localStorage tokens
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('access_token');
         }
 
         // Get session to check onboarding status
@@ -122,6 +147,13 @@ function AuthContent() {
 
         if (result?.ok) {
           console.log('✅ Login successful, redirecting to onboarding...');
+          
+          // Clean up legacy localStorage tokens
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('access_token');
+          }
+          
           // Redirect to onboarding
           router.push('/onboarding');
         } else {
@@ -132,7 +164,16 @@ function AuthContent() {
         }
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      // Handle network errors and other exceptions
+      console.error('[Auth] Unexpected error:', err);
+      
+      // Check if it's a network error
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Connection error. Please check your internet connection and try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+      
       setIsLoading(false);
     }
   };
@@ -480,9 +521,5 @@ function AuthContent() {
 
 
 export default function AuthClient() {
-  return (
-    <SessionProvider>
-      <AuthContent />
-    </SessionProvider>
-  );
+  return <AuthContent />;
 }

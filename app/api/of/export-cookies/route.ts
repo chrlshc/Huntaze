@@ -1,14 +1,16 @@
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { sessionManager } from '@/lib/of/session-manager';
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await getUserFromRequest(req);
-    const userId = user?.userId;
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Require authentication
+    const authResult = await requireAuth(req);
+    if (authResult instanceof Response) return authResult;
+
+    const userId = authResult.user.id;
 
     const json = await sessionManager.getDecryptedCookies(userId);
     if (!json) return NextResponse.json({ error: 'No cookies found' }, { status: 404 });

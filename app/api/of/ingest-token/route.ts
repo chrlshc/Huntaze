@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { getOptionalAuth } from '@/lib/auth/api-protection';
 import { createIngestToken } from '@/lib/bridgeTokens';
 import crypto from 'crypto';
 
@@ -15,8 +15,9 @@ function getApiBase(): string {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await getUserFromRequest(req).catch(() => null);
-  let userId = user?.userId as string | undefined;
+  // Use optional auth since this endpoint supports public bridge mode
+  const authResult = await getOptionalAuth(req);
+  let userId = authResult?.user.id;
   const bridgePublic = (process.env.BRIDGE_PUBLIC === '1') || (process.env.NEXT_PUBLIC_BRIDGE_PUBLIC === '1' || process.env.NEXT_PUBLIC_BRIDGE_PUBLIC === 'true');
   if (!userId) {
     if (bridgePublic) {

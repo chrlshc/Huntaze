@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { tokenManager } from '@/lib/services/tokenManager';
 import { tiktokOAuth } from '@/lib/services/tiktokOAuth';
 import { tiktokUpload } from '@/lib/services/tiktokUpload';
@@ -23,16 +23,11 @@ export async function GET(
   try {
     const { publishId } = await params;
     
-    // Get authenticated user
-    const user = await getUserFromRequest(request);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
+    // Require authentication
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
 
-    const userId = parseInt(user.userId);
+    const userId = parseInt(authResult.user.id);
     if (isNaN(userId)) {
       return NextResponse.json(
         { error: 'Invalid user ID' },

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parse } from 'csv-parse/sync';
 import { FansRepository } from '@/lib/db/repositories';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 import { z } from 'zod';
 
@@ -24,6 +24,10 @@ interface ImportSummary {
 
 async function postHandler(request: NextRequest) {
   try {
+    // Authentication
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
+
     // Rate limit CSV imports (expensive operation)
     const ident = idFromRequestHeaders(request.headers);
     const rl = await checkRateLimit({ id: ident.id, limit: 10, windowSec: 3600 }); // 10 per hour
@@ -31,12 +35,7 @@ async function postHandler(request: NextRequest) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const userId = parseInt(user.userId, 10);
+    const userId = parseInt(authResult.user.id, 10);
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }

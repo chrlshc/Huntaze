@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, SessionProvider } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { ShopifyBackdrop } from '@/components/onboarding/huntaze-onboarding/ShopifyBackdrop';
 import SimpleOnboarding from '@/components/onboarding/huntaze-onboarding/SimpleOnboarding';
 
@@ -107,9 +107,5 @@ function OnboardingContent() {
 
 
 export default function OnboardingClient() {
-  return (
-    <SessionProvider>
-      <OnboardingContent />
-    </SessionProvider>
-  );
+  return <OnboardingContent />;
 }

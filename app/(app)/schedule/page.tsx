@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 type ScheduledPost = {
   id: string;
@@ -70,8 +71,9 @@ export default function SchedulePage() {
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Schedule</h1>
+    <ProtectedRoute requireOnboarding={true}>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Schedule</h1>
       <p className="text-gray-600 dark:text-gray-400 mb-8">
         Schedule posts and maintain consistent momentum across platforms.
       </p>
@@ -169,6 +171,7 @@ export default function SchedulePage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

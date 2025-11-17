@@ -1,67 +1,87 @@
 #!/bin/bash
 
-# Monitor staging deployment status
+# Monitor Staging Deployment
+# Checks the status of the latest Amplify build and tests the register endpoint
 
 APP_ID="d33l77zi1h78ce"
 BRANCH="staging"
-JOB_ID="125"
+REGION="us-east-1"
+STAGING_URL="https://staging.huntaze.com"
 
-echo "📊 Monitoring deployment status..."
-echo "App ID: $APP_ID"
-echo "Branch: $BRANCH"
-echo "Job ID: $JOB_ID"
+echo "🔍 Monitoring Staging Deployment..."
+echo "=================================="
 echo ""
 
-while true; do
-  STATUS=$(aws amplify get-job \
-    --app-id $APP_ID \
-    --branch-name $BRANCH \
-    --job-id $JOB_ID \
-    --region us-east-1 \
-    --query 'job.summary.status' \
-    --output text 2>&1)
+# Get latest job status
+echo "📊 Latest Build Status:"
+aws amplify list-jobs \
+  --app-id "$APP_ID" \
+  --branch-name "$BRANCH" \
+  --region "$REGION" \
+  --max-items 1 \
+  --query 'jobSummaries[0].[jobId,status,commitId]' \
+  --output table
+
+echo ""
+echo "⏳ Waiting for build to complete..."
+echo ""
+
+# Wait for build to complete (max 10 minutes)
+for i in {1..60}; do
+  STATUS=$(aws amplify list-jobs \
+    --app-id "$APP_ID" \
+    --branch-name "$BRANCH" \
+    --region "$REGION" \
+    --max-items 1 \
+    --query 'jobSummaries[0].status' \
+    --output text)
   
-  if [ $? -ne 0 ]; then
-    echo "❌ Error checking deployment status"
-    echo "$STATUS"
+  echo "[$i/60] Status: $STATUS"
+  
+  if [ "$STATUS" = "SUCCEED" ]; then
+    echo ""
+    echo "✅ Build completed successfully!"
+    echo ""
+    break
+  elif [ "$STATUS" = "FAILED" ] || [ "$STATUS" = "CANCELLED" ]; then
+    echo ""
+    echo "❌ Build failed with status: $STATUS"
     exit 1
   fi
   
-  TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-  echo "[$TIMESTAMP] Status: $STATUS"
-  
-  case $STATUS in
-    "SUCCEED")
-      echo ""
-      echo "✅ Deployment completed successfully!"
-      echo ""
-      echo "🧪 Testing authentication endpoint..."
-      curl -I https://staging.huntaze.com/api/auth/signin 2>&1 | grep -E "HTTP|content-type"
-      echo ""
-      echo "🔍 Check full response:"
-      echo "   curl https://staging.huntaze.com/api/auth/signin"
-      exit 0
-      ;;
-    "FAILED")
-      echo ""
-      echo "❌ Deployment failed!"
-      echo ""
-      echo "📋 Get error details:"
-      echo "   aws amplify get-job --app-id $APP_ID --branch-name $BRANCH --job-id $JOB_ID --region us-east-1"
-      exit 1
-      ;;
-    "CANCELLED")
-      echo ""
-      echo "⚠️  Deployment was cancelled"
-      exit 1
-      ;;
-    "PENDING"|"RUNNING"|"PROVISIONING")
-      # Continue monitoring
-      sleep 15
-      ;;
-    *)
-      echo "⚠️  Unknown status: $STATUS"
-      sleep 15
-      ;;
-  esac
+  sleep 10
 done
+
+# Test the register endpoint
+echo "🧪 Testing Register Endpoint..."
+echo ""
+
+RESPONSE=$(curl -s -X POST "$STAGING_URL/api/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Test123!","fullName":"Test User"}' \
+  -w "\nHTTP_STATUS:%{http_code}")
+
+HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d: -f2)
+BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
+
+echo "Status Code: $HTTP_STATUS"
+echo "Response Body:"
+echo "$BODY" | jq . 2>/dev/null || echo "$BODY"
+echo ""
+
+if [ "$HTTP_STATUS" = "503" ]; then
+  echo "⚠️  Still getting 503 - Registration unavailable"
+  echo "This might mean:"
+  echo "  1. Build hasn't propagated to CloudFront yet (wait 5-10 min)"
+  echo "  2. DATABASE_URL env var is missing"
+  echo "  3. Code still has the DATABASE_URL check"
+elif [ "$HTTP_STATUS" = "409" ] || [ "$HTTP_STATUS" = "201" ]; then
+  echo "✅ Registration endpoint is working!"
+  echo "   (409 = user exists, 201 = created successfully)"
+else
+  echo "ℹ️  Got status $HTTP_STATUS - check response above"
+fi
+
+echo ""
+echo "=================================="
+echo "Monitoring complete!"

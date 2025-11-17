@@ -61,7 +61,20 @@ This directory contains comprehensive API documentation for all Huntaze endpoint
 
 ## Authentication
 
-All protected endpoints require authentication via NextAuth session cookies.
+All protected endpoints require authentication via NextAuth v5 session cookies.
+
+**📖 See [Session-Based Authentication Guide](./SESSION_AUTH.md) for complete documentation.**
+
+### Quick Start
+
+Session cookies are automatically managed by NextAuth. No manual token handling required.
+
+```typescript
+// Client-side requests automatically include session cookie
+const response = await fetch('/api/analytics', {
+  credentials: 'include', // Important!
+});
+```
 
 ### Session Cookie
 
@@ -73,7 +86,7 @@ Cookie: next-auth.session-token=<session-token>
 
 1. Register or login via `/api/auth/register` or `/api/auth/[...nextauth]`
 2. Session cookie is automatically set
-3. Include cookie in subsequent requests
+3. Include `credentials: 'include'` in fetch requests
 
 ### Example Authenticated Request
 
@@ -83,6 +96,12 @@ curl -X POST https://app.huntaze.com/api/onboard/complete \
   -H "Cookie: next-auth.session-token=your-session-token" \
   -d '{"answers": {"platforms": ["instagram"]}}'
 ```
+
+### Migration from Legacy System
+
+The application has migrated from localStorage tokens to NextAuth sessions.
+
+**📖 See [NextAuth Migration Guide](../NEXTAUTH_MIGRATION_GUIDE.md) for migration details.**
 
 ## Rate Limiting
 
@@ -261,8 +280,14 @@ For API support:
 
 ## Related Documentation
 
+### Authentication
+- **[Session-Based Authentication](./SESSION_AUTH.md)** - Complete session auth guide
+- **[NextAuth Migration Guide](../NEXTAUTH_MIGRATION_GUIDE.md)** - Migration from legacy system
+- **[NextAuth Troubleshooting](../NEXTAUTH_TROUBLESHOOTING.md)** - Common issues and solutions
 - [Authentication Flow](../AUTH_FLOW.md) - Complete authentication flow
 - [Authentication Setup](../AUTH_SETUP.md) - Auth system setup
+
+### Deployment & Operations
 - [Deployment Guide](../DEPLOYMENT_GUIDE.md) - Production deployment
 - [Database Migrations](../../migrations/README.md) - Schema changes
 

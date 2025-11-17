@@ -1,14 +1,18 @@
+'use client';
+
 import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
 import OFConnectBanner from '@/components/OFConnectBanner';
 import { BridgeLauncher } from "@/components/of/BridgeLauncher";
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function OnlyFansAssistedPage() {
   return (
-    <div className="hz" data-theme="light">
-      <div className="hz-app">
+    <ProtectedRoute requireOnboarding={true}>
+      <div className="hz" data-theme="light">
+        <div className="hz-app">
         {/* Sidebar */}
         <aside className="hz-sidebar">
           <nav className="hz-sidebar-nav" aria-label="Primary navigation">
@@ -103,7 +107,8 @@ export default function OnlyFansAssistedPage() {
             {/* Cards removed per request */}
           </div>
         </main>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

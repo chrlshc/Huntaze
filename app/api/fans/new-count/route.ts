@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { crmData } from '@/lib/services/crmData';
-import { getUserFromRequest } from '@/lib/auth/request';
-
-async function getUserId(request: NextRequest): Promise<string | null> {
-  const user = await getUserFromRequest(request);
-  return user?.userId || null;
-}
+import { requireAuth } from '@/lib/auth/api-protection';
 
 export async function GET(request: NextRequest) {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ new: 0, pending: 0 });
+  // Require authentication
+  const authResult = await requireAuth(request);
+  if (authResult instanceof Response) return authResult;
+
+  const userId = authResult.user.id;
   const fans = crmData.listFans(userId);
   const now = Date.now();
   const dayAgo = now - 24 * 60 * 60 * 1000;

@@ -28,7 +28,7 @@ logger.info('NextAuth initialization', {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: 'jwt', // JWT-only for serverless compatibility
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60, // Default 30 days (can be overridden per-session)
   },
   pages: {
     signIn: '/auth',
@@ -39,6 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        rememberMe: { label: 'Remember Me', type: 'checkbox' },
       },
       async authorize(credentials) {
         const startTime = Date.now();
@@ -52,6 +53,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             });
             return null;
           }
+          
+          // Extract rememberMe flag (will be passed to JWT callback via account)
+          const rememberMe = credentials.rememberMe === 'true' || credentials.rememberMe === true;
 
           // Basic email format validation
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -105,6 +109,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             userId: user.id,
             email: user.email,
             onboardingCompleted: user.onboarding_completed,
+            rememberMe,
             duration,
           });
 
@@ -115,12 +120,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // Default to false for new users (they need to complete onboarding)
             // Only existing users without the column will get true
             onboardingCompleted: user.onboarding_completed !== null ? user.onboarding_completed : false,
+            rememberMe, // Pass rememberMe to JWT callback
           };
         } catch (error) {
           const duration = Date.now() - startTime;
           logger.error('Authorization error', error as Error, {
             duration,
             email: credentials?.email,
+            errorMessage: error instanceof Error ? error.message : 'Unknown error',
+            errorStack: error instanceof Error ? error.stack : undefined,
           });
           return null;
         }
@@ -132,14 +140,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const startTime = Date.now();
       
       try {
-        // Add onboarding status when user signs in
+        // Add onboarding status and session expiration when user signs in
         if (user) {
           token.id = user.id;
           // Set onboardingCompleted, defaulting to false for new users
           token.onboardingCompleted = user.onboardingCompleted ?? false;
+          
+          // Handle "Remember Me" functionality
+          // rememberMe is passed through the user object from authorize()
+          const rememberMe = (user as any).rememberMe === true;
+          
+          // Set expiration based on rememberMe
+          // 30 days if remembered, 24 hours if not
+          const expirationSeconds = rememberMe 
+            ? 30 * 24 * 60 * 60  // 30 days
+            : 24 * 60 * 60;       // 24 hours
+          
+          // Store expiration time in token
+          token.exp = Math.floor(Date.now() / 1000) + expirationSeconds;
+          token.rememberMe = rememberMe;
+          
           logger.info('JWT token created', {
             userId: user.id,
             onboardingCompleted: token.onboardingCompleted,
+            rememberMe,
+            expiresIn: rememberMe ? '30 days' : '24 hours',
             trigger,
             duration: Date.now() - startTime,
           });
@@ -212,6 +237,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: user.email,
         provider: account?.provider,
       });
+      
+      // Note: Legacy localStorage token cleanup happens client-side
+      // See app/auth/page.tsx for client-side cleanup after successful login
     },
     async signOut() {
       logger.info('Sign out event');

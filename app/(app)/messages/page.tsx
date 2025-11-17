@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useUnifiedMessages } from '@/hooks/messages/useUnifiedMessages';
 import { MessageSquare, Star, Check, Send } from 'lucide-react';
 import type { MessagePlatform, MessageThread } from '@/lib/types/messages';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function MessagesPage() {
   const [selectedPlatform, setSelectedPlatform] = useState<MessagePlatform | 'all'>('all');
@@ -66,8 +67,9 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex">
-      {/* Platform Selector - Left Column */}
+    <ProtectedRoute requireOnboarding={true}>
+      <div className="h-[calc(100vh-4rem)] flex">
+        {/* Platform Selector - Left Column */}
       <div className="w-64 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Platforms</h2>
@@ -277,6 +279,7 @@ export default function MessagesPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
