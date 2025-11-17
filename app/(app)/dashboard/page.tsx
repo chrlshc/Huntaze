@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useDashboard, formatCurrency, formatPercentage, formatNumber } from '@/hooks/useDashboard';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useDashboard({
@@ -35,8 +36,9 @@ export default function DashboardPage() {
   if (!dashboard) return null;
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+    <ProtectedRoute requireOnboarding={true}>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
       <p className="mt-4 text-gray-600 dark:text-gray-400">
         Welcome to your unified Huntaze dashboard
       </p>
@@ -128,6 +130,7 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

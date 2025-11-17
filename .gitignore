@@ -42,3 +42,10 @@ next-env.d.ts
 
 # backups
 backup_*.sql
+
+# Large files
+examples/byo-ip-runner/
+infra/terraform/.terraform/
+infra/terraform/production-hardening/.terraform/
+build.log
+huntazee/

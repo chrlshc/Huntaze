@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
 import "./animations.css";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "@/lib/config/chartConfig"; // Register Chart.js components
 
@@ -60,11 +60,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ThemeProvider>
-          <AuthProvider>
+          <NextAuthProvider>
             <main className="min-h-screen">
               {children}
             </main>
-          </AuthProvider>
+          </NextAuthProvider>
         </ThemeProvider>
       </body>
     </html>

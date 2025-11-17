@@ -6,6 +6,7 @@ import { UnifiedMetricsCard } from '@/components/analytics/UnifiedMetricsCard';
 import { PlatformComparisonChart } from '@/components/analytics/PlatformComparisonChart';
 import { TopContentGrid } from '@/components/analytics/TopContentGrid';
 import { InsightsPanel } from '@/components/analytics/InsightsPanel';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 type TimeRange = '7d' | '30d' | '90d' | 'all';
 
@@ -50,8 +51,9 @@ export default function AdvancedAnalyticsPage() {
   };
 
   return (
-    <SSRDataProvider hydrationId="analytics-advanced">
-    <div className="min-h-screen bg-gray-50 p-6">
+    <ProtectedRoute requireOnboarding={true}>
+      <SSRDataProvider hydrationId="analytics-advanced">
+        <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -123,7 +125,8 @@ export default function AdvancedAnalyticsPage() {
           <p>Last updated: {<SafeDateRenderer date={new Date()} format="full" />}</p>
         </div>
       </div>
-    </div>
-    </SSRDataProvider>
+        </div>
+      </SSRDataProvider>
+    </ProtectedRoute>
   );
 }

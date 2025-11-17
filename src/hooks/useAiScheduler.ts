@@ -37,15 +37,9 @@ export function useAiScheduler() {
   }, []);
 
   const ensureJwtCookie = () => {
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-      if (!token) return;
-      // Set cookie for EventSource if not already set
-      if (!document.cookie.includes('auth_token=')) {
-        const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString();
-        document.cookie = `auth_token=${token}; path=/; expires=${expires}`;
-      }
-    } catch {}
+    // Note: EventSource now uses NextAuth session cookies automatically
+    // No need to manually set cookies from localStorage
+    // This function is kept for backward compatibility but does nothing
   };
 
   const connectStream = useCallback((modelId: string, handlers?: {

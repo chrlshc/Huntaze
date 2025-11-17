@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useContent, deleteContent, createContent, updateContent, type ContentItem } from '@/hooks/useContent';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ContentModal } from '@/components/content/ContentModal';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function ContentPage() {
   const [activeTab, setActiveTab] = useState<'all' | 'draft' | 'scheduled' | 'published'>('all');
@@ -128,8 +129,9 @@ export default function ContentPage() {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <ProtectedRoute requireOnboarding={true}>
+      <div>
+        <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Content Creation</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
@@ -363,6 +365,7 @@ export default function ContentPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

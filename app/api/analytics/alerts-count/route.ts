@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { crmData } from '@/lib/services/crmData';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 
 export async function GET(request: NextRequest) {
-  const user = await getUserFromRequest(request);
-  const userId = user?.userId || null;
-  if (!userId) return NextResponse.json({ alerts: 0 });
+  // Require authentication
+  const authResult = await requireAuth(request);
+  if (authResult instanceof Response) return authResult;
+
+  const userId = authResult.user.id;
   // Simple heuristic for demo: 1 alert si conversations en attente; +1 si aucun nouveau fan 24h
   const convs = crmData.listConversations(userId);
   let pending = 0;

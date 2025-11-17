@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function FansPage() {
   const [fans, setFans] = useState<any[]>([]);
@@ -24,8 +25,9 @@ export default function FansPage() {
   }, []);
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <ProtectedRoute requireOnboarding={true}>
+      <div>
+        <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Fans</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
@@ -104,6 +106,7 @@ export default function FansPage() {
           </Link>
         </div>
       )}
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

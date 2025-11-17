@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MetricsOverview } from '@/components/revenue/metrics/MetricsOverview';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
@@ -48,8 +49,9 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="max-w-7xl mx-auto">
+    <ProtectedRoute requireOnboarding={true}>
+      <ErrorBoundary>
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Analytics</h1>
@@ -188,7 +190,8 @@ export default function AnalyticsPage() {
             </div>
           </div>
         </div>
-      </div>
-    </ErrorBoundary>
+        </div>
+      </ErrorBoundary>
+    </ProtectedRoute>
   );
 }

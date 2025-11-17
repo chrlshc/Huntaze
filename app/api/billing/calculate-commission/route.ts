@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import crypto from 'crypto';
 import { makeReqLogger } from '@/lib/logger';
 
@@ -48,13 +48,13 @@ async function handler(request: NextRequest) {
     // Otherwise require an authenticated user
     let userId: string | null = null;
     if (!allowInternal) {
-      const user = await getUserFromRequest(request);
-      if (!user?.userId) {
-        const r = NextResponse.json({ error: 'Not authenticated', requestId }, { status: 401 });
+      const authResult = await requireAuth(request);
+      if (authResult instanceof Response) {
+        const r = authResult;
         r.headers.set('X-Request-Id', requestId);
         return r;
       }
-      userId = user.userId as string;
+      userId = authResult.user.id;
     }
 
     const { monthlyRevenue, subscriptionTier, accountAge } = await request.json();

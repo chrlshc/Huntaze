@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useMarketingCampaigns } from '@/hooks/marketing/useMarketingCampaigns';
 import { Plus, Filter, TrendingUp, Send, Eye, MousePointer } from 'lucide-react';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function MarketingPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -54,8 +55,9 @@ export default function MarketingPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
+    <ProtectedRoute requireOnboarding={true}>
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Marketing & Social</h1>
@@ -237,6 +239,7 @@ export default function MarketingPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

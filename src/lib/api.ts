@@ -24,8 +24,8 @@ class ApiClient {
 
       if (response.status === 401) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('auth_token');
-          window.location.href = '/login';
+          // Redirect to auth page - NextAuth will handle session cleanup
+          window.location.href = '/auth';
         }
         throw new Error('Unauthorized');
       }

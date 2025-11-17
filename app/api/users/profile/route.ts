@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserProfilesRepository } from '@/lib/db/repositories';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
+    // Require authentication
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
 
-    const userId = parseInt(user.userId, 10);
+    const userId = parseInt(authResult.user.id, 10);
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
@@ -36,12 +35,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
+    // Require authentication
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
 
-    const userId = parseInt(user.userId, 10);
+    const userId = parseInt(authResult.user.id, 10);
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
@@ -57,12 +55,11 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
+    // Require authentication
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
 
-    const userId = parseInt(user.userId, 10);
+    const userId = parseInt(authResult.user.id, 10);
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }

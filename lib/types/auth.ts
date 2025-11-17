@@ -18,8 +18,10 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
+      email: string;
+      name?: string | null;
       onboardingCompleted: boolean;
-    } & DefaultSession['user'];
+    };
   }
 
   /**
@@ -27,7 +29,11 @@ declare module 'next-auth' {
    */
   interface User {
     id: string;
+    email: string;
+    name?: string | null;
+    image?: string | null;
     onboardingCompleted: boolean;
+    rememberMe?: boolean;
   }
 }
 

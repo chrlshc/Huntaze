@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/auth/request';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { OnlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
 import { getPool } from '@/lib/db/index';
 
 async function getHandler(request: NextRequest) {
   try {
-    const user = await getUserFromRequest(request);
-    if (!user?.userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
+    // Require authentication
+    const authResult = await requireAuth(request);
+    if (authResult instanceof Response) return authResult;
 
     // Get queue status from SQS
     const rateLimiterService = new OnlyFansRateLimiterService();

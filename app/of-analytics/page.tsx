@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { analyticsManager, seedMockAnalytics } from '@/lib/of/analytics-manager';
 import type { FanAnalytics } from '@/lib/types/onlyfans';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function OfAnalyticsPage() {
   const [period, setPeriod] = useState<'24h' | '7d' | '30d' | 'all'>('30d');
@@ -51,8 +52,9 @@ export default function OfAnalyticsPage() {
   const { metrics } = analytics;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <ProtectedRoute requireOnboarding={true}>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -297,7 +299,8 @@ export default function OfAnalyticsPage() {
             ))}
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

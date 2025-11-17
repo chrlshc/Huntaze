@@ -5,12 +5,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OfInbox from '@/components/of/inbox';
 import OfCampaigns from '@/components/of/campaigns';
 import { MessageSquare, Send } from 'lucide-react';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function OfMessagesPage() {
   const [activeTab, setActiveTab] = useState('inbox');
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <ProtectedRoute requireOnboarding={true}>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -59,6 +61,7 @@ export default function OfMessagesPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

@@ -2,11 +2,13 @@
 
 import React from "react";
 import { BridgeLauncher } from "@/components/of/BridgeLauncher";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export default function Client() {
   return (
-    <div className="hz" data-theme="light">
-      <main className="hz-main">
+    <ProtectedRoute requireOnboarding={true}>
+      <div className="hz" data-theme="light">
+        <main className="hz-main">
         <div className="hz-page" style={{ maxWidth: 720 }}>
           <h1>Connect OnlyFans</h1>
           <div className="hz-card" style={{ marginTop: 12 }}>
@@ -19,7 +21,8 @@ export default function Client() {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
 

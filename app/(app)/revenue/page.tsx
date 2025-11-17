@@ -1,7 +1,12 @@
+'use client';
+
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+
 export default function RevenuePage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Revenue Optimization</h1>
+    <ProtectedRoute requireOnboarding={true}>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Revenue Optimization</h1>
       <p className="mt-4 text-gray-600 dark:text-gray-400">
         Advanced revenue analytics and optimization tools
       </p>
@@ -30,6 +35,7 @@ export default function RevenuePage() {
           </p>
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }
