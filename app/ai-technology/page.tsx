@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Brain, Zap, MessageSquare, TrendingUp, Sparkles, Crown } from 'lucide-react';
 import Link from 'next/link';
 

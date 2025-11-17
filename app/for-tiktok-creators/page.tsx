@@ -6,6 +6,8 @@ import Link from "next/link";
 import { MagneticButton } from "@/src/components/ui/magnetic-button";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = 'force-dynamic';
+
 const benefits = [
   {
     icon: Video,

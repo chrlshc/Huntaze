@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+
 import type { Metadata } from 'next';
 import { IntegrationsHeroSimple } from '@/components/integrations/IntegrationsHeroSimple';
 import { IntegrationsSectionSimple } from '@/components/integrations/IntegrationsSectionSimple';

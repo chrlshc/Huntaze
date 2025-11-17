@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Image, Sparkles, Zap, Crown } from 'lucide-react';
 import Link from 'next/link';
 

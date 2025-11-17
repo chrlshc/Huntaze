@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+
 import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';

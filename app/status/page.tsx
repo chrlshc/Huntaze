@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+
 import { Metadata } from 'next'
 import { CheckCircle, AlertCircle, Activity, Shield, Database, Zap } from 'lucide-react'
 import { SafeDateRenderer, SSRDataProvider } from '@/components/hydration';
