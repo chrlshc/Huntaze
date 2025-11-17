@@ -1,297 +1,364 @@
 # API Integration Tests
 
-Comprehensive integration tests for API endpoints with focus on observability, error handling, and production readiness.
+## Overview
+
+Comprehensive integration tests for all Huntaze API endpoints with real HTTP requests, database interactions, and session-based authentication.
 
 ## Test Structure
 
 ```
 tests/integration/api/
-├── README.md                    # This file
-├── metrics.test.ts              # /api/metrics endpoint tests
-├── fixtures/
-│   └── metrics-samples.ts       # Test data and fixtures
-└── helpers/
-    └── test-utils.ts            # Shared test utilities
+├── README.md                           # This file
+├── fixtures/                           # Test data fixtures
+│   ├── content-fixtures.ts            # Content API fixtures
+│   └── auth-fixtures.ts               # Auth API fixtures
+├── helpers/                            # Test utilities
+│   ├── api-client.ts                  # HTTP client wrapper
+│   └── test-setup.ts                  # Setup/teardown helpers
+├── auth-register.integration.test.ts  # Registration tests
+├── auth-onboarding-flow.test.ts       # Auth + onboarding flow
+├── onboarding-complete.integration.test.ts # Onboarding completion
+├── content.integration.test.ts        # Content CRUD tests
+└── content-api-tests.md               # Content API documentation
 ```
 
 ## Running Tests
 
-### Prerequisites
-
+### All Integration Tests
 ```bash
-# Start the development server
-npm run dev
-
-# Or start production build
-npm run build
-npm start
+npm run test:integration
 ```
 
-### Run All Integration Tests
-
+### Specific Test File
 ```bash
-# Run all integration tests
-npm run test:integration
+npm run test:integration -- content.integration.test.ts
+```
 
-# Run with coverage
+### With Coverage
+```bash
 npm run test:integration -- --coverage
+```
 
-# Run specific test file
-npm run test:integration tests/integration/api/metrics.test.ts
-
-# Run in watch mode
+### Watch Mode
+```bash
 npm run test:integration -- --watch
 ```
 
-### Environment Variables
+### Verbose Output
+```bash
+npm run test:integration -- --reporter=verbose
+```
+
+## Environment Setup
+
+### Required Environment Variables
 
 ```bash
-# Set custom base URL (default: http://localhost:3000)
-TEST_BASE_URL=http://localhost:3000 npm run test:integration
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/huntaze_test
 
-# Run against staging
-TEST_BASE_URL=https://staging.example.com npm run test:integration
+# Authentication
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=test-secret-key-min-32-chars
 
-# Run against production (read-only tests only)
-TEST_BASE_URL=https://production.example.com npm run test:integration
+# API
+TEST_API_URL=http://localhost:3000
 ```
 
-## Test Coverage
+### Test Database Setup
 
-### /api/metrics Endpoint
+```bash
+# Create test database
+createdb huntaze_test
 
-**Status Codes:**
-- ✅ 200 OK - Successful metrics collection
-- ✅ 405 Method Not Allowed - POST, PUT, DELETE rejected
-- ✅ 500 Internal Server Error - Graceful degradation
+# Run migrations
+npm run db:migrate
 
-**Response Validation:**
-- ✅ Prometheus text format compliance
-- ✅ Valid metric names (alphanumeric + underscore)
-- ✅ Valid metric values (numeric)
-- ✅ HELP and TYPE declarations
-- ✅ Default Node.js metrics present
-- ✅ Label syntax validation
+# Seed test data (optional)
+npm run db:seed:test
+```
 
-**Error Handling:**
-- ✅ Graceful degradation on prom-client failure
-- ✅ JSON error format on 500
-- ✅ No crashes on malformed requests
+## Test Patterns
 
-**Performance:**
-- ✅ First request < 1s (includes lazy init)
-- ✅ Subsequent requests < 200ms
-- ✅ Concurrent requests handled correctly
-
-**Concurrency:**
-- ✅ Multiple concurrent requests (10+)
-- ✅ No race conditions on metric registration
-- ✅ Consistent data across concurrent requests
-- ✅ Idempotent collectDefaultMetrics()
-
-**Runtime Configuration:**
-- ✅ Node.js runtime (not Edge)
-- ✅ Dynamic rendering (not cached)
-- ✅ Proper Content-Type headers
-
-**Security:**
-- ✅ No sensitive information exposed
-- ✅ No authentication required (public endpoint)
-- ✅ Safe handling of malformed requests
-
-**Prometheus Compatibility:**
-- ✅ Scrapable by Prometheus
-- ✅ Valid metric types (counter, gauge, histogram, summary)
-- ✅ Valid label syntax
-
-## Test Scenarios
-
-### 1. Happy Path
+### 1. HTTP Status Code Testing
 
 ```typescript
-// GET /api/metrics
-// Expected: 200 OK with Prometheus metrics
-const response = await fetch('/api/metrics')
-expect(response.status).toBe(200)
-expect(response.headers.get('content-type')).toMatch(/text\/plain/)
+describe('HTTP Status Codes', () => {
+  it('should return 200 OK on success', async () => {
+    const response = await fetch(`${baseUrl}/api/endpoint`);
+    expect(response.status).toBe(200);
+  });
+
+  it('should return 401 Unauthorized without auth', async () => {
+    const response = await fetch(`${baseUrl}/api/endpoint`);
+    expect(response.status).toBe(401);
+  });
+
+  it('should return 400 Bad Request for invalid data', async () => {
+    const response = await fetch(`${baseUrl}/api/endpoint`, {
+      method: 'POST',
+      body: JSON.stringify({ invalid: 'data' }),
+    });
+    expect(response.status).toBe(400);
+  });
+});
 ```
 
-### 2. Error Handling
+### 2. Response Schema Validation
 
 ```typescript
-// Simulate prom-client failure
-// Expected: 500 with JSON error
-const response = await fetch('/api/metrics')
-if (response.status === 500) {
-  const json = await response.json()
-  expect(json.error).toBe('Metrics unavailable')
-}
+import { z } from 'zod';
+
+const ResponseSchema = z.object({
+  success: z.boolean(),
+  data: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
+});
+
+it('should return valid response schema', async () => {
+  const response = await fetch(`${baseUrl}/api/endpoint`);
+  const data = await response.json();
+  
+  expect(ResponseSchema.parse(data)).toBeDefined();
+});
 ```
 
-### 3. Concurrent Access
+### 3. Authentication Testing
 
 ```typescript
-// 20 concurrent requests
-const requests = Array.from({ length: 20 }, () => fetch('/api/metrics'))
-const responses = await Promise.all(requests)
-responses.forEach(r => expect(r.ok).toBe(true))
+describe('Authentication', () => {
+  let sessionCookie: string;
+
+  beforeAll(async () => {
+    // Login to get session
+    const response = await fetch(`${baseUrl}/api/auth/signin`, {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    
+    sessionCookie = response.headers.get('set-cookie');
+  });
+
+  it('should require authentication', async () => {
+    const response = await fetch(`${baseUrl}/api/endpoint`, {
+      headers: { Cookie: sessionCookie },
+    });
+    
+    expect(response.status).toBe(200);
+  });
+});
 ```
 
-### 4. Performance Validation
+### 4. Database Integration Testing
 
 ```typescript
-// First request (lazy init)
-const start = Date.now()
-await fetch('/api/metrics')
-const duration = Date.now() - start
-expect(duration).toBeLessThan(1000)
+import { query } from '@/lib/db';
+
+it('should create record in database', async () => {
+  const response = await fetch(`${baseUrl}/api/endpoint`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+
+  const { id } = await response.json();
+
+  // Verify in database
+  const result = await query('SELECT * FROM table WHERE id = $1', [id]);
+  expect(result.rows.length).toBe(1);
+});
 ```
 
-## Fixtures
-
-### Valid Prometheus Metrics
+### 5. Concurrent Access Testing
 
 ```typescript
-import { validPrometheusMetrics } from './fixtures/metrics-samples'
+it('should handle concurrent requests', async () => {
+  const requests = Array.from({ length: 10 }, () =>
+    fetch(`${baseUrl}/api/endpoint`, { method: 'POST' })
+  );
 
-// Use in tests to validate format
-expect(actualMetrics).toMatch(/# HELP/)
-expect(actualMetrics).toMatch(/# TYPE/)
+  const responses = await Promise.all(requests);
+  const successCount = responses.filter(r => r.status === 200).length;
+
+  expect(successCount).toBe(10);
+});
 ```
 
-### Expected Default Metrics
+### 6. Rate Limiting Testing
 
 ```typescript
-import { expectedDefaultMetrics } from './fixtures/metrics-samples'
+it('should enforce rate limits', async () => {
+  const requests = [];
 
-expectedDefaultMetrics.forEach(metric => {
-  expect(metricsText).toContain(metric)
-})
+  // Exceed rate limit
+  for (let i = 0; i < 100; i++) {
+    requests.push(fetch(`${baseUrl}/api/endpoint`));
+  }
+
+  const responses = await Promise.all(requests);
+  const rateLimited = responses.some(r => r.status === 429);
+
+  expect(rateLimited).toBe(true);
+});
 ```
 
-### Performance Benchmarks
+## Test Coverage Goals
 
-```typescript
-import { performanceBenchmarks } from './fixtures/metrics-samples'
+### Minimum Coverage
+- **Lines**: 80%
+- **Branches**: 75%
+- **Functions**: 80%
+- **Statements**: 80%
 
-expect(duration).toBeLessThan(performanceBenchmarks.firstRequest.maxDuration)
-```
+### Critical Paths
+- Authentication flows: 100%
+- Authorization checks: 100%
+- Data validation: 90%
+- Error handling: 85%
 
 ## Best Practices
 
 ### 1. Test Isolation
 
-Each test should be independent and not rely on state from other tests:
-
 ```typescript
-it('should handle request independently', async () => {
-  // Don't rely on previous test state
-  const response = await fetch('/api/metrics')
-  expect(response.ok).toBe(true)
-})
+describe('Test Suite', () => {
+  const testData: string[] = [];
+
+  afterEach(async () => {
+    // Cleanup after each test
+    for (const id of testData) {
+      await query('DELETE FROM table WHERE id = $1', [id]);
+    }
+    testData.length = 0;
+  });
+});
 ```
 
-### 2. Async/Await
-
-Always use async/await for cleaner test code:
+### 2. Use Fixtures
 
 ```typescript
-it('should return metrics', async () => {
-  const response = await fetch('/api/metrics')
-  const text = await response.text()
-  expect(text).toContain('process_cpu')
-})
+import { validContentData } from './fixtures/content-fixtures';
+
+it('should create content', async () => {
+  const response = await fetch(`${baseUrl}/api/content`, {
+    method: 'POST',
+    body: JSON.stringify(validContentData.minimal),
+  });
+
+  expect(response.status).toBe(201);
+});
 ```
 
-### 3. Error Handling
-
-Test both success and failure paths:
+### 3. Test Real Scenarios
 
 ```typescript
-it('should handle errors gracefully', async () => {
-  const response = await fetch('/api/metrics')
+it('should complete full user journey', async () => {
+  // 1. Register
+  const registerResponse = await register(userData);
   
-  if (response.ok) {
-    const text = await response.text()
-    expect(text.length).toBeGreaterThan(0)
-  } else {
-    const json = await response.json()
-    expect(json).toHaveProperty('error')
-  }
-})
+  // 2. Login
+  const loginResponse = await login(credentials);
+  
+  // 3. Complete onboarding
+  const onboardingResponse = await completeOnboarding(answers);
+  
+  // 4. Create content
+  const contentResponse = await createContent(contentData);
+  
+  // All steps should succeed
+  expect(registerResponse.status).toBe(201);
+  expect(loginResponse.status).toBe(200);
+  expect(onboardingResponse.status).toBe(200);
+  expect(contentResponse.status).toBe(201);
+});
 ```
 
 ### 4. Performance Testing
 
-Use realistic thresholds based on production requirements:
-
 ```typescript
-it('should respond quickly', async () => {
-  const start = Date.now()
-  await fetch('/api/metrics')
-  const duration = Date.now() - start
+it('should complete within time limit', async () => {
+  const startTime = Date.now();
   
-  // First request: < 1s (includes lazy init)
-  expect(duration).toBeLessThan(1000)
-})
+  await fetch(`${baseUrl}/api/endpoint`);
+  
+  const duration = Date.now() - startTime;
+  expect(duration).toBeLessThan(1000); // < 1 second
+});
 ```
 
-### 5. Concurrent Testing
-
-Test realistic concurrent load:
+### 5. Error Scenarios
 
 ```typescript
-it('should handle concurrent requests', async () => {
-  const concurrentRequests = 20
-  const requests = Array.from(
-    { length: concurrentRequests },
-    () => fetch('/api/metrics')
-  )
-  
-  const responses = await Promise.all(requests)
-  responses.forEach(r => expect(r.ok).toBe(true))
-})
+describe('Error Handling', () => {
+  it('should handle network errors', async () => {
+    // Mock network failure
+    const response = await fetch('http://invalid-url');
+    expect(response).toBeUndefined();
+  });
+
+  it('should handle database errors', async () => {
+    // Mock database failure
+    const response = await fetch(`${baseUrl}/api/endpoint`);
+    expect(response.status).toBe(500);
+  });
+});
 ```
 
-## Debugging Tests
+## Common Issues
 
-### Enable Verbose Logging
+### Database Connection Errors
 
+**Problem**: Tests fail with "connection refused"
+
+**Solution**:
 ```bash
-# Run with debug output
-DEBUG=* npm run test:integration
+# Check database is running
+pg_isready
 
-# Run specific test with logs
-npm run test:integration -- --reporter=verbose metrics.test.ts
+# Verify DATABASE_URL
+echo $DATABASE_URL
+
+# Test connection
+psql $DATABASE_URL -c "SELECT 1"
 ```
 
-### Inspect Responses
+### Session Authentication Failures
 
+**Problem**: Tests fail with 401 Unauthorized
+
+**Solution**:
 ```typescript
-it('should return valid metrics', async () => {
-  const response = await fetch('/api/metrics')
-  const text = await response.text()
-  
-  // Log for debugging
-  console.log('Status:', response.status)
-  console.log('Headers:', Object.fromEntries(response.headers))
-  console.log('Body preview:', text.substring(0, 200))
-  
-  expect(response.ok).toBe(true)
-})
+// Ensure session cookie is set
+const response = await fetch(url, {
+  headers: {
+    Cookie: sessionCookie,
+  },
+  credentials: 'include', // Important!
+});
 ```
 
-### Test Against Different Environments
+### Flaky Tests
 
-```bash
-# Local
-TEST_BASE_URL=http://localhost:3000 npm run test:integration
+**Problem**: Tests pass/fail randomly
 
-# Staging
-TEST_BASE_URL=https://staging.example.com npm run test:integration
+**Solution**:
+- Add proper cleanup in `afterEach`
+- Use unique test data (timestamps, UUIDs)
+- Increase timeouts for slow operations
+- Avoid shared state between tests
 
-# Production (read-only)
-TEST_BASE_URL=https://api.example.com npm run test:integration
+### Rate Limit Failures
+
+**Problem**: Tests fail due to rate limiting
+
+**Solution**:
+```typescript
+// Add delays between requests
+await new Promise(resolve => setTimeout(resolve, 100));
+
+// Or use separate test users
+const testUser = `test-${Date.now()}@example.com`;
 ```
 
 ## CI/CD Integration
@@ -306,120 +373,65 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
       
       - name: Install dependencies
         run: npm ci
       
-      - name: Build application
-        run: npm run build
-      
-      - name: Start server
-        run: npm start &
-        
-      - name: Wait for server
-        run: npx wait-on http://localhost:3000
+      - name: Run migrations
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
       
       - name: Run integration tests
         run: npm run test:integration
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          NEXTAUTH_SECRET: ${{ secrets.TEST_NEXTAUTH_SECRET }}
 ```
 
-## Troubleshooting
+## Test Documentation
 
-### Server Not Running
+Each API endpoint should have comprehensive test documentation:
 
-```bash
-Error: connect ECONNREFUSED 127.0.0.1:3000
-```
+- **HTTP Status Codes**: All possible response codes
+- **Request/Response Schemas**: Zod validation
+- **Authentication**: Session requirements
+- **Authorization**: Ownership checks
+- **Rate Limiting**: Limits and headers
+- **Concurrent Access**: Race condition handling
+- **Performance**: Response time benchmarks
+- **Security**: XSS, SQL injection tests
 
-**Solution:** Start the dev server first:
-```bash
-npm run dev
-```
-
-### Timeout Errors
-
-```bash
-Error: Timeout of 5000ms exceeded
-```
-
-**Solution:** Increase timeout in vitest.config.ts:
-```typescript
-export default defineConfig({
-  test: {
-    testTimeout: 10000, // 10 seconds
-  }
-})
-```
-
-### Flaky Tests
-
-If tests fail intermittently:
-
-1. Check for race conditions in concurrent tests
-2. Increase wait times for async operations
-3. Ensure test isolation (no shared state)
-4. Use retry logic for network requests
-
-```typescript
-it('should handle flaky network', async () => {
-  let response
-  let attempts = 0
-  const maxAttempts = 3
-  
-  while (attempts < maxAttempts) {
-    try {
-      response = await fetch('/api/metrics')
-      if (response.ok) break
-    } catch (error) {
-      attempts++
-      if (attempts === maxAttempts) throw error
-      await new Promise(resolve => setTimeout(resolve, 1000))
-    }
-  }
-  
-  expect(response.ok).toBe(true)
-})
-```
+See [content-api-tests.md](./content-api-tests.md) for example.
 
 ## Related Documentation
 
-- [Observability Hardening Spec](../../../.kiro/specs/observability-wrapper-build-fix/)
-- [Team Briefing](../../../.kiro/specs/observability-wrapper-build-fix/TEAM_BRIEFING.md)
-- [Design Document](../../../.kiro/specs/observability-wrapper-build-fix/design.md)
-- [Prometheus Best Practices](https://prometheus.io/docs/practices/)
+- [API Reference](../../../docs/api/README.md)
+- [Authentication Guide](../../../docs/api/SESSION_AUTH.md)
+- [Database Migrations](../../../migrations/README.md)
+- [Rate Limiting](../../../lib/services/rate-limiter/README.md)
 
-## Contributing
+---
 
-When adding new API integration tests:
-
-1. Follow the existing test structure
-2. Add fixtures for test data
-3. Test all HTTP status codes
-4. Validate response schemas with Zod
-5. Test error handling and edge cases
-6. Include performance benchmarks
-7. Test concurrent access patterns
-8. Document test scenarios in this README
-
-## Maintenance
-
-### Regular Tasks
-
-- [ ] Review and update performance benchmarks quarterly
-- [ ] Add tests for new API endpoints
-- [ ] Update fixtures when API contracts change
-- [ ] Monitor test execution time and optimize slow tests
-- [ ] Review and update CI/CD integration
-
-### Metrics
-
-Track test suite health:
-- Test execution time
-- Test flakiness rate
-- Code coverage percentage
-- Number of tests per endpoint
+**Last Updated**: November 17, 2025  
+**Version**: 1.0  
+**Status**: ✅ Active

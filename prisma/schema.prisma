@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                         Int                 @id @default(autoincrement())
+  email                      String              @unique @db.VarChar(255)
+  name                       String?             @db.VarChar(255)
+  password                   String?             @db.VarChar(255)
+  emailVerified              Boolean?            @default(false) @map("email_verified")
+  email_verification_token   String?             @db.VarChar(255)
+  email_verification_expires DateTime?           @db.Timestamp(6)
+  createdAt                  DateTime?           @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                  DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  onboardingCompleted        Boolean?            @default(false) @map("onboarding_completed")
+  
+  // Relations
+  content                    Content[]
+  marketingCampaigns         MarketingCampaign[]
+  transactions               Transaction[]
+  subscriptions              Subscription[]
+
+  @@index([onboardingCompleted], map: "idx_users_onboarding_completed")
+  @@map("users")
+}
+
+model ai_plan {
+  id           String         @id @db.Uuid
+  source       String         @db.VarChar(32)
+  account_id   String         @db.VarChar(128)
+  created_at   DateTime       @default(now()) @db.Timestamptz(6)
+  raw          Json
+  ai_plan_item ai_plan_item[]
+
+  @@index([account_id, created_at(sort: Desc)], map: "idx_ai_plan_account_created")
+}
+
+model ai_plan_item {
+  id           String    @id @db.Uuid
+  plan_id      String    @db.Uuid
+  platform     String    @db.VarChar(32)
+  scheduled_at DateTime? @db.Timestamptz(6)
+  content      Json
+  status       String    @default("scheduled") @db.VarChar(24)
+  ai_plan      ai_plan   @relation(fields: [plan_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([plan_id, platform], map: "idx_item_plan_platform")
+  @@index([scheduled_at], map: "idx_item_scheduled")
+}
+
+model events_outbox {
+  id             BigInt    @id @default(autoincrement())
+  aggregate_type String
+  aggregate_id   String
+  event_type     String
+  event_time     DateTime  @default(now()) @db.Timestamptz(6)
+  payload        Json
+  sent_at        DateTime? @db.Timestamptz(6)
+}
+
+model insight_snapshot {
+  id           BigInt   @id @default(autoincrement())
+  platform     String   @db.VarChar(32)
+  account_id   String   @db.VarChar(128)
+  period_start DateTime @db.Date
+  period_end   DateTime @db.Date
+  raw          Json
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([account_id, platform, period_end(sort: Desc)], map: "idx_snapshot_acc_platform")
+}
+
+model insight_summary {
+  id         BigInt   @id @default(autoincrement())
+  platform   String   @db.VarChar(32)
+  account_id String   @db.VarChar(128)
+  period     String
+  summary    Json
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([account_id, platform, created_at(sort: Desc)], map: "idx_summary_acc_platform")
+}
+
+
+// New Content model for managing multi-platform content
+model Content {
+  id          String    @id @default(cuid())
+  userId      Int       @map("user_id")
+  title       String
+  text        String?   @db.Text
+  type        String    @db.VarChar(50) // 'image', 'video', 'text'
+  platform    String    @db.VarChar(50) // 'onlyfans', 'fansly', 'instagram', 'tiktok'
+  status      String    @db.VarChar(50) // 'draft', 'scheduled', 'published'
+  category    String?   @db.VarChar(100)
+  tags        String[]
+  mediaIds    String[]  @map("media_ids")
+  scheduledAt DateTime? @map("scheduled_at") @db.Timestamp(6)
+  publishedAt DateTime? @map("published_at") @db.Timestamp(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  metadata    Json?
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, platform])
+  @@index([userId, createdAt])
+  @@map("content")
+}
+
+// New MarketingCampaign model for campaign management
+model MarketingCampaign {
+  id              String   @id @default(cuid())
+  userId          Int      @map("user_id")
+  name            String   @db.VarChar(255)
+  status          String   @db.VarChar(50) // 'draft', 'scheduled', 'active', 'paused', 'completed'
+  channel         String   @db.VarChar(50) // 'email', 'dm', 'sms', 'push'
+  goal            String   @db.VarChar(50) // 'engagement', 'conversion', 'retention'
+  audienceSegment String   @map("audience_segment") @db.VarChar(100)
+  audienceSize    Int      @map("audience_size")
+  message         Json
+  schedule        Json?
+  stats           Json?    // { sent, opened, clicked, converted }
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, channel])
+  @@map("marketing_campaigns")
+}
+
+// New Transaction model for revenue tracking
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    Int      @map("user_id")
+  amount    Float
+  currency  String   @default("USD") @db.VarChar(10)
+  status    String   @db.VarChar(50) // 'pending', 'completed', 'failed'
+  type      String   @db.VarChar(50) // 'subscription', 'tip', 'ppv', 'message'
+  platform  String?  @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@map("transactions")
+}
+
+// New Subscription model for subscriber management
+model Subscription {
+  id        String    @id @default(cuid())
+  userId    Int       @map("user_id")
+  fanId     String    @map("fan_id") @db.VarChar(255)
+  platform  String    @db.VarChar(50)
+  tier      String?   @db.VarChar(50)
+  amount    Float
+  status    String    @db.VarChar(50) // 'active', 'cancelled', 'expired'
+  startedAt DateTime  @map("started_at") @db.Timestamp(6)
+  endsAt    DateTime? @map("ends_at") @db.Timestamp(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, platform])
+  @@map("subscriptions")
+}

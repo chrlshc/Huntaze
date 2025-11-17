@@ -1,89 +1,88 @@
-/**
- * Trends API
- * 
- * GET /api/analytics/trends
- * Returns trend analysis and insights
- */
-
-import { NextRequest, NextResponse } from 'next/server';
-import { trendAnalysisService } from '@/lib/services/trendAnalysisService';
-import { auth } from '@/lib/auth/config';;
-
-export const dynamic = 'force-dynamic';
+import { withOnboarding } from '@/lib/api/middleware/auth';
+import { withRateLimit } from '@/lib/api/middleware/rate-limit';
+import { analyticsService } from '@/lib/api/services/analytics.service';
+import { successResponse, errorResponse } from '@/lib/api/utils/response';
+import { getCached } from '@/lib/api/utils/cache';
 
 /**
  * GET /api/analytics/trends
  * 
- * Query params:
- * - metric: 'followers' | 'engagement' | 'posts' (optional, for time series)
- * - timeRange: '7d' | '30d' | '90d' (default: '30d')
+ * Returns time-series trend data for analytics metrics
+ * 
+ * Query Parameters:
+ * - metric: 'revenue' | 'subscribers' | 'arpu' (required)
+ * - period: 'day' | 'week' | 'month' (default: 'day')
+ * - days: number of days to look back (default: 30)
+ * 
+ * Example: /api/analytics/trends?metric=revenue&period=day&days=30
+ * 
+ * Cached for 5 minutes to optimize performance
  */
-export async function GET(request: NextRequest) {
+export const GET = withRateLimit(withOnboarding(async (req) => {
   try {
-    // Get authenticated user
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+    const { searchParams } = new URL(req.url);
+    const userId = parseInt(req.user.id);
+
+    // Parse query parameters
+    const metric = searchParams.get('metric');
+    const period = (searchParams.get('period') || 'day') as 'day' | 'week' | 'month';
+    const days = parseInt(searchParams.get('days') || '30');
+
+    // Validate required parameters
+    if (!metric) {
+      return Response.json(
+        errorResponse('VALIDATION_ERROR', 'Missing required parameter: metric'),
+        { status: 400 }
       );
     }
 
-    const userId = parseInt(session.user.id);
-
-    // Parse query params
-    const searchParams = request.nextUrl.searchParams;
-    const metric = searchParams.get('metric') as any;
-    const timeRangeParam = searchParams.get('timeRange') || '30d';
-
-    // Calculate time range
-    const endDate = new Date();
-    const startDate = new Date();
-
-    switch (timeRangeParam) {
-      case '7d':
-        startDate.setDate(startDate.getDate() - 7);
-        break;
-      case '90d':
-        startDate.setDate(startDate.getDate() - 90);
-        break;
-      case '30d':
-      default:
-        startDate.setDate(startDate.getDate() - 30);
+    // Validate metric
+    const validMetrics = ['revenue', 'subscribers', 'arpu'];
+    if (!validMetrics.includes(metric)) {
+      return Response.json(
+        errorResponse(
+          'VALIDATION_ERROR',
+          `Invalid metric. Must be one of: ${validMetrics.join(', ')}`
+        ),
+        { status: 400 }
+      );
     }
 
-    const timeRange = { startDate, endDate };
-
-    // Get trend data
-    const [growthRates, insights] = await Promise.all([
-      trendAnalysisService.getGrowthRates(userId, timeRange),
-      trendAnalysisService.analyzeTrends(userId, timeRange),
-    ]);
-
-    // Get time series if metric specified
-    let timeSeries = null;
-    if (metric) {
-      timeSeries = await trendAnalysisService.getTimeSeries(userId, metric, timeRange);
+    // Validate period
+    const validPeriods = ['day', 'week', 'month'];
+    if (!validPeriods.includes(period)) {
+      return Response.json(
+        errorResponse(
+          'VALIDATION_ERROR',
+          `Invalid period. Must be one of: ${validPeriods.join(', ')}`
+        ),
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        growthRates,
-        insights,
-        timeSeries,
-      },
-    });
+    // Validate days
+    if (isNaN(days) || days < 1 || days > 365) {
+      return Response.json(
+        errorResponse('VALIDATION_ERROR', 'Days must be between 1 and 365'),
+        { status: 400 }
+      );
+    }
+
+    const cacheKey = `analytics:trends:${userId}:${metric}:${period}:${days}`;
+
+    // Get trends with caching (5 min TTL)
+    const trends = await getCached(
+      cacheKey,
+      () => analyticsService.getTrends(userId, metric, period, days),
+      { ttl: 300 } // 5 minutes
+    );
+
+    return Response.json(successResponse(trends));
   } catch (error: any) {
-    console.error('[API] Trends analytics error:', error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch trends',
-      },
+    console.error('Analytics trends error:', error);
+    return Response.json(
+      errorResponse('INTERNAL_ERROR', error.message || 'Failed to fetch analytics trends'),
       { status: 500 }
     );
   }
-}
+}));

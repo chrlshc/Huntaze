@@ -53,3 +53,5 @@ infra/terraform/.terraform/
 infra/terraform/production-hardening/.terraform/
 build.log
 huntazee/
+
+/generated/prisma
