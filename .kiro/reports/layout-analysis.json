@@ -1,0 +1,639 @@
+{
+  "total": 70,
+  "redundant": [
+    {
+      "path": "app/(app)/analytics/churn/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/analytics/forecast/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/analytics/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/analytics/payouts/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/analytics/pricing/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/analytics/upsells/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/content/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/dashboard/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/fans/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/marketing/calendar/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/marketing/campaigns/[id]/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/marketing/campaigns/new/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/marketing/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/marketing/social/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/messages/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/onlyfans/fans/[id]/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/onlyfans/fans/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/onlyfans/messages/mass/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/onlyfans/ppv/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/onlyfans/settings/welcome/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/revenue/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/schedule/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(app)/settings/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/(landing)/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/ai/training/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/ai-images-comparison/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/ai-technology/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/analytics/advanced/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/analytics/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/auth/login/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/billing/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/campaigns/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/campaigns/new/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/chatbot/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/complete-onboarding/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/configure/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/content/moderation/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/creator/messages/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/dashboard/huntaze-ai/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": true,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/fans/import/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/features/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/features/onlyfans/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/menu/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/messages/[conversationId]/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/messages/onlyfans/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/messages/onlyfans-crm/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/of-analytics/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/of-connect/cookies/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/of-messages/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/onboarding/dashboard/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/onboarding/huntaze/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/onboarding/optimize/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/onboarding/setup/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/onboarding/wizard/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/onlyfans-assisted/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/connect/instagram/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/connect/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/connect/onlyfans/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/connect/reddit/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/connect/tiktok/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/import/onlyfans/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/onlyfans/analytics/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/reddit/publish/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/platforms/tiktok/upload/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/skip-onboarding/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/smart-onboarding/analytics/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/social/tiktok/upload/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    },
+    {
+      "path": "app/why-huntaze/layout.tsx",
+      "category": "redundant",
+      "reason": "Layout only returns children without any logic, styles, or wrapping",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": false,
+      "childrenOnly": true
+    }
+  ],
+  "necessary": [
+    {
+      "path": "app/(app)/layout.tsx",
+      "category": "necessary",
+      "reason": "Layout is necessary: wraps children with components",
+      "hasLogic": false,
+      "hasStyles": false,
+      "hasImports": true,
+      "childrenOnly": false
+    },
+    {
+      "path": "app/layout.tsx",
+      "category": "necessary",
+      "reason": "Layout is necessary: applies styles, wraps children with components",
+      "hasLogic": false,
+      "hasStyles": true,
+      "hasImports": true,
+      "childrenOnly": false
+    }
+  ],
+  "review": [],
+  "timestamp": "2025-11-17T15:42:05.129Z"
+}
