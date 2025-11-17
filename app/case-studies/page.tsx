@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { motion } from "framer-motion";
 import { TrendingUp, Clock, MessageSquare, DollarSign, Star, ArrowRight } from "lucide-react";
 import Link from "next/link";

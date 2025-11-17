@@ -3,13 +3,11 @@
  * Central hub for Game Day management and execution
  */
 
-import { Metadata } from 'next';
+'use client';
+
 import GameDayDashboard from '@/components/game-days/GameDayDashboard';
 
-export const metadata: Metadata = {
-  title: 'Game Days - Disaster Recovery Testing',
-  description: 'Structured chaos engineering and disaster recovery testing platform'
-};
+export const dynamic = 'force-dynamic';
 
 export default function GameDaysPage() {
   return (
