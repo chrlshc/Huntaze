@@ -51,6 +51,16 @@ export interface DashboardData {
   };
   recentActivity: ActivityItem[];
   quickActions: QuickAction[];
+  metadata?: {
+    sources?: {
+      onlyfans?: boolean;
+      instagram?: boolean;
+      tiktok?: boolean;
+      reddit?: boolean;
+    };
+    hasRealData?: boolean;
+    generatedAt?: string;
+  };
 }
 
 export interface DashboardOptions {

@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "duration": 28.481,
+  "errors": [
+    {
+      "file": "app/(app)/integrations/page.tsx",
+      "line": 0,
+      "column": 0,
+      "message": "\u001b[31mFailed to compile. \u001b[39m app/(app)/integrations/page.tsx You cannot have two parallel pages that resolve to the same path. Please check /(app)/integrations/page and /integrations/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups",
+      "type": "other"
+    }
+  ],
+  "warnings": [],
+  "timestamp": "2025-11-18T18:55:58.379Z",
+  "stats": {
+    "pages": 0,
+    "routes": 0,
+    "staticPages": 0,
+    "serverPages": 0,
+    "edgePages": 0,
+    "bundleSize": 0
+  },
+  "stdout": "\n> huntaze@0.1.0 build\n> next build --webpack\n\n   \u001b[1m\u001b[38;2;173;127;168m▲ Next.js 16.0.3\u001b[39m\u001b[22m (webpack)\n   - Environments: .env.local, .env.production, .env\n   - Experiments (use with caution):\n     · serverActions\n\n \u001b[37m\u001b[1m \u001b[22m\u001b[39m Creating an optimized production build ...\n",
+  "stderr": " \u001b[33m\u001b[1m⚠\u001b[22m\u001b[39m The \"middleware\" file convention is deprecated. Please use \"proxy\" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy\n\u001b[31mFailed to compile.\n\u001b[39m\napp/(app)/integrations/page.tsx\nYou cannot have two parallel pages that resolve to the same path. Please check /(app)/integrations/page and /integrations/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups\n\napp/integrations/page.tsx\nYou cannot have two parallel pages that resolve to the same path. Please check /(app)/integrations/page and /integrations/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups\n\n\n> Build failed because of webpack errors\n"
+}
