@@ -11,7 +11,7 @@ export default function OfMessagesPage() {
   const [activeTab, setActiveTab] = useState('inbox');
 
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Page Header */}

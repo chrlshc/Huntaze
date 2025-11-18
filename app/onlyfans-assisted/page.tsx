@@ -10,7 +10,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function OnlyFansAssistedPage() {
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <div className="hz" data-theme="light">
         <div className="hz-app">
         {/* Sidebar */}

@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <ErrorBoundary>
         <div className="max-w-7xl mx-auto">
         {/* Header */}

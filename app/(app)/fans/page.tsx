@@ -25,7 +25,7 @@ export default function FansPage() {
   }, []);
 
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <div>
         <div className="flex items-center justify-between mb-8">
         <div>

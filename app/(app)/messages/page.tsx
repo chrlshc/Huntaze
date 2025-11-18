@@ -67,7 +67,7 @@ export default function MessagesPage() {
   }
 
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <div className="h-[calc(100vh-4rem)] flex">
         {/* Platform Selector - Left Column */}
       <div className="w-64 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col">
