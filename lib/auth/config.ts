@@ -67,8 +67,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           // Query user from database (including onboarding_completed)
+          // Use LOWER() to match case-insensitive email (same as registration)
           const result = await query(
-            'SELECT id, email, name, password, email_verified, onboarding_completed FROM users WHERE email = $1',
+            'SELECT id, email, name, password, email_verified, onboarding_completed FROM users WHERE LOWER(email) = LOWER($1)',
             [credentials.email]
           );
 
