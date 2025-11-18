@@ -36,7 +36,7 @@ export default function DashboardPage() {
   if (!dashboard) return null;
 
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
       <p className="mt-4 text-gray-600 dark:text-gray-400">

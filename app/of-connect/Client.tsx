@@ -6,7 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export default function Client() {
   return (
-    <ProtectedRoute requireOnboarding={true}>
+    <ProtectedRoute requireOnboarding={false}>
       <div className="hz" data-theme="light">
         <main className="hz-main">
         <div className="hz-page" style={{ maxWidth: 720 }}>
