@@ -7,6 +7,9 @@ import { IntegrationCard } from '@/components/integrations/IntegrationCard';
 import { ToastProvider, useToast } from '@/components/ui/toast';
 import { Loader2, AlertCircle } from 'lucide-react';
 
+// Disable static generation for this page since it uses client-side hooks
+export const dynamic = 'force-dynamic';
+
 const AVAILABLE_PROVIDERS = ['instagram', 'tiktok', 'reddit', 'onlyfans'] as const;
 
 function IntegrationsContent() {
