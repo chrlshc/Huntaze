@@ -123,8 +123,8 @@ function AuthContent() {
         // Show success message briefly
         setError('Account created! Logging you in...');
         
-        // Wait a moment for the user to see the success message
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Wait longer to ensure DB transaction is committed
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Auto-login after registration
         console.log('🔵 Attempting auto-login...');
