@@ -1,0 +1,9 @@
+export const dynamic = 'force-dynamic';
+
+export default function MenuLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
+}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { crmData } from '@/lib/services/crmData';
 import { getUserFromRequest } from '@/lib/auth/request';
+import { createSuccessResponse } from '@/lib/api/utils/response';
 
 export const runtime = 'nodejs';
 
@@ -26,14 +27,33 @@ async function computeUnread(userId: string): Promise<number> {
 export async function GET(request: NextRequest) {
   try {
     const userId = await getUserId(request);
-    if (!userId) return NextResponse.json({ count: 0 }, { status: 200 });
+    if (!userId) {
+      return NextResponse.json(
+        createSuccessResponse({ count: 0, unreadByPlatform: {} }),
+        { status: 200, headers: noStore }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const sse = searchParams.get('sse') === '1';
 
     if (!sse) {
       const count = await computeUnread(userId);
-      return NextResponse.json({ count }, { headers: noStore });
+      
+      // Return standardized format
+      return NextResponse.json(
+        createSuccessResponse({
+          count,
+          unreadByPlatform: {
+            onlyfans: count, // For now, all unread are from OnlyFans
+            instagram: 0,
+            tiktok: 0,
+            email: 0,
+          },
+          lastUpdated: new Date().toISOString(),
+        }),
+        { headers: noStore }
+      );
     }
 
     const encoder = new TextEncoder();
@@ -78,6 +98,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ count: 0 }, { status: 200 });
+    return NextResponse.json(
+      createSuccessResponse({ count: 0, unreadByPlatform: {} }),
+      { status: 200, headers: noStore }
+    );
   }
 }

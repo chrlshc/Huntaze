@@ -8,7 +8,7 @@
  */
 
 import { NextRequest } from 'next/server';
-import { withOnboarding, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { withValidation, validators } from '@/lib/api/middleware/validation';
 import { marketingService } from '@/lib/api/services/marketing.service';
@@ -19,7 +19,7 @@ import { successResponse, errorResponse } from '@/lib/api/utils/response';
  * List campaigns with optional filters for status and channel
  * Requirements: 3.1, 3.5, 5.1, 5.2
  */
-export const GET = withRateLimit(withOnboarding(async (req: AuthenticatedRequest) => {
+export const GET = withRateLimit(withAuth(async (req: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(req.url);
 
@@ -60,7 +60,7 @@ const createCampaignSchema = {
 };
 
 export const POST = withRateLimit(
-  withOnboarding(
+  withAuth(
     withValidation(createCampaignSchema, async (req, body) => {
       try {
         // Set default values

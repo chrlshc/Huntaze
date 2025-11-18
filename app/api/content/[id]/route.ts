@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { withOnboarding } from '@/lib/api/middleware/auth';
+import { withAuth } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { withValidation, validators } from '@/lib/api/middleware/validation';
 import { contentService } from '@/lib/api/services/content.service';
@@ -15,7 +15,7 @@ interface RouteContext {
  * GET /api/content/[id]
  * Get single content by ID
  */
-export const GET = withRateLimit(withOnboarding(async (req, context: RouteContext) => {
+export const GET = withRateLimit(withAuth(async (req, context: RouteContext) => {
   try {
     const { id } = context.params;
 
@@ -57,7 +57,7 @@ const updateContentSchema = {
 };
 
 export const PUT = withRateLimit(
-  withOnboarding(
+  withAuth(
     withValidation(updateContentSchema, async (req, body, context: RouteContext) => {
       try {
         const { id } = context.params;
@@ -86,7 +86,7 @@ export const PUT = withRateLimit(
  * DELETE /api/content/[id]
  * Delete content by ID
  */
-export const DELETE = withRateLimit(withOnboarding(async (req, context: RouteContext) => {
+export const DELETE = withRateLimit(withAuth(async (req, context: RouteContext) => {
   try {
     const { id } = context.params;
 
