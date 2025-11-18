@@ -1,143 +1,283 @@
-import type { ReactNode } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, Clock } from "lucide-react";
+'use client';
 
-import { cn } from "@/lib/utils";
-
-type IntegrationStatus = "connected" | "available" | "coming-soon";
-
-const statusTokens: Record<
-  IntegrationStatus,
-  { label: string; dotClass: string; toneClass: string; icon: ReactNode }
-> = {
-  connected: {
-    label: "Connected",
-    dotClass: "bg-success",
-    toneClass: "text-success",
-    icon: <CheckCircle2 className="h-4 w-4" aria-hidden="true" />,
-  },
-  available: {
-    label: "Available",
-    dotClass: "bg-primary",
-    toneClass: "text-content-secondary",
-    icon: <ArrowUpRight className="h-4 w-4" aria-hidden="true" />,
-  },
-  "coming-soon": {
-    label: "Coming soon",
-    dotClass: "bg-warning",
-    toneClass: "text-warning",
-    icon: <Clock className="h-4 w-4" aria-hidden="true" />,
-  },
-};
+import { useState } from 'react';
+import { Loader2, Trash2, RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { IntegrationIcon } from './IntegrationIcon';
+import { IntegrationStatus, type ConnectionStatus } from './IntegrationStatus';
+import { useToast } from '@/components/ui/toast';
 
 export interface IntegrationCardProps {
-  name: string;
-  description: string;
-  logo?: string;
-  category?: string;
-  href?: string;
-  status?: IntegrationStatus;
-  badges?: Array<{ label: string; tone?: "success" | "warning" | "danger" | "info" }>;
-  accentColor?: string;
+  provider: 'instagram' | 'tiktok' | 'reddit' | 'onlyfans';
+  isConnected: boolean;
+  account?: {
+    providerAccountId: string;
+    metadata?: Record<string, any>;
+    expiresAt?: Date;
+    createdAt: Date;
+  };
+  onConnect: () => void;
+  onDisconnect: () => void;
+  onReconnect: () => void;
   className?: string;
+  showAddAnother?: boolean;
 }
 
-const toneClassName: Record<"success" | "warning" | "danger" | "info", string> = {
-  success: "bg-success/15 text-success border-success/30",
-  warning: "bg-warning/15 text-warning border-warning/30",
-  danger: "bg-danger/15 text-danger border-danger/30",
-  info: "bg-info/15 text-info border-info/30",
+const providerInfo = {
+  instagram: {
+    name: 'Instagram',
+    description: 'Connect your Instagram Business account to manage posts and analytics.',
+  },
+  tiktok: {
+    name: 'TikTok',
+    description: 'Connect your TikTok account to schedule videos and track performance.',
+  },
+  reddit: {
+    name: 'Reddit',
+    description: 'Connect your Reddit account to manage posts and engage with communities.',
+  },
+  onlyfans: {
+    name: 'OnlyFans',
+    description: 'Connect your OnlyFans account to manage content and track earnings.',
+  },
 };
 
+function getConnectionStatus(
+  isConnected: boolean,
+  expiresAt?: Date
+): ConnectionStatus {
+  if (!isConnected) return 'disconnected';
+  if (expiresAt && new Date() > expiresAt) return 'expired';
+  return 'connected';
+}
+
 export function IntegrationCard({
-  name,
-  description,
-  logo,
-  category,
-  href,
-  status = "available",
-  badges = [],
-  accentColor,
+  provider,
+  isConnected,
+  account,
+  onConnect,
+  onDisconnect,
+  onReconnect,
   className,
+  showAddAnother = false,
 }: IntegrationCardProps) {
-  const statusMeta = statusTokens[status];
+  const [isLoading, setIsLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const { showToast } = useToast();
+  
+  const info = providerInfo[provider];
+  const status = getConnectionStatus(isConnected, account?.expiresAt);
+
+  const handleConnect = async () => {
+    setIsLoading(true);
+    setActionError(null);
+    try {
+      await onConnect();
+      // Success toast will be shown after OAuth redirect
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to connect';
+      setActionError(errorMessage);
+      showToast({
+        title: `Failed to connect ${info.name}`,
+        description: errorMessage,
+        variant: 'error',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!window.confirm(`Are you sure you want to disconnect ${info.name}?`)) {
+      return;
+    }
+    
+    setIsLoading(true);
+    setActionError(null);
+    try {
+      await onDisconnect();
+      showToast({
+        title: `${info.name} disconnected`,
+        description: 'Your account has been disconnected successfully.',
+        variant: 'success',
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to disconnect';
+      setActionError(errorMessage);
+      showToast({
+        title: `Failed to disconnect ${info.name}`,
+        description: errorMessage,
+        variant: 'error',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReconnect = async () => {
+    setIsLoading(true);
+    setActionError(null);
+    try {
+      await onReconnect();
+      // Success toast will be shown after OAuth redirect
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to reconnect';
+      setActionError(errorMessage);
+      showToast({
+        title: `Failed to reconnect ${info.name}`,
+        description: errorMessage,
+        variant: 'error',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col rounded-2xl border border-border-subtle bg-surface-raised p-6 shadow-sm transition hover:border-border-strong hover:shadow-md",
-        className,
+        'group relative flex h-full flex-col rounded-2xl border border-border-subtle bg-surface-raised p-6 shadow-sm transition hover:border-border-strong hover:shadow-md',
+        className
       )}
     >
       <div className="flex items-start gap-4">
-        <div
-          className={cn(
-            "relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl border border-border-subtle bg-surface-muted transition group-hover:shadow-sm",
-            accentColor ? "shadow-none" : null,
-          )}
-          style={accentColor ? { backgroundColor: accentColor } : undefined}
-        >
-          {logo ? (
-            <Image
-              src={logo}
-              alt={name}
-              fill
-              className="object-contain p-2"
-              sizes="56px"
-            />
-          ) : (
-            <span className="text-lg font-semibold text-content-secondary">
-              {name.slice(0, 2).toUpperCase()}
-            </span>
-          )}
-        </div>
+        <IntegrationIcon provider={provider} size="md" />
 
         <div className="flex flex-1 flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-content-primary">{name}</h3>
-            {badges.map((badge) => (
-              <span
-                key={badge.label}
-                className={cn(
-                  "rounded-full border px-2 py-0.5 text-xs font-medium",
-                  toneClassName[badge.tone ?? "info"],
-                )}
-              >
-                {badge.label}
-              </span>
-            ))}
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold text-content-primary">{info.name}</h3>
+            <IntegrationStatus status={status} />
           </div>
-          {category ? (
-            <p className="text-xs font-medium uppercase tracking-wide text-content-subtle">
-              {category}
+          
+          {account?.metadata?.username && (
+            <p className="text-xs text-content-subtle">
+              @{account.metadata.username}
             </p>
-          ) : null}
+          )}
+          
+          {account?.createdAt && status === 'connected' && (
+            <p className="text-xs text-content-subtle">
+              Connected {new Date(account.createdAt).toLocaleDateString()}
+            </p>
+          )}
         </div>
-
-        <span className={cn("flex items-center gap-1 text-xs font-medium", statusMeta.toneClass)}>
-          <span className={cn("h-2 w-2 rounded-full", statusMeta.dotClass)} />
-          {statusMeta.label}
-        </span>
       </div>
 
-      <p className="mt-4 text-sm text-content-secondary">{description}</p>
+      <p className="mt-4 text-sm text-content-secondary">{info.description}</p>
 
-      {href ? (
-        <Link
-          href={href}
-          className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary transition hover:text-primary-hover"
-          prefetch={false}
-        >
-          Explore integration
-          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
-      ) : (
-        <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-content-subtle">
-          {statusMeta.icon}
-          {statusMeta.label}
-        </span>
+      {actionError && (
+        <div className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3">
+          <p className="text-xs text-red-600 dark:text-red-400">{actionError}</p>
+        </div>
       )}
+
+      <div className="mt-6 flex gap-2">
+        {status === 'disconnected' && (
+          <button
+            onClick={handleConnect}
+            disabled={isLoading}
+            className={cn(
+              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              'Add app'
+            )}
+          </button>
+        )}
+
+        {status === 'connected' && (
+          <>
+            {showAddAnother && (
+              <button
+                onClick={handleConnect}
+                disabled={isLoading}
+                className={cn(
+                  'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed'
+                )}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  'Add another'
+                )}
+              </button>
+            )}
+            <button
+              onClick={handleDisconnect}
+              disabled={isLoading}
+              className={cn(
+                showAddAnother ? '' : 'flex-1',
+                'inline-flex items-center justify-center gap-2 rounded-lg border border-border-subtle bg-surface-muted px-4 py-2 text-sm font-medium text-content-primary transition hover:bg-surface-raised hover:border-border-strong disabled:opacity-50 disabled:cursor-not-allowed'
+              )}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Disconnecting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  Disconnect
+                </>
+              )}
+            </button>
+          </>
+        )}
+
+        {status === 'expired' && (
+          <button
+            onClick={handleReconnect}
+            disabled={isLoading}
+            className={cn(
+              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Reconnecting...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                Reconnect
+              </>
+            )}
+          </button>
+        )}
+
+        {status === 'error' && (
+          <button
+            onClick={handleReconnect}
+            disabled={isLoading}
+            className={cn(
+              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Reconnecting...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                Reconnect
+              </>
+            )}
+          </button>
+        )}
+      </div>
     </article>
   );
 }

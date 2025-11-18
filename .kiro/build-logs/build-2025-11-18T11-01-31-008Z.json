@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "duration": 38.917,
+  "errors": [],
+  "warnings": [
+    {
+      "message": "⚠ Compiled with warnings in 20.9s",
+      "count": 1
+    }
+  ],
+  "timestamp": "2025-11-18T11:01:31.007Z",
+  "stats": {
+    "pages": 235,
+    "routes": 465,
+    "staticPages": 2,
+    "serverPages": 0,
+    "edgePages": 463,
+    "bundleSize": 0
+  },
+  "stdout": "\n> huntaze@0.1.0 build\n> next build --webpack\n\n   \u001b[1m\u001b[38;2;173;127;168m▲ Next.js 16.0.3\u001b[39m\u001b[22m (webpack)\n   - Environments: .env.local, .env.production, .env\n   - Experiments (use with caution):\n     · serverActions\n\n \u001b[37m\u001b[1m \u001b[22m\u001b[39m Creating an optimized production build ...\n \u001b[37m\u001b[1m \u001b[22m\u001b[39m Skipping validation of types\n \u001b[37m\u001b[1m \u001b[22m\u001b[39m Collecting page data using 7 workers ...\n[Cache] Redis not configured, using in-memory fallback\n{\"correlationId\":\"2f77b71c-a388-44a9-b931-e6f78010348c\",\"timestamp\":\"2025-11-18T11:01:16.366Z\",\"service\":\"nextauth\",\"level\":\"info\",\"message\":\"NextAuth initialization\",\"metadata\":{\"hasNextAuthSecret\":true,\"hasNextAuthUrl\":true,\"nodeEnv\":\"production\"}}\n{\"correlationId\":\"241b83c4-2b56-4a00-9921-6e610322c684\",\"timestamp\":\"2025-11-18T11:01:16.366Z\",\"service\":\"nextauth\",\"level\":\"info\",\"message\":\"NextAuth initialization\",\"metadata\":{\"hasNextAuthSecret\":true,\"hasNextAuthUrl\":true,\"nodeEnv\":\"production\"}}\n{\"correlationId\":\"ccd39e08-2b76-42b8-b033-...",
+  "stderr": " \u001b[33m\u001b[1m⚠\u001b[22m\u001b[39m The \"middleware\" file convention is deprecated. Please use \"proxy\" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy\n \u001b[33m\u001b[1m⚠\u001b[22m\u001b[39m Compiled with warnings in 20.9s\n\n./components/hydration/index.ts\nexport 'HydrationErrorBoundary' (reexported as 'HydrationErrorBoundary') was not found in './HydrationErrorBoundary' (possible exports: default)\n\nImport trace for requested module:\n./components/hydration/index.ts\n./components/landing/LandingFooter.tsx\n\n./components/hydration/index.ts\nexport 'HydrationErrorBoundary' (reexported as 'HydrationErrorBoundary') was not found in './HydrationErrorBoundary' (possible exports: default)\n\nImport trace for requested module:\n./components/hydration/index.ts\n./components/landing/LandingFooter.tsx\n\n./app/api/instagram/publish/route.ts\nAttempted import error: 'createSuccessResponse' is not exported from '@/lib/api/utils/response' (imported as 'createSuccessResponse').\n\nImport trace for requested module:\n./ap..."
+}

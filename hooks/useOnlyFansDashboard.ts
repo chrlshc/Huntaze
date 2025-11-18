@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
 
 import type {
   DashboardActionListDTO,
@@ -20,6 +21,7 @@ export type {
 interface UseOnlyFansDashboardOptions {
   accountId?: string;
   fetchOnMount?: boolean;
+  requireRealConnection?: boolean; // New option to require real OAuth connection
 }
 
 interface OnlyFansDashboardState {
@@ -27,6 +29,7 @@ interface OnlyFansDashboardState {
   loading: boolean;
   error: string | null;
   refreshing: boolean;
+  isConnected: boolean; // Track if using real OAuth connection
 }
 
 const DASHBOARD_ENDPOINT = '/api/onlyfans/dashboard';
@@ -36,13 +39,18 @@ const DEFAULT_RETRY_INTERVAL = 4000;
 export function useOnlyFansDashboard({
   accountId,
   fetchOnMount = true,
+  requireRealConnection = false,
 }: UseOnlyFansDashboardOptions = {}) {
+  const { data: session } = useSession();
   const [state, setState] = useState<OnlyFansDashboardState>({
     data: null,
     loading: fetchOnMount,
     refreshing: false,
     error: null,
+    isConnected: false,
   });
+  
+  const [hasCheckedConnection, setHasCheckedConnection] = useState(false);
 
   const eventSourceRef = useRef<EventSource | null>(null);
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -71,7 +79,54 @@ export function useOnlyFansDashboard({
     return url.toString();
   }, [accountId]);
 
+  // Check if user has a real OnlyFans OAuth connection
+  const checkConnection = useCallback(async () => {
+    if (!session?.user?.id) {
+      setHasCheckedConnection(true);
+      return false;
+    }
+
+    try {
+      const response = await fetch('/api/integrations/status');
+      if (!response.ok) {
+        setHasCheckedConnection(true);
+        return false;
+      }
+      
+      const { integrations } = await response.json();
+      const onlyFansIntegration = integrations.find(
+        (int: any) => int.provider === 'onlyfans' && int.isConnected
+      );
+      
+      const isConnected = !!onlyFansIntegration;
+      setState(prev => ({ ...prev, isConnected }));
+      setHasCheckedConnection(true);
+      return isConnected;
+    } catch (error) {
+      console.error('Failed to check OnlyFans connection:', error);
+      setHasCheckedConnection(true);
+      return false;
+    }
+  }, [session?.user?.id]);
+
   const fetchDashboard = useCallback(async ({ refresh }: { refresh?: boolean } = {}) => {
+    // Check connection status first if we haven't already
+    if (!hasCheckedConnection) {
+      const isConnected = await checkConnection();
+      
+      // If real connection is required but not available, show error
+      if (requireRealConnection && !isConnected) {
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          refreshing: false,
+          error: 'Please connect your OnlyFans account to view real data',
+          isConnected: false,
+        }));
+        return;
+      }
+    }
+
     setState((prev) => ({
       ...prev,
       loading: !prev.data,
@@ -86,12 +141,17 @@ export function useOnlyFansDashboard({
         throw new Error(`Dashboard request failed with status ${response.status}`);
       }
       const payload: OnlyFansDashboardPayload = await response.json();
-      setState({
+      
+      // Check if the data source indicates real vs mock data
+      const isRealData = payload.metadata?.source === 'upstream' || payload.metadata?.source === 'api';
+      
+      setState((prev) => ({
         data: payload,
         loading: false,
         refreshing: false,
         error: null,
-      });
+        isConnected: prev.isConnected || isRealData,
+      }));
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unexpected error fetching dashboard data';
@@ -102,7 +162,7 @@ export function useOnlyFansDashboard({
         error: message,
       }));
     }
-  }, [buildUrl]);
+  }, [buildUrl, hasCheckedConnection, checkConnection, requireRealConnection]);
 
   useEffect(() => {
     if (!fetchOnMount) return;
@@ -127,12 +187,14 @@ export function useOnlyFansDashboard({
       source.addEventListener('snapshot', (event) => {
         try {
           const payload = JSON.parse((event as MessageEvent<string>).data) as OnlyFansDashboardPayload;
-          setState({
+          const isRealData = payload.metadata?.source === 'upstream' || payload.metadata?.source === 'api';
+          setState((prev) => ({
             data: payload,
             loading: false,
             refreshing: false,
             error: null,
-          });
+            isConnected: prev.isConnected || isRealData,
+          }));
         } catch (error) {
           console.error('onlyfans.dashboard.stream.snapshot.parse_error', error);
         }
@@ -269,6 +331,7 @@ export function useOnlyFansDashboard({
     loading: state.loading,
     refreshing: state.refreshing,
     error: state.error,
+    isConnected: state.isConnected,
     refresh: () => fetchDashboard({ refresh: true }),
     signalFeed: state.data?.signalFeed ?? [],
   };
