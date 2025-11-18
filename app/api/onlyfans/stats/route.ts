@@ -6,13 +6,13 @@
  */
 
 import { NextRequest } from 'next/server';
-import { withOnboarding } from '@/lib/api/middleware/auth';
+import { withAuth } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { onlyFansService } from '@/lib/api/services/onlyfans.service';
 import { successResponse, errorResponse } from '@/lib/api/utils/response';
 import { getCached } from '@/lib/api/utils/cache';
 
-export const GET = withRateLimit(withOnboarding(async (req) => {
+export const GET = withRateLimit(withAuth(async (req) => {
   try {
     // Get user ID from authenticated request
     const userId = parseInt(req.user.id);

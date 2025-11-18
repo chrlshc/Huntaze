@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createSuccessResponse, createErrorResponse } from '@/lib/api/utils/response';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,9 +21,28 @@ export async function GET(request: Request) {
     const ttr: { t: number; v: number }[] = [];
     const slaPct: { t: number; v: number }[] = [];
 
-    return NextResponse.json({ byDay, ttr, slaPct });
+    // Return standardized format
+    return NextResponse.json(
+      createSuccessResponse({
+        byDay,
+        ttr,
+        slaPct,
+        period: {
+          from: from || null,
+          to: to || null,
+        },
+        conversationCount: conversations.length,
+      })
+    );
   } catch (e) {
-    return NextResponse.json({ byDay: [], ttr: [], slaPct: [] });
+    return NextResponse.json(
+      createErrorResponse(
+        'INTERNAL_ERROR',
+        'Failed to fetch message metrics',
+        500
+      ),
+      { status: 500 }
+    );
   }
 }
 

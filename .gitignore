@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.yarn/install-state.gz
 
 # testing
 /coverage
@@ -25,8 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
-.env.migration
+.env.production
 
 # vercel
 .vercel
@@ -35,23 +37,32 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# playwright
-/test-results/
-/playwright-report/
-/playwright/.cache/
+# IDE
+.vscode/
+.idea/
 
-# backups
-backup_*.sql
-.kiro/backups/
+# Credentials - NEVER COMMIT
+*.key
+*.pem
+*.p12
+credentials.json
+service-account.json
 
-# logs
-.kiro/build-logs/*.log
+# AWS
+.aws/
 
-# Large files
-examples/byo-ip-runner/
-infra/terraform/.terraform/
-infra/terraform/production-hardening/.terraform/
-build.log
-huntazee/
+# Prisma
+prisma/.env
 
-/generated/prisma
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup

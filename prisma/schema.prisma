@@ -24,9 +24,32 @@ model User {
   marketingCampaigns         MarketingCampaign[]
   transactions               Transaction[]
   subscriptions              Subscription[]
+  oauthAccounts              OAuthAccount[]
 
   @@index([onboardingCompleted], map: "idx_users_onboarding_completed")
   @@map("users")
+}
+
+// OAuth Accounts for social media integrations
+model OAuthAccount {
+  id                 Int       @id @default(autoincrement())
+  userId             Int       @map("user_id")
+  provider           String    @db.VarChar(50) // 'instagram', 'tiktok', 'reddit', 'onlyfans'
+  providerAccountId  String    @map("provider_account_id") @db.VarChar(255)
+  accessToken        String?   @map("access_token") @db.Text
+  refreshToken       String?   @map("refresh_token") @db.Text
+  expiresAt          DateTime? @map("expires_at") @db.Timestamp(6)
+  tokenType          String?   @map("token_type") @db.VarChar(50)
+  scope              String?   @db.Text
+  metadata           Json?     // Provider-specific data (e.g., ig_business_id)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId, provider])
+  @@map("oauth_accounts")
 }
 
 model ai_plan {

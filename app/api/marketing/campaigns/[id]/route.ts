@@ -9,7 +9,7 @@
  */
 
 import { NextRequest } from 'next/server';
-import { withOnboarding, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { withValidation, validators } from '@/lib/api/middleware/validation';
 import { marketingService } from '@/lib/api/services/marketing.service';
@@ -26,7 +26,7 @@ interface RouteContext {
  * Get a specific campaign by ID
  * Requirements: 3.1, 5.1, 5.2
  */
-export const GET = withRateLimit(withOnboarding(async (req: AuthenticatedRequest, context: RouteContext) => {
+export const GET = withRateLimit(withAuth(async (req: AuthenticatedRequest, context: RouteContext) => {
   try {
     const campaignId = context.params.id;
 
@@ -74,7 +74,7 @@ const updateCampaignSchema = {
 };
 
 export const PUT = withRateLimit(
-  withOnboarding(
+  withAuth(
     withValidation(updateCampaignSchema, async (req, body, context: RouteContext) => {
       try {
         const campaignId = context.params.id;
@@ -110,7 +110,7 @@ export const PUT = withRateLimit(
  * Delete a campaign with ownership verification
  * Requirements: 3.4, 5.1, 5.2
  */
-export const DELETE = withRateLimit(withOnboarding(async (req: AuthenticatedRequest, context: RouteContext) => {
+export const DELETE = withRateLimit(withAuth(async (req: AuthenticatedRequest, context: RouteContext) => {
   try {
     const campaignId = context.params.id;
 

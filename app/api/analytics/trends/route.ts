@@ -1,4 +1,4 @@
-import { withOnboarding } from '@/lib/api/middleware/auth';
+import { withAuth } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { analyticsService } from '@/lib/api/services/analytics.service';
 import { successResponse, errorResponse } from '@/lib/api/utils/response';
@@ -18,7 +18,7 @@ import { getCached } from '@/lib/api/utils/cache';
  * 
  * Cached for 5 minutes to optimize performance
  */
-export const GET = withRateLimit(withOnboarding(async (req) => {
+export const GET = withRateLimit(withAuth(async (req) => {
   try {
     const { searchParams } = new URL(req.url);
     const userId = parseInt(req.user.id);

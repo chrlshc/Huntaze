@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { withOnboarding } from '@/lib/api/middleware/auth';
+import { withAuth } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { withValidation, validators } from '@/lib/api/middleware/validation';
 import { contentService } from '@/lib/api/services/content.service';
@@ -9,7 +9,7 @@ import { successResponse, errorResponse } from '@/lib/api/utils/response';
  * GET /api/content
  * List content with filters and pagination
  */
-export const GET = withRateLimit(withOnboarding(async (req) => {
+export const GET = withRateLimit(withAuth(async (req) => {
   try {
     const { searchParams } = new URL(req.url);
 
@@ -51,7 +51,7 @@ const createContentSchema = {
 };
 
 export const POST = withRateLimit(
-  withOnboarding(
+  withAuth(
     withValidation(createContentSchema, async (req, body) => {
       try {
         const content = await contentService.createContent(parseInt(req.user.id), body);
