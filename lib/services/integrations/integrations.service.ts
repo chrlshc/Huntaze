@@ -266,14 +266,16 @@ export class IntegrationsService {
         () => adapter.exchangeCodeForToken(code),
         3,
         'Token exchange'
-      ) as { accessToken: string; refreshToken?: string; expiresIn?: number; tokenType?: string; scope?: string };
+        correlationId
+       string };
       
       // Get user profile with retry logic
       const profile = await this.retryWithBackoff(
-        () => adapter.getUserProfile(tokens.accessToken),
+        ()
         3,
-        'Profile fetch'
-      ) as { providerAccountId: string; metadata?: Record<string, any> };
+        'Profile fetch',
+      
+      ) as { providerAccountIdny> };d<string, a: Recora?tadatg; mein: strlationId  corre
       
       // Calculate expiry date
       const expiresAt = tokens.expiresIn
@@ -378,51 +380,123 @@ export class IntegrationsService {
   /**
    * Retry a function with exponential backoff
    * 
+   * Implements comprehensive retry strategy with:
+   * - Exponential backoff (100ms, 200ms, 400ms, 800ms)
+   * - Network error detection
+   * - HTTP status code handling (429, 502, 503, 504)
+   * - Structured logging with correlation IDs
+   * - Type-safe error handling
+   * 
    * @param fn - Function to retry
-   * @param maxRetries - Maximum number of retries
+   * @param maxRetries - Maximum number of retries (default: 3)
    * @param operation - Operation name for logging
+   * @param correlationId - Optional correlation ID for tracking
    * @returns Result of the function
+   * @throws Last error if all retries fail
+   * 
+   * @example
+   * ```typescript
+   * const result = await this.retryWithBackoff(
+   *   () => adapter.exchangeCodeForToken(code),
+   *   3,
+   *   'Token exchange',
+   *   'oauth-123-abc'
+   * );
+   * ```
    */
   private async retryWithBackoff<T>(
     fn: () => Promise<T>,
     maxRetries: number,
-    operation: string
+    operation: string,
+    correlationId?: string
   ): Promise<T> {
     let lastError: Error | null = null;
+    const retryCorrelationId = correlationId || `retry-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        return await fn();
+        const result = await fn();
+        
+        // Log successful retry if not first attempt
+        if (attempt > 1) {
+          console.log(`[IntegrationsService] ${operation} succeeded after retry`, {
+            operation,
+            attempt,
+            correlationId: retryCorrelationId,
+          });
+        }
+        
+        return result;
       } catch (error) {
         lastError = error as Error;
         
-        // Check if error is retryable (network errors)
-        const isRetryable = 
-          lastError.message.includes('ECONNREFUSED') ||
-          lastError.message.includes('ETIMEDOUT') ||
-          lastError.message.includes('ENOTFOUND') ||
-          lastError.message.includes('network') ||
-          lastError.message.includes('timeout');
+        // Extract error details safely
+        const errorMessage = lastError?.message || '';
+        const errorCode = (lastError as any)?.code || '';
+        const errorStatus = (lastError as any)?.status || (lastError as any)?.statusCode || 0;
         
+        // Check if error is retryable
+        const isNetworkError = 
+          errorMessage.includes('ECONNREFUSED') ||
+          errorMessage.includes('ETIMEDOUT') ||
+          errorMessage.includes('ENOTFOUND') ||
+          errorMessage.includes('ENETUNREACH') ||
+          errorMessage.includes('network') ||
+          errorMessage.includes('timeout') ||
+          errorCode === 'ECONNREFUSED' ||
+          errorCode === 'ETIMEDOUT' ||
+          errorCode === 'ENOTFOUND' ||
+          errorCode === 'ENETUNREACH';
+        
+        const isRetryableHttpStatus = 
+          errorStatus === 429 || // Rate limit
+          errorStatus === 502 || // Bad gateway
+          errorStatus === 503 || // Service unavailable
+          errorStatus === 504;   // Gateway timeout
+        
+        const isRetryable = isNetworkError || isRetryableHttpStatus;
+        
+        // If not retryable or last attempt, throw
         if (!isRetryable || attempt === maxRetries) {
+          console.error(`[IntegrationsService] ${operation} failed permanently`, {
+            operation,
+            attempt,
+            maxRetries,
+            error: errorMessage,
+            errorCode,
+            errorStatus,
+            isRetryable,
+            correlationId: retryCorrelationId,
+          });
           throw lastError;
         }
         
-        // Exponential backoff: 100ms, 200ms, 400ms
-        const delay = 100 * Math.pow(2, attempt - 1);
+        // Calculate exponential backoff with jitter
+        const baseDelay = 100 * Math.pow(2, attempt - 1);
+        const jitter = Math.random() * 100; // Add 0-100ms jitter
+        const delay = Math.min(baseDelay + jitter, 5000); // Cap at 5 seconds
         
         console.warn(`[IntegrationsService] ${operation} failed, retrying`, {
+          operation,
           attempt,
           maxRetries,
-          delay,
-          error: lastError.message,
+          nextAttempt: attempt + 1,
+          delay: Math.round(delay),
+          error: errorMessage,
+          errorCode,
+          errorStatus,
+          isNetworkError,
+          isRetryableHttpStatus,
+          correlationId: retryCorrelationId,
         });
         
+        // Wait before retrying
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
     
-    throw lastError;
+    // This should never be reached, but TypeScript needs it
+    throw lastError || new Error(`${operation} failed after ${maxRetries} retries`);
   }
 
   /**
@@ -518,15 +592,16 @@ export class IntegrationsService {
           });
           
           // Check if error is retryable
+          const errorMessage = lastError?.message || '';
           const isRetryable = 
-            lastError.message.includes('ECONNREFUSED') ||
-            lastError.message.includes('ETIMEDOUT') ||
-            lastError.message.includes('ENOTFOUND') ||
-            lastError.message.includes('network') ||
-            lastError.message.includes('timeout') ||
-            lastError.message.includes('503') ||
-            lastError.message.includes('502') ||
-            lastError.message.includes('429');
+            errorMessage.includes('ECONNREFUSED') ||
+            errorMessage.includes('ETIMEDOUT') ||
+            errorMessage.includes('ENOTFOUND') ||
+            errorMessage.includes('network') ||
+            errorMessage.includes('timeout') ||
+            errorMessage.includes('503') ||
+            errorMessage.includes('502') ||
+            errorMessage.includes('429');
           
           // If not retryable or last attempt, throw
           if (!isRetryable || attempt === maxRetries) {

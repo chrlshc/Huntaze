@@ -57,12 +57,21 @@ prisma/.env
 # Logs
 logs/
 *.log
+.kiro/build-logs/*.log
+.kiro/build-logs-test/*.log
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 
+# Test results
+test-results/
+playwright-report/
+
 # Backup files
 *.bak
 *.backup
+
+# Lambda builds (regenerate when needed)
+lambda/*.zip

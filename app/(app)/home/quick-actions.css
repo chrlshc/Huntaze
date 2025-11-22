@@ -1,0 +1,222 @@
+/**
+ * Quick Actions Styles
+ * Following Beta Launch UI System Design
+ * Pure black backgrounds, minimal rainbow accents
+ * Requirements: 9.1, 9.2, 9.3, 9.4
+ */
+
+/* ========================================
+   SECTION LAYOUT
+   ======================================== */
+
+.quick-actions-section {
+  margin-top: var(--space-10);
+}
+
+.quick-actions-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-6) 0;
+  line-height: 1.2;
+}
+
+/* ========================================
+   ACTIONS GRID - 3 Columns, Responsive
+   ======================================== */
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+/* Responsive: 2 columns on tablets */
+@media (max-width: 1024px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Responsive: Single column on mobile */
+@media (max-width: 768px) {
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   ACTION BUTTON - Pure Black, Hover Effects
+   ======================================== */
+
+.quick-action-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-decoration: none;
+  /* GPU-accelerated properties only */
+  transition: transform 200ms ease-out, border-color 200ms ease-out, box-shadow 200ms ease-out;
+  will-change: transform;
+  cursor: pointer;
+  /* NO gradients - pure professional */
+}
+
+/* Requirement 9.3: Hover effect with 2px upward translation and border emphasis */
+.quick-action-button:hover {
+  transform: translateY(-2px) translateZ(0); /* Force GPU acceleration */
+  border-color: var(--border-emphasis);
+  box-shadow: var(--shadow-md);
+}
+
+/* Focus state with brand-colored ring */
+.quick-action-button:focus-visible {
+  outline: none;
+  box-shadow: var(--brand-glow);
+}
+
+/* Active state */
+.quick-action-button:active {
+  transform: translateY(0) translateZ(0);
+}
+
+/* ========================================
+   ICON CONTAINER
+   ======================================== */
+
+.quick-action-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  /* GPU-accelerated properties only */
+  transition: border-color 200ms ease-out, background-color 200ms ease-out;
+}
+
+.quick-action-button:hover .quick-action-icon {
+  border-color: var(--border-emphasis);
+  background: var(--bg-hover);
+}
+
+.quick-action-icon .icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-secondary);
+  /* GPU-accelerated properties only */
+  transition: color 200ms ease-out, opacity 200ms ease-out;
+}
+
+.quick-action-button:hover .quick-action-icon .icon {
+  color: var(--text-primary);
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.quick-action-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+.quick-action-label {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  line-height: 1.4;
+  /* GPU-accelerated properties only */
+  transition: color 200ms ease-out, opacity 200ms ease-out;
+}
+
+.quick-action-description {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: 1.4;
+  /* GPU-accelerated properties only */
+  transition: color 200ms ease-out, opacity 200ms ease-out;
+}
+
+.quick-action-button:hover .quick-action-description {
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   SKELETON LOADING STYLES
+   ======================================== */
+
+.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface, #0a0a0a) 0%,
+    var(--bg-hover, #1a1a1a) 50%,
+    var(--bg-surface, #0a0a0a) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm, 4px);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-text-xs {
+  height: 0.75em;
+}
+
+.skeleton-text-sm {
+  height: 0.875em;
+}
+
+.skeleton-text-base {
+  height: 1em;
+}
+
+.skeleton-text-lg {
+  height: 1.25em;
+}
+
+/* GPU-accelerated shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+  100% {
+    background-position: -200% 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+}
+
+/* ========================================
+   REDUCED MOTION SUPPORT
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-action-button,
+  .quick-action-icon,
+  .quick-action-icon .icon,
+  .quick-action-label,
+  .quick-action-description {
+    transition: none;
+  }
+  
+  .quick-action-button:hover {
+    transform: none;
+  }
+  
+  .skeleton-text {
+    animation: none;
+  }
+}

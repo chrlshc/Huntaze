@@ -15,7 +15,7 @@ interface AlarmConfig {
 export class EventBridgeAlerting {
   private client: CloudWatchClient;
 
-  constructor(region = process.env.AWS_REGION || 'us-west-1') {
+  constructor(region = process.env.AWS_REGION || 'us-east-1') {
     this.client = new CloudWatchClient({ region });
   }
 

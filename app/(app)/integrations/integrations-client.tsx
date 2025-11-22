@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useIntegrations } from '@/hooks/useIntegrations';
 import { IntegrationCard } from '@/components/integrations/IntegrationCard';
+import { IntegrationsGridSkeleton } from './IntegrationsGridSkeleton';
 import { ToastProvider, useToast } from '@/components/ui/toast';
 import { Loader2, AlertCircle } from 'lucide-react';
+import './integrations.css';
 
 const AVAILABLE_PROVIDERS = ['instagram', 'tiktok', 'reddit', 'onlyfans'] as const;
 
@@ -55,26 +57,19 @@ function IntegrationsContent() {
   }, [searchParams, showToast]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-content-secondary">Loading integrations...</p>
-        </div>
-      </div>
-    );
+    return <IntegrationsGridSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4 max-w-md text-center">
-          <AlertCircle className="h-12 w-12 text-red-500" />
-          <h2 className="text-xl font-semibold text-content-primary">Failed to load integrations</h2>
-          <p className="text-sm text-content-secondary">{error}</p>
+      <div className="integrations-error">
+        <div className="integrations-error-content">
+          <AlertCircle className="integrations-error-icon" />
+          <h2 className="integrations-error-title">Failed to load integrations</h2>
+          <p className="integrations-error-message">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover"
+            className="integrations-error-retry"
           >
             Retry
           </button>
@@ -84,15 +79,15 @@ function IntegrationsContent() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-content-primary mb-2">Integrations</h1>
-        <p className="text-content-secondary">
+    <div className="integrations-container">
+      <div className="integrations-header">
+        <h1 className="integrations-title">Integrations</h1>
+        <p className="integrations-subtitle">
           Connect your social media and content platform accounts to manage everything in one place.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="integrations-grid">
         {AVAILABLE_PROVIDERS.map((provider) => {
           // Find all accounts for this provider
           const connectedAccounts = integrations.filter(
@@ -135,8 +130,8 @@ function IntegrationsContent() {
       </div>
 
       {integrations.length === 0 && (
-        <div className="mt-12 text-center">
-          <p className="text-content-secondary">
+        <div className="integrations-empty">
+          <p>
             No integrations connected yet. Click "Add app" on any card above to get started.
           </p>
         </div>

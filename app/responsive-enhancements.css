@@ -1,0 +1,514 @@
+/**
+ * Responsive Design Enhancements - Beta Launch UI System
+ * 
+ * Ensures all interactive elements meet WCAG 2.5.5 touch target requirements
+ * and provides optimal mobile experience across all viewports.
+ * 
+ * Requirements: 13.1, 13.2, 13.3, 13.4
+ */
+
+/* ============================================
+   TOUCH TARGET ENFORCEMENT (44x44px minimum)
+   ============================================ */
+
+/* Ensure all buttons meet minimum touch target */
+button,
+a[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-ghost {
+  min-height: 44px;
+  min-width: 44px;
+  position: relative;
+}
+
+/* Extend touch area for small visual elements */
+.touch-extend::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+  z-index: -1;
+}
+
+/* Ensure form inputs are touch-friendly */
+input,
+select,
+textarea {
+  min-height: 44px;
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* Checkbox and radio buttons need larger touch targets */
+input[type="checkbox"],
+input[type="radio"] {
+  min-width: 20px;
+  min-height: 20px;
+  cursor: pointer;
+}
+
+/* Extend touch area for checkbox/radio labels */
+input[type="checkbox"] + label,
+input[type="radio"] + label,
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+/* ============================================
+   MOBILE VIEWPORT OPTIMIZATIONS
+   ============================================ */
+
+/* Mobile: < 768px */
+@media (max-width: 767px) {
+  /* Ensure proper spacing for touch targets */
+  button + button,
+  a + a,
+  .btn + .btn {
+    margin-left: 8px;
+  }
+
+  /* Stack buttons vertically on very small screens */
+  @media (max-width: 374px) {
+    .button-group,
+    .form-actions {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .button-group button,
+    .form-actions button {
+      width: 100%;
+    }
+  }
+
+  /* Optimize auth pages for mobile */
+  .auth-container {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
+
+  /* Optimize onboarding for mobile */
+  .onboarding-container {
+    padding: 16px;
+  }
+
+  /* Ensure sidebar is hidden on mobile by default */
+  aside:not(.mobile-open) {
+    transform: translateX(-100%);
+  }
+
+  /* Optimize header for mobile */
+  .top-header {
+    padding: 12px 16px;
+  }
+
+  /* Optimize stats grid for mobile */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Optimize integrations grid for mobile */
+  .integrations-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Optimize quick actions for mobile */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Optimize platform status for mobile */
+  .platform-status-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Ensure text is readable on mobile */
+  h1 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Optimize form spacing on mobile */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  /* Ensure proper padding for safe areas */
+  .safe-area-bottom {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-top {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+}
+
+/* Small mobile: 320px - 374px */
+@media (max-width: 374px) {
+  /* Extra compact spacing for very small screens */
+  .auth-card,
+  .onboarding-card {
+    padding: 20px;
+  }
+
+  /* Reduce font sizes slightly */
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  /* Ensure buttons remain touch-friendly */
+  button,
+  .btn {
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  /* Optimize input padding */
+  input,
+  select,
+  textarea {
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+/* Medium mobile: 375px - 413px */
+@media (min-width: 375px) and (max-width: 413px) {
+  /* Standard mobile phone sizes (iPhone SE, iPhone 12/13/14) */
+  .auth-card,
+  .onboarding-card {
+    padding: 24px;
+  }
+
+  /* Optimize grid layouts */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Large mobile: 414px - 767px */
+@media (min-width: 414px) and (max-width: 767px) {
+  /* Larger phones and small tablets */
+  .auth-card,
+  .onboarding-card {
+    padding: 32px;
+  }
+
+  /* Can fit more columns */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Optimize stats grid for larger mobile */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* ============================================
+   TABLET OPTIMIZATIONS
+   ============================================ */
+
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Show sidebar on tablet */
+  aside {
+    display: flex;
+  }
+
+  /* Optimize grid layouts for tablet */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .integrations-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+/* ============================================
+   LANDSCAPE ORIENTATION OPTIMIZATIONS
+   ============================================ */
+
+@media (max-height: 600px) and (orientation: landscape) {
+  /* Optimize for landscape mobile (e.g., iPhone in landscape) */
+  .auth-container,
+  .onboarding-container {
+    padding: 12px;
+  }
+
+  .auth-card,
+  .onboarding-card {
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* Reduce vertical spacing */
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  /* Optimize progress bar */
+  .progress-bar {
+    margin-bottom: 16px;
+  }
+}
+
+/* ============================================
+   TOUCH FEEDBACK ENHANCEMENTS
+   ============================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Touch devices only */
+  
+  /* Active state feedback - GPU accelerated */
+  button:active,
+  a:active,
+  .btn:active {
+    transform: scale(0.97) translateZ(0); /* Force GPU acceleration */
+    opacity: 0.9;
+    transition: transform 100ms ease-out, opacity 100ms ease-out;
+  }
+
+  /* Prevent double-tap zoom */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  /* Remove hover effects on touch devices */
+  button:hover,
+  a:hover,
+  .btn:hover {
+    transform: none;
+  }
+
+  /* Only apply active state on touch */
+  button:active,
+  a:active,
+  .btn:active {
+    transform: scale(0.97) translateZ(0); /* Force GPU acceleration */
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Ensure focus indicators are visible on mobile */
+@media (max-width: 767px) {
+  *:focus-visible {
+    outline: 3px solid var(--brand-primary, #8B5CF6);
+    outline-offset: 2px;
+  }
+
+  /* Larger focus indicators for better visibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Reduce animation complexity on mobile - keep within 200-300ms range */
+  * {
+    animation-duration: 200ms !important;
+  }
+
+  /* Disable expensive animations */
+  .blur-effect,
+  .backdrop-blur {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Optimize transforms for GPU acceleration */
+  .hardware-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  /* Force GPU acceleration on frequently animated elements */
+  button,
+  a,
+  .btn,
+  .card,
+  .stat-card,
+  .quick-action-button,
+  .platform-status-card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* ============================================
+   SAFE AREA SUPPORT (Notched Devices)
+   ============================================ */
+
+/* iOS safe areas */
+@supports (padding: max(0px)) {
+  .safe-area-inset-top {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-inset-left {
+    padding-left: max(16px, env(safe-area-inset-left));
+  }
+
+  .safe-area-inset-right {
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  /* Full safe area padding */
+  .safe-area-inset {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+}
+
+/* ============================================
+   REDUCED MOTION SUPPORT
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  /* Disable scroll animations */
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   HIGH CONTRAST MODE SUPPORT
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  /* Increase contrast for better visibility */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border-width: 2px;
+  }
+
+  /* Ensure text has sufficient contrast */
+  body {
+    color: #000000;
+    background-color: #FFFFFF;
+  }
+
+  .dark body {
+    color: #FFFFFF;
+    background-color: #000000;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  /* Hide interactive elements when printing */
+  button,
+  .hamburger-menu,
+  .mobile-nav,
+  aside {
+    display: none !important;
+  }
+
+  /* Optimize layout for printing */
+  .stats-grid,
+  .integrations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Ensure readable text */
+  body {
+    color: #000000;
+    background: #FFFFFF;
+  }
+}

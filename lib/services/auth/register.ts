@@ -114,12 +114,14 @@ export class RegistrationService {
 
       return {
         success: true,
+        message: 'Account created successfully. Please check your email to verify your account.',
+        userId: parseInt(user.id),
+        verificationToken: verificationToken,
         user: {
           id: user.id,
           email: user.email,
           name: user.name,
         },
-        message: 'Account created successfully. Please check your email to verify your account.',
       };
     } catch (error: any) {
       const duration = Date.now() - startTime;
