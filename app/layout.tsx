@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
+import "./mobile-optimized.css";
+import "./responsive-enhancements.css";
 import "./animations.css";
+import "@/styles/design-system.css"; // Beta Launch Design System
+import "@/styles/skeleton-animations.css"; // Phase 7: Enhanced Loading States
+import "@/components/accessibility/skip-link.css"; // Phase 8: Accessibility
 import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { SkipLink } from "@/components/accessibility/SkipLink";
 import "@/lib/config/chartConfig"; // Register Chart.js components
 
 
@@ -57,11 +63,22 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#6366f1" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        
+        {/* Resource hints for external domains - Requirement 21.4 */}
+        <link rel="preconnect" href="https://api.dicebear.com" />
+        <link rel="dns-prefetch" href="https://api.dicebear.com" />
+        <link rel="preconnect" href="https://ui-avatars.com" />
+        <link rel="dns-prefetch" href="https://ui-avatars.com" />
+        <link rel="preconnect" href="https://cdn.huntaze.com" />
+        <link rel="dns-prefetch" href="https://cdn.huntaze.com" />
+        <link rel="preconnect" href="https://static.onlyfansassets.com" />
+        <link rel="dns-prefetch" href="https://static.onlyfansassets.com" />
       </head>
       <body className="antialiased" suppressHydrationWarning>
+        <SkipLink />
         <ThemeProvider>
           <NextAuthProvider>
-            <main className="min-h-screen">
+            <main id="main-content" className="min-h-screen" role="main">
               {children}
             </main>
           </NextAuthProvider>

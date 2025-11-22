@@ -168,10 +168,10 @@ function defaultRateLimitHandler(retryAfter?: number): Response {
  * );
  * ```
  */
-export function withRateLimit(
-  handler: (req: NextRequest) => Promise<Response> | Response,
+export function withRateLimit<T = any>(
+  handler: (req: NextRequest, context?: T) => Promise<Response> | Response,
   config: RateLimitConfig = {}
-): (req: NextRequest) => Promise<Response> {
+): (req: NextRequest, context?: T) => Promise<Response> {
   const {
     limit = DEFAULT_CONFIG.limit,
     windowMs = DEFAULT_CONFIG.windowMs,
@@ -180,11 +180,11 @@ export function withRateLimit(
     handler: customHandler,
   } = config;
   
-  return async (req: NextRequest) => {
+  return async (req: NextRequest, context?: T) => {
     try {
       // Check if we should skip rate limiting for this request
       if (skip && await skip(req)) {
-        return await handler(req);
+        return await handler(req, context);
       }
       
       // Generate rate limit key
@@ -218,7 +218,7 @@ export function withRateLimit(
       }
       
       // Rate limit OK, proceed with handler
-      const response = await handler(req);
+      const response = await handler(req, context);
       
       // Add rate limit headers to successful response
       return addRateLimitHeaders(response);
@@ -226,7 +226,7 @@ export function withRateLimit(
     } catch (error) {
       // On error, log and allow request (fail-open strategy)
       console.error('[RateLimit] Error in rate limit middleware:', error);
-      return await handler(req);
+      return await handler(req, context);
     }
   };
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge';
 
 const eventBridge = new EventBridgeClient({ 
-  region: process.env.AWS_REGION || 'us-west-1' 
+  region: process.env.AWS_REGION || 'us-east-1' 
 });
 
 // This endpoint receives events from AWS EventBridge

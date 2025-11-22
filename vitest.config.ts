@@ -20,6 +20,15 @@ export default defineConfig(() => ({
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
     ],
+    // Optimize resource usage
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true, // Use single process to reduce memory
+      },
+    },
+    maxConcurrency: 2, // Limit concurrent tests
+    isolate: false, // Reuse same context to save memory
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

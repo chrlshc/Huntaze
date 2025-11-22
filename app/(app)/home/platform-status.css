@@ -1,0 +1,306 @@
+/**
+ * Platform Status Component Styles
+ * 
+ * Professional black theme with minimal rainbow accents
+ * Requirements: 8.2, 8.3, 8.4
+ */
+
+.platform-status-section {
+  margin-top: var(--space-8);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.section-title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.manage-link {
+  font-size: var(--text-sm);
+  color: var(--brand-primary);
+  text-decoration: none;
+  font-weight: 500;
+  /* GPU-accelerated properties only */
+  transition: color 200ms ease, opacity 200ms ease;
+}
+
+.manage-link:hover {
+  color: var(--brand-secondary);
+}
+
+.manage-link:focus-visible {
+  outline: none;
+  box-shadow: var(--brand-glow);
+  border-radius: var(--radius-sm);
+}
+
+/* Loading State */
+.platform-status-loading {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  min-height: 120px;
+}
+
+.loading-shimmer {
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 0%,
+    var(--bg-hover) 50%,
+    var(--bg-card) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  will-change: background-position;
+}
+
+/* GPU-accelerated shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+  100% {
+    background-position: 200% 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+}
+
+/* Error State */
+.platform-status-error {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.platform-status-error p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Empty State */
+.platform-status-empty {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.empty-message {
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-4) 0;
+  font-size: var(--text-base);
+}
+
+.btn-secondary {
+  display: inline-block;
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  /* GPU-accelerated properties only */
+  transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--border-emphasis);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.btn-secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--brand-glow);
+}
+
+/* Platform Status Grid */
+.platform-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Platform Status Card */
+.platform-status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  /* GPU-accelerated properties only */
+  transition: border-color 200ms ease;
+}
+
+.platform-status-card:hover {
+  border-color: var(--border-emphasis);
+}
+
+.platform-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.platform-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.platform-name {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.platform-account {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.platform-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* Status Dot - Pulsing for connected, static for disconnected */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.status-connected {
+  background: #10b981; /* Green */
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-disconnected {
+  background: #ef4444; /* Red */
+  /* No animation - static */
+}
+
+/* GPU-accelerated pulse animation using opacity only */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+}
+
+.status-text {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.platform-status-footer {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.last-sync {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .platform-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .manage-link {
+    align-self: flex-end;
+  }
+}
+
+/* Skeleton loading styles */
+.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface, #0a0a0a) 0%,
+    var(--bg-hover, #1a1a1a) 50%,
+    var(--bg-surface, #0a0a0a) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm, 4px);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-text-xs {
+  height: 0.75em;
+}
+
+.skeleton-text-sm {
+  height: 0.875em;
+}
+
+.skeleton-text-base {
+  height: 1em;
+}
+
+.skeleton-text-lg {
+  height: 1.25em;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .status-connected {
+    animation: none;
+  }
+
+  .loading-shimmer {
+    animation: none;
+  }
+  
+  .skeleton-text {
+    animation: none;
+  }
+
+  .manage-link,
+  .btn-secondary,
+  .platform-status-card {
+    transition: none;
+  }
+}

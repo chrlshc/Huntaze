@@ -94,11 +94,17 @@ const nextConfig: NextConfig = {
 
   // Removed experimental features for stable builds
   
-  // Performance optimizations
+  // Performance optimizations - Requirements 21.1, 21.2, 21.3, 21.4
   compiler: {
     // Only remove console logs in production environment, keep them in staging for debugging
     removeConsole: process.env.NODE_ENV === 'production' && process.env.AMPLIFY_ENV === 'production',
   },
+  
+  // Production optimizations
+  productionBrowserSourceMaps: false, // Disable source maps in production for smaller bundles
+  
+  // Optimize CSS - PurgeCSS is handled by Tailwind, minification by Next.js
+  // Tree shaking and minification are enabled by default in production
 
   // Strict type checking for production builds
   // Note: TypeScript errors exist but don't block production builds

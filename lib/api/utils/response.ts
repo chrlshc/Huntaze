@@ -419,9 +419,11 @@ function getRetryDelay(code: string): number | undefined {
  * Builds response headers from options
  */
 function buildResponseHeaders(options: ResponseOptions): Record<string, string> {
+  const requestId = options.correlationId || generateRequestId();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'X-Request-ID': options.correlationId || generateRequestId(),
+    'X-Request-ID': requestId,
+    'X-Correlation-Id': requestId, // Also include for compatibility
     ...options.headers,
   };
 
