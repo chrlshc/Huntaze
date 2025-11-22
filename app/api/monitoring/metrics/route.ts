@@ -1,99 +1,331 @@
-import { NextResponse } from 'next/server';
-import { metrics } from '@/lib/utils/metrics';
+/**
+ * Monitoring Metrics API
+ * 
+ * GET /api/monitoring/metrics
+ * 
+ * Exposes current monitoring metrics and alarm status for operational visibility.
+ * Includes automatic retry logic, structured error handling, and performance monitoring.
+ * 
+ * @endpoint GET /api/monitoring/metrics
+ * @authentication Optional (public endpoint for monitoring dashboards)
+ * @rateLimit Standard rate limiting applies
+ * 
+ * @responseBody Success (200)
+ * {
+ *   success: true,
+ *   data: {
+ *     metrics: {
+ *       requests: { total: number, averageLatency: number, errorRate: number },
+ *       connections: { active: number },
+ *       cache: { hits: number, misses: number },
+ *       database: { queries: number, averageLatency: number, successRate: number }
+ *     },
+ *     alarms: Array<{
+ *       name: string,
+ *       state: string,
+ *       reason: string,
+ *       updatedAt: Date
+ *     }>,
+ *     timestamp: string
+ *   },
+ *   duration: number
+ * }
+ * 
+ * @responseBody Error (500/503)
+ * {
+ *   success: false,
+ *   error: string,
+ *   correlationId: string,
+ *   retryable: boolean
+ * }
+ * 
+ * @example
+ * GET /api/monitoring/metrics
+ * 
+ * Response:
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "metrics": {
+ *       "requests": { "total": 1247, "averageLatency": 145, "errorRate": 0.5 },
+ *       "connections": { "active": 42 },
+ *       "cache": { "hits": 850, "misses": 150 },
+ *       "database": { "queries": 320, "averageLatency": 25, "successRate": 99.8 }
+ *     },
+ *     "alarms": [],
+ *     "timestamp": "2024-11-19T10:30:00.000Z"
+ *   },
+ *   "duration": 45
+ * }
+ */
 
-interface MetricData {
-  timestamp: string;
-  metric: string;
-  value: number;
-  tags?: Record<string, string>;
+import { NextRequest, NextResponse } from 'next/server';
+import { cloudWatchService } from '@/lib/monitoring/cloudwatch.service';
+import { goldenSignals } from '@/lib/monitoring/telemetry';
+import { createLogger } from '@/lib/utils/logger';
+import { cacheService } from '@/lib/services/cache.service';
+import type {
+  MetricsSummary,
+  AlarmInfo,
+  MetricsSuccessResponse,
+  MetricsErrorResponse,
+  MetricsResponse,
+} from './types';
+
+// Force Node.js runtime
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const logger = createLogger('monitoring-metrics-api');
+
+// Cache configuration
+const METRICS_CACHE_TTL = 30; // 30 seconds TTL for metrics cache
+
+// ============================================================================
+// Retry Configuration
+// ============================================================================
+
+const RETRY_CONFIG = {
+  maxRetries: 3,
+  initialDelay: 100, // ms
+  maxDelay: 2000, // ms
+  backoffFactor: 2,
+  retryableErrors: [
+    'ECONNREFUSED',
+    'ETIMEDOUT',
+    'ENOTFOUND',
+    'ENETUNREACH',
+    'NetworkingError',
+    'ServiceUnavailable',
+  ],
+};
+
+/**
+ * Check if error is retryable
+ */
+function isRetryableError(error: any): boolean {
+  // Network errors
+  if (error.code && RETRY_CONFIG.retryableErrors.includes(error.code)) {
+    return true;
+  }
+
+  // AWS SDK errors
+  if (error.name && RETRY_CONFIG.retryableErrors.includes(error.name)) {
+    return true;
+  }
+
+  // HTTP 5xx errors
+  if (error.statusCode && error.statusCode >= 500) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
- * GET /api/monitoring/metrics
- * Returns current metrics and summary
+ * Retry operation with exponential backoff
  */
-export async function GET() {
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  correlationId: string,
+  attempt = 1
+): Promise<T> {
   try {
-    const recentMetrics = metrics.getRecentMetrics(200);
+    return await fn();
+  } catch (error: any) {
+    const retryable = isRetryableError(error);
+
+    if (!retryable || attempt >= RETRY_CONFIG.maxRetries) {
+      throw error;
+    }
+
+    const delay = Math.min(
+      RETRY_CONFIG.initialDelay * Math.pow(RETRY_CONFIG.backoffFactor, attempt - 1),
+      RETRY_CONFIG.maxDelay
+    );
+
+    logger.warn('Retrying CloudWatch operation', {
+      correlationId,
+      attempt,
+      delay,
+      error: error.message,
+      errorCode: error.code || error.name,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    return retryWithBackoff(fn, correlationId, attempt + 1);
+  }
+}
+
+// ============================================================================
+// Main Handler
+// ============================================================================
+
+/**
+ * GET /api/monitoring/metrics
+ * Fetch current monitoring metrics and alarm status
+ */
+export async function GET(request: NextRequest): Promise<NextResponse<MetricsResponse>> {
+  const correlationId = `metrics-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  const startTime = Date.now();
+
+  try {
+    logger.info('Fetching monitoring metrics', { correlationId });
+
+    // 1. Check cache first (Requirements: 11.1, 11.2)
+    const cacheKey = 'monitoring:metrics:summary';
+    const cachedMetrics = cacheService.get<MetricsSuccessResponse['data']>(cacheKey);
+
+    if (cachedMetrics) {
+      const duration = Date.now() - startTime;
+      
+      logger.info('Monitoring metrics served from cache', {
+        correlationId,
+        duration,
+        cacheHit: true,
+      });
+
+      return NextResponse.json<MetricsSuccessResponse>(
+        {
+          success: true,
+          data: cachedMetrics,
+          duration,
+        },
+        {
+          status: 200,
+          headers: {
+            'X-Correlation-Id': correlationId,
+            'X-Duration-Ms': duration.toString(),
+            'X-Cache-Status': 'HIT',
+            'Cache-Control': 'private, max-age=30',
+          },
+        }
+      );
+    }
+
+    // 2. Get metrics summary (in-memory, fast)
+    const metricsSummary = goldenSignals.getMetricsSummary();
     
-    // Calculate summary by platform
-    const summary = {
-      oauth: {
-        success: {} as Record<string, number>,
-        failure: {} as Record<string, number>,
-      },
-      upload: {
-        success: {} as Record<string, number>,
-        failure: {} as Record<string, number>,
-      },
-      webhook: {
-        received: {} as Record<string, number>,
-        processed: {} as Record<string, number>,
-        avgLatency: {} as Record<string, number>,
-      },
-      tokenRefresh: {
-        success: {} as Record<string, number>,
-        failure: {} as Record<string, number>,
-      },
+    // 3. Get alarm status with retry logic (cache miss)
+    let alarms: AlarmInfo[] = [];
+    try {
+      const cloudWatchAlarms = await retryWithBackoff(
+        async () => {
+          return await cloudWatchService.getAlarmStatus();
+        },
+        correlationId
+      );
+
+      alarms = cloudWatchAlarms.map(alarm => ({
+        name: alarm.AlarmName || 'unknown',
+        state: alarm.StateValue || 'UNKNOWN',
+        reason: alarm.StateReason || 'No reason provided',
+        updatedAt: alarm.StateUpdatedTimestamp || new Date(),
+      }));
+    } catch (cloudWatchError: any) {
+      // Log error but don't fail the request - alarms are optional
+      logger.warn('Failed to fetch CloudWatch alarms', {
+        correlationId,
+        error: cloudWatchError.message,
+        errorCode: cloudWatchError.code || cloudWatchError.name,
+      });
+      
+      // Return empty alarms array on error
+      alarms = [];
+    }
+
+    // 4. Build response
+    const duration = Date.now() - startTime;
+    
+    const responseData = {
+      metrics: metricsSummary,
+      alarms,
+      timestamp: new Date().toISOString(),
     };
 
-    const latencies: Record<string, number[]> = {};
-
-    for (const metric of recentMetrics) {
-      const platform = metric.tags?.platform || 'unknown';
-
-      // OAuth metrics
-      if (metric.metric === 'oauth.success') {
-        summary.oauth.success[platform] = (summary.oauth.success[platform] || 0) + metric.value;
-      } else if (metric.metric === 'oauth.failure') {
-        summary.oauth.failure[platform] = (summary.oauth.failure[platform] || 0) + metric.value;
-      }
-
-      // Upload metrics
-      else if (metric.metric === 'upload.success') {
-        summary.upload.success[platform] = (summary.upload.success[platform] || 0) + metric.value;
-      } else if (metric.metric === 'upload.failure') {
-        summary.upload.failure[platform] = (summary.upload.failure[platform] || 0) + metric.value;
-      }
-
-      // Webhook metrics
-      else if (metric.metric === 'webhook.received') {
-        summary.webhook.received[platform] = (summary.webhook.received[platform] || 0) + metric.value;
-      } else if (metric.metric === 'webhook.processed') {
-        summary.webhook.processed[platform] = (summary.webhook.processed[platform] || 0) + metric.value;
-      } else if (metric.metric === 'webhook.latency') {
-        if (!latencies[platform]) {
-          latencies[platform] = [];
-        }
-        latencies[platform].push(metric.value);
-      }
-
-      // Token refresh metrics
-      else if (metric.metric === 'token.refresh.success') {
-        summary.tokenRefresh.success[platform] = (summary.tokenRefresh.success[platform] || 0) + metric.value;
-      } else if (metric.metric === 'token.refresh.failure') {
-        summary.tokenRefresh.failure[platform] = (summary.tokenRefresh.failure[platform] || 0) + metric.value;
-      }
+    // 5. Store in cache (Requirements: 11.1, 11.3)
+    try {
+      cacheService.set(cacheKey, responseData, METRICS_CACHE_TTL);
+      
+      logger.info('Monitoring metrics cached', {
+        correlationId,
+        cacheKey,
+        ttl: METRICS_CACHE_TTL,
+      });
+    } catch (cacheError) {
+      // Log cache error but don't fail the request
+      logger.warn('Failed to cache metrics', {
+        correlationId,
+        error: cacheError instanceof Error ? cacheError.message : 'Unknown error',
+      });
     }
 
-    // Calculate average latencies
-    for (const [platform, values] of Object.entries(latencies)) {
-      if (values.length > 0) {
-        const avg = values.reduce((a, b) => a + b, 0) / values.length;
-        summary.webhook.avgLatency[platform] = avg;
-      }
-    }
-
-    return NextResponse.json({
-      metrics: recentMetrics,
-      summary,
-      timestamp: new Date().toISOString(),
+    logger.info('Monitoring metrics fetched successfully', {
+      correlationId,
+      duration,
+      alarmsCount: alarms.length,
+      cacheHit: false,
     });
-  } catch (error) {
-    console.error('Failed to get metrics:', error);
-    return NextResponse.json(
-      { error: 'Failed to get metrics' },
-      { status: 500 }
+
+    return NextResponse.json<MetricsSuccessResponse>(
+      {
+        success: true,
+        data: responseData,
+        duration,
+      },
+      {
+        status: 200,
+        headers: {
+          'X-Correlation-Id': correlationId,
+          'X-Duration-Ms': duration.toString(),
+          'X-Cache-Status': 'MISS',
+          'Cache-Control': 'private, max-age=30',
+        },
+      }
+    );
+
+  } catch (error: any) {
+    const duration = Date.now() - startTime;
+    
+    logger.error('Unexpected error fetching monitoring metrics', error, {
+      correlationId,
+      duration,
+      errorMessage: error.message,
+      errorStack: error.stack,
+    });
+
+    const retryable = isRetryableError(error);
+
+    return NextResponse.json<MetricsErrorResponse>(
+      {
+        success: false,
+        error: 'Failed to retrieve monitoring metrics. Please try again.',
+        correlationId,
+        retryable,
+      },
+      {
+        status: retryable ? 503 : 500,
+        headers: {
+          'X-Correlation-Id': correlationId,
+          ...(retryable && { 'Retry-After': '60' }),
+        },
+      }
     );
   }
+}
+
+/**
+ * OPTIONS handler for CORS preflight
+ */
+export async function OPTIONS() {
+  return NextResponse.json(
+    {},
+    {
+      status: 200,
+      headers: {
+        'Allow': 'GET, OPTIONS',
+        'Cache-Control': 'public, max-age=86400',
+      },
+    }
+  );
 }

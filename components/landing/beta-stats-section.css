@@ -1,0 +1,176 @@
+/**
+ * Beta Stats Section Styles
+ * 
+ * Design Rules:
+ * - Pure black background (#000000)
+ * - Stat cards with solid backgrounds (NO gradients)
+ * - Beta labels with subtle styling
+ * - Hover effects: translateY(-4px) and border emphasis
+ * - Disclaimer text in muted color
+ * 
+ * Requirements: 2.5, 2.6, 2.7
+ */
+
+/* ========================================
+   BETA STATS SECTION
+   Requirement 2.5
+   ======================================== */
+
+.beta-stats-section {
+  padding: var(--space-12) var(--space-8);
+  background: var(--bg-app); /* Pure black - NO gradients */
+}
+
+.beta-stats-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.beta-stats-title {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--space-4);
+  color: var(--text-primary);
+}
+
+.beta-stats-subtitle {
+  font-size: var(--text-lg);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--space-12);
+  line-height: 1.6;
+}
+
+/* ========================================
+   STATS GRID
+   Requirement 2.5
+   ======================================== */
+
+.beta-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+/* ========================================
+   STAT CARDS WITH BETA LABELS
+   Requirements 2.5, 2.6
+   ======================================== */
+
+.beta-stat-card {
+  background: var(--bg-card); /* Solid color - NO gradients */
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-align: center;
+  position: relative;
+  /* GPU-accelerated properties only */
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
+}
+
+/* Hover effects: translateY(-4px) and emphasize border
+   Requirement 2.7 */
+.beta-stat-card:hover {
+  border-color: var(--brand-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px -5px rgba(139, 92, 246, 0.2);
+}
+
+/* Beta Label Badge
+   Requirement 2.6 */
+.beta-stat-badge {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--beta-text);
+  background: var(--beta-bg);
+  border: 1px solid var(--beta-border);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+  margin-bottom: var(--space-4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Stat Value */
+.beta-stat-value {
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  line-height: 1;
+}
+
+/* Stat Label */
+.beta-stat-label {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* Stat Description */
+.beta-stat-description {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ========================================
+   DISCLAIMER TEXT
+   Requirement 2.6
+   ======================================== */
+
+.beta-stats-disclaimer {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+  font-style: italic;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .beta-stats-section {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .beta-stats-title {
+    font-size: var(--text-3xl);
+  }
+
+  .beta-stats-subtitle {
+    font-size: var(--text-base);
+  }
+
+  .beta-stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .beta-stat-value {
+    font-size: var(--text-3xl);
+  }
+
+  .beta-stat-label {
+    font-size: var(--text-base);
+  }
+}
+
+/* ========================================
+   REDUCED MOTION SUPPORT
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .beta-stat-card:hover {
+    transform: none;
+  }
+}

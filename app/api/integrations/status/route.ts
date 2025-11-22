@@ -68,9 +68,13 @@ import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { successResponse, errorResponse, internalServerError } from '@/lib/api/utils/response';
 import { integrationsService } from '@/lib/services/integrations/integrations.service';
 import { createLogger } from '@/lib/utils/logger';
+import { cacheService } from '@/lib/services/cache.service';
 import crypto from 'crypto';
 
 const logger = createLogger('integrations-status');
+
+// Cache configuration
+const INTEGRATIONS_CACHE_TTL = 300; // 5 minute TTL for integrations cache
 
 // ============================================================================
 // Types
@@ -91,14 +95,19 @@ interface IntegrationWithStatus {
 }
 
 /**
- * Success response type
+ * Success response type with standardized meta
  */
 interface IntegrationsStatusResponse {
   success: true;
   data: {
     integrations: IntegrationWithStatus[];
   };
-  duration: number;
+  meta: {
+    timestamp: string;
+    requestId: string;
+    duration?: number;
+    version?: string;
+  };
 }
 
 // ============================================================================
@@ -179,7 +188,7 @@ export const GET = withRateLimit(
         });
         
         return Response.json(
-          errorResponse('INVALID_USER_ID', 'Invalid user ID'),
+          errorResponse('INVALID_USER_ID', 'Invalid user ID', undefined, { correlationId, startTime }),
           { 
             status: 400,
             headers: {
@@ -189,7 +198,38 @@ export const GET = withRateLimit(
         );
       }
 
-      // Get all connected integrations with retry logic
+      // Check cache first (Requirements: 12.1, 12.2)
+      const cacheKey = `integrations:status:${userId}`;
+      const cachedIntegrations = cacheService.get<IntegrationWithStatus[]>(cacheKey);
+
+      if (cachedIntegrations) {
+        const duration = Date.now() - startTime;
+        
+        logger.info('Integrations status served from cache', {
+          correlationId,
+          userId,
+          count: cachedIntegrations.length,
+          duration,
+          cacheHit: true,
+        });
+
+        return Response.json(
+          successResponse(
+            { integrations: cachedIntegrations },
+            { correlationId, startTime }
+          ),
+          {
+            headers: {
+              'X-Correlation-Id': correlationId,
+              'X-Duration-Ms': duration.toString(),
+              'X-Cache-Status': 'HIT',
+              'Cache-Control': 'private, no-cache, no-store, must-revalidate',
+            },
+          }
+        );
+      }
+
+      // Get all connected integrations with retry logic (cache miss)
       const integrations = await retryWithBackoff(
         async () => {
           return await integrationsService.getConnectedIntegrations(userId);
@@ -220,23 +260,44 @@ export const GET = withRateLimit(
 
       const duration = Date.now() - startTime;
 
+      // Store in cache (Requirements: 12.1, 12.2)
+      try {
+        cacheService.set(cacheKey, integrationsWithStatus, INTEGRATIONS_CACHE_TTL);
+        
+        logger.info('Integrations status cached', {
+          correlationId,
+          userId,
+          cacheKey,
+          ttl: INTEGRATIONS_CACHE_TTL,
+        });
+      } catch (cacheError) {
+        // Log cache error but don't fail the request
+        logger.warn('Failed to cache integrations status', {
+          correlationId,
+          userId,
+          error: cacheError instanceof Error ? cacheError.message : 'Unknown error',
+        });
+      }
+
       logger.info('Integrations status fetched successfully', {
         correlationId,
         userId,
         count: integrationsWithStatus.length,
         expired: integrationsWithStatus.filter(i => i.status === 'expired').length,
         duration,
+        cacheHit: false,
       });
 
       return Response.json(
         successResponse(
           { integrations: integrationsWithStatus },
-          { startTime }
+          { correlationId, startTime }
         ),
         {
           headers: {
             'X-Correlation-Id': correlationId,
             'X-Duration-Ms': duration.toString(),
+            'X-Cache-Status': 'MISS',
             'Cache-Control': 'private, no-cache, no-store, must-revalidate',
           },
         }
@@ -255,7 +316,7 @@ export const GET = withRateLimit(
       return Response.json(
         internalServerError(
           error.message || 'Failed to fetch integrations',
-          { startTime }
+          { correlationId, startTime }
         ),
         {
           status: 500,

@@ -1,0 +1,238 @@
+/**
+ * Integrations Page Styles
+ * 
+ * Follows the Beta Launch UI System design specifications:
+ * - Pure black backgrounds (#000000)
+ * - Minimal rainbow accents (only on primary CTAs)
+ * - Professional Shopify-inspired aesthetic
+ * 
+ * Requirements: 8.1, 8.2, 8.3, 8.4
+ * @see .kiro/specs/beta-launch-ui-system/design.md
+ */
+
+.integrations-container {
+  min-height: 100vh;
+  background: var(--bg-app, #000000);
+  padding: var(--space-8, 32px) var(--space-4, 16px);
+}
+
+.integrations-header {
+  margin-bottom: var(--space-8, 32px);
+}
+
+.integrations-title {
+  font-size: var(--text-3xl, 30px);
+  font-weight: 700;
+  color: var(--text-primary, #FFFFFF);
+  margin-bottom: var(--space-2, 8px);
+}
+
+.integrations-subtitle {
+  font-size: var(--text-base, 15px);
+  color: var(--text-secondary, #a3a3a3);
+  line-height: 1.5;
+}
+
+.integrations-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--space-6, 24px);
+}
+
+@media (min-width: 768px) {
+  .integrations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .integrations-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.integrations-empty {
+  margin-top: var(--space-12, 48px);
+  text-align: center;
+  color: var(--text-secondary, #a3a3a3);
+  font-size: var(--text-sm, 13px);
+}
+
+/* Loading state */
+.integrations-loading {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.integrations-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 16px);
+}
+
+.integrations-loading-spinner {
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  color: var(--brand-primary, #8B5CF6);
+  will-change: transform;
+}
+
+.integrations-loading-text {
+  font-size: var(--text-sm, 13px);
+  color: var(--text-secondary, #a3a3a3);
+}
+
+/* Error state */
+.integrations-error {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.integrations-error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  max-width: 28rem;
+  text-align: center;
+}
+
+.integrations-error-icon {
+  width: 48px;
+  height: 48px;
+  color: #ef4444;
+}
+
+.integrations-error-title {
+  font-size: var(--text-xl, 20px);
+  font-weight: 600;
+  color: var(--text-primary, #FFFFFF);
+}
+
+.integrations-error-message {
+  font-size: var(--text-sm, 13px);
+  color: var(--text-secondary, #a3a3a3);
+}
+
+.integrations-error-retry {
+  margin-top: var(--space-4, 16px);
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  border-radius: var(--radius-md, 8px);
+  background: var(--brand-primary, #8B5CF6);
+  color: white;
+  font-size: var(--text-sm, 13px);
+  font-weight: 500;
+  /* GPU-accelerated properties only */
+  transition: background-color 200ms ease, opacity 200ms ease;
+  border: none;
+  cursor: pointer;
+}
+
+.integrations-error-retry:hover {
+  background: var(--brand-primary-hover, #7C3AED);
+}
+
+/* GPU-accelerated spin animation using transform only */
+@keyframes spin {
+  from {
+    transform: rotate(0deg) translateZ(0); /* Force GPU acceleration */
+  }
+  to {
+    transform: rotate(360deg) translateZ(0); /* Force GPU acceleration */
+  }
+}
+
+/* Skeleton loading styles */
+.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface, #0a0a0a) 0%,
+    var(--bg-hover, #1a1a1a) 50%,
+    var(--bg-surface, #0a0a0a) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm, 4px);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-text-xs {
+  height: 0.75em;
+}
+
+.skeleton-text-sm {
+  height: 0.875em;
+}
+
+.skeleton-text-base {
+  height: 1em;
+}
+
+.skeleton-text-lg {
+  height: 1.25em;
+}
+
+.skeleton-text-xl {
+  height: 1.5em;
+}
+
+/* GPU-accelerated shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+  100% {
+    background-position: -200% 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+}
+
+/* Integration card skeleton styles */
+.integration-card {
+  background: var(--bg-card, #0f0f0f);
+  border: 1px solid var(--border-default, #1a1a1a);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-6, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+}
+
+.integration-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.integration-icon-wrapper {
+  flex-shrink: 0;
+}
+
+.integration-card-body {
+  flex: 1;
+}
+
+.integration-card-footer {
+  margin-top: auto;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .integrations-loading-spinner {
+    animation: none;
+  }
+  
+  .skeleton-text {
+    animation: none;
+  }
+}

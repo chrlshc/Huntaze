@@ -21,6 +21,13 @@ import type { NextRequest } from 'next/server';
  */
 export async function getSession(): Promise<ExtendedSession | null> {
   try {
+    // In test mode, we can't use NextAuth session
+    // This function is called without request context, so we can't check headers
+    // Return null to indicate no session (tests should use getSessionFromRequest instead)
+    if (process.env.NODE_ENV === 'test') {
+      return null;
+    }
+    
     const session = await auth();
     return session as ExtendedSession | null;
   } catch (error) {
@@ -42,6 +49,39 @@ export async function getSessionFromRequest(
   request: NextRequest
 ): Promise<ExtendedSession | null> {
   try {
+    // In test mode, check for Authorization header
+    if (process.env.NODE_ENV === 'test') {
+      const authHeader = request.headers.get('authorization');
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        
+        if (token.startsWith('test-user-')) {
+          const userIdStr = token.substring(10);
+          const parsedUserId = parseInt(userIdStr);
+          
+          if (!isNaN(parsedUserId) && parsedUserId > 0) {
+            // Create a mock session for test mode
+            const mockSession: ExtendedSession = {
+              user: {
+                id: parsedUserId.toString(),
+                email: `test-user-${parsedUserId}@example.com`,
+                name: `Test User ${parsedUserId}`,
+                onboardingCompleted: true,
+              },
+              expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+            };
+            
+            return mockSession;
+          }
+        }
+      }
+      
+      // No valid test auth found
+      return null;
+    }
+    
+    // Production: use NextAuth
     const session = await auth();
     return session as ExtendedSession | null;
   } catch (error) {

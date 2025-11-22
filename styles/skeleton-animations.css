@@ -1,0 +1,168 @@
+/**
+ * Skeleton Animation Styles
+ * 
+ * **Feature: beta-launch-ui-system, Phase 7: Loading States & Responsive Design**
+ * 
+ * Enhanced skeleton loading animations with performance optimizations
+ */
+
+/* Shimmer wave animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+}
+
+/* Dark mode shimmer */
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+}
+
+/* Pulse animation with better timing */
+@keyframes enhanced-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-enhanced-pulse {
+  animation: enhanced-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Skeleton content loading states */
+.skeleton-content {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive skeleton adjustments */
+@media (max-width: 640px) {
+  .skeleton-responsive {
+    height: auto;
+    min-height: 2rem;
+  }
+  
+  .skeleton-text-mobile {
+    height: 0.875rem; /* Smaller text on mobile */
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-card-mobile {
+    padding: 0.75rem;
+  }
+  
+  .skeleton-grid-mobile {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* Performance optimizations */
+.skeleton-optimized {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-enhanced-pulse,
+  .skeleton-content::before {
+    animation: none;
+  }
+  
+  .skeleton-static {
+    background: #e5e7eb;
+  }
+  
+  .dark .skeleton-static {
+    background: #374151;
+  }
+}
+
+/* Focus states for accessibility */
+.skeleton-focusable:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Loading state transitions */
+.skeleton-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.skeleton-fade-out {
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

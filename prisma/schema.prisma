@@ -7,51 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                         Int                 @id @default(autoincrement())
-  email                      String              @unique @db.VarChar(255)
-  name                       String?             @db.VarChar(255)
-  password                   String?             @db.VarChar(255)
-  emailVerified              Boolean?            @default(false) @map("email_verified")
-  email_verification_token   String?             @db.VarChar(255)
-  email_verification_expires DateTime?           @db.Timestamp(6)
-  createdAt                  DateTime?           @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt                  DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  onboardingCompleted        Boolean?            @default(false) @map("onboarding_completed")
-  
-  // Relations
-  content                    Content[]
-  marketingCampaigns         MarketingCampaign[]
-  transactions               Transaction[]
-  subscriptions              Subscription[]
-  oauthAccounts              OAuthAccount[]
-
-  @@index([onboardingCompleted], map: "idx_users_onboarding_completed")
-  @@map("users")
-}
-
-// OAuth Accounts for social media integrations
-model OAuthAccount {
-  id                 Int       @id @default(autoincrement())
-  userId             Int       @map("user_id")
-  provider           String    @db.VarChar(50) // 'instagram', 'tiktok', 'reddit', 'onlyfans'
-  providerAccountId  String    @map("provider_account_id") @db.VarChar(255)
-  accessToken        String?   @map("access_token") @db.Text
-  refreshToken       String?   @map("refresh_token") @db.Text
-  expiresAt          DateTime? @map("expires_at") @db.Timestamp(6)
-  tokenType          String?   @map("token_type") @db.VarChar(50)
-  scope              String?   @db.Text
-  metadata           Json?     // Provider-specific data (e.g., ig_business_id)
-  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId, provider])
-  @@map("oauth_accounts")
-}
-
 model ai_plan {
   id           String         @id @db.Uuid
   source       String         @db.VarChar(32)
@@ -74,6 +29,29 @@ model ai_plan_item {
 
   @@index([plan_id, platform], map: "idx_item_plan_platform")
   @@index([scheduled_at], map: "idx_item_scheduled")
+}
+
+model content {
+  id           String    @id
+  user_id      Int
+  title        String
+  text         String?
+  type         String    @db.VarChar(50)
+  platform     String    @db.VarChar(50)
+  status       String    @db.VarChar(50)
+  category     String?   @db.VarChar(100)
+  tags         String[]
+  media_ids    String[]
+  scheduled_at DateTime? @db.Timestamp(6)
+  published_at DateTime? @db.Timestamp(6)
+  created_at   DateTime  @default(now()) @db.Timestamp(6)
+  updated_at   DateTime  @default(now()) @db.Timestamp(6)
+  metadata     Json?
+  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, created_at])
+  @@index([user_id, platform])
+  @@index([user_id, status])
 }
 
 model events_outbox {
@@ -109,92 +87,168 @@ model insight_summary {
   @@index([account_id, platform, created_at(sort: Desc)], map: "idx_summary_acc_platform")
 }
 
+model marketing_campaigns {
+  id               String   @id
+  user_id          Int
+  name             String   @db.VarChar(255)
+  status           String   @db.VarChar(50)
+  channel          String   @db.VarChar(50)
+  goal             String   @db.VarChar(50)
+  audience_segment String   @db.VarChar(100)
+  audience_size    Int
+  message          Json
+  schedule         Json?
+  stats            Json?
+  created_at       DateTime @default(now()) @db.Timestamp(6)
+  updated_at       DateTime @default(now()) @db.Timestamp(6)
+  users            users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-// New Content model for managing multi-platform content
-model Content {
-  id          String    @id @default(cuid())
-  userId      Int       @map("user_id")
-  title       String
-  text        String?   @db.Text
-  type        String    @db.VarChar(50) // 'image', 'video', 'text'
-  platform    String    @db.VarChar(50) // 'onlyfans', 'fansly', 'instagram', 'tiktok'
-  status      String    @db.VarChar(50) // 'draft', 'scheduled', 'published'
-  category    String?   @db.VarChar(100)
-  tags        String[]
-  mediaIds    String[]  @map("media_ids")
-  scheduledAt DateTime? @map("scheduled_at") @db.Timestamp(6)
-  publishedAt DateTime? @map("published_at") @db.Timestamp(6)
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  metadata    Json?
-  
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, status])
-  @@index([userId, platform])
-  @@index([userId, createdAt])
-  @@map("content")
+  @@index([user_id, channel])
+  @@index([user_id, status])
 }
 
-// New MarketingCampaign model for campaign management
-model MarketingCampaign {
-  id              String   @id @default(cuid())
-  userId          Int      @map("user_id")
-  name            String   @db.VarChar(255)
-  status          String   @db.VarChar(50) // 'draft', 'scheduled', 'active', 'paused', 'completed'
-  channel         String   @db.VarChar(50) // 'email', 'dm', 'sms', 'push'
-  goal            String   @db.VarChar(50) // 'engagement', 'conversion', 'retention'
-  audienceSegment String   @map("audience_segment") @db.VarChar(100)
-  audienceSize    Int      @map("audience_size")
-  message         Json
-  schedule        Json?
-  stats           Json?    // { sent, opened, clicked, converted }
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model oauth_accounts {
+  id                  Int       @id @default(autoincrement())
+  user_id             Int
+  provider            String    @db.VarChar(50)
+  provider_account_id String    @db.VarChar(255)
+  access_token        String?
+  refresh_token       String?
+  expires_at          DateTime? @db.Timestamp(6)
+  token_type          String?   @db.VarChar(50)
+  scope               String?
+  metadata            Json?
+  created_at          DateTime  @default(now()) @db.Timestamp(6)
+  updated_at          DateTime  @default(now()) @db.Timestamp(6)
+  users               users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@index([userId, status])
-  @@index([userId, channel])
-  @@map("marketing_campaigns")
+  @@unique([provider, provider_account_id])
+  @@index([user_id, provider])
 }
 
-// New Transaction model for revenue tracking
-model Transaction {
-  id        String   @id @default(cuid())
-  userId    Int      @map("user_id")
-  amount    Float
-  currency  String   @default("USD") @db.VarChar(10)
-  status    String   @db.VarChar(50) // 'pending', 'completed', 'failed'
-  type      String   @db.VarChar(50) // 'subscription', 'tip', 'ppv', 'message'
-  platform  String?  @db.VarChar(50)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model subscriptions {
+  id         String    @id
+  user_id    Int
+  fan_id     String    @db.VarChar(255)
+  platform   String    @db.VarChar(50)
+  tier       String?   @db.VarChar(50)
+  amount     Float
+  status     String    @db.VarChar(50)
+  started_at DateTime  @db.Timestamp(6)
+  ends_at    DateTime? @db.Timestamp(6)
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @db.Timestamp(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@index([userId, status])
-  @@index([userId, createdAt])
-  @@map("transactions")
+  @@index([user_id, platform])
+  @@index([user_id, status])
 }
 
-// New Subscription model for subscriber management
-model Subscription {
-  id        String    @id @default(cuid())
-  userId    Int       @map("user_id")
-  fanId     String    @map("fan_id") @db.VarChar(255)
-  platform  String    @db.VarChar(50)
-  tier      String?   @db.VarChar(50)
-  amount    Float
-  status    String    @db.VarChar(50) // 'active', 'cancelled', 'expired'
-  startedAt DateTime  @map("started_at") @db.Timestamp(6)
-  endsAt    DateTime? @map("ends_at") @db.Timestamp(6)
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+model transactions {
+  id         String   @id
+  user_id    Int
+  amount     Float
+  currency   String   @default("USD") @db.VarChar(10)
+  status     String   @db.VarChar(50)
+  type       String   @db.VarChar(50)
+  platform   String?  @db.VarChar(50)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@index([userId, status])
-  @@index([userId, platform])
-  @@map("subscriptions")
+  @@index([user_id, created_at])
+  @@index([user_id, status])
+}
+
+model user_stats {
+  id                  String   @id
+  user_id             Int      @unique
+  messages_sent       Int      @default(0)
+  messages_trend      Float    @default(0)
+  response_rate       Float    @default(0)
+  response_rate_trend Float    @default(0)
+  revenue             Float    @default(0)
+  revenue_trend       Float    @default(0)
+  active_chats        Int      @default(0)
+  active_chats_trend  Float    @default(0)
+  created_at          DateTime @default(now()) @db.Timestamp(6)
+  updated_at          DateTime @default(now()) @db.Timestamp(6)
+  users               users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id                         Int                   @id @default(autoincrement())
+  email                      String                @unique @db.VarChar(255)
+  name                       String?               @db.VarChar(255)
+  password                   String?               @db.VarChar(255)
+  email_verified             Boolean?              @default(false)
+  email_verification_token   String?               @db.VarChar(255)
+  email_verification_expires DateTime?             @db.Timestamp(6)
+  created_at                 DateTime?             @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime?             @default(now()) @db.Timestamp(6)
+  onboarding_completed       Boolean?              @default(false)
+  content_types              String[]              @default([])
+  goal                       String?               @db.VarChar(100)
+  revenue_goal               Int?
+  ai_plan                    String?               @default("starter") @db.VarChar(20)
+  role                       String                @default("user") @db.VarChar(20)
+  content                    content[]
+  marketing_campaigns        marketing_campaigns[]
+  oauth_accounts             oauth_accounts[]
+  subscriptions              subscriptions[]
+  transactions               transactions[]
+  user_stats                 user_stats?
+  usage_logs                 UsageLog[]
+  monthly_charges            MonthlyCharge[]
+  ai_insights                AIInsight[]
+
+  @@index([onboarding_completed], map: "idx_users_onboarding_completed")
+  @@index([role], map: "idx_users_role")
+}
+
+model UsageLog {
+  id           String   @id @default(cuid())
+  creator      users    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId    Int
+  feature      String
+  agentId      String?
+  model        String
+  tokensInput  Int
+  tokensOutput Int
+  costUsd      Decimal  @db.Decimal(10, 6)
+  createdAt    DateTime @default(now())
+
+  @@index([creatorId, createdAt])
+  @@map("usage_logs")
+}
+
+model MonthlyCharge {
+  id                String   @id @default(cuid())
+  creator           users    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId         Int
+  month             DateTime
+  totalTokensInput  Int
+  totalTokensOutput Int
+  totalCostUsd      Decimal  @db.Decimal(10, 6)
+  planPrice         Decimal  @db.Decimal(10, 2)
+
+  @@unique([creatorId, month])
+  @@map("monthly_charges")
+}
+
+model AIInsight {
+  id         String   @id @default(cuid())
+  creator    users    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId  Int
+  source     String
+  type       String
+  confidence Float
+  data       Json
+  createdAt  DateTime @default(now())
+
+  @@index([creatorId, type, createdAt])
+  @@map("ai_insights")
 }

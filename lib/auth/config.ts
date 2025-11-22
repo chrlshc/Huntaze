@@ -13,6 +13,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { createLogger } from '@/lib/utils/logger';
 import { query } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { cacheService } from '@/lib/services/cache.service';
 import '@/lib/types/auth'; // Import type augmentation
 
 // Create logger for NextAuth operations
@@ -238,6 +239,78 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: user.email,
         provider: account?.provider,
       });
+      
+      // Cache warming on login (Requirements: 12.2)
+      // Pre-fetch and cache user data to improve initial page load performance
+      try {
+        const userId = parseInt(user.id);
+        
+        if (!isNaN(userId)) {
+          // Warm up home stats cache
+          const statsResult = await query(
+            'SELECT * FROM user_stats WHERE user_id = $1',
+            [userId]
+          );
+          
+          if (statsResult.rows.length > 0) {
+            const stats = statsResult.rows[0];
+            const statsData = {
+              messagesSent: stats.messages_sent || 0,
+              messagesTrend: stats.messages_trend || 0,
+              responseRate: stats.response_rate || 0,
+              responseRateTrend: stats.response_rate_trend || 0,
+              revenue: stats.revenue || 0,
+              revenueTrend: stats.revenue_trend || 0,
+              activeChats: stats.active_chats || 0,
+              activeChatsTrend: stats.active_chats_trend || 0,
+            };
+            
+            cacheService.set(`home:stats:${userId}`, statsData, 60); // 1 minute TTL
+            
+            logger.info('Cache warmed: home stats', {
+              userId,
+              cacheKey: `home:stats:${userId}`,
+            });
+          }
+          
+          // Warm up integrations status cache
+          const integrationsResult = await query(
+            'SELECT * FROM integrations WHERE user_id = $1',
+            [userId]
+          );
+          
+          if (integrationsResult.rows.length > 0) {
+            const integrations = integrationsResult.rows.map((integration: any) => ({
+              id: integration.id,
+              provider: integration.provider,
+              accountId: integration.provider_account_id,
+              accountName: integration.metadata?.username || 
+                          integration.metadata?.displayName || 
+                          integration.provider_account_id,
+              status: integration.expires_at && new Date(integration.expires_at) < new Date()
+                ? 'expired'
+                : 'connected',
+              expiresAt: integration.expires_at ? new Date(integration.expires_at).toISOString() : null,
+              createdAt: new Date(integration.created_at).toISOString(),
+              updatedAt: new Date(integration.updated_at).toISOString(),
+            }));
+            
+            cacheService.set(`integrations:status:${userId}`, integrations, 300); // 5 minute TTL
+            
+            logger.info('Cache warmed: integrations status', {
+              userId,
+              cacheKey: `integrations:status:${userId}`,
+              count: integrations.length,
+            });
+          }
+        }
+      } catch (cacheWarmError) {
+        // Log error but don't fail login
+        logger.warn('Cache warming failed on login', {
+          userId: user.id,
+          error: cacheWarmError instanceof Error ? cacheWarmError.message : 'Unknown error',
+        });
+      }
       
       // Note: Legacy localStorage token cleanup happens client-side
       // See app/auth/page.tsx for client-side cleanup after successful login

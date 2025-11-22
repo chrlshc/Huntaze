@@ -60,12 +60,14 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   success: boolean;
-  user: {
+  message: string;
+  userId: number;
+  verificationToken: string;
+  user?: {
     id: string;
     email: string;
     name: string;
   };
-  message?: string;
   correlationId?: string;
   metadata?: {
     emailVerificationRequired?: boolean;

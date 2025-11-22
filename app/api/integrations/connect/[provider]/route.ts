@@ -10,6 +10,7 @@ import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { successResponse, errorResponse, badRequest, internalServerError } from '@/lib/api/utils/response';
 import { integrationsService } from '@/lib/services/integrations/integrations.service';
+import { validateCsrfToken } from '@/lib/middleware/csrf';
 import type { Provider } from '@/lib/services/integrations/types';
 
 const VALID_PROVIDERS: Provider[] = ['instagram', 'tiktok', 'reddit', 'onlyfans'];
@@ -34,6 +35,21 @@ export const POST = withRateLimit(
     const startTime = Date.now();
     
     try {
+      // Validate CSRF token (Requirements: 16.5)
+      const csrfValidation = await validateCsrfToken(req);
+      if (!csrfValidation.valid) {
+        console.warn('[CSRF] Integration connect blocked', {
+          error: csrfValidation.error,
+          errorCode: csrfValidation.errorCode,
+          provider: params.provider,
+        });
+        
+        return Response.json(
+          errorResponse('CSRF_ERROR', csrfValidation.error || 'CSRF validation failed'),
+          { status: 403 }
+        );
+      }
+      
       const provider = params.provider as Provider;
       
       // Validate provider
