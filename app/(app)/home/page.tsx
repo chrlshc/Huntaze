@@ -5,6 +5,9 @@ import { PlatformStatus } from './PlatformStatus';
 import { QuickActions } from './QuickActions';
 import './home.css';
 
+// Force dynamic rendering since this page fetches user-specific data
+export const dynamic = 'force-dynamic';
+
 interface HomeStats {
   messagesSent: number;
   messagesTrend: number;
