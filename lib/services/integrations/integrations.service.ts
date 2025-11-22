@@ -275,7 +275,7 @@ export class IntegrationsService {
         3,
         'Profile fetch',
         correlationId
-      ) as { providerAccountId: string; metadata?: Record<string, any> }
+      ) as { providerAccountId: string; metadata?: Record<string, any> };
       
       // Calculate expiry date
       const expiresAt = tokens.expiresIn
