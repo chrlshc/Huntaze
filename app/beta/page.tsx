@@ -15,6 +15,10 @@ import './beta.css';
  * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7
  */
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface BetaStat {
   label: string;
   value: string;
