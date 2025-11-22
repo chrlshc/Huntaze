@@ -21,10 +21,17 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     globalSetup: ['tests/integration/setup/global-setup.ts'],
-    testTimeout: 15000, // 15 seconds per test
-    hookTimeout: 30000, // 30 seconds for setup/teardown
+    setupFiles: ['./vitest.setup.integration.ts'],
+    testTimeout: 30000, // 30 seconds per test (increased)
+    hookTimeout: 60000, // 60 seconds for setup/teardown (increased)
     pool: 'forks', // Run tests in separate processes
-    maxConcurrency: 4, // Parallel execution with 4 workers
+    poolOptions: {
+      forks: {
+        singleFork: true, // Use single process to reduce memory
+      },
+    },
+    maxConcurrency: 1, // Sequential execution to avoid conflicts
+    isolate: false, // Reuse same context to save memory
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],

@@ -2,7 +2,7 @@ import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge
 
 import type { HuntazeModule } from '@/contexts/AppStateContext';
 
-const eventBridgeRegion = process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS_REGION || 'us-west-1';
+const eventBridgeRegion = process.env.AWS_REGION || process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1';
 
 const eventBridgeClient = new EventBridgeClient({
   region: eventBridgeRegion,

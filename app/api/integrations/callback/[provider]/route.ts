@@ -7,6 +7,7 @@
 
 import { NextRequest } from 'next/server';
 import { integrationsService } from '@/lib/services/integrations/integrations.service';
+import { cacheService } from '@/lib/services/cache.service';
 import type { Provider } from '@/lib/services/integrations/types';
 
 const VALID_PROVIDERS: Provider[] = ['instagram', 'tiktok', 'reddit', 'onlyfans'];
@@ -82,6 +83,22 @@ export async function GET(
       ipAddress,
       userAgent
     );
+
+    // Invalidate integration status cache (Requirements: 12.3)
+    try {
+      const cacheKey = `integrations:status:${result.userId}`;
+      cacheService.invalidate(cacheKey);
+      
+      console.log('[Cache Invalidation] Integration connected', {
+        provider,
+        userId: result.userId,
+        accountId: result.accountId,
+        cacheKey,
+      });
+    } catch (cacheError) {
+      // Log cache error but don't fail the request
+      console.warn('[Cache Invalidation Error]', cacheError);
+    }
 
     // Redirect to integrations page with success message
     return Response.redirect(

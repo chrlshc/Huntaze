@@ -1,142 +1,232 @@
 /**
- * API Response Types
+ * Standardized API Response Types
  * 
- * Standardized TypeScript types for API responses across the application
+ * Provides consistent response structure across all API endpoints.
+ * Includes success and error response wrappers with metadata.
+ * 
+ * Usage:
+ * ```typescript
+ * import { ApiSuccessResponse, ApiErrorResponse } from '@/lib/api/types/responses';
+ * 
+ * // Success response
+ * return NextResponse.json<ApiSuccessResponse<UserData>>(
+ *   createSuccessResponse(userData, { correlationId })
+ * );
+ * 
+ * // Error response
+ * return NextResponse.json<ApiErrorResponse>(
+ *   createErrorResponse('User not found', 'NOT_FOUND', { correlationId })
+ * );
+ * ```
  */
-
-import type { ErrorCode } from '../utils/errors';
 
 /**
- * Base API response structure
+ * Response metadata
  */
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: ApiErrorResponse;
-  correlationId: string;
+export interface ResponseMeta {
   timestamp: string;
+  requestId: string;
+  duration?: number;
+  version?: string;
 }
 
 /**
- * API error response structure
+ * Success response structure
+ */
+export interface ApiSuccessResponse<T = any> {
+  success: true;
+  data: T;
+  meta: ResponseMeta;
+}
+
+/**
+ * Error details
+ */
+export interface ErrorDetails {
+  code: string;
+  message: string;
+  retryable?: boolean;
+  severity?: string;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Error response structure
  */
 export interface ApiErrorResponse {
-  code: ErrorCode;
-  message: string;
-  details?: any;
-  correlationId: string;
-  timestamp: string;
+  success: false;
+  error: ErrorDetails;
+  meta: ResponseMeta;
 }
 
 /**
- * Paginated response structure
+ * Generic API response (union type)
  */
-export interface PaginatedResponse<T> {
-  success: true;
-  data: {
-    items: T[];
-    pagination: PaginationMeta;
-  };
-  correlationId: string;
-  timestamp: string;
-}
+export type ApiResponse<T = any> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 /**
  * Pagination metadata
  */
 export interface PaginationMeta {
   page: number;
-  perPage: number;
-  total: number;
+  pageSize: number;
   totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
+  totalItems: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 /**
- * Success response helper
+ * Paginated response structure
+ */
+export interface PaginatedResponse<T = any> {
+  success: true;
+  data: T[];
+  pagination: PaginationMeta;
+  meta: ResponseMeta;
+}
+
+/**
+ * Options for creating responses
+ */
+export interface ResponseOptions {
+  correlationId?: string;
+  startTime?: number;
+  version?: string;
+}
+
+/**
+ * Create success response
  */
 export function createSuccessResponse<T>(
   data: T,
-  correlationId?: string
-): ApiResponse<T> {
+  options: ResponseOptions = {}
+): ApiSuccessResponse<T> {
+  const { correlationId, startTime, version } = options;
+  const timestamp = new Date().toISOString();
+  const duration = startTime ? Date.now() - startTime : undefined;
+
   return {
     success: true,
     data,
-    correlationId: correlationId || crypto.randomUUID(),
-    timestamp: new Date().toISOString(),
+    meta: {
+      timestamp,
+      requestId: correlationId || generateRequestId(),
+      ...(duration !== undefined && { duration }),
+      ...(version && { version }),
+    },
   };
 }
 
 /**
- * Paginated response helper
+ * Create error response
+ */
+export function createErrorResponse(
+  message: string,
+  code: string,
+  options: ResponseOptions & {
+    retryable?: boolean;
+    severity?: string;
+    metadata?: Record<string, any>;
+  } = {}
+): ApiErrorResponse {
+  const { correlationId, startTime, version, retryable, severity, metadata } = options;
+  const timestamp = new Date().toISOString();
+  const duration = startTime ? Date.now() - startTime : undefined;
+
+  return {
+    success: false,
+    error: {
+      code,
+      message,
+      ...(retryable !== undefined && { retryable }),
+      ...(severity && { severity }),
+      ...(metadata && { metadata }),
+    },
+    meta: {
+      timestamp,
+      requestId: correlationId || generateRequestId(),
+      ...(duration !== undefined && { duration }),
+      ...(version && { version }),
+    },
+  };
+}
+
+/**
+ * Create paginated response
  */
 export function createPaginatedResponse<T>(
-  items: T[],
-  page: number,
-  perPage: number,
-  total: number,
-  correlationId?: string
+  data: T[],
+  pagination: PaginationMeta,
+  options: ResponseOptions = {}
 ): PaginatedResponse<T> {
-  const totalPages = Math.ceil(total / perPage);
-  
+  const { correlationId, startTime, version } = options;
+  const timestamp = new Date().toISOString();
+  const duration = startTime ? Date.now() - startTime : undefined;
+
   return {
     success: true,
-    data: {
-      items,
-      pagination: {
-        page,
-        perPage,
-        total,
-        totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1,
-      },
+    data,
+    pagination,
+    meta: {
+      timestamp,
+      requestId: correlationId || generateRequestId(),
+      ...(duration !== undefined && { duration }),
+      ...(version && { version }),
     },
-    correlationId: correlationId || crypto.randomUUID(),
-    timestamp: new Date().toISOString(),
   };
 }
 
 /**
- * Type guard for API response
+ * Generate unique request ID
  */
-export function isApiResponse(value: any): value is ApiResponse {
-  return (
-    value &&
-    typeof value === 'object' &&
-    'success' in value &&
-    'correlationId' in value &&
-    'timestamp' in value
-  );
+function generateRequestId(): string {
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
 /**
- * Type guard for paginated response
+ * Type guard for success response
  */
-export function isPaginatedResponse(value: any): value is PaginatedResponse<any> {
-  return (
-    isApiResponse(value) &&
-    value.success &&
-    value.data &&
-    'items' in value.data &&
-    'pagination' in value.data
-  );
+export function isSuccessResponse<T>(
+  response: ApiResponse<T>
+): response is ApiSuccessResponse<T> {
+  return response.success === true;
 }
 
 /**
- * Extract data from API response with type safety
+ * Type guard for error response
  */
-export function extractData<T>(response: ApiResponse<T>): T {
-  if (!response.success || !response.data) {
-    throw new Error(response.error?.message || 'API request failed');
+export function isErrorResponse(response: ApiResponse): response is ApiErrorResponse {
+  return response.success === false;
+}
+
+/**
+ * Extract data from response or throw error
+ */
+export function unwrapResponse<T>(response: ApiResponse<T>): T {
+  if (isSuccessResponse(response)) {
+    return response.data;
   }
-  return response.data;
+
+  throw new Error(response.error.message);
 }
 
 /**
- * Extract items from paginated response
+ * Calculate pagination metadata
  */
-export function extractItems<T>(response: PaginatedResponse<T>): T[] {
-  return response.data.items;
+export function calculatePagination(
+  page: number,
+  pageSize: number,
+  totalItems: number
+): PaginationMeta {
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  return {
+    page,
+    pageSize,
+    totalPages,
+    totalItems,
+    hasNextPage: page < totalPages,
+    hasPreviousPage: page > 1,
+  };
 }

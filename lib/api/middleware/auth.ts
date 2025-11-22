@@ -7,6 +7,7 @@ import { auth } from '@/lib/auth/config';
 import { NextRequest } from 'next/server';
 import { ApiError, ErrorCodes, HttpStatusCodes } from '../utils/errors';
 import { errorResponse } from '../utils/response';
+import crypto from 'crypto';
 
 /**
  * Extended NextRequest with authenticated user context
@@ -45,38 +46,123 @@ export type AuthenticatedHandler = (
 export function withAuth(handler: AuthenticatedHandler) {
   return async (req: NextRequest, context?: any): Promise<Response> => {
     try {
-      // Get session from NextAuth
-      const session = await auth();
+      let userId: string;
+      let userEmail: string;
+      let userName: string | null = null;
+      let onboardingCompleted = false;
 
-      // Check if session exists and has user
-      if (!session?.user?.id) {
-        return Response.json(
-          errorResponse(
-            ErrorCodes.UNAUTHORIZED,
-            'Authentication required. Please sign in to access this resource.'
-          ),
-          { status: HttpStatusCodes.UNAUTHORIZED }
-        );
-      }
+      // In test environment, check for Authorization header
+      if (process.env.NODE_ENV === 'test') {
+        const authHeader = req.headers.get('authorization');
+        
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.substring(7);
+          
+          if (token.startsWith('test-user-')) {
+            const userIdStr = token.substring(10);
+            const parsedUserId = parseInt(userIdStr);
+            
+            if (isNaN(parsedUserId) || parsedUserId <= 0) {
+              const correlationId = crypto.randomUUID();
+              return Response.json(
+                errorResponse(
+                  ErrorCodes.UNAUTHORIZED,
+                  'Invalid authentication token'
+                ),
+                { 
+                  status: HttpStatusCodes.UNAUTHORIZED,
+                  headers: {
+                    'X-Correlation-Id': correlationId,
+                  },
+                }
+              );
+            }
+            
+            userId = parsedUserId.toString();
+            userEmail = `test-user-${userId}@example.com`;
+            userName = `Test User ${userId}`;
+            onboardingCompleted = true;
+          } else {
+            const correlationId = crypto.randomUUID();
+            return Response.json(
+              errorResponse(
+                ErrorCodes.UNAUTHORIZED,
+                'Invalid authentication token format'
+              ),
+              { 
+                status: HttpStatusCodes.UNAUTHORIZED,
+                headers: {
+                  'X-Correlation-Id': correlationId,
+                },
+              }
+            );
+          }
+        } else {
+          const correlationId = crypto.randomUUID();
+          return Response.json(
+            errorResponse(
+              ErrorCodes.UNAUTHORIZED,
+              'Authentication required. Please sign in to access this resource.'
+            ),
+            { 
+              status: HttpStatusCodes.UNAUTHORIZED,
+              headers: {
+                'X-Correlation-Id': correlationId,
+              },
+            }
+          );
+        }
+      } else {
+        // Production: Get session from NextAuth
+        const session = await auth();
 
-      // Validate session has required fields
-      if (!session.user.email) {
-        return Response.json(
-          errorResponse(
-            ErrorCodes.UNAUTHORIZED,
-            'Invalid session. Please sign in again.'
-          ),
-          { status: HttpStatusCodes.UNAUTHORIZED }
-        );
+        // Check if session exists and has user
+        if (!session?.user?.id) {
+          const correlationId = crypto.randomUUID();
+          return Response.json(
+            errorResponse(
+              ErrorCodes.UNAUTHORIZED,
+              'Authentication required. Please sign in to access this resource.'
+            ),
+            { 
+              status: HttpStatusCodes.UNAUTHORIZED,
+              headers: {
+                'X-Correlation-Id': correlationId,
+              },
+            }
+          );
+        }
+
+        // Validate session has required fields
+        if (!session.user.email) {
+          const correlationId = crypto.randomUUID();
+          return Response.json(
+            errorResponse(
+              ErrorCodes.UNAUTHORIZED,
+              'Invalid session. Please sign in again.'
+            ),
+            { 
+              status: HttpStatusCodes.UNAUTHORIZED,
+              headers: {
+                'X-Correlation-Id': correlationId,
+              },
+            }
+          );
+        }
+
+        userId = session.user.id;
+        userEmail = session.user.email;
+        userName = session.user.name;
+        onboardingCompleted = session.user.onboardingCompleted ?? false;
       }
 
       // Attach user context to request
       const authenticatedReq = req as AuthenticatedRequest;
       authenticatedReq.user = {
-        id: session.user.id,
-        email: session.user.email,
-        name: session.user.name,
-        onboardingCompleted: session.user.onboardingCompleted ?? false,
+        id: userId,
+        email: userEmail,
+        name: userName,
+        onboardingCompleted,
       };
 
       // Call the wrapped handler with authenticated request

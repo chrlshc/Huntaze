@@ -85,7 +85,7 @@ export default function RepostPage() {
                   <div className="flex gap-3 items-start">
                     <div className="w-20 h-20 bg-gray-200 dark:bg-gray-800 rounded overflow-hidden flex items-center justify-center">
                       {s.asset.thumbUrl ? (
-                        <img src={s.asset.thumbUrl} className="object-cover w-full h-full" />
+                        <img src={s.asset.thumbUrl} alt={`${s.asset.type} thumbnail`} className="object-cover w-full h-full" />
                       ) : (
                         <span className="text-xs text-gray-500">{s.asset.type}</span>
                       )}
