@@ -3,14 +3,21 @@
  * 
  * Comprehensive endpoint to verify server and services status
  * 
+ * Protected with:
+ * - withRateLimit (public endpoint)
+ * 
+ * Requirements: 5.1
+ * 
  * Returns:
  * - 200: All systems operational
  * - 503: Service degraded or unavailable
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { withRateLimit } from '@/lib/middleware/rate-limit';
+import type { RouteHandler } from '@/lib/middleware/types';
 
-export async function GET() {
+const handler: RouteHandler = async (req: NextRequest) => {
   const correlationId = `health-${Date.now()}`;
 
   try {
@@ -88,3 +95,9 @@ function getDeploymentPlatform(): string {
   if (process.env.RENDER) return 'render';
   return 'local';
 }
+
+// Apply rate limiting middleware (public endpoint)
+export const GET = withRateLimit(handler, {
+  maxRequests: 100,
+  windowMs: 60000, // 100 requests per minute
+});

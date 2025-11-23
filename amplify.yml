@@ -1,21 +1,81 @@
 version: 1
+
+# Next.js 16 + AWS Amplify Compute Configuration
+# Uses Amplify Compute (ECS Fargate) instead of Lambda to avoid cold starts
+
 frontend:
   phases:
     preBuild:
       commands:
-        - npm ci --include=dev --legacy-peer-deps || npm install --include=dev --legacy-peer-deps
+        # Install dependencies with offline cache for faster builds
+        - npm ci --prefer-offline --no-audit
+        # Generate Prisma Client
+        - npx prisma generate
+        # Verify Node.js version (should be 20+)
+        - node --version
+    
     build:
       commands:
-        # Debug: Print environment variables (masked)
-        - echo "NEXTAUTH_SECRET is set:" $(if [ -n "$NEXTAUTH_SECRET" ]; then echo "YES"; else echo "NO"; fi)
-        - echo "NEXTAUTH_URL is set:" $(if [ -n "$NEXTAUTH_URL" ]; then echo "YES"; else echo "NO"; fi)
-        # Use webpack explicitly (NextAuth v5 compatibility handled via build script)
+        # Run database migrations (production)
+        - npx prisma migrate deploy
+        # Build Next.js 16 app with webpack
         - npm run build
+        # Verify build output
+        - ls -la .next
+        - echo "Build completed successfully"
+  
   artifacts:
     baseDirectory: .next
     files:
       - '**/*'
+  
   cache:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+      - .next/standalone/**/*
+
+# Backend Configuration (Optional - for custom Lambda functions)
+backend:
+  phases:
+    build:
+      commands:
+        - npm ci
+        - npx prisma generate
+
+# Compute Configuration (Amplify Compute - NO COLD STARTS)
+# This uses ECS Fargate instead of Lambda
+compute:
+  type: container
+  runtime: nodejs20
+  memory: 2048  # 2GB RAM
+  cpu: 1024     # 1 vCPU
+  
+  # VPC Configuration for ElastiCache access
+  vpc:
+    securityGroupIds:
+      - ${LAMBDA_SECURITY_GROUP_ID}
+    subnetIds:
+      - ${PRIVATE_SUBNET_1_ID}
+      - ${PRIVATE_SUBNET_2_ID}
+
+# Environment Variables (set in Amplify Console)
+# Required:
+# - DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
+# - REDIS_HOST=your-elasticache.cache.amazonaws.com
+# - REDIS_PORT=6379
+# - NEXTAUTH_URL=https://app.huntaze.com
+# - NEXTAUTH_SECRET=your-secret-here
+# - GEMINI_API_KEY=your-gemini-key
+# - AWS_REGION=us-east-1
+# - AWS_ACCESS_KEY_ID=your-key
+# - AWS_SECRET_ACCESS_KEY=your-secret
+# - S3_BUCKET_NAME=huntaze-assets
+# - SES_FROM_EMAIL=noreply@huntaze.com
+# - NODE_ENV=production
+# - NODE_VERSION=20
+# 
+# VPC (for compute):
+# - LAMBDA_SECURITY_GROUP_ID=sg-xxxxxxxxx
+# - PRIVATE_SUBNET_1_ID=subnet-xxxxxxxx
+# - PRIVATE_SUBNET_2_ID=subnet-yyyyyyyy

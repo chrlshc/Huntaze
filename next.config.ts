@@ -13,11 +13,48 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
   
+  // Output for Amplify Compute (ECS Fargate) - Requirement 6.1
+  output: 'standalone',
+  
   // Note: swcMinify removed - it's now the default in Next.js 16
 
-  // Let Amplify set edge/static headers; avoid duplication here
+  // Security headers - Requirements 7.1, 7.2, 7.3, 7.4, 7.5
   async headers() {
-    return [];
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
+          },
+        ],
+      },
+    ];
   },
 
   // Redirects and rewrites
@@ -52,10 +89,8 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Turbopack configuration (Next.js 16+)
-  turbopack: {},
-
-  // Force Node.js runtime for all API routes (fixes NextAuth compatibility)
+  // Turbopack is enabled by default in Next.js 16 for development - Requirement 6.2, 6.3
+  // Webpack is used for production builds - Requirement 6.4
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',

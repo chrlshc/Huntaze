@@ -1,207 +1,255 @@
 /**
- * Rate Limiting Middleware for Onboarding APIs
+ * Rate Limiting Middleware for Next.js 16.0.3 App Router
  * 
- * Uses Redis-based sliding window algorithm for accurate rate limiting
+ * Uses Redis-based rate limiting with fail-open error handling.
+ * Extracts client IP from CloudFront x-forwarded-for header.
+ * 
+ * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6
+ * 
+ * @module lib/middleware/rate-limit
  */
 
-import { createRedisClient } from '@/lib/smart-onboarding/config/redis';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { Redis } from 'ioredis';
+import type { RouteHandler } from './types';
 
-export interface RateLimitConfig {
-  windowMs: number; // Time window in milliseconds
-  max: number; // Maximum requests in window
-  keyPrefix?: string; // Redis key prefix
-  skipSuccessfulRequests?: boolean;
-  skipFailedRequests?: boolean;
-}
+/**
+ * Redis client instance
+ * Lazy-initialized to avoid connection issues during module load
+ */
+let redisClient: Redis | null = null;
 
-export interface RateLimitResult {
-  allowed: boolean;
-  limit: number;
-  remaining: number;
-  resetTime: Date;
-  retryAfter?: number; // Seconds until reset
+/**
+ * Get or create Redis client
+ */
+function getRedisClient(): Redis {
+  if (!redisClient) {
+    redisClient = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      retryStrategy: (times: number) => {
+        // Stop retrying after 3 attempts
+        if (times > 3) {
+          return null;
+        }
+        return Math.min(times * 100, 3000);
+      },
+      maxRetriesPerRequest: 3,
+      enableReadyCheck: true,
+      lazyConnect: true,
+    });
+  }
+  return redisClient;
 }
 
 /**
- * Rate limit configurations for different endpoints
+ * Rate limit configuration options
  */
-export const RATE_LIMITS: Record<string, RateLimitConfig> = {
+export interface RateLimitOptions {
+  /**
+   * Maximum number of requests allowed in the time window
+   */
+  maxRequests: number;
+  
+  /**
+   * Time window in milliseconds
+   */
+  windowMs: number;
+  
+  /**
+   * Optional key prefix for Redis keys
+   * @default 'rate-limit'
+   */
+  keyPrefix?: string;
+}
+
+/**
+ * Extract client IP from request headers
+ * 
+ * Follows CloudFront x-forwarded-for format where the first IP
+ * in the comma-separated list is the original client IP.
+ * 
+ * Requirements: 5.1, 5.2
+ * 
+ * @param req - Next.js request object
+ * @returns Client IP address
+ */
+export function extractClientIp(req: NextRequest): string {
+  // Get x-forwarded-for header from CloudFront
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  
+  if (forwardedFor) {
+    // First IP in comma-separated list is the original client IP
+    const ips = forwardedFor.split(',');
+    const clientIp = ips[0].trim();
+    return clientIp;
+  }
+  
+  // Fallback to x-real-ip
+  const realIp = req.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp;
+  }
+  
+  // Last resort fallback
+  return 'unknown';
+}
+
+/**
+ * Rate limiting middleware wrapper
+ * 
+ * Implements Redis-based rate limiting with the following features:
+ * - IP extraction from x-forwarded-for header (CloudFront)
+ * - Fail-open error handling (allows requests if Redis is down)
+ * - Rate limit headers in responses
+ * - Per-route rate limiting
+ * 
+ * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6
+ * 
+ * @param handler - Route handler to wrap
+ * @param options - Rate limit configuration
+ * @returns Wrapped route handler with rate limiting
+ * 
+ * @example
+ * ```typescript
+ * export const POST = withRateLimit(
+ *   async (req) => {
+ *     return NextResponse.json({ success: true });
+ *   },
+ *   { maxRequests: 10, windowMs: 60000 }
+ * );
+ * ```
+ */
+export function withRateLimit(
+  handler: RouteHandler,
+  options: RateLimitOptions
+): RouteHandler {
+  return async (req: NextRequest): Promise<NextResponse> => {
+    // Extract client IP from CloudFront headers
+    const ip = extractClientIp(req);
+    
+    // Build Redis key
+    const keyPrefix = options.keyPrefix || 'rate-limit';
+    const key = `${keyPrefix}:${ip}:${req.nextUrl.pathname}`;
+    
+    try {
+      const redis = getRedisClient();
+      
+      // Ensure Redis is connected
+      if (redis.status !== 'ready' && redis.status !== 'connect') {
+        await redis.connect();
+      }
+      
+      // Increment counter
+      const count = await redis.incr(key);
+      
+      // Set expiry on first request
+      if (count === 1) {
+        await redis.expire(key, Math.floor(options.windowMs / 1000));
+      }
+      
+      // Check if limit exceeded
+      if (count > options.maxRequests) {
+        // Get TTL for retry-after header
+        const ttl = await redis.ttl(key);
+        
+        return NextResponse.json(
+          {
+            error: 'Too many requests',
+            message: 'Rate limit exceeded. Please try again later.',
+            retryAfter: ttl > 0 ? ttl : Math.floor(options.windowMs / 1000),
+          },
+          {
+            status: 429,
+            headers: {
+              'Retry-After': ttl > 0 ? ttl.toString() : Math.floor(options.windowMs / 1000).toString(),
+              'X-RateLimit-Limit': options.maxRequests.toString(),
+              'X-RateLimit-Remaining': '0',
+              'X-RateLimit-Reset': new Date(Date.now() + (ttl > 0 ? ttl * 1000 : options.windowMs)).toISOString(),
+            },
+          }
+        );
+      }
+      
+      // Call handler
+      const response = await handler(req);
+      
+      // Add rate limit headers to successful response
+      response.headers.set('X-RateLimit-Limit', options.maxRequests.toString());
+      response.headers.set('X-RateLimit-Remaining', Math.max(0, options.maxRequests - count).toString());
+      
+      // Get TTL for reset time
+      const ttl = await redis.ttl(key);
+      if (ttl > 0) {
+        response.headers.set('X-RateLimit-Reset', new Date(Date.now() + ttl * 1000).toISOString());
+      }
+      
+      return response;
+      
+    } catch (error) {
+      // Fail open - allow request if Redis is down
+      // Requirement 5.6: Fail-open error handling
+      console.error('[Rate Limit] Error checking rate limit:', error);
+      console.warn('[Rate Limit] Failing open - allowing request due to Redis error');
+      
+      // Call handler without rate limiting
+      return handler(req);
+    }
+  };
+}
+
+/**
+ * Legacy rate limit configurations for backward compatibility
+ */
+export const RATE_LIMITS: Record<string, RateLimitOptions> = {
   'PATCH /api/onboarding/steps/:id': {
     windowMs: 60 * 1000, // 1 minute
-    max: 20,
+    maxRequests: 20,
     keyPrefix: 'rl:onboarding:patch',
   },
   'POST /api/onboarding/snooze': {
     windowMs: 24 * 60 * 60 * 1000, // 1 day
-    max: 3,
+    maxRequests: 3,
     keyPrefix: 'rl:onboarding:snooze',
   },
   'GET /api/onboarding': {
     windowMs: 60 * 1000, // 1 minute
-    max: 60,
+    maxRequests: 60,
     keyPrefix: 'rl:onboarding:get',
   },
 };
 
 /**
- * Check rate limit for a key
- */
-export async function checkRateLimit(
-  key: string,
-  config: RateLimitConfig
-): Promise<RateLimitResult> {
-  const redis = createRedisClient();
-  const now = Date.now();
-  const windowStart = now - config.windowMs;
-  
-  const redisKey = `${config.keyPrefix || 'rl'}:${key}`;
-  
-  try {
-    // Use sorted set to track requests in time window
-    // Remove old requests outside the window
-    await redis.zremrangebyscore(redisKey, 0, windowStart);
-    
-    // Count requests in current window
-    const count = await redis.zcard(redisKey);
-    
-    if (count >= config.max) {
-      // Rate limit exceeded
-      const oldestRequest = await redis.zrange(redisKey, 0, 0, 'WITHSCORES');
-      const resetTime = oldestRequest.length > 0
-        ? new Date(parseInt(oldestRequest[1]) + config.windowMs)
-        : new Date(now + config.windowMs);
-      
-      const retryAfter = Math.ceil((resetTime.getTime() - now) / 1000);
-      
-      return {
-        allowed: false,
-        limit: config.max,
-        remaining: 0,
-        resetTime,
-        retryAfter,
-      };
-    }
-    
-    // Add current request
-    await redis.zadd(redisKey, now, `${now}-${Math.random()}`);
-    
-    // Set expiry on key
-    await redis.expire(redisKey, Math.ceil(config.windowMs / 1000));
-    
-    return {
-      allowed: true,
-      limit: config.max,
-      remaining: config.max - count - 1,
-      resetTime: new Date(now + config.windowMs),
-    };
-  } catch (error) {
-    console.error('[Rate Limit] Error checking rate limit:', error);
-    // Fail open - allow request if Redis is down
-    return {
-      allowed: true,
-      limit: config.max,
-      remaining: config.max,
-      resetTime: new Date(now + config.windowMs),
-    };
-  }
-}
-
-/**
- * Get rate limit key from request
- * Uses user ID if authenticated, otherwise IP address
- */
-export function getRateLimitKey(
-  userId?: string,
-  ip?: string
-): string {
-  if (userId) {
-    return `user:${userId}`;
-  }
-  if (ip) {
-    return `ip:${ip}`;
-  }
-  return 'anonymous';
-}
-
-/**
- * Rate limit middleware for Next.js API routes
- */
-export async function rateLimitMiddleware(
-  req: Request,
-  userId?: string,
-  endpoint?: string
-): Promise<NextResponse | null> {
-  if (!endpoint) {
-    return null; // No rate limiting if endpoint not specified
-  }
-  
-  const config = RATE_LIMITS[endpoint];
-  if (!config) {
-    return null; // No rate limiting configured for this endpoint
-  }
-  
-  // Get IP from headers
-  const forwarded = req.headers.get('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
-  
-  const key = getRateLimitKey(userId, ip);
-  const result = await checkRateLimit(key, config);
-  
-  if (!result.allowed) {
-    console.warn('[Rate Limit] Limit exceeded', {
-      key,
-      endpoint,
-      limit: result.limit,
-      retryAfter: result.retryAfter,
-    });
-    
-    return NextResponse.json(
-      {
-        error: 'TOO_MANY_REQUESTS',
-        message: 'Trop de requêtes. Réessayez plus tard.',
-        limit: result.limit,
-        remaining: result.remaining,
-        resetTime: result.resetTime.toISOString(),
-        retryAfter: result.retryAfter,
-      },
-      {
-        status: 429,
-        headers: {
-          'X-RateLimit-Limit': result.limit.toString(),
-          'X-RateLimit-Remaining': result.remaining.toString(),
-          'X-RateLimit-Reset': result.resetTime.toISOString(),
-          'Retry-After': result.retryAfter?.toString() || '60',
-        },
-      }
-    );
-  }
-  
-  // Add rate limit headers to response (will be added by caller)
-  return null;
-}
-
-/**
- * Add rate limit headers to response
- */
-export function addRateLimitHeaders(
-  response: NextResponse,
-  result: RateLimitResult
-): NextResponse {
-  response.headers.set('X-RateLimit-Limit', result.limit.toString());
-  response.headers.set('X-RateLimit-Remaining', result.remaining.toString());
-  response.headers.set('X-RateLimit-Reset', result.resetTime.toISOString());
-  return response;
-}
-
-/**
  * Reset rate limit for a key (useful for testing)
+ * 
+ * @param ip - Client IP address
+ * @param pathname - Request pathname
+ * @param keyPrefix - Optional key prefix
  */
 export async function resetRateLimit(
-  key: string,
-  config: RateLimitConfig
+  ip: string,
+  pathname: string,
+  keyPrefix: string = 'rate-limit'
 ): Promise<void> {
-  const redis = createRedisClient();
-  const redisKey = `${config.keyPrefix || 'rl'}:${key}`;
-  await redis.del(redisKey);
+  try {
+    const redis = getRedisClient();
+    if (redis.status !== 'ready' && redis.status !== 'connect') {
+      await redis.connect();
+    }
+    const key = `${keyPrefix}:${ip}:${pathname}`;
+    await redis.del(key);
+  } catch (error) {
+    console.error('[Rate Limit] Error resetting rate limit:', error);
+  }
+}
+
+/**
+ * Close Redis connection (useful for testing cleanup)
+ */
+export async function closeRedisConnection(): Promise<void> {
+  if (redisClient) {
+    await redisClient.quit();
+    redisClient = null;
+  }
 }

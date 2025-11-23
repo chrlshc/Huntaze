@@ -1,5 +1,6 @@
-import { withAuth } from '@/lib/api/middleware/auth';
-import { withRateLimit } from '@/lib/api/middleware/rate-limit';
+import { withAuth } from '@/lib/middleware/auth';
+import { withRateLimit } from '@/lib/middleware/rate-limit';
+import type { RouteHandler } from '@/lib/middleware/types';
 import { analyticsService } from '@/lib/api/services/analytics.service';
 import { successResponse, errorResponse } from '@/lib/api/utils/response';
 import { getCached } from '@/lib/api/utils/cache';
@@ -133,14 +134,24 @@ async function retryWithBackoff<T>(
  * 
  * @see docs/api/analytics-overview.md
  */
-export const GET = withRateLimit(withAuth(async (req) => {
+const analyticsOverviewHandler: RouteHandler = async (req) => {
   const startTime = Date.now();
   const correlationId = crypto.randomUUID();
   let isCached = false;
 
   try {
+    // Access user from authenticated request
+    const user = (req as any).user;
+    if (!user || !user.id) {
+      throw new ApiError(
+        ErrorCodes.UNAUTHORIZED,
+        'User not authenticated',
+        HttpStatusCodes.UNAUTHORIZED
+      );
+    }
+
     // Validate user ID
-    const userId = parseInt(req.user.id);
+    const userId = parseInt(user.id);
     if (isNaN(userId)) {
       logger.warn('Invalid user ID in analytics overview request', {
         correlationId,
@@ -158,7 +169,7 @@ export const GET = withRateLimit(withAuth(async (req) => {
     logger.info('Analytics overview request started', {
       correlationId,
       userId,
-      email: req.user.email,
+      email: user.email,
     });
 
     const cacheKey = `analytics:overview:${userId}`;
@@ -274,4 +285,17 @@ export const GET = withRateLimit(withAuth(async (req) => {
       },
     });
   }
-}));
+};
+
+/**
+ * Export GET handler with middleware composition
+ * Applies rate limiting (60 req/min) and authentication
+ * Requirements: 1.5, 2.3
+ */
+export const GET = withRateLimit(
+  withAuth(analyticsOverviewHandler),
+  {
+    maxRequests: 60,
+    windowMs: 60 * 1000, // 1 minute
+  }
+);
