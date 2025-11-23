@@ -1,4 +1,11 @@
-import "dotenv/config";
+// Try to load dotenv if available (dev environment)
+// In production (Amplify), env vars are already set via SSM
+try {
+  require("dotenv/config");
+} catch (e) {
+  // dotenv not available in production, that's fine
+}
+
 import { defineConfig, env } from "prisma/config";
 
 export default defineConfig({
