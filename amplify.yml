@@ -7,6 +7,8 @@ frontend:
   phases:
     preBuild:
       commands:
+        # Clear node_modules to avoid cache issues
+        - rm -rf node_modules
         # Install dependencies (using npm install since package-lock.json was removed)
         # Using --legacy-peer-deps to handle @react-three/drei peer dependency conflict
         - npm install --no-audit --legacy-peer-deps
