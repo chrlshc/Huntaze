@@ -10,15 +10,15 @@ frontend:
         # Install dependencies with offline cache for faster builds
         # Using --legacy-peer-deps to handle @react-three/drei peer dependency conflict
         - npm ci --prefer-offline --no-audit --legacy-peer-deps
-        # Generate Prisma Client
-        - npx prisma generate
+        # Generate Prisma Client (use local version 6.19.0, not npx which installs 7.0.0)
+        - ./node_modules/.bin/prisma generate
         # Verify Node.js version (should be 20+)
         - node --version
     
     build:
       commands:
-        # Run database migrations (production)
-        - npx prisma migrate deploy
+        # Run database migrations (production) - use local Prisma version
+        - ./node_modules/.bin/prisma migrate deploy
         # Build Next.js 16 app with webpack
         - npm run build
         # Verify build output
@@ -42,7 +42,7 @@ backend:
     build:
       commands:
         - npm ci --legacy-peer-deps
-        - npx prisma generate
+        - ./node_modules/.bin/prisma generate
 
 # Compute Configuration (Amplify Compute - NO COLD STARTS)
 # This uses ECS Fargate instead of Lambda
