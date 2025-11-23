@@ -8,7 +8,8 @@ frontend:
     preBuild:
       commands:
         # Install dependencies with offline cache for faster builds
-        - npm ci --prefer-offline --no-audit
+        # Using --legacy-peer-deps to handle @react-three/drei peer dependency conflict
+        - npm ci --prefer-offline --no-audit --legacy-peer-deps
         # Generate Prisma Client
         - npx prisma generate
         # Verify Node.js version (should be 20+)
@@ -40,7 +41,7 @@ backend:
   phases:
     build:
       commands:
-        - npm ci
+        - npm ci --legacy-peer-deps
         - npx prisma generate
 
 # Compute Configuration (Amplify Compute - NO COLD STARTS)
