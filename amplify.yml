@@ -7,10 +7,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        # Install dependencies with offline cache for faster builds
+        # Install dependencies (using npm install since package-lock.json was removed)
         # Using --legacy-peer-deps to handle @react-three/drei peer dependency conflict
-        # Remove --prefer-offline to force fresh install (cache issue with Tailwind CSS)
-        - npm ci --no-audit --legacy-peer-deps
+        - npm install --no-audit --legacy-peer-deps
         # Generate Prisma Client (force version 6.19.0 to match package.json)
         - npx prisma@6.19.0 generate
         # Verify Node.js version (should be 20+)
@@ -43,7 +42,7 @@ backend:
   phases:
     build:
       commands:
-        - npm ci --legacy-peer-deps
+        - npm install --legacy-peer-deps
         - npx prisma@6.19.0 generate
 
 # Compute Configuration (Amplify Compute - NO COLD STARTS)
