@@ -1,372 +1,373 @@
 # API Integration Tests
 
-## Overview
+## Quick Start
 
-Comprehensive integration tests for all Huntaze API endpoints with real HTTP requests, database interactions, and session-based authentication.
+### Run All API Integration Tests
+
+```bash
+npm run test:integration:api
+```
+
+### Run CSRF Token Tests Only
+
+```bash
+npm run test:integration:csrf
+```
+
+### Run with Coverage
+
+```bash
+npm run test:integration:api:coverage
+```
+
+### Run in Watch Mode
+
+```bash
+npm run test:integration:api:watch
+```
+
+## Prerequisites
+
+### 1. Start the Development Server
+
+```bash
+npm run dev
+```
+
+The server should be running on `http://localhost:3000`.
+
+### 2. Set Environment Variables
+
+Create a `.env.test` file:
+
+```bash
+# Test API URL
+TEST_API_URL=http://localhost:3000
+
+# Node environment
+NODE_ENV=test
+
+# Redis (optional, for rate limiting tests)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# Database (optional, for database tests)
+DATABASE_URL=postgresql://user:password@localhost:5432/huntaze_test
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
 
 ## Test Structure
 
 ```
 tests/integration/api/
-├── README.md                           # This file
-├── fixtures/                           # Test data fixtures
-│   ├── content-fixtures.ts            # Content API fixtures
-│   └── auth-fixtures.ts               # Auth API fixtures
-├── helpers/                            # Test utilities
-│   ├── api-client.ts                  # HTTP client wrapper
-│   └── test-setup.ts                  # Setup/teardown helpers
-├── auth-register.integration.test.ts  # Registration tests
-├── auth-onboarding-flow.test.ts       # Auth + onboarding flow
-├── onboarding-complete.integration.test.ts # Onboarding completion
-├── content.integration.test.ts        # Content CRUD tests
-└── content-api-tests.md               # Content API documentation
+├── csrf-token.integration.test.ts          # Core integration tests
+├── csrf-token-scenarios.integration.test.ts # Scenario-based tests
+├── fixtures/
+│   └── csrf-token.fixtures.ts              # Test data and helpers
+├── setup.ts                                 # Test setup
+├── global-setup.ts                          # Global setup
+├── global-teardown.ts                       # Global teardown
+├── API_TESTS.md                            # Detailed documentation
+└── README.md                               # This file
 ```
 
-## Running Tests
+## Writing Tests
 
-### All Integration Tests
-```bash
-npm run test:integration
-```
-
-### Specific Test File
-```bash
-npm run test:integration -- content.integration.test.ts
-```
-
-### With Coverage
-```bash
-npm run test:integration -- --coverage
-```
-
-### Watch Mode
-```bash
-npm run test:integration -- --watch
-```
-
-### Verbose Output
-```bash
-npm run test:integration -- --reporter=verbose
-```
-
-## Environment Setup
-
-### Required Environment Variables
-
-```bash
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/huntaze_test
-
-# Authentication
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=test-secret-key-min-32-chars
-
-# API
-TEST_API_URL=http://localhost:3000
-```
-
-### Test Database Setup
-
-```bash
-# Create test database
-createdb huntaze_test
-
-# Run migrations
-npm run db:migrate
-
-# Seed test data (optional)
-npm run db:seed:test
-```
-
-## Test Patterns
-
-### 1. HTTP Status Code Testing
+### Basic Test Structure
 
 ```typescript
-describe('HTTP Status Codes', () => {
-  it('should return 200 OK on success', async () => {
-    const response = await fetch(`${baseUrl}/api/endpoint`);
+import { describe, it, expect } from 'vitest';
+
+describe('My API Endpoint', () => {
+  const baseUrl = process.env.TEST_API_URL || 'http://localhost:3000';
+
+  it('should return 200 OK', async () => {
+    const response = await fetch(`${baseUrl}/api/my-endpoint`);
+    
     expect(response.status).toBe(200);
-  });
-
-  it('should return 401 Unauthorized without auth', async () => {
-    const response = await fetch(`${baseUrl}/api/endpoint`);
-    expect(response.status).toBe(401);
-  });
-
-  it('should return 400 Bad Request for invalid data', async () => {
-    const response = await fetch(`${baseUrl}/api/endpoint`, {
-      method: 'POST',
-      body: JSON.stringify({ invalid: 'data' }),
-    });
-    expect(response.status).toBe(400);
+    
+    const body = await response.json();
+    expect(body).toHaveProperty('data');
   });
 });
 ```
 
-### 2. Response Schema Validation
+### Using Fixtures
+
+```typescript
+import {
+  TEST_USER_AGENTS,
+  makeConcurrentRequests,
+  measureRequestDuration,
+} from './fixtures/csrf-token.fixtures';
+
+it('should handle concurrent requests', async () => {
+  const responses = await makeConcurrentRequests(
+    `${baseUrl}/api/csrf/token`,
+    10
+  );
+  
+  expect(responses.every(r => r.status === 200)).toBe(true);
+});
+```
+
+### Schema Validation with Zod
 
 ```typescript
 import { z } from 'zod';
 
 const ResponseSchema = z.object({
-  success: z.boolean(),
-  data: z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
+  token: z.string().length(64),
 });
 
 it('should return valid response schema', async () => {
-  const response = await fetch(`${baseUrl}/api/endpoint`);
-  const data = await response.json();
+  const response = await fetch(`${baseUrl}/api/csrf/token`);
+  const body = await response.json();
   
-  expect(ResponseSchema.parse(data)).toBeDefined();
+  const validation = ResponseSchema.safeParse(body);
+  expect(validation.success).toBe(true);
 });
 ```
 
-### 3. Authentication Testing
+## Test Categories
+
+### 1. Success Cases
+
+Test successful API responses:
 
 ```typescript
-describe('Authentication', () => {
-  let sessionCookie: string;
-
-  beforeAll(async () => {
-    // Login to get session
-    const response = await fetch(`${baseUrl}/api/auth/signin`, {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    
-    sessionCookie = response.headers.get('set-cookie');
-  });
-
-  it('should require authentication', async () => {
-    const response = await fetch(`${baseUrl}/api/endpoint`, {
-      headers: { Cookie: sessionCookie },
-    });
-    
-    expect(response.status).toBe(200);
-  });
+it('should return 200 with valid data', async () => {
+  const response = await fetch(`${baseUrl}/api/endpoint`);
+  expect(response.status).toBe(200);
 });
 ```
 
-### 4. Database Integration Testing
+### 2. Error Cases
+
+Test error handling:
 
 ```typescript
-import { query } from '@/lib/db';
-
-it('should create record in database', async () => {
+it('should return 400 for invalid input', async () => {
   const response = await fetch(`${baseUrl}/api/endpoint`, {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify({ invalid: 'data' }),
   });
-
-  const { id } = await response.json();
-
-  // Verify in database
-  const result = await query('SELECT * FROM table WHERE id = $1', [id]);
-  expect(result.rows.length).toBe(1);
+  expect(response.status).toBe(400);
 });
 ```
 
-### 5. Concurrent Access Testing
+### 3. Authentication
+
+Test authentication requirements:
 
 ```typescript
-it('should handle concurrent requests', async () => {
-  const requests = Array.from({ length: 10 }, () =>
-    fetch(`${baseUrl}/api/endpoint`, { method: 'POST' })
-  );
+it('should return 401 without auth', async () => {
+  const response = await fetch(`${baseUrl}/api/protected`);
+  expect(response.status).toBe(401);
+});
+```
 
-  const responses = await Promise.all(requests);
+### 4. Rate Limiting
+
+Test rate limiting behavior:
+
+```typescript
+it('should rate limit excessive requests', async () => {
+  const responses = await makeConcurrentRequests(url, 200);
+  const rateLimited = responses.filter(r => r.status === 429);
+  expect(rateLimited.length).toBeGreaterThan(0);
+});
+```
+
+### 5. Performance
+
+Test response times:
+
+```typescript
+it('should respond within 100ms', async () => {
+  const { response, duration } = await measureRequestDuration(url);
+  expect(response.status).toBe(200);
+  expect(duration).toBeLessThan(100);
+});
+```
+
+### 6. Concurrent Access
+
+Test concurrent request handling:
+
+```typescript
+it('should handle 50 concurrent requests', async () => {
+  const responses = await makeConcurrentRequests(url, 50);
   const successCount = responses.filter(r => r.status === 200).length;
-
-  expect(successCount).toBe(10);
+  expect(successCount).toBeGreaterThanOrEqual(45);
 });
 ```
-
-### 6. Rate Limiting Testing
-
-```typescript
-it('should enforce rate limits', async () => {
-  const requests = [];
-
-  // Exceed rate limit
-  for (let i = 0; i < 100; i++) {
-    requests.push(fetch(`${baseUrl}/api/endpoint`));
-  }
-
-  const responses = await Promise.all(requests);
-  const rateLimited = responses.some(r => r.status === 429);
-
-  expect(rateLimited).toBe(true);
-});
-```
-
-## Test Coverage Goals
-
-### Minimum Coverage
-- **Lines**: 80%
-- **Branches**: 75%
-- **Functions**: 80%
-- **Statements**: 80%
-
-### Critical Paths
-- Authentication flows: 100%
-- Authorization checks: 100%
-- Data validation: 90%
-- Error handling: 85%
 
 ## Best Practices
 
-### 1. Test Isolation
+### 1. Use Descriptive Test Names
 
 ```typescript
-describe('Test Suite', () => {
-  const testData: string[] = [];
+// ❌ Bad
+it('test 1', async () => { ... });
 
-  afterEach(async () => {
-    // Cleanup after each test
-    for (const id of testData) {
-      await query('DELETE FROM table WHERE id = $1', [id]);
-    }
-    testData.length = 0;
+// ✅ Good
+it('should return 200 with valid CSRF token', async () => { ... });
+```
+
+### 2. Test One Thing Per Test
+
+```typescript
+// ❌ Bad
+it('should work', async () => {
+  // Tests multiple things
+  expect(response.status).toBe(200);
+  expect(response.headers.get('content-type')).toBe('application/json');
+  expect(body.token).toBeTruthy();
+  expect(cookie).toBeTruthy();
+});
+
+// ✅ Good
+it('should return 200 status code', async () => {
+  expect(response.status).toBe(200);
+});
+
+it('should return JSON content-type', async () => {
+  expect(response.headers.get('content-type')).toContain('application/json');
+});
+```
+
+### 3. Use Fixtures for Test Data
+
+```typescript
+// ❌ Bad
+const token = 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456';
+
+// ✅ Good
+import { VALID_CSRF_TOKENS } from './fixtures/csrf-token.fixtures';
+const token = VALID_CSRF_TOKENS[0];
+```
+
+### 4. Clean Up After Tests
+
+```typescript
+afterEach(async () => {
+  // Clean up test data
+  await cleanupTestData();
+});
+```
+
+### 5. Handle Async Properly
+
+```typescript
+// ❌ Bad
+it('should work', () => {
+  fetch(url).then(response => {
+    expect(response.status).toBe(200);
   });
 });
-```
 
-### 2. Use Fixtures
-
-```typescript
-import { validContentData } from './fixtures/content-fixtures';
-
-it('should create content', async () => {
-  const response = await fetch(`${baseUrl}/api/content`, {
-    method: 'POST',
-    body: JSON.stringify(validContentData.minimal),
-  });
-
-  expect(response.status).toBe(201);
+// ✅ Good
+it('should work', async () => {
+  const response = await fetch(url);
+  expect(response.status).toBe(200);
 });
 ```
 
-### 3. Test Real Scenarios
+## Debugging Tests
 
-```typescript
-it('should complete full user journey', async () => {
-  // 1. Register
-  const registerResponse = await register(userData);
-  
-  // 2. Login
-  const loginResponse = await login(credentials);
-  
-  // 3. Complete onboarding
-  const onboardingResponse = await completeOnboarding(answers);
-  
-  // 4. Create content
-  const contentResponse = await createContent(contentData);
-  
-  // All steps should succeed
-  expect(registerResponse.status).toBe(201);
-  expect(loginResponse.status).toBe(200);
-  expect(onboardingResponse.status).toBe(200);
-  expect(contentResponse.status).toBe(201);
-});
-```
+### Run Single Test File
 
-### 4. Performance Testing
-
-```typescript
-it('should complete within time limit', async () => {
-  const startTime = Date.now();
-  
-  await fetch(`${baseUrl}/api/endpoint`);
-  
-  const duration = Date.now() - startTime;
-  expect(duration).toBeLessThan(1000); // < 1 second
-});
-```
-
-### 5. Error Scenarios
-
-```typescript
-describe('Error Handling', () => {
-  it('should handle network errors', async () => {
-    // Mock network failure
-    const response = await fetch('http://invalid-url');
-    expect(response).toBeUndefined();
-  });
-
-  it('should handle database errors', async () => {
-    // Mock database failure
-    const response = await fetch(`${baseUrl}/api/endpoint`);
-    expect(response.status).toBe(500);
-  });
-});
-```
-
-## Common Issues
-
-### Database Connection Errors
-
-**Problem**: Tests fail with "connection refused"
-
-**Solution**:
 ```bash
-# Check database is running
-pg_isready
-
-# Verify DATABASE_URL
-echo $DATABASE_URL
-
-# Test connection
-psql $DATABASE_URL -c "SELECT 1"
+npm run test:integration:api -- csrf-token.integration.test.ts
 ```
 
-### Session Authentication Failures
+### Run Single Test
 
-**Problem**: Tests fail with 401 Unauthorized
+```bash
+npm run test:integration:api -- -t "should return 200"
+```
 
-**Solution**:
+### Enable Verbose Logging
+
+```bash
+DEBUG=* npm run test:integration:api
+```
+
+### Run with Node Inspector
+
+```bash
+node --inspect-brk node_modules/.bin/vitest run --config vitest.config.integration.api.ts
+```
+
+## Troubleshooting
+
+### Server Not Running
+
+**Error**: `ECONNREFUSED`
+
+**Solution**: Start the development server:
+
+```bash
+npm run dev
+```
+
+### Port Already in Use
+
+**Error**: `EADDRINUSE`
+
+**Solution**: Kill the process using the port:
+
+```bash
+lsof -ti:3000 | xargs kill -9
+```
+
+### Tests Timing Out
+
+**Error**: `Test timed out`
+
+**Solution**: Increase timeout in test:
+
 ```typescript
-// Ensure session cookie is set
-const response = await fetch(url, {
-  headers: {
-    Cookie: sessionCookie,
-  },
-  credentials: 'include', // Important!
-});
+it('slow test', async () => {
+  // ...
+}, 60000); // 60 second timeout
 ```
 
-### Flaky Tests
+### Redis Connection Failed
 
-**Problem**: Tests pass/fail randomly
+**Error**: `Redis connection refused`
 
-**Solution**:
-- Add proper cleanup in `afterEach`
-- Use unique test data (timestamps, UUIDs)
-- Increase timeouts for slow operations
-- Avoid shared state between tests
+**Solution**: Start Redis:
 
-### Rate Limit Failures
-
-**Problem**: Tests fail due to rate limiting
-
-**Solution**:
-```typescript
-// Add delays between requests
-await new Promise(resolve => setTimeout(resolve, 100));
-
-// Or use separate test users
-const testUser = `test-${Date.now()}@example.com`;
+```bash
+redis-server
 ```
+
+Or skip rate limiting tests:
+
+```bash
+npm run test:integration:api -- --exclude rate-limit
+```
+
+### Database Connection Failed
+
+**Error**: `Database connection refused`
+
+**Solution**: Check database is running and credentials are correct.
 
 ## CI/CD Integration
 
 ### GitHub Actions
 
 ```yaml
-name: Integration Tests
+name: API Integration Tests
 
 on: [push, pull_request]
 
@@ -376,7 +377,7 @@ jobs:
     
     services:
       postgres:
-        image: postgres:14
+        image: postgres:15
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -384,54 +385,80 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+      
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
       
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
       
-      - name: Run migrations
-        run: npm run db:migrate
+      - run: npm run build
+      
+      - run: npm run dev &
+      
+      - run: sleep 10
+      
+      - run: npm run test:integration:api
         env:
+          TEST_API_URL: http://localhost:3000
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
-      
-      - name: Run integration tests
-        run: npm run test:integration
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
-          NEXTAUTH_SECRET: ${{ secrets.TEST_NEXTAUTH_SECRET }}
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
 ```
 
-## Test Documentation
+## Performance Benchmarks
 
-Each API endpoint should have comprehensive test documentation:
+| Metric | Target | Typical |
+|--------|--------|---------|
+| Single request | < 100ms | ~10ms |
+| 10 sequential | < 500ms | ~100ms |
+| 10 concurrent | < 200ms | ~50ms |
+| 50 concurrent | < 500ms | ~150ms |
 
-- **HTTP Status Codes**: All possible response codes
-- **Request/Response Schemas**: Zod validation
-- **Authentication**: Session requirements
-- **Authorization**: Ownership checks
-- **Rate Limiting**: Limits and headers
-- **Concurrent Access**: Race condition handling
-- **Performance**: Response time benchmarks
-- **Security**: XSS, SQL injection tests
+## Coverage Goals
 
-See [content-api-tests.md](./content-api-tests.md) for example.
+- **Line Coverage**: > 80%
+- **Branch Coverage**: > 80%
+- **Function Coverage**: > 80%
+- **Statement Coverage**: > 80%
 
-## Related Documentation
+## Resources
 
-- [API Reference](../../../docs/api/README.md)
-- [Authentication Guide](../../../docs/api/SESSION_AUTH.md)
-- [Database Migrations](../../../migrations/README.md)
-- [Rate Limiting](../../../lib/services/rate-limiter/README.md)
+- [API Tests Documentation](./API_TESTS.md)
+- [CSRF Token API Documentation](../../../app/api/csrf/token/README.md)
+- [Vitest Documentation](https://vitest.dev/)
+- [Testing Best Practices](https://testingjavascript.com/)
 
----
+## Support
 
-**Last Updated**: November 17, 2025  
-**Version**: 1.0  
-**Status**: ✅ Active
+For questions or issues:
+
+1. Check [API_TESTS.md](./API_TESTS.md) for detailed documentation
+2. Review existing tests for examples
+3. Check [Troubleshooting](#troubleshooting) section
+4. Contact the platform team
+
+## Contributing
+
+When adding new tests:
+
+1. Follow the existing test structure
+2. Use fixtures for test data
+3. Add documentation to API_TESTS.md
+4. Ensure tests pass locally
+5. Update this README if needed
+
+## License
+
+Internal use only - Huntaze Platform Team

@@ -3,12 +3,23 @@
  * POST /api/admin/feature-flags - Update feature flags
  * GET /api/admin/feature-flags - Get current feature flags
  * 
+ * Protected with:
+ * - withAuth (admin required)
+ * - withCsrf (POST only)
+ * - withRateLimit
+ * 
+ * Requirements: 1.5, 3.1, 4.1, 5.1
+ * 
  * @see docs/api/admin-feature-flags.md for full documentation
  */
 
-import { NextResponse } from 'next/server';
-import { requireUser } from '@/lib/server-auth';
+import { NextRequest, NextResponse } from 'next/server';
 import { getFlags, updateFlags, type OnboardingFlags } from '@/lib/feature-flags';
+import { withAuth } from '@/lib/middleware/auth';
+import { withCsrf } from '@/lib/middleware/csrf';
+import { withRateLimit } from '@/lib/middleware/rate-limit';
+import { composeMiddleware } from '@/lib/middleware/types';
+import type { RouteHandler } from '@/lib/middleware/types';
 
 export const runtime = 'nodejs';
 
@@ -72,29 +83,15 @@ function logInfo(context: string, metadata?: Record<string, any>) {
  * - 401 Unauthorized: User not authenticated or not admin
  * - 500 Internal Server Error: Failed to retrieve flags
  */
-export async function GET(req: Request): Promise<NextResponse<FeatureFlagsResponse | ErrorResponse>> {
+const getHandler: RouteHandler = async (req: NextRequest): Promise<NextResponse<FeatureFlagsResponse | ErrorResponse>> => {
   const correlationId = crypto.randomUUID();
 
   try {
     logInfo('GET request started', { correlationId });
 
-    const user = await requireUser();
-
-    // TODO: Implement proper role-based access control
-    // For now, any authenticated user can view flags
-    // In production, check user.role === 'admin' or similar
-    if (!user) {
-      logInfo('Unauthorized access attempt', { correlationId });
-      return NextResponse.json(
-        { error: 'Unauthorized', correlationId },
-        { status: 401 }
-      );
-    }
-
     const flags = await getFlags();
 
     logInfo('GET request completed', { 
-      userId: user.id, 
       correlationId 
     });
 
@@ -104,14 +101,6 @@ export async function GET(req: Request): Promise<NextResponse<FeatureFlagsRespon
     });
   } catch (error) {
     logError('GET request failed', error, { correlationId });
-    
-    // Check for specific error types
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json(
-        { error: 'Unauthorized', correlationId },
-        { status: 401 }
-      );
-    }
 
     return NextResponse.json(
       {
@@ -122,7 +111,13 @@ export async function GET(req: Request): Promise<NextResponse<FeatureFlagsRespon
       { status: 500 }
     );
   }
-}
+};
+
+// Apply middlewares: auth (admin required) + rate limiting
+export const GET = composeMiddleware([
+  (handler) => withRateLimit(handler, { maxRequests: 60, windowMs: 60000 }),
+  (handler) => withAuth(handler, { requireAdmin: true }),
+])(getHandler);
 
 /**
  * POST /api/admin/feature-flags
@@ -146,25 +141,14 @@ export async function GET(req: Request): Promise<NextResponse<FeatureFlagsRespon
  * Error Responses:
  * - 400 Bad Request: Invalid input (rolloutPercentage out of range, no updates, invalid JSON)
  * - 401 Unauthorized: User not authenticated or not admin
+ * - 403 Forbidden: Invalid CSRF token
  * - 500 Internal Server Error: Failed to update flags
  */
-export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlagsResponse | ErrorResponse>> {
+const postHandler: RouteHandler = async (req: NextRequest): Promise<NextResponse<UpdateFeatureFlagsResponse | ErrorResponse>> => {
   const correlationId = crypto.randomUUID();
 
   try {
     logInfo('POST request started', { correlationId });
-
-    const user = await requireUser();
-
-    // TODO: Implement proper role-based access control
-    // In production, verify user.role === 'admin'
-    if (!user) {
-      logInfo('Unauthorized update attempt', { correlationId });
-      return NextResponse.json(
-        { error: 'Unauthorized', correlationId },
-        { status: 401 }
-      );
-    }
 
     // Parse and validate request body
     let body: UpdateFeatureFlagsRequest;
@@ -172,7 +156,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
       body = await req.json();
     } catch (parseError) {
       logError('Invalid JSON in request body', parseError, { 
-        userId: user.id, 
         correlationId 
       });
       return NextResponse.json(
@@ -195,7 +178,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
       if (body.rolloutPercentage < 0 || body.rolloutPercentage > 100) {
         logInfo('Invalid rolloutPercentage', { 
           value: body.rolloutPercentage, 
-          userId: user.id, 
           correlationId 
         });
         return NextResponse.json(
@@ -216,7 +198,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
       if (invalidMarkets.length > 0) {
         logInfo('Invalid market codes', { 
           invalidMarkets, 
-          userId: user.id, 
           correlationId 
         });
         return NextResponse.json(
@@ -239,7 +220,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
       if (invalidIds.length > 0) {
         logInfo('Invalid user IDs in whitelist', { 
           invalidIds, 
-          userId: user.id, 
           correlationId 
         });
         return NextResponse.json(
@@ -257,7 +237,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
     if (Object.keys(updates).length === 0) {
       logInfo('No valid updates provided', { 
         body, 
-        userId: user.id, 
         correlationId 
       });
       return NextResponse.json(
@@ -277,7 +256,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
     const newFlags = await getFlags();
 
     logInfo('POST request completed', {
-      userId: user.id,
       updates,
       correlationId,
     });
@@ -289,14 +267,6 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
     });
   } catch (error) {
     logError('POST request failed', error, { correlationId });
-    
-    // Check for specific error types
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return NextResponse.json(
-        { error: 'Unauthorized', correlationId },
-        { status: 401 }
-      );
-    }
 
     return NextResponse.json(
       {
@@ -307,4 +277,11 @@ export async function POST(req: Request): Promise<NextResponse<UpdateFeatureFlag
       { status: 500 }
     );
   }
-}
+};
+
+// Apply middlewares: auth (admin required) + CSRF + rate limiting
+export const POST = composeMiddleware([
+  (handler) => withRateLimit(handler, { maxRequests: 20, windowMs: 60000 }),
+  withCsrf,
+  (handler) => withAuth(handler, { requireAdmin: true }),
+])(postHandler);
