@@ -80,7 +80,7 @@ export default function HomePage() {
             marginBottom: 'var(--spacing-6)',
             color: 'var(--color-text-primary)'
           }}>
-            Double Your Revenue, Half the Work
+            Run Your Creator Business on Autopilot
           </h1>
           <p style={{
             fontSize: 'var(--font-size-lg)',
@@ -90,9 +90,9 @@ export default function HomePage() {
             maxWidth: '600px',
             margin: '0 auto var(--spacing-8)'
           }}>
-            Automate your creator business with smart AI. Focus on creating, we handle the rest.
+            Focus on creating content. We handle the analytics, marketing, and growth.
           </p>
-          <div style={{ display: 'flex', gap: 'var(--spacing-4)', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', alignItems: 'center' }}>
             <Link
               href="/auth/register"
               style={{
@@ -106,78 +106,104 @@ export default function HomePage() {
                 display: 'inline-block'
               }}
             >
-              Start Free Trial
+              Request Early Access
             </Link>
-            <Link
-              href="/demo"
-              style={{
-                backgroundColor: 'var(--color-bg-surface)',
-                color: 'var(--color-text-primary)',
-                padding: 'var(--spacing-3) var(--spacing-6)',
-                borderRadius: 'var(--border-radius-md)',
-                textDecoration: 'none',
-                fontSize: 'var(--font-size-base)',
-                fontWeight: 'var(--font-weight-medium)',
-                border: '1px solid var(--color-border-subtle)',
-                display: 'inline-block'
-              }}
-            >
-              Watch Demo
-            </Link>
+            <span style={{
+              fontSize: 'var(--font-size-sm)',
+              color: 'var(--color-text-muted)'
+            }}>
+              Closed Beta • Invite only
+            </span>
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
+      {/* The Problem */}
       <section style={{
         padding: 'var(--spacing-20) var(--content-padding)',
         backgroundColor: 'var(--color-bg-surface)'
       }}>
-        <div style={{ maxWidth: 'var(--content-max-width-sm)', margin: '0 auto' }}>
-          <h2 style={{
-            fontSize: 'var(--font-size-3xl)',
+        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+          <h3 style={{
+            fontSize: 'var(--font-size-2xl)',
             fontWeight: 'var(--font-weight-medium)',
-            textAlign: 'center',
-            marginBottom: 'var(--spacing-12)',
+            marginBottom: 'var(--spacing-4)',
             color: 'var(--color-text-primary)'
           }}>
-            Everything you need to succeed
-          </h2>
+            Stop juggling apps
+          </h3>
+          <p style={{
+            fontSize: 'var(--font-size-base)',
+            color: 'var(--color-text-secondary)',
+            lineHeight: 'var(--line-height-relaxed)'
+          }}>
+            Being a creator shouldn't mean being a data analyst or a manager. Huntaze brings calm to your workflow by putting everything in one place.
+          </p>
+        </div>
+      </section>
+
+      {/* The Benefits */}
+      <section style={{
+        padding: 'var(--spacing-20) var(--content-padding)'
+      }}>
+        <div style={{ maxWidth: 'var(--content-max-width-sm)', margin: '0 auto' }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 'var(--spacing-6)'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'var(--spacing-8)'
           }}>
             {[
-              { icon: Zap, title: 'Lightning Fast', desc: 'Get started in minutes with our intuitive platform' },
-              { icon: Users, title: 'Grow Your Audience', desc: 'Connect with fans across multiple platforms' },
-              { icon: TrendingUp, title: 'Increase Revenue', desc: 'Monetize effectively with powerful tools' },
-              { icon: Shield, title: 'Secure & Private', desc: 'Enterprise-grade security and encryption' },
-              { icon: Sparkles, title: 'AI-Powered', desc: 'Leverage AI to optimize your strategy' },
-              { icon: BarChart3, title: 'Advanced Analytics', desc: 'Track performance with detailed insights' }
+              { 
+                icon: BarChart3, 
+                title: 'Clarity', 
+                subtitle: 'See clearly',
+                desc: 'Track your revenue and growth across all platforms instantly. No more spreadsheets.' 
+              },
+              { 
+                icon: Sparkles, 
+                title: 'Freedom', 
+                subtitle: 'Save time',
+                desc: 'Your AI assistant works 24/7. It handles messages and routine tasks so you can sleep.' 
+              },
+              { 
+                icon: Users, 
+                title: 'Connection', 
+                subtitle: 'Know your fans',
+                desc: 'Identify your top supporters and build real relationships with the people who matter most.' 
+              }
             ].map((feature, i) => (
               <div key={i} style={{
                 padding: 'var(--spacing-6)',
-                backgroundColor: 'var(--color-bg-app)',
+                backgroundColor: 'var(--color-bg-surface)',
                 border: '1px solid var(--color-border-subtle)',
                 borderRadius: 'var(--border-radius-lg)'
               }}>
                 <feature.icon style={{
-                  width: '24px',
-                  height: '24px',
+                  width: '32px',
+                  height: '32px',
                   color: 'var(--color-accent-primary)',
                   marginBottom: 'var(--spacing-4)'
                 }} />
-                <h3 style={{
-                  fontSize: 'var(--font-size-lg)',
+                <div style={{
+                  fontSize: 'var(--font-size-sm)',
                   fontWeight: 'var(--font-weight-medium)',
-                  marginBottom: 'var(--spacing-2)',
-                  color: 'var(--color-text-primary)'
+                  color: 'var(--color-text-muted)',
+                  marginBottom: 'var(--spacing-1)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em'
                 }}>
                   {feature.title}
+                </div>
+                <h3 style={{
+                  fontSize: 'var(--font-size-xl)',
+                  fontWeight: 'var(--font-weight-medium)',
+                  marginBottom: 'var(--spacing-3)',
+                  color: 'var(--color-text-primary)'
+                }}>
+                  {feature.subtitle}
                 </h3>
                 <p style={{
-                  fontSize: 'var(--font-size-sm)',
+                  fontSize: 'var(--font-size-base)',
                   color: 'var(--color-text-secondary)',
                   lineHeight: 'var(--line-height-relaxed)'
                 }}>
@@ -186,6 +212,30 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Safety */}
+      <section style={{
+        padding: 'var(--spacing-20) var(--content-padding)',
+        backgroundColor: 'var(--color-bg-surface)'
+      }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+          <h3 style={{
+            fontSize: 'var(--font-size-2xl)',
+            fontWeight: 'var(--font-weight-medium)',
+            marginBottom: 'var(--spacing-4)',
+            color: 'var(--color-text-primary)'
+          }}>
+            Your business, safe and secure
+          </h3>
+          <p style={{
+            fontSize: 'var(--font-size-base)',
+            color: 'var(--color-text-secondary)',
+            lineHeight: 'var(--line-height-relaxed)'
+          }}>
+            We built Huntaze to protect your work. We never see your passwords, and your data stays yours. Forever.
+          </p>
         </div>
       </section>
 
@@ -198,19 +248,11 @@ export default function HomePage() {
           <h2 style={{
             fontSize: 'var(--font-size-3xl)',
             fontWeight: 'var(--font-weight-medium)',
-            marginBottom: 'var(--spacing-4)',
+            marginBottom: 'var(--spacing-8)',
             color: 'var(--color-text-primary)'
           }}>
-            Ready to grow your business?
+            Ready to upgrade your workflow?
           </h2>
-          <p style={{
-            fontSize: 'var(--font-size-base)',
-            color: 'var(--color-text-secondary)',
-            marginBottom: 'var(--spacing-8)',
-            lineHeight: 'var(--line-height-relaxed)'
-          }}>
-            Start automating your creator business today. No credit card required.
-          </p>
           <Link
             href="/auth/register"
             style={{
@@ -224,7 +266,7 @@ export default function HomePage() {
               display: 'inline-block'
             }}
           >
-            Start Free Trial
+            Request Access
           </Link>
         </div>
       </section>
