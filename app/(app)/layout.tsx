@@ -1,6 +1,15 @@
-import type { ReactNode } from 'react';
-import { AppShell } from '@/components/layout/AppShell';
+/**
+ * App Layout
+ * Forces dynamic rendering for all authenticated app pages
+ * This prevents build-time errors when database/Redis connections are not available
+ */
 
-export default function AppLayout({ children }: { children: ReactNode }) {
-  return <AppShell>{children}</AppShell>;
+export const dynamic = 'force-dynamic';
+
+export default function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }
