@@ -1,6 +1,3 @@
-// Enable static generation for optimal performance and SEO
-export const dynamic = 'force-static';
-
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { LandingHeader } from '@/components/landing/LandingHeader';
@@ -8,6 +5,11 @@ import { SimpleHeroSection as HeroSection } from '@/components/landing/SimpleHer
 import { FeaturesGrid } from '@/components/landing/FeaturesGrid';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { Zap, Users, TrendingUp, Shield, Sparkles, BarChart3 } from 'lucide-react';
+
+// Use dynamic rendering to avoid build-time errors
+// The page will be rendered on-demand for each request
+export const dynamicParams = true;
+export const revalidate = 0;
 
 // Dynamic imports for below-the-fold sections with skeleton loaders
 // These components are loaded on the client side to reduce initial bundle size
