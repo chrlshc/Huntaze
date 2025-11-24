@@ -25,7 +25,6 @@ const FeaturesShowcase = dynamic(
   () => import('@/components/landing/SimpleFeaturesShowcase').then((mod) => ({ default: mod.SimpleFeaturesShowcase })),
   {
     loading: () => <FeaturesShowcaseSkeleton />,
-    ssr: false,
   }
 );
 
@@ -33,7 +32,6 @@ const SocialProof = dynamic(
   () => import('@/components/landing/SimpleSocialProof').then((mod) => ({ default: mod.SimpleSocialProof })),
   {
     loading: () => <SocialProofSkeleton />,
-    ssr: false,
   }
 );
 
@@ -41,7 +39,6 @@ const PricingSection = dynamic(
   () => import('@/components/landing/SimplePricingSection').then((mod) => ({ default: mod.SimplePricingSection })),
   {
     loading: () => <PricingSectionSkeleton />,
-    ssr: false,
   }
 );
 
@@ -49,7 +46,6 @@ const FAQSection = dynamic(
   () => import('@/components/landing/SimpleFAQSection').then((mod) => ({ default: mod.SimpleFAQSection })),
   {
     loading: () => <FAQSectionSkeleton />,
-    ssr: false,
   }
 );
 
@@ -57,7 +53,6 @@ const FinalCTA = dynamic(
   () => import('@/components/landing/SimpleFinalCTA').then((mod) => ({ default: mod.SimpleFinalCTA })),
   {
     loading: () => <FinalCTASkeleton />,
-    ssr: false,
   }
 );
 
