@@ -21,6 +21,10 @@ frontend:
     
     build:
       commands:
+        # CRITICAL: Disable Redis/DB during build to prevent timeouts
+        # These connections are only needed at runtime, not build time
+        - export DISABLE_REDIS_CACHE=true
+        - export DISABLE_DATABASE=true
         # Skip migrations - database is already migrated
         # Migrations should be run manually or via separate deployment pipeline
         # - npx prisma@6.19.0 migrate deploy
