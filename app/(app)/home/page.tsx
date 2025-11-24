@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { Suspense } from 'react';
 import { StatCard } from './StatCard';
 import { StatsGridSkeleton } from './StatsGridSkeleton';
