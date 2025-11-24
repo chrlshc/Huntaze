@@ -97,6 +97,10 @@ const nextConfig: NextConfig = {
     },
   },
 
+  // Force dynamic rendering for all pages to avoid prerendering issues with database connections
+  // This prevents build-time errors when Redis/Postgres are not available
+  dynamicIO: true,
+
   // Explicitly mark next-auth as external package to prevent webpack bundling issues
   // This ensures NextAuth v5 works correctly in serverless environments
   // Note: In Next.js 16, this was moved from experimental.serverComponentsExternalPackages
