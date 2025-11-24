@@ -3,29 +3,59 @@
 import Redis from 'ioredis';
 import { CACHE_KEYS, CACHE_TTL } from './database';
 
-// Redis connection configuration
-export const REDIS_CONFIG = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD,
-  db: parseInt(process.env.REDIS_DB || '0'),
-  retryDelayOnFailover: 100,
-  maxRetriesPerRequest: 3,
-  lazyConnect: true,
-  keepAlive: 30000,
-  family: 4,
-  keyPrefix: 'huntaze:smart_onboarding:',
-} as const;
+// Redis connection configuration (nullable when disabled)
+export const REDIS_CONFIG = process.env.REDIS_HOST || process.env.REDIS_URL
+  ? {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      db: parseInt(process.env.REDIS_DB || '0'),
+      retryDelayOnFailover: 100,
+      maxRetriesPerRequest: 3,
+      lazyConnect: true,
+      keepAlive: 30000,
+      family: 4,
+      keyPrefix: 'huntaze:smart_onboarding:',
+    }
+  : null;
+
+// Small no-op client for environments without Redis
+const createNoopRedis = (): any => {
+  const pipeline = () => ({
+    del: () => pipeline(),
+    setex: () => pipeline(),
+    hset: () => pipeline(),
+    expire: () => pipeline(),
+    sadd: () => pipeline(),
+    exec: async () => [],
+  });
+
+  const noop = {
+    get: async () => null,
+    setex: async () => undefined,
+    hset: async () => undefined,
+    expire: async () => undefined,
+    sadd: async () => undefined,
+    pipeline,
+    on: () => noop,
+  };
+
+  return noop;
+};
 
 // Create Redis client instance (safe for build time)
 export const createRedisClient = (): Redis => {
-  // Skip Redis initialization during build
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
-    console.warn('Skipping Redis initialization during build');
-    return null as any; // Will be properly initialized at runtime
+  const redisDisabled =
+    process.env.SMART_ONBOARDING_REDIS_ENABLED === 'false' ||
+    (!REDIS_CONFIG && !process.env.REDIS_URL);
+
+  // Skip Redis entirely when disabled or during build
+  if (redisDisabled || process.env.NEXT_PHASE === 'phase-production-build') {
+    console.warn('Smart Onboarding Redis disabled - using in-memory noop client');
+    return createNoopRedis();
   }
   
-  const redis = new Redis(REDIS_CONFIG);
+  const redis = REDIS_CONFIG ? new Redis(REDIS_CONFIG) : new Redis(); // fallback URL env
   
   redis.on('connect', () => {
     console.log('Smart Onboarding Redis client connected');
