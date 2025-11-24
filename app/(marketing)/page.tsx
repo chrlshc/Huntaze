@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Zap, Users, TrendingUp, Shield, Sparkles, BarChart3 } from 'lucide-react';
+import Image from 'next/image';
 
 // Use dynamic rendering
 export const dynamicParams = true;
@@ -8,58 +9,23 @@ export const revalidate = 0;
 
 export default function HomePage() {
   return (
-    <div style={{ 
-      backgroundColor: 'var(--color-bg-app)',
-      minHeight: '100vh',
-      color: 'var(--color-text-primary)'
-    }}>
+    <div className="min-h-screen bg-[#0F0F10] text-white font-[family-name:var(--font-inter)]">
       {/* Header */}
-      <header style={{
-        borderBottom: '1px solid var(--color-border-subtle)',
-        backgroundColor: 'var(--color-bg-surface)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50
-      }}>
-        <div style={{
-          maxWidth: 'var(--content-max-width-sm)',
-          margin: '0 auto',
-          padding: 'var(--spacing-4) var(--content-padding)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div style={{
-            fontSize: 'var(--font-size-xl)',
-            fontWeight: 'var(--font-weight-medium)',
-            color: 'var(--color-text-primary)'
-          }}>
+      <header className="sticky top-0 z-50 border-b border-[#27272A] bg-[#0F0F10]/80 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="text-xl font-semibold text-[#F8F9FA]">
             Huntaze
           </div>
-          <div style={{ display: 'flex', gap: 'var(--spacing-4)' }}>
+          <div className="flex gap-6 items-center">
             <Link 
               href="/auth/login"
-              style={{
-                color: 'var(--color-text-secondary)',
-                textDecoration: 'none',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-medium)'
-              }}
+              className="text-sm font-medium text-[#A0AEC0] hover:text-[#F8F9FA] transition-colors"
             >
               Login
             </Link>
             <Link
               href="/auth/register"
-              style={{
-                backgroundColor: 'var(--color-accent-primary)',
-                color: 'var(--color-text-inverse)',
-                padding: 'var(--spacing-2) var(--spacing-4)',
-                borderRadius: 'var(--border-radius-md)',
-                textDecoration: 'none',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-medium)',
-                transition: 'var(--transition-fast)'
-              }}
+              className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-[#8E65D4] to-[#7D57C1] rounded-lg hover:shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] transition-all duration-200"
             >
               Get Started
             </Link>
@@ -68,145 +34,102 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section style={{
-        padding: 'var(--spacing-24) var(--content-padding)',
-        textAlign: 'center'
-      }}>
-        <div style={{ maxWidth: 'var(--content-max-width-sm)', margin: '0 auto' }}>
-          <h1 style={{
-            fontSize: 'var(--font-size-4xl)',
-            fontWeight: 'var(--font-weight-medium)',
-            lineHeight: 'var(--line-height-tight)',
-            marginBottom: 'var(--spacing-6)',
-            color: 'var(--color-text-primary)'
-          }}>
+      <section className="relative px-6 pt-32 pb-20 overflow-hidden">
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#7D57C1]/10 via-transparent to-transparent pointer-events-none" />
+        
+        <div className="relative max-w-4xl mx-auto text-center">
+          <h1 className="text-6xl md:text-7xl font-bold leading-tight mb-6 bg-gradient-to-b from-[#F8F9FA] to-[#E2E8F0] bg-clip-text text-transparent">
             Run Your Creator Business on Autopilot
           </h1>
-          <p style={{
-            fontSize: 'var(--font-size-lg)',
-            color: 'var(--color-text-secondary)',
-            lineHeight: 'var(--line-height-relaxed)',
-            marginBottom: 'var(--spacing-8)',
-            maxWidth: '600px',
-            margin: '0 auto var(--spacing-8)'
-          }}>
+          <p className="text-xl text-[#A0AEC0] leading-relaxed mb-10 max-w-2xl mx-auto">
             Focus on creating content. We handle the analytics, marketing, and growth.
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', alignItems: 'center' }}>
+          
+          <div className="flex flex-col items-center gap-4">
             <Link
               href="/auth/register"
-              style={{
-                backgroundColor: 'var(--color-accent-primary)',
-                color: 'var(--color-text-inverse)',
-                padding: 'var(--spacing-3) var(--spacing-6)',
-                borderRadius: 'var(--border-radius-md)',
-                textDecoration: 'none',
-                fontSize: 'var(--font-size-base)',
-                fontWeight: 'var(--font-weight-medium)',
-                display: 'inline-block'
-              }}
+              className="group relative px-8 py-4 text-base font-semibold bg-gradient-to-r from-[#8E65D4] to-[#7D57C1] rounded-xl shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] hover:shadow-[0_6px_20px_0_rgba(125,87,193,0.6)] transition-all duration-200 hover:-translate-y-0.5"
             >
               Request Early Access
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
-            <span style={{
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--color-text-muted)'
-            }}>
+            <span className="text-sm text-[#94A3B8]">
               Closed Beta • Invite only
             </span>
+          </div>
+
+          {/* Dashboard Preview */}
+          <div className="mt-20 relative">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F10] via-transparent to-transparent z-10 pointer-events-none" />
+            <div 
+              className="relative rounded-2xl overflow-hidden border border-[#27272A] shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+              style={{
+                transform: 'perspective(1000px) rotateX(5deg) scale(1.02)',
+              }}
+            >
+              {/* Placeholder for dashboard screenshot */}
+              <div className="aspect-[16/10] bg-gradient-to-br from-[#18181B] to-[#0F0F10] flex items-center justify-center">
+                <div className="text-center">
+                  <BarChart3 className="w-16 h-16 text-[#7D57C1] mx-auto mb-4 opacity-50" />
+                  <p className="text-[#94A3B8]">Dashboard Preview</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* The Problem */}
-      <section style={{
-        padding: 'var(--spacing-20) var(--content-padding)',
-        backgroundColor: 'var(--color-bg-surface)'
-      }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
-          <h3 style={{
-            fontSize: 'var(--font-size-2xl)',
-            fontWeight: 'var(--font-weight-medium)',
-            marginBottom: 'var(--spacing-4)',
-            color: 'var(--color-text-primary)'
-          }}>
+      <section className="relative px-6 py-24 bg-gradient-to-b from-transparent via-[#131316]/50 to-transparent">
+        <div className="max-w-3xl mx-auto text-center">
+          <h3 className="text-3xl font-semibold text-[#E2E8F0] mb-4">
             Stop juggling apps
           </h3>
-          <p style={{
-            fontSize: 'var(--font-size-base)',
-            color: 'var(--color-text-secondary)',
-            lineHeight: 'var(--line-height-relaxed)'
-          }}>
+          <p className="text-lg text-[#A0AEC0] leading-relaxed">
             Being a creator shouldn't mean being a data analyst or a manager. Huntaze brings calm to your workflow by putting everything in one place.
           </p>
         </div>
       </section>
 
       {/* The Benefits */}
-      <section style={{
-        padding: 'var(--spacing-20) var(--content-padding)'
-      }}>
-        <div style={{ maxWidth: 'var(--content-max-width-sm)', margin: '0 auto' }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 'var(--spacing-8)'
-          }}>
+      <section className="px-6 py-24">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               { 
                 icon: BarChart3, 
-                title: 'Clarity', 
-                subtitle: 'See clearly',
+                label: 'CLARITY',
+                title: 'See clearly',
                 desc: 'Track your revenue and growth across all platforms instantly. No more spreadsheets.' 
               },
               { 
                 icon: Sparkles, 
-                title: 'Freedom', 
-                subtitle: 'Save time',
+                label: 'FREEDOM',
+                title: 'Save time',
                 desc: 'Your AI assistant works 24/7. It handles messages and routine tasks so you can sleep.' 
               },
               { 
                 icon: Users, 
-                title: 'Connection', 
-                subtitle: 'Know your fans',
+                label: 'CONNECTION',
+                title: 'Know your fans',
                 desc: 'Identify your top supporters and build real relationships with the people who matter most.' 
               }
             ].map((feature, i) => (
-              <div key={i} style={{
-                padding: 'var(--spacing-6)',
-                backgroundColor: 'var(--color-bg-surface)',
-                border: '1px solid var(--color-border-subtle)',
-                borderRadius: 'var(--border-radius-lg)'
-              }}>
-                <feature.icon style={{
-                  width: '32px',
-                  height: '32px',
-                  color: 'var(--color-accent-primary)',
-                  marginBottom: 'var(--spacing-4)'
-                }} />
-                <div style={{
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: 'var(--font-weight-medium)',
-                  color: 'var(--color-text-muted)',
-                  marginBottom: 'var(--spacing-1)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
-                }}>
-                  {feature.title}
+              <div 
+                key={i} 
+                className="group relative p-8 bg-[#18181B] border border-[#27272A] rounded-2xl hover:border-[#7D57C1] hover:shadow-[0_0_30px_rgba(125,87,193,0.3)] transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[#7D57C1]/10 flex items-center justify-center mb-6 group-hover:bg-[#7D57C1]/20 transition-colors">
+                  <feature.icon className="w-6 h-6 text-[#7D57C1]" strokeWidth={1.5} />
                 </div>
-                <h3 style={{
-                  fontSize: 'var(--font-size-xl)',
-                  fontWeight: 'var(--font-weight-medium)',
-                  marginBottom: 'var(--spacing-3)',
-                  color: 'var(--color-text-primary)'
-                }}>
-                  {feature.subtitle}
+                <div className="text-xs font-semibold text-[#7D57C1] tracking-wider mb-2">
+                  {feature.label}
+                </div>
+                <h3 className="text-2xl font-semibold text-[#F8F9FA] mb-3">
+                  {feature.title}
                 </h3>
-                <p style={{
-                  fontSize: 'var(--font-size-base)',
-                  color: 'var(--color-text-secondary)',
-                  lineHeight: 'var(--line-height-relaxed)'
-                }}>
+                <p className="text-base text-[#A0AEC0] leading-relaxed">
                   {feature.desc}
                 </p>
               </div>
@@ -216,74 +139,41 @@ export default function HomePage() {
       </section>
 
       {/* Safety */}
-      <section style={{
-        padding: 'var(--spacing-20) var(--content-padding)',
-        backgroundColor: 'var(--color-bg-surface)'
-      }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
-          <h3 style={{
-            fontSize: 'var(--font-size-2xl)',
-            fontWeight: 'var(--font-weight-medium)',
-            marginBottom: 'var(--spacing-4)',
-            color: 'var(--color-text-primary)'
-          }}>
+      <section className="relative px-6 py-24 bg-gradient-to-b from-transparent via-[#131316]/50 to-transparent overflow-hidden">
+        {/* Background Shield Icon */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none">
+          <Shield className="w-[600px] h-[600px] text-[#7D57C1]" />
+        </div>
+        
+        <div className="relative max-w-3xl mx-auto text-center">
+          <h3 className="text-3xl font-semibold text-[#E2E8F0] mb-4">
             Your business, safe and secure
           </h3>
-          <p style={{
-            fontSize: 'var(--font-size-base)',
-            color: 'var(--color-text-secondary)',
-            lineHeight: 'var(--line-height-relaxed)'
-          }}>
+          <p className="text-lg text-[#A0AEC0] leading-relaxed">
             We built Huntaze to protect your work. We never see your passwords, and your data stays yours. Forever.
           </p>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section style={{
-        padding: 'var(--spacing-24) var(--content-padding)',
-        textAlign: 'center'
-      }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <h2 style={{
-            fontSize: 'var(--font-size-3xl)',
-            fontWeight: 'var(--font-weight-medium)',
-            marginBottom: 'var(--spacing-8)',
-            color: 'var(--color-text-primary)'
-          }}>
+      <section className="px-6 py-32">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-5xl font-bold text-[#F8F9FA] mb-12">
             Ready to upgrade your workflow?
           </h2>
           <Link
             href="/auth/register"
-            style={{
-              backgroundColor: 'var(--color-accent-primary)',
-              color: 'var(--color-text-inverse)',
-              padding: 'var(--spacing-3) var(--spacing-8)',
-              borderRadius: 'var(--border-radius-md)',
-              textDecoration: 'none',
-              fontSize: 'var(--font-size-base)',
-              fontWeight: 'var(--font-weight-medium)',
-              display: 'inline-block'
-            }}
+            className="group relative inline-block px-10 py-5 text-lg font-semibold bg-gradient-to-r from-[#8E65D4] to-[#7D57C1] rounded-xl shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] hover:shadow-[0_6px_20px_0_rgba(125,87,193,0.6)] transition-all duration-200 hover:-translate-y-0.5"
           >
             Request Access
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity" />
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer style={{
-        borderTop: '1px solid var(--color-border-subtle)',
-        padding: 'var(--spacing-8) var(--content-padding)',
-        backgroundColor: 'var(--color-bg-surface)'
-      }}>
-        <div style={{
-          maxWidth: 'var(--content-max-width-sm)',
-          margin: '0 auto',
-          textAlign: 'center',
-          fontSize: 'var(--font-size-sm)',
-          color: 'var(--color-text-muted)'
-        }}>
+      <footer className="border-t border-[#27272A] px-6 py-8 bg-[#0F0F10]">
+        <div className="max-w-6xl mx-auto text-center text-sm text-[#94A3B8]">
           © 2025 Huntaze. All rights reserved.
         </div>
       </footer>
