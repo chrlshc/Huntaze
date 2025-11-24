@@ -14,6 +14,8 @@ frontend:
         - npm install --no-audit --legacy-peer-deps
         # Generate Prisma Client (force version 6.19.0 to match package.json)
         - npx prisma@6.19.0 generate
+        # Test database connections (non-blocking)
+        - npx tsx scripts/test-connections.ts || echo "Connection test completed with warnings"
         # Verify Node.js version (should be 20+)
         - node --version
     
