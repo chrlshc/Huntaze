@@ -9,14 +9,14 @@ export const revalidate = 0;
 export default function HomePage() {
   return (
     <div style={{ 
-      backgroundColor: 'var(--color-bg-app)',
+      backgroundColor: '#0F0F10',
       minHeight: '100vh',
-      color: 'var(--color-text-primary)'
+      color: '#EDEDEF'
     }}>
       {/* Header */}
       <header style={{
-        borderBottom: '1px solid var(--color-border-subtle)',
-        backgroundColor: 'var(--color-bg-surface)',
+        borderBottom: '1px solid #2E2E33',
+        backgroundColor: '#151516',
         position: 'sticky',
         top: 0,
         zIndex: 50

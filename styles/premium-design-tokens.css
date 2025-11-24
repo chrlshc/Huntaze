@@ -1,0 +1,196 @@
+/**
+ * Premium Homepage Design Tokens
+ * 
+ * These tokens extend the existing linear-design-tokens.css
+ * with specific values for the premium homepage design.
+ * 
+ * Inspired by: Linear, Vercel, Raycast
+ * Date: 2024-11-24
+ */
+
+:root {
+  /* ========================================
+     PREMIUM COLOR PALETTE
+     ======================================== */
+  
+  /* Backgrounds - Exact hex codes for premium look */
+  --premium-bg-primary: #0F0F10;      /* Main background - deepest black */
+  --premium-bg-surface: #18181B;      /* Cards, elevated surfaces */
+  --premium-bg-elevated: #131316;     /* Alternating sections */
+  
+  /* Borders - Subtle to prominent */
+  --premium-border-subtle: #27272A;   /* Default borders */
+  --premium-border-accent: #7D57C1;   /* Hover/focus states */
+  
+  /* Text Hierarchy - 5 levels for clear hierarchy */
+  --premium-text-primary: #F8F9FA;    /* Headings, important (white) */
+  --premium-text-secondary: #E2E8F0;  /* Subheadings (light gray) */
+  --premium-text-body: #A0AEC0;       /* Body text (medium gray) */
+  --premium-text-muted: #94A3B8;      /* Secondary info (soft gray) */
+  --premium-text-inverse: #0F0F10;    /* Text on colored backgrounds */
+  
+  /* Accent Colors - Purple gradient */
+  --premium-accent-light: #8E65D4;    /* Lighter purple for gradients */
+  --premium-accent-main: #7D57C1;     /* Main purple */
+  --premium-accent-glow: rgba(125, 87, 193, 0.4);  /* Glow shadow */
+  --premium-accent-glow-strong: rgba(125, 87, 193, 0.6);  /* Hover glow */
+  
+  /* ========================================
+     PREMIUM TYPOGRAPHY SCALE
+     ======================================== */
+  
+  /* Responsive font sizes - Mobile → Desktop */
+  --premium-text-xs: 0.75rem;         /* 12px - Labels */
+  --premium-text-sm: 0.875rem;        /* 14px - Small text */
+  --premium-text-base: 1rem;          /* 16px - Body */
+  --premium-text-lg: 1.125rem;        /* 18px - Large body */
+  --premium-text-xl: 1.25rem;         /* 20px - H4 */
+  --premium-text-2xl: 1.5rem;         /* 24px - H3 */
+  --premium-text-3xl: 1.875rem;       /* 30px - H2 */
+  --premium-text-4xl: 2.25rem;        /* 36px - H1 mobile */
+  --premium-text-5xl: 3rem;           /* 48px - H1 tablet */
+  --premium-text-6xl: 3.75rem;        /* 60px - H1 desktop */
+  --premium-text-7xl: 4.5rem;         /* 72px - H1 large */
+  
+  /* ========================================
+     PREMIUM SPACING SCALE
+     ======================================== */
+  
+  --premium-space-1: 0.25rem;         /* 4px */
+  --premium-space-2: 0.5rem;          /* 8px */
+  --premium-space-3: 0.75rem;         /* 12px */
+  --premium-space-4: 1rem;            /* 16px */
+  --premium-space-6: 1.5rem;          /* 24px */
+  --premium-space-8: 2rem;            /* 32px */
+  --premium-space-12: 3rem;           /* 48px */
+  --premium-space-16: 4rem;           /* 64px */
+  --premium-space-20: 5rem;           /* 80px */
+  --premium-space-24: 6rem;           /* 96px */
+  --premium-space-32: 8rem;           /* 128px */
+  
+  /* ========================================
+     PREMIUM EFFECTS
+     ======================================== */
+  
+  /* Shadows with glow */
+  --premium-shadow-glow: 0 4px 14px 0 var(--premium-accent-glow);
+  --premium-shadow-glow-hover: 0 6px 20px 0 var(--premium-accent-glow-strong);
+  --premium-shadow-card: 0 20px 40px rgba(0, 0, 0, 0.5);
+  --premium-shadow-card-hover: 0 0 30px var(--premium-accent-glow);
+  
+  /* Border radius */
+  --premium-radius-sm: 0.5rem;        /* 8px */
+  --premium-radius-md: 0.75rem;       /* 12px */
+  --premium-radius-lg: 1rem;          /* 16px */
+  --premium-radius-xl: 1.5rem;        /* 24px */
+  
+  /* Transitions */
+  --premium-transition-fast: 200ms ease;
+  --premium-transition-base: 300ms ease;
+  --premium-transition-slow: 500ms ease;
+  
+  /* ========================================
+     PREMIUM GRADIENTS
+     ======================================== */
+  
+  /* Button gradient */
+  --premium-gradient-button: linear-gradient(to right, var(--premium-accent-light), var(--premium-accent-main));
+  
+  /* Text gradient */
+  --premium-gradient-text: linear-gradient(to bottom, var(--premium-text-primary), var(--premium-text-secondary));
+  
+  /* Background gradient (subtle) */
+  --premium-gradient-bg: linear-gradient(to bottom, rgba(125, 87, 193, 0.1), transparent);
+  
+  /* ========================================
+     PREMIUM COMPONENT TOKENS
+     ======================================== */
+  
+  /* Buttons */
+  --premium-button-padding-x: 2rem;   /* 32px */
+  --premium-button-padding-y: 1rem;   /* 16px */
+  --premium-button-radius: var(--premium-radius-md);
+  
+  /* Cards */
+  --premium-card-padding: 2rem;       /* 32px */
+  --premium-card-radius: var(--premium-radius-xl);
+  --premium-card-border: 1px solid var(--premium-border-subtle);
+  
+  /* Icon circles */
+  --premium-icon-size: 3rem;          /* 48px */
+  --premium-icon-radius: var(--premium-radius-lg);
+  --premium-icon-bg: rgba(125, 87, 193, 0.1);
+  --premium-icon-bg-hover: rgba(125, 87, 193, 0.2);
+}
+
+/* ========================================
+   UTILITY CLASSES (Optional)
+   ======================================== */
+
+.premium-gradient-text {
+  background: var(--premium-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.premium-gradient-button {
+  background: var(--premium-gradient-button);
+  box-shadow: var(--premium-shadow-glow);
+  transition: all var(--premium-transition-fast);
+}
+
+.premium-gradient-button:hover {
+  box-shadow: var(--premium-shadow-glow-hover);
+  transform: translateY(-2px);
+}
+
+.premium-card {
+  background: var(--premium-bg-surface);
+  border: var(--premium-card-border);
+  border-radius: var(--premium-card-radius);
+  padding: var(--premium-card-padding);
+  transition: all var(--premium-transition-base);
+}
+
+.premium-card:hover {
+  border-color: var(--premium-border-accent);
+  box-shadow: var(--premium-shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+/* ========================================
+   RESPONSIVE UTILITIES
+   ======================================== */
+
+@media (max-width: 640px) {
+  :root {
+    /* Reduce spacing on mobile */
+    --premium-space-20: 4rem;         /* 64px instead of 80px */
+    --premium-space-24: 5rem;         /* 80px instead of 96px */
+    --premium-space-32: 6rem;         /* 96px instead of 128px */
+    
+    /* Smaller card padding on mobile */
+    --premium-card-padding: 1.5rem;   /* 24px instead of 32px */
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .premium-gradient-button,
+  .premium-card {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --premium-text-body: #FFFFFF;
+    --premium-border-subtle: #FFFFFF;
+  }
+}
