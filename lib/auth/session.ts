@@ -39,6 +39,9 @@ export async function getSession(): Promise<ExtendedSession | null> {
   }
 }
 
+// Backwards-compatible alias for legacy imports
+export const getServerSession = getSession;
+
 /**
  * Get session from request (for API routes)
  * 

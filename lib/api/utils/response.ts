@@ -461,6 +461,10 @@ function buildResponseHeaders(options: ResponseOptions): Record<string, string> 
 // Convenience Response Builders
 // ============================================================================
 
+// Legacy aliases for backwards compatibility with older helpers
+export const createSuccessResponse = successResponse;
+export const createErrorResponse = errorResponse;
+
 /**
  * Creates a 200 OK response
  */

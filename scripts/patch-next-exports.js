@@ -39,7 +39,13 @@ function main() {
     const stubPath = path.join(nextDir, entry);
     if (fs.existsSync(stubPath)) return; // Already patched.
 
-    const contents = `export * from "./${entry}.js"; export { default } from "./${entry}.js";\n`;
+    const contents = [
+      `import * as mod from "./${entry}.js";`,
+      `export * from "./${entry}.js";`,
+      // Provide a safe default export even when the underlying module doesn't have one
+      `export default mod.default ?? mod;`,
+      '',
+    ].join('\n');
 
     try {
       fs.writeFileSync(stubPath, contents, 'utf8');
@@ -55,4 +61,3 @@ function main() {
 }
 
 main();
-
