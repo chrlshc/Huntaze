@@ -90,7 +90,7 @@ export default function HomePage() {
             maxWidth: '600px',
             margin: '0 auto var(--spacing-8)'
           }}>
-            Join 5,000+ creators who automated their business. Save 20+ hours weekly with smart AI.
+            Automate your creator business with smart AI. Focus on creating, we handle the rest.
           </p>
           <div style={{ display: 'flex', gap: 'var(--spacing-4)', justifyContent: 'center' }}>
             <Link
@@ -209,7 +209,7 @@ export default function HomePage() {
             marginBottom: 'var(--spacing-8)',
             lineHeight: 'var(--line-height-relaxed)'
           }}>
-            Join thousands of creators who are already using our platform to scale their content and reach.
+            Start automating your creator business today. No credit card required.
           </p>
           <Link
             href="/auth/register"

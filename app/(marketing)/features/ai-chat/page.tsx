@@ -192,7 +192,7 @@ export default function AIChatPage() {
       <section className="py-20 px-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Ready to save 20+ hours weekly?
+            Ready to automate your conversations?
           </h2>
           <p className="text-xl text-gray-700 dark:text-gray-400 mb-8">
             Join creators who never miss a message or sale opportunity

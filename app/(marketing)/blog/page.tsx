@@ -259,7 +259,7 @@ export default function BlogPage() {
             Get creator insights delivered
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join 50,000+ creators getting exclusive tips, strategies, and industry updates.
+            Get exclusive tips, strategies, and industry updates delivered to your inbox.
           </p>
           <form className="max-w-md mx-auto flex gap-4">
             <input
