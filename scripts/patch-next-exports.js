@@ -37,13 +37,12 @@ function main() {
     if (!fs.existsSync(jsPath)) return; // Nothing to patch for this entry.
 
     const stubPath = path.join(nextDir, entry);
-    if (fs.existsSync(stubPath)) return; // Already patched.
-
     const contents = [
       `import * as mod from "./${entry}.js";`,
       `export * from "./${entry}.js";`,
       // Provide a safe default export even when the underlying module doesn't have one
-      `export default mod.default ?? mod;`,
+      `const defaultExport = Object.prototype.hasOwnProperty.call(mod, "default") ? mod.default : mod;`,
+      `export default defaultExport;`,
       '',
     ].join('\n');
 
