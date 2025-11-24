@@ -5,6 +5,7 @@ import "./mobile-optimized.css";
 import "./responsive-enhancements.css";
 import "./animations.css";
 import "@/styles/design-system.css"; // Beta Launch Design System
+import "@/styles/premium-design-tokens.css"; // Premium Homepage Design Tokens
 import "@/styles/skeleton-animations.css"; // Phase 7: Enhanced Loading States
 import "@/components/accessibility/skip-link.css"; // Phase 8: Accessibility
 import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
