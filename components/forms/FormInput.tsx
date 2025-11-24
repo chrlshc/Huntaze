@@ -1,12 +1,14 @@
 'use client';
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   helperText?: string;
   inputMode?: 'text' | 'email' | 'tel' | 'url' | 'numeric' | 'decimal' | 'search';
+  variant?: 'dense' | 'standard';
 }
 
 export function FormInput({
@@ -16,45 +18,83 @@ export function FormInput({
   className = '',
   id,
   inputMode,
+  variant = 'standard',
   ...props
 }: FormInputProps) {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
-    <div className="mb-4">
+    <div className="mb-[var(--spacing-4)]">
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+          className={cn(
+            "block",
+            "text-[var(--font-size-sm)]",
+            "font-[var(--font-weight-medium)]",
+            "text-[var(--color-text-primary)]",
+            "mb-[var(--spacing-2)]"
+          )}
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
+          {props.required && <span className="text-[var(--color-error)] ml-[var(--spacing-1)]">*</span>}
         </label>
       )}
       <input
         id={inputId}
         inputMode={inputMode}
-        className={`
-          w-full px-4 py-3 min-h-[48px]
-          border rounded-lg
-          bg-white dark:bg-gray-800
-          text-gray-900 dark:text-white
-          placeholder-gray-400 dark:placeholder-gray-500
-          focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-          disabled:opacity-50 disabled:cursor-not-allowed
-          transition-colors duration-200
-          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600'}
-          ${className}
-        `}
+        className={cn(
+          // Base styles
+          "w-full",
+          "border-[length:var(--border-width-thin)]",
+          "rounded-[var(--input-border-radius)]",
+          // Colors from design tokens
+          "bg-[var(--color-bg-input)]",
+          "text-[var(--color-text-primary)]",
+          "placeholder:text-[var(--color-text-muted)]",
+          // Height based on variant (32px dense, 40px standard)
+          variant === 'dense' ? "h-[var(--input-height-dense)]" : "h-[var(--input-height-standard)]",
+          // Padding using 4px grid system
+          "px-[var(--spacing-4)]",
+          "py-[var(--spacing-2)]",
+          // Focus states
+          "focus:outline-none",
+          "focus:ring-[length:var(--focus-ring-width)]",
+          "focus:ring-offset-[length:var(--focus-ring-offset)]",
+          // Disabled state
+          "disabled:opacity-50",
+          "disabled:cursor-not-allowed",
+          // Transitions
+          "transition-[border-color,box-shadow]",
+          "duration-[var(--transition-base)]",
+          // Border and focus colors based on error state
+          error 
+            ? "border-[var(--color-error)] focus:ring-[var(--color-error)]/30 focus:border-[var(--color-error)]"
+            : "border-[var(--color-border-subtle)] focus:ring-[var(--focus-ring-color)] focus:border-[var(--color-border-focus)]",
+          className
+        )}
         {...props}
       />
       {error && (
-        <p className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-error)]"
+          )} 
+          role="alert"
+        >
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-text-muted)]"
+          )}
+        >
           {helperText}
         </p>
       )}
@@ -79,40 +119,76 @@ export function FormTextarea({
   const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
-    <div className="mb-4">
+    <div className="mb-[var(--spacing-4)]">
       {label && (
         <label
           htmlFor={textareaId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+          className={cn(
+            "block",
+            "text-[var(--font-size-sm)]",
+            "font-[var(--font-weight-medium)]",
+            "text-[var(--color-text-primary)]",
+            "mb-[var(--spacing-2)]"
+          )}
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
+          {props.required && <span className="text-[var(--color-error)] ml-[var(--spacing-1)]">*</span>}
         </label>
       )}
       <textarea
         id={textareaId}
-        className={`
-          w-full px-4 py-3
-          border rounded-lg
-          bg-white dark:bg-gray-800
-          text-gray-900 dark:text-white
-          placeholder-gray-400 dark:placeholder-gray-500
-          focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-          disabled:opacity-50 disabled:cursor-not-allowed
-          transition-colors duration-200
-          resize-none
-          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600'}
-          ${className}
-        `}
+        className={cn(
+          // Base styles
+          "w-full",
+          "border-[length:var(--border-width-thin)]",
+          "rounded-[var(--input-border-radius)]",
+          // Colors from design tokens
+          "bg-[var(--color-bg-input)]",
+          "text-[var(--color-text-primary)]",
+          "placeholder:text-[var(--color-text-muted)]",
+          // Padding using 4px grid system
+          "px-[var(--spacing-4)]",
+          "py-[var(--spacing-3)]",
+          // Focus states
+          "focus:outline-none",
+          "focus:ring-[length:var(--focus-ring-width)]",
+          "focus:ring-offset-[length:var(--focus-ring-offset)]",
+          // Disabled state
+          "disabled:opacity-50",
+          "disabled:cursor-not-allowed",
+          // Transitions
+          "transition-[border-color,box-shadow]",
+          "duration-[var(--transition-base)]",
+          // Resize
+          "resize-none",
+          // Border and focus colors based on error state
+          error 
+            ? "border-[var(--color-error)] focus:ring-[var(--color-error)]/30 focus:border-[var(--color-error)]"
+            : "border-[var(--color-border-subtle)] focus:ring-[var(--focus-ring-color)] focus:border-[var(--color-border-focus)]",
+          className
+        )}
         {...props}
       />
       {error && (
-        <p className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-error)]"
+          )} 
+          role="alert"
+        >
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-text-muted)]"
+          )}
+        >
           {helperText}
         </p>
       )}
@@ -125,6 +201,7 @@ interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> 
   error?: string;
   helperText?: string;
   options: { value: string; label: string }[];
+  variant?: 'dense' | 'standard';
 }
 
 export function FormSelect({
@@ -134,34 +211,59 @@ export function FormSelect({
   options,
   className = '',
   id,
+  variant = 'standard',
   ...props
 }: FormSelectProps) {
   const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
-    <div className="mb-4">
+    <div className="mb-[var(--spacing-4)]">
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+          className={cn(
+            "block",
+            "text-[var(--font-size-sm)]",
+            "font-[var(--font-weight-medium)]",
+            "text-[var(--color-text-primary)]",
+            "mb-[var(--spacing-2)]"
+          )}
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
+          {props.required && <span className="text-[var(--color-error)] ml-[var(--spacing-1)]">*</span>}
         </label>
       )}
       <select
         id={selectId}
-        className={`
-          w-full px-4 py-3 min-h-[48px]
-          border rounded-lg
-          bg-white dark:bg-gray-800
-          text-gray-900 dark:text-white
-          focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-          disabled:opacity-50 disabled:cursor-not-allowed
-          transition-colors duration-200
-          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600'}
-          ${className}
-        `}
+        className={cn(
+          // Base styles
+          "w-full",
+          "border-[length:var(--border-width-thin)]",
+          "rounded-[var(--input-border-radius)]",
+          // Colors from design tokens
+          "bg-[var(--color-bg-input)]",
+          "text-[var(--color-text-primary)]",
+          // Height based on variant (32px dense, 40px standard)
+          variant === 'dense' ? "h-[var(--input-height-dense)]" : "h-[var(--input-height-standard)]",
+          // Padding using 4px grid system
+          "px-[var(--spacing-4)]",
+          "py-[var(--spacing-2)]",
+          // Focus states
+          "focus:outline-none",
+          "focus:ring-[length:var(--focus-ring-width)]",
+          "focus:ring-offset-[length:var(--focus-ring-offset)]",
+          // Disabled state
+          "disabled:opacity-50",
+          "disabled:cursor-not-allowed",
+          // Transitions
+          "transition-[border-color,box-shadow]",
+          "duration-[var(--transition-base)]",
+          // Border and focus colors based on error state
+          error 
+            ? "border-[var(--color-error)] focus:ring-[var(--color-error)]/30 focus:border-[var(--color-error)]"
+            : "border-[var(--color-border-subtle)] focus:ring-[var(--focus-ring-color)] focus:border-[var(--color-border-focus)]",
+          className
+        )}
         {...props}
       >
         {options.map((option) => (
@@ -171,12 +273,25 @@ export function FormSelect({
         ))}
       </select>
       {error && (
-        <p className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-error)]"
+          )} 
+          role="alert"
+        >
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-text-muted)]"
+          )}
+        >
           {helperText}
         </p>
       )}
@@ -199,30 +314,52 @@ export function FormCheckbox({
   const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
-    <div className="mb-4">
+    <div className="mb-[var(--spacing-4)]">
       <div className="flex items-start">
         <input
           type="checkbox"
           id={checkboxId}
-          className={`
-            min-w-[20px] min-h-[20px] mt-0.5
-            rounded border-gray-300 dark:border-gray-600
-            text-indigo-600 focus:ring-2 focus:ring-indigo-500
-            bg-white dark:bg-gray-800
-            transition-colors duration-200
-            ${className}
-          `}
+          className={cn(
+            // Size (20px = 5 * 4px, follows 4px grid)
+            "min-w-[20px]",
+            "min-h-[20px]",
+            "mt-[var(--spacing-1)]",
+            // Border and colors
+            "rounded-[var(--border-radius-sm)]",
+            "border-[var(--color-border-subtle)]",
+            "text-[var(--color-accent-primary)]",
+            "bg-[var(--color-bg-input)]",
+            // Focus states
+            "focus:ring-[length:var(--focus-ring-width)]",
+            "focus:ring-[var(--focus-ring-color)]",
+            // Transitions
+            "transition-[border-color,background-color,box-shadow]",
+            "duration-[var(--transition-base)]",
+            className
+          )}
           {...props}
         />
         <label
           htmlFor={checkboxId}
-          className="ml-3 text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
+          className={cn(
+            "ml-[var(--spacing-3)]",
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-text-primary)]",
+            "cursor-pointer"
+          )}
         >
           {label}
         </label>
       </div>
       {helperText && (
-        <p className="mt-1.5 ml-7 text-sm text-gray-500 dark:text-gray-400">
+        <p 
+          className={cn(
+            "mt-[var(--spacing-2)]",
+            "ml-[28px]", // 20px checkbox + 8px spacing
+            "text-[var(--font-size-sm)]",
+            "text-[var(--color-text-muted)]"
+          )}
+        >
           {helperText}
         </p>
       )}
