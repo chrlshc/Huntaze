@@ -2,14 +2,14 @@
 
 export const dynamic = 'force-dynamic';
 
-import { ShopifyShell } from "@/components/ShopifyShell";
-
 export default function OffersPage() {
   return (
-    <ShopifyShell title="Réductions" description={undefined}>
-      <div className="shopify-card">
-        <h2>Discounts</h2>
+    <div className="container mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">Réductions</h1>
+      <div className="bg-surface rounded-lg p-6 border border-border">
+        <h2 className="text-xl font-semibold">Discounts</h2>
+        <p className="text-muted mt-2">Coming soon...</p>
       </div>
-    </ShopifyShell>
+    </div>
   );
 }

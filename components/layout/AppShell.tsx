@@ -21,7 +21,10 @@ export function AppShell({ children }: AppShellProps) {
         Skip to main content
       </a>
       
-      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div 
+        className="flex min-h-screen"
+        style={{ backgroundColor: 'var(--color-bg-app)' }}
+      >
         {/* Sidebar */}
         <MainSidebar />
         
@@ -31,7 +34,14 @@ export function AppShell({ children }: AppShellProps) {
           <TopHeader />
           
           {/* Page content */}
-          <main id="main-content" className="flex-1 overflow-auto px-6 py-8" tabIndex={-1}>
+          <main 
+            id="main-content" 
+            className="flex-1 overflow-auto" 
+            style={{
+              padding: 'var(--spacing-8) var(--spacing-6)'
+            }}
+            tabIndex={-1}
+          >
             {children}
           </main>
         </div>

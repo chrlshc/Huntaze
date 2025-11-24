@@ -265,17 +265,17 @@ export class IntegrationsService {
       const tokens = await this.retryWithBackoff(
         () => adapter.exchangeCodeForToken(code),
         3,
-        'Token exchange'
+        'Token exchange',
         correlationId
-       string };
+      ) as { accessToken: string; refreshToken?: string; expiresIn?: number; tokenType?: string; scope?: string };
       
       // Get user profile with retry logic
       const profile = await this.retryWithBackoff(
-        ()
+        () => adapter.getUserProfile(tokens.accessToken),
         3,
         'Profile fetch',
-      
-      ) as { providerAccountIdny> };d<string, a: Recora?tadatg; mein: strlationId  corre
+        correlationId
+      ) as { providerAccountId: string; metadata?: Record<string, any> };
       
       // Calculate expiry date
       const expiresAt = tokens.expiresIn

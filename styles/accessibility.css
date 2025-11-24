@@ -1,0 +1,320 @@
+/**
+ * Accessibility Styles
+ * 
+ * WCAG 2.1 AA compliant styles for focus indicators, touch targets,
+ * and other accessibility requirements.
+ * 
+ * Requirements: 9.1, 9.2, 9.3, 9.4
+ */
+
+/* ========================================
+   FOCUS INDICATORS
+   ======================================== */
+
+/**
+ * Visible focus indicators for all interactive elements
+ * Requirement 9.3: Focus indicator visibility
+ */
+
+/* Default focus-visible styles for all interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid rgba(125, 87, 193, 0.5);
+  outline-offset: 2px;
+}
+
+/* Alternative ring-based focus indicator */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(125, 87, 193, 0.3);
+}
+
+/* High contrast focus indicator for better visibility */
+.focus-ring-high-contrast:focus-visible {
+  outline: 3px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+/* Skip link - visible only on focus */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-accent-primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ========================================
+   TOUCH TARGETS
+   ======================================== */
+
+/**
+ * Minimum touch target sizes (44x44px)
+ * Requirement 9.4: Touch target size adequacy
+ */
+
+/* Base touch target utility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Touch target for buttons */
+.touch-target-button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+}
+
+/* Touch target for icon buttons */
+.touch-target-icon {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Touch target for links */
+.touch-target-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+/* Ensure all interactive elements meet minimum size */
+button,
+a[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"] {
+  min-height: 44px;
+}
+
+/* Input fields should be at least 40px (close to 44px with padding) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea,
+select {
+  min-height: 40px;
+}
+
+/* ========================================
+   COLOR CONTRAST
+   ======================================== */
+
+/**
+ * High contrast text utilities
+ * Requirements 9.1, 9.2: Contrast ratios
+ */
+
+/* Ensure text has sufficient contrast */
+.text-high-contrast {
+  color: var(--color-text-primary);
+}
+
+.text-medium-contrast {
+  color: var(--color-text-secondary);
+}
+
+/* Warning for low contrast text (development only) */
+.text-low-contrast {
+  color: var(--color-text-muted);
+  /* This should only be used for large text (18pt+) */
+}
+
+/* Background utilities with guaranteed contrast */
+.bg-dark-high-contrast {
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+}
+
+.bg-surface-high-contrast {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   SCREEN READER UTILITIES
+   ======================================== */
+
+/**
+ * Screen reader only content
+ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+/**
+ * Respect user's motion preferences
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   HIGH CONTRAST MODE
+   ======================================== */
+
+/**
+ * Support for Windows High Contrast Mode
+ */
+
+@media (prefers-contrast: high) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border: 2px solid currentColor;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+/* ========================================
+   KEYBOARD NAVIGATION
+   ======================================== */
+
+/**
+ * Enhanced keyboard navigation styles
+ */
+
+/* Show focus indicator only for keyboard navigation */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Ensure focus is always visible for keyboard users */
+:focus-visible {
+  outline: 3px solid rgba(125, 87, 193, 0.5);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   ARIA LIVE REGIONS
+   ======================================== */
+
+/**
+ * Styles for ARIA live regions
+ */
+
+[role="alert"],
+[role="status"],
+[aria-live] {
+  /* Ensure live regions are visible but not intrusive */
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+[role="alert"] {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+[role="status"] {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 1px solid var(--color-info);
+  color: var(--color-info);
+}
+
+/* ========================================
+   DEVELOPMENT WARNINGS
+   ======================================== */
+
+/**
+ * Visual warnings for accessibility issues (development only)
+ * These should be removed in production builds
+ */
+
+/* Warn about missing alt text on images */
+img:not([alt]) {
+  outline: 3px dashed red;
+}
+
+/* Warn about empty links */
+a:empty {
+  outline: 3px dashed orange;
+}
+
+/* Warn about buttons without accessible names */
+button:not([aria-label]):not([aria-labelledby]):empty {
+  outline: 3px dashed orange;
+}
+
+/* Warn about inputs without labels */
+input:not([aria-label]):not([aria-labelledby]):not([id]) {
+  outline: 3px dashed orange;
+}
+
+/* Remove warnings in production */
+@media (prefers-reduced-data: reduce) {
+  img:not([alt]),
+  a:empty,
+  button:not([aria-label]):not([aria-labelledby]):empty,
+  input:not([aria-label]):not([aria-labelledby]):not([id]) {
+    outline: none;
+  }
+}
