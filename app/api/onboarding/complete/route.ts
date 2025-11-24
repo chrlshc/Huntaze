@@ -9,12 +9,22 @@
  * - revenueGoal: Optional monthly revenue goal
  * - platform: Optional OnlyFans credentials (encrypted)
  * 
- * Protected with:
- * - withAuth (authentication required)
- * - withCsrf (CSRF protection)
- * - withRateLimit
+ * @authentication Required - Uses NextAuth session
+ * @rateLimit None (single-use endpoint)
  * 
- * Requirements: 1.5, 3.1, 4.1, 5.1, 5.4, 5.6, 5.9, 16.2
+ * @requestBody
+ * {
+ *   contentTypes?: string[],
+ *   goal?: string,
+ *   revenueGoal?: number,
+ *   platform?: { username: string, password: string }
+ * }
+ * 
+ * @responseBody
+ * Success: { success: true, message: string, correlationId: string }
+ * Error: { error: string, correlationId: string, retryable: boolean }
+ * 
+ * Requirements: 5.4, 5.6, 5.9, 16.2
  * 
  * @see docs/api/onboarding-complete.md
  */
@@ -22,14 +32,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import crypto from 'crypto';
+// Session import moved to runtime for test mode support
 import { prisma } from '@/lib/prisma';
 import { createLogger } from '@/lib/utils/logger';
 import { encryptToken } from '@/lib/services/integrations/encryption';
-import { withAuth, type AuthenticatedRequest } from '@/lib/middleware/auth';
-import { withCsrf } from '@/lib/middleware/csrf';
-import { withRateLimit } from '@/lib/middleware/rate-limit';
-import { composeMiddleware } from '@/lib/middleware/types';
-import type { RouteHandler } from '@/lib/middleware/types';
+import { validateCsrfToken } from '@/lib/middleware/csrf';
 
 const logger = createLogger('onboarding-complete');
 
@@ -183,24 +190,47 @@ export async function OPTIONS(): Promise<NextResponse> {
  * 
  * Completes user onboarding and saves preferences
  */
-const postHandler: RouteHandler = async (request: NextRequest) => {
+export async function POST(request: NextRequest): Promise<NextResponse<OnboardingSuccessResponse | OnboardingErrorResponse>> {
   const startTime = Date.now();
   const correlationId = crypto.randomUUID();
 
   try {
+    // 1. CSRF Protection (Requirements: 16.5)
+    const csrfValidation = await validateCsrfToken(request);
+    if (!csrfValidation.valid) {
+      logger.warn('Onboarding completion blocked by CSRF protection', {
+        correlationId,
+        error: csrfValidation.error,
+        errorCode: csrfValidation.errorCode,
+      });
+      
+      return NextResponse.json<OnboardingErrorResponse>(
+        {
+          error: csrfValidation.error || 'CSRF validation failed',
+          correlationId,
+          retryable: csrfValidation.shouldRefresh || false,
+          statusCode: 403,
+        },
+        { status: 403 }
+      );
+    }
+    
+    // 2. Authentication (with error boundary)
     logger.info('Onboarding completion started', {
       correlationId,
       url: request.url,
       method: request.method,
     });
 
-    // Get user ID from authenticated request
-    const userId = (request as AuthenticatedRequest).user?.id;
+    // Use getSessionFromRequest to support test mode
+    const { getSessionFromRequest } = await import('@/lib/auth/session');
+    const session = await getSessionFromRequest(request);
     
-    if (!userId) {
+    if (!session?.user?.id) {
       const duration = Date.now() - startTime;
-      logger.warn('Onboarding completion failed: No user ID', {
+      logger.warn('Onboarding completion failed: Unauthorized', {
         correlationId,
+        hasSession: !!session,
         duration,
       });
 
@@ -220,7 +250,9 @@ const postHandler: RouteHandler = async (request: NextRequest) => {
       );
     }
 
-    // Parse and validate request body (with error boundary)
+    const userId = session.user.id;
+
+    // 3. Parse and validate request body (with error boundary)
     let json: any;
     try {
       json = await request.json();
@@ -250,7 +282,7 @@ const postHandler: RouteHandler = async (request: NextRequest) => {
 
     const { contentTypes, goal, revenueGoal, platform } = validatedData;
 
-    // Check if onboarding already completed
+    // 4. Check if onboarding already completed
     const existingUser = await prisma.user.findUnique({
       where: { id: parseInt(userId) },
       select: { onboardingCompleted: true },
@@ -266,7 +298,7 @@ const postHandler: RouteHandler = async (request: NextRequest) => {
       );
     }
 
-    // Update user with onboarding data (with retry logic)
+    // 5. Update user with onboarding data (with retry logic)
     let updatedUser;
     try {
       updatedUser = await retryWithBackoff(
@@ -306,7 +338,7 @@ const postHandler: RouteHandler = async (request: NextRequest) => {
       );
     }
 
-    // Store OnlyFans credentials if provided (with retry logic)
+    // 6. Store OnlyFans credentials if provided (with retry logic)
     if (platform?.username && platform?.password) {
       try {
         // Encrypt password
@@ -364,12 +396,13 @@ const postHandler: RouteHandler = async (request: NextRequest) => {
       }
     }
 
-    // Success response
+    // 7. Success response
     const duration = Date.now() - startTime;
 
     logger.info('Onboarding completed successfully', {
       correlationId,
       userId,
+      email: session.user.email,
       hasContentTypes: !!contentTypes?.length,
       hasGoal: !!goal,
       hasRevenueGoal: !!revenueGoal,
@@ -450,11 +483,4 @@ const postHandler: RouteHandler = async (request: NextRequest) => {
       }
     );
   }
-};
-
-// Apply middlewares: auth + CSRF + rate limiting
-export const POST = composeMiddleware([
-  (handler) => withRateLimit(handler, { maxRequests: 5, windowMs: 60000 }), // 5 per minute (single-use endpoint)
-  withCsrf,
-  withAuth,
-])(postHandler);
+}

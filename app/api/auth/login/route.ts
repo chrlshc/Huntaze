@@ -71,8 +71,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { createLogger } from '@/lib/utils/logger';
 import { setCsrfTokenCookie } from '@/lib/middleware/csrf';
-import { withRateLimit } from '@/lib/middleware/rate-limit';
-import type { RouteHandler } from '@/lib/middleware/types';
 import { signIn } from '@/lib/auth/config';
 import { z } from 'zod';
 
@@ -196,7 +194,7 @@ async function retryWithBackoff<T>(
  * @param request - Next.js request object
  * @returns JSON response with verification status or error
  */
-const loginHandler: RouteHandler = async (request: NextRequest): Promise<NextResponse<LoginResponse>> => {
+export async function POST(request: NextRequest): Promise<NextResponse<LoginResponse>> {
   const correlationId = `login-${Date.now()}-${Math.random().toString(36).substring(7)}`;
   const startTime = Date.now();
 
@@ -416,17 +414,7 @@ const loginHandler: RouteHandler = async (request: NextRequest): Promise<NextRes
       }
     );
   }
-};
-
-/**
- * Export POST handler with rate limiting middleware
- * Rate limit: 10 requests per minute per IP
- * Requirements: 1.5, 2.3
- */
-export const POST = withRateLimit(loginHandler, {
-  maxRequests: 10,
-  windowMs: 60 * 1000, // 1 minute
-});
+}
 
 /**
  * OPTIONS handler for CORS preflight

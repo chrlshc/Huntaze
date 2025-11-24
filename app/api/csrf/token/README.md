@@ -1,260 +1,498 @@
 # CSRF Token API
 
-## Overview
-
-The CSRF Token API provides a secure way to generate Cross-Site Request Forgery (CSRF) tokens for client applications. These tokens are used to protect against CSRF attacks by validating that requests originate from legitimate sources.
-
 ## Endpoint
 
 ```
 GET /api/csrf/token
 ```
 
+## Description
+
+Generates and returns a new CSRF (Cross-Site Request Forgery) token for the current authenticated session. This token must be included in all state-changing requests (POST, PUT, DELETE, PATCH) to protect against CSRF attacks.
+
+The token is automatically set as an HTTP-only cookie and also returned in the response body for manual inclusion in request headers.
+
 ## Authentication
 
-**Not required** - CSRF tokens can be generated without authentication. This allows unauthenticated users to obtain tokens before making authenticated requests.
+**Required**: Yes (NextAuth session)
 
 ## Rate Limiting
 
-**None** - This is a read-only endpoint that generates tokens on demand.
+None (read-only endpoint)
 
 ## Request
 
 ### Headers
 
-No special headers required.
+```
+Content-Type: application/json
+```
 
 ### Query Parameters
 
-None.
+None
 
 ### Request Body
 
-None (GET request).
+None (GET request)
 
 ## Response
 
 ### Success Response (200 OK)
 
-```typescript
-{
-  token: string  // 64-character hexadecimal CSRF token
-}
-```
-
-#### Example
-
 ```json
 {
-  "token": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456"
-}
-```
-
-### Error Response (500 Internal Server Error)
-
-```typescript
-{
-  error: string  // Error message
-}
-```
-
-#### Example
-
-```json
-{
-  "error": "Failed to generate CSRF token"
-}
-```
-
-## Cookies
-
-The endpoint automatically sets a `csrf-token` cookie with the following attributes:
-
-### Production Environment
-
-```
-csrf-token=<token>; Domain=.huntaze.com; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400
-```
-
-- **Domain**: `.huntaze.com` (works across all subdomains)
-- **HttpOnly**: Prevents JavaScript access to the cookie
-- **Secure**: Cookie only sent over HTTPS
-- **SameSite**: `Lax` (prevents CSRF while allowing top-level navigation)
-- **Max-Age**: 86400 seconds (24 hours)
-
-### Development Environment
-
-```
-csrf-token=<token>; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400
-```
-
-- **No Domain**: Cookie works on localhost
-- **No Secure**: Allows HTTP connections in development
-- Other attributes remain the same
-
-## Usage
-
-### Client-Side (JavaScript)
-
-```javascript
-// 1. Fetch CSRF token
-const response = await fetch('/api/csrf/token');
-const { token } = await response.json();
-
-// 2. Include token in subsequent requests
-await fetch('/api/some-endpoint', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'X-CSRF-Token': token,  // Include token in header
+  "success": true,
+  "data": {
+    "token": "1234567890:abc123def456ghi789:jkl012mno345pqr678",
+    "expiresIn": 3600000
   },
-  body: JSON.stringify({ data: 'example' }),
-});
+  "meta": {
+    "timestamp": "2024-11-19T10:30:00.000Z",
+    "requestId": "req_1234567890_abc123",
+    "duration": 45
+  }
+}
 ```
 
-### Server-Side Validation
+**Fields:**
+- `success` (boolean): Always `true` for successful responses
+- `data` (object): Token data
+  - `token` (string): CSRF token to include in requests
+  - `expiresIn` (number): Token expiration time in milliseconds (1 hour)
+- `meta` (object): Response metadata
+  - `timestamp` (string): ISO 8601 timestamp
+  - `requestId` (string): Unique request identifier for tracing
+  - `duration` (number): Request processing time in milliseconds
 
-The CSRF middleware automatically validates tokens for non-GET requests:
+### Error Responses
+
+#### 401 Unauthorized
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Authentication required to generate CSRF token",
+    "retryable": false
+  },
+  "meta": {
+    "timestamp": "2024-11-19T10:30:00.000Z",
+    "requestId": "csrf-1234567890-abc123",
+    "duration": 12
+  }
+}
+```
+
+**Cause**: No valid session found
+
+**Action**: User needs to log in
+
+#### 500 Internal Server Error
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "An unexpected error occurred. Please try again.",
+    "retryable": true,
+    "retryAfter": 5
+  },
+  "meta": {
+    "timestamp": "2024-11-19T10:30:00.000Z",
+    "requestId": "csrf-1234567890-abc123",
+    "duration": 234
+  }
+}
+```
+
+**Cause**: Token generation failed or session retrieval error
+
+**Action**: Retry the request after delay
+
+**Headers:**
+- `Retry-After: 5` - Retry after 5 seconds
+
+## Response Headers
+
+All responses include:
+
+- `X-Correlation-Id`: Unique request identifier for debugging
+- `X-Duration-Ms`: Request processing time in milliseconds (success only)
+- `Cache-Control`: `private, no-cache, no-store, must-revalidate`
+- `Set-Cookie`: `csrf-token` (HTTP-only, Secure, SameSite=Strict)
+
+## Features
+
+### 1. Automatic Retry Logic
+
+The API implements exponential backoff retry for transient errors:
+
+- **Max Retries**: 3 attempts
+- **Initial Delay**: 100ms
+- **Max Delay**: 2000ms
+- **Backoff Factor**: 2x
+
+**Retryable Errors:**
+- Session retrieval failures
+- Network errors
+- JWT errors
+
+### 2. Dual Token Delivery
+
+The CSRF token is delivered in two ways:
+
+1. **HTTP-Only Cookie**: Automatically included in subsequent requests
+2. **Response Body**: For manual inclusion in request headers
+
+This dual approach provides flexibility for different client implementations.
+
+### 3. Token Security
+
+- **Format**: `timestamp:signature:random`
+- **Expiration**: 1 hour (3600000ms)
+- **Cookie Attributes**:
+  - `HttpOnly`: Prevents JavaScript access
+  - `Secure`: HTTPS only (production)
+  - `SameSite=Strict`: Prevents cross-site requests
+  - `Path=/`: Available for all routes
+
+### 4. Performance Monitoring
+
+Each request is logged with:
+- Correlation ID
+- User ID
+- Token length
+- Duration
+- Error details (if applicable)
+
+## Client-Side Integration
+
+### React Hook (Recommended)
 
 ```typescript
-import { withCsrf } from '@/lib/middleware/csrf';
+'use client';
 
-export const POST = withCsrf(async (req: NextRequest) => {
-  // Handler logic - CSRF token already validated
-  return NextResponse.json({ success: true });
-});
+import { useState, useEffect } from 'react';
+
+interface CsrfToken {
+  token: string;
+  expiresIn: number;
+}
+
+export function useCsrfToken() {
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchToken() {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch('/api/csrf/token', {
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch CSRF token');
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.data?.token) {
+          setToken(data.data.token);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchToken();
+  }, []);
+
+  return { token, isLoading, error };
+}
 ```
+
+### Using the Token in Requests
+
+```typescript
+import { useCsrfToken } from '@/hooks/useCsrfToken';
+
+export function MyComponent() {
+  const { token, isLoading, error } = useCsrfToken();
+
+  async function handleSubmit(data: any) {
+    if (!token) {
+      console.error('CSRF token not available');
+      return;
+    }
+
+    const response = await fetch('/api/some-endpoint', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': token,
+      },
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+
+    // Handle response...
+  }
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return <form onSubmit={handleSubmit}>{/* Form fields */}</form>;
+}
+```
+
+### Fetch with Retry (Client-Side)
+
+```typescript
+async function fetchCsrfTokenWithRetry(maxRetries = 3): Promise<string> {
+  const baseDelay = 1000;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch('/api/csrf/token', {
+        credentials: 'include',
+        signal: AbortSignal.timeout(10000),
+      });
+
+      if (!response.ok) {
+        const isRetryable = response.status >= 500;
+        
+        if (isRetryable && attempt < maxRetries) {
+          const delay = baseDelay * Math.pow(2, attempt - 1);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+        
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.data?.token) {
+        return data.data.token;
+      }
+      
+      throw new Error('Invalid response format');
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      
+      const delay = baseDelay * Math.pow(2, attempt - 1);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw new Error('Failed to fetch CSRF token after retries');
+}
+```
+
+### Server-Side Usage (API Routes)
+
+```typescript
+import { NextRequest } from 'next/server';
+import { validateCsrfToken } from '@/lib/middleware/csrf';
+
+export async function POST(request: NextRequest) {
+  // Validate CSRF token
+  const validation = await validateCsrfToken(request);
+  
+  if (!validation.valid) {
+    return Response.json(
+      { error: validation.error },
+      { status: 403 }
+    );
+  }
+
+  // Process request...
+}
+```
+
+## Token Lifecycle
+
+### 1. Token Generation
+
+```
+Client Request → Authentication Check → Generate Token → Set Cookie → Return Token
+```
+
+### 2. Token Usage
+
+```
+Client Request → Include Token (Header or Cookie) → Server Validates → Process Request
+```
+
+### 3. Token Expiration
+
+- **Expiry Time**: 1 hour from generation
+- **Automatic Refresh**: Client should fetch new token before expiry
+- **Validation**: Server checks timestamp and signature
 
 ## Security Considerations
 
-### Double-Submit Cookie Pattern
+### 1. Token Format
 
-This endpoint implements the double-submit cookie pattern:
+The token consists of three parts separated by colons:
 
-1. **Token Generation**: Server generates a cryptographically secure random token
-2. **Cookie Storage**: Token is stored in an HttpOnly cookie
-3. **Client Storage**: Token is also returned in the response body
-4. **Request Validation**: Client includes token in `X-CSRF-Token` header
-5. **Server Validation**: Server compares header token with cookie token
-
-### Token Properties
-
-- **Length**: 64 characters (32 bytes hex-encoded)
-- **Randomness**: Generated using `crypto.randomBytes(32)`
-- **Uniqueness**: Each request generates a new unique token
-- **Expiration**: Tokens expire after 24 hours
-
-### Protection Against
-
-- **CSRF Attacks**: Malicious sites cannot read the cookie or generate valid tokens
-- **XSS Attacks**: HttpOnly flag prevents JavaScript access to cookie
-- **Man-in-the-Middle**: Secure flag ensures HTTPS-only transmission in production
-
-## Requirements
-
-This endpoint satisfies the following requirements from the production-critical-fixes spec:
-
-- **8.1**: Cookie domain set to `.huntaze.com` in production
-- **8.2**: No domain specified in development
-- **8.3**: HttpOnly and Secure flags set appropriately
-- **8.4**: SameSite policy set to 'lax'
-- **8.5**: 24-hour expiration time
-
-## Error Handling
-
-### Token Generation Failure
-
-If token generation fails (extremely rare), the endpoint returns a 500 error:
-
-```json
-{
-  "error": "Failed to generate CSRF token"
-}
+```
+timestamp:signature:random
 ```
 
-**Recovery**: Client should retry the request after a brief delay.
+- **Timestamp**: Unix timestamp in milliseconds
+- **Signature**: HMAC-SHA256 signature
+- **Random**: Cryptographically secure random bytes
 
-### Network Errors
+### 2. Validation Process
 
-Standard HTTP error handling applies:
+Server validates:
+1. Token format (3 parts)
+2. Timestamp (not expired)
+3. Signature (matches expected value)
 
-- **Network timeout**: Retry with exponential backoff
-- **Connection refused**: Check server availability
-- **DNS resolution failure**: Check network connectivity
+### 3. Cookie Security
+
+- **HttpOnly**: Prevents XSS attacks
+- **Secure**: HTTPS only in production
+- **SameSite=Strict**: Prevents CSRF attacks
+- **Path=/**: Available for all routes
+
+### 4. Best Practices
+
+- ✅ Always fetch token on page load
+- ✅ Include token in all state-changing requests
+- ✅ Refresh token before expiry
+- ✅ Handle token validation errors gracefully
+- ✅ Never expose token in URLs or logs
 
 ## Logging
 
-### Development Environment
+All requests are logged with structured JSON format:
 
-Token generation is logged for debugging:
-
-```
-[CSRF] Token generated: {
-  tokenLength: 64,
-  timestamp: "2024-11-22T10:30:00.000Z"
+```json
+{
+  "correlationId": "csrf-1234567890-abc123",
+  "timestamp": "2024-11-19T10:30:00.000Z",
+  "service": "csrf-token-api",
+  "level": "info",
+  "message": "CSRF token generated successfully",
+  "metadata": {
+    "userId": "123",
+    "tokenLength": 64,
+    "duration": 45
+  }
 }
-```
-
-### Production Environment
-
-No logging to avoid performance overhead and log spam.
-
-## Testing
-
-### Unit Tests
-
-See `tests/unit/api/csrf-token.test.ts` for comprehensive unit tests covering:
-
-- Token generation
-- Cookie configuration
-- Environment-specific behavior
-- Error handling
-
-### Integration Tests
-
-```bash
-# Run unit tests
-npm test tests/unit/api/csrf-token.test.ts
-
-# Run all CSRF-related tests
-npm test csrf
-```
-
-### Manual Testing
-
-```bash
-# Development
-curl http://localhost:3000/api/csrf/token
-
-# Production
-curl https://huntaze.com/api/csrf/token
 ```
 
 ## Performance
 
-- **Response Time**: < 10ms (p95)
-- **Token Generation**: O(1) constant time
-- **Memory Usage**: Minimal (single token per request)
-- **Caching**: Not applicable (tokens must be unique)
+- **Target Response Time**: < 100ms (p95)
+- **Timeout**: 10 seconds (client-side recommended)
+- **Token Generation**: < 10ms
+- **Session Retrieval**: < 50ms
+
+## Testing
+
+### Manual Testing
+
+```bash
+# Fetch CSRF token (requires authentication)
+curl -X GET http://localhost:3000/api/csrf/token \
+  -H "Cookie: next-auth.session-token=YOUR_SESSION_TOKEN" \
+  -v
+
+# Response includes Set-Cookie header with csrf-token
+```
+
+### Integration Tests
+
+See test files:
+- `tests/integration/api/csrf-token.integration.test.ts`
+
+## Requirements Mapping
+
+- **16.5**: CSRF protection for all state-changing requests
+
+## Troubleshooting
+
+### Issue: 401 Unauthorized
+
+**Possible Causes:**
+1. User not logged in
+2. Session expired
+3. Invalid session token
+
+**Solutions:**
+1. Redirect to login page
+2. Refresh session
+3. Clear cookies and re-authenticate
+
+### Issue: Token validation fails
+
+**Possible Causes:**
+1. Token expired (> 1 hour old)
+2. Token signature invalid
+3. Token format incorrect
+
+**Solutions:**
+1. Fetch new token
+2. Check server secret configuration
+3. Verify token format
+
+### Issue: Slow response times
+
+**Possible Causes:**
+1. Session retrieval slow
+2. Network latency
+3. High concurrent requests
+
+**Solutions:**
+1. Check database performance
+2. Implement connection pooling
+3. Add caching for session data
 
 ## Related Documentation
 
-- [CSRF Middleware](../../../lib/middleware/csrf.ts)
-- [CSRF Property Tests](../../../tests/unit/middleware/csrf.property.test.ts)
-- [Production Critical Fixes Spec](../../../.kiro/specs/production-critical-fixes/)
+- [CSRF Middleware](../../../lib/middleware/csrf.README.md)
+- [CSRF Client Utilities](../../../lib/utils/csrf-client.ts)
+- [Authentication](../../../lib/auth/README.md)
+- [API Response Utilities](../../../lib/api/utils/response.ts)
 
 ## Changelog
 
-### 2024-11-22
+### v1.0.0 (2024-11-19)
+- ✨ Initial implementation
+- ✅ Automatic retry with exponential backoff
+- ✅ Structured error handling
+- ✅ Performance monitoring
+- ✅ Correlation ID tracking
+- ✅ Dual token delivery (cookie + body)
+- ✅ Comprehensive documentation
+- ✅ TypeScript types
+- ✅ Security best practices
 
-- Simplified implementation removing unnecessary authentication checks
-- Added proper TypeScript types for responses
-- Added error handling with try-catch
-- Added development logging
-- Updated documentation
+## Support
 
-### Previous Version
+For issues or questions:
+1. Check this README
+2. Review CSRF middleware documentation
+3. Check correlation ID in logs
+4. Contact development team
 
-- Required authentication (removed)
-- Complex retry logic (removed)
-- Correlation IDs (removed for simplicity)
+---
+
+**Version**: 1.0.0  
+**Status**: ✅ Production Ready  
+**Last Updated**: 2024-11-19
