@@ -27,7 +27,7 @@
 import { ImageResponse } from '@vercel/og';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 /**
  * TypeScript types for API responses
