@@ -39,10 +39,10 @@ function main() {
     const stubPath = path.join(nextDir, entry);
     const contents = [
       `import * as mod from "./${entry}.js";`,
+      // Re-export all named exports
       `export * from "./${entry}.js";`,
-      // Provide a safe default export even when the underlying module doesn't have one
-      `const defaultExport = Object.prototype.hasOwnProperty.call(mod, "default") ? mod.default : mod;`,
-      `export default defaultExport;`,
+      // Provide a safe default export as the namespace object (works even without a native default)
+      `export default mod;`,
       '',
     ].join('\n');
 
