@@ -130,6 +130,7 @@
     "stripe": "^19.3.1",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.17",
     "three": "^0.181.1",
     "typescript": "^5.9.3",
     "zod": "^4.1.12",
@@ -138,7 +139,6 @@
   "devDependencies": {
     "@axe-core/react": "^4.11.0",
     "@playwright/test": "^1.56.1",
-    "@tailwindcss/postcss": "^4.1.17",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -159,7 +159,6 @@
     "playwright": "^1.56.1",
     "postcss": "^8.5.6",
     "prisma": "^6.19.0",
-    "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
     "vitest": "^4.0.8"
   }
