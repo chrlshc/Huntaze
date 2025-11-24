@@ -14,7 +14,8 @@ const nextConfig: NextConfig = {
   compress: true,
   
   // Output for Amplify Compute (ECS Fargate) - Requirement 6.1
-  output: 'standalone',
+  // Temporarily disabled to debug ENOENT errors during build
+  // output: 'standalone',
   
   // Note: swcMinify removed - it's now the default in Next.js 16
 
