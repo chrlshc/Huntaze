@@ -219,7 +219,7 @@ export default function HowItWorksPage() {
             Ready to Save Time and Grow?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join 5,000+ creators who work smarter, not harder
+            Work smarter, not harder with AI automation
           </p>
           <Link href="/onboarding">
             <Button size="lg" className="bg-white text-purple-700 hover:bg-gray-100">

@@ -99,8 +99,8 @@ const useCases = [
 const metrics = [
   {
     icon: Clock,
-    value: "20+ hours",
-    label: "Saved per week"
+    value: "Automated",
+    label: "Time-saving tools"
   },
   {
     icon: TrendingUp,
@@ -252,7 +252,7 @@ export default function UseCasesPage() {
             Ready to transform your business?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of creators earning more while working less
+            Start automating your creator business today
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button

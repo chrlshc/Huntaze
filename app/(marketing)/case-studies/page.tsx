@@ -1,88 +1,80 @@
 "use client";
 
-// Enable static generation for optimal performance and SEO
 export const dynamic = 'force-static';
 
 import { motion } from "framer-motion";
-import { TrendingUp, Clock, MessageSquare, DollarSign, Star, ArrowRight } from "lucide-react";
+import { MessageSquare, Clock, BarChart3, Shield, Zap, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { MagneticButton } from "@/src/components/ui/magnetic-button";
 import { Button } from "@/components/ui/button";
 
-const caseStudies = [
+const features = [
   {
-    name: "Sarah M.",
-    avatar: "SM",
-    role: "Fitness Creator",
-    before: {
-      revenue: "$2,400/month",
-      hours: "35 hours/week on messages",
-      fans: "1,200 active fans"
-    },
-    after: {
-      revenue: "$5,800/month",
-      hours: "12 hours/week on messages",
-      fans: "1,850 active fans"
-    },
-    timeframe: "3 months",
-    testimonial: "I was drowning in messages. Now I create more content and still earn more.",
-    highlights: [
-      "2.4x revenue growth",
-      "23 hours saved weekly",
-      "Better fan engagement"
+    icon: MessageSquare,
+    title: "AI-Powered Messaging",
+    description: "Automate repetitive conversations while maintaining your authentic voice",
+    benefits: [
+      "Smart message templates",
+      "Context-aware responses",
+      "Multi-platform support"
     ]
   },
   {
-    name: "Jake T.",
-    avatar: "JT",
-    role: "Gaming Creator",
-    before: {
-      revenue: "$3,100/month",
-      hours: "40 hours/week on messages",
-      fans: "2,500 active fans"
-    },
-    after: {
-      revenue: "$6,300/month",
-      hours: "15 hours/week on messages",
-      fans: "3,200 active fans"
-    },
-    timeframe: "4 months",
-    testimonial: "The AI handles the repetitive stuff perfectly. I focus on high-value fans now.",
-    highlights: [
-      "2x revenue growth",
-      "Improved conversion rates",
-      "25 hours saved weekly"
+    icon: Clock,
+    title: "Time Management",
+    description: "Focus on creating content while AI handles routine interactions",
+    benefits: [
+      "Automated scheduling",
+      "Priority inbox",
+      "Batch processing"
     ]
   },
   {
-    name: "Maria K.",
-    avatar: "MK",
-    role: "Lifestyle Creator",
-    before: {
-      revenue: "$1,800/month",
-      hours: "25 hours/week on messages",
-      fans: "800 active fans"
-    },
-    after: {
-      revenue: "$3,200/month",
-      hours: "8 hours/week on messages",
-      fans: "1,100 active fans"
-    },
-    timeframe: "2 months",
-    testimonial: "Started small with just welcome messages. Now AI handles 80% of my DMs.",
-    highlights: [
-      "1.7x revenue growth",
-      "17 hours saved weekly",
-      "Platform compliant"
+    icon: BarChart3,
+    title: "Analytics & Insights",
+    description: "Track engagement and optimize your strategy with data",
+    benefits: [
+      "Performance metrics",
+      "Fan engagement tracking",
+      "Revenue analytics"
+    ]
+  },
+  {
+    icon: Shield,
+    title: "Platform Compliant",
+    description: "Built with platform guidelines in mind for safe automation",
+    benefits: [
+      "Terms of service compliant",
+      "Human-in-the-loop controls",
+      "Transparent AI usage"
+    ]
+  },
+  {
+    icon: Zap,
+    title: "Quick Setup",
+    description: "Get started in minutes with our intuitive onboarding",
+    benefits: [
+      "Easy integration",
+      "Guided setup wizard",
+      "24/7 support"
+    ]
+  },
+  {
+    icon: TrendingUp,
+    title: "Growth Tools",
+    description: "Scale your creator business with powerful automation",
+    benefits: [
+      "Campaign management",
+      "Content scheduling",
+      "Fan segmentation"
     ]
   }
 ];
 
 const commonChallenges = [
-  "Spending 5+ hours daily on repetitive messages",
-  "Missing high-value fans in the DM chaos",
+  "Spending hours daily on repetitive messages",
+  "Missing important fan interactions",
   "Burning out from constant availability",
-  "Revenue plateauing despite more work"
+  "Struggling to scale your business"
 ];
 
 export default function CaseStudiesPage() {
@@ -90,180 +82,101 @@ export default function CaseStudiesPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
       <section className="py-20 md:py-32 bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
-        <div className="container-width">
+        <div className="container mx-auto px-4 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Real Creators, <span className="text-gradient">Real Results</span>
+              Built for <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Creator Success</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              See how creators like you save time and grow revenue with Huntaze. 
-              Real examples from our community. Results vary.
+              Powerful automation tools designed to help creators save time and grow their business.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Case Studies */}
+      {/* Common Challenges */}
+      <section className="py-16 bg-white dark:bg-gray-800">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Challenges We Help Solve
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {commonChallenges.map((challenge, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg"
+              >
+                <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0" />
+                <p className="text-gray-700 dark:text-gray-300">{challenge}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
       <section className="py-20 md:py-32">
-        <div className="container-width">
-          <div className="space-y-20">
-            {caseStudies.map((study, index) => (
+        <div className="container mx-auto px-4 max-w-6xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+            How Huntaze Helps
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-12 shadow-xl"
+                transition={{ delay: index * 0.1 }}
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
               >
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                    {study.avatar}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold">{study.name}</h3>
-                    <p className="text-gray-600 dark:text-gray-400">{study.role}</p>
-                  </div>
-                  <div className="ml-auto text-right">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Results in</p>
-                    <p className="text-lg font-semibold text-purple-600">{study.timeframe}</p>
-                  </div>
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center mb-6">
+                  <feature.icon className="w-6 h-6 text-white" />
                 </div>
-
-                {/* Before/After */}
-                <div className="grid md:grid-cols-2 gap-8 mb-8">
-                  <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl p-6">
-                    <h4 className="font-semibold text-gray-600 dark:text-gray-400 mb-4">Before Huntaze</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <DollarSign className="w-5 h-5 text-gray-400" />
-                        <span>{study.before.revenue}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-gray-400" />
-                        <span>{study.before.hours}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MessageSquare className="w-5 h-5 text-gray-400" />
-                        <span>{study.before.fans}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6">
-                    <h4 className="font-semibold text-purple-600 mb-4">After Huntaze</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <DollarSign className="w-5 h-5 text-green-600" />
-                        <span className="font-semibold">{study.after.revenue}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-green-600" />
-                        <span className="font-semibold">{study.after.hours}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MessageSquare className="w-5 h-5 text-green-600" />
-                        <span className="font-semibold">{study.after.fans}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Testimonial */}
-                <blockquote className="text-lg italic text-gray-700 dark:text-gray-300 mb-6">
-                  "{study.testimonial}"
-                </blockquote>
-
-                {/* Highlights */}
-                <div className="flex flex-wrap gap-3">
-                  {study.highlights.map((highlight, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full text-sm">
-                      <Star className="w-4 h-4" />
-                      <span>{highlight}</span>
-                    </div>
+                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  {feature.description}
+                </p>
+                <ul className="space-y-2">
+                  {feature.benefits.map((benefit, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
+                      {benefit}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </motion.div>
             ))}
           </div>
-          
-          {/* Disclaimer */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mt-16 text-sm text-gray-500 dark:text-gray-400 max-w-3xl mx-auto"
-          >
-            These are examples from real creators. Individual results vary based on audience, 
-            content quality, and personal effort. Huntaze provides tools; success requires your engagement.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* Common Challenges */}
-      <section className="py-20 bg-gray-100 dark:bg-gray-800">
-        <div className="container-width">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Sound Familiar?
-            </h2>
-            <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 md:p-12">
-              <h3 className="text-xl font-semibold mb-6">
-                Before using Huntaze, our creators struggled with:
-              </h3>
-              <div className="space-y-4">
-                {commonChallenges.map((challenge, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <div className="w-2 h-2 bg-red-500 rounded-full" />
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300">{challenge}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 text-center">
-                <p className="text-lg font-semibold mb-4">
-                  You don't have to struggle alone
-                </p>
-                <Link href="/onboarding">
-                  <MagneticButton variant="primary">
-                    Start Your Success Story
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </MagneticButton>
-                </Link>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="container-width text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Start Working Smarter Today
+      <section className="py-20 md:py-32 bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="container mx-auto px-4 max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Transform Your Creator Business?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join 5,000+ creators saving time with AI automation
+            Start saving time with AI automation today
           </p>
           <div className="flex justify-center gap-4">
-            <Link href="/pricing">
-              <Button size="lg" className="bg-white text-purple-700 hover:bg-gray-100">
-                View Pricing
+            <Link href="/auth/register">
+              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                Start Free Trial
               </Button>
             </Link>
-            <Link href="/demo">
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-                Watch Demo
+            <Link href="/features">
+              <Button size="lg" variant="outline">
+                Explore Features
               </Button>
             </Link>
           </div>
