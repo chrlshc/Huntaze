@@ -3,9 +3,11 @@
  * 
  * Provides a Redis client that gracefully handles connection failures
  * during build time when Redis is not available.
+ * 
+ * Supports both AWS ElastiCache (ioredis) and Upstash Redis
  */
 
-import { Redis } from '@upstash/redis';
+import Redis from 'ioredis';
 
 let redisClient: Redis | null = null;
 let connectionAttempted = false;
@@ -27,22 +29,53 @@ export function getRedisClient(): Redis | null {
     return null;
   }
 
-  // Check if Redis URL is configured
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL;
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  // Check for AWS ElastiCache configuration (preferred)
+  const redisHost = process.env.REDIS_HOST;
+  const redisPort = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379;
 
-  if (!redisUrl || !redisToken) {
-    console.warn('[Redis] No Redis credentials found - using fallback mode');
+  // Fallback to Upstash if ElastiCache not configured
+  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!redisHost && !upstashUrl) {
+    console.warn('[Redis] No Redis configuration found - using fallback mode');
     connectionAttempted = true;
     return null;
   }
 
   try {
-    // Attempt to create Redis client
-    redisClient = new Redis({
-      url: redisUrl,
-      token: redisToken,
-    });
+    if (redisHost) {
+      // AWS ElastiCache configuration
+      console.log('[Redis] Connecting to AWS ElastiCache:', redisHost);
+      redisClient = new Redis({
+        host: redisHost,
+        port: redisPort,
+        retryStrategy: (times) => {
+          if (times > 3) {
+            console.error('[Redis] Max retry attempts reached');
+            return null;
+          }
+          return Math.min(times * 100, 3000);
+        },
+        maxRetriesPerRequest: 3,
+        enableReadyCheck: true,
+        lazyConnect: false,
+      });
+
+      // Handle connection errors
+      redisClient.on('error', (err) => {
+        console.error('[Redis] Connection error:', err.message);
+        connectionError = err;
+      });
+
+      redisClient.on('connect', () => {
+        console.log('[Redis] Connected successfully');
+      });
+    } else if (upstashUrl && upstashToken) {
+      // Upstash configuration (fallback)
+      console.log('[Redis] Using Upstash Redis');
+      redisClient = new Redis(upstashUrl);
+    }
 
     console.log('[Redis] Client initialized successfully');
     connectionAttempted = true;
@@ -59,7 +92,8 @@ export function getRedisClient(): Redis | null {
  * Check if Redis is available
  */
 export function isRedisAvailable(): boolean {
-  return getRedisClient() !== null;
+  const client = getRedisClient();
+  return client !== null && client.status === 'ready';
 }
 
 /**
@@ -81,5 +115,16 @@ export async function safeRedisOperation<T>(
   } catch (error) {
     console.error('[Redis] Operation failed:', error);
     return fallback;
+  }
+}
+
+/**
+ * Disconnect Redis client
+ */
+export async function disconnectRedis(): Promise<void> {
+  if (redisClient) {
+    await redisClient.quit();
+    redisClient = null;
+    connectionAttempted = false;
   }
 }
