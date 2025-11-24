@@ -505,3 +505,8 @@ export function withCsrfProtection(
     return handler(request);
   };
 }
+
+/**
+ * Alias for withCsrfProtection for backward compatibility
+ */
+export const withCsrf = withCsrfProtection;
