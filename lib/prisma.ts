@@ -12,3 +12,7 @@ export const db =
   });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
+
+// Backwards compatibility: some modules expect a named `prisma` export
+export const prisma = db;
+export default db;

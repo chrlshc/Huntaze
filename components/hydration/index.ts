@@ -32,4 +32,4 @@ export {
   withSSRData,
 } from './SSRDataProvider';
 
-export { HydrationErrorBoundary } from './HydrationErrorBoundary';
+export { default as HydrationErrorBoundary } from './HydrationErrorBoundary';

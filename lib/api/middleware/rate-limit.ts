@@ -24,8 +24,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SlidingWindowLimiter } from '@/lib/services/rate-limiter/sliding-window';
 import { errorResponse } from '../utils/response';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/config';
+import { auth } from '@/lib/auth/config';
 
 /**
  * Rate limit configuration
@@ -104,7 +103,7 @@ async function generateKey(req: NextRequest, customGenerator?: RateLimitConfig['
   
   // Try to get user from session
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (session?.user?.id) {
       // Use user ID for authenticated requests
       const url = new URL(req.url);
