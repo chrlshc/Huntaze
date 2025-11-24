@@ -16,6 +16,13 @@ let connectionError: Error | null = null;
  * Returns null if connection fails (e.g., during build)
  */
 export function getPrismaClient(): PrismaClient | null {
+  // CRITICAL: Force disable database if explicitly requested
+  // This prevents build-time timeouts that corrupt the build artifact
+  if (process.env.DISABLE_DATABASE === 'true' || process.env.DISABLE_DATABASE === '1') {
+    console.log('[Prisma] Explicitly disabled via DISABLE_DATABASE');
+    return null;
+  }
+
   // Return cached client if already connected
   if (prismaClient) {
     return prismaClient;

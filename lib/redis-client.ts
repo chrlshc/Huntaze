@@ -18,6 +18,13 @@ let connectionError: Error | null = null;
  * Returns null if connection fails (e.g., during build)
  */
 export function getRedisClient(): Redis | null {
+  // CRITICAL: Force disable Redis if explicitly requested
+  // This prevents build-time timeouts that corrupt the build artifact
+  if (process.env.DISABLE_REDIS_CACHE === 'true' || process.env.DISABLE_REDIS_CACHE === '1') {
+    console.log('[Redis] Explicitly disabled via DISABLE_REDIS_CACHE');
+    return null;
+  }
+
   // Return cached client if already connected
   if (redisClient) {
     return redisClient;
