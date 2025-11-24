@@ -7,10 +7,9 @@ import "./animations.css";
 import "@/styles/design-system.css"; // Beta Launch Design System
 import "@/styles/skeleton-animations.css"; // Phase 7: Enhanced Loading States
 import "@/components/accessibility/skip-link.css"; // Phase 8: Accessibility
-// Temporarily removed client components to debug hydration error:
-// import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
-// import { ThemeProvider } from "@/contexts/ThemeContext";
-// import { SkipLink } from "@/components/accessibility/SkipLink";
+import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { SkipLink } from "@/components/accessibility/SkipLink";
 import "@/lib/config/chartConfig"; // Register Chart.js components
 
 
@@ -66,9 +65,14 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        <main id="main-content" className="min-h-screen" role="main">
-          {children}
-        </main>
+        <SkipLink />
+        <ThemeProvider>
+          <NextAuthProvider>
+            <main id="main-content" className="min-h-screen" role="main">
+              {children}
+            </main>
+          </NextAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
