@@ -27,6 +27,10 @@ function AuthContent() {
     } else if (errorParam === 'unauthorized') {
       setError('Authentication required. Please log in.');
     }
+    // If coming from registration pending, default to login tab
+    if (searchParams.get('pending')) {
+      setIsLogin(true);
+    }
   }, [searchParams]);
 
   // Calculer la force du mot de passe
@@ -247,6 +251,15 @@ function AuthContent() {
       {/* RIGHT SIDE - FORM */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 lg:p-8 bg-white overflow-y-auto">
         <div className="w-full max-w-md my-auto">
+          {/* Pending verification banner */}
+          {searchParams.get('pending') && (
+            <div className="mb-4 rounded-lg border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm text-indigo-800">
+              Check your email
+              {searchParams.get('email') ? ` at ${searchParams.get('email')}` : ''}
+              {' '}to verify your account, then sign in.
+            </div>
+          )}
+
           {/* Mobile Header */}
           <div className="lg:hidden mb-4 text-center">
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-white mb-2">

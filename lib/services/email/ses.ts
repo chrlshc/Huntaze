@@ -5,6 +5,7 @@
  */
 
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { sendMail } from '@/lib/mailer';
 
 // Initialize SES client
 const sesClient = new SESClient({
@@ -146,12 +147,15 @@ If you didn't create an account with Huntaze, you can safely ignore this email.
 © ${new Date().getFullYear()} Huntaze. All rights reserved.
   `;
 
-  return sendEmail({
+  const result = await sendMail({
     to: email,
     subject: 'Verify your Huntaze account',
     html,
     text,
+    from: FROM_EMAIL,
   });
+
+  return result.ok;
 }
 
 /**

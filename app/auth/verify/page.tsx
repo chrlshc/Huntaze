@@ -53,7 +53,7 @@ function VerifyContent() {
         setState('success');
         // Redirect to onboarding after a short delay
         setTimeout(() => {
-          router.push('/onboarding');
+          router.push('/auth');
         }, 1500);
       } else {
         if (data.error === 'Token expired') {
@@ -114,7 +114,7 @@ function VerifyContent() {
                 Email verified!
               </h1>
               <p className="text-[#a3a3a3] text-center mb-6">
-                Your account has been verified. Redirecting to onboarding...
+                Your account has been verified. Redirecting to the sign-in/up page...
               </p>
               <div className="flex justify-center">
                 <div className="animate-pulse text-[#8B5CF6]">●</div>
