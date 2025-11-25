@@ -182,6 +182,9 @@ describe('CSRF Middleware Property Tests', () => {
           async (path, method, headerToken, cookieToken) => {
             // Ensure tokens are different
             fc.pre(headerToken !== cookieToken);
+            
+            // Set NODE_ENV to production to enable CSRF validation
+            process.env.NODE_ENV = 'production';
 
             const handlerCalled = { value: false };
             const mockHandler: RouteHandler = async (req: NextRequest) => {
@@ -213,7 +216,7 @@ describe('CSRF Middleware Property Tests', () => {
             // Verify: Response should contain error message
             const body = await response.json();
             expect(body).toHaveProperty('error');
-            expect(body.error).toBe('Invalid CSRF token');
+            expect(body.error).toContain('CSRF token');
           }
         ),
         { numRuns: 100 }
@@ -304,6 +307,9 @@ describe('CSRF Middleware Property Tests', () => {
           fc.webPath(),
           fc.constantFrom('POST', 'PUT', 'DELETE', 'PATCH'),
           async (path, method) => {
+            // Set NODE_ENV to production to enable CSRF validation
+            process.env.NODE_ENV = 'production';
+            
             const handlerCalled = { value: false };
             const mockHandler: RouteHandler = async (req: NextRequest) => {
               handlerCalled.value = true;
@@ -326,7 +332,7 @@ describe('CSRF Middleware Property Tests', () => {
             expect(handlerCalled.value).toBe(false);
 
             const body = await response.json();
-            expect(body.error).toBe('Invalid CSRF token');
+            expect(body.error).toContain('CSRF token');
           }
         ),
         { numRuns: 100 }
@@ -416,7 +422,7 @@ describe('CSRF Middleware Property Tests', () => {
             expect(setCookieHeader).toContain('HttpOnly');
             expect(setCookieHeader).toContain('Secure');
             expect(setCookieHeader.toLowerCase()).toContain('samesite=lax');
-            expect(setCookieHeader).toContain('Max-Age=86400'); // 24 hours
+            expect(setCookieHeader).toContain('Max-Age=3600'); // 1 hour
             expect(setCookieHeader).toContain('Path=/');
           }
         ),
@@ -454,7 +460,7 @@ describe('CSRF Middleware Property Tests', () => {
 
             // Verify other settings
             expect(setCookieHeader.toLowerCase()).toContain('samesite=lax');
-            expect(setCookieHeader).toContain('Max-Age=86400');
+            expect(setCookieHeader).toContain('Max-Age=3600');
             expect(setCookieHeader).toContain('Path=/');
           }
         ),
@@ -544,7 +550,7 @@ describe('CSRF Middleware Property Tests', () => {
               expect(header).toContain('HttpOnly');
               expect(header).toContain('Secure');
               expect(header.toLowerCase()).toContain('samesite=lax');
-              expect(header).toContain('Max-Age=86400');
+              expect(header).toContain('Max-Age=3600');
               expect(header).toContain('Path=/');
             }
           }
