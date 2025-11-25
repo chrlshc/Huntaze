@@ -171,7 +171,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       userAgent: request.headers.get('user-agent'),
     });
 
-    // 1. Check authentication with retry logic
+    // 1. Check authentication (optional - CSRF tokens can be generated for unauthenticated users)
     let session;
     try {
       session = await retryWithBackoff(
@@ -183,29 +183,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         correlationId
       );
     } catch (sessionError: any) {
-      logger.error('Session retrieval failed', sessionError, {
+      // Session retrieval failed, but we can still generate a CSRF token for public pages
+      logger.warn('Session retrieval failed, generating token for unauthenticated user', {
         correlationId,
-        duration: Date.now() - startTime,
+        error: sessionError.message,
       });
-
-      return internalServerError(
-        'Failed to retrieve session. Please try again.',
-        { correlationId, startTime }
-      );
+      session = null;
     }
     
-    if (!session?.user?.id) {
-      logger.warn('CSRF token request without authentication', {
-        correlationId,
-        url: request.url,
-        duration: Date.now() - startTime,
-      });
-      
-      return unauthorized(
-        'Authentication required to generate CSRF token',
-        { correlationId, startTime }
-      );
-    }
+    // CSRF tokens are needed for both authenticated and unauthenticated users
+    // (e.g., signup, login forms need CSRF protection too)
+    logger.info('Generating CSRF token', {
+      correlationId,
+      authenticated: !!session?.user?.id,
+      userId: session?.user?.id || 'anonymous',
+    });
     
     // 2. Generate new CSRF token
     let token: string;
