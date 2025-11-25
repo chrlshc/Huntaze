@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { ReactNode } from 'react';
+import { StandardCTA } from '@/components/cta';
 
 interface HeroSectionProps {
   badge?: string;
@@ -9,14 +9,22 @@ interface HeroSectionProps {
   subtitle: string;
   ctaText?: string;
   ctaHref?: string;
+  ctaMicrocopy?: string;
 }
 
+/**
+ * HeroSection Component
+ * 
+ * Hero section with badge, title, subtitle, and CTA.
+ * Uses StandardCTA for consistent styling and authentication-aware behavior.
+ */
 export function HeroSection({
   badge = 'Closed Beta • Invite only',
   title,
   subtitle,
-  ctaText = 'Request Early Access',
-  ctaHref = '/auth/register',
+  ctaText,
+  ctaHref,
+  ctaMicrocopy = 'Check your email',
 }: HeroSectionProps) {
   return (
     <section 
@@ -45,14 +53,15 @@ export function HeroSection({
           {subtitle}
         </p>
         
-        {/* CTA Button */}
+        {/* CTA Button - Now using StandardCTA */}
         <div className="flex justify-center">
-          <Link
+          <StandardCTA
+            text={ctaText}
             href={ctaHref}
-            className="inline-flex items-center px-10 py-5 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] hover:shadow-[0_6px_20px_0_rgba(125,87,193,0.6)] transition-all duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none text-lg font-semibold text-white no-underline focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F10] focus:outline-none"
-          >
-            {ctaText}
-          </Link>
+            microcopy={ctaMicrocopy}
+            size="lg"
+            variant="primary"
+          />
         </div>
       </div>
     </section>

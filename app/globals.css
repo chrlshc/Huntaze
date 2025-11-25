@@ -2,6 +2,7 @@
 @import "../styles/design-system.css";
 @import "../styles/linear-design-tokens.css";
 @import "../styles/accessibility.css";
+@import "../styles/accessible-colors.css";
 @import "./tailwind.css";
 
 @layer base {

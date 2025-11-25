@@ -10,10 +10,12 @@
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 import { createLogger } from '@/lib/utils/logger';
 import { query } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { cacheService } from '@/lib/services/cache.service';
+import { sendMagicLinkEmail } from '@/lib/auth/magic-link';
 import '@/lib/types/auth'; // Import type augmentation
 
 // Create logger for NextAuth operations
@@ -35,6 +37,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: '/auth',
   },
   providers: [
+    // Google OAuth Provider
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+          scope: 'openid email profile'
+        }
+      }
+    }),
+    // Credentials Provider (existing)
     Credentials({
       name: 'credentials',
       credentials: {

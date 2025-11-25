@@ -52,6 +52,7 @@ export interface CsrfValidationResult {
   error?: string;
   errorCode?: string;
   shouldRefresh?: boolean;
+  userMessage?: string;  // User-friendly error message
 }
 
 /**
@@ -167,6 +168,7 @@ export class CsrfMiddleware {
           valid: false,
           error: 'CSRF token is required',
           errorCode: 'MISSING_TOKEN',
+          userMessage: 'Security token is missing. Please refresh the page and try again.',
         };
       }
       
@@ -181,6 +183,7 @@ export class CsrfMiddleware {
           valid: false,
           error: 'CSRF token has invalid format',
           errorCode: 'MALFORMED_TOKEN',
+          userMessage: 'Security token is invalid. Please refresh the page and try again.',
         };
       }
       
@@ -211,6 +214,7 @@ export class CsrfMiddleware {
           error: 'CSRF token has expired',
           errorCode: 'EXPIRED_TOKEN',
           shouldRefresh: true,
+          userMessage: 'Your session has expired. Please refresh the page and try again.',
         };
       }
       
@@ -236,6 +240,7 @@ export class CsrfMiddleware {
           valid: false,
           error: 'CSRF token signature is invalid',
           errorCode: 'INVALID_SIGNATURE',
+          userMessage: 'Security token is invalid. Please refresh the page and try again.',
         };
       }
       
@@ -307,13 +312,20 @@ export class CsrfMiddleware {
    * @returns Modified response
    */
   setTokenCookie(response: NextResponse, token: string): NextResponse {
-    response.cookies.set(this.config.cookieName, token, {
+    const cookieOptions: any = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: this.config.maxAge / 1000, // Convert to seconds
-    });
+    };
+    
+    // Set domain for production to work across subdomains
+    if (process.env.NODE_ENV === 'production') {
+      cookieOptions.domain = '.huntaze.com';
+    }
+    
+    response.cookies.set(this.config.cookieName, token, cookieOptions);
     
     return response;
   }

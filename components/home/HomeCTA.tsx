@@ -1,20 +1,29 @@
 'use client';
 
 import Link from 'next/link';
+import { StandardCTA } from '@/components/cta';
 
 interface HomeCTAProps {
   title?: string;
   ctaText?: string;
   ctaHref?: string;
+  ctaMicrocopy?: string;
   featuresLink?: string;
   pricingLink?: string;
   aboutLink?: string;
 }
 
+/**
+ * HomeCTA Component
+ * 
+ * Final CTA section for the homepage.
+ * Uses StandardCTA for consistent styling and authentication-aware behavior.
+ */
 export function HomeCTA({
   title = 'Ready to upgrade your workflow?',
-  ctaText = 'Request Access',
-  ctaHref = '/auth/register',
+  ctaText,
+  ctaHref,
+  ctaMicrocopy = 'Check your email',
   featuresLink = '/features',
   pricingLink = '/pricing',
   aboutLink = '/about',
@@ -33,14 +42,15 @@ export function HomeCTA({
             {title}
           </h2>
           
-          {/* Primary CTA */}
+          {/* Primary CTA - Now using StandardCTA */}
           <div className="flex justify-center mb-10">
-            <Link
+            <StandardCTA
+              text={ctaText}
               href={ctaHref}
-              className="inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] hover:shadow-[0_6px_20px_0_rgba(125,87,193,0.6)] transition-all duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none text-lg font-semibold text-white no-underline focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F0F10] focus:outline-none whitespace-nowrap"
-            >
-              {ctaText}
-            </Link>
+              microcopy={ctaMicrocopy}
+              size="lg"
+              variant="primary"
+            />
           </div>
         
           {/* Navigation Links */}

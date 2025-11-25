@@ -2,7 +2,7 @@
 
 import { BarChart3, Sparkles, Users } from 'lucide-react';
 import { HeroSection } from '@/components/home/HeroSection';
-import { DashboardMockSection } from '@/components/home/DashboardMockSection';
+import { InteractiveDashboardDemo } from '@/components/home/InteractiveDashboardDemo';
 import { BenefitSection } from '@/components/home/BenefitSection';
 import { HomeCTA } from '@/components/home/HomeCTA';
 
@@ -18,8 +18,8 @@ export function HomePageContent() {
         ctaHref="/auth/register"
       />
 
-      {/* Section 2: Dashboard Mock */}
-      <DashboardMockSection />
+      {/* Section 2: Interactive Dashboard Demo */}
+      <InteractiveDashboardDemo />
 
       {/* Section 3: Clarity - Analytics & Tracking */}
       <BenefitSection

@@ -195,6 +195,9 @@ model users {
   revenue_goal               Int?
   ai_plan                    String?               @default("starter") @db.VarChar(20)
   role                       String                @default("user") @db.VarChar(20)
+  signup_method              String?               @db.VarChar(50)
+  signup_completed_at        DateTime?             @db.Timestamp(6)
+  first_login_at             DateTime?             @db.Timestamp(6)
   content                    content[]
   marketing_campaigns        marketing_campaigns[]
   oauth_accounts             oauth_accounts[]
@@ -204,9 +207,55 @@ model users {
   usage_logs                 UsageLog[]
   monthly_charges            MonthlyCharge[]
   ai_insights                AIInsight[]
+  accounts                   Account[]
+  sessions                   Session[]
 
   @@index([onboarding_completed], map: "idx_users_onboarding_completed")
   @@index([role], map: "idx_users_role")
+  @@index([signup_method], map: "idx_users_signup_method")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("nextauth_accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("nextauth_sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@index([token])
+  @@map("nextauth_verification_tokens")
 }
 
 model UsageLog {
@@ -251,4 +300,53 @@ model AIInsight {
 
   @@index([creatorId, type, createdAt])
   @@map("ai_insights")
+}
+
+/// Signup funnel analytics tracking
+/// Tracks user behavior through the signup process to identify drop-off points
+model SignupAnalytics {
+  id        String   @id @default(cuid())
+  
+  // Session tracking
+  sessionId String   @unique
+  
+  // User info (nullable for anonymous tracking)
+  userId    String?
+  email     String?
+  
+  // Funnel tracking
+  landingPage       String?
+  referrer          String?
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  
+  // Events
+  pageViewed        DateTime?
+  formStarted       DateTime?
+  methodSelected    String?   // 'email', 'google', 'apple'
+  formSubmitted     DateTime?
+  signupCompleted   DateTime?
+  signupFailed      DateTime?
+  errorCode         String?
+  errorMessage      String?
+  
+  // Device info
+  userAgent         String?
+  deviceType        String?   // 'mobile', 'tablet', 'desktop'
+  browser           String?
+  os                String?
+  
+  // Performance
+  timeToSubmit      Int?      // milliseconds
+  timeToComplete    Int?      // milliseconds
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([email])
+  @@index([sessionId])
+  @@index([createdAt])
+  @@index([methodSelected])
+  @@map("signup_analytics")
 }
