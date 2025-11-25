@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   description: 'Get started with Huntaze in just 3 simple steps',
 };
 
+// Force dynamic rendering since this page uses auth and client components
+export const dynamic = 'force-dynamic';
+
 export default async function OnboardingPage() {
   const session = await auth();
   

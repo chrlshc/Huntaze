@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   description: 'Create your Huntaze account and start optimizing your creator business',
 };
 
+// Force dynamic rendering since this page uses auth and client components
+export const dynamic = 'force-dynamic';
+
 export default async function SignupPage() {
   // Redirect if already authenticated
   const session = await auth();
