@@ -52,20 +52,24 @@ export async function fetchCsrfToken(): Promise<string> {
     
     const data = await response.json();
     
-    if (!data.token) {
+    // Support both bare token responses and wrapped API responses
+    const token = data.token || data.data?.token;
+    const expiresIn = data.expiresIn || data.data?.expiresIn || 3600000; // Default 1 hour
+    
+    if (!token) {
       throw new Error('CSRF token not found in response');
     }
     
     // Cache token with expiry
-    cachedToken = data.token;
-    tokenExpiry = Date.now() + (data.expiresIn || 3600000); // Default 1 hour
+    cachedToken = token;
+    tokenExpiry = Date.now() + expiresIn;
     
     logger.info('CSRF token fetched', {
-      tokenLength: data.token.length,
-      expiresIn: data.expiresIn,
+      tokenLength: token.length,
+      expiresIn,
     });
     
-    return data.token;
+    return token;
   } catch (error) {
     logger.error('Failed to fetch CSRF token', error as Error);
     throw error;
