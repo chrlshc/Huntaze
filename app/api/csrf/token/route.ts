@@ -206,7 +206,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     } catch (tokenError: any) {
       logger.error('CSRF token generation failed', tokenError, {
         correlationId,
-        userId: session.user.id,
+        userId: session?.user?.id || 'anonymous',
         duration: Date.now() - startTime,
       });
 
@@ -220,7 +220,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     
     logger.info('CSRF token generated successfully', {
       correlationId,
-      userId: session.user.id,
+      userId: session?.user?.id || 'anonymous',
       tokenLength: token.length,
       duration,
     });
