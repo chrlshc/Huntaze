@@ -83,9 +83,12 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 export async function sendVerificationEmail(
   email: string,
   verificationToken: string,
-  baseUrl: string
+  baseUrl: string,
+  userId?: string | number
 ): Promise<boolean> {
-  const verificationUrl = `${baseUrl}/auth/verify-email?token=${verificationToken}`;
+  const verificationUrl = `${baseUrl}/auth/verify?token=${verificationToken}${
+    userId ? `&userId=${userId}` : ''
+  }`;
 
   const html = `
     <!DOCTYPE html>

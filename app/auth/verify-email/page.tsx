@@ -15,5 +15,10 @@ export default function VerifyEmailPage({ searchParams }: VerifyEmailPageProps) 
   }
 
   // Delegate verification to the existing API route
-  redirect(`/api/auth/verify-email?token=${encodeURIComponent(token as string)}`);
+  const userId = Array.isArray(searchParams?.userId)
+    ? searchParams?.userId[0]
+    : searchParams?.userId;
+
+  // Redirect to client verifier page that handles POST with token+userId
+  redirect(`/auth/verify?token=${encodeURIComponent(token as string)}${userId ? `&userId=${encodeURIComponent(userId)}` : ''}`);
 }
