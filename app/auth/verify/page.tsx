@@ -53,7 +53,7 @@ function VerifyContent() {
         setState('success');
         // Redirect to onboarding after a short delay
         setTimeout(() => {
-          router.push('/auth');
+          router.push('/onboarding');
         }, 1500);
       } else {
         if (data.error === 'Token expired') {
