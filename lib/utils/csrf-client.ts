@@ -192,7 +192,7 @@ export async function fetchWithCsrf(
  *   return (
  *     <form>
  *       <input type="hidden" name="csrfToken" value={csrfToken || ''} />
- *       {/* ... */}
+ *       <div>form fields...</div>
  *     </form>
  *   );
  * }
