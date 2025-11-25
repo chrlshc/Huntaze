@@ -1,10 +1,23 @@
 import type { ReactNode } from 'react';
+import { MarketingHeader } from '@/components/layout/MarketingHeader';
+import { MarketingFooter } from '@/components/layout/MarketingFooter';
 
 /**
- * Marketing Layout - Simplified for debugging
+ * Marketing Layout
  * 
- * Temporarily removed JSON-LD to isolate 500 error
+ * Shared layout for all marketing pages with:
+ * - Consistent header with navigation
+ * - Page content
+ * - Consistent footer
+ * 
+ * Requirements: 1.1, 5.1, 8.2
  */
 export default function MarketingLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return (
+    <div className="flex min-h-screen flex-col">
+      <MarketingHeader />
+      <main className="flex-1">{children}</main>
+      <MarketingFooter />
+    </div>
+  );
 }

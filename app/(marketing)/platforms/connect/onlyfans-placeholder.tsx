@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { AlertCircle, Mail } from 'lucide-react';
 
 export default function OnlyFansPlaceholder() {
@@ -24,7 +25,7 @@ export default function OnlyFansPlaceholder() {
     <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
       <div className="flex items-start gap-4">
         <div className="p-3 bg-white rounded-xl shadow-sm">
-          <img src="/onlyfans-logo.svg" alt="OnlyFans" className="w-8 h-8" />
+          <Image src="/onlyfans-logo.svg" alt="OnlyFans" width={32} height={32} className="w-8 h-8" />
         </div>
         
         <div className="flex-1">
