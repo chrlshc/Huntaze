@@ -18,7 +18,8 @@ const sesClient = new SESClient({
     : undefined,
 });
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@huntaze.com';
+// Prefer SES_FROM_EMAIL when configured (Amplify env), fallback to FROM_EMAIL
+const FROM_EMAIL = process.env.SES_FROM_EMAIL || process.env.FROM_EMAIL || 'noreply@huntaze.com';
 
 export interface EmailOptions {
   to: string;
