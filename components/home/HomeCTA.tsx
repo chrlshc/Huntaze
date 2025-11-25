@@ -20,8 +20,14 @@ export function HomeCTA({
   aboutLink = '/about',
 }: HomeCTAProps) {
   return (
-    <section className="px-4 py-16 md:py-20 lg:py-24 text-center md:px-6">
-      <div className="mx-auto max-w-7xl">
+    <section 
+      id="cta"
+      className="relative min-h-screen flex items-center justify-center px-4 py-20 md:py-24 text-center md:px-6 overflow-hidden"
+    >
+      {/* Background gradient glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-violet-900/20 blur-[120px] rounded-full pointer-events-none" />
+      
+      <div className="relative z-10 mx-auto max-w-4xl">
         <div className="mx-auto max-w-[600px]">
           <h2 className="mb-8 text-3xl md:text-4xl lg:text-5xl font-medium text-white">
             {title}

@@ -2,22 +2,49 @@
 
 ## Architecture Overview
 
-### Component Structure
+### New 7-Section Component Structure
 ```
 HomePage (app/(marketing)/page.tsx)
 ├── Header (sticky, backdrop blur)
-├── HeroSection
+├── 1. HeroSection (full-screen)
 │   ├── Title (gradient text)
 │   ├── Subtitle
 │   ├── CTA Button (with glow)
-│   └── DashboardPreview (3D transform)
-├── ProblemSection (alternating bg)
-├── BenefitsSection
-│   └── FeatureCard[] (hover effects)
-├── SafetySection (with watermark)
-├── CTASection (final conversion)
+│   └── Badge ("Closed Beta")
+├── 2. DashboardMockSection (full-screen)
+│   ├── Section Title
+│   ├── Description
+│   └── Dashboard Visual (screenshot/illustration)
+├── 3. ClaritySection (full-screen)
+│   ├── Icon (BarChart3)
+│   ├── Title: "See clearly"
+│   ├── Subtitle: "Clarity"
+│   ├── Description (expanded)
+│   └── Visual Element (optional)
+├── 4. FreedomSection (full-screen)
+│   ├── Icon (Sparkles)
+│   ├── Title: "Save time"
+│   ├── Subtitle: "Freedom"
+│   ├── Description (expanded)
+│   └── Visual Element (optional)
+├── 5. ConnectionSection (full-screen)
+│   ├── Icon (Users)
+│   ├── Title: "Know your fans"
+│   ├── Subtitle: "Connection"
+│   ├── Description (expanded)
+│   └── Visual Element (optional)
+├── 6. FinalCTASection (full-screen)
+│   ├── Title: "Ready to upgrade your workflow?"
+│   ├── CTA Button
+│   └── Trust indicators
 └── Footer
 ```
+
+### Key Architectural Changes
+- **From 3 to 7 sections**: Each benefit gets dedicated space
+- **Full-screen sections**: Desktop sections use min-h-screen
+- **Vertical storytelling**: Linear narrative flow
+- **Consistent patterns**: Each benefit section follows same structure
 
 ### Styling Approach
 - **Primary**: Tailwind CSS utility classes
@@ -73,66 +100,104 @@ Generous spacing: gap-8 → gap-12
 
 ## Component Specifications
 
-### 1. Header Component
+### 1. Hero Section (Full-Screen)
 ```typescript
 Properties:
-- Sticky positioning (top-0)
-- Backdrop blur effect
-- Semi-transparent background
-- Border bottom (subtle)
-
-Responsive:
-- Mobile: Compact, hamburger menu (future)
-- Desktop: Full navigation
-
-States:
-- Default: Semi-transparent
-- Scrolled: More opaque (handled by backdrop-blur)
-```
-
-### 2. Hero Section
-```typescript
-Properties:
+- min-h-screen (desktop), min-h-[80vh] (mobile)
 - Gradient background (subtle purple)
-- Centered content
+- Centered content (flex items-center justify-center)
 - Max-width: 4xl (896px)
 
 Elements:
-- H1: Gradient text (white → gray)
-- Subtitle: Gray text, max-width 2xl
+- H1: Gradient text (white → gray), text-6xl md:text-7xl
+- Subtitle: Gray text, max-width 2xl, text-lg md:text-xl
 - CTA Button: Gradient bg, glow shadow
 - Badge: "Closed Beta • Invite only"
-- Dashboard Preview: 3D perspective transform
 
 Responsive:
-- Mobile: text-5xl, single column
-- Desktop: text-7xl, spacious layout
+- Mobile: py-20, text-5xl
+- Desktop: min-h-screen, text-7xl
 ```
 
-### 3. Feature Cards
+### 2. Dashboard Mock Section (Full-Screen)
 ```typescript
 Properties:
-- Background: #18181B
-- Border: 1px solid #27272A
-- Border radius: 16px
-- Padding: 32px
-
-Hover State:
-- Border color: #7D57C1
-- Shadow: 0 0 30px rgba(125,87,193,0.3)
-- Transform: translateY(-4px)
-- Transition: 300ms ease
+- min-h-screen
+- Background: Alternating (bg-[#131316])
+- Centered content
+- Max-width: 6xl (1152px)
 
 Elements:
-- Icon: In colored circle, purple/10 bg
-- Label: Uppercase, purple, 12px
-- Title: 24px, white
-- Description: 16px, gray
+- Section Title: "See it in action" (text-4xl md:text-5xl)
+- Description: Brief intro text
+- Dashboard Visual: 
+  - Placeholder or screenshot
+  - Rounded corners (rounded-2xl)
+  - Border: subtle
+  - Shadow: large purple glow
+  - Aspect ratio: 16:9 or 4:3
 
 Responsive:
-- Mobile: Full width, stack vertically
-- Tablet: 2 columns
-- Desktop: 3 columns
+- Mobile: Smaller image, py-16
+- Desktop: Large centered image, py-24
+```
+
+### 3. Benefit Sections (Clarity, Freedom, Connection)
+```typescript
+// Each benefit section follows this pattern
+
+Properties:
+- min-h-screen (desktop), min-h-[60vh] (mobile)
+- Alternating backgrounds (odd: default, even: #131316)
+- Centered content (flex items-center)
+- Max-width: 5xl (1024px)
+
+Layout Pattern:
+- Icon side (left on odd, right on even for variety)
+- Content side (right on odd, left on even)
+
+Elements:
+- Icon Container:
+  - Size: 80px × 80px (mobile), 120px × 120px (desktop)
+  - Background: purple/10
+  - Border: purple/20
+  - Icon: 40px × 60px, purple-400
+
+- Label: 
+  - Uppercase, text-sm, purple-400
+  - "CLARITY" / "FREEDOM" / "CONNECTION"
+
+- Title:
+  - text-3xl md:text-5xl, white
+  - "See clearly" / "Save time" / "Know your fans"
+
+- Description:
+  - text-lg md:text-xl, gray-400
+  - 2-3 sentences explaining the benefit
+  - Max-width: 2xl
+
+Responsive:
+- Mobile: Stack vertically, icon top, content below
+- Desktop: Side-by-side layout, 50/50 split
+```
+
+### 4. Final CTA Section (Full-Screen)
+```typescript
+Properties:
+- min-h-screen
+- Gradient background (purple glow)
+- Centered content
+- Max-width: 4xl
+
+Elements:
+- Title: "Ready to upgrade your workflow?"
+- Subtitle: Optional reinforcement text
+- CTA Button: Large, prominent
+- Trust indicators: "Join 100+ creators" (optional)
+
+Responsive:
+- Mobile: py-20, compact
+- Desktop: min-h-screen, spacious
 ```
 
 ### 4. CTA Buttons
@@ -333,30 +398,102 @@ aria-describedby="beta-badge"
 - [ ] Dark mode looks good
 - [ ] Print styles work (if needed)
 
+## Section-Specific Design Details
+
+### Clarity Section Content
+```typescript
+Label: "CLARITY"
+Title: "See clearly"
+Description: "Track your revenue and growth across all platforms instantly. 
+No more spreadsheets. Get real-time insights into what's working and 
+what's not, all in one beautiful dashboard."
+
+Icon: BarChart3 (from lucide-react)
+Visual: Optional chart/graph illustration
+Background: Default (#0F0F10)
+```
+
+### Freedom Section Content
+```typescript
+Label: "FREEDOM"
+Title: "Save time"
+Description: "Your AI assistant works 24/7. It handles messages and routine 
+tasks so you can sleep. Automate the boring stuff and focus on what you 
+love: creating content."
+
+Icon: Sparkles (from lucide-react)
+Visual: Optional automation illustration
+Background: Alternating (#131316)
+```
+
+### Connection Section Content
+```typescript
+Label: "CONNECTION"
+Title: "Know your fans"
+Description: "Identify your top supporters and build real relationships with 
+the people who matter most. See who engages, who buys, and who truly 
+supports your work."
+
+Icon: Users (from lucide-react)
+Visual: Optional community illustration
+Background: Default (#0F0F10)
+```
+
+## Scroll Behavior
+
+### Smooth Scrolling
+```css
+/* Add to globals.css */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+```
+
+### Section Anchors (Optional Enhancement)
+```typescript
+// Each section can have an ID for direct linking
+<section id="hero">
+<section id="dashboard">
+<section id="clarity">
+<section id="freedom">
+<section id="connection">
+<section id="cta">
+```
+
 ## Implementation Phases
 
-### Phase 1: Foundation (Safe Changes)
-- Update color values to exact hex codes
-- Implement typography scale
-- Add spacing system
-- Test on all devices
+### Phase 1: Restructure Layout
+- Remove current 3-card grid layout
+- Create 7 individual section components
+- Implement full-screen section wrapper
+- Test basic structure on all devices
 
-### Phase 2: Visual Effects (Progressive Enhancement)
-- Add gradient text to hero
-- Implement button glow effects
-- Add card hover states
-- Test performance impact
+### Phase 2: Implement Individual Sections
+- Build Hero section (reuse existing)
+- Create Dashboard Mock section
+- Build Clarity section component
+- Build Freedom section component
+- Build Connection section component
+- Update Final CTA section
 
-### Phase 3: Advanced Effects (Desktop Only)
-- Add backdrop blur to header
-- Implement 3D dashboard preview
-- Add shield watermark
-- Add shine effects
+### Phase 3: Content & Styling
+- Add expanded copy for each benefit
+- Implement alternating backgrounds
+- Add icons and visual elements
+- Apply responsive spacing
 
 ### Phase 4: Polish & Optimization
-- Fine-tune animations
-- Optimize bundle size
-- Add reduced motion support
+- Fine-tune section heights
+- Add smooth scroll behavior
+- Test on all devices
+- Optimize performance
 - Final accessibility audit
 
 ## Rollback Plan
