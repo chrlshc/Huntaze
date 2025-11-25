@@ -29,28 +29,28 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        'fixed top-0 left-0 right-0 z-50 w-full border-b border-white/5 bg-black/80 backdrop-blur-xl',
         className
       )}
     >
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="mx-auto max-w-7xl flex h-20 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link 
           href="/" 
-          className="flex items-center space-x-2 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+          className="flex items-center space-x-2 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
           aria-label="Huntaze Home"
         >
-          <span className="text-xl font-bold">Huntaze</span>
+          <span className="text-2xl font-bold text-white">Huntaze</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex md:items-center md:gap-6" aria-label="Main navigation">
+        <nav className="hidden md:flex md:items-center md:gap-8" aria-label="Main navigation">
           {navigationConfig.main.map((item) => (
             <NavLink
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-muted-foreground"
-              activeClassName="text-foreground font-semibold"
+              className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              activeClassName="text-white font-semibold"
             >
               {item.label}
             </NavLink>
@@ -58,16 +58,16 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
         </nav>
 
         {/* CTA Button (Desktop) */}
-        <div className="hidden md:flex md:items-center md:gap-4">
+        <div className="hidden md:flex md:items-center md:gap-6">
           <Link
             href="/auth/login"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
           >
             Sign In
           </Link>
           <Link
             href="/auth/register"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] transition-all duration-300 hover:shadow-[0_6px_20px_0_rgba(125,87,193,0.6)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black motion-reduce:transition-none motion-reduce:hover:transform-none"
           >
             Get Started
           </Link>
@@ -76,7 +76,7 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:hidden"
+          className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-menu"
@@ -94,29 +94,29 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="border-t md:hidden"
+          className="border-t border-white/5 bg-black/95 backdrop-blur-xl md:hidden"
         >
-          <nav className="container space-y-1 px-4 py-4" aria-label="Mobile navigation">
+          <nav className="mx-auto max-w-7xl space-y-1 px-4 py-4" aria-label="Mobile navigation">
             {navigationConfig.main.map((item) => (
               <NavLink
                 key={item.href}
                 href={item.href}
-                className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                activeClassName="bg-accent text-foreground font-semibold"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                activeClassName="bg-white/10 text-white font-semibold"
               >
                 {item.label}
               </NavLink>
             ))}
-            <div className="border-t pt-4 space-y-2">
+            <div className="border-t border-white/5 pt-4 space-y-2">
               <Link
                 href="/auth/login"
-                className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/register"
-                className="block rounded-md bg-primary px-3 py-2 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                className="block rounded-md bg-gradient-to-r from-purple-500 to-purple-600 px-3 py-2 text-base font-semibold text-white transition-all hover:shadow-lg"
               >
                 Get Started
               </Link>
