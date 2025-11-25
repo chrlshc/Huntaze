@@ -8,11 +8,15 @@ type MailOptions = {
 };
 
 export async function sendMail(opts: MailOptions): Promise<{ ok: true } | { ok: false; error: string }> {
-  const from = opts.from || process.env.SES_FROM_EMAIL || process.env.SMTP_FROM || process.env.FROM_EMAIL;
+  const from = opts.from 
+    || process.env.SES_FROM_EMAIL 
+    || process.env.AWS_SES_FROM_EMAIL 
+    || process.env.SMTP_FROM 
+    || process.env.FROM_EMAIL;
   if (!from) return { ok: false, error: 'No FROM email configured' };
 
   const hasSmtp = !!process.env.SMTP_HOST;
-  const hasSes = !!process.env.SES_FROM_EMAIL;
+  const hasSes = !!(process.env.SES_FROM_EMAIL || process.env.AWS_SES_FROM_EMAIL);
 
   try {
     if (hasSmtp) {
@@ -38,7 +42,7 @@ export async function sendMail(opts: MailOptions): Promise<{ ok: true } | { ok: 
     }
 
     if (hasSes) {
-      const region = process.env.AWS_REGION || 'us-east-1';
+      const region = process.env.SES_REGION || process.env.AWS_SES_REGION || process.env.AWS_REGION || 'us-east-1';
       // Lazy-load AWS SES client
       const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
       const client = new SESClient({ region });

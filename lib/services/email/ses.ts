@@ -9,7 +9,7 @@ import { sendMail } from '@/lib/mailer';
 
 // Initialize SES client
 const sesClient = new SESClient({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: process.env.SES_REGION || process.env.AWS_SES_REGION || process.env.AWS_REGION || 'us-east-1',
   credentials: process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
     ? {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -20,7 +20,11 @@ const sesClient = new SESClient({
 });
 
 // Prefer SES_FROM_EMAIL when configured (Amplify env), fallback to FROM_EMAIL
-const FROM_EMAIL = process.env.SES_FROM_EMAIL || process.env.FROM_EMAIL || 'noreply@huntaze.com';
+const FROM_EMAIL = process.env.SES_FROM_EMAIL 
+  || process.env.AWS_SES_FROM_EMAIL 
+  || process.env.SMTP_FROM 
+  || process.env.FROM_EMAIL 
+  || 'noreply@huntaze.com';
 
 export interface EmailOptions {
   to: string;
@@ -155,7 +159,15 @@ If you didn't create an account with Huntaze, you can safely ignore this email.
     from: FROM_EMAIL,
   });
 
-  return result.ok;
+  if (!result.ok) {
+    console.error('[Email] Verification email not sent', {
+      to: email,
+      error: result.error,
+    });
+    throw new Error(result.error || 'Failed to send verification email');
+  }
+
+  return true;
 }
 
 /**
