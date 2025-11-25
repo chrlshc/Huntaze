@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   description: 'Verify your email address to complete signup',
 };
 
+// This page needs to be dynamic because it processes verification tokens from URL
+export const dynamic = 'force-dynamic';
+
 function VerificationContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center px-4 py-12">
