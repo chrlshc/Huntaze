@@ -295,23 +295,46 @@ export class CsrfMiddleware {
     // Check cookie
     const cookieToken = request.cookies.get(this.config.cookieName)?.value;
     
-    // Log for debugging
-    logger.info('Extracting CSRF token', {
+    // Enhanced logging for debugging
+    const debugInfo = {
+      url: request.url,
+      method: request.method,
       hasHeaderToken: !!headerToken,
       hasCookieToken: !!cookieToken,
       headerName: this.config.headerName,
       cookieName: this.config.cookieName,
-      allHeaders: Object.fromEntries(request.headers.entries()),
-      allCookies: request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value })),
-    });
+      headerTokenPreview: headerToken ? `${headerToken.substring(0, 20)}...` : null,
+      cookieTokenPreview: cookieToken ? `${cookieToken.substring(0, 20)}...` : null,
+      allCookieNames: request.cookies.getAll().map(c => c.name),
+      relevantHeaders: {
+        'x-csrf-token': request.headers.get('x-csrf-token') ? 'present' : 'missing',
+        'cookie': request.headers.get('cookie') ? 'present' : 'missing',
+        'origin': request.headers.get('origin'),
+        'referer': request.headers.get('referer'),
+      },
+    };
+    
+    logger.info('Extracting CSRF token', debugInfo);
+    
+    // Also log to console in production for easier debugging
+    if (process.env.NODE_ENV === 'production') {
+      console.log('[CSRF DEBUG]', JSON.stringify(debugInfo, null, 2));
+    }
     
     if (headerToken) {
+      logger.info('Using CSRF token from header');
       return headerToken;
     }
     
     if (cookieToken) {
+      logger.info('Using CSRF token from cookie');
       return cookieToken;
     }
+    
+    logger.warn('No CSRF token found in request', {
+      checkedHeader: this.config.headerName,
+      checkedCookie: this.config.cookieName,
+    });
     
     return null;
   }
@@ -332,12 +355,64 @@ export class CsrfMiddleware {
       maxAge: this.config.maxAge / 1000, // Convert to seconds
     };
     
-    // Set domain for production to work across subdomains
+    logger.info('Setting CSRF token cookie', {
+      tokenPreview: token.substring(0, 20) + '...',
+      tokenLength: token.length,
+      cookieName: this.config.cookieName,
+      initialOptions: { ...cookieOptions },
+    });
+    
+    // Set domain based on environment
+    // In production, use the configured domain or auto-detect from NEXTAUTH_URL
     if (process.env.NODE_ENV === 'production') {
-      cookieOptions.domain = '.huntaze.com';
+      const configuredDomain = process.env.CSRF_COOKIE_DOMAIN;
+      
+      if (configuredDomain) {
+        // Use explicitly configured domain
+        cookieOptions.domain = configuredDomain;
+      } else if (process.env.NEXTAUTH_URL) {
+        // Auto-detect domain from NEXTAUTH_URL
+        try {
+          const url = new URL(process.env.NEXTAUTH_URL);
+          const hostname = url.hostname;
+          
+          // Use exact hostname instead of wildcard domain
+          // This is more reliable for subdomains like staging.huntaze.com
+          // The cookie will only be sent to the exact domain
+          cookieOptions.domain = hostname;
+          
+          logger.info('CSRF cookie domain set from NEXTAUTH_URL', {
+            domain: hostname,
+            nextauthUrl: process.env.NEXTAUTH_URL,
+          });
+        } catch (error) {
+          // If URL parsing fails, don't set domain (will default to current domain)
+          logger.warn('Failed to parse NEXTAUTH_URL for cookie domain', {
+            error: (error as Error).message,
+          });
+        }
+      }
     }
     
     response.cookies.set(this.config.cookieName, token, cookieOptions);
+    
+    logger.info('CSRF token cookie set successfully', {
+      cookieName: this.config.cookieName,
+      finalOptions: cookieOptions,
+      domain: cookieOptions.domain || 'not set (will use current domain)',
+    });
+    
+    // Log to console in production for easier debugging
+    if (process.env.NODE_ENV === 'production') {
+      console.log('[CSRF COOKIE SET]', {
+        cookieName: this.config.cookieName,
+        domain: cookieOptions.domain || 'current domain',
+        secure: cookieOptions.secure,
+        sameSite: cookieOptions.sameSite,
+        httpOnly: cookieOptions.httpOnly,
+        maxAge: cookieOptions.maxAge,
+      });
+    }
     
     return response;
   }
