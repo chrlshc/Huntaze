@@ -29,7 +29,7 @@ const benefits: Benefit[] = [
 
 export function HomePageContent() {
   return (
-    <div className="min-h-screen bg-[#0F0F10] text-[#EDEDEF]">
+    <div className="min-h-screen bg-[#0F0F10] text-[#EDEDEF] w-full mx-auto">
       {/* Hero Section */}
       <HeroSection
         badge="Closed Beta • Invite only"
