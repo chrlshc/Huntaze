@@ -14,6 +14,8 @@
   html {
     scroll-behavior: smooth;
     background-color: var(--bg-app);
+    overflow-x: hidden;
+    width: 100%;
   }
   
   body {
@@ -22,6 +24,8 @@
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--bg-app);
     color: var(--text-primary);
+    overflow-x: hidden;
+    width: 100%;
   }
   
   /* Clean text selection */
