@@ -77,10 +77,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
+import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { createLogger } from '@/lib/utils/logger';
 import { validateCsrfToken, setCsrfTokenCookie } from '@/lib/middleware/csrf';
 import { Prisma } from '@prisma/client';
+import { sendVerificationEmail } from '@/lib/services/email/ses';
 
 // Force Node.js runtime (required for database connections)
 export const runtime = 'nodejs';
@@ -543,7 +545,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
       );
     }
 
-    // 9. Create user in database (with retry)
+    // 9. Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // 10. Create user in database (with retry)
     let user;
     try {
       user = await retryWithBackoff(
@@ -555,6 +561,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
               name: data.name || null,
               email_verified: false,
               onboarding_completed: false,
+              email_verification_token: verificationToken,
+              email_verification_expires: verificationExpires,
             },
             select: {
               id: true,
@@ -608,7 +616,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
       );
     }
 
-    // 10. Build success response
+    // 11. Fire verification email (non-blocking)
+    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://staging.huntaze.com';
+    sendVerificationEmail(user.email, verificationToken, baseUrl).catch((error) => {
+      logger.error('Failed to send verification email', error as Error, {
+        correlationId,
+        userId: user.id,
+        email: user.email,
+      });
+    });
+
+    // 12. Build success response
     const duration = Date.now() - startTime;
 
     logger.info('Registration successful', {

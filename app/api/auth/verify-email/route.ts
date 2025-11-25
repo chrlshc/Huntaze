@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const { token, userId } = body;
 
     // Find user with matching token
-    const user = await prisma.user.findFirst({
+    const user = await prisma.users.findFirst({
       where: {
         id: parseInt(userId),
         email_verification_token: token,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already verified
-    if (user.emailVerified) {
+    if (user.email_verified) {
       return NextResponse.json(
         { success: true, message: 'Email already verified' },
         { status: 200 }
@@ -66,10 +66,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Update user to verified
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
-        emailVerified: true,
+        email_verified: true,
         email_verification_token: null,
         email_verification_expires: null,
       },
