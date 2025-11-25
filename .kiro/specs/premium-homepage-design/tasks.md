@@ -143,6 +143,37 @@
 
 ---
 
+## 🔧 Phase 6: Layout Debugging (CURRENT)
+
+### 17. Diagnostiquer le problème de centrage
+- [ ] Ajouter temporairement `* { outline: 1px solid red; }` dans globals.css
+- [ ] Identifier l'élément qui dépasse la largeur de l'écran
+- [ ] Vérifier les éléments avec largeur fixe ou position absolute
+- [ ] Vérifier les background glows (600px, 800px width)
+- [ ] Test: Inspecter dans DevTools pour trouver l'élément coupable
+
+### 18. Corriger le conteneur principal
+- [ ] Vérifier que `body` et `html` ont `overflow-x: hidden` et `width: 100%`
+- [ ] S'assurer que tous les conteneurs ont `max-w-*` et `mx-auto`
+- [ ] Vérifier que les sections ont `overflow-hidden` si nécessaire
+- [ ] Test: Plus de scroll horizontal sur aucun device
+
+### 19. Corriger les éléments problématiques
+- [ ] Ajuster les background glows pour ne pas dépasser
+- [ ] Vérifier le dashboard preview 3D
+- [ ] Vérifier les images et SVG
+- [ ] S'assurer que tous les éléments absolute sont contenus
+- [ ] Test: Contenu centré sur tous les viewports
+
+### 20. Validation finale du centrage
+- [ ] Retirer le code de debug (outline rouge)
+- [ ] Vérifier sur mobile (375px, 414px)
+- [ ] Vérifier sur tablet (768px, 1024px)
+- [ ] Vérifier sur desktop (1280px, 1920px)
+- [ ] Test: Site parfaitement centré, pas d'espace vide à droite
+
+---
+
 ## 🚨 Rollback
 ```bash
 git checkout app/(marketing)/page.tsx
@@ -150,4 +181,4 @@ git revert HEAD
 ```
 
 ## 📋 Ordre recommandé
-1-3 (Base) → 4-8 (Effets) → 11-13 (A11y) → 14-16 (Tests) → 9-10 (Advanced si temps)
+1-3 (Base) → 4-8 (Effets) → 11-13 (A11y) → 14-16 (Tests) → 9-10 (Advanced si temps) → 17-20 (Layout Fix)
