@@ -33,14 +33,16 @@ export function SignupForm({
   const [emailSent, setEmailSent] = useState(false);
   const [sentEmail, setSentEmail] = useState('');
 
-  const handleEmailSubmit = async (email: string) => {
+  const handleEmailSubmit = async (email: string, csrfToken: string) => {
     try {
       // Send magic link email
       const response = await fetch('/api/auth/signup/email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
         },
+        credentials: 'include',
         body: JSON.stringify({ email }),
       });
 

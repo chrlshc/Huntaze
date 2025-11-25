@@ -13,6 +13,7 @@ import { validateEmail } from '@/lib/validation/signup';
 import { query } from '@/lib/db';
 import { randomBytes } from 'crypto';
 import { sendMagicLinkEmail } from '@/lib/auth/magic-link';
+import { validateCsrfToken } from '@/lib/middleware/csrf';
 
 const logger = createLogger('signup-email');
 
@@ -20,6 +21,24 @@ export async function POST(request: NextRequest) {
   const startTime = Date.now();
   
   try {
+    // Validate CSRF token
+    const csrfValidation = await validateCsrfToken(request);
+    if (!csrfValidation.valid) {
+      logger.warn('CSRF validation failed for signup', {
+        error: csrfValidation.error,
+        errorCode: csrfValidation.errorCode,
+      });
+      
+      return NextResponse.json(
+        { 
+          error: csrfValidation.userMessage || csrfValidation.error || 'CSRF validation failed',
+          errorCode: csrfValidation.errorCode,
+          shouldRefresh: csrfValidation.shouldRefresh,
+        },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { email } = body;
 
