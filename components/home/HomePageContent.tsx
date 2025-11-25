@@ -1,36 +1,15 @@
 'use client';
 
-import { type Benefit } from '@/components/home/ValueProposition';
+import { BarChart3, Sparkles, Users } from 'lucide-react';
 import { HeroSection } from '@/components/home/HeroSection';
-import { ValueProposition } from '@/components/home/ValueProposition';
+import { DashboardMockSection } from '@/components/home/DashboardMockSection';
+import { BenefitSection } from '@/components/home/BenefitSection';
 import { HomeCTA } from '@/components/home/HomeCTA';
-
-// Define the 3 key benefits
-const benefits: Benefit[] = [
-  { 
-    icon: 'BarChart3', 
-    title: 'Clarity', 
-    subtitle: 'See clearly',
-    description: 'Track your revenue and growth across all platforms instantly. No more spreadsheets.' 
-  },
-  { 
-    icon: 'Sparkles', 
-    title: 'Freedom', 
-    subtitle: 'Save time',
-    description: 'Your AI assistant works 24/7. It handles messages and routine tasks so you can sleep.' 
-  },
-  { 
-    icon: 'Users', 
-    title: 'Connection', 
-    subtitle: 'Know your fans',
-    description: 'Identify your top supporters and build real relationships with the people who matter most.' 
-  }
-];
 
 export function HomePageContent() {
   return (
     <div className="min-h-screen bg-[#0F0F10] text-[#EDEDEF] w-full mx-auto">
-      {/* Hero Section */}
+      {/* Section 1: Hero */}
       <HeroSection
         badge="Closed Beta • Invite only"
         title="Run Your Creator Business on Autopilot"
@@ -39,10 +18,43 @@ export function HomePageContent() {
         ctaHref="/auth/register"
       />
 
-      {/* Value Proposition - 3 Benefits */}
-      <ValueProposition benefits={benefits} />
+      {/* Section 2: Dashboard Mock */}
+      <DashboardMockSection />
 
-      {/* Final CTA with Navigation Links */}
+      {/* Section 3: Clarity - Analytics & Tracking */}
+      <BenefitSection
+        id="clarity"
+        icon={BarChart3}
+        label="CLARITY"
+        title="See clearly"
+        description="Track your revenue and growth across all platforms instantly. No more spreadsheets. Get real-time insights into what's working and what's not, all in one beautiful dashboard."
+        imagePosition="left"
+        background="default"
+      />
+
+      {/* Section 4: Freedom - Automation */}
+      <BenefitSection
+        id="freedom"
+        icon={Sparkles}
+        label="FREEDOM"
+        title="Save time"
+        description="Your AI assistant works 24/7. It handles messages and routine tasks so you can sleep. Automate the boring stuff and focus on what you love: creating content."
+        imagePosition="right"
+        background="alternate"
+      />
+
+      {/* Section 5: Connection - Relationships */}
+      <BenefitSection
+        id="connection"
+        icon={Users}
+        label="CONNECTION"
+        title="Know your fans"
+        description="Identify your top supporters and build real relationships with the people who matter most. See who engages, who buys, and who truly supports your work."
+        imagePosition="left"
+        background="default"
+      />
+
+      {/* Section 6: Final CTA */}
       <HomeCTA
         title="Ready to upgrade your workflow?"
         ctaText="Request Access"
