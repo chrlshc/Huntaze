@@ -469,7 +469,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
     try {
       existingUser = await retryWithBackoff(
         async () => {
-          return await prisma.user.findUnique({
+          return await prisma.users.findUnique({
             where: { email: data.email.toLowerCase() },
             select: { id: true },
           });
@@ -548,13 +548,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
     try {
       user = await retryWithBackoff(
         async () => {
-          return await prisma.user.create({
+          return await prisma.users.create({
             data: {
               email: data.email.toLowerCase(),
               password: hashedPassword,
               name: data.name || null,
-              emailVerified: false,
-              onboardingCompleted: false,
+              email_verified: false,
+              onboarding_completed: false,
             },
             select: {
               id: true,
