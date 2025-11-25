@@ -102,7 +102,7 @@ export class RegistrationService {
 
       // Send verification email (non-blocking)
       const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-      this.sendVerificationEmailAsync(email, verificationToken, baseUrl, correlationId);
+      this.sendVerificationEmailAsync(email, verificationToken, baseUrl, correlationId, user.id);
 
       const duration = Date.now() - startTime;
       authLogger.info('Registration successful', {
@@ -236,20 +236,23 @@ export class RegistrationService {
     email: string,
     token: string,
     baseUrl: string,
-    correlationId: string
+    correlationId: string,
+    userId?: string
   ): void {
     // Send email without blocking registration response
-    sendVerificationEmail(email, token, baseUrl)
+    sendVerificationEmail(email, token, baseUrl, userId)
       .then((success) => {
         if (success) {
           authLogger.info('Verification email sent', {
             correlationId,
             email,
+            userId,
           });
         } else {
           authLogger.warn('Verification email failed to send', {
             correlationId,
             email,
+            userId,
           });
         }
       })
@@ -257,6 +260,7 @@ export class RegistrationService {
         authLogger.error('Verification email error', error, {
           correlationId,
           email,
+          userId,
         });
       });
   }

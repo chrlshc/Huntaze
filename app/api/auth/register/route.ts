@@ -618,7 +618,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
 
     // 11. Fire verification email (non-blocking)
     const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://staging.huntaze.com';
-    sendVerificationEmail(user.email, verificationToken, baseUrl).catch((error) => {
+    sendVerificationEmail(user.email, verificationToken, baseUrl, user.id).catch((error) => {
       logger.error('Failed to send verification email', error as Error, {
         correlationId,
         userId: user.id,
