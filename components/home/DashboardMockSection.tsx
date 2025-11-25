@@ -9,28 +9,28 @@ export function DashboardMockSection() {
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
       
-      <div className="relative z-10 mx-auto max-w-6xl w-full">
+      <div className="relative z-10 mx-auto max-w-7xl w-full">
         {/* Section Title */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-16 md:mb-20">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
             See it in action
           </h2>
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Get a glimpse of your future dashboard. Everything you need to run your creator business, all in one place.
           </p>
         </div>
 
         {/* Dashboard Visual */}
-        <div className="relative rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-sm shadow-2xl transition-transform duration-500 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:transform-none">
+        <div className="relative rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm shadow-2xl transition-transform duration-500 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:transform-none">
           {/* Purple glow shadow */}
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-violet-600/20 rounded-2xl blur-xl opacity-50" />
           
           {/* Dashboard placeholder */}
-          <div className="relative rounded-lg bg-gradient-to-br from-gray-900 to-gray-800 aspect-video flex items-center justify-center">
+          <div className="relative rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 aspect-video flex items-center justify-center">
             <div className="text-center">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10 border border-purple-500/20 mb-4">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
                 <svg 
-                  className="h-8 w-8 text-purple-400" 
+                  className="h-10 w-10 text-purple-400" 
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor"
@@ -43,8 +43,8 @@ export function DashboardMockSection() {
                   />
                 </svg>
               </div>
-              <p className="text-gray-500 text-sm">Dashboard Preview</p>
-              <p className="text-gray-600 text-xs mt-1">Coming soon in beta</p>
+              <p className="text-gray-500 text-base font-medium">Dashboard Preview</p>
+              <p className="text-gray-600 text-sm mt-2">Coming soon in beta</p>
             </div>
           </div>
         </div>
