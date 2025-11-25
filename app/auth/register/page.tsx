@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { fetchWithCsrf } from '@/lib/utils/csrf-client';
+import { useCsrfToken } from '@/hooks/useCsrfToken';
 
 /**
  * User Registration Page
@@ -25,6 +27,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { token: csrfToken, loading: csrfLoading, error: csrfError, refresh: refreshCsrf } = useCsrfToken();
 
   // Calculate password strength
   const getPasswordStrength = () => {
@@ -58,19 +61,34 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
+      // Ensure we have a CSRF token before sending the request
+      if (!csrfToken && !csrfLoading) {
+        await refreshCsrf();
+      }
+
+      const executeRequest = async () => {
+        return fetchWithCsrf('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+      };
+
       // Create user account
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      let response = await executeRequest();
+
+      // Retry once if token was stale/expired
+      if (response.status === 403) {
+        await refreshCsrf();
+        response = await executeRequest();
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Registration failed');
       }
 
-      const data = await response.json();
+      await response.json();
 
       // Redirect to verification pending page
       router.push(`/auth/verify-pending?email=${encodeURIComponent(formData.email)}`);
@@ -80,6 +98,16 @@ export default function RegisterPage() {
       setIsLoading(false);
     }
   };
+
+  const displayError =
+    error ||
+    (csrfError ? 'Security token could not be loaded. Please refresh and try again.' : null);
+  const submitting = isLoading || csrfLoading;
+  const buttonLabel = isLoading
+    ? 'Creating Account...'
+    : csrfLoading
+    ? 'Preparing Security...'
+    : 'Create Account';
 
   return (
     <div className="auth-container">
@@ -91,9 +119,9 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
-          {error && (
+          {displayError && (
             <div className="error-message" role="alert">
-              {error}
+              {displayError}
             </div>
           )}
 
@@ -170,10 +198,10 @@ export default function RegisterPage() {
           <button
             type="submit"
             className="btn-primary btn-full"
-            disabled={isLoading}
-            aria-busy={isLoading}
+            disabled={submitting}
+            aria-busy={submitting}
           >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+            {buttonLabel}
           </button>
 
           <p className="form-footer">
