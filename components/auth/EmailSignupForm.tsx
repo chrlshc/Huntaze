@@ -19,7 +19,7 @@ import { FieldError, ErrorSummary } from '@/components/forms/FormError';
 import { getContextualError } from '@/lib/validation/error-messages';
 
 interface EmailSignupFormProps {
-  onSubmit: (email: string) => Promise<void>;
+  onSubmit: (email: string, csrfToken: string) => Promise<void>;
   onValidationChange?: (isValid: boolean) => void;
   autoFocus?: boolean;
 }
@@ -101,7 +101,7 @@ export function EmailSignupForm({
     startSubmit(); // Mobile double-submit prevention
     
     try {
-      await onSubmit(email);
+      await onSubmit(email, csrfToken);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to send verification email');
     } finally {
