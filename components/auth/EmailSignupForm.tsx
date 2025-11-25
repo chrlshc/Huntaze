@@ -93,7 +93,13 @@ export function EmailSignupForm({
     e.preventDefault();
     
     // Prevent double-submission
-    if (!isValid || isSubmitting || isMobileSubmitting || !csrfToken) {
+    if (!isValid || isSubmitting || isMobileSubmitting) {
+      return;
+    }
+
+    // Ensure CSRF token is available
+    if (!csrfToken) {
+      setError('Security token not available. Please refresh the page.');
       return;
     }
 

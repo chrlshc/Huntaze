@@ -397,18 +397,6 @@ export async function validateCsrfToken(request: NextRequest): Promise<CsrfValid
     };
   }
   
-  // Temporary bypass for debugging - remove in production
-  if (process.env.CSRF_BYPASS === 'true') {
-    logger.warn('CSRF validation bypassed via environment variable', {
-      url: request.url,
-      method: request.method,
-    });
-    
-    return {
-      valid: true,
-    };
-  }
-  
   // Extract token from request
   const token = csrfMiddleware.extractToken(request);
   
