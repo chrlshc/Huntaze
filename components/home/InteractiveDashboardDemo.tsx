@@ -177,7 +177,7 @@ export function InteractiveDashboardDemo() {
       className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[#131316] overflow-hidden"
     >
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
       
       <div className="relative z-10 mx-auto max-w-7xl w-full">
         {/* Section Title */}
