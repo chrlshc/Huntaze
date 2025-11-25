@@ -91,7 +91,7 @@ export default function RegisterPage() {
       await response.json();
 
       // Redirect to auth page with pending verification message
-      router.push(`/auth?pending=1&email=${encodeURIComponent(formData.email)}`);
+      router.push(`/auth/?pending=1&email=${encodeURIComponent(formData.email)}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
