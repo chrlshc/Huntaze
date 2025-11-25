@@ -291,12 +291,24 @@ export class CsrfMiddleware {
   extractToken(request: NextRequest): string | null {
     // Check header first
     const headerToken = request.headers.get(this.config.headerName);
+    
+    // Check cookie
+    const cookieToken = request.cookies.get(this.config.cookieName)?.value;
+    
+    // Log for debugging
+    logger.info('Extracting CSRF token', {
+      hasHeaderToken: !!headerToken,
+      hasCookieToken: !!cookieToken,
+      headerName: this.config.headerName,
+      cookieName: this.config.cookieName,
+      allHeaders: Object.fromEntries(request.headers.entries()),
+      allCookies: request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value })),
+    });
+    
     if (headerToken) {
       return headerToken;
     }
     
-    // Check cookie
-    const cookieToken = request.cookies.get(this.config.cookieName)?.value;
     if (cookieToken) {
       return cookieToken;
     }
