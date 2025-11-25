@@ -76,3 +76,5 @@ playwright-report/
 
 # Lambda builds (regenerate when needed)
 lambda/*.zip
+CREDENTIALS_GÉNÉRÉS.md
+.env.amplify.json

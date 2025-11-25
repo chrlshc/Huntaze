@@ -34,7 +34,7 @@ export function HomeCTA({
       className="relative min-h-screen flex items-center justify-center px-4 py-20 md:py-24 text-center md:px-6 overflow-hidden"
     >
       {/* Background gradient glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-violet-900/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[400px] bg-violet-900/20 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="relative z-10 mx-auto max-w-5xl w-full">
         <div className="mx-auto max-w-4xl">

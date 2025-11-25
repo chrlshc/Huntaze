@@ -99,3 +99,28 @@ export async function disconnectPrisma(): Promise<void> {
     connectionAttempted = false;
   }
 }
+
+/**
+ * Export prisma instance for direct usage
+ * Returns a Proxy that throws helpful errors if database is unavailable
+ */
+export const prisma = new Proxy({} as PrismaClient, {
+  get(target, prop) {
+    const client = getPrismaClient();
+    
+    if (!client) {
+      // During build or when database is unavailable
+      if (process.env.NODE_ENV === 'production' && process.env.DISABLE_DATABASE === 'true') {
+        // Return a no-op for build time
+        return () => Promise.resolve(null);
+      }
+      
+      throw new Error(
+        `Database is not available. Cannot access prisma.${String(prop)}. ` +
+        `Check DATABASE_URL environment variable and database connectivity.`
+      );
+    }
+    
+    return client[prop as keyof PrismaClient];
+  },
+});

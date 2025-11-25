@@ -32,7 +32,7 @@ export function HeroSection({
       className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center px-4 py-20 md:py-24 text-center md:px-6 overflow-hidden"
     >
       {/* Background Glow */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-[120px] pointer-events-none" />
       
       <div className="relative z-10 mx-auto max-w-5xl w-full">
         {/* Beta Badge */}
