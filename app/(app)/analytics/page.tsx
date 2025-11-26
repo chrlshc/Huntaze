@@ -1,16 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import Link from 'next/link';
-import { MetricsOverview } from '@/components/revenue/metrics/MetricsOverview';
-import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
+import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useIntegrations } from '@/hooks/useIntegrations';
+import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
+import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
+
+// Lazy load heavy components to reduce initial bundle size
+const MetricsOverview = lazy(() => import('@/components/revenue/metrics/MetricsOverview').then(mod => ({ default: mod.MetricsOverview })));
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<any>(null);
   const { integrations, loading: integrationsLoading } = useIntegrations();
+  
+  // Performance monitoring
+  const { trackAPIRequest, trackNavigation } = usePerformanceMonitoring({
+    pageName: 'Analytics',
+    trackScrollPerformance: true,
+    trackInteractions: true,
+  });
 
   // Check if user has any connected integrations
   const hasConnectedIntegrations = integrations.some(i => i.isConnected);
@@ -24,14 +35,16 @@ export default function AnalyticsPage() {
       }
 
       try {
-        // Fetch real metrics from connected integrations
-        const response = await fetch('/api/analytics/overview?timeRange=30d');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setMetrics(data.data);
+        // Fetch real metrics from connected integrations with performance tracking
+        await trackAPIRequest('/api/analytics/overview', 'GET', async () => {
+          const response = await fetch('/api/analytics/overview?timeRange=30d');
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+              setMetrics(data.data);
+            }
           }
-        }
+        });
       } catch (error) {
         console.error('Failed to load metrics:', error);
       } finally {
@@ -59,12 +72,14 @@ export default function AnalyticsPage() {
 
   if (loading || integrationsLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-indigo)] mx-auto mb-4"></div>
-          <p className="text-[var(--color-text-sub)]">Loading analytics...</p>
+      <ProtectedRoute requireOnboarding={false}>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-indigo)] mx-auto mb-4"></div>
+            <p className="text-[var(--color-text-sub)]">Loading analytics...</p>
+          </div>
         </div>
-      </div>
+      </ProtectedRoute>
     );
   }
 
@@ -72,7 +87,7 @@ export default function AnalyticsPage() {
   if (!hasConnectedIntegrations) {
     return (
       <ProtectedRoute requireOnboarding={false}>
-        <ErrorBoundary>
+        <ContentPageErrorBoundary pageName="Analytics">
           <div className="max-w-7xl mx-auto">
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Analytics</h1>
@@ -126,14 +141,14 @@ export default function AnalyticsPage() {
               </div>
             </div>
           </div>
-        </ErrorBoundary>
+        </ContentPageErrorBoundary>
       </ProtectedRoute>
     );
   }
 
   return (
     <ProtectedRoute requireOnboarding={false}>
-      <ErrorBoundary>
+      <ContentPageErrorBoundary pageName="Analytics">
         <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -237,12 +252,27 @@ export default function AnalyticsPage() {
         {/* Revenue Metrics Overview */}
         {metrics && (
           <div className="mb-8">
-            <MetricsOverview
-              metrics={metrics}
-              trends={mockTrends}
-              onMetricClick={handleMetricClick}
-              loading={false}
-            />
+            <LazyLoadErrorBoundary>
+              <Suspense fallback={
+                <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+                  <div className="animate-pulse space-y-4">
+                    <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="h-24 bg-gray-200 rounded"></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              }>
+                <MetricsOverview
+                  metrics={metrics}
+                  trends={mockTrends}
+                  onMetricClick={handleMetricClick}
+                  loading={false}
+                />
+              </Suspense>
+            </LazyLoadErrorBoundary>
           </div>
         )}
 
@@ -284,7 +314,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
         </div>
-      </ErrorBoundary>
+      </ContentPageErrorBoundary>
     </ProtectedRoute>
   );
 }

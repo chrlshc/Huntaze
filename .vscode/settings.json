@@ -19,5 +19,6 @@
     "**/coverage": true,
     "**/test-results": true
   },
-  "testing.automaticallyOpenTestResults": "neverOpen"
+  "testing.automaticallyOpenTestResults": "neverOpen",
+  "kiroAgent.configureMCP": "Disabled"
 }

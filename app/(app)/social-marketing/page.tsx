@@ -1,10 +1,14 @@
 export const dynamic = 'force-dynamic';
 
-
-import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
+import { lazy, Suspense } from 'react';
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
+import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
+import type { NodeDef, LinkDef } from '@/components/hz/ConnectorGraph';
+
+// Lazy load heavy SVG visualization component to reduce initial bundle size
+const ConnectorGraph = lazy(() => import('@/components/hz/ConnectorGraph'));
 
 export default function SocialMarketingPage() {
   return (
@@ -65,7 +69,15 @@ export default function SocialMarketingPage() {
                 { from: 'hub', to: 'tiktok' },
                 { from: 'hub', to: 'reddit' },
               ];
-              return <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />;
+              return (
+                <LazyLoadErrorBoundary>
+                  <Suspense fallback={
+                    <div className="animate-pulse bg-gray-200 rounded-lg" style={{ height: '420px', width: '100%' }}></div>
+                  }>
+                    <ConnectorGraph nodes={nodes} links={links} hideStatus cardWidth={220} />
+                  </Suspense>
+                </LazyLoadErrorBoundary>
+              );
             })()}
 
             <SectionExplainer

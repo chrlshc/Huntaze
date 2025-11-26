@@ -1,12 +1,17 @@
 'use client';
 
-import ConnectorGraph, { type NodeDef, type LinkDef } from '@/components/hz/ConnectorGraph';
+import { lazy, Suspense } from 'react';
 import OFConnectBanner from '@/components/OFConnectBanner';
 import { BridgeLauncher } from "@/components/of/BridgeLauncher";
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';
 import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Home as HomeIcon, Search } from 'lucide-react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
+import type { NodeDef, LinkDef } from '@/components/hz/ConnectorGraph';
+
+// Lazy load heavy SVG visualization component to reduce initial bundle size
+const ConnectorGraph = lazy(() => import('@/components/hz/ConnectorGraph'));
 
 export default function OnlyFansAssistedPage() {
   return (
@@ -94,7 +99,15 @@ export default function OnlyFansAssistedPage() {
                 { from: 'hub', to: 'mass' },
                 { from: 'hub', to: 'compliance' },
               ];
-              return <ConnectorGraph nodes={nodes} links={links} hideStatus={false} cardWidth={220} />;
+              return (
+                <LazyLoadErrorBoundary>
+                  <Suspense fallback={
+                    <div className="animate-pulse bg-gray-200 rounded-lg" style={{ height: '420px', width: '100%' }}></div>
+                  }>
+                    <ConnectorGraph nodes={nodes} links={links} hideStatus={false} cardWidth={220} />
+                  </Suspense>
+                </LazyLoadErrorBoundary>
+              );
             })()}
 
             <SectionExplainer

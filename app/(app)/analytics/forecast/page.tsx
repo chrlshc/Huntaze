@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import { useRevenueForecast } from '@/hooks/revenue/useRevenueForecast';
-import { RevenueForecastChart } from '@/components/revenue/forecast/RevenueForecastChart';
 import { MonthProgress } from '@/components/revenue/forecast/MonthProgress';
 import { GoalAchievement } from '@/components/revenue/forecast/GoalAchievement';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
+import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
+
+// Lazy load heavy chart component (uses Recharts library) to reduce initial bundle size
+const RevenueForecastChart = lazy(() => import('@/components/revenue/forecast/RevenueForecastChart').then(mod => ({ default: mod.RevenueForecastChart })));
 
 export default function ForecastPage() {
   const [showToast, setShowToast] = useState(false);
@@ -49,7 +52,22 @@ export default function ForecastPage() {
         </div>
 
         <div className="mb-8">
-          <RevenueForecastChart forecast={forecast} />
+          <LazyLoadErrorBoundary>
+            <Suspense fallback={
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <div className="animate-pulse space-y-4">
+                  <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-[400px] bg-gray-200 rounded"></div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="h-32 bg-gray-200 rounded"></div>
+                    <div className="h-32 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            }>
+              <RevenueForecastChart forecast={forecast} />
+            </Suspense>
+          </LazyLoadErrorBoundary>
         </div>
 
         {showToast && (
