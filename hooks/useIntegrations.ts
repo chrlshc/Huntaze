@@ -69,8 +69,8 @@ export function useIntegrations(): UseIntegrationsReturn {
       setLoading(true);
       setError(null);
       
-      // Use fetchWithRetry for automatic retry logic
-      const data = await fetchWithRetry('/api/integrations/status');
+      // Use fetchWithRetry for automatic retry logic (fail fast to avoid long skeletons)
+      const data = await fetchWithRetry('/api/integrations/status', {}, { timeout: 8000, maxRetries: 1 });
       
       // Handle both old and new response formats
       const integrationsData = data.data?.integrations || data.integrations || [];
