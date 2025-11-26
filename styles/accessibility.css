@@ -280,41 +280,4 @@ select {
   color: var(--color-info);
 }
 
-/* ========================================
-   DEVELOPMENT WARNINGS
-   ======================================== */
-
-/**
- * Visual warnings for accessibility issues (development only)
- * These should be removed in production builds
- */
-
-/* Warn about missing alt text on images */
-img:not([alt]) {
-  outline: 3px dashed red;
-}
-
-/* Warn about empty links */
-a:empty {
-  outline: 3px dashed orange;
-}
-
-/* Warn about buttons without accessible names */
-button:not([aria-label]):not([aria-labelledby]):empty {
-  outline: 3px dashed orange;
-}
-
-/* Warn about inputs without labels */
-input:not([aria-label]):not([aria-labelledby]):not([id]) {
-  outline: 3px dashed orange;
-}
-
-/* Remove warnings in production */
-@media (prefers-reduced-data: reduce) {
-  img:not([alt]),
-  a:empty,
-  button:not([aria-label]):not([aria-labelledby]):empty,
-  input:not([aria-label]):not([aria-labelledby]):not([id]) {
-    outline: none;
-  }
-}
+/* Development-only outline warnings removed for production */
