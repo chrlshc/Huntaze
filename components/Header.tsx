@@ -18,7 +18,7 @@ export default function Header() {
             style={{
               fontSize: 'var(--font-size-lg)',
               fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-text-primary)'
+              color: 'var(--nav-text)'
             }}
           >
             Huntaze
@@ -36,20 +36,20 @@ export default function Header() {
             className="rounded-lg"
             style={{
               padding: 'var(--spacing-2)',
-              color: 'var(--color-text-secondary)',
+              color: 'var(--nav-text-muted)',
               transition: 'all var(--transition-fast)',
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-indigo-fade)';
-              e.currentTarget.style.color = 'var(--color-indigo)';
+              e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
+              e.currentTarget.style.color = 'var(--nav-text)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--color-text-secondary)';
+              e.currentTarget.style.color = 'var(--nav-text-muted)';
             }}
             onFocus={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-indigo-glow)';
+              e.currentTarget.style.boxShadow = '0 0 0 3px var(--nav-border-strong)';
               e.currentTarget.style.outline = 'none';
             }}
             onBlur={(e) => {
@@ -95,7 +95,7 @@ export default function Header() {
                 style={{
                   fontSize: 'var(--font-size-sm)',
                   fontWeight: 'var(--font-weight-medium)',
-                  color: 'var(--color-text-primary)'
+                  color: 'var(--nav-text)'
                 }}
               >
                 {session?.user?.name || 'User'}
@@ -103,7 +103,7 @@ export default function Header() {
               <p 
                 style={{
                   fontSize: 'var(--font-size-xs)',
-                  color: 'var(--color-text-secondary)'
+                  color: 'var(--nav-text-muted)'
                 }}
               >
                 {session?.user?.email}
@@ -114,20 +114,20 @@ export default function Header() {
               className="rounded-lg"
               style={{
                 padding: 'var(--spacing-2)',
-                color: 'var(--color-text-secondary)',
+                color: 'var(--nav-text-muted)',
                 transition: 'all var(--transition-fast)',
                 cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--color-indigo-fade)';
-                e.currentTarget.style.color = 'var(--color-indigo)';
+                e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
+                e.currentTarget.style.color = 'var(--nav-text)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--color-text-secondary)';
+                e.currentTarget.style.color = 'var(--nav-text-muted)';
               }}
               onFocus={(e) => {
-                e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-indigo-glow)';
+                e.currentTarget.style.boxShadow = '0 0 0 3px var(--nav-border-strong)';
                 e.currentTarget.style.outline = 'none';
               }}
               onBlur={(e) => {

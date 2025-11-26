@@ -42,25 +42,6 @@ export function Sidebar() {
 
   return (
     <aside className="huntaze-sidebar hidden md:flex md:flex-col">
-      <div 
-        className="flex items-center"
-        style={{
-          padding: 'var(--spacing-6)',
-          borderBottom: '1px solid var(--color-border-subtle)'
-        }}
-      >
-        <Link 
-          href="/dashboard"
-          style={{
-            fontSize: 'var(--font-size-xl)',
-            fontWeight: 'var(--font-weight-bold)',
-            color: 'var(--color-accent-primary)'
-          }}
-        >
-          Huntaze
-        </Link>
-      </div>
-
       <nav 
         className="flex-1"
         style={{ padding: '16px 0 16px 16px' }}
@@ -80,8 +61,8 @@ export function Sidebar() {
                     alignItems: 'center',
                     padding: '12px 16px',
                     gap: '12px',
-                    color: isActive ? 'var(--color-indigo)' : '#4B5563',
-                    backgroundColor: isActive ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
+                    color: isActive ? 'var(--nav-text)' : 'var(--nav-text-muted)',
+                    backgroundColor: isActive ? 'var(--nav-active-bg)' : 'transparent',
                     textDecoration: 'none',
                     transition: 'all 0.15s ease',
                     borderRadius: '0 8px 8px 0',
@@ -89,7 +70,7 @@ export function Sidebar() {
                     fontSize: '14px',
                     fontWeight: isActive ? '500' : '400',
                     ...(isActive && {
-                      borderLeft: '3px solid var(--color-indigo)',
+                      borderLeft: '3px solid var(--nav-active-indicator)',
                       paddingLeft: '13px',
                     }),
                   }}
@@ -97,8 +78,8 @@ export function Sidebar() {
                   <DuotoneIcon
                     name={item.icon}
                     size={20}
-                    primaryColor={isActive ? 'var(--color-indigo)' : '#9CA3AF'}
-                    secondaryColor={isActive ? 'var(--color-indigo)' : '#9CA3AF'}
+                    primaryColor={isActive ? 'var(--nav-text)' : 'var(--nav-text-subtle)'}
+                    secondaryColor={isActive ? 'var(--nav-text)' : 'var(--nav-text-subtle)'}
                   />
                   {item.name}
                 </Link>
@@ -112,7 +93,7 @@ export function Sidebar() {
         className="border-t"
         style={{
           padding: 'var(--spacing-4)',
-          borderColor: 'var(--color-border-subtle)'
+          borderColor: 'var(--nav-border)'
         }}
       >
         <Link
@@ -121,18 +102,18 @@ export function Sidebar() {
           style={{
             padding: 'var(--spacing-3)',
             gap: 'var(--spacing-3)',
-            color: 'var(--color-text-secondary)',
+            color: 'var(--nav-text-muted)',
             fontSize: 'var(--font-size-sm)',
             transition: 'all var(--transition-fast)',
             textDecoration: 'none'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-indigo-fade)';
-            e.currentTarget.style.color = 'var(--color-indigo)';
+            e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
+            e.currentTarget.style.color = 'var(--nav-text)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = 'var(--color-text-secondary)';
+            e.currentTarget.style.color = 'var(--nav-text-muted)';
           }}
         >
           <svg

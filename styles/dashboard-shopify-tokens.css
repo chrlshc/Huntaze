@@ -55,6 +55,20 @@
   --color-text-sub: #6B7280;    /* Medium gray - secondary text */
   --color-text-heading: #111827; /* Near-black - headings */
   --color-text-inactive: #6B7280; /* Medium gray - inactive elements (WCAG compliant: 4.5:1) */
+
+  /* Navigation Shell (dark chrome) */
+  --nav-surface: #0f0f10;            /* Header background */
+  --nav-surface-elevated: #151516;   /* Sidebar background */
+  --nav-border: #1f1f22;             /* Divider line */
+  --nav-border-strong: #2e2e33;      /* Stronger divider for hover/focus */
+  --nav-text: #e5e7eb;               /* Primary nav text */
+  --nav-text-muted: #9ca3af;         /* Secondary nav text */
+  --nav-text-subtle: #6b7280;        /* Tertiary text/icons */
+  --nav-hover: #1a1a1c;              /* Hover fill */
+  --nav-active-bg: #1e1f24;          /* Active item background */
+  --nav-active-indicator: #7d57c1;   /* Accent line for active state */
+  --nav-search-bg: #18181a;          /* Search field background */
+  --nav-search-border: #2e2e33;      /* Search border */
   
   /* Border Colors */
   --color-border-light: #6B7280;  /* Medium-dark gray for 3:1 contrast (WCAG compliant) */
@@ -160,8 +174,9 @@
 /* Grid area assignments */
 .huntaze-header {
   grid-area: header;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--color-border-light);
+  background: var(--nav-surface);
+  color: var(--nav-text);
+  border-bottom: 1px solid var(--nav-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -174,8 +189,9 @@
 
 .huntaze-sidebar {
   grid-area: sidebar;
-  background-color: var(--bg-surface);
-  border-right: 1px solid var(--color-border-medium);
+  background-color: var(--nav-surface-elevated);
+  color: var(--nav-text-muted);
+  border-right: 1px solid var(--nav-border);
   display: flex;
   flex-direction: column;
   z-index: var(--huntaze-z-index-nav);
@@ -219,22 +235,25 @@
 .nav-item {
   --icon-primary: #6B7280;
   --icon-secondary: #6B7280;
+  color: var(--nav-text-muted);
+  background-color: transparent;
 }
 
 .nav-item[data-active="true"] {
-  --icon-primary: var(--color-indigo-dark);
-  --icon-secondary: var(--color-indigo-dark);
-  color: var(--color-indigo-dark); /* Use darker indigo for WCAG compliance */
+  --icon-primary: var(--nav-text);
+  --icon-secondary: var(--nav-text);
+  color: var(--nav-text);
+  background-color: var(--nav-active-bg);
 }
 
 .nav-item:hover:not([data-active="true"]) {
-  background-color: rgba(0, 0, 0, 0.02);
-  color: var(--color-text-main);
+  background-color: var(--nav-hover);
+  color: var(--nav-text);
 }
 
 .nav-item:hover {
-  --icon-primary: var(--color-indigo-light);
-  --icon-secondary: var(--color-indigo-light);
+  --icon-primary: var(--nav-text);
+  --icon-secondary: var(--nav-text);
 }
 
 /* ============================================
