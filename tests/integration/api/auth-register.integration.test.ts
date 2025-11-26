@@ -89,7 +89,7 @@ const INVALID_EMAIL_USER = {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       OR: [
         { email: { contains: 'test-register@' } },
@@ -152,13 +152,13 @@ async function registerRequest(
 async function createExistingUser() {
   const hashedPassword = await hash(VALID_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       email: VALID_USER.email.toLowerCase(),
       password: hashedPassword,
       name: VALID_USER.name,
-      emailVerified: false,
-      onboardingCompleted: false,
+      email_verified: false,
+      onboarding_completed: false,
     },
   });
 }
@@ -232,7 +232,7 @@ describe('Auth Register API Integration Tests', () => {
     it('should not create user without valid CSRF token', async () => {
       // Note: CSRF validation is skipped in test environment
       // In production, this would not create the user
-      const countBefore = await prisma.user.count();
+      const countBefore = await prisma.users.count();
       
       await registerRequest(
         VALID_USER.email,
@@ -241,7 +241,7 @@ describe('Auth Register API Integration Tests', () => {
         // No CSRF token
       );
       
-      const countAfter = await prisma.user.count();
+      const countAfter = await prisma.users.count();
       
       // In test environment, CSRF is skipped so user is created
       expect(countAfter).toBe(countBefore + 1);
@@ -297,7 +297,7 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
@@ -316,7 +316,7 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
@@ -335,7 +335,7 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
@@ -353,11 +353,11 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
-      expect(user?.emailVerified).toBe(false);
+      expect(user?.email_verified).toBe(false);
     });
 
     it('should set onboardingCompleted to false', async () => {
@@ -370,11 +370,11 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
-      expect(user?.onboardingCompleted).toBe(false);
+      expect(user?.onboarding_completed).toBe(false);
     });
 
     it('should allow registration without name', async () => {
@@ -390,7 +390,7 @@ describe('Auth Register API Integration Tests', () => {
       const data = await response.json();
       expect(data.data.user.name).toBeNull();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
@@ -451,7 +451,7 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
@@ -685,7 +685,7 @@ describe('Auth Register API Integration Tests', () => {
       // Create existing user
       await createExistingUser();
       
-      const countBefore = await prisma.user.count({
+      const countBefore = await prisma.users.count({
         where: { email: VALID_USER.email.toLowerCase() },
       });
       
@@ -697,7 +697,7 @@ describe('Auth Register API Integration Tests', () => {
         csrfToken
       );
       
-      const countAfter = await prisma.user.count({
+      const countAfter = await prisma.users.count({
         where: { email: VALID_USER.email.toLowerCase() },
       });
       
@@ -877,14 +877,14 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
-      expect(user?.createdAt).toBeDefined();
-      expect(user?.updatedAt).toBeDefined();
-      expect(user?.createdAt).toBeInstanceOf(Date);
-      expect(user?.updatedAt).toBeInstanceOf(Date);
+      expect(user?.created_at).toBeDefined();
+      expect(user?.updated_at).toBeDefined();
+      expect(user?.created_at).toBeInstanceOf(Date);
+      expect(user?.updated_at).toBeInstanceOf(Date);
     });
 
     it('should create user with all required fields', async () => {
@@ -897,27 +897,27 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       
       expect(user?.id).toBeDefined();
       expect(user?.email).toBeDefined();
       expect(user?.password).toBeDefined();
-      expect(user?.emailVerified).toBeDefined();
-      expect(user?.onboardingCompleted).toBeDefined();
-      expect(user?.createdAt).toBeDefined();
-      expect(user?.updatedAt).toBeDefined();
+      expect(user?.email_verified).toBeDefined();
+      expect(user?.onboarding_completed).toBeDefined();
+      expect(user?.created_at).toBeDefined();
+      expect(user?.updated_at).toBeDefined();
     });
 
     it('should handle transaction rollback on error', async () => {
       // This is conceptual - actual implementation depends on database setup
-      const countBefore = await prisma.user.count();
+      const countBefore = await prisma.users.count();
       
       // Try to create with invalid data (should fail)
       await registerRequest('', '', undefined, csrfToken);
       
-      const countAfter = await prisma.user.count();
+      const countAfter = await prisma.users.count();
       
       // No partial data should be created
       expect(countAfter).toBe(countBefore);
@@ -1016,7 +1016,7 @@ describe('Auth Register API Integration Tests', () => {
       
       const data = await response.json();
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: parseInt(data.data.user.id) },
       });
       

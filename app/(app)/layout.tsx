@@ -15,20 +15,12 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div 
-      className="flex min-h-screen"
-      style={{
-        backgroundColor: 'var(--color-bg-base)',
-        color: 'var(--color-text-primary)'
-      }}
-    >
+    <div className="huntaze-layout">
+      <Header />
       <Sidebar />
-      <div className="flex flex-1 flex-col">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-      </div>
+      <main className="huntaze-main">
+        {children}
+      </main>
     </div>
   );
 }
