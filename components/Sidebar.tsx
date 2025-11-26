@@ -6,7 +6,7 @@ import { DuotoneIcon } from './dashboard/DuotoneIcon';
 
 const navigation = [
   {
-    name: 'Dashboard',
+    name: 'Home',
     href: '/dashboard',
     icon: 'home',
   },

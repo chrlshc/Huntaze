@@ -53,13 +53,13 @@ export default function DashboardPage() {
               fontSize: 'var(--font-size-lg)'
             }}
           >
-            Error Loading Dashboard
+            Error Loading Home
           </h3>
           <p 
             className="text-sm"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Failed to load dashboard data. Please try again.
+            Failed to load home data. Please try again.
           </p>
         </div>
       </CenteredContainer>
@@ -73,7 +73,7 @@ export default function DashboardPage() {
         <CenteredContainer maxWidth="lg">
           <div>
             <h1 className="huntaze-h1">
-              Dashboard
+              Home
             </h1>
             <p 
               className="huntaze-body-secondary"
@@ -279,13 +279,13 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between" style={{ marginBottom: 'var(--spacing-content-block-gap)' }}>
             <div>
               <h1 className="huntaze-h1">
-                Dashboard
+                Home
               </h1>
               <p 
                 className="huntaze-body-secondary"
                 style={{ marginTop: 'var(--spacing-sm)' }}
               >
-                Welcome to your unified Huntaze dashboard
+                Welcome to your unified Huntaze home
               </p>
             </div>
             {dashboard?.metadata?.hasRealData && (
