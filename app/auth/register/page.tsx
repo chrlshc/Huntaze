@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { fetchWithCsrf } from '@/lib/utils/csrf-client';
 import { useCsrfToken } from '@/hooks/useCsrfToken';
@@ -20,6 +20,7 @@ import { useCsrfToken } from '@/hooks/useCsrfToken';
  */
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -91,7 +92,7 @@ export default function RegisterPage() {
       await response.json();
 
       // Redirect to auth page with pending verification message
-      router.push(`/auth/?pending=1&email=${encodeURIComponent(formData.email)}`);
+      router.push(`/auth/register?pending=1&email=${encodeURIComponent(formData.email)}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -119,6 +120,11 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {searchParams.get('pending') && (
+            <div className="success-message" role="status">
+              Check your email{searchParams.get('email') ? ` at ${searchParams.get('email')}` : ''} to verify your account, then sign in.
+            </div>
+          )}
           {displayError && (
             <div className="error-message" role="alert">
               {displayError}
