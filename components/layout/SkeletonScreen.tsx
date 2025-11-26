@@ -53,7 +53,7 @@ const SkeletonElement: React.FC<{
   
   return (
     <div
-      className={`bg-[var(--color-bg-surface)] rounded-md ${animationClass} ${className}`}
+      className={`bg-[var(--bg-surface)] rounded-md ${animationClass} ${className}`}
       data-testid={testId}
       data-skeleton="true"
       data-animated={animate}
@@ -167,7 +167,7 @@ const ListSkeleton: React.FC<{ count?: number; animate?: boolean }> = ({
       {Array.from({ length: count }).map((_, index) => (
         <div 
           key={index} 
-          className="flex items-center space-x-4 p-4 border border-[var(--color-border-subtle)] rounded-md"
+          className="flex items-center space-x-4 p-4 border border-[var(--color-border-medium)] rounded-md"
           data-testid={`skeleton-list-item-${index}`}
         >
           <SkeletonElement className="h-12 w-12 rounded-full flex-shrink-0" animate={animate} />
