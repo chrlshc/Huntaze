@@ -3,11 +3,11 @@
 }
 
 .search {
-  background: #F3F4F6;
+  background: var(--nav-search-bg);
   border-radius: var(--radius-input);
   padding: 10px 16px;
   width: 400px;
-  border: 1px solid transparent;
+  border: 1px solid var(--nav-search-border);
   transition: all var(--transition-medium);
   display: flex;
   align-items: center;
@@ -15,13 +15,13 @@
 }
 
 .search.focused {
-  background: var(--bg-surface);
-  border-color: var(--color-indigo);
-  box-shadow: var(--shadow-search-focus), 0 0 0 2px var(--color-indigo-glow);
+  background: var(--nav-surface-elevated);
+  border-color: var(--nav-border-strong);
+  box-shadow: var(--shadow-search-focus), 0 0 0 1px var(--nav-border-strong);
 }
 
 .icon {
-  color: var(--color-text-sub);
+  color: var(--nav-text-subtle);
   flex-shrink: 0;
 }
 
@@ -31,11 +31,11 @@
   outline: none;
   width: 100%;
   font-size: var(--font-size-small);
-  color: var(--color-text-main);
+  color: var(--nav-text);
 }
 
 .input::placeholder {
-  color: var(--color-text-inactive);
+  color: var(--nav-text-subtle);
 }
 
 .results {
@@ -43,7 +43,7 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: var(--bg-surface);
+  background: var(--nav-surface-elevated);
   border-radius: var(--radius-input);
   box-shadow: var(--shadow-soft);
   max-height: 400px;
@@ -54,7 +54,7 @@
 .loading {
   padding: 16px;
   text-align: center;
-  color: var(--color-text-sub);
+  color: var(--nav-text-muted);
 }
 
 .category {
@@ -62,14 +62,14 @@
 }
 
 .category:not(:last-child) {
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--nav-border);
 }
 
 .categoryTitle {
   padding: 8px 16px;
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-heading);
-  color: var(--color-text-sub);
+  color: var(--nav-text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -85,18 +85,18 @@
 }
 
 .resultItem:hover {
-  background: var(--color-indigo-fade);
+  background: var(--nav-hover);
 }
 
 .resultTitle {
   font-size: var(--font-size-small);
-  color: var(--color-text-main);
+  color: var(--nav-text);
   font-weight: var(--font-weight-medium);
 }
 
 .resultSubtitle {
   font-size: var(--font-size-label);
-  color: var(--color-text-sub);
+  color: var(--nav-text-muted);
   margin-top: 2px;
 }
 
