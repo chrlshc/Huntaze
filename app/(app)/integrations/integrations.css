@@ -1,42 +1,44 @@
 /**
  * Integrations Page Styles
  * 
- * Follows the Beta Launch UI System design specifications:
- * - Pure black backgrounds (#000000)
- * - Minimal rainbow accents (only on primary CTAs)
+ * Follows the Shopify 2.0 design system:
+ * - Light mode with pale gray backgrounds
+ * - Electric Indigo accents
  * - Professional Shopify-inspired aesthetic
  * 
- * Requirements: 8.1, 8.2, 8.3, 8.4
- * @see .kiro/specs/beta-launch-ui-system/design.md
+ * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 8.1, 8.2, 8.3, 8.4
+ * @see .kiro/specs/dashboard-shopify-migration/design.md
  */
 
 .integrations-container {
   min-height: 100vh;
-  background: var(--bg-app, #000000);
-  padding: var(--space-8, 32px) var(--space-4, 16px);
+  background: var(--bg-app, #F8F9FB);
+  padding: var(--spacing-content-padding, 32px) var(--spacing-md, 16px);
 }
 
 .integrations-header {
-  margin-bottom: var(--space-8, 32px);
+  margin-bottom: var(--spacing-content-block-gap, 24px);
 }
 
 .integrations-title {
-  font-size: var(--text-3xl, 30px);
-  font-weight: 700;
-  color: var(--text-primary, #FFFFFF);
-  margin-bottom: var(--space-2, 8px);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h1, 32px);
+  font-weight: var(--font-weight-heading, 600);
+  color: var(--color-text-heading, #111827);
+  margin-bottom: var(--spacing-sm, 8px);
 }
 
 .integrations-subtitle {
-  font-size: var(--text-base, 15px);
-  color: var(--text-secondary, #a3a3a3);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body, 16px);
+  color: var(--color-text-sub, #6B7280);
   line-height: 1.5;
 }
 
 .integrations-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: var(--space-6, 24px);
+  gap: var(--spacing-card-gap, 24px);
 }
 
 @media (min-width: 768px) {
@@ -52,10 +54,10 @@
 }
 
 .integrations-empty {
-  margin-top: var(--space-12, 48px);
+  margin-top: var(--spacing-2xl, 48px);
   text-align: center;
-  color: var(--text-secondary, #a3a3a3);
-  font-size: var(--text-sm, 13px);
+  color: var(--color-text-sub, #6B7280);
+  font-size: var(--font-size-small, 14px);
 }
 
 /* Loading state */
@@ -70,20 +72,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4, 16px);
+  gap: var(--spacing-md, 16px);
 }
 
 .integrations-loading-spinner {
   width: 32px;
   height: 32px;
   animation: spin 1s linear infinite;
-  color: var(--brand-primary, #8B5CF6);
+  color: var(--color-indigo, #6366f1);
   will-change: transform;
 }
 
 .integrations-loading-text {
-  font-size: var(--text-sm, 13px);
-  color: var(--text-secondary, #a3a3a3);
+  font-size: var(--font-size-small, 14px);
+  color: var(--color-text-sub, #6B7280);
 }
 
 /* Error state */
@@ -98,7 +100,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4, 16px);
+  gap: var(--spacing-md, 16px);
   max-width: 28rem;
   text-align: center;
 }
@@ -110,32 +112,32 @@
 }
 
 .integrations-error-title {
-  font-size: var(--text-xl, 20px);
-  font-weight: 600;
-  color: var(--text-primary, #FFFFFF);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-h3, 20px);
+  font-weight: var(--font-weight-heading, 600);
+  color: var(--color-text-heading, #111827);
 }
 
 .integrations-error-message {
-  font-size: var(--text-sm, 13px);
-  color: var(--text-secondary, #a3a3a3);
+  font-size: var(--font-size-small, 14px);
+  color: var(--color-text-sub, #6B7280);
 }
 
 .integrations-error-retry {
-  margin-top: var(--space-4, 16px);
-  padding: var(--space-2, 8px) var(--space-4, 16px);
-  border-radius: var(--radius-md, 8px);
-  background: var(--brand-primary, #8B5CF6);
+  margin-top: var(--spacing-md, 16px);
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  border-radius: var(--radius-button, 8px);
+  background: var(--color-indigo, #6366f1);
   color: white;
-  font-size: var(--text-sm, 13px);
+  font-size: var(--font-size-small, 14px);
   font-weight: 500;
-  /* GPU-accelerated properties only */
-  transition: background-color 200ms ease, opacity 200ms ease;
+  transition: opacity var(--transition-fast, 0.15s ease);
   border: none;
   cursor: pointer;
 }
 
 .integrations-error-retry:hover {
-  background: var(--brand-primary-hover, #7C3AED);
+  opacity: 0.9;
 }
 
 /* GPU-accelerated spin animation using transform only */
@@ -156,12 +158,12 @@
 .skeleton-text {
   background: linear-gradient(
     90deg,
-    var(--bg-surface, #0a0a0a) 0%,
-    var(--bg-hover, #1a1a1a) 50%,
-    var(--bg-surface, #0a0a0a) 100%
+    #E5E7EB 0%,
+    #F3F4F6 50%,
+    #E5E7EB 100%
   );
   background-size: 200% 100%;
-  border-radius: var(--radius-sm, 4px);
+  border-radius: 4px;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
@@ -199,13 +201,20 @@
 
 /* Integration card skeleton styles */
 .integration-card {
-  background: var(--bg-card, #0f0f0f);
-  border: 1px solid var(--border-default, #1a1a1a);
-  border-radius: var(--radius-lg, 12px);
-  padding: var(--space-6, 24px);
+  background: var(--bg-surface, #FFFFFF);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  border-radius: var(--radius-card, 16px);
+  padding: var(--spacing-card-padding, 24px);
+  box-shadow: var(--shadow-soft, 0 4px 20px rgba(0, 0, 0, 0.05));
   display: flex;
   flex-direction: column;
-  gap: var(--space-4, 16px);
+  gap: var(--spacing-md, 16px);
+  transition: transform var(--transition-fast, 0.15s ease), box-shadow var(--transition-fast, 0.15s ease);
+}
+
+.integration-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover, 0 12px 24px rgba(0, 0, 0, 0.1));
 }
 
 .integration-card-header {

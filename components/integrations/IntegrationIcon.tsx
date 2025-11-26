@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import { Instagram, MessageCircle, Video } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -34,7 +37,33 @@ const providerLogos = {
   onlyfans: '/logos/onlyfans.svg',
 };
 
+// Fallback icon components
+function FallbackIcon({ provider, size, color }: { provider: string; size: number; color: string }) {
+  switch (provider) {
+    case 'instagram':
+      return <Instagram size={size} style={{ color }} className="absolute inset-0 m-auto" />;
+    case 'tiktok':
+      return <Video size={size} style={{ color }} className="absolute inset-0 m-auto" />;
+    case 'reddit':
+      return <MessageCircle size={size} style={{ color }} className="absolute inset-0 m-auto" />;
+    case 'onlyfans':
+      return (
+        <div 
+          className="absolute inset-0 m-auto flex items-center justify-center text-xs font-bold"
+          style={{ color }}
+        >
+          OF
+        </div>
+      );
+    default:
+      return null;
+  }
+}
+
 export function IntegrationIcon({ provider, size = 'md', className }: IntegrationIconProps) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+  
   const iconSize = iconSizes[size];
   const accentColor = providerColors[provider];
   const logoPath = providerLogos[provider];
@@ -42,30 +71,39 @@ export function IntegrationIcon({ provider, size = 'md', className }: Integratio
   return (
     <div
       className={cn(
-        'relative grid shrink-0 place-items-center overflow-hidden rounded-xl border border-border-subtle bg-surface-muted',
+        'relative grid shrink-0 place-items-center overflow-hidden rounded-xl border border-gray-200 bg-white',
         sizeClasses[size],
         className
       )}
       style={{ backgroundColor: `${accentColor}15` }}
     >
-      {/* Try to use logo image first, fallback to icon */}
       <div className="relative h-full w-full p-2">
-        {provider === 'instagram' && (
-          <Instagram size={iconSize} style={{ color: accentColor }} className="absolute inset-0 m-auto" />
-        )}
-        {provider === 'tiktok' && (
-          <Video size={iconSize} style={{ color: accentColor }} className="absolute inset-0 m-auto" />
-        )}
-        {provider === 'reddit' && (
-          <MessageCircle size={iconSize} style={{ color: accentColor }} className="absolute inset-0 m-auto" />
-        )}
-        {provider === 'onlyfans' && (
-          <div 
-            className="absolute inset-0 m-auto flex items-center justify-center text-xs font-bold"
-            style={{ color: accentColor }}
-          >
-            OF
+        {/* Show loading state */}
+        {imageLoading && !imageError && (
+          <div className="absolute inset-0 m-auto flex items-center justify-center">
+            <div 
+              className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent"
+              style={{ borderTopColor: accentColor }}
+            />
           </div>
+        )}
+        
+        {/* Try to load image, fallback to icon on error */}
+        {!imageError ? (
+          <Image
+            src={logoPath}
+            alt={`${provider} logo`}
+            fill
+            className="object-contain p-1"
+            onError={() => {
+              setImageError(true);
+              setImageLoading(false);
+            }}
+            onLoad={() => setImageLoading(false)}
+            loading="lazy"
+          />
+        ) : (
+          <FallbackIcon provider={provider} size={iconSize} color={accentColor} />
         )}
       </div>
     </div>

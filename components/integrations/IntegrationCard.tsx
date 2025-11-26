@@ -136,7 +136,7 @@ export function IntegrationCard({
   return (
     <article
       className={cn(
-        'group relative flex h-full flex-col rounded-2xl border border-border-subtle bg-surface-raised p-6 shadow-sm transition hover:border-border-strong hover:shadow-md',
+        'integration-card group relative flex h-full flex-col',
         className
       )}
     >
@@ -145,29 +145,29 @@ export function IntegrationCard({
 
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-content-primary">{info.name}</h3>
+            <h3 className="text-base font-semibold text-[var(--color-text-main)]">{info.name}</h3>
             <IntegrationStatus status={status} />
           </div>
           
           {account?.metadata?.username && (
-            <p className="text-xs text-content-subtle">
+            <p className="text-xs text-[var(--color-text-sub)]">
               @{account.metadata.username}
             </p>
           )}
           
           {account?.createdAt && status === 'connected' && (
-            <p className="text-xs text-content-subtle">
+            <p className="text-xs text-[var(--color-text-sub)]">
               Connected {new Date(account.createdAt).toLocaleDateString()}
             </p>
           )}
         </div>
       </div>
 
-      <p className="mt-4 text-sm text-content-secondary">{info.description}</p>
+      <p className="mt-4 text-sm text-[var(--color-text-sub)]">{info.description}</p>
 
       {actionError && (
-        <div className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3">
-          <p className="text-xs text-red-600 dark:text-red-400">{actionError}</p>
+        <div className="mt-4 rounded-lg bg-red-50 border border-red-200 p-3">
+          <p className="text-xs text-red-600">{actionError}</p>
         </div>
       )}
 
@@ -177,7 +177,7 @@ export function IntegrationCard({
             onClick={handleConnect}
             disabled={isLoading}
             className={cn(
-              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed'
+              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-indigo)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
             )}
           >
             {isLoading ? (
@@ -198,7 +198,7 @@ export function IntegrationCard({
                 onClick={handleConnect}
                 disabled={isLoading}
                 className={cn(
-                  'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed'
+                  'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-indigo)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
               >
                 {isLoading ? (
@@ -216,7 +216,7 @@ export function IntegrationCard({
               disabled={isLoading}
               className={cn(
                 showAddAnother ? '' : 'flex-1',
-                'inline-flex items-center justify-center gap-2 rounded-lg border border-border-subtle bg-surface-muted px-4 py-2 text-sm font-medium text-content-primary transition hover:bg-surface-raised hover:border-border-strong disabled:opacity-50 disabled:cursor-not-allowed'
+                'inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-[var(--bg-surface)] px-4 py-2 text-sm font-medium text-[var(--color-text-main)] transition hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
               {isLoading ? (

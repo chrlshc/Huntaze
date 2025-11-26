@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useIntegrations } from '@/hooks/useIntegrations';
-import { IntegrationCard } from '@/components/integrations/IntegrationCard';
 import { IntegrationsGridSkeleton } from './IntegrationsGridSkeleton';
 import { ToastProvider, useToast } from '@/components/ui/toast';
 import { Loader2, AlertCircle } from 'lucide-react';
+import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import './integrations.css';
+
+// Lazy load IntegrationCard component to reduce initial bundle size
+const IntegrationCard = lazy(() => import('@/components/integrations/IntegrationCard').then(mod => ({ default: mod.IntegrationCard })));
 
 const AVAILABLE_PROVIDERS = ['instagram', 'tiktok', 'reddit', 'onlyfans'] as const;
 
@@ -57,22 +60,40 @@ function IntegrationsContent() {
   }, [searchParams, showToast]);
 
   if (loading) {
-    return <IntegrationsGridSkeleton />;
+    return (
+      <div className="integrations-container">
+        <div className="integrations-header">
+          <h1 className="integrations-title">Integrations</h1>
+          <p className="integrations-subtitle">
+            Connect your social media and content platform accounts to manage everything in one place.
+          </p>
+        </div>
+        <IntegrationsGridSkeleton />
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="integrations-error">
-        <div className="integrations-error-content">
-          <AlertCircle className="integrations-error-icon" />
-          <h2 className="integrations-error-title">Failed to load integrations</h2>
-          <p className="integrations-error-message">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="integrations-error-retry"
-          >
-            Retry
-          </button>
+      <div className="integrations-container">
+        <div className="integrations-header">
+          <h1 className="integrations-title">Integrations</h1>
+          <p className="integrations-subtitle">
+            Connect your social media and content platform accounts to manage everything in one place.
+          </p>
+        </div>
+        <div className="integrations-error">
+          <div className="integrations-error-content">
+            <AlertCircle className="integrations-error-icon" />
+            <h2 className="integrations-error-title">Failed to load integrations</h2>
+            <p className="integrations-error-message">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="integrations-error-retry"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -88,45 +109,47 @@ function IntegrationsContent() {
       </div>
 
       <div className="integrations-grid">
-        {AVAILABLE_PROVIDERS.map((provider) => {
-          // Find all accounts for this provider
-          const connectedAccounts = integrations.filter(
-            (integration) => integration.provider === provider
-          );
-
-          // If no accounts connected, show a single card to add one
-          if (connectedAccounts.length === 0) {
-            return (
-              <IntegrationCard
-                key={provider}
-                provider={provider}
-                isConnected={false}
-                onConnect={() => connect(provider)}
-                onDisconnect={() => {}}
-                onReconnect={() => {}}
-              />
+        <Suspense fallback={<IntegrationsGridSkeleton />}>
+          {AVAILABLE_PROVIDERS.map((provider) => {
+            // Find all accounts for this provider
+            const connectedAccounts = integrations.filter(
+              (integration) => integration.provider === provider
             );
-          }
 
-          // Show a card for each connected account
-          return connectedAccounts.map((account) => (
-            <IntegrationCard
-              key={`${provider}-${account.providerAccountId}`}
-              provider={provider}
-              isConnected={true}
-              account={{
-                providerAccountId: account.providerAccountId,
-                metadata: account.metadata,
-                expiresAt: account.expiresAt,
-                createdAt: account.createdAt,
-              }}
-              onConnect={() => connect(provider)}
-              onDisconnect={() => disconnect(provider, account.providerAccountId)}
-              onReconnect={() => reconnect(provider, account.providerAccountId)}
-              showAddAnother={true}
-            />
-          ));
-        })}
+            // If no accounts connected, show a single card to add one
+            if (connectedAccounts.length === 0) {
+              return (
+                <IntegrationCard
+                  key={provider}
+                  provider={provider}
+                  isConnected={false}
+                  onConnect={() => connect(provider)}
+                  onDisconnect={() => {}}
+                  onReconnect={() => {}}
+                />
+              );
+            }
+
+            // Show a card for each connected account
+            return connectedAccounts.map((account) => (
+              <IntegrationCard
+                key={`${provider}-${account.providerAccountId}`}
+                provider={provider}
+                isConnected={true}
+                account={{
+                  providerAccountId: account.providerAccountId,
+                  metadata: account.metadata,
+                  expiresAt: account.expiresAt,
+                  createdAt: account.createdAt,
+                }}
+                onConnect={() => connect(provider)}
+                onDisconnect={() => disconnect(provider, account.providerAccountId)}
+                onReconnect={() => reconnect(provider, account.providerAccountId)}
+                showAddAnother={true}
+              />
+            ));
+          })}
+        </Suspense>
       </div>
 
       {integrations.length === 0 && (
@@ -143,7 +166,9 @@ function IntegrationsContent() {
 export default function IntegrationsClient() {
   return (
     <ToastProvider>
-      <IntegrationsContent />
+      <ContentPageErrorBoundary pageName="Integrations">
+        <IntegrationsContent />
+      </ContentPageErrorBoundary>
     </ToastProvider>
   );
 }

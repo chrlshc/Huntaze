@@ -6,6 +6,7 @@
 
 import Header from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
+import { PerformanceMonitorDashboard } from '@/components/dashboard/PerformanceMonitor';
 import '@/styles/dashboard-shopify-tokens.css';
 
 export const dynamic = 'force-dynamic';
@@ -22,6 +23,8 @@ export default function AppLayout({
       <main className="huntaze-main">
         {children}
       </main>
+      {/* Performance Monitor - Development Only */}
+      <PerformanceMonitorDashboard />
     </div>
   );
 }
