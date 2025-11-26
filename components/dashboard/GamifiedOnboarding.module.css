@@ -1,0 +1,160 @@
+.container {
+  margin-bottom: 32px;
+}
+
+.greeting {
+  font-size: var(--font-size-welcome);
+  font-weight: var(--font-weight-heading);
+  color: var(--color-text-heading);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-bottom: var(--spacing-card-gap);
+  font-family: var(--font-heading);
+}
+
+.onboardingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-card-gap);
+}
+
+.actionCard {
+  background: var(--bg-surface);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-card-padding);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-medium);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.actionCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.cardIcon {
+  margin-bottom: 16px;
+  color: var(--color-indigo);
+}
+
+.pulsingIcon {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.cardTitle {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-heading);
+  color: var(--color-text-heading);
+  margin-bottom: 8px;
+  font-family: var(--font-heading);
+}
+
+.cardDescription {
+  font-size: 14px;
+  color: var(--color-text-sub);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.platformLogos {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.logoBlurred {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.2) 100%);
+  filter: blur(2px);
+  opacity: 0.6;
+}
+
+.logoBlurred[data-platform="instagram"] {
+  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  filter: blur(3px);
+}
+
+.logoBlurred[data-platform="tiktok"] {
+  background: linear-gradient(135deg, #000000 0%, #00f2ea 100%);
+  filter: blur(3px);
+}
+
+.logoBlurred[data-platform="youtube"] {
+  background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+  filter: blur(3px);
+}
+
+.statsVisualization {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 8px;
+}
+
+.growthCurve {
+  width: 100%;
+  height: auto;
+}
+
+.potentialText {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.primaryButton {
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--color-indigo) 0%, var(--color-indigo-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-button);
+  font-weight: var(--font-weight-heading);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  margin-top: auto;
+}
+
+.primaryButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-indigo-glow);
+}
+
+.primaryButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--color-text-inactive);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionCard,
+  .primaryButton,
+  .pulsingIcon {
+    transition: none;
+    animation: none;
+  }
+  
+  .actionCard:hover {
+    transform: none;
+  }
+}

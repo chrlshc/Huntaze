@@ -1,6 +1,7 @@
 /* Import design systems */
 @import "../styles/design-system.css";
 @import "../styles/linear-design-tokens.css";
+@import "../styles/dashboard-shopify-tokens.css";
 @import "../styles/accessibility.css";
 @import "../styles/accessible-colors.css";
 @import "./tailwind.css";

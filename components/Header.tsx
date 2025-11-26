@@ -3,20 +3,14 @@
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { MobileSidebar } from './MobileSidebar';
+import { GlobalSearch } from './dashboard/GlobalSearch';
 
 export default function Header() {
   const { data: session } = useSession();
 
   return (
-    <header 
-      className="border-b"
-      style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        borderColor: 'var(--color-border-subtle)',
-        padding: 'var(--spacing-4) var(--spacing-6)'
-      }}
-    >
-      <div className="flex items-center justify-between">
+    <header className="huntaze-header">
+      <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-[var(--spacing-4)]">
           <MobileSidebar />
           <h2 
@@ -31,13 +25,35 @@ export default function Header() {
           </h2>
         </div>
 
+        {/* Global Search - Hidden on mobile */}
+        <div className="hidden md:block flex-1 max-w-md mx-8">
+          <GlobalSearch />
+        </div>
+
         <div className="flex items-center gap-[var(--spacing-4)]">
           {/* Notifications */}
           <button
-            className="rounded-lg transition-colors"
+            className="rounded-lg"
             style={{
               padding: 'var(--spacing-2)',
-              color: 'var(--color-text-secondary)'
+              color: 'var(--color-text-secondary)',
+              transition: 'all var(--transition-fast)',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-indigo-fade)';
+              e.currentTarget.style.color = 'var(--color-indigo)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'var(--color-text-secondary)';
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-indigo-glow)';
+              e.currentTarget.style.outline = 'none';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.boxShadow = 'none';
             }}
             aria-label="Notifications"
           >
@@ -95,10 +111,27 @@ export default function Header() {
             </div>
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              className="rounded-lg transition-colors"
+              className="rounded-lg"
               style={{
                 padding: 'var(--spacing-2)',
-                color: 'var(--color-text-secondary)'
+                color: 'var(--color-text-secondary)',
+                transition: 'all var(--transition-fast)',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-indigo-fade)';
+                e.currentTarget.style.color = 'var(--color-indigo)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--color-text-secondary)';
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-indigo-glow)';
+                e.currentTarget.style.outline = 'none';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
               }}
               aria-label="Sign out"
             >

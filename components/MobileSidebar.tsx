@@ -3,62 +3,38 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { DuotoneIcon } from './dashboard/DuotoneIcon';
 
 const navigation = [
   {
     name: 'Dashboard',
     href: '/dashboard',
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
+    icon: 'home',
   },
   {
     name: 'Analytics',
     href: '/analytics',
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
+    icon: 'analytics',
   },
   {
     name: 'Content',
     href: '/content',
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-      </svg>
-    ),
+    icon: 'content',
   },
   {
     name: 'Messages',
     href: '/messages',
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-      </svg>
-    ),
+    icon: 'messages',
   },
   {
     name: 'Integrations',
     href: '/integrations',
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
+    icon: 'integrations',
   },
   {
     name: 'Settings',
     href: '/settings',
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
+    icon: 'settings',
   },
 ];
 
@@ -68,20 +44,26 @@ export function MobileSidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button - Hamburger icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden rounded-lg transition-colors"
+        className="lg:hidden"
         style={{
-          padding: 'var(--spacing-2)',
-          color: 'var(--color-text-secondary)'
+          padding: '8px',
+          color: 'var(--color-text-sub)',
+          borderRadius: 'var(--radius-button)',
+          transition: 'color var(--transition-fast)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
         aria-label="Toggle menu"
+        aria-expanded={isOpen}
       >
         <svg
           style={{
-            width: 'var(--spacing-6)',
-            height: 'var(--spacing-6)'
+            width: '24px',
+            height: '24px'
           }}
           fill="none"
           viewBox="0 0 24 24"
@@ -91,153 +73,225 @@ export function MobileSidebar() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={1.5}
+              strokeWidth={2}
               d="M6 18L18 6M6 6l12 12"
             />
           ) : (
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={1.5}
+              strokeWidth={2}
               d="M4 6h16M4 12h16M4 18h16"
             />
           )}
         </svg>
       </button>
 
-      {/* Mobile sidebar overlay */}
+      {/* Backdrop overlay */}
       {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40 md:hidden"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        <div
+          className="fixed inset-0 lg:hidden"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 'var(--huntaze-z-index-overlay)',
+            animation: 'fadeIn var(--transition-drawer)'
+          }}
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile sidebar drawer */}
+      <aside
+        className="fixed inset-y-0 left-0 lg:hidden"
+        style={{
+          width: isOpen ? 'min(80vw, 300px)' : '0',
+          maxWidth: '300px',
+          backgroundColor: 'var(--bg-surface)',
+          boxShadow: isOpen ? 'var(--shadow-mobile-drawer)' : 'none',
+          zIndex: 'var(--huntaze-z-index-modal)',
+          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform var(--transition-drawer)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}
+        aria-hidden={!isOpen}
+      >
+        {/* Sidebar header */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px 24px',
+            borderBottom: '1px solid var(--color-border-light)'
+          }}
+        >
+          <Link
+            href="/dashboard"
             onClick={() => setIsOpen(false)}
-          />
-          <aside
-            className="fixed inset-y-0 left-0 z-50 flex flex-col md:hidden"
             style={{
-              width: '16rem',
-              backgroundColor: 'var(--color-bg-surface)',
-              borderRight: '1px solid var(--color-border-subtle)'
+              fontSize: '20px',
+              fontWeight: 'var(--font-weight-heading)',
+              color: 'var(--color-indigo)',
+              fontFamily: 'var(--font-heading)',
+              textDecoration: 'none'
             }}
           >
-            <div
-              className="flex items-center justify-between"
+            Huntaze
+          </Link>
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              padding: '8px',
+              color: 'var(--color-text-sub)',
+              borderRadius: 'var(--radius-button)',
+              transition: 'color var(--transition-fast)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            aria-label="Close menu"
+          >
+            <svg
               style={{
-                padding: 'var(--spacing-6)',
-                borderBottom: '1px solid var(--color-border-subtle)'
+                width: '20px',
+                height: '20px'
               }}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <Link
-                href="/dashboard"
-                onClick={() => setIsOpen(false)}
-                style={{
-                  fontSize: 'var(--font-size-xl)',
-                  fontWeight: 'var(--font-weight-bold)',
-                  color: 'var(--color-accent-primary)'
-                }}
-              >
-                Huntaze
-              </Link>
-              <button
-                onClick={() => setIsOpen(false)}
-                style={{
-                  padding: 'var(--spacing-2)',
-                  color: 'var(--color-text-secondary)'
-                }}
-              >
-                <svg
-                  style={{
-                    width: 'var(--spacing-5)',
-                    height: 'var(--spacing-5)'
-                  }}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
 
-            <nav
-              className="flex-1"
-              style={{ padding: 'var(--spacing-4)' }}
-            >
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-1)' }}>
-                {navigation.map((item) => {
-                  const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
-                  return (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center rounded-lg transition-colors"
+        {/* Navigation */}
+        <nav
+          style={{
+            flex: 1,
+            padding: '16px 12px',
+            overflowY: 'auto'
+          }}
+        >
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px', listStyle: 'none', padding: 0, margin: 0 }}>
+            {navigation.map((item) => {
+              const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="nav-item"
+                    data-active={isActive}
+                    style={{
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '12px 16px',
+                      gap: '12px',
+                      color: isActive ? 'var(--color-indigo)' : '#4B5563',
+                      backgroundColor: isActive ? 'var(--color-indigo-fade)' : 'transparent',
+                      textDecoration: 'none',
+                      borderRadius: '0 var(--radius-nav-item) var(--radius-nav-item) 0',
+                      marginRight: '12px',
+                      transition: 'all var(--transition-fast)',
+                      fontSize: 'var(--font-size-body)',
+                      fontWeight: isActive ? 'var(--font-weight-medium)' : 'var(--font-weight-body)',
+                      fontFamily: 'var(--font-body)'
+                    }}
+                  >
+                    {/* Active indicator border */}
+                    {isActive && (
+                      <span
                         style={{
-                          padding: 'var(--spacing-3)',
-                          gap: 'var(--spacing-3)',
-                          backgroundColor: isActive ? 'var(--color-accent-primary)' : 'transparent',
-                          color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
-                          fontWeight: isActive ? 'var(--font-weight-medium)' : 'var(--font-weight-regular)',
-                          fontSize: 'var(--font-size-sm)'
+                          position: 'absolute',
+                          left: 0,
+                          top: '10%',
+                          height: '80%',
+                          width: '3px',
+                          backgroundColor: 'var(--color-indigo)',
+                          borderRadius: '0 4px 4px 0'
                         }}
-                      >
-                        <span style={{ width: 'var(--spacing-5)', height: 'var(--spacing-5)' }}>
-                          {item.icon}
-                        </span>
-                        {item.name}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
+                        aria-hidden="true"
+                      />
+                    )}
+                    <DuotoneIcon 
+                      name={item.icon} 
+                      size={20}
+                      primaryColor={isActive ? 'var(--color-indigo)' : '#9CA3AF'}
+                      secondaryColor={isActive ? 'var(--color-indigo)' : '#9CA3AF'}
+                    />
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-            <div
-              className="border-t"
+        {/* Footer */}
+        <div
+          style={{
+            padding: '16px',
+            borderTop: '1px solid var(--color-border-light)'
+          }}
+        >
+          <Link
+            href="/"
+            onClick={() => setIsOpen(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '12px 16px',
+              gap: '12px',
+              color: 'var(--color-text-sub)',
+              textDecoration: 'none',
+              borderRadius: 'var(--radius-button)',
+              transition: 'background var(--transition-fast)',
+              fontSize: 'var(--font-size-small)',
+              fontFamily: 'var(--font-body)'
+            }}
+          >
+            <svg
               style={{
-                padding: 'var(--spacing-4)',
-                borderColor: 'var(--color-border-subtle)'
+                width: '20px',
+                height: '20px'
               }}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <Link
-                href="/"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center rounded-lg transition-colors"
-                style={{
-                  padding: 'var(--spacing-3)',
-                  gap: 'var(--spacing-3)',
-                  color: 'var(--color-text-secondary)',
-                  fontSize: 'var(--font-size-sm)'
-                }}
-              >
-                <svg
-                  style={{
-                    width: 'var(--spacing-5)',
-                    height: 'var(--spacing-5)'
-                  }}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                Back to Home
-              </Link>
-            </div>
-          </aside>
-        </>
-      )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Home
+          </Link>
+        </div>
+      </aside>
+
+      {/* Fade in animation */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
     </>
   );
 }

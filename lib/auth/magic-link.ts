@@ -12,12 +12,15 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
 const logger = createLogger('magic-link');
 
-// Initialize SES client
+// Initialize SES client with flexible region configuration
+const sesRegion = process.env.AWS_SES_REGION || process.env.SES_REGION || process.env.AWS_REGION || 'us-east-1';
+
 const sesClient = new SESClient({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: sesRegion,
   credentials: process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    ...(process.env.AWS_SESSION_TOKEN && { sessionToken: process.env.AWS_SESSION_TOKEN }),
   } : undefined,
 });
 
@@ -37,8 +40,11 @@ export async function sendMagicLinkEmail({ email, url, token }: MagicLinkEmailPa
     const emailHtml = generateMagicLinkEmailHtml(url);
     const emailText = generateMagicLinkEmailText(url);
     
+    // Support multiple environment variable names for sender email
+    const fromEmail = process.env.AWS_SES_FROM_EMAIL || process.env.SES_FROM_EMAIL || process.env.EMAIL_FROM || 'noreply@huntaze.com';
+    
     const command = new SendEmailCommand({
-      Source: process.env.EMAIL_FROM || 'noreply@huntaze.com',
+      Source: fromEmail,
       Destination: {
         ToAddresses: [email],
       },
@@ -70,11 +76,35 @@ export async function sendMagicLinkEmail({ email, url, token }: MagicLinkEmailPa
     });
   } catch (error) {
     const duration = Date.now() - startTime;
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorName = error instanceof Error ? error.name : 'UnknownError';
+    
     logger.error('Failed to send magic link email', error as Error, {
       email,
       duration,
-      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      errorMessage,
+      errorName,
+      provider: 'ses',
+      region: sesRegion,
+      fromEmail: process.env.AWS_SES_FROM_EMAIL || process.env.SES_FROM_EMAIL || process.env.EMAIL_FROM || 'noreply@huntaze.com',
     });
+    
+    // Log specific error details for debugging
+    if (errorMessage.includes('not verified')) {
+      logger.error('Email address not verified in SES', error as Error, {
+        hint: 'Verify sender and recipient emails in AWS SES Console',
+        sandboxMode: 'If in sandbox, both sender and recipient must be verified',
+      });
+    } else if (errorMessage.includes('credentials')) {
+      logger.error('AWS credentials issue', error as Error, {
+        hint: 'Check AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_SESSION_TOKEN',
+      });
+    } else if (errorMessage.includes('Access Denied')) {
+      logger.error('IAM permissions issue', error as Error, {
+        hint: 'Ensure IAM policy allows ses:SendEmail and ses:SendRawEmail',
+      });
+    }
+    
     throw error;
   }
 }
