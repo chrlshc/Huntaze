@@ -1,5 +1,8 @@
 'use client';
 
+// Client-only page; disable prerendering so hooks run only at runtime.
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 

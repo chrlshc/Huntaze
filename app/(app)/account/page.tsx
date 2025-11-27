@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 export default function AccountPage() {
   return (
     <main className="hz-main" role="main">
@@ -12,4 +14,3 @@ export default function AccountPage() {
     </main>
   );
 }
-
