@@ -9,6 +9,9 @@ import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
 import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // Lazy load heavy chart component (uses Recharts library) to reduce initial bundle size
 const RevenueForecastChart = lazy(() => import('@/components/revenue/forecast/RevenueForecastChart').then(mod => ({ default: mod.RevenueForecastChart })));
 
