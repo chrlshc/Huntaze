@@ -8,6 +8,10 @@ import { GoalAchievement } from '@/components/revenue/forecast/GoalAchievement';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
 import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
+import { SubNavigation } from '@/components/dashboard/SubNavigation';
+import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
+import { useNavigationContext } from '@/hooks/useNavigationContext';
+import { getAnalyticsSubNav } from '../analytics-nav';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -19,6 +23,9 @@ export default function ForecastPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const creatorId = 'creator_123';
+  
+  // Navigation context
+  const { breadcrumbs, subNavItems } = useNavigationContext();
 
   const { forecast, isLoading, error, setGoal, runScenario } = useRevenueForecast({ creatorId });
 
@@ -39,15 +46,16 @@ export default function ForecastPage() {
   return (
     <ErrorBoundary>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
-            <Link href="/analytics" className="hover:text-gray-900 dark:hover:text-white">Analytics</Link>
-            <span>/</span>
-            <span className="text-gray-900 dark:text-white">Forecast</span>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Revenue Forecast</h1>
-          <p className="text-gray-600 dark:text-gray-400">Predict and plan your future revenue</p>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Revenue Forecast</h1>
+          <p className="text-[var(--color-text-sub)]">Predict and plan your future revenue</p>
         </div>
+
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={breadcrumbs} />
+
+        {/* Sub-Navigation */}
+        {subNavItems && <SubNavigation items={subNavItems} />}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <MonthProgress forecast={forecast} />

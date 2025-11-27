@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DuotoneIcon } from './dashboard/DuotoneIcon';
+import { useNavigationContext } from '@/hooks/useNavigationContext';
 
 interface SubNavItem {
   name: string;
@@ -67,6 +68,7 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { currentSection } = useNavigationContext();
 
   return (
     <aside className="huntaze-sidebar hidden md:flex md:flex-col">
@@ -76,7 +78,9 @@ export function Sidebar() {
       >
         <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {navigation.map((item) => {
-            const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+            // Extract section name from href (e.g., '/analytics' -> 'analytics')
+            const sectionName = item.href.split('/')[1] || 'home';
+            const isActive = currentSection === sectionName;
             const hasSubItems = item.subItems && item.subItems.length > 0;
             const showSubNav = hasSubItems && isActive;
 

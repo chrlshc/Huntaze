@@ -1,292 +1,280 @@
-'use client';
-
 /**
- * Loading State Hook
- * 
- * **Feature: performance-optimization-aws, Task 7: Enhanced Loading State Management**
- * 
- * Provides intelligent loading state management with:
- * - Skeleton screen support
- * - Progress indicators for operations > 1 second
- * - Independent loading states per section
- * - Smooth transitions without layout jumps
- * - Background update handling without loading states for cached content
- * - Minimum loading duration to prevent flashing
- * - Staggered loading for multiple items
- * - Error state handling
- * - Accessibility announcements
+ * useLoadingState Hook
+ * Task 5.1: Centralized loading state management
+ * Requirements: 4.1
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-
-export type LoadingType = 'skeleton' | 'spinner' | 'progress' | 'none';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface LoadingStateOptions {
-  minDuration?: number; // Minimum loading duration in ms
-  staggerDelay?: number; // Delay between items in ms
-  enableStagger?: boolean;
-  loadingType?: LoadingType; // Type of loading indicator
-  showProgressAfter?: number; // Show progress indicator after N ms (default: 1000)
-  hasCachedData?: boolean; // Whether cached data is available
-  sectionId?: string; // Unique identifier for independent section loading
-  onLoadingStart?: () => void;
-  onLoadingEnd?: () => void;
+  /**
+   * Minimum time to show loading state (prevents flashing)
+   */
+  minDuration?: number;
+  
+  /**
+   * Timeout for the operation
+   */
+  timeout?: number;
+  
+  /**
+   * Callback when operation times out
+   */
+  onTimeout?: () => void;
+  
+  /**
+   * Callback when operation completes
+   */
+  onComplete?: () => void;
+  
+  /**
+   * Callback when operation fails
+   */
   onError?: (error: Error) => void;
 }
 
 interface LoadingState {
   isLoading: boolean;
-  isMinDurationMet: boolean;
   error: Error | null;
   progress: number;
-  staggerIndex: number;
-  loadingType: LoadingType;
-  showProgress: boolean; // Whether to show progress indicator
-  isBackgroundUpdate: boolean; // Whether this is a background update with cached data
-  sectionId?: string;
 }
 
-interface LoadingActions {
-  startLoading: () => void;
-  stopLoading: () => void;
-  setError: (error: Error) => void;
-  clearError: () => void;
-  setProgress: (progress: number) => void;
-  nextStagger: () => void;
-  resetStagger: () => void;
-}
-
-export const useLoadingState = (options: LoadingStateOptions = {}): [LoadingState, LoadingActions] => {
+/**
+ * Hook for managing loading states with minimum duration and timeout
+ */
+export function useLoadingState(options: LoadingStateOptions = {}) {
   const {
-    minDuration = 500,
-    staggerDelay = 100,
-    enableStagger = false,
-    loadingType = 'skeleton',
-    showProgressAfter = 1000,
-    hasCachedData = false,
-    sectionId,
-    onLoadingStart,
-    onLoadingEnd,
-    onError
+    minDuration = 300,
+    timeout,
+    onTimeout,
+    onComplete,
+    onError,
   } = options;
 
   const [state, setState] = useState<LoadingState>({
     isLoading: false,
-    isMinDurationMet: false,
     error: null,
     progress: 0,
-    staggerIndex: 0,
-    loadingType,
-    showProgress: false,
-    isBackgroundUpdate: false,
-    sectionId
   });
 
-  const loadingStartTime = useRef<number | null>(null);
-  const minDurationTimer = useRef<NodeJS.Timeout | null>(null);
-  const staggerTimer = useRef<NodeJS.Timeout | null>(null);
-  const progressTimer = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
+  /**
+   * Start loading
+   */
   const startLoading = useCallback(() => {
-    loadingStartTime.current = Date.now();
-    
-    // If we have cached data, this is a background update - don't show loading state
-    const isBackgroundUpdate = hasCachedData;
-    
-    setState(prev => ({ 
-      ...prev, 
-      isLoading: !isBackgroundUpdate, // Don't show loading if background update
-      isMinDurationMet: false, 
+    startTimeRef.current = Date.now();
+    setState({
+      isLoading: true,
       error: null,
-      showProgress: false,
-      isBackgroundUpdate
-    }));
-    
-    // Set minimum duration timer
-    if (!isBackgroundUpdate) {
-      minDurationTimer.current = setTimeout(() => {
-        setState(prev => ({ ...prev, isMinDurationMet: true }));
-      }, minDuration);
+      progress: 0,
+    });
+
+    // Set timeout if specified
+    if (timeout && onTimeout) {
+      timeoutIdRef.current = setTimeout(() => {
+        onTimeout();
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          error: new Error('Operation timed out'),
+        }));
+      }, timeout);
+    }
+  }, [timeout, onTimeout]);
+
+  /**
+   * Stop loading with minimum duration enforcement
+   */
+  const stopLoading = useCallback(async (error?: Error) => {
+    // Clear timeout
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
     }
 
-    // Set progress indicator timer (show after 1 second)
-    if (!isBackgroundUpdate && showProgressAfter > 0) {
-      progressTimer.current = setTimeout(() => {
-        setState(prev => ({ ...prev, showProgress: true }));
-      }, showProgressAfter);
+    const elapsed = Date.now() - startTimeRef.current;
+    const remaining = Math.max(0, minDuration - elapsed);
+
+    // Wait for minimum duration if needed
+    if (remaining > 0) {
+      await new Promise(resolve => setTimeout(resolve, remaining));
     }
 
-    onLoadingStart?.();
-  }, [minDuration, showProgressAfter, hasCachedData, onLoadingStart]);
+    setState({
+      isLoading: false,
+      error: error || null,
+      progress: 100,
+    });
 
-  const stopLoading = useCallback(() => {
-    // Clear progress timer if still running
-    if (progressTimer.current) {
-      clearTimeout(progressTimer.current);
-      progressTimer.current = null;
+    // Call callbacks
+    if (error && onError) {
+      onError(error);
+    } else if (!error && onComplete) {
+      onComplete();
     }
+  }, [minDuration, onComplete, onError]);
 
-    const now = Date.now();
-    const elapsed = loadingStartTime.current ? now - loadingStartTime.current : 0;
-    const remainingTime = Math.max(0, minDuration - elapsed);
-
-    const finishLoading = () => {
-      setState(prev => ({ 
-        ...prev, 
-        isLoading: false, 
-        progress: 100,
-        showProgress: false,
-        isBackgroundUpdate: false
-      }));
-      onLoadingEnd?.();
-    };
-
-    // If background update, finish immediately
-    if (state.isBackgroundUpdate) {
-      finishLoading();
-      return;
-    }
-
-    // Otherwise respect minimum duration for smooth transitions
-    if (remainingTime > 0) {
-      setTimeout(finishLoading, remainingTime);
-    } else {
-      finishLoading();
-    }
-  }, [minDuration, state.isBackgroundUpdate, onLoadingEnd]);
-
-  const setError = useCallback((error: Error) => {
-    setState(prev => ({ ...prev, error, isLoading: false }));
-    onError?.(error);
-  }, [onError]);
-
-  const clearError = useCallback(() => {
-    setState(prev => ({ ...prev, error: null }));
-  }, []);
-
+  /**
+   * Update progress (0-100)
+   */
   const setProgress = useCallback((progress: number) => {
-    setState(prev => ({ ...prev, progress: Math.max(0, Math.min(100, progress)) }));
+    setState(prev => ({
+      ...prev,
+      progress: Math.min(100, Math.max(0, progress)),
+    }));
   }, []);
 
-  const nextStagger = useCallback(() => {
-    if (!enableStagger) return;
+  /**
+   * Execute an async operation with loading state
+   */
+  const execute = useCallback(async <T,>(
+    operation: () => Promise<T>
+  ): Promise<T | null> => {
+    startLoading();
     
-    setState(prev => ({ ...prev, staggerIndex: prev.staggerIndex + 1 }));
-    
-    if (staggerTimer.current) {
-      clearTimeout(staggerTimer.current);
+    try {
+      const result = await operation();
+      await stopLoading();
+      return result;
+    } catch (error) {
+      await stopLoading(error as Error);
+      return null;
     }
-    
-    staggerTimer.current = setTimeout(() => {
-      // Stagger logic handled by component
-    }, staggerDelay);
-  }, [enableStagger, staggerDelay]);
+  }, [startLoading, stopLoading]);
 
-  const resetStagger = useCallback(() => {
-    setState(prev => ({ ...prev, staggerIndex: 0 }));
-    if (staggerTimer.current) {
-      clearTimeout(staggerTimer.current);
+  /**
+   * Reset state
+   */
+  const reset = useCallback(() => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
     }
+    
+    setState({
+      isLoading: false,
+      error: null,
+      progress: 0,
+    });
   }, []);
 
-  // Cleanup timers on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (minDurationTimer.current) {
-        clearTimeout(minDurationTimer.current);
-      }
-      if (staggerTimer.current) {
-        clearTimeout(staggerTimer.current);
-      }
-      if (progressTimer.current) {
-        clearTimeout(progressTimer.current);
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
       }
     };
   }, []);
 
-  const actions: LoadingActions = {
+  return {
+    ...state,
     startLoading,
     stopLoading,
-    setError,
-    clearError,
     setProgress,
-    nextStagger,
-    resetStagger
+    execute,
+    reset,
   };
+}
 
-  return [state, actions];
-};
-
-// Specialized hook for data fetching
-export const useDataLoadingState = <T,>(fetchFn: () => Promise<T>, deps: React.DependencyList = []) => {
-  const [loadingState, actions] = useLoadingState({
-    minDuration: 300,
-    onLoadingStart: () => {
-      // Announce to screen readers
-      const announcement = document.createElement('div');
-      announcement.setAttribute('aria-live', 'polite');
-      announcement.setAttribute('aria-atomic', 'true');
-      announcement.className = 'sr-only';
-      announcement.textContent = 'Loading data...';
-      document.body.appendChild(announcement);
-      setTimeout(() => document.body.removeChild(announcement), 1000);
-    }
+/**
+ * Hook for managing multiple loading states
+ */
+export function useMultipleLoadingStates<T extends string>(
+  keys: T[]
+): Record<T, LoadingState> & {
+  startLoading: (key: T) => void;
+  stopLoading: (key: T, error?: Error) => void;
+  isAnyLoading: boolean;
+} {
+  const [states, setStates] = useState<Record<T, LoadingState>>(() => {
+    const initial = {} as Record<T, LoadingState>;
+    keys.forEach(key => {
+      initial[key] = {
+        isLoading: false,
+        error: null,
+        progress: 0,
+      };
+    });
+    return initial;
   });
 
-  const [data, setData] = useState<T | null>(null);
+  const startLoading = useCallback((key: T) => {
+    setStates(prev => ({
+      ...prev,
+      [key]: {
+        isLoading: true,
+        error: null,
+        progress: 0,
+      },
+    }));
+  }, []);
 
-  const fetchData = useCallback(async () => {
-    try {
-      actions.startLoading();
-      const result = await fetchFn();
-      setData(result);
-      actions.stopLoading();
-    } catch (error) {
-      actions.setError(error as Error);
-    }
-  }, [fetchFn, actions]);
+  const stopLoading = useCallback((key: T, error?: Error) => {
+    setStates(prev => ({
+      ...prev,
+      [key]: {
+        isLoading: false,
+        error: error || null,
+        progress: 100,
+      },
+    }));
+  }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, deps);
+  const isAnyLoading = Object.values(states).some(
+    (state: any) => state.isLoading
+  );
 
   return {
-    data,
-    ...loadingState,
-    refetch: fetchData,
-    ...actions
+    ...states,
+    startLoading,
+    stopLoading,
+    isAnyLoading,
   };
-};
+}
 
-// Hook for staggered list loading
-export const useStaggeredLoading = (itemCount: number, staggerDelay: number = 100) => {
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
+/**
+ * Hook for sequential loading states (wizard-like)
+ */
+export function useSequentialLoading(steps: string[]) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    if (visibleCount >= itemCount) {
-      setIsComplete(true);
-      return;
-    }
+  const isLoading = currentStep < steps.length;
+  const progress = (completedSteps.size / steps.length) * 100;
 
-    const timer = setTimeout(() => {
-      setVisibleCount(prev => prev + 1);
-    }, staggerDelay);
+  const nextStep = useCallback(() => {
+    setCompletedSteps(prev => new Set([...prev, currentStep]));
+    setCurrentStep(prev => Math.min(prev + 1, steps.length));
+  }, [currentStep, steps.length]);
 
-    return () => clearTimeout(timer);
-  }, [visibleCount, itemCount, staggerDelay]);
+  const previousStep = useCallback(() => {
+    setCurrentStep(prev => Math.max(prev - 1, 0));
+  }, []);
+
+  const setStepError = useCallback((error: Error) => {
+    setError(error);
+  }, []);
 
   const reset = useCallback(() => {
-    setVisibleCount(0);
-    setIsComplete(false);
+    setCurrentStep(0);
+    setCompletedSteps(new Set());
+    setError(null);
   }, []);
 
   return {
-    visibleCount,
-    isComplete,
+    currentStep,
+    currentStepName: steps[currentStep],
+    completedSteps: Array.from(completedSteps),
+    isLoading,
+    progress,
+    error,
+    nextStep,
+    previousStep,
+    setStepError,
     reset,
-    shouldShow: (index: number) => index < visibleCount
   };
-};
-
-export default useLoadingState;
+}

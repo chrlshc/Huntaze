@@ -1,21 +1,62 @@
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, LucideIcon } from 'lucide-react';
 
 interface StatCardProps {
   label: string;
-  value: string;
-  trend: number;
-  description: string;
+  value: string | number;
+  trend?: number;
+  description?: string;
+  icon?: LucideIcon;
+  color?: 'blue' | 'green' | 'purple' | 'orange' | 'red';
+  type?: 'number' | 'currency' | 'percentage';
+  loading?: boolean;
 }
 
-export function StatCard({ label, value, trend, description }: StatCardProps) {
-  const isPositive = trend > 0;
-  const isNegative = trend < 0;
+export function StatCard({ 
+  label, 
+  value, 
+  trend, 
+  description, 
+  icon: Icon,
+  color = 'blue',
+  type = 'number',
+  loading = false
+}: StatCardProps) {
+  const isPositive = trend !== undefined && trend > 0;
+  const isNegative = trend !== undefined && trend < 0;
+
+  // Format value based on type
+  const formattedValue = typeof value === 'number' 
+    ? type === 'currency' 
+      ? `$${value.toLocaleString()}`
+      : type === 'percentage'
+      ? `${value}%`
+      : value.toLocaleString()
+    : value;
+
+  if (loading) {
+    return (
+      <div className="stat-card stat-card-loading">
+        <div className="stat-card-skeleton">
+          <div className="skeleton-header"></div>
+          <div className="skeleton-value"></div>
+          <div className="skeleton-description"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="stat-card">
+    <div className={`stat-card stat-card-${color}`}>
       <div className="stat-card-header">
-        <span className="stat-label">{label}</span>
-        {trend !== 0 && (
+        <div className="stat-card-label-group">
+          {Icon && (
+            <div className={`stat-card-icon stat-card-icon-${color}`}>
+              <Icon className="icon" aria-hidden="true" />
+            </div>
+          )}
+          <span className="stat-label">{label}</span>
+        </div>
+        {trend !== undefined && trend !== 0 && (
           <span className={`stat-trend ${isPositive ? 'stat-trend-positive' : 'stat-trend-negative'}`}>
             {isPositive ? (
               <TrendingUp className="stat-trend-icon" aria-hidden="true" />
@@ -26,8 +67,8 @@ export function StatCard({ label, value, trend, description }: StatCardProps) {
           </span>
         )}
       </div>
-      <div className="stat-value">{value}</div>
-      <div className="stat-description">{description}</div>
+      <div className="stat-value">{formattedValue}</div>
+      {description && <div className="stat-description">{description}</div>}
     </div>
   );
 }
