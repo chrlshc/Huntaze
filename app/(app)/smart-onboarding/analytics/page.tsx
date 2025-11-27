@@ -6,6 +6,9 @@ import OnboardingAnalyticsDashboard from '@/components/smart-onboarding/analytic
 import RealTimeMetrics from '@/components/smart-onboarding/analytics/RealTimeMetrics';
 import SystemAlerts from '@/components/smart-onboarding/analytics/SystemAlerts';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function SmartOnboardingAnalyticsPage() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'metrics' | 'alerts'>('dashboard');
   const [alertCount, setAlertCount] = useState(0);

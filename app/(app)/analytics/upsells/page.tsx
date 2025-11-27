@@ -8,6 +8,9 @@ import { UpsellAutomationSettings } from '@/components/revenue/upsell/UpsellAuto
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function UpsellsPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');

@@ -7,7 +7,9 @@ import { PricingCard } from '@/components/revenue/pricing/PricingCard';
 import { PPVPricing } from '@/components/revenue/pricing/PPVPricing';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
-// Toast component will be shown inline
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export default function PricingPage() {
   const [showToast, setShowToast] = useState(false);

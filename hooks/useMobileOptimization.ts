@@ -31,6 +31,32 @@ export interface MobileOptimizationState {
   recommendations: string[];
 }
 
+/**
+ * Get mobile-optimized input attributes for better keyboard experience
+ */
+export function getMobileInputAttributes(type: 'email' | 'tel' | 'number' | 'text' | 'url') {
+  const inputModeMap = {
+    email: 'email',
+    tel: 'tel',
+    number: 'numeric',
+    text: 'text',
+    url: 'url',
+  } as const;
+
+  return {
+    type,
+    inputMode: inputModeMap[type],
+  };
+}
+
+/**
+ * Validate that a touch target meets minimum size requirements (44x44px)
+ */
+export function validateTouchTarget(element: HTMLElement): boolean {
+  const rect = element.getBoundingClientRect();
+  return rect.width >= 44 && rect.height >= 44;
+}
+
 export function useMobileOptimization(options: UseMobileOptimizationOptions = {}) {
   const [state, setState] = useState<MobileOptimizationState>({
     connectionQuality: null,
