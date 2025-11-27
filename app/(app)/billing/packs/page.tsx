@@ -1,11 +1,11 @@
+"use client";
+
 /**
  * Fetches real-time data from API or database
  * Requires dynamic rendering
  * Requirements: 2.1, 2.2
  */
 export const dynamic = 'force-dynamic';
-
-"use client";
 
 import { useState } from 'react'
 import { useAsyncOperation, AsyncErrorDisplay } from '@/components/dashboard/AsyncOperationWrapper'

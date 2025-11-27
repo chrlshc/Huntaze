@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Fetches real-time data from API or database
  * Requires dynamic rendering
@@ -5,7 +7,6 @@
  */
 export const dynamic = 'force-dynamic';
 
-"use client";
 import { useEffect, useState } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
