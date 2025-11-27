@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Mark Message as Read Hook
  * 

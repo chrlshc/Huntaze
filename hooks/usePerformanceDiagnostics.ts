@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * React Hook for Performance Diagnostics
  * Provides easy access to performance diagnostics from React components

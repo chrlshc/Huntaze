@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Marketing Campaigns Hook
  * 

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Instagram Account Hook - SWR Integration with Real OAuth Support
  * Phase 3: Client-side caching and revalidation

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * React Hook for Client-Side Caching
  * Provides SWR-like functionality with cache management

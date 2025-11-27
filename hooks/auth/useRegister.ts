@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Auth Hook - User Registration
  * 

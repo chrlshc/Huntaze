@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * React Hook for Asset Optimization
  * Provides client-side interface for image optimization and upload

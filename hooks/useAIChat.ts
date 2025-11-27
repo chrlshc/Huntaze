@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * useAIChat Hook
  * 

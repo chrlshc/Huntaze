@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * CSRF Token Hook
  * 
