@@ -1,5 +1,8 @@
 'use client';
 
+// This page depends on client-only hooks/components; disable prerendering.
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { 
   ArrowLeft, 
