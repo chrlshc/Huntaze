@@ -20,32 +20,36 @@ export async function recomputeMonthlyChargesForMonth(month: Date) {
     },
   });
 
-  for (const row of grouped) {
-    const planPrice = 29; // Default starter plan
+  // Fix N+1: Batch all upserts in a single transaction
+  // This reduces N queries to 1 transaction with N operations
+  await prisma.$transaction(
+    grouped.map(row => {
+      const planPrice = 29; // Default starter plan
 
-    await prisma.monthlyCharge.upsert({
-      where: {
-        creatorId_month: {
+      return prisma.monthlyCharge.upsert({
+        where: {
+          creatorId_month: {
+            creatorId: row.creatorId,
+            month: monthStart,
+          },
+        },
+        create: {
           creatorId: row.creatorId,
           month: monthStart,
+          totalTokensInput: row._sum.tokensInput ?? 0,
+          totalTokensOutput: row._sum.tokensOutput ?? 0,
+          totalCostUsd: row._sum.costUsd ?? 0,
+          planPrice,
         },
-      },
-      create: {
-        creatorId: row.creatorId,
-        month: monthStart,
-        totalTokensInput: row._sum.tokensInput ?? 0,
-        totalTokensOutput: row._sum.tokensOutput ?? 0,
-        totalCostUsd: row._sum.costUsd ?? 0,
-        planPrice,
-      },
-      update: {
-        totalTokensInput: row._sum.tokensInput ?? 0,
-        totalTokensOutput: row._sum.tokensOutput ?? 0,
-        totalCostUsd: row._sum.costUsd ?? 0,
-        planPrice,
-      },
-    });
-  }
+        update: {
+          totalTokensInput: row._sum.tokensInput ?? 0,
+          totalTokensOutput: row._sum.tokensOutput ?? 0,
+          totalCostUsd: row._sum.costUsd ?? 0,
+          planPrice,
+        },
+      });
+    })
+  );
 }
 
 /**

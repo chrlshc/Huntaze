@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic';
-
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft, User, Mail, Shield, CreditCard, Settings, LogOut } from 'lucide-react'

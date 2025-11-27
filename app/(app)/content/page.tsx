@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * Content Page - Real-time data
+ * Requires dynamic rendering for content management
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 import { useState, lazy, Suspense, useMemo, useCallback, memo } from 'react';
 import Link from 'next/link';
 import { useContent, deleteContent, createContent, updateContent, type ContentItem } from '@/hooks/useContent';

@@ -16,6 +16,7 @@ interface UsePerformanceMonitoringOptions {
 
 /**
  * Hook to monitor performance in React components
+ * Only active in development mode (Requirements: 3.2, 5.1, 5.2, 5.4)
  */
 export function usePerformanceMonitoring(options: UsePerformanceMonitoringOptions = {}) {
   const {
@@ -25,30 +26,32 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
   } = options;
 
   const mountTimeRef = useRef<number>(Date.now());
+  
+  // Early return if not in development - no monitoring overhead in production
+  const isEnabled = process.env.NODE_ENV === 'development';
 
-  // Track component mount time
+  // Track component mount time (development only)
   useEffect(() => {
-    const mountTime = Date.now() - mountTimeRef.current;
+    if (!isEnabled) return;
     
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Performance] ${pageName || 'Component'} mounted in ${mountTime}ms`);
-    }
-  }, [pageName]);
+    const mountTime = Date.now() - mountTimeRef.current;
+    console.log(`[Performance] ${pageName || 'Component'} mounted in ${mountTime}ms`);
+  }, [pageName, isEnabled]);
 
-  // Track scroll performance
+  // Track scroll performance (development only)
   useEffect(() => {
-    if (trackScrollPerformance) {
-      performanceMonitor.startScrollMonitoring();
-      
-      return () => {
-        performanceMonitor.stopScrollMonitoring();
-      };
-    }
-  }, [trackScrollPerformance]);
+    if (!isEnabled || !trackScrollPerformance) return;
+    
+    performanceMonitor.startScrollMonitoring();
+    
+    return () => {
+      performanceMonitor.stopScrollMonitoring();
+    };
+  }, [trackScrollPerformance, isEnabled]);
 
-  // Track click interactions
+  // Track click interactions (development only)
   useEffect(() => {
-    if (!trackInteractions) return;
+    if (!isEnabled || !trackInteractions) return;
 
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -67,15 +70,20 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
     return () => {
       document.removeEventListener('click', handleClick);
     };
-  }, [trackInteractions, pageName]);
+  }, [trackInteractions, pageName, isEnabled]);
 
-  // Track API request
+  // Track API request (development only)
   const trackAPIRequest = useCallback(
     async <T,>(
       endpoint: string,
       method: string,
       requestFn: () => Promise<T>
     ): Promise<T> => {
+      // Skip tracking in production
+      if (!isEnabled) {
+        return requestFn();
+      }
+      
       const startTime = Date.now();
       let status = 200;
       let success = true;
@@ -91,40 +99,46 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
         performanceMonitor.trackAPIRequest(endpoint, method, startTime, status, success);
       }
     },
-    []
+    [isEnabled]
   );
 
-  // Track navigation
+  // Track navigation (development only)
   const trackNavigation = useCallback(
     (destination: string, metadata?: Record<string, any>) => {
+      if (!isEnabled) return;
+      
       performanceMonitor.trackInteraction('navigation', destination, {
         page: pageName,
         ...metadata,
       });
     },
-    [pageName]
+    [pageName, isEnabled]
   );
 
-  // Track form submission
+  // Track form submission (development only)
   const trackFormSubmit = useCallback(
     (formName: string, metadata?: Record<string, any>) => {
+      if (!isEnabled) return;
+      
       performanceMonitor.trackInteraction('form_submit', formName, {
         page: pageName,
         ...metadata,
       });
     },
-    [pageName]
+    [pageName, isEnabled]
   );
 
-  // Track custom event
+  // Track custom event (development only)
   const trackCustomEvent = useCallback(
     (eventName: string, metadata?: Record<string, any>) => {
+      if (!isEnabled) return;
+      
       performanceMonitor.trackInteraction('custom', eventName, {
         page: pageName,
         ...metadata,
       });
     },
-    [pageName]
+    [pageName, isEnabled]
   );
 
   return {
@@ -137,14 +151,22 @@ export function usePerformanceMonitoring(options: UsePerformanceMonitoringOption
 
 /**
  * Hook to track API requests with automatic performance monitoring
+ * Only active in development mode (Requirements: 3.2, 5.1, 5.2, 5.4)
  */
 export function useAPIPerformance() {
+  const isEnabled = process.env.NODE_ENV === 'development';
+  
   const trackRequest = useCallback(
     async <T,>(
       endpoint: string,
       method: string,
       requestFn: () => Promise<T>
     ): Promise<T> => {
+      // Skip tracking in production
+      if (!isEnabled) {
+        return requestFn();
+      }
+      
       const startTime = Date.now();
       let status = 200;
       let success = true;
@@ -160,7 +182,7 @@ export function useAPIPerformance() {
         performanceMonitor.trackAPIRequest(endpoint, method, startTime, status, success);
       }
     },
-    []
+    [isEnabled]
   );
 
   return { trackRequest };
@@ -168,19 +190,25 @@ export function useAPIPerformance() {
 
 /**
  * Hook to get performance metrics
+ * Only active in development mode (Requirements: 3.2, 5.1, 5.2, 5.4)
  */
 export function usePerformanceMetrics() {
+  const isEnabled = process.env.NODE_ENV === 'development';
+  
   const getMetrics = useCallback(() => {
+    if (!isEnabled) return [];
     return performanceMonitor.getMetrics();
-  }, []);
+  }, [isEnabled]);
 
   const getSummary = useCallback(() => {
+    if (!isEnabled) return null;
     return performanceMonitor.getSummary();
-  }, []);
+  }, [isEnabled]);
 
   const clearMetrics = useCallback(() => {
+    if (!isEnabled) return;
     performanceMonitor.clearMetrics();
-  }, []);
+  }, [isEnabled]);
 
   return {
     getMetrics,

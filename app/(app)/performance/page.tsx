@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic';
-
 import React from 'react'
 import { motion } from 'framer-motion'
 import LinearHeader from '@/components/LinearHeader'

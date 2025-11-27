@@ -1,3 +1,10 @@
+/**
+ * Fetches real-time data from API or database
+ * Requires dynamic rendering
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 "use client";
 import { useEffect, useState } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';

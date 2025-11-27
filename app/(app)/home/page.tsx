@@ -1,3 +1,8 @@
+/**
+ * Home Page - Real-time data
+ * Requires dynamic rendering for user-specific stats
+ * Requirements: 2.1, 2.2
+ */
 export const dynamic = 'force-dynamic';
 
 import { Suspense } from 'react';

@@ -1,0 +1,1128 @@
+{
+  "timestamp": "2025-11-27T02:22:35.436Z",
+  "summary": {
+    "total": 98,
+    "realTime": 23,
+    "userSpecific": 7,
+    "static": 68,
+    "withForceDynamic": 51
+  },
+  "pages": {
+    "realTime": [
+      {
+        "path": "/app/(app)/analytics/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/automations/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/billing/packs/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/campaigns/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/chatbot/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/complete-onboarding/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/configure/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/content/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/dashboard/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/diagnostics/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/fans/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/home/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/home/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/marketing/campaigns/[id]/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/menu/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-connect/cookies/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/dashboard/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/optimize/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/wizard/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/repost/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/schedule/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/skip-onboarding/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      },
+      {
+        "path": "/app/(app)/social/tiktok/upload/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "real-time",
+        "reason": "Fetches real-time data from API or database",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Keep dynamic rendering",
+          "Add SWR caching with appropriate dedupingInterval",
+          "Consider stale-while-revalidate strategy"
+        ]
+      }
+    ],
+    "userSpecific": [
+      {
+        "path": "/app/(app)/marketing/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      },
+      {
+        "path": "/app/(app)/messages/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-analytics/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-messages/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/huntaze/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans-assisted/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      },
+      {
+        "path": "/app/(app)/revenue/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "user-specific",
+        "reason": "Requires user authentication or user-specific data",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Use dynamic rendering for this page only",
+          "Cache user-independent parts with React Server Components",
+          "Add revalidate: 60 for semi-static content"
+        ]
+      }
+    ],
+    "static": [
+      {
+        "path": "/app/(app)/account/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/analytics/churn/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/analytics/forecast/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/analytics/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/analytics/payouts/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/analytics/pricing/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/analytics/upsells/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/automations/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/billing/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/billing/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/campaigns/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/campaigns/new/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/campaigns/new/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/chatbot/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/chatting/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/chatting/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/complete-onboarding/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/configure/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/connect-of/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/connect-of/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/design-system/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "Static content page (documentation, design system, etc.)",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation",
+          "Add revalidate: 3600 for periodic updates"
+        ]
+      },
+      {
+        "path": "/app/(app)/design-system/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "Static content page (documentation, design system, etc.)",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation",
+          "Add revalidate: 3600 for periodic updates"
+        ]
+      },
+      {
+        "path": "/app/(app)/flows/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/flows/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/game-days/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/game-days/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/integrations/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/manage-business/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/manage-business/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/marketing/calendar/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/marketing/campaigns/new/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/marketing/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/marketing/social/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/menu/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-analytics/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-connect/cookies/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-connect/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/of-messages/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/offers/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/offers/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/dashboard/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/huntaze/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/optimize/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/setup/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/setup/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding/wizard/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding-v2/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onboarding-v2/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans/fans/[id]/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans/fans/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans/messages/mass/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans/ppv/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans/settings/welcome/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/onlyfans-assisted/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/performance/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/performance/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/profile/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/profile/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/repost/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/settings/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/skip-onboarding/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/smart-onboarding/analytics/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/smart-onboarding/analytics/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": false,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/social/tiktok/upload/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/social-marketing/layout.tsx",
+        "file": "layout.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      },
+      {
+        "path": "/app/(app)/social-marketing/page.tsx",
+        "file": "page.tsx",
+        "dataRequirements": "static",
+        "reason": "No dynamic data detected",
+        "hasForceDynamic": true,
+        "recommendations": [
+          "Remove force-dynamic",
+          "Enable static generation"
+        ]
+      }
+    ]
+  }
+}

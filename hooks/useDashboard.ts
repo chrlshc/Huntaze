@@ -1,6 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
+import { getConfigForEndpoint } from '@/lib/swr/config';
 
 export interface DashboardSummary {
   totalRevenue: {
@@ -93,11 +94,13 @@ export function useDashboard(options: DashboardOptions = {}) {
 
   const url = `/api/dashboard?${params.toString()}`;
 
-  return useSWR<{ success: boolean; data: DashboardData }>(url, fetcher, {
-    refreshInterval: refetchInterval,
-    revalidateOnFocus: false,
-    dedupingInterval: 30000,
-  });
+  // Use optimized SWR config, but allow custom refresh interval
+  const swrConfig = {
+    ...getConfigForEndpoint('/api/dashboard'),
+    refreshInterval: refetchInterval, // Allow user override
+  };
+
+  return useSWR<{ success: boolean; data: DashboardData }>(url, fetcher, swrConfig);
 }
 
 /**

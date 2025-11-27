@@ -169,17 +169,31 @@ export function useIntegrations(): UseIntegrationsReturn {
 
   // Initial fetch and setup polling for real-time status updates
   useEffect(() => {
-    fetchIntegrations();
+    let isMounted = true;
+    
+    // Only fetch if component is still mounted
+    const safeFetch = async () => {
+      if (isMounted) {
+        await fetchIntegrations();
+      }
+    };
+    
+    safeFetch();
 
     // Set up polling for real-time status updates
     pollIntervalRef.current = setInterval(() => {
-      fetchIntegrations();
+      if (isMounted) {
+        safeFetch();
+      }
     }, POLL_INTERVAL);
 
-    // Cleanup on unmount
+    // Cleanup on unmount - cancel pending requests
     return () => {
+      isMounted = false;
+      
       if (pollIntervalRef.current) {
         clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
       }
     };
   }, [fetchIntegrations]);

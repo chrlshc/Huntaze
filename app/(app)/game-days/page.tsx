@@ -7,8 +7,6 @@
 
 import GameDayDashboard from '@/components/game-days/GameDayDashboard';
 
-export const dynamic = 'force-dynamic';
-
 export default function GameDaysPage() {
   return (
     <div className="min-h-screen bg-gray-50">

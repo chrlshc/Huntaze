@@ -1,15 +1,19 @@
 /**
  * App Layout
- * Forces dynamic rendering for all authenticated app pages
- * This prevents build-time errors when database/Redis connections are not available
+ * 
+ * PERFORMANCE OPTIMIZATION (Task 3.2):
+ * Removed force-dynamic from layout to enable selective dynamic rendering per page.
+ * This allows static pages to be cached while dynamic pages can opt-in to dynamic rendering.
+ * 
+ * Pages that need dynamic rendering should add:
+ * * 
+ * Requirements: 2.3, 2.4
  */
 
 import Header from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
 import { PerformanceMonitorDashboard } from '@/components/dashboard/PerformanceMonitor';
 import '@/styles/dashboard-shopify-tokens.css';
-
-export const dynamic = 'force-dynamic';
 
 export default function AppLayout({
   children,

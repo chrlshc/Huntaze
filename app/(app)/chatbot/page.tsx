@@ -1,4 +1,11 @@
 'use client';
+/**
+ * Fetches real-time data from API or database
+ * Requires dynamic rendering
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Plus, Trash2, MessageCircle } from 'lucide-react';
