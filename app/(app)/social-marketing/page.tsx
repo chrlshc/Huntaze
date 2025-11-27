@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { lazy, Suspense } from 'react';
 import SectionExplainer from '@/components/hz/SectionExplainer';
 import Image from 'next/image';

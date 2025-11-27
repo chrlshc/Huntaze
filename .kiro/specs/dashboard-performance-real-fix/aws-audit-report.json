@@ -1,0 +1,276 @@
+{
+  "timestamp": "2025-11-27T03:50:10.529Z",
+  "s3": {
+    "buckets": [
+      {
+        "bucketName": "aws-config-317805897534-us-east-1",
+        "region": "us-east-1",
+        "objectCount": 295,
+        "totalSizeBytes": 403455,
+        "lastModified": "2025-11-27T02:01:59.000Z",
+        "requestsLast30Days": 8903,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "aws-sam-cli-managed-default-samclisourcebucket-qusvkqzketix",
+        "region": "us-east-1",
+        "objectCount": 15,
+        "totalSizeBytes": 448006156,
+        "lastModified": "2025-10-27T10:51:47.000Z",
+        "requestsLast30Days": 435,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "cdk-hnb659fds-assets-317805897534-us-east-1",
+        "region": "us-east-1",
+        "objectCount": 5,
+        "totalSizeBytes": 58297,
+        "lastModified": "2025-10-28T13:53:07.000Z",
+        "requestsLast30Days": 145,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "cdk-ofq1abcde-assets-317805897534-us-east-1",
+        "region": "us-east-1",
+        "objectCount": 37,
+        "totalSizeBytes": 1126228,
+        "lastModified": "2025-10-12T19:28:07.000Z",
+        "requestsLast30Days": 1073,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-assets",
+        "region": "us-east-1",
+        "objectCount": 3,
+        "totalSizeBytes": 118,
+        "lastModified": "2025-11-26T23:32:05.000Z",
+        "requestsLast30Days": 1,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-aws-config-317805897534",
+        "region": "us-east-1",
+        "objectCount": 0,
+        "totalSizeBytes": 0,
+        "requestsLast30Days": 0,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-beta-assets",
+        "region": "us-east-1",
+        "objectCount": 1,
+        "totalSizeBytes": 4,
+        "lastModified": "2025-11-21T05:12:09.000Z",
+        "requestsLast30Days": 7,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-cloudtrail-logs-317805897534",
+        "region": "us-east-1",
+        "objectCount": 1000,
+        "totalSizeBytes": 716399,
+        "lastModified": "2025-10-29T16:27:01.000Z",
+        "requestsLast30Days": 1978659,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-of-traces-317805897534-us-east-1",
+        "region": "us-east-1",
+        "objectCount": 898,
+        "totalSizeBytes": 104301058,
+        "lastModified": "2025-10-11T17:52:12.000Z",
+        "requestsLast30Days": 26042,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-playwright-artifacts-317805897534-us-east-1",
+        "region": "us-east-1",
+        "objectCount": 0,
+        "totalSizeBytes": 0,
+        "requestsLast30Days": 0,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-storage-lens-reports",
+        "region": "us-east-1",
+        "objectCount": 0,
+        "totalSizeBytes": 0,
+        "requestsLast30Days": 0,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntaze-synthetics-artifacts-317805897534",
+        "region": "us-east-1",
+        "objectCount": 0,
+        "totalSizeBytes": 0,
+        "requestsLast30Days": 0,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntazeofcistack-ofpipelineartifactsbucket2e105862-yvpqdiogwdmu",
+        "region": "us-east-1",
+        "objectCount": 91,
+        "totalSizeBytes": 5127341318,
+        "lastModified": "2025-10-12T16:17:06.000Z",
+        "requestsLast30Days": 2639,
+        "bytesDownloadedLast30Days": 0
+      },
+      {
+        "bucketName": "huntazeofcistack-ofsourcebuckete857dca2-sit7ku08virm",
+        "region": "us-east-1",
+        "objectCount": 1,
+        "totalSizeBytes": 400300843,
+        "lastModified": "2025-10-12T23:10:14.000Z",
+        "requestsLast30Days": 1537,
+        "bytesDownloadedLast30Days": 0
+      }
+    ],
+    "totalCost": 0.9380608278030098,
+    "recommendation": "keep",
+    "reasoning": "Active usage: 2,019,441 requests/month, 5.66GB stored. S3 is providing value."
+  },
+  "cloudFront": {
+    "distributions": [
+      {
+        "distributionId": "E21VMD5A9KDBOO",
+        "domainName": "dc825q4u11mxr.cloudfront.net",
+        "status": "Deployed",
+        "requestsLast30Days": 0,
+        "bytesDownloadedLast30Days": 0,
+        "cacheHitRate": 0
+      }
+    ],
+    "totalCost": 0,
+    "recommendation": "remove",
+    "reasoning": "Found 1 distribution(s), but zero requests in last 30 days. Remove unused distributions."
+  },
+  "cloudWatch": {
+    "metrics": [
+      {
+        "namespace": "AWS/Config",
+        "metricCount": 94,
+        "dataPointsLast30Days": 2784,
+        "estimatedCostPerMonth": 0.05604
+      },
+      {
+        "namespace": "AWS/Usage",
+        "metricCount": 183,
+        "dataPointsLast30Days": 32710,
+        "estimatedCostPerMonth": 0.382
+      },
+      {
+        "namespace": "AWS/Lambda",
+        "metricCount": 13,
+        "dataPointsLast30Days": 3626,
+        "estimatedCostPerMonth": 0.04016
+      },
+      {
+        "namespace": "AWS/ElastiCache",
+        "metricCount": 35,
+        "dataPointsLast30Days": 25224,
+        "estimatedCostPerMonth": 0.26274000000000003
+      },
+      {
+        "namespace": "AWS/SQS",
+        "metricCount": 66,
+        "dataPointsLast30Days": 6445,
+        "estimatedCostPerMonth": 0.08425
+      },
+      {
+        "namespace": "AWS/RDS",
+        "metricCount": 39,
+        "dataPointsLast30Days": 27411,
+        "estimatedCostPerMonth": 0.28581
+      },
+      {
+        "namespace": "AWS/S3",
+        "metricCount": 8,
+        "dataPointsLast30Days": 227,
+        "estimatedCostPerMonth": 0.0046700000000000005
+      },
+      {
+        "namespace": "AWS/DynamoDB",
+        "metricCount": 18,
+        "dataPointsLast30Days": 12908,
+        "estimatedCostPerMonth": 0.13448
+      },
+      {
+        "namespace": "AWS/Events",
+        "metricCount": 16,
+        "dataPointsLast30Days": 7632,
+        "estimatedCostPerMonth": 0.08112
+      },
+      {
+        "namespace": "AWS/AmplifyHosting",
+        "metricCount": 3,
+        "dataPointsLast30Days": 2161,
+        "estimatedCostPerMonth": 0.022510000000000002
+      },
+      {
+        "namespace": "AWS/Logs",
+        "metricCount": 8,
+        "dataPointsLast30Days": 3012,
+        "estimatedCostPerMonth": 0.03252
+      },
+      {
+        "namespace": "AWS/HealthLake",
+        "metricCount": 2,
+        "dataPointsLast30Days": 62,
+        "estimatedCostPerMonth": 0.00122
+      },
+      {
+        "namespace": "AWS/SES",
+        "metricCount": 2,
+        "dataPointsLast30Days": 9,
+        "estimatedCostPerMonth": 0.00069
+      },
+      {
+        "namespace": "AWS/EBS",
+        "metricCount": 3,
+        "dataPointsLast30Days": 2163,
+        "estimatedCostPerMonth": 0.02253
+      },
+      {
+        "namespace": "AWS/EC2",
+        "metricCount": 3,
+        "dataPointsLast30Days": 2162,
+        "estimatedCostPerMonth": 0.022520000000000002
+      },
+      {
+        "namespace": "AWS/SNS",
+        "metricCount": 2,
+        "dataPointsLast30Days": 200,
+        "estimatedCostPerMonth": 0.0026
+      },
+      {
+        "namespace": "AWS/Scheduler",
+        "metricCount": 2,
+        "dataPointsLast30Days": 1442,
+        "estimatedCostPerMonth": 0.01502
+      },
+      {
+        "namespace": "AWS/CloudFront",
+        "metricCount": 1,
+        "dataPointsLast30Days": 74,
+        "estimatedCostPerMonth": 0.00104
+      },
+      {
+        "namespace": "AWS/States",
+        "metricCount": 1,
+        "dataPointsLast30Days": 32,
+        "estimatedCostPerMonth": 0.00062
+      },
+      {
+        "namespace": "AWS/Location",
+        "metricCount": 1,
+        "dataPointsLast30Days": 1,
+        "estimatedCostPerMonth": 0.00031
+      }
+    ],
+    "totalCost": 1.4528500000000002,
+    "recommendation": "optimize",
+    "reasoning": "Minimal usage: 130285 data points/month ($1.45/month). Consider consolidating metrics or using local logging."
+  },
+  "overallRecommendation": "🟢 KEEP ACTIVE SERVICES\n\nAWS services are providing value ($2.39/month). Keep: S3, CloudWatch\n\nReview individual service recommendations below for optimization opportunities.",
+  "estimatedMonthlySavings": 0
+}

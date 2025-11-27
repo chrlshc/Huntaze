@@ -1,4 +1,11 @@
 'use client';
+/**
+ * Requires user authentication or user-specific data
+ * Requires dynamic rendering
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 
 import { lazy, Suspense } from 'react';
 import OFConnectBanner from '@/components/OFConnectBanner';

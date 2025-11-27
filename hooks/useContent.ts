@@ -1,6 +1,7 @@
 'use client';
 
 import useSWR, { mutate } from 'swr';
+import { getConfigForEndpoint } from '@/lib/swr/config';
 
 export interface ContentItem {
   id: string;
@@ -66,10 +67,10 @@ export function useContent(filters: ContentFilters = {}) {
 
   const url = `/api/content?${params.toString()}`;
   
-  return useSWR<ContentResponse>(url, fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 30000,
-  });
+  // Use optimized SWR config based on endpoint volatility
+  const swrConfig = getConfigForEndpoint('/api/content');
+  
+  return useSWR<ContentResponse>(url, fetcher, swrConfig);
 }
 
 /**
@@ -78,9 +79,10 @@ export function useContent(filters: ContentFilters = {}) {
 export function useDrafts(limit = 20, offset = 0) {
   const url = `/api/content/drafts?limit=${limit}&offset=${offset}`;
   
-  return useSWR<ContentResponse>(url, fetcher, {
-    revalidateOnFocus: false,
-  });
+  // Use optimized SWR config
+  const swrConfig = getConfigForEndpoint('/api/content/drafts');
+  
+  return useSWR<ContentResponse>(url, fetcher, swrConfig);
 }
 
 /**
@@ -195,7 +197,8 @@ export async function scheduleContent(data: {
 export function useContentMetrics(contentId: string) {
   const url = contentId ? `/api/content/metrics?contentId=${contentId}` : null;
   
-  return useSWR(url, fetcher, {
-    revalidateOnFocus: false,
-  });
+  // Use optimized SWR config
+  const swrConfig = getConfigForEndpoint('/api/content/metrics');
+  
+  return useSWR(url, fetcher, swrConfig);
 }

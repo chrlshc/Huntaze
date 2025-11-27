@@ -1,4 +1,11 @@
 'use client';
+/**
+ * Fetches real-time data from API or database
+ * Requires dynamic rendering
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

@@ -1,463 +1,325 @@
-# Redis Caching Implementation
+# API Cache Middleware
 
-This directory contains the Redis caching implementation for Huntaze platform.
-
-## Overview
-
-The caching layer uses Redis to improve performance by storing frequently accessed data in memory. This reduces database load and improves response times.
+Application-level caching for API routes with tag-based invalidation and LRU eviction.
 
 ## Features
 
-- ✅ Automatic cache invalidation
-- ✅ Configurable TTL per data type
-- ✅ Pattern-based cache deletion
-- ✅ Fallback to database on cache miss
-- ✅ Cache statistics and monitoring
-- ✅ Optional Redis (graceful degradation)
+- ✅ **Cache-first data fetching** - Check cache before DB queries
+- ✅ **Tag-based invalidation** - Invalidate related cache entries
+- ✅ **TTL-based expiration** - Automatic cache expiration
+- ✅ **LRU eviction** - Evict least recently used entries when full
+- ✅ **Cache statistics** - Monitor hit rate and performance
+- ✅ **Zero configuration** - Works out of the box
 
-## Setup
+## Quick Start
 
-### 1. Install Redis
-
-**Using Docker:**
-```bash
-docker run -d -p 6379:6379 redis:7-alpine
-```
-
-**Using Upstash (Serverless):**
-1. Create account at https://upstash.com
-2. Create Redis database
-3. Copy URL and token to `.env`
-
-### 2. Configure Environment Variables
-
-```env
-REDIS_URL="redis://localhost:6379"
-REDIS_TOKEN=""  # Only needed for Upstash
-```
-
-### 3. Install Dependencies
-
-```bash
-npm install @upstash/redis
-```
-
-## Usage
-
-### Basic Caching
+### Basic Usage
 
 ```typescript
-import { getCacheOrSet, getCacheKey, CACHE_TTL, CACHE_PREFIX } from '@/lib/cache/redis';
+import { withCache, CachePresets } from '@/lib/cache/api-cache';
 
-export async function GET(req: NextRequest) {
-  const userId = 'user-123';
-  const cacheKey = getCacheKey(CACHE_PREFIX.DASHBOARD, userId);
-
-  const data = await getCacheOrSet(
-    cacheKey,
-    CACHE_TTL.DASHBOARD,
-    async () => {
-      // Fetch from database
-      return await fetchDashboardData(userId);
-    }
-  );
-
-  return NextResponse.json(data);
-}
+// Wrap your DB query with cache
+const userData = await withCache(
+  async () => {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+    });
+  },
+  {
+    key: `user:${userId}`,
+    ttl: CachePresets.MEDIUM.ttl, // 5 minutes
+    tags: ['user', `user:${userId}`],
+  }
+);
 ```
 
 ### Cache Invalidation
 
 ```typescript
-import { invalidateCachePrefix, CACHE_PREFIX } from '@/lib/cache/redis';
+import { invalidateCacheByTag } from '@/lib/cache/api-cache';
 
-export async function POST(req: NextRequest) {
-  // Create/update data
-  const result = await createCampaign(data);
+// After mutation, invalidate cache
+await prisma.user.update({
+  where: { id: userId },
+  data: { name: 'New Name' },
+});
 
-  // Invalidate related cache
-  await invalidateCachePrefix(CACHE_PREFIX.CAMPAIGNS);
-
-  return NextResponse.json(result);
-}
+// Invalidate all cache entries with this tag
+invalidateCacheByTag(`user:${userId}`);
 ```
 
-### Manual Cache Operations
+## Cache Presets
+
+Use predefined TTL values based on data volatility:
 
 ```typescript
-import { getCache, setCache, deleteCache } from '@/lib/cache/redis';
+import { CachePresets } from '@/lib/cache/api-cache';
 
-// Get from cache
-const data = await getCache<DashboardData>('dashboard:user-123');
+// High volatility: 30 seconds
+CachePresets.HIGH.ttl
 
-// Set in cache
-await setCache('dashboard:user-123', data, 300); // 5 minutes
+// Medium volatility: 5 minutes
+CachePresets.MEDIUM.ttl
 
-// Delete from cache
-await deleteCache('dashboard:user-123');
+// Low volatility: 1 hour
+CachePresets.LOW.ttl
+
+// Static: 24 hours
+CachePresets.STATIC.ttl
 ```
 
-## Cache Configuration
+## API Routes Example
 
-### TTL Settings
-
-| Data Type | TTL | Reason |
-|-----------|-----|--------|
-| Dashboard | 5 min | Frequently updated |
-| Analytics | 10 min | Heavy computation |
-| Campaigns | 2 min | Real-time updates needed |
-| Messages | 30 sec | Near real-time |
-| Content | 5 min | Moderate updates |
-| Fans | 5 min | Moderate updates |
-| PPV | 2 min | Real-time tracking |
-
-### Cache Prefixes
+### GET with Cache
 
 ```typescript
-export const CACHE_PREFIX = {
-  DASHBOARD: 'dashboard',
-  ANALYTICS: 'analytics',
-  CAMPAIGNS: 'campaigns',
-  MESSAGES: 'messages',
-  CONTENT: 'content',
-  FANS: 'fans',
-  PPV: 'ppv',
-} as const;
-```
+import { withCache, CachePresets } from '@/lib/cache/api-cache';
 
-## API Routes with Caching
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('userId');
 
-### Dashboard API
-
-```typescript
-// app/api/dashboard/route.ts
-import { getCacheOrSet, getCacheKey, CACHE_TTL, CACHE_PREFIX } from '@/lib/cache/redis';
-
-export async function GET(req: NextRequest) {
-  const session = await getSession(req);
-  const cacheKey = getCacheKey(CACHE_PREFIX.DASHBOARD, session.userId);
-
-  const data = await getCacheOrSet(
-    cacheKey,
-    CACHE_TTL.DASHBOARD,
+  const userData = await withCache(
     async () => {
-      return await aggregateDashboardData(session.userId);
-    }
-  );
-
-  return NextResponse.json(data, {
-    headers: {
-      'X-Cache': 'HIT',
-      'Cache-Control': `public, max-age=${CACHE_TTL.DASHBOARD}`,
+      return await prisma.user.findUnique({
+        where: { id: userId },
+        include: { profile: true },
+      });
     },
-  });
-}
-```
-
-### Analytics API
-
-```typescript
-// app/api/analytics/pricing/route.ts
-import { getCacheOrSet, getCacheKey, CACHE_TTL, CACHE_PREFIX } from '@/lib/cache/redis';
-
-export async function GET(req: NextRequest) {
-  const session = await getSession(req);
-  const cacheKey = getCacheKey(CACHE_PREFIX.ANALYTICS, `pricing:${session.userId}`);
-
-  const data = await getCacheOrSet(
-    cacheKey,
-    CACHE_TTL.ANALYTICS,
-    async () => {
-      return await calculatePricingRecommendations(session.userId);
+    {
+      key: `user:${userId}`,
+      ttl: CachePresets.MEDIUM.ttl,
+      tags: ['user', `user:${userId}`],
     }
   );
 
-  return NextResponse.json(data);
+  return NextResponse.json({ data: userData });
 }
 ```
 
-### Campaigns API
+### POST with Invalidation
 
 ```typescript
-// app/api/marketing/campaigns/route.ts
-import { getCacheOrSet, getCacheKey, CACHE_TTL, CACHE_PREFIX, invalidateCachePrefix } from '@/lib/cache/redis';
+import { invalidateCacheByTag } from '@/lib/cache/api-cache';
 
-export async function GET(req: NextRequest) {
-  const session = await getSession(req);
-  const cacheKey = getCacheKey(CACHE_PREFIX.CAMPAIGNS, session.userId);
-
-  const data = await getCacheOrSet(
-    cacheKey,
-    CACHE_TTL.CAMPAIGNS,
-    async () => {
-      return await fetchCampaigns(session.userId);
-    }
-  );
-
-  return NextResponse.json(data);
-}
-
-export async function POST(req: NextRequest) {
-  const session = await getSession(req);
-  const body = await req.json();
-
-  const campaign = await createCampaign(session.userId, body);
-
-  // Invalidate campaigns cache
-  await invalidateCachePrefix(CACHE_PREFIX.CAMPAIGNS);
-
-  return NextResponse.json(campaign, { status: 201 });
-}
-```
-
-### Messages API
-
-```typescript
-// app/api/messages/unified/route.ts
-import { getCacheOrSet, getCacheKey, CACHE_TTL, CACHE_PREFIX } from '@/lib/cache/redis';
-
-export async function GET(req: NextRequest) {
-  const session = await getSession(req);
-  const url = new URL(req.url);
-  const platform = url.searchParams.get('platform');
+export async function POST(request: NextRequest) {
+  const body = await request.json();
   
-  const cacheKey = getCacheKey(
-    CACHE_PREFIX.MESSAGES,
-    `${session.userId}:${platform || 'all'}`
-  );
+  // Update database
+  const updatedUser = await prisma.user.update({
+    where: { id: body.userId },
+    data: body,
+  });
 
-  const data = await getCacheOrSet(
-    cacheKey,
-    CACHE_TTL.MESSAGES,
-    async () => {
-      return await aggregateMessages(session.userId, platform);
-    }
-  );
+  // Invalidate cache
+  invalidateCacheByTag(`user:${body.userId}`);
 
-  return NextResponse.json(data);
+  return NextResponse.json({ data: updatedUser });
 }
 ```
 
-## Cache Invalidation Strategies
+## Cache Statistics
 
-### 1. Time-based (TTL)
-Automatic expiration after configured time.
-
-### 2. Event-based
-Invalidate on data mutations:
+Monitor cache performance:
 
 ```typescript
-// After creating/updating/deleting
-await invalidateCachePrefix(CACHE_PREFIX.CAMPAIGNS);
+import { getCacheStats, getCacheHitRate } from '@/lib/cache/api-cache';
+
+const stats = getCacheStats();
+const hitRate = getCacheHitRate();
+
+console.log('Cache Stats:', {
+  hits: stats.hits,
+  misses: stats.misses,
+  size: stats.size,
+  evictions: stats.evictions,
+  hitRate: `${(hitRate * 100).toFixed(2)}%`,
+});
 ```
 
-### 3. Pattern-based
-Invalidate multiple related keys:
+## API Endpoints
+
+### Get Cache Stats
+
+```bash
+GET /api/cache/stats
+```
+
+Response:
+```json
+{
+  "stats": {
+    "hits": 150,
+    "misses": 50,
+    "size": 42,
+    "evictions": 5,
+    "hitRate": "75.00%",
+    "hitRateDecimal": 0.75
+  },
+  "timestamp": "2024-11-26T10:00:00.000Z"
+}
+```
+
+### Invalidate Cache
+
+```bash
+POST /api/cache/invalidate
+Content-Type: application/json
+
+{
+  "tag": "user:123"
+}
+```
+
+Response:
+```json
+{
+  "message": "Cache invalidated for tag: user:123",
+  "invalidated": 3
+}
+```
+
+## Configuration
+
+### Cache Size
+
+Default: 1000 entries
+
+To change, modify the APICache constructor:
 
 ```typescript
-// Invalidate all user-specific caches
-await deleteCachePattern(`*:${userId}:*`);
+const apiCache = new APICache(2000); // 2000 entries
 ```
 
-### 4. Batch Invalidation
-Invalidate multiple prefixes:
+### TTL Values
+
+Customize TTL based on your needs:
 
 ```typescript
-await Promise.all([
-  invalidateCachePrefix(CACHE_PREFIX.DASHBOARD),
-  invalidateCachePrefix(CACHE_PREFIX.ANALYTICS),
-  invalidateCachePrefix(CACHE_PREFIX.CONTENT),
-]);
-```
-
-## Monitoring
-
-### Check Redis Status
-
-```typescript
-import { isRedisAvailable, getCacheStats } from '@/lib/cache/redis';
-
-// Check if Redis is available
-const available = await isRedisAvailable();
-
-// Get cache statistics
-const stats = await getCacheStats();
-console.log(`Cache keys: ${stats.keyCount}`);
-```
-
-### Cache Headers
-
-All cached responses include headers:
-
-```
-X-Cache: HIT | MISS | SKIP
-Cache-Control: public, max-age=300
+const customTTL = {
+  ttl: 10 * 60 * 1000, // 10 minutes
+  tags: ['custom'],
+};
 ```
 
 ## Best Practices
 
-### 1. Always Use Prefixes
+### 1. Use Appropriate TTL
+
+- **Real-time data** (user status): HIGH (30s)
+- **User data** (profile, settings): MEDIUM (5min)
+- **Reference data** (categories, tags): LOW (1h)
+- **Static content** (terms, policies): STATIC (24h)
+
+### 2. Tag Strategy
+
+Use hierarchical tags for flexible invalidation:
+
 ```typescript
-// ✅ Good
-const key = getCacheKey(CACHE_PREFIX.DASHBOARD, userId);
-
-// ❌ Bad
-const key = `dashboard-${userId}`;
+tags: [
+  'user',              // Invalidate all users
+  `user:${userId}`,    // Invalidate specific user
+  `user:${userId}:profile`, // Invalidate user profile
+]
 ```
 
-### 2. Invalidate on Mutations
+### 3. Invalidate on Mutations
+
+Always invalidate cache after POST/PUT/DELETE:
+
 ```typescript
-// ✅ Good
-await createCampaign(data);
-await invalidateCachePrefix(CACHE_PREFIX.CAMPAIGNS);
+// Update
+await prisma.user.update({ ... });
+invalidateCacheByTag(`user:${userId}`);
 
-// ❌ Bad
-await createCampaign(data);
-// Cache not invalidated - stale data!
+// Delete
+await prisma.user.delete({ ... });
+invalidateCacheByTag('user'); // Invalidate all users
 ```
 
-### 3. Handle Cache Failures Gracefully
-```typescript
-// ✅ Good
-try {
-  const data = await getCacheOrSet(key, ttl, fetchData);
-  return data;
-} catch (error) {
-  console.error('Cache error:', error);
-  return await fetchData(); // Fallback
-}
-```
+### 4. Monitor Hit Rate
 
-### 4. Use Appropriate TTLs
-- Short TTL (30s-2min): Real-time data (messages, campaigns)
-- Medium TTL (5min): Frequently updated (dashboard, content)
-- Long TTL (10min+): Heavy computation (analytics, forecasts)
-
-### 5. Don't Cache Everything
-Skip caching for:
-- User-specific sensitive data
-- Real-time critical data
-- Small, fast queries
-- Data that changes frequently
-
-## Performance Impact
-
-### Before Caching
-- Dashboard load: ~800ms
-- Analytics load: ~1.5s
-- Campaigns load: ~400ms
-
-### After Caching
-- Dashboard load: ~50ms (16x faster)
-- Analytics load: ~80ms (19x faster)
-- Campaigns load: ~30ms (13x faster)
-
-### Cache Hit Rates
-- Dashboard: ~85%
-- Analytics: ~90%
-- Campaigns: ~75%
-- Messages: ~60%
-
-## Troubleshooting
-
-### Redis Not Available
-If Redis is not configured, the system will:
-1. Log a warning
-2. Skip caching
-3. Fetch directly from database
-4. Continue working normally
-
-### Cache Misses
-High cache miss rate can indicate:
-- TTL too short
-- Frequent invalidations
-- Cache key issues
-- Redis connection problems
-
-### Memory Usage
-Monitor Redis memory:
-```bash
-redis-cli INFO memory
-```
-
-Set max memory policy:
-```bash
-redis-cli CONFIG SET maxmemory-policy allkeys-lru
-```
+Aim for >70% hit rate. If lower:
+- Increase TTL
+- Check if data is too volatile
+- Review cache key strategy
 
 ## Testing
 
-### Unit Tests
-```typescript
-import { getCache, setCache, deleteCache } from '@/lib/cache/redis';
+Run the test suite:
 
-describe('Redis Cache', () => {
-  it('should set and get cache', async () => {
-    await setCache('test-key', { data: 'test' }, 60);
-    const result = await getCache('test-key');
-    expect(result).toEqual({ data: 'test' });
-  });
-
-  it('should delete cache', async () => {
-    await setCache('test-key', { data: 'test' }, 60);
-    await deleteCache('test-key');
-    const result = await getCache('test-key');
-    expect(result).toBeNull();
-  });
-});
+```bash
+npx tsx scripts/test-api-cache.ts
 ```
 
-### Integration Tests
+Tests validate:
+- Cache-first fetching
+- Tag-based invalidation
+- TTL expiration
+- LRU eviction
+- Cache statistics
+
+## Performance Impact
+
+Expected improvements:
+- **DB queries**: -60% to -80%
+- **API response time**: -40% to -60%
+- **Cache hit rate**: 70% to 90%
+
+## Stale-While-Revalidate
+
+Serve stale data immediately while fetching fresh data in background.
+
+### Usage
+
 ```typescript
-describe('Dashboard API with Cache', () => {
-  it('should return cached data on second request', async () => {
-    const res1 = await fetch('/api/dashboard');
-    const res2 = await fetch('/api/dashboard');
-    
-    expect(res1.headers.get('X-Cache')).toBe('MISS');
-    expect(res2.headers.get('X-Cache')).toBe('HIT');
-  });
-});
-```
+import { withStaleWhileRevalidate, SWRPresets } from '@/lib/cache/stale-while-revalidate';
 
-## Migration Guide
-
-### Existing API Routes
-
-1. Import cache utilities:
-```typescript
-import { getCacheOrSet, getCacheKey, CACHE_TTL, CACHE_PREFIX } from '@/lib/cache/redis';
-```
-
-2. Wrap data fetching:
-```typescript
-// Before
-const data = await fetchData();
-
-// After
-const data = await getCacheOrSet(
-  getCacheKey(CACHE_PREFIX.DASHBOARD, userId),
-  CACHE_TTL.DASHBOARD,
-  () => fetchData()
+const userData = await withStaleWhileRevalidate(
+  async () => {
+    return await prisma.user.findUnique({ where: { id } });
+  },
+  {
+    key: `user:${id}`,
+    ttl: SWRPresets.MEDIUM.ttl, // 5 minutes fresh
+    staleWhileRevalidate: SWRPresets.MEDIUM.staleWhileRevalidate, // 5 minutes stale
+    tags: ['user', `user:${id}`],
+  }
 );
 ```
 
-3. Add cache invalidation:
-```typescript
-// After mutations
-await invalidateCachePrefix(CACHE_PREFIX.DASHBOARD);
+### Behavior
+
+1. **Fresh data (within TTL)**: Return cached data immediately
+2. **Stale data (expired but within SWR window)**:
+   - Return stale data immediately (fast response)
+   - Fetch fresh data in background
+   - Update cache when fresh data arrives
+3. **Completely expired**: Fetch fresh data and wait
+
+### Benefits
+
+- **Instant responses**: Users always get immediate data
+- **Fresh data**: Background updates keep cache current
+- **Resilience**: Serves stale data if revalidation fails
+- **Performance**: Reduces perceived latency
+
+### Example Timeline
+
+```
+Time    | Action                    | Response Time
+--------|---------------------------|---------------
+0s      | First request             | 200ms (DB query)
+30s     | Second request (fresh)    | 1ms (cache hit)
+6min    | Third request (stale)     | 1ms (stale data)
+        | Background revalidation   | 200ms (async)
+7min    | Fourth request (fresh)    | 1ms (updated cache)
 ```
 
-## Resources
+## Requirements Validated
 
-- [Redis Documentation](https://redis.io/docs/)
-- [Upstash Redis](https://upstash.com/docs/redis)
-- [Next.js Caching](https://nextjs.org/docs/app/building-your-application/caching)
-
-## Support
-
-For issues or questions:
-- Check logs for Redis errors
-- Verify environment variables
-- Test Redis connection
-- Review cache configuration
+- ✅ **4.1**: Cache-first data fetching
+- ✅ **4.2**: Database results are cached
+- ✅ **4.3**: Stale-while-revalidate behavior
+- ✅ **4.4**: Cache invalidation on mutation
+- ✅ **4.5**: LRU cache eviction

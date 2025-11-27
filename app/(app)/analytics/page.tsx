@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * Analytics Page - Real-time data
+ * Requires dynamic rendering for analytics metrics
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';

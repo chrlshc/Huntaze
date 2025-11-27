@@ -1,4 +1,11 @@
 'use client';
+/**
+ * Requires user authentication or user-specific data
+ * Requires dynamic rendering
+ * Requirements: 2.1, 2.2
+ */
+export const dynamic = 'force-dynamic';
+
 
 /**
  * Huntaze Onboarding Page
