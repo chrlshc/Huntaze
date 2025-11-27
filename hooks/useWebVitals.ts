@@ -1,5 +1,5 @@
 /**
- * Web Vitals Hook
+ * Web Vitals Hook with CloudWatch Integration
  * 
  * Measures and reports Core Web Vitals:
  * - LCP (Largest Contentful Paint)
@@ -8,7 +8,11 @@
  * - FCP (First Contentful Paint)
  * - TTFB (Time to First Byte)
  * 
- * Requirements: 11.5, 12.1
+ * Automatically sends metrics to CloudWatch for monitoring and alerting
+ * 
+ * Requirements: 2.2, 9.1, 9.4
+ * Property 7: Web Vitals logging
+ * Property 9: Performance alerts
  */
 
 'use client';
@@ -32,11 +36,12 @@ export interface WebVitalsReport extends WebVitals {
 }
 
 /**
- * Hook to measure and report Web Vitals
+ * Hook to measure and report Web Vitals with CloudWatch integration
  */
 export function useWebVitals(options?: {
   onReport?: (report: WebVitalsReport) => void;
   reportToAnalytics?: boolean;
+  sendToCloudWatch?: boolean; // New option to send to CloudWatch
 }) {
   const [vitals, setVitals] = useState<WebVitals>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -72,6 +77,11 @@ export function useWebVitals(options?: {
       // Send to analytics if enabled
       if (options?.reportToAnalytics) {
         sendToAnalytics(name, value);
+      }
+      
+      // Send to CloudWatch if enabled (default: true)
+      if (options?.sendToCloudWatch !== false) {
+        sendToCloudWatch(name, value, report);
       }
     };
     
@@ -242,6 +252,106 @@ function sendToAnalytics(name: string, value: number) {
       // Silently fail - don't block user experience
     });
   }
+}
+
+/**
+ * Send Web Vitals to CloudWatch
+ * Property 7: Web Vitals logging - All Core Web Vitals should be logged
+ */
+function sendToCloudWatch(name: string, value: number, report: WebVitalsReport) {
+  // Only send in production or if explicitly enabled
+  if (process.env.NODE_ENV !== 'production' && !process.env.NEXT_PUBLIC_ENABLE_CLOUDWATCH) {
+    return;
+  }
+  
+  // Send to CloudWatch metrics API endpoint
+  fetch('/api/metrics', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      namespace: 'Huntaze/WebVitals',
+      metricName: name,
+      value,
+      unit: name === 'CLS' ? 'None' : 'Milliseconds',
+      dimensions: {
+        Page: new URL(report.url).pathname,
+        Connection: report.connection || 'unknown',
+        UserAgent: getUserAgentCategory(report.userAgent),
+      },
+      timestamp: new Date(report.timestamp).toISOString(),
+    }),
+  }).catch((error) => {
+    // Log error but don't block user experience
+    console.warn('Failed to send Web Vitals to CloudWatch:', error);
+  });
+  
+  // Check if metric exceeds threshold and needs alerting
+  checkThresholdAndAlert(name, value, report);
+}
+
+/**
+ * Check if metric exceeds threshold and trigger alert
+ * Property 9: Performance alerts - Alerts should be triggered when thresholds are exceeded
+ */
+function checkThresholdAndAlert(name: string, value: number, report: WebVitalsReport) {
+  const thresholds: Record<string, number> = {
+    LCP: 2500,  // Good: < 2.5s
+    FID: 100,   // Good: < 100ms
+    CLS: 0.1,   // Good: < 0.1
+    FCP: 1800,  // Good: < 1.8s
+    TTFB: 800,  // Good: < 800ms
+    INP: 200,   // Good: < 200ms
+  };
+  
+  const threshold = thresholds[name];
+  if (threshold && value > threshold) {
+    // Send alert to CloudWatch
+    fetch('/api/metrics/alert', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        metricName: name,
+        value,
+        threshold,
+        severity: getSeverity(name, value, threshold),
+        context: {
+          url: report.url,
+          userAgent: report.userAgent,
+          connection: report.connection,
+          timestamp: report.timestamp,
+        },
+      }),
+    }).catch(() => {
+      // Silently fail
+    });
+  }
+}
+
+/**
+ * Get severity level based on how much threshold is exceeded
+ */
+function getSeverity(name: string, value: number, threshold: number): 'warning' | 'critical' {
+  const ratio = value / threshold;
+  
+  // Critical if exceeds threshold by 50% or more
+  if (ratio >= 1.5) {
+    return 'critical';
+  }
+  
+  return 'warning';
+}
+
+/**
+ * Categorize user agent for better grouping in CloudWatch
+ */
+function getUserAgentCategory(userAgent: string): string {
+  if (/mobile/i.test(userAgent)) return 'Mobile';
+  if (/tablet/i.test(userAgent)) return 'Tablet';
+  return 'Desktop';
 }
 
 /**

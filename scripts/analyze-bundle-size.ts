@@ -1,186 +1,110 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env tsx
 /**
- * Bundle Size Analysis Script
+ * Bundle Size Analyzer
  * 
- * Identifies components that exceed the 50KB threshold and should be lazy loaded.
- * This script analyzes the codebase to find heavy components like charts, editors,
- * and 3D libraries.
- * 
- * Requirements: 7.1, 7.4
+ * Analyzes Next.js build output to ensure chunks don't exceed 200KB limit
+ * Validates: Requirements 6.1, 6.5
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import { readFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
 
-interface ComponentAnalysis {
+interface ChunkInfo {
+  name: string;
+  size: number;
+  sizeKB: number;
   path: string;
-  estimatedSizeKB: number;
-  imports: string[];
-  shouldLazyLoad: boolean;
-  reason: string;
+  exceedsLimit: boolean;
 }
 
-// Heavy libraries and their estimated sizes
-const HEAVY_LIBRARIES: Record<string, number> = {
-  '@react-three/fiber': 150,
-  '@react-three/drei': 200,
-  'three': 600,
-  'react-chartjs-2': 100,
-  'chart.js': 200,
-  '@tiptap/react': 80,
-  '@tiptap/starter-kit': 50,
-  'framer-motion': 100,
-};
+const MAX_CHUNK_SIZE_KB = 200;
+const BUILD_DIR = join(process.cwd(), '.next');
 
-const LAZY_LOAD_THRESHOLD = 50; // KB
+function formatBytes(bytes: number): string {
+  return `${(bytes / 1024).toFixed(2)} KB`;
+}
 
-function analyzeFile(filePath: string): ComponentAnalysis | null {
+function analyzeChunks(dir: string, prefix = ''): ChunkInfo[] {
+  const chunks: ChunkInfo[] = [];
+  
   try {
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const imports: string[] = [];
-    let estimatedSize = 0;
-
-    // Extract imports
-    const importRegex = /import\s+.*?from\s+['"]([^'"]+)['"]/g;
-    let match;
-    while ((match = importRegex.exec(content)) !== null) {
-      const importPath = match[1];
-      imports.push(importPath);
-
-      // Check if it's a heavy library
-      for (const [lib, size] of Object.entries(HEAVY_LIBRARIES)) {
-        if (importPath.includes(lib)) {
-          estimatedSize += size;
-        }
+    const files = readdirSync(dir);
+    
+    for (const file of files) {
+      const filePath = join(dir, file);
+      const stat = statSync(filePath);
+      
+      if (stat.isDirectory()) {
+        chunks.push(...analyzeChunks(filePath, `${prefix}${file}/`));
+      } else if (file.endsWith('.js')) {
+        const sizeKB = stat.size / 1024;
+        chunks.push({
+          name: `${prefix}${file}`,
+          size: stat.size,
+          sizeKB,
+          path: filePath,
+          exceedsLimit: sizeKB > MAX_CHUNK_SIZE_KB,
+        });
       }
     }
-
-    // Add base component size estimate
-    const lines = content.split('\n').length;
-    estimatedSize += Math.ceil(lines / 10); // Rough estimate: 10 lines = 1KB
-
-    const shouldLazyLoad = estimatedSize > LAZY_LOAD_THRESHOLD;
-    const reason = shouldLazyLoad
-      ? `Estimated size: ${estimatedSize}KB (threshold: ${LAZY_LOAD_THRESHOLD}KB)`
-      : 'Below threshold';
-
-    return {
-      path: filePath,
-      estimatedSizeKB: estimatedSize,
-      imports,
-      shouldLazyLoad,
-      reason,
-    };
   } catch (error) {
-    console.error(`Error analyzing ${filePath}:`, error);
-    return null;
+    // Directory might not exist yet
   }
-}
-
-function findComponentFiles(dir: string, files: string[] = []): string[] {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    // Skip node_modules, .next, and other build directories
-    if (
-      entry.name === 'node_modules' ||
-      entry.name === '.next' ||
-      entry.name === 'dist' ||
-      entry.name === 'build' ||
-      entry.name.startsWith('.')
-    ) {
-      continue;
-    }
-
-    if (entry.isDirectory()) {
-      findComponentFiles(fullPath, files);
-    } else if (
-      entry.isFile() &&
-      (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts')) &&
-      !entry.name.endsWith('.test.tsx') &&
-      !entry.name.endsWith('.test.ts')
-    ) {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
+  
+  return chunks;
 }
 
 function main() {
-  console.log('🔍 Analyzing bundle sizes...\n');
-
-  const componentsDir = path.join(process.cwd(), 'components');
-  const appDir = path.join(process.cwd(), 'app');
-
-  const componentFiles = [
-    ...findComponentFiles(componentsDir),
-    ...findComponentFiles(appDir),
-  ];
-
-  const analyses: ComponentAnalysis[] = [];
-
-  for (const file of componentFiles) {
-    const analysis = analyzeFile(file);
-    if (analysis) {
-      analyses.push(analysis);
-    }
+  console.log('🔍 Analyzing Next.js bundle sizes...\n');
+  
+  // Analyze static chunks
+  const staticChunks = analyzeChunks(join(BUILD_DIR, 'static', 'chunks'));
+  
+  if (staticChunks.length === 0) {
+    console.log('⚠️  No build output found. Run `npm run build` first.');
+    process.exit(1);
   }
-
+  
   // Sort by size descending
-  analyses.sort((a, b) => b.estimatedSizeKB - a.estimatedSizeKB);
-
-  // Filter components that should be lazy loaded
-  const heavyComponents = analyses.filter(a => a.shouldLazyLoad);
-
-  console.log('📊 Heavy Components (>50KB) that should be lazy loaded:\n');
+  staticChunks.sort((a, b) => b.size - a.size);
+  
+  // Find chunks exceeding limit
+  const oversizedChunks = staticChunks.filter(c => c.exceedsLimit);
+  
+  console.log(`📦 Total chunks analyzed: ${staticChunks.length}`);
+  console.log(`📏 Maximum chunk size limit: ${MAX_CHUNK_SIZE_KB} KB\n`);
+  
+  // Show top 10 largest chunks
+  console.log('🔝 Top 10 largest chunks:');
   console.log('─'.repeat(80));
-
-  for (const component of heavyComponents) {
-    const relativePath = path.relative(process.cwd(), component.path);
-    console.log(`\n📦 ${relativePath}`);
-    console.log(`   Size: ${component.estimatedSizeKB}KB`);
-    console.log(`   Reason: ${component.reason}`);
+  staticChunks.slice(0, 10).forEach((chunk, i) => {
+    const status = chunk.exceedsLimit ? '❌' : '✅';
+    console.log(`${i + 1}. ${status} ${chunk.name}`);
+    console.log(`   Size: ${formatBytes(chunk.size)}`);
+  });
+  console.log();
+  
+  // Report oversized chunks
+  if (oversizedChunks.length > 0) {
+    console.log(`❌ ${oversizedChunks.length} chunk(s) exceed the ${MAX_CHUNK_SIZE_KB}KB limit:\n`);
+    oversizedChunks.forEach(chunk => {
+      console.log(`  • ${chunk.name}: ${formatBytes(chunk.size)}`);
+    });
+    console.log('\n💡 Suggestions:');
+    console.log('  - Use dynamic imports for large components');
+    console.log('  - Split large libraries into separate chunks');
+    console.log('  - Review and remove unused dependencies');
+    console.log('  - Consider lazy loading heavy features\n');
     
-    const heavyImports = component.imports.filter(imp =>
-      Object.keys(HEAVY_LIBRARIES).some(lib => imp.includes(lib))
-    );
+    process.exit(1);
+  } else {
+    console.log('✅ All chunks are within the size limit!\n');
     
-    if (heavyImports.length > 0) {
-      console.log(`   Heavy imports: ${heavyImports.join(', ')}`);
-    }
+    // Calculate total bundle size
+    const totalSize = staticChunks.reduce((sum, chunk) => sum + chunk.size, 0);
+    console.log(`📊 Total bundle size: ${formatBytes(totalSize)}`);
+    console.log(`📊 Average chunk size: ${formatBytes(totalSize / staticChunks.length)}\n`);
   }
-
-  console.log('\n' + '─'.repeat(80));
-  console.log(`\n✅ Found ${heavyComponents.length} components that should be lazy loaded`);
-  console.log(`📈 Total estimated size: ${heavyComponents.reduce((sum, c) => sum + c.estimatedSizeKB, 0)}KB`);
-
-  // Generate report file
-  const report = {
-    timestamp: new Date().toISOString(),
-    threshold: LAZY_LOAD_THRESHOLD,
-    totalComponents: analyses.length,
-    heavyComponents: heavyComponents.length,
-    components: heavyComponents.map(c => ({
-      path: path.relative(process.cwd(), c.path),
-      sizeKB: c.estimatedSizeKB,
-      imports: c.imports.filter(imp =>
-        Object.keys(HEAVY_LIBRARIES).some(lib => imp.includes(lib))
-      ),
-    })),
-  };
-
-  const reportPath = path.join(process.cwd(), '.kiro/reports/bundle-analysis.json');
-  fs.mkdirSync(path.dirname(reportPath), { recursive: true });
-  fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-
-  console.log(`\n📄 Report saved to: ${reportPath}`);
 }
 
-if (require.main === module) {
-  main();
-}
-
-export { analyzeFile, findComponentFiles, HEAVY_LIBRARIES, LAZY_LOAD_THRESHOLD };
+main();

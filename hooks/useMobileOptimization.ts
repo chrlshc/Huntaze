@@ -1,211 +1,151 @@
 /**
- * Mobile Optimization Hook
+ * React Hook for Mobile Performance Optimization
  * 
- * Provides utilities for mobile-specific optimizations:
- * - Input field scrolling on focus
- * - Touch target validation
- * - Double-submission prevention
- * - Mobile keyboard handling
- * 
- * Requirements: 10.1, 10.2, 10.5
+ * Provides mobile-specific optimizations including:
+ * - Connection quality detection
+ * - Adaptive image loading
+ * - Layout shift monitoring
+ * - Touch responsiveness tracking
  */
 
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { getMobileOptimizer, ConnectionQuality, ImageQualitySettings } from '@/lib/mobile/mobile-optimizer';
 
-interface MobileOptimizationOptions {
-  /**
-   * Enable automatic scroll-into-view on input focus
-   */
-  enableScrollOnFocus?: boolean;
-  /**
-   * Offset from top when scrolling (to account for fixed headers)
-   */
-  scrollOffset?: number;
-  /**
-   * Enable double-submission prevention
-   */
-  preventDoubleSubmit?: boolean;
+export interface UseMobileOptimizationOptions {
+  enableAdaptiveLoading?: boolean;
+  enableAboveFoldPriority?: boolean;
+  touchResponseThreshold?: number;
+  clsThreshold?: number;
 }
 
-interface MobileOptimizationReturn {
-  /**
-   * Whether the device is mobile
-   */
-  isMobile: boolean;
-  /**
-   * Whether a form is currently submitting
-   */
-  isSubmitting: boolean;
-  /**
-   * Start submission (prevents double-submit)
-   */
-  startSubmit: () => void;
-  /**
-   * End submission (re-enables submit)
-   */
-  endSubmit: () => void;
-  /**
-   * Ref to attach to form container
-   */
-  formRef: React.RefObject<HTMLFormElement>;
+export interface MobileOptimizationState {
+  connectionQuality: ConnectionQuality | null;
+  imageSettings: ImageQualitySettings | null;
+  cls: number;
+  clsAcceptable: boolean;
+  avgTouchResponseTime: number;
+  touchResponsive: boolean;
+  shouldDeferContent: boolean;
+  recommendations: string[];
 }
 
-/**
- * Hook for mobile-specific optimizations
- * 
- * @example
- * ```tsx
- * const { isMobile, isSubmitting, startSubmit, endSubmit, formRef } = useMobileOptimization({
- *   enableScrollOnFocus: true,
- *   preventDoubleSubmit: true,
- * });
- * 
- * const handleSubmit = async (e) => {
- *   e.preventDefault();
- *   if (isSubmitting) return;
- *   
- *   startSubmit();
- *   try {
- *     await submitForm();
- *   } finally {
- *     endSubmit();
- *   }
- * };
- * 
- * return <form ref={formRef} onSubmit={handleSubmit}>...</form>;
- * ```
- */
-export function useMobileOptimization(
-  options: MobileOptimizationOptions = {}
-): MobileOptimizationReturn {
-  const {
-    enableScrollOnFocus = true,
-    scrollOffset = 100,
-    preventDoubleSubmit = true,
-  } = options;
+export function useMobileOptimization(options: UseMobileOptimizationOptions = {}) {
+  const [state, setState] = useState<MobileOptimizationState>({
+    connectionQuality: null,
+    imageSettings: null,
+    cls: 0,
+    clsAcceptable: true,
+    avgTouchResponseTime: 0,
+    touchResponsive: true,
+    shouldDeferContent: false,
+    recommendations: [],
+  });
 
-  const formRef = useRef<HTMLFormElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const optimizer = useRef(getMobileOptimizer(options));
+  const touchStartTime = useRef<number>(0);
 
-  // Detect mobile device
-  useEffect(() => {
-    const checkMobile = () => {
-      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      ) || window.innerWidth < 768;
-      setIsMobile(mobile);
-    };
+  // Update state from optimizer
+  const updateState = useCallback(() => {
+    const report = optimizer.current.getReport();
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    setState({
+      connectionQuality: report.connectionQuality,
+      imageSettings: report.imageSettings,
+      cls: report.cls,
+      clsAcceptable: report.clsAcceptable,
+      avgTouchResponseTime: report.avgTouchResponseTime,
+      touchResponsive: report.touchResponsive,
+      shouldDeferContent: optimizer.current.shouldDeferNonEssentialContent(),
+      recommendations: report.recommendations,
+    });
   }, []);
 
-  // Handle input focus scrolling on mobile
+  // Initialize and detect connection
   useEffect(() => {
-    if (!enableScrollOnFocus || !isMobile || !formRef.current) return;
+    optimizer.current.detectConnectionQuality();
+    updateState();
 
-    const handleFocus = (e: FocusEvent) => {
-      const target = e.target as HTMLElement;
-      
-      // Only handle input elements
-      if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT'
-      ) {
-        // Wait for mobile keyboard to appear
-        setTimeout(() => {
-          const rect = target.getBoundingClientRect();
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const targetTop = rect.top + scrollTop - scrollOffset;
-
-          // Smooth scroll to position
-          window.scrollTo({
-            top: targetTop,
-            behavior: 'smooth',
-          });
-        }, 300); // Delay to account for keyboard animation
-      }
+    // Update on connection change
+    const handleConnectionChange = () => {
+      optimizer.current.detectConnectionQuality();
+      updateState();
     };
 
-    const form = formRef.current;
-    form.addEventListener('focusin', handleFocus);
+    if (typeof window !== 'undefined' && 'connection' in navigator) {
+      const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+      connection?.addEventListener('change', handleConnectionChange);
 
-    return () => {
-      form.removeEventListener('focusin', handleFocus);
+      return () => {
+        connection?.removeEventListener('change', handleConnectionChange);
+      };
+    }
+  }, [updateState]);
+
+  // Update state periodically
+  useEffect(() => {
+    const interval = setInterval(updateState, 5000);
+    return () => clearInterval(interval);
+  }, [updateState]);
+
+  // Track touch interactions
+  const handleTouchStart = useCallback((target: string) => {
+    touchStartTime.current = performance.now();
+  }, []);
+
+  const handleTouchEnd = useCallback((target: string, type: 'tap' | 'swipe' | 'scroll' = 'tap') => {
+    if (touchStartTime.current > 0) {
+      optimizer.current.trackTouchInteraction(type, target, touchStartTime.current);
+      touchStartTime.current = 0;
+      updateState();
+    }
+  }, [updateState]);
+
+  // Check if element is above fold
+  const isAboveFold = useCallback((element: HTMLElement): boolean => {
+    return optimizer.current.isAboveFold(element);
+  }, []);
+
+  // Prioritize content
+  const prioritizeContent = useCallback((elements: HTMLElement[]) => {
+    return optimizer.current.prioritizeAboveFoldContent(elements);
+  }, []);
+
+  // Get optimal image props
+  const getImageProps = useCallback((src: string, alt: string) => {
+    const settings = state.imageSettings || optimizer.current.getImageQualitySettings();
+
+    return {
+      src,
+      alt,
+      loading: settings.lazy ? ('lazy' as const) : ('eager' as const),
+      style: {
+        maxWidth: `${settings.maxWidth}px`,
+        height: 'auto',
+      },
+      // Add quality hint for Next.js Image component
+      quality: settings.quality,
     };
-  }, [enableScrollOnFocus, isMobile, scrollOffset]);
-
-  // Double-submission prevention
-  const startSubmit = useCallback(() => {
-    if (preventDoubleSubmit) {
-      setIsSubmitting(true);
-    }
-  }, [preventDoubleSubmit]);
-
-  const endSubmit = useCallback(() => {
-    if (preventDoubleSubmit) {
-      setIsSubmitting(false);
-    }
-  }, [preventDoubleSubmit]);
+  }, [state.imageSettings]);
 
   return {
-    isMobile,
-    isSubmitting,
-    startSubmit,
-    endSubmit,
-    formRef,
+    // State
+    connectionQuality: state.connectionQuality,
+    imageSettings: state.imageSettings,
+    cls: state.cls,
+    clsAcceptable: state.clsAcceptable,
+    avgTouchResponseTime: state.avgTouchResponseTime,
+    touchResponsive: state.touchResponsive,
+    shouldDeferContent: state.shouldDeferContent,
+    recommendations: state.recommendations,
+
+    // Methods
+    handleTouchStart,
+    handleTouchEnd,
+    isAboveFold,
+    prioritizeContent,
+    getImageProps,
+    updateState,
   };
-}
-
-/**
- * Validates that an element meets minimum touch target size
- * 
- * @param element - The element to validate
- * @returns Whether the element meets the 44px × 44px minimum
- */
-export function validateTouchTarget(element: HTMLElement): boolean {
-  const rect = element.getBoundingClientRect();
-  const MIN_SIZE = 44;
-  
-  return rect.width >= MIN_SIZE && rect.height >= MIN_SIZE;
-}
-
-/**
- * Gets the appropriate input type and inputmode for mobile keyboards
- * 
- * @param fieldType - The type of field (email, tel, number, etc.)
- * @returns Object with type and inputMode attributes
- */
-export function getMobileInputAttributes(fieldType: 'email' | 'tel' | 'number' | 'text' | 'url') {
-  const attributes: {
-    type: string;
-    inputMode?: 'email' | 'tel' | 'numeric' | 'url' | 'text';
-  } = {
-    type: fieldType,
-  };
-
-  // Set appropriate inputMode for better mobile keyboard
-  switch (fieldType) {
-    case 'email':
-      attributes.inputMode = 'email';
-      break;
-    case 'tel':
-      attributes.inputMode = 'tel';
-      break;
-    case 'number':
-      attributes.inputMode = 'numeric';
-      break;
-    case 'url':
-      attributes.inputMode = 'url';
-      break;
-    default:
-      attributes.inputMode = 'text';
-  }
-
-  return attributes;
 }
