@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Web Vitals Hook with CloudWatch Integration
  * 

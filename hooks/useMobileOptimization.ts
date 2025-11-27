@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * React Hook for Mobile Performance Optimization
  * 

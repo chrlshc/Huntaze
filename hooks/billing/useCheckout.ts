@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Billing Checkout Hook - Optimized
  * 

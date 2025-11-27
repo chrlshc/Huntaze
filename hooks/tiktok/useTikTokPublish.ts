@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * TikTok Publish Hook
  * Phase 3: Client-side publishing with debouncing

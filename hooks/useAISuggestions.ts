@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Hook personnalisé pour les suggestions AI
  */

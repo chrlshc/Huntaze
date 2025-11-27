@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * React hook for request optimization
  * Provides deduplication, batching, debouncing, and retry capabilities

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Enhanced Cache Hook
  * React hook with stale-while-revalidate, offline support, and tag-based invalidation

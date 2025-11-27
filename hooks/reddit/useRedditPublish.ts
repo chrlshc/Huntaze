@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Reddit Publish Hook - Debounced Mutations
  * Phase 3: Optimized mutations with debouncing

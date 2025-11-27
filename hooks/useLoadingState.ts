@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Loading State Hook
  * 

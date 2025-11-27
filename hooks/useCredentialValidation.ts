@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Credential Validation Hook
  * 
