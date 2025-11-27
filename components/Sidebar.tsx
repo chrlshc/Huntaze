@@ -4,36 +4,64 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DuotoneIcon } from './dashboard/DuotoneIcon';
 
+interface SubNavItem {
+  name: string;
+  href: string;
+}
+
+interface NavItem {
+  name: string;
+  href: string;
+  icon: string;
+  subItems?: SubNavItem[];
+}
+
+// 5-section navigation structure
 const navigation = [
   {
     name: 'Home',
-    href: '/dashboard',
+    href: '/home',
     icon: 'home',
+  },
+  {
+    name: 'OnlyFans',
+    href: '/onlyfans',
+    icon: 'onlyfans',
+    subItems: [
+      { name: 'Overview', href: '/onlyfans' },
+      { name: 'Messages', href: '/onlyfans/messages' },
+      { name: 'Fans', href: '/onlyfans/fans' },
+      { name: 'PPV', href: '/onlyfans/ppv' },
+      { name: 'Settings', href: '/onlyfans/settings' },
+    ],
   },
   {
     name: 'Analytics',
     href: '/analytics',
     icon: 'analytics',
+    subItems: [
+      { name: 'Overview', href: '/analytics' },
+      { name: 'Pricing', href: '/analytics/pricing' },
+      { name: 'Churn', href: '/analytics/churn' },
+      { name: 'Upsells', href: '/analytics/upsells' },
+      { name: 'Forecast', href: '/analytics/forecast' },
+      { name: 'Payouts', href: '/analytics/payouts' },
+    ],
+  },
+  {
+    name: 'Marketing',
+    href: '/marketing',
+    icon: 'marketing',
+    subItems: [
+      { name: 'Campaigns', href: '/marketing/campaigns' },
+      { name: 'Social', href: '/marketing/social' },
+      { name: 'Calendar', href: '/marketing/calendar' },
+    ],
   },
   {
     name: 'Content',
     href: '/content',
     icon: 'content',
-  },
-  {
-    name: 'Messages',
-    href: '/messages',
-    icon: 'messages',
-  },
-  {
-    name: 'Integrations',
-    href: '/integrations',
-    icon: 'integrations',
-  },
-  {
-    name: 'Settings',
-    href: '/settings',
-    icon: 'settings',
   },
 ];
 
@@ -49,6 +77,9 @@ export function Sidebar() {
         <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const showSubNav = hasSubItems && isActive;
+
             return (
               <li key={item.name}>
                 <Link
@@ -83,6 +114,55 @@ export function Sidebar() {
                   />
                   {item.name}
                 </Link>
+
+                {/* Sub-navigation */}
+                {showSubNav && (
+                  <ul style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '2px',
+                    marginTop: '4px',
+                    marginLeft: '32px',
+                    marginRight: '12px',
+                  }}>
+                    {item.subItems.map((subItem) => {
+                      const isSubActive = pathname === subItem.href;
+                      return (
+                        <li key={subItem.href}>
+                          <Link
+                            href={subItem.href}
+                            className="nav-sub-item"
+                            data-active={isSubActive}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '8px 16px',
+                              color: isSubActive ? 'var(--nav-text)' : 'var(--nav-text-muted)',
+                              backgroundColor: isSubActive ? 'var(--nav-active-bg-subtle)' : 'transparent',
+                              textDecoration: 'none',
+                              transition: 'all 0.15s ease',
+                              borderRadius: '6px',
+                              fontSize: '13px',
+                              fontWeight: isSubActive ? '500' : '400',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isSubActive) {
+                                e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isSubActive) {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                              }
+                            }}
+                          >
+                            {subItem.name}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </li>
             );
           })}

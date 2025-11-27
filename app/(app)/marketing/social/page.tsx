@@ -1,179 +1,237 @@
 'use client';
+/**
+ * Social Media Management Page
+ * Combines integrations management with social media marketing
+ * Requirements: 4.3
+ */
+export const dynamic = 'force-dynamic';
 
+import { lazy, Suspense } from 'react';
+import { useIntegrations } from '@/hooks/useIntegrations';
+import { IntegrationCard } from '@/components/integrations/IntegrationCard';
+import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
+import { ToastProvider } from '@/components/ui/toast';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Loader2, AlertCircle, TrendingUp, Users, MessageSquare, Calendar } from 'lucide-react';
 import Link from 'next/link';
-import { Instagram, Music, MessageCircle, Share2, CheckCircle, XCircle } from 'lucide-react';
 
-export default function SocialMediaPage() {
-  const platforms = [
-    {
-      id: 'instagram',
-      name: 'Instagram',
-      icon: Instagram,
-      connected: true,
-      stats: { followers: 12500, posts: 234, engagement: 4.2 },
-      color: 'pink',
-    },
-    {
-      id: 'tiktok',
-      name: 'TikTok',
-      icon: Music,
-      connected: true,
-      stats: { followers: 45000, posts: 156, engagement: 8.5 },
-      color: 'purple',
-    },
-    {
-      id: 'reddit',
-      name: 'Reddit',
-      icon: MessageCircle,
-      connected: false,
-      stats: null,
-      color: 'orange',
-    },
-    {
-      id: 'threads',
-      name: 'Threads',
-      icon: Share2,
-      connected: false,
-      stats: null,
-      color: 'gray',
-    },
-  ];
+const SOCIAL_PROVIDERS = ['instagram', 'tiktok', 'reddit', 'onlyfans'] as const;
 
-  const getColorClasses = (color: string, connected: boolean) => {
-    if (!connected) return 'bg-gray-100 dark:bg-gray-700';
-    
-    switch (color) {
-      case 'pink': return 'bg-pink-100 dark:bg-pink-900/30';
-      case 'purple': return 'bg-purple-100 dark:bg-purple-900/30';
-      case 'orange': return 'bg-orange-100 dark:bg-orange-900/30';
-      default: return 'bg-gray-100 dark:bg-gray-700';
-    }
-  };
+function SocialMediaContent() {
+  const { integrations, loading, error, connect, disconnect, reconnect } = useIntegrations();
 
-  const getIconColor = (color: string, connected: boolean) => {
-    if (!connected) return 'text-gray-400';
-    
-    switch (color) {
-      case 'pink': return 'text-pink-600 dark:text-pink-400';
-      case 'purple': return 'text-purple-600 dark:text-purple-400';
-      case 'orange': return 'text-orange-600 dark:text-orange-400';
-      default: return 'text-gray-600 dark:text-gray-400';
-    }
-  };
+  // Calculate social media stats
+  const connectedPlatforms = integrations.length;
+  const totalFollowers = integrations.reduce((sum, int) => {
+    return sum + (int.metadata?.followers || 0);
+  }, 0);
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+          <div className="grid grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <div>
+              <h3 className="text-red-800 dark:text-red-200 font-semibold">Error Loading Social Media</h3>
+              <p className="text-red-600 dark:text-red-300 text-sm">{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
-          <Link href="/marketing" className="hover:text-gray-900 dark:hover:text-white">Marketing</Link>
-          <span>/</span>
-          <span className="text-gray-900 dark:text-white">Social Media</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Social Media Hub</h1>
-        <p className="text-gray-600 dark:text-gray-400">Connect and manage your social media accounts</p>
-      </div>
-
-      {/* Platforms Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {platforms.map((platform) => {
-          const Icon = platform.icon;
-          return (
-            <div
-              key={platform.id}
-              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-lg ${getColorClasses(platform.color, platform.connected)}`}>
-                    <Icon className={`w-6 h-6 ${getIconColor(platform.color, platform.connected)}`} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{platform.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {platform.connected ? (
-                        <>
-                          <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
-                          <span className="text-sm text-green-600 dark:text-green-400">Connected</span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-500 dark:text-gray-400">Not connected</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                {platform.connected ? (
-                  <button className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    Disconnect
-                  </button>
-                ) : (
-                  <button className="px-3 py-1 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900">
-                    Connect
-                  </button>
-                )}
-              </div>
-
-              {platform.stats ? (
-                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Followers</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {platform.stats.followers.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Posts</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {platform.stats.posts}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Engagement</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {platform.stats.engagement}%
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Connect your {platform.name} account to see analytics
-                  </p>
-                </div>
-              )}
+    <ProtectedRoute requireOnboarding={false}>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Social Media</h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage your social media accounts and track engagement across platforms
+              </p>
             </div>
-          );
-        })}
-      </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/marketing"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Back to Marketing
+              </Link>
+              <Link
+                href="/marketing/calendar"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900"
+              >
+                <Calendar className="w-5 h-5" />
+                Content Calendar
+              </Link>
+            </div>
+          </div>
+        </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-left">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Schedule Post</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Plan content across platforms</p>
-          </button>
-          <button className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-left">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">View Analytics</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Track performance metrics</p>
-          </button>
-          <button className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-left">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Content Calendar</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Manage posting schedule</p>
-          </button>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Connected Platforms</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{connectedPlatforms}</p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Followers</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {totalFollowers.toLocaleString()}
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <MessageSquare className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Posts This Week</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Engagement Rate</p>
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">4.2%</p>
+          </div>
+        </div>
+
+        {/* Connected Platforms Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connected Platforms</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {SOCIAL_PROVIDERS.map((provider) => {
+              const connectedAccounts = integrations.filter(
+                (integration) => integration.provider === provider
+              );
+
+              if (connectedAccounts.length === 0) {
+                return (
+                  <IntegrationCard
+                    key={provider}
+                    provider={provider}
+                    isConnected={false}
+                    onConnect={() => connect(provider)}
+                    onDisconnect={() => {}}
+                    onReconnect={() => {}}
+                  />
+                );
+              }
+
+              return connectedAccounts.map((account) => (
+                <IntegrationCard
+                  key={`${provider}-${account.providerAccountId}`}
+                  provider={provider}
+                  isConnected={true}
+                  account={{
+                    providerAccountId: account.providerAccountId,
+                    metadata: account.metadata,
+                    expiresAt: account.expiresAt,
+                    createdAt: account.createdAt,
+                  }}
+                  onConnect={() => connect(provider)}
+                  onDisconnect={() => disconnect(provider, account.providerAccountId)}
+                  onReconnect={() => reconnect(provider, account.providerAccountId)}
+                  showAddAnother={true}
+                />
+              ));
+            })}
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
+              href="/content"
+              className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            >
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Create Post</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Schedule content across platforms</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/marketing/calendar"
+              className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            >
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">View Calendar</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">See your content schedule</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/analytics"
+              className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            >
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">View Analytics</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Track performance metrics</p>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
+    </ProtectedRoute>
+  );
+}
 
-      {/* Info Banner */}
-      <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <h3 className="text-blue-800 dark:text-blue-200 font-semibold mb-2">🚀 Coming Soon</h3>
-        <p className="text-blue-600 dark:text-blue-300 text-sm">
-          Full social media management features including post scheduling, analytics dashboards, and cross-platform publishing are coming soon!
-        </p>
-      </div>
-    </div>
+export default function SocialMediaPage() {
+  return (
+    <ToastProvider>
+      <ContentPageErrorBoundary pageName="Social Media">
+        <SocialMediaContent />
+      </ContentPageErrorBoundary>
+    </ToastProvider>
   );
 }
