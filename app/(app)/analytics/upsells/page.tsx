@@ -7,6 +7,10 @@ import { UpsellOpportunity } from '@/components/revenue/upsell/UpsellOpportunity
 import { UpsellAutomationSettings } from '@/components/revenue/upsell/UpsellAutomationSettings';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
+import { SubNavigation } from '@/components/dashboard/SubNavigation';
+import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
+import { useNavigationContext } from '@/hooks/useNavigationContext';
+import { getAnalyticsSubNav } from '../analytics-nav';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -16,6 +20,9 @@ export default function UpsellsPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [showSettings, setShowSettings] = useState(false);
+  
+  // Navigation context
+  const { breadcrumbs, subNavItems } = useNavigationContext();
 
   const creatorId = 'creator_123';
 
@@ -63,25 +70,26 @@ export default function UpsellsPage() {
   return (
     <ErrorBoundary>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
-            <Link href="/analytics" className="hover:text-gray-900 dark:hover:text-white">Analytics</Link>
-            <span>/</span>
-            <span className="text-gray-900 dark:text-white">Upsells</span>
-          </div>
+        <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Upsell Opportunities</h1>
-              <p className="text-gray-600 dark:text-gray-400">AI-powered upsell suggestions to increase revenue</p>
+              <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Upsell Opportunities</h1>
+              <p className="text-[var(--color-text-sub)]">AI-powered upsell suggestions to increase revenue</p>
             </div>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900"
+              className="px-4 py-2 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               {showSettings ? 'Hide' : 'Show'} Settings
             </button>
           </div>
         </div>
+
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={breadcrumbs} />
+
+        {/* Sub-Navigation */}
+        {subNavItems && <SubNavigation items={subNavItems} />}
 
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

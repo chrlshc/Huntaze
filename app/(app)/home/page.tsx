@@ -2,6 +2,7 @@
  * Home Page - Real-time data
  * Requires dynamic rendering for user-specific stats
  * Requirements: 2.1, 2.2
+ * Phase 2: Enhanced with modern design and comprehensive stats
  */
 export const dynamic = 'force-dynamic';
 
@@ -10,31 +11,81 @@ import { StatCard } from './StatCard';
 import { StatsGridSkeleton } from './StatsGridSkeleton';
 import { PlatformStatus } from './PlatformStatus';
 import { QuickActions } from './QuickActions';
+import { RecentActivity } from './RecentActivity';
+import { DollarSign, Users, MessageSquare, FileText, Sparkles } from 'lucide-react';
 import './home.css';
 
 interface HomeStats {
-  messagesSent: number;
-  messagesTrend: number;
-  responseRate: number;
-  responseRateTrend: number;
-  revenue: number;
-  revenueTrend: number;
-  activeChats: number;
-  activeChatsTrend: number;
+  revenue: {
+    today: number;
+    week: number;
+    month: number;
+    trend: number;
+  };
+  fans: {
+    total: number;
+    active: number;
+    newToday: number;
+    trend: number;
+  };
+  messages: {
+    received: number;
+    sent: number;
+    responseRate: number;
+    avgResponseTime: number;
+  };
+  content: {
+    postsThisWeek: number;
+    totalViews: number;
+    engagementRate: number;
+  };
+  ai: {
+    messagesUsed: number;
+    quotaRemaining: number;
+    quotaTotal: number;
+  };
+  // Legacy fields for backward compatibility
+  messagesSent?: number;
+  messagesTrend?: number;
+  responseRate?: number;
+  responseRateTrend?: number;
+  revenueTrend?: number;
+  activeChats?: number;
+  activeChatsTrend?: number;
 }
 
 /**
  * Default stats for error fallback
  */
 const DEFAULT_STATS: HomeStats = {
-  messagesSent: 0,
-  messagesTrend: 0,
-  responseRate: 0,
-  responseRateTrend: 0,
-  revenue: 0,
-  revenueTrend: 0,
-  activeChats: 0,
-  activeChatsTrend: 0
+  revenue: {
+    today: 0,
+    week: 0,
+    month: 0,
+    trend: 0,
+  },
+  fans: {
+    total: 0,
+    active: 0,
+    newToday: 0,
+    trend: 0,
+  },
+  messages: {
+    received: 0,
+    sent: 0,
+    responseRate: 0,
+    avgResponseTime: 0,
+  },
+  content: {
+    postsThisWeek: 0,
+    totalViews: 0,
+    engagementRate: 0,
+  },
+  ai: {
+    messagesUsed: 0,
+    quotaRemaining: 1000,
+    quotaTotal: 1000,
+  },
 };
 
 /**
@@ -102,29 +153,58 @@ async function StatsGrid() {
 
   return (
     <div className="stats-grid">
+      {/* Revenue Card */}
       <StatCard
-        label="Messages Sent"
-        value={stats.messagesSent.toLocaleString()}
-        trend={stats.messagesTrend}
-        description="Last 7 days"
+        label="Monthly Revenue"
+        value={stats.revenue.month}
+        trend={stats.revenue.trend}
+        description={`$${stats.revenue.today.toLocaleString()} today • $${stats.revenue.week.toLocaleString()} this week`}
+        icon={DollarSign}
+        color="green"
+        type="currency"
       />
+      
+      {/* Fans Card */}
+      <StatCard
+        label="Total Fans"
+        value={stats.fans.total}
+        trend={stats.fans.trend}
+        description={`${stats.fans.active} active • ${stats.fans.newToday} new today`}
+        icon={Users}
+        color="blue"
+        type="number"
+      />
+      
+      {/* Messages Card */}
       <StatCard
         label="Response Rate"
-        value={`${stats.responseRate}%`}
-        trend={stats.responseRateTrend}
-        description="AI-powered replies"
+        value={stats.messages.responseRate}
+        trend={stats.messages.responseRate > 90 ? 5 : -2}
+        description={`${stats.messages.sent} sent • ${stats.messages.received} received`}
+        icon={MessageSquare}
+        color="purple"
+        type="percentage"
       />
+      
+      {/* Content Card */}
       <StatCard
-        label="Revenue"
-        value={`$${stats.revenue.toLocaleString()}`}
-        trend={stats.revenueTrend}
-        description="This month"
+        label="Content Performance"
+        value={stats.content.engagementRate}
+        trend={stats.content.engagementRate > 80 ? 8 : -3}
+        description={`${stats.content.postsThisWeek} posts • ${stats.content.totalViews.toLocaleString()} views`}
+        icon={FileText}
+        color="orange"
+        type="percentage"
       />
+      
+      {/* AI Usage Card */}
       <StatCard
-        label="Active Chats"
-        value={stats.activeChats.toLocaleString()}
-        trend={stats.activeChatsTrend}
-        description="Ongoing conversations"
+        label="AI Messages"
+        value={`${stats.ai.messagesUsed}/${stats.ai.quotaTotal}`}
+        description={`${stats.ai.quotaRemaining} remaining this month`}
+        icon={Sparkles}
+        color="purple"
+        type="number"
       />
     </div>
   );
@@ -144,11 +224,21 @@ export default function HomePage() {
         <StatsGrid />
       </Suspense>
 
-      {/* Platform Status - Requirements: 8.2, 8.3, 8.4 */}
-      <PlatformStatus />
-
-      {/* Quick Actions - Requirements: 9.1, 9.2, 9.3, 9.4 */}
-      <QuickActions />
+      {/* Two Column Layout for Quick Actions & Recent Activity */}
+      <div className="home-two-column">
+        <div className="home-left-column">
+          {/* Quick Actions - Requirements: 9.1, 9.2, 9.3, 9.4 */}
+          <QuickActions />
+          
+          {/* Recent Activity - Requirements: 1.5 */}
+          <RecentActivity />
+        </div>
+        
+        <div className="home-right-column">
+          {/* Platform Status - Requirements: 8.2, 8.3, 8.4 */}
+          <PlatformStatus />
+        </div>
+      </div>
     </div>
   );
 }
