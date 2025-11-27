@@ -180,6 +180,51 @@ const nextConfig: NextConfig = {
         tls: false,
       };
     }
+
+    // Bundle size optimization - Requirement 6.1: Enforce 200KB chunk limit
+    if (!isServer && config.optimization) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          // Framework chunk (React, Next.js core)
+          framework: {
+            name: 'framework',
+            test: /[\\/]node_modules[\\/](react|react-dom|scheduler|next)[\\/]/,
+            priority: 40,
+            enforce: true,
+          },
+          // Large libraries get their own chunks
+          lib: {
+            test: /[\\/]node_modules[\\/]/,
+            name(module: any) {
+              const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)?.[1];
+              return `npm.${packageName?.replace('@', '')}`;
+            },
+            priority: 30,
+            minChunks: 1,
+            reuseExistingChunk: true,
+          },
+          // Common code shared across pages
+          commons: {
+            name: 'commons',
+            minChunks: 2,
+            priority: 20,
+            reuseExistingChunk: true,
+          },
+        },
+        // Enforce maximum chunk size of 200KB (Requirement 6.1)
+        maxSize: 200 * 1024, // 200KB in bytes
+      };
+    }
+
+    // Tree shaking optimization - Requirement 6.5
+    if (config.optimization) {
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = true;
+    }
+
     return config;
   },
 };

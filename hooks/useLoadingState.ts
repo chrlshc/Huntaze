@@ -1,9 +1,14 @@
 /**
  * Loading State Hook
  * 
- * **Feature: beta-launch-ui-system, Phase 7: Loading States & Responsive Design**
+ * **Feature: performance-optimization-aws, Task 7: Enhanced Loading State Management**
  * 
  * Provides intelligent loading state management with:
+ * - Skeleton screen support
+ * - Progress indicators for operations > 1 second
+ * - Independent loading states per section
+ * - Smooth transitions without layout jumps
+ * - Background update handling without loading states for cached content
  * - Minimum loading duration to prevent flashing
  * - Staggered loading for multiple items
  * - Error state handling
@@ -12,10 +17,16 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+export type LoadingType = 'skeleton' | 'spinner' | 'progress' | 'none';
+
 interface LoadingStateOptions {
   minDuration?: number; // Minimum loading duration in ms
   staggerDelay?: number; // Delay between items in ms
   enableStagger?: boolean;
+  loadingType?: LoadingType; // Type of loading indicator
+  showProgressAfter?: number; // Show progress indicator after N ms (default: 1000)
+  hasCachedData?: boolean; // Whether cached data is available
+  sectionId?: string; // Unique identifier for independent section loading
   onLoadingStart?: () => void;
   onLoadingEnd?: () => void;
   onError?: (error: Error) => void;
@@ -27,6 +38,10 @@ interface LoadingState {
   error: Error | null;
   progress: number;
   staggerIndex: number;
+  loadingType: LoadingType;
+  showProgress: boolean; // Whether to show progress indicator
+  isBackgroundUpdate: boolean; // Whether this is a background update with cached data
+  sectionId?: string;
 }
 
 interface LoadingActions {
@@ -44,6 +59,10 @@ export const useLoadingState = (options: LoadingStateOptions = {}): [LoadingStat
     minDuration = 500,
     staggerDelay = 100,
     enableStagger = false,
+    loadingType = 'skeleton',
+    showProgressAfter = 1000,
+    hasCachedData = false,
+    sectionId,
     onLoadingStart,
     onLoadingEnd,
     onError
@@ -54,41 +73,85 @@ export const useLoadingState = (options: LoadingStateOptions = {}): [LoadingStat
     isMinDurationMet: false,
     error: null,
     progress: 0,
-    staggerIndex: 0
+    staggerIndex: 0,
+    loadingType,
+    showProgress: false,
+    isBackgroundUpdate: false,
+    sectionId
   });
 
   const loadingStartTime = useRef<number | null>(null);
   const minDurationTimer = useRef<NodeJS.Timeout | null>(null);
   const staggerTimer = useRef<NodeJS.Timeout | null>(null);
+  const progressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const startLoading = useCallback(() => {
     loadingStartTime.current = Date.now();
-    setState(prev => ({ ...prev, isLoading: true, isMinDurationMet: false, error: null }));
+    
+    // If we have cached data, this is a background update - don't show loading state
+    const isBackgroundUpdate = hasCachedData;
+    
+    setState(prev => ({ 
+      ...prev, 
+      isLoading: !isBackgroundUpdate, // Don't show loading if background update
+      isMinDurationMet: false, 
+      error: null,
+      showProgress: false,
+      isBackgroundUpdate
+    }));
     
     // Set minimum duration timer
-    minDurationTimer.current = setTimeout(() => {
-      setState(prev => ({ ...prev, isMinDurationMet: true }));
-    }, minDuration);
+    if (!isBackgroundUpdate) {
+      minDurationTimer.current = setTimeout(() => {
+        setState(prev => ({ ...prev, isMinDurationMet: true }));
+      }, minDuration);
+    }
+
+    // Set progress indicator timer (show after 1 second)
+    if (!isBackgroundUpdate && showProgressAfter > 0) {
+      progressTimer.current = setTimeout(() => {
+        setState(prev => ({ ...prev, showProgress: true }));
+      }, showProgressAfter);
+    }
 
     onLoadingStart?.();
-  }, [minDuration, onLoadingStart]);
+  }, [minDuration, showProgressAfter, hasCachedData, onLoadingStart]);
 
   const stopLoading = useCallback(() => {
+    // Clear progress timer if still running
+    if (progressTimer.current) {
+      clearTimeout(progressTimer.current);
+      progressTimer.current = null;
+    }
+
     const now = Date.now();
     const elapsed = loadingStartTime.current ? now - loadingStartTime.current : 0;
     const remainingTime = Math.max(0, minDuration - elapsed);
 
     const finishLoading = () => {
-      setState(prev => ({ ...prev, isLoading: false, progress: 100 }));
+      setState(prev => ({ 
+        ...prev, 
+        isLoading: false, 
+        progress: 100,
+        showProgress: false,
+        isBackgroundUpdate: false
+      }));
       onLoadingEnd?.();
     };
 
+    // If background update, finish immediately
+    if (state.isBackgroundUpdate) {
+      finishLoading();
+      return;
+    }
+
+    // Otherwise respect minimum duration for smooth transitions
     if (remainingTime > 0) {
       setTimeout(finishLoading, remainingTime);
     } else {
       finishLoading();
     }
-  }, [minDuration, onLoadingEnd]);
+  }, [minDuration, state.isBackgroundUpdate, onLoadingEnd]);
 
   const setError = useCallback((error: Error) => {
     setState(prev => ({ ...prev, error, isLoading: false }));
@@ -132,6 +195,9 @@ export const useLoadingState = (options: LoadingStateOptions = {}): [LoadingStat
       }
       if (staggerTimer.current) {
         clearTimeout(staggerTimer.current);
+      }
+      if (progressTimer.current) {
+        clearTimeout(progressTimer.current);
       }
     };
   }, []);
