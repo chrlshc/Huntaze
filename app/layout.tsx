@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./mobile.css";
-import "./mobile-optimized.css";
 import "./responsive-enhancements.css";
 import "./animations.css";
 import "@/styles/design-system.css"; // Beta Launch Design System

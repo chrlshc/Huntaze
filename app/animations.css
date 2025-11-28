@@ -1,17 +1,77 @@
-/* Smooth animations for mobile */
+/**
+ * Custom Animations - Minimized & Documented
+ * 
+ * This file contains ONLY custom animations not available in Tailwind.
+ * 
+ * Tailwind already provides:
+ * - animate-spin, animate-ping, animate-pulse, animate-bounce
+ * - transition-* utilities for smooth transitions
+ * - hover:, active:, focus: state variants
+ * 
+ * Use Tailwind utilities when possible for better tree-shaking.
+ */
 
-/* Page transitions */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+/* ========================================
+   CUSTOM KEYFRAME ANIMATIONS
+   Not available in Tailwind
+   ======================================== */
+
+/**
+ * Gradient Shift Animation
+ * Purpose: Animated gradient backgrounds for hero sections
+ * Usage: .gradient-animate
+ */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  50% {
+    background-position: 100% 50%;
   }
 }
 
+.gradient-animate {
+  background: linear-gradient(
+    -45deg,
+    var(--accent-primary),
+    #EC4899,
+    #F472B6,
+    #A855F7
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
+}
+
+/**
+ * Gradient Text Animation
+ * Purpose: Animated gradient text for headings
+ * Usage: .gradient-text-animate
+ */
+@keyframes gradientText {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.gradient-text-animate {
+  background: linear-gradient(
+    to right,
+    var(--accent-primary),
+    #EC4899,
+    var(--accent-primary)
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientText 3s linear infinite;
+}
+
+/**
+ * Stagger Animation for Lists
+ * Purpose: Sequential fade-in for list items
+ * Usage: .stagger-animate (parent)
+ */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -23,132 +83,48 @@
   }
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.stagger-animate > * {
+  opacity: 0;
+  animation: slideUp 0.4s ease-out forwards;
 }
 
-@keyframes pulse {
+.stagger-animate > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-animate > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-animate > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-animate > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-animate > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-animate > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-animate > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-animate > *:nth-child(8) { animation-delay: 0.4s; }
+
+/**
+ * Success Pop Animation
+ * Purpose: Celebratory animation for success states
+ * Usage: .success-animate
+ */
+@keyframes successPop {
   0% {
-    transform: scale(1);
+    transform: scale(0);
+    opacity: 0;
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* Apply animations */
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-slideUp {
-  animation: slideUp 0.4s ease-out;
-}
-
-.animate-slideIn {
-  animation: slideIn 0.3s ease-out;
-}
-
-.animate-pulse {
-  animation: pulse 2s infinite;
-}
-
-/* Gradient animations */
-.gradient-animate {
-  background: linear-gradient(
-    -45deg,
-    #9333EA,
-    #EC4899,
-    #F472B6,
-    #A855F7
-  );
-  background-size: 400% 400%;
-  animation: gradientShift 10s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Bounce animation for buttons */
-.bounce-on-hover {
-  transition: transform 0.2s;
-}
-
-.bounce-on-hover:hover {
-  transform: translateY(-2px);
-}
-
-.bounce-on-hover:active {
-  transform: translateY(0);
-}
-
-/* Card hover effects */
-.card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(147, 51, 234, 0.2);
-}
-
-/* Loading shimmer */
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    #f3f4f6 25%,
-    #e5e7eb 50%,
-    #f3f4f6 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Number counter animation */
-@keyframes countUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-.counter-animate {
-  animation: countUp 0.6s ease-out;
+.success-animate {
+  animation: successPop 0.5s ease-out;
 }
 
-/* Notification badge pulse */
+/**
+ * Notification Pulse
+ * Purpose: Pulsing effect for notification badges
+ * Usage: .notification-pulse
+ */
 .notification-pulse {
   position: relative;
 }
@@ -173,40 +149,16 @@
   }
 }
 
-/* Stagger animations for lists */
-.stagger-animate > * {
-  opacity: 0;
-  animation: slideUp 0.4s ease-out forwards;
-}
+/* ========================================
+   MOBILE-SPECIFIC ANIMATIONS
+   ======================================== */
 
-.stagger-animate > *:nth-child(1) { animation-delay: 0.05s; }
-.stagger-animate > *:nth-child(2) { animation-delay: 0.1s; }
-.stagger-animate > *:nth-child(3) { animation-delay: 0.15s; }
-.stagger-animate > *:nth-child(4) { animation-delay: 0.2s; }
-.stagger-animate > *:nth-child(5) { animation-delay: 0.25s; }
-
-/* Mobile-specific transitions */
 @media (max-width: 1024px) {
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  /* Tab indicator animation */
-  .tab-indicator {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Bottom sheet animation */
-  .bottom-sheet-enter {
-    animation: slideUp 0.3s ease-out;
-  }
-  
-  /* Swipe hint */
-  .swipe-hint {
-    animation: swipeHint 2s ease-in-out infinite;
-  }
-  
+  /**
+   * Swipe Hint Animation
+   * Purpose: Visual hint for swipeable content
+   * Usage: .swipe-hint
+   */
   @keyframes swipeHint {
     0%, 100% {
       transform: translateX(0);
@@ -216,7 +168,15 @@
     }
   }
   
-  /* Press feedback */
+  .swipe-hint {
+    animation: swipeHint 2s ease-in-out infinite;
+  }
+  
+  /**
+   * Press Feedback
+   * Purpose: Touch feedback for mobile interactions
+   * Usage: .press-feedback
+   */
   .press-feedback {
     transition: transform 0.1s, opacity 0.1s;
   }
@@ -227,42 +187,32 @@
   }
 }
 
-/* Gradient text animation */
-.gradient-text-animate {
-  background: linear-gradient(
-    to right,
-    #9333EA,
-    #EC4899,
-    #9333EA
-  );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradientText 3s linear infinite;
-}
+/* ========================================
+   MIGRATION GUIDE
+   ======================================== */
 
-@keyframes gradientText {
-  to {
-    background-position: 200% center;
-  }
-}
-
-/* Success animation */
-.success-animate {
-  animation: successPop 0.5s ease-out;
-}
-
-@keyframes successPop {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
+/*
+  REMOVED ANIMATIONS (Use Tailwind instead):
+  
+  .animate-fadeIn → animate-fade-in (Tailwind)
+  .animate-slideIn → transition-transform (Tailwind)
+  .animate-pulse → animate-pulse (Tailwind)
+  .bounce-on-hover → hover:-translate-y-0.5 transition-transform (Tailwind)
+  .card-hover → hover:-translate-y-1 hover:shadow-lg transition-all (Tailwind)
+  .shimmer → Use skeleton from mobile.css
+  .counter-animate → animate-fade-in (Tailwind)
+  
+  EXAMPLES:
+  
+  Before:
+  <div className="animate-fadeIn">Content</div>
+  
+  After:
+  <div className="animate-fade-in">Content</div>
+  
+  Before:
+  <button className="bounce-on-hover">Click</button>
+  
+  After:
+  <button className="hover:-translate-y-0.5 transition-transform">Click</button>
+*/

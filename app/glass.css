@@ -1,63 +1,40 @@
-/* Glassmorphism Base Styles */
-:root {
-  --glass-blur: 12px;
-  --glass-blur-mobile: 8px;
-  --glass-bg-light: rgba(255, 255, 255, 0.15);
-  --glass-bg-dark: rgba(0, 0, 0, 0.15);
-  --glass-border-light: rgba(255, 255, 255, 0.25);
-  --glass-border-dark: rgba(255, 255, 255, 0.1);
-}
+/**
+ * Glass Morphism Effects - Refactored for Tailwind
+ * 
+ * Most glass effects can now be achieved with Tailwind utilities:
+ * - bg-white/5 or bg-black/5 for background
+ * - backdrop-blur-xl for blur effect
+ * - border-white/10 for borders
+ * 
+ * This file only contains custom glass effects not available in Tailwind.
+ * Use design tokens from styles/design-tokens.css for consistency.
+ */
 
-/* Base Glass Effect */
-.glass {
-  background: var(--glass-bg-light);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  border: 1px solid var(--glass-border-light);
-  border-radius: 20px;
+/* ========================================
+   CUSTOM GLASS EFFECTS
+   Use these only when Tailwind utilities aren't sufficient
+   ======================================== */
+
+/* Glass with saturate effect (not available in Tailwind) */
+.glass-saturate {
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur-xl)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--blur-xl)) saturate(180%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
   transform: translateZ(0); /* Force GPU layer */
-  will-change: transform;
 }
 
-.dark .glass {
-  background: var(--glass-bg-dark);
-  border-color: var(--glass-border-dark);
-}
-
-/* Glass Variants */
-.glass-card {
-  @apply glass;
-  padding: 2rem;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.glass-card:hover {
-  transform: translateY(-2px) translateZ(0);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
+/* Glass navbar with stronger blur */
 .glass-navbar {
-  @apply glass;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
 }
 
-.dark .glass-navbar {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-.glass-button {
-  @apply glass;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.glass-button:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-/* Premium Gradient Overlays */
+/* Premium gradient overlay effect */
 .glass-gradient {
   position: relative;
   overflow: hidden;
@@ -72,67 +49,61 @@
   height: 200%;
   background: radial-gradient(
     circle at 50% 0%,
-    rgba(120, 119, 198, 0.3),
+    rgba(139, 92, 246, 0.2),
     transparent 50%
   );
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity var(--transition-slow);
+  pointer-events: none;
 }
 
 .glass-gradient:hover::before {
   opacity: 1;
 }
 
-/* Performance Optimization for Mobile */
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
 @media (max-width: 768px) {
-  .glass {
-    --glass-blur: var(--glass-blur-mobile);
+  /* Reduce blur on mobile for better performance */
+  .glass-saturate,
+  .glass-navbar {
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
   }
   
   /* Disable hover effects on mobile */
-  .glass-card:hover {
-    transform: none;
-    box-shadow: none;
+  .glass-gradient:hover::before {
+    opacity: 0;
   }
 }
 
-/* Skeleton Loading */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-}
+/* ========================================
+   MIGRATION GUIDE
+   ======================================== */
 
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-.skeleton-text {
-  @apply skeleton;
-  height: 1em;
-  border-radius: 4px;
-  margin-bottom: 0.5em;
-}
-
-.skeleton-button {
-  @apply skeleton;
-  height: 3rem;
-  border-radius: 8px;
-  width: 120px;
-}
-
-.skeleton-card {
-  @apply skeleton;
-  height: 200px;
-  border-radius: 20px;
-}
+/*
+  OLD GLASS CLASSES → NEW TAILWIND UTILITIES
+  
+  .glass → bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl
+  
+  .glass-card → bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8
+                transition-all hover:-translate-y-0.5 hover:shadow-lg
+  
+  .glass-button → bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg
+                  px-6 py-3 transition-all hover:bg-white/10
+  
+  EXAMPLES:
+  
+  Before:
+  <div className="glass-card">Content</div>
+  
+  After:
+  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+    Content
+  </div>
+  
+  Or use the utility class from design-tokens.css:
+  <div className="glass-card">Content</div>
+*/

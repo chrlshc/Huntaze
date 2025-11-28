@@ -1,10 +1,30 @@
-/* Import design systems */
-@import "../styles/design-system.css";
+/**
+ * Global Styles - Import Order Matters!
+ * 
+ * Order: tokens → base → components → utilities
+ * This ensures proper CSS cascade and specificity
+ */
+
+/* 1. Design Tokens (Foundation) */
+@import "../styles/design-tokens.css";
+
+/* 2. Context-Specific Tokens (Extend foundation) */
 @import "../styles/linear-design-tokens.css";
 @import "../styles/dashboard-shopify-tokens.css";
+@import "../styles/premium-design-tokens.css";
+
+/* 3. Base Styles */
+@import "../styles/design-system.css";
 @import "../styles/accessibility.css";
 @import "../styles/accessible-colors.css";
+
+/* 4. Tailwind (Base, Components, Utilities) */
 @import "./tailwind.css";
+
+/* 5. Custom Components */
+@import "./glass.css";
+@import "./animations.css";
+@import "./mobile.css";
 
 @layer base {
   * {

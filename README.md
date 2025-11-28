@@ -12,8 +12,9 @@ Huntaze is an AI-powered platform designed to help content creators manage and o
 - Node.js 18+ and npm
 - PostgreSQL 14+
 - AWS account (for SES email service)
+- Redis (optional, for caching)
 
-### Installation
+### Local Development Setup
 
 ```bash
 # Clone the repository
@@ -27,6 +28,10 @@ npm install
 cp .env.example .env
 # Edit .env with your configuration
 
+# Generate secrets
+openssl rand -base64 32  # For NEXTAUTH_SECRET
+openssl rand -base64 32  # For CSRF_SECRET
+
 # Initialize database
 npm run db:init
 
@@ -35,6 +40,26 @@ npm run dev
 ```
 
 Visit `http://localhost:3000` to see the application.
+
+### Production Deployment
+
+**Ready to deploy?** The application is configured for AWS Amplify:
+
+```bash
+# Push to production branch
+git push huntaze production-ready
+```
+
+Deployment happens automatically via AWS Amplify. Monitor the build at:
+https://console.aws.amazon.com/amplify/
+
+**Build time**: ~5-10 minutes
+
+**Deployment Guides**:
+- [Quick Deploy (English)](DEPLOYMENT-STATUS.md) - Current deployment status
+- [Quick Deploy (Français)](QUICK-DEPLOY-FR.md) - Guide rapide en français
+- [Complete Guide (Français)](DEPLOYMENT-GUIDE-FR.md) - Guide complet de déploiement
+- [Deployment Checklist](docs/DEPLOYMENT_CHECKLIST.md) - Pre-deployment checklist
 
 ## Documentation
 
@@ -57,6 +82,38 @@ Visit `http://localhost:3000` to see the application.
 - [Social Media Setup](docs/SOCIAL_MEDIA_SETUP.md) - Connect your social accounts
 - [Onboarding Guide](docs/of-onboarding.md) - Complete the onboarding process
 
+## Project Structure
+
+The codebase follows a clean, organized structure established through comprehensive cleanup and refactoring:
+
+### Core Directories
+- `/app` - Next.js application routes and pages
+- `/components` - Reusable React components
+  - `/components/effects` - Visual effects (shadows, neon, atomic backgrounds)
+  - `/components/debug` - Debug and development components
+- `/lib` - Core business logic and utilities
+- `/hooks` - Custom React hooks
+- `/types` - TypeScript type definitions
+- `/styles` - Global styles and design tokens
+- `/scripts` - Build, deployment, and analysis scripts
+- `/tests` - Test suites (unit, integration, property-based)
+
+### Documentation Structure
+- `/docs` - Technical documentation
+  - `/docs/aws` - AWS service guides and setup
+  - `CSRF-GUIDE.md` - CSRF protection documentation
+- `ENV-GUIDE.md` - Environment variables guide (60+ variables documented)
+- `CONFIG-GUIDE.md` - Configuration files guide (TypeScript, Vitest, build configs)
+- `CLEANUP-REPORT.md` - Codebase cleanup metrics and improvements
+- `DEPLOYMENT-STATUS.md` - Current deployment status
+- `.kiro/specs/` - Feature specifications with FINAL-REPORT.md for completed features
+
+### Design System
+- `styles/design-tokens.css` - CSS custom properties and design tokens
+- Tailwind-first approach with minimal custom CSS
+- Consolidated mobile styles in `app/mobile.css`
+- Documented animations in `app/animations.css`
+
 ## Architecture
 
 ### Tech Stack
@@ -67,13 +124,12 @@ Visit `http://localhost:3000` to see the application.
 - **Email**: AWS SES
 - **Deployment**: AWS Amplify
 
-### Key Components
-- `/app` - Next.js application routes and pages
-- `/components` - Reusable React components
-- `/lib` - Core business logic and utilities
-- `/hooks` - Custom React hooks
-- `/types` - TypeScript type definitions
-- `/migrations` - Database migration scripts
+### Configuration Files
+All configuration files are documented in [CONFIG-GUIDE.md](CONFIG-GUIDE.md):
+- TypeScript configs (tsconfig.json, tsconfig.typecheck.json)
+- Test configs (vitest.config.ts, vitest.config.integration.ts, vitest.config.e2e.ts)
+- Build configs (buildspec.yml, next.config.ts)
+- Performance configs (.lighthouserc.json, performance-budget.json)
 
 ## Development
 
