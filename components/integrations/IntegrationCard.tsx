@@ -1,26 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Loader2, Trash2, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { IntegrationIcon } from './IntegrationIcon';
 import { IntegrationStatus, type ConnectionStatus } from './IntegrationStatus';
 import { useToast } from '@/components/ui/toast';
+import { Button } from "@/components/ui/button";
 
 export interface IntegrationCardProps {
-  provider: 'instagram' | 'tiktok' | 'reddit' | 'onlyfans';
-  isConnected: boolean;
+  provider?: 'instagram' | 'tiktok' | 'reddit' | 'onlyfans' | string;
+  isConnected?: boolean;
   account?: {
     providerAccountId: string;
     metadata?: Record<string, any>;
     expiresAt?: Date;
     createdAt: Date;
   };
-  onConnect: () => void;
-  onDisconnect: () => void;
-  onReconnect: () => void;
+  onConnect?: () => void;
+  onDisconnect?: () => void;
+  onReconnect?: () => void;
   className?: string;
   showAddAnother?: boolean;
+  name?: string;
+  description?: string;
+  logo?: string;
+  status?: string;
+  badges?: Array<{ label: string; tone?: string }>;
+  accentColor?: string;
+  href?: string;
+  id?: string;
 }
 
 const providerInfo = {
@@ -52,27 +61,38 @@ function getConnectionStatus(
 }
 
 export function IntegrationCard({
-  provider,
-  isConnected,
+  provider = 'instagram',
+  isConnected = false,
   account,
   onConnect,
   onDisconnect,
   onReconnect,
   className,
   showAddAnother = false,
+  name,
+  description,
 }: IntegrationCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const { showToast } = useToast();
   
-  const info = providerInfo[provider];
+  const providerKey = (provider as keyof typeof providerInfo) ?? 'instagram';
+  const defaultInfo = providerInfo[providerKey];
+  const info = {
+    name: name ?? defaultInfo?.name ?? providerKey,
+    description: description ?? defaultInfo?.description ?? '',
+  };
+  const iconProvider: 'instagram' | 'tiktok' | 'reddit' | 'onlyfans' =
+    provider === 'instagram' || provider === 'tiktok' || provider === 'reddit' || provider === 'onlyfans'
+      ? provider
+      : 'instagram';
   const status = getConnectionStatus(isConnected, account?.expiresAt);
 
   const handleConnect = async () => {
     setIsLoading(true);
     setActionError(null);
     try {
-      await onConnect();
+      await (onConnect?.() ?? Promise.resolve());
       // Success toast will be shown after OAuth redirect
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to connect';
@@ -95,7 +115,7 @@ export function IntegrationCard({
     setIsLoading(true);
     setActionError(null);
     try {
-      await onDisconnect();
+      await (onDisconnect?.() ?? Promise.resolve());
       showToast({
         title: `${info.name} disconnected`,
         description: 'Your account has been disconnected successfully.',
@@ -118,7 +138,7 @@ export function IntegrationCard({
     setIsLoading(true);
     setActionError(null);
     try {
-      await onReconnect();
+      await (onReconnect?.() ?? Promise.resolve());
       // Success toast will be shown after OAuth redirect
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to reconnect';
@@ -141,44 +161,52 @@ export function IntegrationCard({
       )}
     >
       <div className="flex items-start gap-4">
-        <IntegrationIcon provider={provider} size="md" />
+        <IntegrationIcon provider={iconProvider} size="md" />
 
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[var(--color-text-main)]">{info.name}</h3>
+            <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>{info.name}</h3>
             <IntegrationStatus status={status} />
           </div>
           
           {account?.metadata?.username && (
-            <p className="text-xs text-[var(--color-text-sub)]">
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
               @{account.metadata.username}
             </p>
           )}
           
           {account?.createdAt && status === 'connected' && (
-            <p className="text-xs text-[var(--color-text-sub)]">
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
               Connected {new Date(account.createdAt).toLocaleDateString()}
             </p>
           )}
         </div>
       </div>
 
-      <p className="mt-4 text-sm text-[var(--color-text-sub)]">{info.description}</p>
+      <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)' }}>{info.description}</p>
 
       {actionError && (
-        <div className="mt-4 rounded-lg bg-red-50 border border-red-200 p-3">
-          <p className="text-xs text-red-600">{actionError}</p>
+        <div className="mt-4 rounded-lg p-3" style={{ 
+          background: 'rgba(239, 68, 68, 0.1)', 
+          border: '1px solid rgba(239, 68, 68, 0.3)' 
+        }}>
+          <p className="text-xs" style={{ color: 'var(--accent-error)' }}>{actionError}</p>
         </div>
       )}
 
       <div className="mt-6 flex gap-2">
         {status === 'disconnected' && (
-          <button
-            onClick={handleConnect}
-            disabled={isLoading}
-            className={cn(
-              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-indigo)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
-            )}
+          <Button 
+            variant="primary" 
+            onClick={handleConnect} 
+            disabled={isLoading} 
+            style={{
+              background: 'var(--accent-primary)',
+              color: 'var(--text-primary)',
+              borderRadius: 'var(--button-radius)',
+            }}
+            onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => !isLoading && (e.currentTarget.style.background = 'var(--accent-primary-hover)')}
+            onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'var(--accent-primary)')}
           >
             {isLoading ? (
               <>
@@ -188,18 +216,23 @@ export function IntegrationCard({
             ) : (
               'Add app'
             )}
-          </button>
+          </Button>
         )}
 
         {status === 'connected' && (
           <>
             {showAddAnother && (
-              <button
-                onClick={handleConnect}
-                disabled={isLoading}
-                className={cn(
-                  'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-indigo)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
-                )}
+              <Button 
+                variant="primary" 
+                onClick={handleConnect} 
+                disabled={isLoading} 
+                style={{
+                  background: 'var(--accent-primary)',
+                  color: 'var(--text-primary)',
+                  borderRadius: 'var(--button-radius)',
+                }}
+                onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => !isLoading && (e.currentTarget.style.background = 'var(--accent-primary-hover)')}
+                onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'var(--accent-primary)')}
               >
                 {isLoading ? (
                   <>
@@ -209,15 +242,20 @@ export function IntegrationCard({
                 ) : (
                   'Add another'
                 )}
-              </button>
+          </Button>
             )}
-            <button
-              onClick={handleDisconnect}
-              disabled={isLoading}
-              className={cn(
-                showAddAnother ? '' : 'flex-1',
-                'inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-[var(--bg-surface)] px-4 py-2 text-sm font-medium text-[var(--color-text-main)] transition hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
-              )}
+            <Button 
+              variant="primary" 
+              onClick={handleDisconnect} 
+              disabled={isLoading} 
+              style={{
+                border: '1px solid var(--border-default)',
+                background: 'var(--bg-secondary)',
+                color: 'var(--text-primary)',
+                borderRadius: 'var(--button-radius)',
+              }}
+              onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => !isLoading && (e.currentTarget.style.background = 'var(--bg-tertiary)')}
+              onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.currentTarget.style.background = 'var(--bg-secondary)')}
             >
               {isLoading ? (
                 <>
@@ -230,17 +268,20 @@ export function IntegrationCard({
                   Disconnect
                 </>
               )}
-            </button>
+          </Button>
           </>
         )}
 
         {status === 'expired' && (
-          <button
-            onClick={handleReconnect}
-            disabled={isLoading}
-            className={cn(
-              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed'
-            )}
+          <Button 
+            variant="primary" 
+            onClick={handleReconnect} 
+            disabled={isLoading} 
+            style={{
+              background: 'var(--accent-warning)',
+              color: 'var(--text-primary)',
+              borderRadius: 'var(--button-radius)',
+            }}
           >
             {isLoading ? (
               <>
@@ -253,16 +294,19 @@ export function IntegrationCard({
                 Reconnect
               </>
             )}
-          </button>
+          </Button>
         )}
 
         {status === 'error' && (
-          <button
-            onClick={handleReconnect}
-            disabled={isLoading}
-            className={cn(
-              'flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed'
-            )}
+          <Button 
+            variant="primary" 
+            onClick={handleReconnect} 
+            disabled={isLoading} 
+            style={{
+              background: 'var(--accent-error)',
+              color: 'var(--text-primary)',
+              borderRadius: 'var(--button-radius)',
+            }}
           >
             {isLoading ? (
               <>
@@ -275,7 +319,7 @@ export function IntegrationCard({
                 Reconnect
               </>
             )}
-          </button>
+          </Button>
         )}
       </div>
     </article>

@@ -84,7 +84,7 @@
 
 /* Animation Classes */
 .animate-fadeIn {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: fadeIn var(--transition-slower) ease-out forwards;
 }
 
 .animate-slideUp {
@@ -133,7 +133,7 @@
 
 .hover-lift:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .hover-scale {
@@ -149,7 +149,7 @@
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
 }
 
 /* Gradient Text Animation */
@@ -157,7 +157,7 @@
   background: linear-gradient(
     to right,
     #7c3aed 0%,
-    #ec4899 50%,
+    var(--accent-primary) 50%,
     #7c3aed 100%
   );
   background-size: 200% auto;

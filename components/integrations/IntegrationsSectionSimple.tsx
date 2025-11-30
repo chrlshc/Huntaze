@@ -101,7 +101,7 @@ const integrationCatalogue: Array<IntegrationCardProps & { id: string; categoryI
     logo: "https://api.dicebear.com/7.x/identicon/svg?seed=ga&backgroundColor=fef9c3",
     categoryId: "analytics",
     status: "available",
-    accentColor: "#FFFBEB",
+    accentColor: "rgba(245, 158, 11, 0.1)",
   },
   {
     id: "mailchimp",
@@ -110,7 +110,7 @@ const integrationCatalogue: Array<IntegrationCardProps & { id: string; categoryI
     logo: "https://api.dicebear.com/7.x/identicon/svg?seed=mailchimp&backgroundColor=fde68a",
     categoryId: "marketing",
     status: "coming-soon",
-    accentColor: "#FEF3C7",
+    accentColor: "rgba(245, 158, 11, 0.1)",
     badges: [{ label: "Waitlist", tone: "warning" }],
   },
   {
@@ -156,8 +156,8 @@ export function IntegrationsSectionSimple() {
         selectedCategory === "all" || integration.categoryId === selectedCategory;
       const matchesSearch =
         !search ||
-        integration.name.toLowerCase().includes(search) ||
-        integration.description.toLowerCase().includes(search) ||
+        integration.name?.toLowerCase().includes(search) ||
+        integration.description?.toLowerCase().includes(search) ||
         (integration.categoryId && integration.categoryId.includes(search));
 
       return matchesCategory && matchesSearch;

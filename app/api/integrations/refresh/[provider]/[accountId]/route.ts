@@ -349,11 +349,11 @@ export const POST = withRateLimit(
       try {
         account = await retryWithBackoff(
           async () => {
-            return await prisma.oAuthAccount.findFirst({
+            return await prisma.oauth_accounts.findFirst({
               where: {
-                userId,
+                user_id: userId,
                 provider,
-                providerAccountId: accountId,
+                provider_account_id: accountId,
               },
             });
           },
@@ -463,11 +463,11 @@ export const POST = withRateLimit(
       try {
         updatedAccount = await retryWithBackoff(
           async () => {
-            return await prisma.oAuthAccount.findFirst({
+            return await prisma.oauth_accounts.findFirst({
               where: {
-                userId,
+                user_id: userId,
                 provider,
-                providerAccountId: accountId,
+                provider_account_id: accountId,
               },
             });
           },
@@ -514,7 +514,7 @@ export const POST = withRateLimit(
         message: `Successfully refreshed ${provider} token`,
         provider,
         accountId,
-        expiresAt: updatedAccount?.expiresAt?.toISOString() || null,
+        expiresAt: updatedAccount?.expires_at?.toISOString() || null,
       };
 
       logger.info('Token refresh completed successfully', {

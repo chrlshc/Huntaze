@@ -14,24 +14,24 @@
      ======================================== */
   
   /* Backgrounds - Exact hex codes for premium look */
-  --premium-bg-primary: #0F0F10;      /* Main background - deepest black */
+  --premium-bg-primary: var(--bg-primary);      /* Main background - deepest black */
   --premium-bg-surface: #18181B;      /* Cards, elevated surfaces */
-  --premium-bg-elevated: #131316;     /* Alternating sections */
+  --premium-bg-elevated: var(--bg-secondary);     /* Alternating sections */
   
   /* Borders - Subtle to prominent */
   --premium-border-subtle: #27272A;   /* Default borders */
-  --premium-border-accent: #7D57C1;   /* Hover/focus states */
+  --premium-border-accent: var(--accent-primary);   /* Hover/focus states */
   
   /* Text Hierarchy - 5 levels for clear hierarchy */
   --premium-text-primary: #F8F9FA;    /* Headings, important (white) */
   --premium-text-secondary: #E2E8F0;  /* Subheadings (light gray) */
   --premium-text-body: #A0AEC0;       /* Body text (medium gray) */
   --premium-text-muted: #94A3B8;      /* Secondary info (soft gray) */
-  --premium-text-inverse: #0F0F10;    /* Text on colored backgrounds */
+  --premium-text-inverse: var(--bg-primary);    /* Text on colored backgrounds */
   
   /* Accent Colors - Purple gradient */
   --premium-accent-light: #8E65D4;    /* Lighter purple for gradients */
-  --premium-accent-main: #7D57C1;     /* Main purple */
+  --premium-accent-main: var(--accent-primary);     /* Main purple */
   --premium-accent-glow: rgba(125, 87, 193, 0.4);  /* Glow shadow */
   --premium-accent-glow-strong: rgba(125, 87, 193, 0.6);  /* Hover glow */
   

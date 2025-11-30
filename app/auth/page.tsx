@@ -5,10 +5,11 @@ export const dynamic = 'force-dynamic';
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-export default function AuthPage({ searchParams = {} }: { searchParams?: SearchParams }) {
+export default async function AuthPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const resolvedParams = await searchParams;
   const params = new URLSearchParams();
 
-  for (const [key, value] of Object.entries(searchParams)) {
+  for (const [key, value] of Object.entries(resolvedParams)) {
     if (typeof value === 'string') {
       params.set(key, value);
     } else if (Array.isArray(value)) {

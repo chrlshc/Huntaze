@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 import { 
   TrendingUp, 
   Users, 
@@ -16,6 +17,7 @@ import {
   Info
 } from 'lucide-react';
 import { useDemoTracking } from '@/lib/analytics/demo-tracking';
+import { Button } from "@/components/ui/button";
 
 interface MetricCardProps {
   title: string;
@@ -42,10 +44,10 @@ function MetricCard({ title, value, change, icon, tooltip, isHovered, onHover, o
     >
       {/* Tooltip */}
       {isHovered && (
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap z-20 border border-purple-500/30">
+        <Card className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap z-20 border border-purple-500/30">
           {tooltip}
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 border-r border-b border-purple-500/30" />
-        </div>
+        </Card>
       )}
       
       <div className="flex items-start justify-between mb-3">
@@ -78,18 +80,18 @@ function ChartBar({ height, label, value, isActive, onClick }: ChartBarProps) {
   return (
     <div className="flex flex-col items-center gap-2 flex-1">
       <div className="relative w-full flex items-end justify-center h-32">
-        <button
-          onClick={onClick}
-          className="relative w-full max-w-[40px] bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-lg transition-all duration-300 hover:from-purple-500 hover:to-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        <Button 
+          variant="primary" 
+          onClick={onClick} 
           style={{ height: `${height}%` }}
-          aria-label={`${label}: ${value}`}
+          className="w-full bg-purple-500 hover:bg-purple-600 rounded-t-lg transition-all duration-300 cursor-pointer relative"
         >
           {isActive && (
             <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-500/30">
               {value}
             </div>
           )}
-        </button>
+        </Button>
       </div>
       <span className="text-gray-400 text-xs">{label}</span>
     </div>
@@ -174,7 +176,7 @@ export function InteractiveDashboardDemo() {
   return (
     <section 
       id="dashboard"
-      className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[#131316] overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[var(--bg-secondary)] overflow-hidden"
     >
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
@@ -196,9 +198,7 @@ export function InteractiveDashboardDemo() {
 
         {/* Interactive Dashboard */}
         <div 
-          className={`relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm shadow-2xl transition-all duration-700 ${
-            animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
+          className={`relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm shadow-2xl transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           onMouseEnter={handleInteraction}
           onClick={handleInteraction}
         >
@@ -237,7 +237,7 @@ export function InteractiveDashboardDemo() {
             </div>
 
             {/* Chart Section */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-purple-500/10 rounded-lg">
@@ -271,10 +271,10 @@ export function InteractiveDashboardDemo() {
                   />
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Recent Activity */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-500/10 rounded-lg">
                   <MessageSquare className="w-5 h-5 text-purple-400" />
@@ -307,7 +307,7 @@ export function InteractiveDashboardDemo() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         </div>
 

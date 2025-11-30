@@ -75,7 +75,7 @@ const TEST_USER = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       password: hashedPassword,
@@ -87,7 +87,7 @@ async function createTestUser() {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-csrf@' },
     },
@@ -428,7 +428,7 @@ describe('CSRF Token API Integration Tests', () => {
   describe('User Isolation', () => {
     it('should generate different tokens for different users', async () => {
       // Create another user with unique email
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: `test-csrf-other-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`,
           password: await hash('password', 12),
@@ -455,7 +455,7 @@ describe('CSRF Token API Integration Tests', () => {
       expect(data1.data.token).not.toBe(data2.data.token);
       
       // Cleanup
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.users.delete({ where: { id: otherUser.id } });
     });
   });
 

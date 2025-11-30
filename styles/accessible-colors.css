@@ -9,49 +9,49 @@
 
 :root {
   /* ===== Error Colors (WCAG AA Compliant) ===== */
-  /* Original #EF4444 had 3.76:1 ratio - FAIL */
-  /* New #DC2626 has 4.83:1 ratio - PASS */
-  --color-error: #DC2626;
-  --color-error-light: #FEE2E2;
+  /* Original var(--accent-error) had 3.76:1 ratio - FAIL */
+  /* New var(--accent-error) has 4.83:1 ratio - PASS */
+  --color-error: var(--accent-error);
+  --color-error-light: rgba(239, 68, 68, 0.1);
   --color-error-dark: #991B1B;
   
   /* ===== Success Colors (WCAG AA Compliant) ===== */
-  /* Original #10B981 had 2.54:1 ratio - FAIL */
+  /* Original var(--accent-success) had 2.54:1 ratio - FAIL */
   /* New #047857 has 4.54:1 ratio - PASS */
   --color-success: #047857;
   --color-success-light: #D1FAE5;
   --color-success-dark: #065F46;
   
   /* ===== Secondary Button Colors (WCAG AA Compliant) ===== */
-  /* Original #A78BFA had 2.72:1 ratio - FAIL */
-  /* New #7C3AED has 4.73:1 ratio - PASS */
-  --color-secondary: #7C3AED;
-  --color-secondary-hover: #6D28D9;
+  /* Original var(--accent-primary) had 2.72:1 ratio - FAIL */
+  /* New var(--accent-primary-hover) has 4.73:1 ratio - PASS */
+  --color-secondary: var(--accent-primary-hover);
+  --color-secondary-hover: var(--accent-primary-active);
   --color-secondary-light: #EDE9FE;
   
   /* ===== Footer Text Colors (WCAG AA Compliant) ===== */
-  /* Original #6B7280 had 3.96:1 ratio - FAIL */
-  /* New #9CA3AF has 7.55:1 ratio - PASS */
-  --color-footer-text: #9CA3AF;
-  --color-footer-text-muted: #6B7280; /* Use only for large text */
+  /* Original var(--text-tertiary) had 3.96:1 ratio - FAIL */
+  /* New var(--text-secondary) has 7.55:1 ratio - PASS */
+  --color-footer-text: var(--text-secondary);
+  --color-footer-text-muted: var(--text-tertiary); /* Use only for large text */
   
   /* ===== Primary Colors (Already Compliant) ===== */
-  --color-primary: #7D57C1;
-  --color-primary-hover: #6B47AF;
+  --color-primary: var(--accent-primary);
+  --color-primary-hover: var(--accent-primary-active);
   --color-primary-light: #F5F3FF;
   
   /* ===== Background Colors ===== */
-  --color-bg-primary: #0F0F10;
-  --color-bg-secondary: #131316;
-  --color-bg-surface: #1F2937;
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-surface: var(--text-primary);
   
   /* ===== Text Colors (Already Compliant) ===== */
   --color-text-primary: #FFFFFF;
-  --color-text-secondary: #EDEDEF;
-  --color-text-muted: #9CA3AF;
+  --color-text-secondary: var(--text-primary);
+  --color-text-muted: var(--text-secondary);
   
   /* ===== Focus Indicators (WCAG 2.2 Requirement) ===== */
-  --color-focus: #8B5CF6;
+  --color-focus: var(--accent-primary);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }
@@ -64,10 +64,10 @@
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
-    --color-error: #DC2626;
+    --color-error: var(--accent-error);
     --color-success: #047857;
-    --color-secondary: #7C3AED;
-    --color-text-muted: #D1D5DB; /* Even higher contrast */
+    --color-secondary: var(--accent-primary-hover);
+    --color-text-muted: var(--border-subtle); /* Even higher contrast */
   }
 }
 

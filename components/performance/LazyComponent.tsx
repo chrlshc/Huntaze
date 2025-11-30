@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ComponentType, lazy, Suspense, useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 
 /**
  * Configuration for LazyComponent wrapper
@@ -70,13 +71,9 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({
     <p className="text-red-500 mb-4">Failed to load component</p>
     <p className="text-sm text-gray-500 mb-4">{error.message}</p>
     {retryCount < maxRetries && (
-      <button
-        onClick={onRetry}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        data-testid="retry-button"
-      >
-        Retry ({retryCount}/{maxRetries})
-      </button>
+      <Button variant="primary" onClick={onRetry} data-testid="retry-button">
+  Retry ({retryCount}/{maxRetries})
+</Button>
     )}
     {retryCount >= maxRetries && (
       <p className="text-sm text-gray-500">Maximum retry attempts reached</p>

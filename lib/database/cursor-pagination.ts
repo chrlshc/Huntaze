@@ -47,7 +47,7 @@ export function decodeCursor(cursor: string): string {
  * 
  * @example
  * const options = buildCursorQuery({ cursor: 'abc123', limit: 20 });
- * const users = await prisma.user.findMany({
+ * const users = await prisma.users.findMany({
  *   ...options,
  *   where: { active: true }
  * });
@@ -76,7 +76,7 @@ export function buildCursorQuery(params: CursorPaginationParams) {
  * Format the results of a cursor-based query
  * 
  * @example
- * const results = await prisma.user.findMany(options);
+ * const results = await prisma.users.findMany(options);
  * const paginated = formatCursorResults(results, params.limit);
  */
 export function formatCursorResults<T extends { id: string | number }>(
@@ -103,7 +103,7 @@ export function formatCursorResults<T extends { id: string | number }>(
  * 
  * @example
  * const result = await paginateWithCursor(
- *   (options) => prisma.user.findMany({ ...options, where: { active: true } }),
+ *   (options) => prisma.users.findMany({ ...options, where: { active: true } }),
  *   { cursor: req.query.cursor, limit: 20 }
  * );
  */

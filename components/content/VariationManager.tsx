@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Variation {
   id: string;
@@ -122,7 +124,7 @@ export default function VariationManager({ parentContentId, parentContent, onVar
   }
 
   return (
-    <div className="bg-white rounded-lg border p-6">
+    <Card className="bg-white rounded-lg border p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h3 className="text-lg font-semibold">A/B Test Variations</h3>
@@ -203,13 +205,13 @@ export default function VariationManager({ parentContentId, parentContent, onVar
             </div>
 
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="primary"
                 onClick={createVariation}
                 disabled={!variationName || !variationText}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Create Variation
-              </button>
+              </Button>
               <button
                 onClick={() => setShowCreateForm(false)}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
@@ -310,6 +312,6 @@ export default function VariationManager({ parentContentId, parentContent, onVar
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

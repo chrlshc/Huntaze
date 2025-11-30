@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from "@/components/ui/button";
 
 const faqs = [
   {
@@ -44,7 +45,8 @@ export default function PricingFAQ() {
             key={index}
             className="border border-gray-200 rounded-lg overflow-hidden"
           >
-            <button
+            <Button 
+              variant="ghost" 
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
@@ -54,7 +56,7 @@ export default function PricingFAQ() {
                   openIndex === index ? 'rotate-180' : ''
                 }`}
               />
-            </button>
+            </Button>
             
             <AnimatePresence>
               {openIndex === index && (

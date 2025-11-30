@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Upload, FileText, Users, MessageSquare } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function OnlyFansImportPage() {
   const [importing, setImporting] = useState(false);
@@ -61,7 +63,7 @@ export default function OnlyFansImportPage() {
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8">Import OnlyFans Data</h1>
         
-        <div className="bg-white rounded-xl shadow-sm p-8">
+        <Card className="bg-white rounded-xl shadow-sm p-8">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Manual Import Process</h2>
@@ -115,12 +117,9 @@ export default function OnlyFansImportPage() {
               </div>
               
               <div className="flex gap-3">
-                <button
-                  onClick={() => setStep(2)}
-                  className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-medium"
-                >
+                <Button variant="secondary" onClick={() => setStep(2)} className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-medium">
                   Continue
-                </button>
+                </Button>
                 <a href="/repost" className="flex-1 py-3 bg-gray-100 text-gray-800 rounded-lg text-center font-medium">
                   Skip to Repost Engine
                 </a>
@@ -151,13 +150,9 @@ export default function OnlyFansImportPage() {
               </label>
               
               {error && <p className="text-sm text-red-600">{error}</p>}
-              <button
-                onClick={doImport}
-                disabled={importing}
-                className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50"
-              >
-                {importing ? 'Importing…' : 'Start Import'}
-              </button>
+              <Button variant="primary" onClick={doImport} disabled={importing}>
+  {importing ? 'Importing…' : 'Start Import'}
+</Button>
             </div>
           )}
 
@@ -179,7 +174,7 @@ export default function OnlyFansImportPage() {
               </a>
             </div>
           )}
-        </div>
+        </Card>
 
         <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <p className="text-sm text-amber-800">

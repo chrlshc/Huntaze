@@ -9,6 +9,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function CompleteOnboarding() {
   const [status, setStatus] = useState('');
@@ -37,20 +39,17 @@ export default function CompleteOnboarding() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-100 flex items-center justify-center">
-      <div className="max-w-md mx-auto elevated-card p-6 text-center">
+      <Card className="max-w-md mx-auto p-6 text-center">
         <h1 className="text-2xl font-bold mb-6">Skip Onboarding (Dev Only)</h1>
         
-        <button
-          onClick={completeOnboarding}
-          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-        >
+        <Button variant="primary" onClick={completeOnboarding}>
           Complete Onboarding & Go to Dashboard
-        </button>
+        </Button>
         
         {status && (
           <p className="mt-4 text-sm text-gray-600">{status}</p>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

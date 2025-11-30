@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect, type ComponentProps } from 'react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface MenuItem {
   label: string;
@@ -81,22 +83,23 @@ export function UserMenu() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
-        aria-label="User menu"
+      <Button 
+        variant="ghost" 
+        onClick={() => setIsOpen(!isOpen)} 
+        type="button" 
+        aria-label="User menu" 
         aria-expanded={isOpen}
+        className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
       >
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-sm font-semibold text-white">
           {initials}
         </div>
         <ChevronDownIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-      </button>
+</Button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+        <Card className="absolute right-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
           {/* User info */}
           <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
             <p className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</p>
@@ -123,14 +126,15 @@ export function UserMenu() {
                         {item.label}
                       </Link>
                     ) : (
-                      <button
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => handleMenuItemClick(item)} 
                         type="button"
-                        onClick={() => handleMenuItemClick(item)}
                         className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                       >
                         <Icon className="h-4 w-4" />
                         {item.label}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 );
@@ -147,19 +151,19 @@ export function UserMenu() {
                   {item.label}
                 </Link>
               ) : (
-                <button
-                  key={item.label}
+                <Button 
+                  variant="ghost" 
+                  onClick={() => handleMenuItemClick(item)} 
                   type="button"
-                  onClick={() => handleMenuItemClick(item)}
                   className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   <Icon className="h-4 w-4" />
                   {item.label}
-                </button>
+                </Button>
               );
             })}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

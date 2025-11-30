@@ -76,7 +76,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
       const cacheKey = this.generateCacheKey(userId, context);
       const cached = await this.getCachedHelp(cacheKey);
       if (cached) {
-        logger.debug(`Returning cached help for user ${userId}`);
+        logger.info(`Returning cached help for user ${userId}`);
         return cached;
       }
 
@@ -97,7 +97,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return helpContent;
     } catch (error) {
-      logger.error(`Failed to generate contextual help for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to generate contextual help for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -158,7 +158,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return disclosure;
     } catch (error) {
-      logger.error(`Failed to implement progressive disclosure for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to implement progressive disclosure for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -211,7 +211,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return personalizedContent;
     } catch (error) {
-      logger.error(`Failed to personalize help content for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to personalize help content for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -264,7 +264,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return effectiveness;
     } catch (error) {
-      logger.error(`Failed to track help effectiveness:`, undefined, error as Error);
+      logger.error(`Failed to track help effectiveness:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -326,7 +326,7 @@ export class ContextualHelpServiceImpl implements ContextualHelpService {
 
       return optimizedContent;
     } catch (error) {
-      logger.error(`Failed to optimize help content ${helpContentId}:`, undefined, error as Error);
+      logger.error(`Failed to optimize help content ${helpContentId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }

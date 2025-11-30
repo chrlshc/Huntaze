@@ -151,7 +151,7 @@ class JourneyStateManager {
       return journey;
 
     } catch (error) {
-      logger.error('Failed to create journey', { userId, journeyId, error });
+      logger.error('Failed to create journey', error instanceof Error ? error : new Error(String(error)), { userId, journeyId });
       throw new OrchestratorError(
         OrchestratorErrorCode.DATABASE_ERROR,
         'Failed to create onboarding journey',
@@ -161,7 +161,7 @@ class JourneyStateManager {
   }
 
   async updateJourneyState(journeyId: string, updates: Partial<OnboardingJourney>): Promise<OnboardingJourney> {
-    logger.debug('Updating journey state', { journeyId, updates: Object.keys(updates) });
+    logger.info('Updating journey state', { journeyId, updates: Object.keys(updates) });
 
     try {
       // Get current journey with retry
@@ -212,7 +212,7 @@ class JourneyStateManager {
         throw error;
       }
       
-      logger.error('Failed to update journey state', { journeyId, error });
+      logger.error('Failed to update journey state', error instanceof Error ? error : new Error(String(error)), { journeyId });
       throw new OrchestratorError(
         OrchestratorErrorCode.DATABASE_ERROR,
         'Failed to update journey state',
@@ -257,7 +257,7 @@ class JourneyStateManager {
   }
 
   async getJourney(journeyId: string): Promise<OnboardingJourney> {
-    logger.debug('Fetching journey', { journeyId });
+    logger.info('Fetching journey', { journeyId });
 
     try {
       // Try cache first (TODO: implement cache methods)
@@ -292,7 +292,7 @@ class JourneyStateManager {
         throw error;
       }
       
-      logger.error('Failed to fetch journey', { journeyId, error });
+      logger.error('Failed to fetch journey', error instanceof Error ? error : new Error(String(error)), { journeyId });
       throw new OrchestratorError(
         OrchestratorErrorCode.DATABASE_ERROR,
         'Failed to fetch journey',

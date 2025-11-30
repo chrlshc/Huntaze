@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import OnboardingAnalyticsDashboard from '@/components/smart-onboarding/analytics/OnboardingAnalyticsDashboard';
 import RealTimeMetrics from '@/components/smart-onboarding/analytics/RealTimeMetrics';
 import SystemAlerts from '@/components/smart-onboarding/analytics/SystemAlerts';
+import { Button } from "@/components/ui/button";
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';

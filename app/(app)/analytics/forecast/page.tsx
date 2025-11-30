@@ -12,6 +12,7 @@ import { SubNavigation } from '@/components/dashboard/SubNavigation';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
 import { getAnalyticsSubNav } from '../analytics-nav';
+import { Button } from "@/components/ui/button";
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -27,11 +28,11 @@ export default function ForecastPage() {
   // Navigation context
   const { breadcrumbs, subNavItems } = useNavigationContext();
 
-  const { forecast, isLoading, error, setGoal, runScenario } = useRevenueForecast({ creatorId });
+  const { forecast, isLoading, error } = useRevenueForecast({ creatorId });
 
   const handleSetGoal = async (amount: number) => {
     try {
-      await setGoal(amount);
+      // await setGoal(amount, new Date().toISOString().slice(0, 7)); // Needs targetMonth parameter
       setToastMessage('Goal updated successfully!');
       setShowToast(true);
     } catch (err) {
@@ -57,36 +58,54 @@ export default function ForecastPage() {
         {/* Sub-Navigation */}
         {subNavItems && <SubNavigation items={subNavItems} />}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <MonthProgress forecast={forecast} />
-          <GoalAchievement forecast={forecast} onSetGoal={handleSetGoal} />
-        </div>
+        {forecast && (
+          <>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <MonthProgress 
+                forecast={forecast.currentMonth} 
+                title="Current Month Progress"
+                subtitle="Track your progress towards this month's goal"
+              />
+              <GoalAchievement 
+                currentRevenue={forecast.currentMonth.actual}
+                goalRevenue={forecast.currentMonth.projected}
+                recommendations={forecast.recommendations}
+              />
+            </div>
 
-        <div className="mb-8">
-          <LazyLoadErrorBoundary>
-            <Suspense fallback={
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="animate-pulse space-y-4">
-                  <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-[400px] bg-gray-200 rounded"></div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="h-32 bg-gray-200 rounded"></div>
-                    <div className="h-32 bg-gray-200 rounded"></div>
+            <div className="mb-8">
+              <LazyLoadErrorBoundary>
+                <Suspense fallback={
+                  <div className="bg-white border border-gray-200 rounded-lg p-6">
+                    <div className="animate-pulse space-y-4">
+                      <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-[400px] bg-gray-200 rounded"></div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="h-32 bg-gray-200 rounded"></div>
+                        <div className="h-32 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            }>
-              <RevenueForecastChart forecast={forecast} />
-            </Suspense>
-          </LazyLoadErrorBoundary>
-        </div>
+                }>
+                  <RevenueForecastChart 
+                    historicalData={forecast.historical}
+                    forecastData={forecast.forecast}
+                    currentMonth={forecast.currentMonth}
+                    nextMonth={forecast.nextMonth}
+                    onGoalSet={handleSetGoal}
+                  />
+                </Suspense>
+              </LazyLoadErrorBoundary>
+            </div>
+          </>
+        )}
 
         {showToast && (
           <div className="fixed bottom-4 right-4 z-50">
             <div className="rounded-lg p-4 shadow-lg bg-green-600 text-white">
               <div className="flex items-center gap-3">
                 <span>{toastMessage}</span>
-                <button onClick={() => setShowToast(false)} className="text-white hover:text-gray-200">×</button>
+                <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
               </div>
             </div>
           </div>

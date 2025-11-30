@@ -81,21 +81,21 @@ const colorPairs: ColorPair[] = [
   // Hero section
   {
     foreground: '#FFFFFF',
-    background: '#0F0F10',
+    background: 'var(--bg-primary)',
     location: 'Hero Section',
     element: 'Main heading',
     isLargeText: true,
   },
   {
-    foreground: '#EDEDEF',
-    background: '#0F0F10',
+    foreground: 'var(--text-primary)',
+    background: 'var(--bg-primary)',
     location: 'Hero Section',
     element: 'Subtitle text',
     isLargeText: false,
   },
   {
-    foreground: '#9CA3AF',
-    background: '#0F0F10',
+    foreground: 'var(--text-secondary)',
+    background: 'var(--bg-primary)',
     location: 'Hero Section',
     element: 'Description text',
     isLargeText: false,
@@ -104,21 +104,21 @@ const colorPairs: ColorPair[] = [
   // Purple/Violet backgrounds
   {
     foreground: '#FFFFFF',
-    background: '#7D57C1',
+    background: 'var(--accent-primary)',
     location: 'CTA Buttons',
     element: 'Button text',
     isLargeText: false,
   },
   {
     foreground: '#FFFFFF',
-    background: '#6B47AF',
+    background: 'var(--accent-primary-active)',
     location: 'CTA Buttons (hover)',
     element: 'Button text',
     isLargeText: false,
   },
   {
     foreground: '#FFFFFF',
-    background: '#A78BFA',
+    background: 'var(--accent-primary)',
     location: 'Secondary buttons',
     element: 'Button text',
     isLargeText: false,
@@ -127,21 +127,21 @@ const colorPairs: ColorPair[] = [
   // Dashboard demo
   {
     foreground: '#FFFFFF',
-    background: '#131316',
+    background: 'var(--bg-secondary)',
     location: 'Dashboard Demo',
     element: 'Card headings',
     isLargeText: true,
   },
   {
-    foreground: '#9CA3AF',
-    background: '#131316',
+    foreground: 'var(--text-secondary)',
+    background: 'var(--bg-secondary)',
     location: 'Dashboard Demo',
     element: 'Card descriptions',
     isLargeText: false,
   },
   {
-    foreground: '#A78BFA',
-    background: '#131316',
+    foreground: 'var(--accent-primary)',
+    background: 'var(--bg-secondary)',
     location: 'Dashboard Demo',
     element: 'Icon colors',
     isLargeText: false,
@@ -149,21 +149,21 @@ const colorPairs: ColorPair[] = [
 
   // Form elements
   {
-    foreground: '#EF4444',
+    foreground: 'var(--accent-error)',
     background: '#FFFFFF',
     location: 'Forms',
     element: 'Error messages',
     isLargeText: false,
   },
   {
-    foreground: '#DC2626',
+    foreground: 'var(--accent-error)',
     background: '#FFFFFF',
     location: 'Forms',
     element: 'Error messages (dark)',
     isLargeText: false,
   },
   {
-    foreground: '#10B981',
+    foreground: 'var(--accent-success)',
     background: '#FFFFFF',
     location: 'Forms',
     element: 'Success messages',
@@ -172,15 +172,15 @@ const colorPairs: ColorPair[] = [
 
   // Footer
   {
-    foreground: '#9CA3AF',
-    background: '#0F0F10',
+    foreground: 'var(--text-secondary)',
+    background: 'var(--bg-primary)',
     location: 'Footer',
     element: 'Link text',
     isLargeText: false,
   },
   {
-    foreground: '#6B7280',
-    background: '#0F0F10',
+    foreground: 'var(--text-tertiary)',
+    background: 'var(--bg-primary)',
     location: 'Footer',
     element: 'Copyright text',
     isLargeText: false,
@@ -189,7 +189,7 @@ const colorPairs: ColorPair[] = [
   // Interactive demo tooltips
   {
     foreground: '#FFFFFF',
-    background: '#1F2937',
+    background: 'var(--text-primary)',
     location: 'Tooltips',
     element: 'Tooltip text',
     isLargeText: false,
@@ -197,8 +197,8 @@ const colorPairs: ColorPair[] = [
 
   // Badge/Tag elements
   {
-    foreground: '#A78BFA',
-    background: '#1F2937',
+    foreground: 'var(--accent-primary)',
+    background: 'var(--text-primary)',
     location: 'Badges',
     element: 'Badge text',
     isLargeText: false,

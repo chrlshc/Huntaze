@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 export function FAQPro() {
   const items = [
     { q: 'Is Huntaze safe?', a: 'Yes, we follow best practices and encryption.' },
@@ -9,10 +10,10 @@ export function FAQPro() {
         <h3 className="text-lg font-semibold mb-4">Frequently asked questions</h3>
         <div className="space-y-4">
           {items.map((it) => (
-            <div key={it.q} className="rounded-lg border p-4">
+            <Card key={it.q} className="rounded-lg border p-4">
               <div className="font-medium">{it.q}</div>
               <div className="text-sm text-muted-foreground mt-1">{it.a}</div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

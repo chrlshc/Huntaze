@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import type { ImageProps } from 'next/image';
 
-interface OptimizedImageProps extends Omit<ImageProps, 'onLoad' | 'src'> {
+interface OptimizedImageProps extends Omit<ImageProps, 'onLoad' | 'src' | 'sizes'> {
   src: string;
   lowQualitySrc?: string;
   aspectRatio?: number;

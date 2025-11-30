@@ -2,6 +2,7 @@
 
 import { DEMO_LUXURY } from "@/src/lib/onboarding/demoSeeds";
 import { useOnboarding } from "@/src/hooks/useOnboarding";
+import { Button } from "@/components/ui/button";
 
 export default function LoadDemoButton() {
   const {
@@ -70,9 +71,9 @@ export default function LoadDemoButton() {
   };
 
   return (
-    <button className="btn btn-outline w-full" onClick={load} type="button">
-      Load demo persona (Luxury)
-    </button>
+    <Button variant="outline" onClick={load} type="button">
+  Load demo persona (Luxury)
+</Button>
   );
 }
 

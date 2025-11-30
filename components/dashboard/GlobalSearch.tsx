@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import styles from './GlobalSearch.module.css';
+import { Button } from "@/components/ui/button";
 
 interface SearchResult {
   id: string;
@@ -135,9 +136,9 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </div>
                   {items.map((result) => (
-                    <button
+                    <Button 
                       key={result.id}
-                      className={styles.resultItem}
+                      variant="primary" 
                       onClick={() => handleResultClick(result)}
                       data-testid={`search-result-${result.id}`}
                     >
@@ -145,7 +146,7 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
                       {result.subtitle && (
                         <div className={styles.resultSubtitle}>{result.subtitle}</div>
                       )}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               ))}

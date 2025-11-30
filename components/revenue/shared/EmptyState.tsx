@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { Button } from "@/components/ui/button";
 
 interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -23,12 +24,9 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md">{description}</p>
       )}
       {action && (
-        <button
-          onClick={action.onClick}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          {action.label}
-        </button>
+        <Button variant="primary" onClick={action.onClick}>
+  {action.label}
+</Button>
       )}
     </div>
   );

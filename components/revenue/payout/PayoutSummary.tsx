@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface PayoutSummaryProps {
   totalExpected: number;
@@ -108,12 +109,13 @@ export function PayoutSummary({
             <div className="flex items-center justify-between mb-1">
               <div className="text-sm text-orange-600">Estimated Tax</div>
               {!isEditingTaxRate && (
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setIsEditingTaxRate(true)}
                   className="text-xs text-orange-600 hover:text-orange-700 font-medium"
                 >
                   Adjust Rate
-                </button>
+                </Button>
               )}
             </div>
             <div className="text-2xl font-bold text-orange-900">
@@ -141,18 +143,12 @@ export function PayoutSummary({
             )}
             {isEditingTaxRate && (
               <div className="flex gap-2 mt-2">
-                <button
-                  onClick={handleSaveTaxRate}
-                  className="px-3 py-1 text-xs font-medium text-white bg-orange-600 rounded hover:bg-orange-700 transition-colors"
-                >
+                <Button variant="primary" onClick={handleSaveTaxRate}>
                   Save
-                </button>
-                <button
-                  onClick={handleCancelTaxRate}
-                  className="px-3 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-                >
+                </Button>
+                <Button variant="ghost" onClick={handleCancelTaxRate}>
                   Cancel
-                </button>
+                </Button>
               </div>
             )}
           </div>

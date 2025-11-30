@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from '@/components/ui/card';
 
 interface Template {
   id: string;
@@ -144,16 +147,32 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[80vh] flex flex-col">
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-xl font-semibold">Choose a Template</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">✕</button>
+          <Button variant="primary" onClick={onClose}>✕</Button>
         </div>
 
         <div className="p-4 border-b space-y-3">
-          <input type="text" placeholder="Search templates..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full px-3 py-2 border rounded" />
+          <Input 
+            placeholder="Search templates..." 
+            value={searchTerm} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)} 
+            className="w-full px-3 py-2 border rounded" 
+          />
           
           <div className="flex gap-2 flex-wrap">
-            <button onClick={() => setSelectedCategory('all')} className={`px-3 py-1 rounded text-sm ${selectedCategory === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>All</button>
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-3 py-1 rounded text-sm ${selectedCategory === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+            >
+              All
+            </button>
             {TEMPLATE_CATEGORIES.map(category => (
-              <button key={category} onClick={() => setSelectedCategory(category)} className={`px-3 py-1 rounded text-sm capitalize ${selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>{category}</button>
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-3 py-1 rounded text-sm capitalize ${selectedCategory === category ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+              >
+                {category}
+              </button>
             ))}
           </div>
         </div>
@@ -164,7 +183,11 @@ export default function TemplateSelector({ onSelect, onClose }: TemplateSelector
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredTemplates.map((template) => (
-                <div key={template.id} onClick={() => handleTemplateSelect(template)} className="border rounded-lg p-4 cursor-pointer hover:border-blue-500 hover:shadow-md transition-all">
+                <div
+                  key={template.id}
+                  onClick={() => handleTemplateSelect(template)}
+                  className="border rounded-lg p-4 cursor-pointer hover:border-blue-500 hover:shadow-md transition-all"
+                >
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold">{template.name}</h3>
                     <div className="flex items-center gap-2">

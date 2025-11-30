@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 import { 
   TrophyIcon, 
   SparklesIcon, 
@@ -195,7 +196,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
 
   const generateConfettiPieces = () => {
     const pieces = [];
-    const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+    const colors = ['var(--accent-info)', 'var(--accent-error)', 'var(--accent-success)', 'var(--accent-warning)', 'var(--accent-primary)', 'var(--accent-primary)'];
     
     for (let i = 0; i < 20; i++) {
       pieces.push(
@@ -300,20 +301,14 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
                   {onShare && (
-                    <button
-                      onClick={handleShare}
-                      className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors bg-gradient-to-r ${colors.bg} ${colors.text} hover:opacity-90`}
-                    >
-                      Share Achievement
-                    </button>
+                    <Button variant="primary" onClick={handleShare}>
+  Share Achievement
+</Button>
                   )}
                   
-                  <button
-                    onClick={handleClose}
-                    className="flex-1 py-3 px-4 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-                  >
-                    Continue
-                  </button>
+                  <Button variant="secondary" onClick={handleClose}>
+  Continue
+</Button>
                 </div>
               </div>
 

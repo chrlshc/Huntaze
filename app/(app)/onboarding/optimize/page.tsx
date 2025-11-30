@@ -13,6 +13,7 @@ import { abTestVariants, type ABTestVariant } from '@/presets/ab-tests';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import ComplianceChecker from '@/components/ComplianceChecker';
+import { Button } from "@/components/ui/button";
 
 interface ABTestCardProps {
   test: ABTestVariant;
@@ -209,20 +210,16 @@ export default function OptimizePage() {
         </div>
 
         <div className="mt-8 flex justify-between">
-          <button onClick={() => router.back()} className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+          <Button variant="ghost" onClick={() => router.back()}>
             Back
-          </button>
+          </Button>
           <div className="flex gap-3">
-            <button onClick={finalizeAndGoDashboard} className="px-6 py-2 text-gray-600 hover:text-gray-800">
+            <Button variant="primary" onClick={finalizeAndGoDashboard}>
               Skip Testing
-            </button>
-            <button
-              onClick={handleStartTests}
-              disabled={selectedTests.length === 0}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              Start {selectedTests.length || ''} {selectedTests.length === 1 ? 'Test' : 'Tests'}
-            </button>
+            </Button>
+            <Button variant="primary" onClick={handleStartTests} disabled={selectedTests.length === 0}>
+  Start {selectedTests.length || ''} {selectedTests.length === 1 ? 'Test' : 'Tests'}
+</Button>
           </div>
         </div>
       </div>

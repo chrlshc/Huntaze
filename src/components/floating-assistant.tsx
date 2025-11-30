@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const suggestions = [
   "How much can I earn with Huntaze?",
@@ -87,12 +88,13 @@ export function FloatingAssistant() {
                     <div className="text-xs opacity-90">Always here to help</div>
                   </div>
                 </div>
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setIsOpen(false)}
                   className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -108,13 +110,14 @@ export function FloatingAssistant() {
                   </p>
                   <div className="space-y-2">
                     {suggestions.map((suggestion, index) => (
-                      <button
+                      <Button 
                         key={index}
+                        variant="secondary" 
                         onClick={() => handleSuggestion(suggestion)}
                         className="w-full text-left px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm"
                       >
                         {suggestion}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>

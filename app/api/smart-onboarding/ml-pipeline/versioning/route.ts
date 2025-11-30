@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    logger.error('ML versioning endpoint failed', { error });
+    logger.error('ML versioning endpoint failed', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -259,7 +259,7 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    logger.error('ML versioning GET endpoint failed', { error });
+    logger.error('ML versioning GET endpoint failed', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -289,7 +289,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('ML versioning DELETE endpoint failed', { error });
+    logger.error('ML versioning DELETE endpoint failed', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

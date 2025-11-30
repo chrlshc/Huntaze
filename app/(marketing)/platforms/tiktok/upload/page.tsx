@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Upload, Link as LinkIcon, Video, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 type UploadMode = 'file' | 'url';
 type PrivacyLevel = 'PUBLIC_TO_EVERYONE' | 'MUTUAL_FOLLOW_FRIENDS' | 'SELF_ONLY';
@@ -255,9 +256,10 @@ export default function TikTokUploadPage() {
               Upload Method
             </label>
             <div className="grid grid-cols-2 gap-4">
-              <button
+              <Button 
+                variant="secondary" 
+                onClick={() => setMode('url')} 
                 type="button"
-                onClick={() => setMode('url')}
                 className={`flex items-center justify-center px-4 py-3 border-2 rounded-lg transition-colors ${
                   mode === 'url'
                     ? 'border-black bg-gray-50'
@@ -266,10 +268,11 @@ export default function TikTokUploadPage() {
               >
                 <LinkIcon className="w-5 h-5 mr-2" />
                 <span className="font-medium">From URL</span>
-              </button>
-              <button
+              </Button>
+              <Button 
+                variant="secondary" 
+                onClick={() => setMode('file')} 
                 type="button"
-                onClick={() => setMode('file')}
                 className={`flex items-center justify-center px-4 py-3 border-2 rounded-lg transition-colors ${
                   mode === 'file'
                     ? 'border-black bg-gray-50'
@@ -278,7 +281,7 @@ export default function TikTokUploadPage() {
               >
                 <Upload className="w-5 h-5 mr-2" />
                 <span className="font-medium">Upload File</span>
-              </button>
+              </Button>
             </div>
           </div>
 

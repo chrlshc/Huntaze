@@ -18,7 +18,7 @@ type Path = {
 export default function NeonCircuit({
   className,
   intensity = 1,
-  color = "#a855f7", // violet tailwind (purple-500)
+  color = "var(--accent-primary)", // violet tailwind (purple-500)
 }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
 

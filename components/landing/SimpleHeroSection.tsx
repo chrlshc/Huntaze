@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Play, Star } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface SimpleHeroSectionProps {
   title: string;
@@ -27,12 +29,12 @@ export function SimpleHeroSection({ title, subtitle, ctaText, ctaHref, showVideo
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-12">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-indigo-200 dark:border-indigo-800 mb-8 shadow-sm">
+          <Card className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-indigo-200 dark:border-indigo-800 mb-8 shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
             </span>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">✨ Now in Beta - Join Early Adopters</span>
-          </div>
+          </Card>
           
           {/* Headline */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
@@ -116,12 +118,12 @@ export function SimpleHeroSection({ title, subtitle, ctaText, ctaHref, showVideo
           <div className="relative max-w-4xl mx-auto">
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 dark:border-gray-800/50 bg-gradient-to-br from-indigo-500 to-purple-600">
               <div className="absolute inset-0 flex items-center justify-center">
-                <button className="group relative">
+                <Button variant="primary" className="group cursor-pointer">
                   <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all" />
                   <div className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Play className="w-8 h-8 text-indigo-600 ml-1" fill="currentColor" />
                   </div>
-                </button>
+                </Button>
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>

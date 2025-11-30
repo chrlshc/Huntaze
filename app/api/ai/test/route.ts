@@ -140,13 +140,13 @@ interface AITestSuccessData {
 /**
  * Error types
  */
-export enum AITestErrorType {
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',
-  AI_SERVICE_ERROR = 'AI_SERVICE_ERROR',
-  TIMEOUT_ERROR = 'TIMEOUT_ERROR',
-  INTERNAL_ERROR = 'INTERNAL_ERROR',
-}
+const AITestErrorType = {
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  RATE_LIMIT_ERROR: 'RATE_LIMIT_ERROR',
+  AI_SERVICE_ERROR: 'AI_SERVICE_ERROR',
+  TIMEOUT_ERROR: 'TIMEOUT_ERROR',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+} as const;
 
 // ============================================================================
 // Retry Configuration
@@ -372,7 +372,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 3. Check rate limit
     try {
-      await checkCreatorRateLimit(data.creatorId);
+      await checkCreatorRateLimit(parseInt(data.creatorId));
     } catch (rateLimitError: any) {
       logger.warn('Rate limit exceeded', {
         correlationId,
@@ -405,7 +405,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           return await generateTextWithBilling({
             prompt: data.prompt,
             metadata: {
-              creatorId: data.creatorId,
+              creatorId: parseInt(data.creatorId),
               feature: 'test_api',
               agentId: 'test_agent',
             },

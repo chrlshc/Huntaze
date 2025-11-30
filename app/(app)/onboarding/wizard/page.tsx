@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SetupWizardSimple from '@/components/onboarding/huntaze-onboarding/SetupWizardSimple';
 import { ShopifyBackdrop } from '@/components/ui';
+import { Button } from "@/components/ui/button";
 
 export default function WizardPage() {
   const router = useRouter();
@@ -89,18 +90,16 @@ export default function WizardPage() {
             <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
               <p className="text-sm font-medium text-red-400 mb-3">{error}</p>
               <div className="flex gap-2">
-                <button
-                  onClick={handleContinueAnyway}
-                  className="flex-1 px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white text-sm font-medium transition-all"
-                >
+                <Button variant="primary" onClick={handleContinueAnyway}>
                   Continue to Dashboard
-                </button>
-                <button
+                </Button>
+                <Button 
+                  variant="primary" 
                   onClick={() => setError(null)}
                   className="px-4 py-2 rounded-lg border border-neutral-700 hover:border-neutral-600 text-neutral-400 text-sm transition-all"
                 >
                   Try Again
-                </button>
+</Button>
               </div>
             </div>
           )}

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = {
   title: 'Data Deletion - Huntaze',
@@ -14,7 +15,7 @@ export default function DataDeletionPage() {
           Data Deletion Request
         </h1>
         
-        <div className="elevated-card p-8 mb-8">
+        <Card className="p-8 mb-8">
           <h2 className="text-2xl font-bold mb-4">How to Delete Your Data</h2>
           
           <p className="text-gray-700 mb-6">
@@ -72,7 +73,7 @@ export default function DataDeletionPage() {
               Content already published to your social media accounts will not be affected.
             </p>
           </div>
-        </div>
+        </Card>
 
         <div className="text-center">
           <Link href="/" className="text-purple-600 hover:text-purple-700 font-medium">

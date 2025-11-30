@@ -4,6 +4,7 @@ import { useTheme } from './theme-provider'
 import { Moon, Sun, Monitor } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme()
@@ -68,8 +69,9 @@ export function ThemeToggle() {
                 const Icon = t.icon
                 const isActive = theme === t.value
                 return (
-                  <button
+                  <Button 
                     key={t.value}
+                    variant="ghost" 
                     onClick={() => {
                       setTheme(t.value as any)
                       setIsOpen(false)
@@ -88,7 +90,7 @@ export function ThemeToggle() {
                         className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-600"
                       />
                     )}
-                  </button>
+                  </Button>
                 )
               })}
             </motion.div>

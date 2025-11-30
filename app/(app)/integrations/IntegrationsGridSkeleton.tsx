@@ -17,6 +17,7 @@
 'use client';
 
 import { SkeletonCard } from '@/components/dashboard/SkeletonCard';
+import { Card } from '@/components/ui/card';
 
 interface IntegrationsGridSkeletonProps {
   className?: string;
@@ -57,10 +58,10 @@ export function CompactIntegrationsGridSkeleton({ className = '' }: { className?
   return (
     <div className={`grid grid-cols-2 md:grid-cols-4 gap-3 ${className}`}>
       {Array.from({ length: 8 }, (_, index) => (
-        <div key={index} className="integration-card p-3 text-center">
-          <Skeleton variant="avatar" className="w-8 h-8 mx-auto mb-2" />
-          <Skeleton variant="text" className="w-16 h-3 mx-auto" />
-        </div>
+        <Card key={index} className="p-3 text-center">
+          <div className="w-8 h-8 mx-auto mb-2 bg-gray-200 rounded-full animate-pulse" />
+          <div className="w-16 h-3 mx-auto bg-gray-200 rounded animate-pulse" />
+        </Card>
       ))}
     </div>
   );

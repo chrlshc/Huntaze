@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { IntegrationIcon } from './IntegrationIcon';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export interface Account {
   providerAccountId: string;

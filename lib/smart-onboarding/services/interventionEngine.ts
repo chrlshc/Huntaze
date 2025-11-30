@@ -43,7 +43,7 @@ export class InterventionEngineImpl {
 
       logger.info(`Started monitoring user progress: ${userId}`);
     } catch (error) {
-      logger.error(`Failed to start monitoring for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to start monitoring for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -84,7 +84,7 @@ export class InterventionEngineImpl {
 
       return interventionPlan;
     } catch (error) {
-      logger.error(`Failed to trigger intervention for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to trigger intervention for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -118,7 +118,7 @@ export class InterventionEngineImpl {
 
       return helpContent;
     } catch (error) {
-      logger.error(`Failed to provide contextual help for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to provide contextual help for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -159,7 +159,7 @@ export class InterventionEngineImpl {
 
       return escalationTicket;
     } catch (error) {
-      logger.error(`Failed to escalate issue for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to escalate issue for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -191,7 +191,7 @@ export class InterventionEngineImpl {
         timeToResolution: outcome.timeToResolution
       });
     } catch (error) {
-      logger.error(`Failed to track intervention effectiveness:`, undefined, error as Error);
+      logger.error(`Failed to track intervention effectiveness:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -214,7 +214,7 @@ export class InterventionEngineImpl {
         await this.triggerIntervention(userId, trigger);
       }
     } catch (error) {
-      logger.error(`Error checking intervention triggers for user ${userId}:`, undefined, error as Error);
+      logger.error(`Error checking intervention triggers for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -516,4 +516,3 @@ export class InterventionEngineImpl {
     }
   }
 }
-// @ts-nocheck

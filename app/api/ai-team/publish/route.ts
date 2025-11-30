@@ -1,8 +1,10 @@
 // Minimal stub to ensure build succeeds. Real logic can be restored after build checks.
+import { NextResponse } from 'next/server';
+
 export const runtime = 'nodejs'
 
-async function ok(): Promise<Response> {
-  return new Response(JSON.stringify({ status: 'ok' }), {
+async function ok(): Promise<NextResponse> {
+  return NextResponse.json({ status: 'ok' }, {
     status: 200,
     headers: { 'content-type': 'application/json; charset=utf-8', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' },
   })

@@ -58,14 +58,14 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      logger.warn('Invalid request body for AI suggestions', { error: error.errors });
+      logger.warn('Invalid request body for AI suggestions', { error: error.issues });
       return NextResponse.json(
-        { error: 'Invalid request body', details: error.errors },
+        { error: 'Invalid request body', details: error.issues },
         { status: 400 }
       );
     }
 
-    logger.error('Failed to generate AI suggestions', { error });
+    logger.error('Failed to generate AI suggestions', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to generate suggestions' },
       { status: 500 }

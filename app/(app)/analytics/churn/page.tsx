@@ -10,6 +10,8 @@ import { SubNavigation } from '@/components/dashboard/SubNavigation';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
 import { getAnalyticsSubNav } from '../analytics-nav';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -88,30 +90,31 @@ export default function ChurnPage() {
 
         {summary && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total At Risk</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{summary.totalAtRisk}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            </Card>
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">High Risk</p>
               <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{summary.highRisk}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            </Card>
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Medium Risk</p>
               <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">{summary.mediumRisk}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            </Card>
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Low Risk</p>
               <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{summary.lowRisk}</p>
-            </div>
+            </Card>
           </div>
         )}
 
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             {(['all', 'high', 'medium', 'low'] as const).map((level) => (
-              <button
+              <Button 
                 key={level}
+                variant="ghost" 
                 onClick={() => setSelectedRiskLevel(level)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedRiskLevel === level
@@ -120,17 +123,13 @@ export default function ChurnPage() {
                 }`}
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)} {level !== 'all' && 'Risk'}
-              </button>
+              </Button>
             ))}
           </div>
           {selectedFans.length > 0 && (
-            <button
-              onClick={handleBulkReEngage}
-              disabled={isReEngaging}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
-            >
-              {isReEngaging ? 'Sending...' : `Re-engage ${selectedFans.length} Selected`}
-            </button>
+            <Button variant="primary" onClick={handleBulkReEngage} disabled={isReEngaging}>
+  {isReEngaging ? 'Sending...' : `Re-engage ${selectedFans.length} Selected`}
+</Button>
           )}
         </div>
 
@@ -145,7 +144,7 @@ export default function ChurnPage() {
             <div className={`rounded-lg p-4 shadow-lg ${toastType === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`}>
               <div className="flex items-center gap-3">
                 <span>{toastMessage}</span>
-                <button onClick={() => setShowToast(false)} className="text-white hover:text-gray-200">×</button>
+                <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
               </div>
             </div>
           </div>

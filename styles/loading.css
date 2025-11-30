@@ -32,10 +32,10 @@
   animation: shimmer 2s infinite;
   background: linear-gradient(
     to right,
-    #f0f0f0 0%,
+    var(--bg-glass) 0%,
     #e0e0e0 20%,
-    #f0f0f0 40%,
-    #f0f0f0 100%
+    var(--bg-glass) 40%,
+    var(--bg-glass) 100%
   );
   background-size: 1000px 100%;
 }
@@ -45,10 +45,10 @@
   .animate-shimmer {
     background: linear-gradient(
       to right,
-      #2a2a2a 0%,
+      var(--bg-tertiary) 0%,
       #3a3a3a 20%,
-      #2a2a2a 40%,
-      #2a2a2a 100%
+      var(--bg-tertiary) 40%,
+      var(--bg-tertiary) 100%
     );
     background-size: 1000px 100%;
   }
@@ -144,8 +144,8 @@
 .loading-overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(2px);
+  background-color: var(--bg-glass-active);
+  backdrop-filter: blur(var(--blur-sm));
   display: flex;
   align-items: center;
   justify-center;

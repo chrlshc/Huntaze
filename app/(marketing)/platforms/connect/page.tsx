@@ -5,6 +5,8 @@ import { Link2 } from 'lucide-react';
 import Link from 'next/link';
 import ComplianceNotice from '@/components/compliance/ComplianceNotice';
 import { OnlyFansLogoIcon, InstagramLogoIcon, TikTokLogoIcon, RedditLogoIcon, ThreadsLogoIcon } from '@/src/components/platform-icons';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 const INSTAGRAM_APP_ID = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID || '618116867842215';
 // Default to the app subdomain to avoid landing/app conflicts when env is missing
@@ -56,7 +58,7 @@ export default function ConnectPlatformsPage() {
         <ComplianceNotice platform="OnlyFans" />
         
         {/* Instagram Section — drives traffic to OnlyFans */}
-        <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <InstagramLogoIcon className="w-6 h-6" />
             <h2 className="text-xl font-semibold">Instagram</h2>
@@ -68,23 +70,21 @@ export default function ConnectPlatformsPage() {
           >
             Connect Instagram
           </a>
-        </div>
+        </Card>
         
         {/* Threads Section — top of funnel to OnlyFans */}
-        <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <ThreadsLogoIcon className="w-6 h-6" />
             <h2 className="text-xl font-semibold">Threads</h2>
           </div>
           <p className="text-gray-600 mb-4">Use Threads to create conversation and funnel traffic to your OnlyFans.</p>
           <p className="text-sm text-gray-500 mb-4">Note: Threads access requires an Instagram Business or Creator account.</p>
-          <button
-            disabled
-            className="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-          >
+          <Button variant="secondary" disabled>
             Connect via Instagram first
-          </button>
-        </div>
+          </Button>
+        </Card>
+        
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">Link your accounts</h1>
         <div className="grid sm:grid-cols-2 gap-6">
           {/* OnlyFans card */}
@@ -98,11 +98,11 @@ export default function ConnectPlatformsPage() {
             {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
             <div className="flex flex-wrap items-center gap-3">
               <Link href="/platforms/import/onlyfans">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">Import OF CSV</button>
+                <Button variant="primary">Import OF CSV</Button>
               </Link>
-              <button onClick={joinOFWaitlist} disabled={loading} className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-60">
-                {loading ? 'Joining…' : 'Join OF API Waitlist'}
-              </button>
+              <Button variant="ghost" onClick={joinOFWaitlist} disabled={loading}>
+  {loading ? 'Joining…' : 'Join OF API Waitlist'}
+</Button>
               <Link href="/onboarding" className="text-gray-500 hover:text-gray-700 text-sm">Skip for now</Link>
             </div>
           </div>
@@ -116,9 +116,9 @@ export default function ConnectPlatformsPage() {
             </div>
             <p className="text-sm text-gray-600 mb-4">Connect Reddit to engage communities and drive traffic to your OnlyFans.</p>
             <Link href="/auth/reddit">
-              <button className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors">
+              <Button variant="primary">
                 Connect Reddit
-              </button>
+              </Button>
             </Link>
           </div>
 
@@ -130,9 +130,9 @@ export default function ConnectPlatformsPage() {
             </div>
             <p className="text-sm text-gray-600 mb-4">Use TikTok to generate awareness and drive traffic to your OnlyFans.</p>
             <Link href="/auth/tiktok">
-              <button className="px-6 py-2 bg-black hover:bg-gray-900 text-white rounded-lg font-medium transition-colors">
+              <Button variant="primary">
                 Connect TikTok
-              </button>
+              </Button>
             </Link>
           </div>
 
@@ -146,9 +146,9 @@ export default function ConnectPlatformsPage() {
               Connect Threads to share updates and engage with your community.
             </p>
             <Link href="/auth/threads">
-              <button className="px-6 py-2 bg-black hover:bg-gray-900 text-white rounded-lg font-medium transition-colors">
+              <Button variant="primary">
                 Connect Threads
-              </button>
+              </Button>
             </Link>
           </div>
 
@@ -161,9 +161,9 @@ export default function ConnectPlatformsPage() {
             <p className="text-sm text-gray-600 mb-4">
               Instagram integration pending Meta verification.
             </p>
-            <button disabled className="px-6 py-2 border border-gray-300 rounded-lg text-gray-400 cursor-not-allowed text-sm">
+            <Button variant="primary" disabled>
               Verification required
-            </button>
+            </Button>
           </div>
         </div>
       </main>

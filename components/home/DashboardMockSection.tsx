@@ -1,10 +1,11 @@
+import { Card } from '@/components/ui/card';
 'use client';
 
 export function DashboardMockSection() {
   return (
     <section 
       id="dashboard"
-      className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[#131316] overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[var(--bg-secondary)] overflow-hidden"
     >
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
@@ -21,7 +22,7 @@ export function DashboardMockSection() {
         </div>
 
         {/* Dashboard Visual */}
-        <div className="relative rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm shadow-2xl transition-transform duration-500 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:transform-none">
+        <Card className="relative rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm shadow-2xl transition-transform duration-500 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:transform-none">
           {/* Purple glow shadow */}
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-violet-600/20 rounded-2xl blur-xl opacity-50" />
           
@@ -47,7 +48,7 @@ export function DashboardMockSection() {
               <p className="text-gray-600 text-sm mt-2">Coming soon in beta</p>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </section>
   );

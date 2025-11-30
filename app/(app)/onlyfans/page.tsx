@@ -16,6 +16,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 import { 
   MessageSquare, 
   Users, 
@@ -229,7 +230,7 @@ export default function OnlyFansPage() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Messages Card */}
-            <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+            <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                   <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -258,10 +259,10 @@ export default function OnlyFansPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Fans Card */}
-            <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+            <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                   <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -290,10 +291,10 @@ export default function OnlyFansPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* PPV Revenue Card */}
-            <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+            <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                   <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -322,11 +323,11 @@ export default function OnlyFansPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* AI Quota Card */}
             {quotaInfo && (
-              <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+              <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                     <Zap className="w-6 h-6 text-orange-600 dark:text-orange-400" />
@@ -361,7 +362,7 @@ export default function OnlyFansPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             )}
           </div>
         )}
@@ -372,7 +373,7 @@ export default function OnlyFansPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/onlyfans/messages"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
+              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0, 0, 0, 0.3)] hover:-translate-y-1 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
@@ -387,7 +388,7 @@ export default function OnlyFansPage() {
 
             <Link
               href="/onlyfans/fans"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
+              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0, 0, 0, 0.3)] hover:-translate-y-1 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors">
@@ -402,7 +403,7 @@ export default function OnlyFansPage() {
 
             <Link
               href="/onlyfans/ppv"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
+              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0, 0, 0, 0.3)] hover:-translate-y-1 transition-all group"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
@@ -418,7 +419,7 @@ export default function OnlyFansPage() {
         </div>
 
         {/* Navigation to Sub-Pages */}
-        <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
+        <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-medium text-[var(--color-text-main)]">OnlyFans Features</h2>
           </div>
@@ -481,7 +482,7 @@ export default function OnlyFansPage() {
               </Link>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </ContentPageErrorBoundary>
   );

@@ -2,13 +2,23 @@ import type { HTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-export type CardProps = HTMLAttributes<HTMLDivElement>;
+export type CardProps = HTMLAttributes<HTMLDivElement> & {
+  variant?: 'default' | 'glass';
+};
 
-export function Card({ className, ...props }: CardProps) {
+export function Card({ className, variant = 'default', ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]",
+        // Base styles using design tokens
+        "rounded-[var(--card-radius)] p-[var(--card-padding)]",
+        // Variant styles
+        variant === 'glass' 
+          ? "glass-card" // Uses glass effect from design-tokens.css
+          : "bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] shadow-[var(--shadow-inner-glow)]",
+        // Hover state
+        "transition-all duration-[var(--transition-base)]",
+        "hover:border-[var(--border-default)] hover:shadow-[var(--shadow-md)]",
         className,
       )}
       {...props}

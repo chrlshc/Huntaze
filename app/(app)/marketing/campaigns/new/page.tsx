@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useMarketingCampaigns } from '@/hooks/marketing/useMarketingCampaigns';
 import { ArrowLeft, Send, Save } from 'lucide-react';
 import type { CampaignChannel, CampaignGoal } from '@/lib/types/marketing';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function NewCampaignPage() {
   const router = useRouter();
@@ -108,7 +110,7 @@ export default function NewCampaignPage() {
 
       <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
         {/* Campaign Details */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Campaign Details</h2>
           
           <div className="space-y-4">
@@ -160,10 +162,10 @@ export default function NewCampaignPage() {
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Audience Selection */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Audience</h2>
           
           <div>
@@ -187,10 +189,10 @@ export default function NewCampaignPage() {
               </p>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Message */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Message</h2>
           
           <div className="space-y-4">
@@ -243,11 +245,11 @@ export default function NewCampaignPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Preview */}
         {formData.messageBody && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preview</h2>
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
               {formData.channel === 'email' && formData.messageSubject && (
@@ -259,7 +261,7 @@ export default function NewCampaignPage() {
                 {formData.messageBody.replace(/\{\{name\}\}/g, 'John')}
               </p>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Actions */}
@@ -270,23 +272,20 @@ export default function NewCampaignPage() {
           >
             Cancel
           </Link>
-          <button
+          <Button 
+            variant="ghost" 
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, true)} 
+            disabled={isCreating} 
             type="button"
-            onClick={(e) => handleSubmit(e, true)}
-            disabled={isCreating}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            className="flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
             Save as Draft
-          </button>
-          <button
-            type="submit"
-            disabled={isCreating}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900 disabled:opacity-50"
-          >
+          </Button>
+          <Button variant="secondary" disabled={isCreating} type="submit" className="flex items-center gap-2">
             <Send className="w-4 h-4" />
             {isCreating ? 'Creating...' : 'Create Campaign'}
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -295,7 +294,7 @@ export default function NewCampaignPage() {
           <div className={`rounded-lg p-4 shadow-lg ${toastType === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`}>
             <div className="flex items-center gap-3">
               <span>{toastMessage}</span>
-              <button onClick={() => setShowToast(false)} className="text-white hover:text-gray-200">×</button>
+              <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
             </div>
           </div>
         </div>

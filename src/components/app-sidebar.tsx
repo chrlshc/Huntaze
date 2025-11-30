@@ -32,8 +32,9 @@ import { useSSECounter } from "@/src/hooks/useSSECounter";
 import { AnimatePresence, motion } from "framer-motion";
 import { SafeBadge } from "@/components/hydration/SafeBadge";
 import "./nav-styles.css";
+import { Button } from "@/components/ui/button";
 
-type BadgeConfig = { type: "unread" | "alerts"; url: string };
+type BadgeConfig = { type: "unread" | "alert"; url: string };
 type NavItem = {
   label: string;
   href?: string;
@@ -65,7 +66,7 @@ export const NAV_SECTIONS: NavItem[] = [
     label: "Analytics",
     icon: TrendingUp,
     children: [
-      { label: "Overview", href: "/analytics", icon: BarChart3, badge: { type: "alerts", url: "/api/analytics/alerts-count" } },
+      { label: "Overview", href: "/analytics", icon: BarChart3, badge: { type: "alert", url: "/api/analytics/alerts-count" } },
       { label: "Revenue", href: "/analytics/revenue", icon: DollarSign },
       { label: "Engagement", href: "/analytics/engagement", icon: Activity },
       { label: "RFM Analysis", href: "/analytics/rfm", icon: Target },
@@ -236,7 +237,7 @@ export default function AppSidebar() {
     const count = item.badge
       ? useSSECounter({
           url: item.badge.type === "unread" ? `${item.badge.url}?sse=1` : item.badge.url,
-          eventName: item.badge.type === "unread" ? "unread" : "alerts",
+          eventName: item.badge.type === "unread" ? "unread" : "alert",
         })
       : 0;
 
@@ -349,13 +350,14 @@ export default function AppSidebar() {
                   </div>
                   <span className="text-xl font-bold text-content-primary">Huntaze</span>
                 </div>
-                <button
+                <Button 
+                  variant="primary" 
+                  onClick={() => setDrawerOpen(false)} 
                   aria-label="Close menu"
-                  onClick={() => setDrawerOpen(false)}
                   className="mobile-drawer-close"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
               
               {/* Mobile Search */}

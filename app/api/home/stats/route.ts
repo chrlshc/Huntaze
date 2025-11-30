@@ -380,7 +380,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<HomeStatsR
       try {
         user = await retryWithBackoff(
           async () => {
-            return await prisma.user.findUnique({
+            return await prisma.users.findUnique({
               where: { email: userEmail },
               select: { id: true },
             });
@@ -470,8 +470,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<HomeStatsR
       stats = await retryWithBackoff(
         async () => {
           // Try to find existing stats
-          let existingStats = await prisma.userStats.findUnique({
-            where: { userId: user.id },
+          let existingStats = await prisma.user_stats.findUnique({
+            where: { user_id: user.id },
           });
 
           // Create default stats if none exist
@@ -481,10 +481,18 @@ export async function GET(request: NextRequest): Promise<NextResponse<HomeStatsR
               userId: user.id,
             });
 
-            existingStats = await prisma.userStats.create({
+            existingStats = await prisma.user_stats.create({
               data: {
-                userId: user.id,
-                ...DEFAULT_STATS,
+                id: `stats_${user.id}_${Date.now()}`,
+                user_id: user.id,
+                messages_sent: DEFAULT_STATS.messages.sent,
+                messages_trend: 0,
+                response_rate: DEFAULT_STATS.messages.responseRate,
+                response_rate_trend: 0,
+                revenue: DEFAULT_STATS.revenue.month,
+                revenue_trend: DEFAULT_STATS.revenue.trend,
+                active_chats: DEFAULT_STATS.fans.total,
+                active_chats_trend: DEFAULT_STATS.fans.trend,
               },
             });
           }
@@ -523,32 +531,32 @@ export async function GET(request: NextRequest): Promise<NextResponse<HomeStatsR
     // For now, we'll use the existing stats and derive the new structure
     // In a real implementation, these would come from actual database queries
     const totalRevenue = stats.revenue || 0;
-    const totalMessages = stats.messagesSent || 0;
-    const totalFans = stats.activeChats || 0; // Using activeChats as proxy for fans
+    const totalMessages = stats.messages_sent || 0;
+    const totalFans = stats.active_chats || 0; // Using activeChats as proxy for fans
     
     const responseData: HomeStatsData = {
       revenue: {
         today: Math.round(totalRevenue * 0.05), // ~5% of monthly
         week: Math.round(totalRevenue * 0.25), // ~25% of monthly
         month: totalRevenue,
-        trend: stats.revenueTrend || 0,
+        trend: stats.revenue_trend || 0,
       },
       fans: {
         total: totalFans,
         active: Math.round(totalFans * 0.7), // ~70% active
         newToday: Math.round(totalFans * 0.02), // ~2% new today
-        trend: stats.activeChatsTrend || 0,
+        trend: stats.active_chats_trend || 0,
       },
       messages: {
         received: Math.round(totalMessages * 1.5), // Assume 1.5x received vs sent
         sent: totalMessages,
-        responseRate: stats.responseRate || 0,
+        responseRate: stats.response_rate || 0,
         avgResponseTime: 15, // Default 15 minutes
       },
       content: {
         postsThisWeek: 7, // Default 1 per day
         totalViews: Math.round(totalFans * 10), // ~10 views per fan
-        engagementRate: stats.responseRate || 0, // Use response rate as proxy
+        engagementRate: stats.response_rate || 0, // Use response rate as proxy
       },
       ai: {
         messagesUsed: Math.round(totalMessages * 0.3), // ~30% AI-assisted
@@ -556,14 +564,13 @@ export async function GET(request: NextRequest): Promise<NextResponse<HomeStatsR
         quotaTotal: 1000,
       },
       // Legacy fields for backward compatibility
-      messagesSent: stats.messagesSent,
-      messagesTrend: stats.messagesTrend,
-      responseRate: stats.responseRate,
-      responseRateTrend: stats.responseRateTrend,
-      revenue: stats.revenue,
-      revenueTrend: stats.revenueTrend,
-      activeChats: stats.activeChats,
-      activeChatsTrend: stats.activeChatsTrend,
+      messagesSent: stats.messages_sent,
+      messagesTrend: stats.messages_trend,
+      responseRate: stats.response_rate,
+      responseRateTrend: stats.response_rate_trend,
+      revenueTrend: stats.revenue_trend,
+      activeChats: stats.active_chats,
+      activeChatsTrend: stats.active_chats_trend,
     };
 
     // 6. Store in cache (Requirements: 11.1, 11.3)

@@ -165,7 +165,7 @@ class ModelDeploymentService {
       deployment.endTime = new Date();
       deployment.errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
-      logger.error(`Deployment failed: ${deployment.id}`, { error });
+      logger.error(`Deployment failed: ${deployment.id}`, error instanceof Error ? error : new Error(String(error)), {});
       
       // Attempt automatic rollback
       await this.performRollback(deployment);
@@ -431,7 +431,7 @@ class ModelDeploymentService {
               endpoint.lastHealthCheck = new Date();
             } catch (error) {
               endpoint.healthStatus = 'unhealthy';
-              logger.error(`Health check failed for endpoint: ${endpoint.id}`, { error });
+              logger.error(`Health check failed for endpoint: ${endpoint.id}`, error instanceof Error ? error : new Error(String(error)), {});
             }
           }
         }

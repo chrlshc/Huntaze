@@ -16,6 +16,9 @@ import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 import { SubNavigation } from '@/components/dashboard/SubNavigation';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
+import './analytics.css';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 // Time range type
 type TimeRange = '7d' | '30d' | '90d' | 'all';
@@ -128,10 +131,10 @@ export default function AnalyticsPage() {
   if (loading || integrationsLoading) {
     return (
       <ProtectedRoute requireOnboarding={false}>
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-indigo)] mx-auto mb-4"></div>
-            <p className="text-[var(--color-text-sub)]">Loading analytics...</p>
+        <div className="loading-container">
+          <div className="loading-content">
+            <div className="loading-spinner"></div>
+            <p className="loading-text">Loading analytics...</p>
           </div>
         </div>
       </ProtectedRoute>
@@ -143,19 +146,19 @@ export default function AnalyticsPage() {
     return (
       <ProtectedRoute requireOnboarding={false}>
         <ContentPageErrorBoundary pageName="Analytics">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Analytics</h1>
-              <p className="text-[var(--color-text-sub)]">
+          <div className="analytics-container">
+            <div className="analytics-header">
+              <h1 className="analytics-title">Analytics</h1>
+              <p className="analytics-subtitle">
                 Track your performance and optimize your revenue across all platforms
               </p>
             </div>
 
             {/* Empty State */}
-            <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-12 shadow-[var(--shadow-soft)]">
-              <div className="text-center max-w-md mx-auto">
+            <div className="empty-state-container">
+              <div className="empty-state-content">
                 <svg
-                  className="mx-auto h-16 w-16 text-gray-400 mb-4"
+                  className="empty-state-icon"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -167,19 +170,16 @@ export default function AnalyticsPage() {
                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
                 </svg>
-                <h3 className="text-xl font-semibold text-[var(--color-text-main)] mb-2">
+                <h3 className="empty-state-title">
                   Connect Your Accounts
                 </h3>
-                <p className="text-[var(--color-text-sub)] mb-6">
+                <p className="empty-state-description">
                   To view analytics, you need to connect at least one platform account. 
                   Connect your OnlyFans, Instagram, TikTok, or Reddit account to get started.
                 </p>
-                <Link
-                  href="/integrations"
-                  className="inline-flex items-center px-6 py-3 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-all font-medium"
-                >
+                <Link href="/integrations" className="empty-state-button">
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="empty-state-button-icon"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -204,30 +204,31 @@ export default function AnalyticsPage() {
   return (
     <ProtectedRoute requireOnboarding={false}>
       <ContentPageErrorBoundary pageName="Analytics">
-        <div className="max-w-7xl mx-auto">
+        <div className="analytics-container">
           {/* Header with Time Range Selector */}
-          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="analytics-header-with-actions">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Analytics</h1>
-              <p className="text-[var(--color-text-sub)]">
+              <h1 className="analytics-title">Analytics</h1>
+              <p className="analytics-subtitle">
                 Track your performance and optimize your revenue across all platforms
               </p>
             </div>
             
             {/* Time Range Selector */}
-            <div className="flex items-center gap-2 bg-[var(--bg-surface)] border border-gray-200 rounded-lg p-1">
+            <div className="time-range-selector">
               {(['7d', '30d', '90d', 'all'] as TimeRange[]).map((range) => (
-                <button
+                <Button 
                   key={range}
+                  variant="primary" 
                   onClick={() => setTimeRange(range)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`time-range-button ${
                     timeRange === range
-                      ? 'bg-[var(--color-indigo)] text-white shadow-sm'
-                      : 'text-[var(--color-text-sub)] hover:text-[var(--color-text-main)] hover:bg-gray-50'
+                      ? 'time-range-button-active'
+                      : 'time-range-button-inactive'
                   }`}
                 >
                   {range === 'all' ? 'All' : range.toUpperCase()}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -241,161 +242,152 @@ export default function AnalyticsPage() {
           {/* Key Metrics Cards */}
           {metrics && (
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-[var(--color-text-main)] mb-4">Key Metrics</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              <h2 className="section-header">Key Metrics</h2>
+              <div className="metrics-grid metrics-grid-5">
                 {/* Total Revenue */}
-                <div className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[var(--color-text-sub)]">Total Revenue</span>
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Card>
+                  <div className="metric-header">
+                    <span className="metric-label">Total Revenue</span>
+                    <div className="metric-icon-wrapper metric-icon-blue">
+                      <svg className="metric-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[var(--color-text-main)] mb-1">
+                  <div className="metric-value">
                     {formatCurrency(metrics.revenue.total)}
                   </div>
-                  <div className={`text-sm font-medium ${metrics.revenue.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div className={`metric-change ${metrics.revenue.change >= 0 ? 'metric-change-positive' : 'metric-change-negative'}`}>
                     {formatPercent(metrics.revenue.change)}
                   </div>
-                </div>
+                </Card>
 
                 {/* ARPU */}
-                <div className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[var(--color-text-sub)]">ARPU</span>
-                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Card>
+                  <div className="metric-header">
+                    <span className="metric-label">ARPU</span>
+                    <div className="metric-icon-wrapper metric-icon-green">
+                      <svg className="metric-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[var(--color-text-main)] mb-1">
+                  <div className="metric-value">
                     {formatCurrency(metrics.arpu.value)}
                   </div>
-                  <div className={`text-sm font-medium ${metrics.arpu.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div className={`metric-change ${metrics.arpu.change >= 0 ? 'metric-change-positive' : 'metric-change-negative'}`}>
                     {formatPercent(metrics.arpu.change)}
                   </div>
-                </div>
+                </Card>
 
                 {/* LTV */}
-                <div className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[var(--color-text-sub)]">LTV</span>
-                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Card>
+                  <div className="metric-header">
+                    <span className="metric-label">LTV</span>
+                    <div className="metric-icon-wrapper metric-icon-purple">
+                      <svg className="metric-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                       </svg>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[var(--color-text-main)] mb-1">
+                  <div className="metric-value">
                     {formatCurrency(metrics.ltv.value)}
                   </div>
-                  <div className={`text-sm font-medium ${metrics.ltv.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div className={`metric-change ${metrics.ltv.change >= 0 ? 'metric-change-positive' : 'metric-change-negative'}`}>
                     {formatPercent(metrics.ltv.change)}
                   </div>
-                </div>
+                </Card>
 
                 {/* Churn Rate */}
-                <div className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[var(--color-text-sub)]">Churn Rate</span>
-                    <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Card>
+                  <div className="metric-header">
+                    <span className="metric-label">Churn Rate</span>
+                    <div className="metric-icon-wrapper metric-icon-red">
+                      <svg className="metric-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[var(--color-text-main)] mb-1">
+                  <div className="metric-value">
                     {metrics.churnRate.value.toFixed(1)}%
                   </div>
-                  <div className={`text-sm font-medium ${metrics.churnRate.change <= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div className={`metric-change ${metrics.churnRate.change <= 0 ? 'metric-change-positive' : 'metric-change-negative'}`}>
                     {formatPercent(metrics.churnRate.change)}
                   </div>
-                </div>
+                </Card>
 
                 {/* Subscribers */}
-                <div className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-[var(--color-text-sub)]">Subscribers</span>
-                    <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Card>
+                  <div className="metric-header">
+                    <span className="metric-label">Subscribers</span>
+                    <div className="metric-icon-wrapper metric-icon-yellow">
+                      <svg className="metric-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-[var(--color-text-main)] mb-1">
+                  <div className="metric-value">
                     {metrics.subscribers.total.toLocaleString()}
                   </div>
-                  <div className={`text-sm font-medium ${metrics.subscribers.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div className={`metric-change ${metrics.subscribers.change >= 0 ? 'metric-change-positive' : 'metric-change-negative'}`}>
                     {metrics.subscribers.change > 0 ? '+' : ''}{metrics.subscribers.change} this period
                   </div>
-                </div>
+                </Card>
               </div>
             </div>
           )}
 
           {/* Quick Links to Sub-sections */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-[var(--color-text-main)] mb-4">Revenue Optimization Tools</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Link
-                href="/analytics/pricing"
-                className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <h2 className="section-header">Revenue Optimization Tools</h2>
+            <div className="tools-grid">
+              <Link href="/analytics/pricing" className="tool-card">
+                <div className="metric-header">
+                  <div className="tool-icon-wrapper tool-icon-wrapper-blue">
+                    <svg className="tool-icon tool-icon-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[var(--color-text-main)]">Pricing Optimization</h3>
-                    <p className="text-sm text-[var(--color-text-sub)]">AI-powered recommendations</p>
+                    <h3 className="tool-title">Pricing Optimization</h3>
+                    <p className="tool-subtitle">AI-powered recommendations</p>
                   </div>
                 </div>
-                <p className="text-sm text-[var(--color-text-sub)]">
+                <p className="tool-description">
                   Get personalized pricing suggestions based on your audience and content performance.
                 </p>
               </Link>
 
-              <Link
-                href="/analytics/churn"
-                className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                    <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <Link href="/analytics/churn" className="tool-card">
+                <div className="metric-header">
+                  <div className="tool-icon-wrapper tool-icon-wrapper-red">
+                    <svg className="tool-icon tool-icon-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[var(--color-text-main)]">Churn Prevention</h3>
-                    <p className="text-sm text-[var(--color-text-sub)]">Identify at-risk fans</p>
+                    <h3 className="tool-title">Churn Prevention</h3>
+                    <p className="tool-subtitle">Identify at-risk fans</p>
                   </div>
                 </div>
-                <p className="text-sm text-[var(--color-text-sub)]">
+                <p className="tool-description">
                   Detect fans likely to unsubscribe and take action to retain them.
                 </p>
               </Link>
 
-              <Link
-                href="/analytics/upsells"
-                className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                    <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <Link href="/analytics/upsells" className="tool-card">
+                <div className="metric-header">
+                  <div className="tool-icon-wrapper tool-icon-wrapper-green">
+                    <svg className="tool-icon tool-icon-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[var(--color-text-main)]">Upsell Automation</h3>
-                    <p className="text-sm text-[var(--color-text-sub)]">Maximize revenue per fan</p>
+                    <h3 className="tool-title">Upsell Automation</h3>
+                    <p className="tool-subtitle">Maximize revenue per fan</p>
                   </div>
                 </div>
-                <p className="text-sm text-[var(--color-text-sub)]">
+                <p className="tool-description">
                   Automatically suggest premium content and PPV to engaged fans.
                 </p>
               </Link>
@@ -403,14 +395,14 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Charts Placeholder */}
-          <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-[var(--color-text-main)]">Performance Charts</h2>
+          <div className="chart-container">
+            <div className="chart-header">
+              <h2 className="chart-title">Performance Charts</h2>
             </div>
-            <div className="p-6">
-              <div className="text-center py-12">
+            <div className="chart-content">
+              <div className="chart-placeholder">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="chart-placeholder-icon"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -422,10 +414,10 @@ export default function AnalyticsPage() {
                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
                 </svg>
-                <h3 className="mt-4 text-lg font-semibold text-[var(--color-text-main)]">
+                <h3 className="chart-placeholder-title">
                   Charts Coming Soon
                 </h3>
-                <p className="mt-2 text-[var(--color-text-sub)]">
+                <p className="chart-placeholder-description">
                   Revenue trends, fan growth, and engagement charts will be available here.
                 </p>
               </div>

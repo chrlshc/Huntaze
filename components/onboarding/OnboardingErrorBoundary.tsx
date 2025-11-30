@@ -2,6 +2,8 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
@@ -74,7 +76,7 @@ export default class OnboardingErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+          <Card className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
             <div className="flex justify-center mb-6">
               <div className="p-4 bg-red-100 rounded-full">
                 <AlertTriangle className="w-12 h-12 text-red-600" />
@@ -98,34 +100,25 @@ export default class OnboardingErrorBoundary extends Component<Props, State> {
             )}
 
             <div className="space-y-3">
-              <button
-                onClick={this.handleRetry}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
-              >
+              <Button variant="primary" onClick={this.handleRetry}>
                 <RefreshCw className="w-5 h-5" />
                 Try Again
-              </button>
+              </Button>
 
-              <button
-                onClick={this.handleGoHome}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
-              >
+              <Button variant="ghost" onClick={this.handleGoHome}>
                 <Home className="w-5 h-5" />
                 Go to Dashboard
-              </button>
+              </Button>
 
-              <button
-                onClick={this.handleReset}
-                className="w-full text-sm text-gray-500 hover:text-gray-700 transition"
-              >
+              <Button variant="primary" onClick={this.handleReset}>
                 Dismiss Error
-              </button>
+              </Button>
             </div>
 
             <p className="mt-6 text-xs text-gray-500">
               If this problem persists, please contact support
             </p>
-          </div>
+          </Card>
         </div>
       );
     }

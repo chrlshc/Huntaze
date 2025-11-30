@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, type ComponentProps } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,12 +32,13 @@ export function NotificationBell() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-        aria-label="Notifications"
+      <Button 
+        variant="ghost" 
+        onClick={() => setIsOpen(!isOpen)} 
+        type="button" 
+        aria-label="Notifications" 
         aria-expanded={isOpen}
+        className="relative rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
       >
         <BellIcon className="h-6 w-6" />
         {unreadCount > 0 && (
@@ -43,22 +46,19 @@ export function NotificationBell() {
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
-      </button>
+</Button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+        <Card className="absolute right-0 mt-2 w-80 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
           <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                 Notifications
               </h3>
-              <button
-                type="button"
-                className="text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400"
-              >
+              <Button variant="primary" type="button" className="text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400">
                 Mark all read
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -90,14 +90,11 @@ export function NotificationBell() {
           </div>
 
           <div className="border-t border-gray-200 px-4 py-3 dark:border-gray-700">
-            <button
-              type="button"
-              className="w-full text-center text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400"
-            >
+            <Button variant="primary" type="button" className="w-full text-center text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400">
               View all notifications
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

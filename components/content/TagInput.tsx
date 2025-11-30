@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface TagInputProps {
   value: string[];
@@ -62,8 +64,8 @@ export default function TagInput({ value, onChange, suggestions = [], maxTags = 
           >
             {tag}
             <button
-              type="button"
               onClick={() => removeTag(tag)}
+              type="button"
               className="hover:text-blue-900"
             >
               ×
@@ -96,8 +98,8 @@ export default function TagInput({ value, onChange, suggestions = [], maxTags = 
           {filteredSuggestions.map((suggestion) => (
             <button
               key={suggestion}
-              type="button"
               onClick={() => addTag(suggestion)}
+              type="button"
               className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
             >
               {suggestion}

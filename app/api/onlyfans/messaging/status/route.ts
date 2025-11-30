@@ -58,10 +58,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response, { status: 200 });
 
   } catch (error) {
-    logger.error('OnlyFans queue status: Failed to get status', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-    });
+    logger.error('OnlyFans queue status: Failed to get status', error instanceof Error ? error : new Error(String(error)), {});
 
     // Check if it's a service unavailable error
     if (error instanceof Error && error.message.includes('Failed to get queue status')) {

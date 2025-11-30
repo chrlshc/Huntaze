@@ -427,15 +427,15 @@ export class ValidationReporter {
 <head>
     <title>Environment Variables Validation Report</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .summary { background: #f5f5f5; padding: 15px; border-radius: 5px; }
-        .error { color: #d32f2f; }
-        .warning { color: #f57c00; }
-        .success { color: #388e3c; }
-        .recommendation { margin: 10px 0; padding: 10px; border-left: 4px solid #2196f3; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; margin: 20px; }
+        .summary { background: var(--bg-glass); padding: 15px; border-radius: 5px; }
+        .error { color: var(--accent-error); }
+        .warning { color: var(--accent-warning); }
+        .success { color: var(--accent-success); }
+        .recommendation { margin: 10px 0; padding: 10px; border-left: 4px solid var(--accent-info); }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        th, td { border: 1px solid var(--border-subtle); padding: 8px; text-align: left; }
+        th { background-color: var(--bg-glass); }
     </style>
 </head>
 <body>

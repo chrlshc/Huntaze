@@ -262,7 +262,7 @@ export function createSlowQueryMiddleware(config?: SlowQueryConfig) {
  * Usage:
  * const users = await measureQuery(
  *   'User.findMany',
- *   () => prisma.user.findMany({ where: { active: true } })
+ *   () => prisma.users.findMany({ where: { active: true } })
  * );
  */
 export async function measureQuery<T>(
@@ -293,7 +293,7 @@ export async function measureQuery<T>(
  * class UserService {
  *   @measureQueryTime('UserService.getUsers')
  *   async getUsers() {
- *     return prisma.user.findMany();
+ *     return prisma.users.findMany();
  *   }
  * }
  */

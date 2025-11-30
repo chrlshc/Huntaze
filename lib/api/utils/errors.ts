@@ -33,6 +33,8 @@ export const ErrorCodes = {
   DATABASE_ERROR: 'DATABASE_ERROR',
   EXTERNAL_API_ERROR: 'EXTERNAL_API_ERROR',
   SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
+  TIMEOUT_ERROR: 'TIMEOUT_ERROR',
+  NETWORK_ERROR: 'NETWORK_ERROR',
 } as const;
 
 export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
@@ -121,6 +123,8 @@ export function getStatusCodeForError(code: ErrorCode): number {
     [ErrorCodes.DATABASE_ERROR]: HttpStatusCodes.INTERNAL_SERVER_ERROR,
     [ErrorCodes.EXTERNAL_API_ERROR]: HttpStatusCodes.SERVICE_UNAVAILABLE,
     [ErrorCodes.SERVICE_UNAVAILABLE]: HttpStatusCodes.SERVICE_UNAVAILABLE,
+    [ErrorCodes.TIMEOUT_ERROR]: 408,
+    [ErrorCodes.NETWORK_ERROR]: HttpStatusCodes.SERVICE_UNAVAILABLE,
   };
 
   return statusMap[code] || HttpStatusCodes.INTERNAL_SERVER_ERROR;

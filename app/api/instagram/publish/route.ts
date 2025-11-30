@@ -132,9 +132,7 @@ interface PublishResponse {
  * Validation schema for publish request
  */
 const publishSchema = z.object({
-  mediaType: z.enum(['IMAGE', 'VIDEO', 'CAROUSEL'], {
-    errorMap: () => ({ message: 'mediaType must be IMAGE, VIDEO, or CAROUSEL' }),
-  }),
+  mediaType: z.enum(['IMAGE', 'VIDEO', 'CAROUSEL']),
   mediaUrl: z.string().url('Invalid media URL').optional(),
   caption: z.string()
     .max(2200, 'Caption must be 2200 characters or less')
@@ -359,7 +357,7 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
       validatedData = publishSchema.parse(body);
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
-        const errorMessage = validationError.errors
+        const errorMessage = validationError.issues
           .map(e => `${e.path.join('.')}: ${e.message}`)
           .join(', ');
         
@@ -540,7 +538,7 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
       status: 'published',
       metadata: {
         userId: userId.toString(),
-        accountId: account.id,
+        accountId: account.id.toString(),
         igBusinessId,
       },
     };
@@ -557,7 +555,7 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
 
     // 8. Return success response
     return NextResponse.json(
-      createSuccessResponse(publishData, correlationId),
+      createSuccessResponse(publishData, { correlationId }),
       {
         status: 200,
         headers: {
@@ -582,9 +580,8 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
         createErrorResponse(
           error.code,
           error.message,
-          error.statusCode,
-          error.retryable,
-          correlationId
+          { statusCode: error.statusCode, retryable: error.retryable },
+          { correlationId }
         ),
         {
           status: error.statusCode,
@@ -598,14 +595,14 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors
+      const errorMessage = error.issues
         .map(e => `${e.path.join('.')}: ${e.message}`)
         .join(', ');
 
       logger.warn('Instagram publish validation error', {
         correlationId,
         userId,
-        errors: error.errors,
+        errors: error.issues,
         duration,
       });
 
@@ -613,9 +610,8 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
         createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
           `Validation failed: ${errorMessage}`,
-          400,
-          false,
-          correlationId
+          { statusCode: 400, retryable: false },
+          { correlationId }
         ),
         {
           status: 400,
@@ -634,9 +630,8 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
         createErrorResponse(
           mappedError.code,
           mappedError.message,
-          mappedError.statusCode,
-          mappedError.retryable,
-          correlationId
+          { statusCode: mappedError.statusCode, retryable: mappedError.retryable },
+          { correlationId }
         ),
         {
           status: mappedError.statusCode,
@@ -659,9 +654,8 @@ async function publishToInstagram(request: NextRequest, userId: number): Promise
       createErrorResponse(
         ErrorCodes.INTERNAL_ERROR,
         'An unexpected error occurred. Please try again.',
-        500,
-        true,
-        correlationId
+        { statusCode: 500, retryable: true },
+        { correlationId }
       ),
       {
         status: 500,

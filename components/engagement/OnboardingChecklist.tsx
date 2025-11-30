@@ -2,10 +2,12 @@
 
 import { useState, useOptimistic } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
+// TODO: Install canvas-confetti package
+// import confetti from 'canvas-confetti';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { toggleOnboardingStep } from '@/app/actions/onboarding';
 import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
 
 export interface OnboardingStep {
   id: string;
@@ -69,12 +71,14 @@ export function OnboardingChecklist({ initialSteps }: Props) {
     
     // Trigger confetti when all steps are complete
     if (willComplete) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#5E6AD2', '#EDEDED', '#8A8F98'], // Brand colors
-      });
+      // TODO: Restore when canvas-confetti is installed
+      // confetti({
+      //   particleCount: 100,
+      //   spread: 70,
+      //   origin: { y: 0.6 },
+      //   colors: ['#5E6AD2', '#EDEDED', '#8A8F98'], // Brand colors
+      // });
+      console.log('🎉 All onboarding steps completed!');
     }
   }
 

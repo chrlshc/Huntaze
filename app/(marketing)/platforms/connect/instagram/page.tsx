@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 export default function InstagramConnectPage() {
   const searchParams = useSearchParams();
@@ -78,7 +79,7 @@ export default function InstagramConnectPage() {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+        <Card className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           {/* Success Message */}
           {success && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -181,43 +182,43 @@ export default function InstagramConnectPage() {
               'Connect Instagram Business'
             )}
           </button>
-        </div>
 
-        {/* Help Text */}
-        <div className="text-center text-sm text-gray-600">
-          <p>
-            Don't have an Instagram Business account?{' '}
-            <a
-              href="https://help.instagram.com/502981923235522"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-purple-600 hover:text-purple-700 font-medium"
-            >
-              Learn how to convert your account
-            </a>
-          </p>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="text-center space-y-2">
-          <div className="flex justify-center space-x-6 text-sm">
-            <Link
-              href="/platforms/connect/tiktok"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Connect TikTok
-            </Link>
-            <Link
-              href="/platforms/connect/reddit"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Connect Reddit
-            </Link>
+          {/* Help Text */}
+          <div className="text-center text-sm text-gray-600 mt-6">
+            <p>
+              Don't have an Instagram Business account?{' '}
+              <a
+                href="https://help.instagram.com/502981923235522"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-600 hover:text-purple-700 font-medium"
+              >
+                Learn how to convert your account
+              </a>
+            </p>
           </div>
-          <p className="text-xs text-gray-500">
-            🔒 Your credentials are encrypted and stored securely
-          </p>
-        </div>
+
+          {/* Navigation Links */}
+          <div className="text-center space-y-2 mt-6">
+            <div className="flex justify-center space-x-6 text-sm">
+              <Link
+                href="/platforms/connect/tiktok"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Connect TikTok
+              </Link>
+              <Link
+                href="/platforms/connect/reddit"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Connect Reddit
+              </Link>
+            </div>
+            <p className="text-xs text-gray-500">
+              🔒 Your credentials are encrypted and stored securely
+            </p>
+          </div>
+        </Card>
       </div>
     </div>
   );

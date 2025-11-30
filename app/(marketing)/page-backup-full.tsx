@@ -5,6 +5,7 @@ import { SimpleHeroSection as HeroSection } from '@/components/landing/SimpleHer
 import { FeaturesGrid } from '@/components/landing/FeaturesGrid';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { Zap, Users, TrendingUp, Shield, Sparkles, BarChart3 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 // Use dynamic rendering to avoid build-time errors
 // The page will be rendered on-demand for each request
@@ -248,13 +249,13 @@ export default function HomePage() {
       
       {/* Beta Badge */}
       <div className="fixed top-4 right-4 z-50">
-        <div className="bg-primary/10 border border-primary/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2">
+        <Card className="bg-primary/10 border border-primary/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
           </span>
           <span className="text-sm font-medium text-primary">BETA</span>
-        </div>
+        </Card>
       </div>
       
       <HeroSection

@@ -11,6 +11,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Play, Copy, Trash2, TrendingUp, Send, Eye, MousePointer } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function CampaignDetailsPage() {
   const params = useParams();
@@ -149,30 +151,19 @@ export default function CampaignDetailsPage() {
 
           <div className="flex items-center gap-2">
             {campaign.status === 'draft' && (
-              <button
-                onClick={handleLaunch}
-                disabled={isLaunching}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-              >
-                <Play className="w-4 h-4" />
+              <Button variant="primary" onClick={handleLaunch} disabled={isLaunching}>
+  <Play className="w-4 h-4" />
                 {isLaunching ? 'Launching...' : 'Launch'}
-              </button>
+</Button>
             )}
-            <button
-              onClick={handleDuplicate}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              <Copy className="w-4 h-4" />
+            <Button variant="ghost" onClick={handleDuplicate}>
+  <Copy className="w-4 h-4" />
               Duplicate
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="flex items-center gap-2 px-4 py-2 border border-red-300 dark:border-red-600 rounded-lg text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
-            >
-              <Trash2 className="w-4 h-4" />
+</Button>
+            <Button variant="danger" onClick={handleDelete} disabled={isDeleting}>
+  <Trash2 className="w-4 h-4" />
               Delete
-            </button>
+</Button>
           </div>
         </div>
       </div>
@@ -180,7 +171,7 @@ export default function CampaignDetailsPage() {
       {/* Stats */}
       {campaign.stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <Send className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -188,9 +179,9 @@ export default function CampaignDetailsPage() {
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Sent</p>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{campaign.stats.sent}</p>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <Eye className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -201,9 +192,9 @@ export default function CampaignDetailsPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               {(campaign.stats.openRate * 100).toFixed(1)}% rate
             </p>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <MousePointer className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -214,9 +205,9 @@ export default function CampaignDetailsPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               {(campaign.stats.clickRate * 100).toFixed(1)}% rate
             </p>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -227,13 +218,13 @@ export default function CampaignDetailsPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               {(campaign.stats.conversionRate * 100).toFixed(1)}% rate
             </p>
-          </div>
+          </Card>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Campaign Details */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Campaign Details</h2>
           <div className="space-y-3">
             <div>
@@ -265,10 +256,10 @@ export default function CampaignDetailsPage() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Message */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Message</h2>
           {campaign.message.subject && (
             <div className="mb-3">
@@ -284,12 +275,11 @@ export default function CampaignDetailsPage() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
+        </Card>
 
-      {/* Recipients */}
+        {/* Recipients */}
       {campaign.recipients && campaign.recipients.length > 0 && (
-        <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="mt-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recipients</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -324,7 +314,7 @@ export default function CampaignDetailsPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       )}
 
       {showToast && (
@@ -332,11 +322,12 @@ export default function CampaignDetailsPage() {
           <div className="rounded-lg p-4 shadow-lg bg-green-600 text-white">
             <div className="flex items-center gap-3">
               <span>{toastMessage}</span>
-              <button onClick={() => setShowToast(false)} className="text-white hover:text-gray-200">×</button>
+              <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
             </div>
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Send, Users, MessageSquare, Clock, CheckCircle, AlertCircle, Plus, Eye, Calendar } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function OnlyFansMassMessagingPage() {
   const [activeTab, setActiveTab] = useState<'compose' | 'scheduled' | 'sent'>('compose');
@@ -178,7 +180,7 @@ export default function OnlyFansMassMessagingPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -187,9 +189,9 @@ export default function OnlyFansMassMessagingPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">1,234</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Available to message</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Send className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -198,9 +200,9 @@ export default function OnlyFansMassMessagingPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">2,468</p>
           <p className="text-sm text-green-600 dark:text-green-400 mt-1">+15% this week</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -209,9 +211,9 @@ export default function OnlyFansMassMessagingPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">72%</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Last 30 days</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -220,16 +222,17 @@ export default function OnlyFansMassMessagingPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{scheduledMessages.length}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Upcoming messages</p>
-        </div>
+        </Card>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="border-b border-gray-200 dark:border-gray-700">
           <nav className="flex space-x-8 px-6">
             {(['compose', 'scheduled', 'sent'] as const).map((tab) => (
-              <button
+              <Button 
                 key={tab}
+                variant="secondary" 
                 onClick={() => setActiveTab(tab)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab
@@ -243,7 +246,7 @@ export default function OnlyFansMassMessagingPage() {
                     {scheduledMessages.length}
                   </span>
                 )}
-              </button>
+              </Button>
             ))}
           </nav>
         </div>
@@ -387,7 +390,7 @@ export default function OnlyFansMassMessagingPage() {
 
                   {/* Preview */}
                   {selectedAudienceData && messageText && (
-                    <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <Card className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
                           <Eye className="w-4 h-4" />
@@ -410,12 +413,13 @@ export default function OnlyFansMassMessagingPage() {
                       <div className="bg-white dark:bg-gray-800 rounded p-3 border border-gray-200 dark:border-gray-700">
                         <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{previewMessage}</p>
                       </div>
-                    </div>
+                    </Card>
                   )}
 
                   {/* Send Button */}
                   <div className="flex justify-end gap-3">
-                    <button
+                    <Button 
+                      variant="ghost" 
                       onClick={() => {
                         setMessageText('');
                         setScheduleDate('');
@@ -425,15 +429,11 @@ export default function OnlyFansMassMessagingPage() {
                       className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
                       Clear
-                    </button>
-                    <button
-                      onClick={handleSendMessage}
-                      disabled={!messageText.trim() || !selectedAudience}
-                      className="flex items-center gap-2 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-gray-900 transition-colors"
-                    >
+                    </Button>
+                    <Button variant="secondary" onClick={handleSendMessage} disabled={!messageText.trim() || !selectedAudience}>
                       <Send className="w-5 h-5" />
                       {scheduleDate && scheduleTime ? 'Schedule Message' : 'Send Now'}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -471,12 +471,12 @@ export default function OnlyFansMassMessagingPage() {
                       </p>
                     </div>
                     <div className="flex gap-2 ml-4">
-                      <button className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <Button variant="ghost">
                         Edit
-                      </button>
-                      <button className="px-3 py-1 text-sm border border-red-300 dark:border-red-600 rounded-lg text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                      </Button>
+                      <Button variant="danger">
                         Cancel
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -528,16 +528,16 @@ export default function OnlyFansMassMessagingPage() {
                         </div>
                       </div>
                     </div>
-                    <button className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ml-4">
+                    <Button variant="ghost">
                       View Details
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

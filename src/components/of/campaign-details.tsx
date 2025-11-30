@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Users, BarChart3, AlertCircle, Clock, Play, Pause, X } from 'lucide-react';
 import type { OfMassMessageCampaign, CampaignMetrics } from '@/lib/types/onlyfans';
 import { formatDistanceToNow, format } from 'date-fns';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface CampaignDetailsProps {
   campaignId: string;
@@ -72,15 +74,12 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
-            <button
-              onClick={onBack}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
+            <Button variant="ghost" onClick={onBack}>
               <ArrowLeft className="w-5 h-5" />
-            </button>
+            </Button>
             
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -100,40 +99,36 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
           {/* Action Buttons */}
           <div className="flex gap-2">
             {campaign.status === 'draft' && (
-              <button
-                onClick={() => handleAction('launch')}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
+              <Button variant="primary" onClick={() => handleAction('launch')}>
                 <Play className="w-4 h-4" />
                 Launch Campaign
-              </button>
+              </Button>
             )}
             {campaign.status === 'sending' && (
-              <button
-                onClick={() => handleAction('pause')}
-                className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
-              >
+              <Button variant="primary" onClick={() => handleAction('pause')}>
                 <Pause className="w-4 h-4" />
                 Pause Campaign
-              </button>
+              </Button>
             )}
             {campaign.status === 'paused' && (
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => handleAction('resume')}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex items-center gap-2"
               >
                 <Play className="w-4 h-4" />
                 Resume Campaign
-              </button>
+              </Button>
             )}
             {['draft', 'scheduled', 'paused'].includes(campaign.status) && (
-              <button
+              <Button 
+                variant="danger" 
                 onClick={() => handleAction('cancel')}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="flex items-center gap-2"
               >
                 <X className="w-4 h-4" />
                 Cancel
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -155,11 +150,11 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 mb-2">
             <Users className="w-5 h-5" />
             <span className="text-sm font-medium">Total Recipients</span>
@@ -167,9 +162,9 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {campaign.stats.totalRecipients.toLocaleString()}
           </p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 text-green-600 mb-2">
             <BarChart3 className="w-5 h-5" />
             <span className="text-sm font-medium">Sent</span>
@@ -177,9 +172,9 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {campaign.stats.sentCount.toLocaleString()}
           </p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 text-yellow-600 mb-2">
             <Clock className="w-5 h-5" />
             <span className="text-sm font-medium">Queued</span>
@@ -187,9 +182,9 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {campaign.stats.queuedCount.toLocaleString()}
           </p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 text-red-600 mb-2">
             <AlertCircle className="w-5 h-5" />
             <span className="text-sm font-medium">Failed</span>
@@ -197,11 +192,11 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {campaign.stats.failedCount.toLocaleString()}
           </p>
-        </div>
+        </Card>
       </div>
 
       {/* Message Content */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Message Content
         </h3>
@@ -210,10 +205,10 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
             {campaign.content.text}
           </p>
         </div>
-      </div>
+      </Card>
 
       {/* Performance Metrics */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Performance Metrics
         </h3>
@@ -261,11 +256,11 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Timeline */}
       {campaign.startedAt && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Timeline
           </h3>
@@ -296,7 +291,7 @@ export default function CampaignDetails({ campaignId, onBack }: CampaignDetailsP
               </div>
             )}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

@@ -214,7 +214,7 @@ export async function getUserWithCache(userId: number): Promise<User | null> {
     
     const user = await retryWithBackoff(
       async () => {
-        return await prisma.user.findUnique({
+        return await prisma.users.findUnique({
           where: { id: userId },
           select: { id: true, name: true, email: true },
         });
@@ -320,7 +320,7 @@ export async function getUserWithGetOrSet(userId: number): Promise<User | null> 
         // Factory function with retry logic
         return await retryWithBackoff(
           async () => {
-            return await prisma.user.findUnique({
+            return await prisma.users.findUnique({
               where: { id: userId },
               select: { id: true, name: true, email: true },
             });
@@ -418,7 +418,7 @@ export async function updateUser(
     // Update database with retry
     const updated = await retryWithBackoff(
       async () => {
-        return await prisma.user.update({
+        return await prisma.users.update({
           where: { id: userId },
           data,
         });
@@ -521,7 +521,7 @@ export async function deleteUser(userId: number): Promise<void> {
     // Delete from database with retry
     await retryWithBackoff(
       async () => {
-        return await prisma.user.delete({
+        return await prisma.users.delete({
           where: { id: userId },
         });
       },
@@ -796,7 +796,7 @@ export async function getUserData(
 ): Promise<User | null> {
   // Admins get fresh data (no cache)
   if (userRole === 'admin') {
-    return await prisma.user.findUnique({
+    return await prisma.users.findUnique({
       where: { id: userId },
       select: { id: true, name: true, email: true },
     });
@@ -818,7 +818,7 @@ export async function warmCache(): Promise<void> {
   console.log('Warming cache...');
   
   // Fetch top 100 active users
-  const activeUsers = await prisma.user.findMany({
+  const activeUsers = await prisma.users.findMany({
     take: 100,
     orderBy: { updatedAt: 'desc' },
     select: { id: true, name: true, email: true },
@@ -883,7 +883,7 @@ export async function getUserWithFallback(userId: number): Promise<User | null> 
     }
     
     // Try database
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: userId },
       select: { id: true, name: true, email: true },
     });
@@ -928,7 +928,7 @@ export class UserCacheManager {
     return await cacheService.getOrSet(
       this.getKey(userId),
       async () => {
-        return await prisma.user.findUnique({
+        return await prisma.users.findUnique({
           where: { id: userId },
           select: { id: true, name: true, email: true },
         });
@@ -941,7 +941,7 @@ export class UserCacheManager {
     return await cacheService.getOrSet(
       this.getKey(userId, 'profile'),
       async () => {
-        return await prisma.user.findUnique({
+        return await prisma.users.findUnique({
           where: { id: userId },
           include: { stats: true },
         });

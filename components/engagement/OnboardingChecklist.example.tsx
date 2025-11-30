@@ -7,6 +7,7 @@
 
 import { OnboardingChecklist, type OnboardingStep } from './OnboardingChecklist';
 import { getOnboardingProgress } from '@/app/actions/onboarding';
+import { Button } from "@/components/ui/button";
 
 /**
  * Example 1: Basic Dashboard Integration
@@ -312,23 +313,16 @@ export async function OnboardingModal({ isOpen, onClose }: { isOpen: boolean; on
           <h2 className="text-xl font-bold text-foreground">
             Welcome! Let's get you started 🚀
           </h2>
-          <button
-            onClick={onClose}
-            className="text-muted hover:text-foreground"
-            aria-label="Close"
-          >
-            ✕
-          </button>
+          <Button variant="primary" onClick={onClose} aria-label="Close">
+  ✕
+</Button>
         </div>
         
         <OnboardingChecklist initialSteps={steps} />
         
-        <button
-          onClick={onClose}
-          className="mt-4 w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors"
-        >
-          Get Started
-        </button>
+        <Button variant="primary" onClick={onClose}>
+  Get Started
+</Button>
       </div>
     </div>
   );

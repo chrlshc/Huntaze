@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ContentEditorWithAutoSave from './ContentEditorWithAutoSave';
 import MediaPicker from './MediaPicker';
+import { Button } from "@/components/ui/button";
 
 interface MediaAsset {
   id: string;

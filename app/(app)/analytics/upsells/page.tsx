@@ -11,6 +11,9 @@ import { SubNavigation } from '@/components/dashboard/SubNavigation';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
 import { getAnalyticsSubNav } from '../analytics-nav';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
+import { AutomationSettings } from '@/lib/services/revenue/types';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -20,6 +23,13 @@ export default function UpsellsPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [showSettings, setShowSettings] = useState(false);
+  const [automationSettings, setAutomationSettings] = useState<AutomationSettings>({
+    enabled: false,
+    autoSendThreshold: 0.8,
+    maxDailyUpsells: 10,
+    excludedFans: [],
+    customRules: [],
+  });
   
   // Navigation context
   const { breadcrumbs, subNavItems } = useNavigationContext();
@@ -31,13 +41,13 @@ export default function UpsellsPage() {
     isLoading,
     error,
     sendUpsell,
-    dismissUpsell,
+    dismissOpportunity,
     isSending,
   } = useUpsellOpportunities({ creatorId });
 
   const handleSend = async (opportunityId: string) => {
     try {
-      await sendUpsell(opportunityId);
+      await sendUpsell({ opportunityId, creatorId });
       setToastMessage('Upsell sent successfully!');
       setToastType('success');
       setShowToast(true);
@@ -50,7 +60,7 @@ export default function UpsellsPage() {
 
   const handleDismiss = async (opportunityId: string) => {
     try {
-      await dismissUpsell(opportunityId);
+      await dismissOpportunity(opportunityId);
       setToastMessage('Upsell dismissed.');
       setToastType('success');
       setShowToast(true);
@@ -76,12 +86,13 @@ export default function UpsellsPage() {
               <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Upsell Opportunities</h1>
               <p className="text-[var(--color-text-sub)]">AI-powered upsell suggestions to increase revenue</p>
             </div>
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => setShowSettings(!showSettings)}
               className="px-4 py-2 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               {showSettings ? 'Hide' : 'Show'} Settings
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -93,24 +104,32 @@ export default function UpsellsPage() {
 
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Opportunities</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{stats.totalOpportunities}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            </Card>
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Expected Revenue</p>
               <p className="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">${stats.expectedRevenue.toFixed(0)}</p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            </Card>
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Buy Rate</p>
               <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{(stats.averageBuyRate * 100).toFixed(0)}%</p>
-            </div>
+            </Card>
           </div>
         )}
 
         {showSettings && (
           <div className="mb-8">
-            <UpsellAutomationSettings creatorId={creatorId} />
+            <UpsellAutomationSettings 
+              settings={automationSettings}
+              onUpdate={async (newSettings) => {
+                setAutomationSettings(newSettings);
+                setToastMessage('Settings updated successfully!');
+                setToastType('success');
+                setShowToast(true);
+              }}
+            />
           </div>
         )}
 
@@ -121,7 +140,6 @@ export default function UpsellsPage() {
               opportunity={opportunity}
               onSend={() => handleSend(opportunity.id)}
               onDismiss={() => handleDismiss(opportunity.id)}
-              isSending={isSending}
             />
           ))}
         </div>
@@ -131,7 +149,7 @@ export default function UpsellsPage() {
             <div className={`rounded-lg p-4 shadow-lg ${toastType === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`}>
               <div className="flex items-center gap-3">
                 <span>{toastMessage}</span>
-                <button onClick={() => setShowToast(false)} className="text-white hover:text-gray-200">×</button>
+                <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
               </div>
             </div>
           </div>

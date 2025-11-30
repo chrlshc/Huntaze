@@ -3,6 +3,8 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
@@ -71,7 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="max-w-md w-full p-8">
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <Card className="bg-white rounded-2xl shadow-xl p-8 text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertCircle className="w-8 h-8 text-red-600" />
               </div>
@@ -97,13 +99,10 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button
-                  onClick={this.handleReset}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                >
+                <Button variant="primary" onClick={this.handleReset}>
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Try again
-                </button>
+                </Button>
                 
                 <Link
                   href="/dashboard"
@@ -113,7 +112,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   Go to Dashboard
                 </Link>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       );

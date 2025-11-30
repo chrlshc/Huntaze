@@ -12,7 +12,9 @@ import { z } from 'zod';
 import { requireAuth } from '@/lib/auth/api-protection';
 import { checkRateLimit, idFromRequestHeaders } from '@/src/lib/rate-limit';
 import { onlyFansRateLimiterService } from '@/lib/services/onlyfans-rate-limiter.service';
-import { logger } from '@/lib/utils/logger';
+import { createLogger } from '@/lib/utils/logger';
+
+const logger = createLogger('onlyfans-messaging-send');
 
 // Zod schema pour validation du body
 const SendMessageSchema = z.object({
@@ -20,7 +22,7 @@ const SendMessageSchema = z.object({
   content: z.string().min(1, 'Content is required').max(5000, 'Content too long (max 5000 chars)'),
   mediaUrls: z.array(z.string().url('Invalid media URL')).optional(),
   priority: z.number().min(1).max(10).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 type SendMessageRequest = z.infer<typeof SendMessageSchema>;
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
       validated = SendMessageSchema.parse(body);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errors = error.errors.map(e => ({
+        const errors = error.issues.map(e => ({
           field: e.path.join('.'),
           message: e.message,
         }));
@@ -96,10 +98,9 @@ export async function POST(request: NextRequest) {
 
     // 6. Handle result
     if (result.status === 'failed') {
-      logger.error('OnlyFans send message: Failed to queue message', {
+      logger.error('OnlyFans send message: Failed to queue message', new Error(result.error || 'Unknown error'), {
         userId,
         messageId,
-        error: result.error,
       });
 
       // Check if rate limiter is disabled
@@ -144,10 +145,7 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    logger.error('OnlyFans send message: Unexpected error', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-    });
+    logger.error('OnlyFans send message: Unexpected error', error instanceof Error ? error : new Error(String(error)), {});
 
     return NextResponse.json(
       { 

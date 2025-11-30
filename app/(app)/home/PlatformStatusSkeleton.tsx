@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 /**
  * PlatformStatusSkeleton Component
  * 
@@ -18,7 +19,7 @@ export function PlatformStatusSkeleton() {
 
       <div className="platform-status-grid">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="platform-status-card skeleton">
+          <Card key={i} className="skeleton">
             <div className="platform-status-header">
               <div className="platform-info">
                 <div className="skeleton-text skeleton-text-base" style={{ width: '100px', height: '20px', marginBottom: '4px' }} />
@@ -33,7 +34,7 @@ export function PlatformStatusSkeleton() {
             <div className="platform-status-footer">
               <div className="skeleton-text skeleton-text-xs" style={{ width: '140px', height: '14px' }} />
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

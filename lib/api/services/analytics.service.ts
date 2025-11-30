@@ -84,10 +84,10 @@ export class AnalyticsService {
     startDate: Date,
     endDate: Date
   ): Promise<number> {
-    const result = await prisma.transaction.aggregate({
+    const result = await prisma.transactions.aggregate({
       where: {
-        userId,
-        createdAt: {
+        user_id: userId,
+        created_at: {
           gte: startDate,
           lte: endDate,
         },
@@ -105,9 +105,9 @@ export class AnalyticsService {
    * Get active subscribers count
    */
   private async getActiveSubscribers(userId: number): Promise<number> {
-    return prisma.subscription.count({
+    return prisma.subscriptions.count({
       where: {
-        userId,
+        user_id: userId,
         status: 'active',
       },
     });
@@ -121,17 +121,17 @@ export class AnalyticsService {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const [startCount, churnedCount] = await Promise.all([
-      prisma.subscription.count({
+      prisma.subscriptions.count({
         where: {
-          userId,
-          createdAt: { lt: startOfMonth },
+          user_id: userId,
+          created_at: { lt: startOfMonth },
         },
       }),
-      prisma.subscription.count({
+      prisma.subscriptions.count({
         where: {
-          userId,
+          user_id: userId,
           status: 'cancelled',
-          updatedAt: { gte: startOfMonth },
+          updated_at: { gte: startOfMonth },
         },
       }),
     ]);
@@ -148,28 +148,28 @@ export class AnalyticsService {
     endDate: Date,
     period: 'day' | 'week' | 'month'
   ): Promise<TrendData[]> {
-    const transactions = await prisma.transaction.findMany({
+    const transactions = await prisma.transactions.findMany({
       where: {
-        userId,
+        user_id: userId,
         status: 'completed',
-        createdAt: {
+        created_at: {
           gte: startDate,
           lte: endDate,
         },
       },
       select: {
         amount: true,
-        createdAt: true,
+        created_at: true,
       },
       orderBy: {
-        createdAt: 'asc',
+        created_at: 'asc',
       },
     });
 
     return this.aggregateByPeriod(
       transactions,
       period,
-      (items: Array<{ amount: number; createdAt: Date }>) =>
+      (items: Array<{ amount: number; created_at: Date }>) =>
         items.reduce((sum, item) => sum + item.amount, 0)
     );
   }
@@ -183,24 +183,24 @@ export class AnalyticsService {
     endDate: Date,
     period: 'day' | 'week' | 'month'
   ): Promise<TrendData[]> {
-    const subscriptions = await prisma.subscription.findMany({
+    const subscriptions = await prisma.subscriptions.findMany({
       where: {
-        userId,
-        startedAt: {
+        user_id: userId,
+        started_at: {
           gte: startDate,
           lte: endDate,
         },
       },
       select: {
-        startedAt: true,
+        started_at: true,
       },
       orderBy: {
-        startedAt: 'asc',
+        started_at: 'asc',
       },
     });
 
     return this.aggregateByPeriod(
-      subscriptions.map((s: { startedAt: Date }) => ({ createdAt: s.startedAt })),
+      subscriptions.map((s: { started_at: Date }) => ({ created_at: s.started_at })),
       period,
       (items) => items.length
     );
@@ -234,7 +234,7 @@ export class AnalyticsService {
   /**
    * Aggregate data by period (day, week, month)
    */
-  private aggregateByPeriod<T extends { createdAt: Date }>(
+  private aggregateByPeriod<T extends { created_at: Date }>(
     items: T[],
     period: 'day' | 'week' | 'month',
     aggregator: (items: T[]) => number
@@ -242,7 +242,7 @@ export class AnalyticsService {
     const grouped = new Map<string, T[]>();
 
     items.forEach((item) => {
-      const key = this.getPeriodKey(item.createdAt, period);
+      const key = this.getPeriodKey(item.created_at, period);
       if (!grouped.has(key)) {
         grouped.set(key, []);
       }

@@ -6,6 +6,8 @@
 
 import { useState } from 'react';
 import { Send, MessageCircle } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function CreatorMessagesPage() {
   const [messageText, setMessageText] = useState('');
@@ -18,7 +20,7 @@ export default function CreatorMessagesPage() {
           <h1 className="text-4xl font-bold text-gray-900">Messages</h1>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <p className="text-gray-600">Message interface coming soon...</p>
           
           <div className="mt-6">
@@ -29,14 +31,12 @@ export default function CreatorMessagesPage() {
               className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
               rows={4}
             />
-            <button
-              className="mt-3 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
-            >
+            <Button variant="primary">
               <Send className="w-4 h-4" />
               Send
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

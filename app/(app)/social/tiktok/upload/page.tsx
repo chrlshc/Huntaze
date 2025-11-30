@@ -11,6 +11,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Upload, Video, Hash, Send } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function TikTokUploadPage() {
   const router = useRouter();
@@ -105,7 +107,7 @@ export default function TikTokUploadPage() {
         </div>
 
         {/* Upload Form */}
-        <div className="elevated-card rounded-xl p-6">
+        <Card className="rounded-xl p-6">
           {/* Video Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -204,7 +206,7 @@ export default function TikTokUploadPage() {
               </>
             )}
           </button>
-        </div>
+        </Card>
 
         {/* Info Box */}
         <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">

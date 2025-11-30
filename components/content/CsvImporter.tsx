@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getAvailableColumns } from '@/lib/services/csvImporter';
+import { Button } from "@/components/ui/button";
 
 interface CsvMapping {
   title: string;
@@ -154,12 +155,9 @@ export default function CsvImporter({ onImportSuccess, onCancel }: CsvImporterPr
                 onChange={handleFileChange}
                 className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <button
-                onClick={handleDownloadTemplate}
-                className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 whitespace-nowrap"
-              >
-                Download Template
-              </button>
+              <Button variant="secondary" onClick={handleDownloadTemplate}>
+  Download Template
+</Button>
             </div>
           </div>
 
@@ -285,20 +283,12 @@ export default function CsvImporter({ onImportSuccess, onCancel }: CsvImporterPr
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={handleImport}
-              disabled={loading || !mapping.title || !mapping.content}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Importing...' : 'Import Content'}
-            </button>
-            <button
-              onClick={handleReset}
-              disabled={loading}
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 transition-colors"
-            >
-              Cancel
-            </button>
+            <Button variant="primary" onClick={handleImport} disabled={loading || !mapping.title || !mapping.content}>
+  {loading ? 'Importing...' : 'Import Content'}
+</Button>
+            <Button variant="secondary" onClick={handleReset} disabled={loading}>
+  Cancel
+</Button>
           </div>
         </>
       )}
@@ -327,19 +317,13 @@ export default function CsvImporter({ onImportSuccess, onCancel }: CsvImporterPr
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={handleReset}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Import Another File
-            </button>
+            <Button variant="primary" onClick={handleReset}>
+  Import Another File
+</Button>
             {onCancel && (
-              <button
-                onClick={onCancel}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Close
-              </button>
+              <Button variant="secondary" onClick={onCancel}>
+  Close
+</Button>
             )}
           </div>
         </>

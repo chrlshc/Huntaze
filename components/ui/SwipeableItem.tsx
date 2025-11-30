@@ -120,7 +120,7 @@ export function SwipeableItem({
       {/* Swipeable Content */}
       <div
         {...handlers}
-        className={`relative bg-white dark:bg-[#1F1F1F] transition-transform ${
+        className={`relative bg-white dark:bg-[var(--bg-secondary)] transition-transform ${
           isSwiping ? 'duration-0' : 'duration-300'
         }`}
         style={{ transform: `translateX(${offset}px)` }}

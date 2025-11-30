@@ -110,7 +110,7 @@ export class SuccessPredictionServiceImpl {
 
       return result;
     } catch (error) {
-      logger.error(`Failed to predict success for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to predict success for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -152,7 +152,7 @@ export class SuccessPredictionServiceImpl {
 
       return assessment;
     } catch (error) {
-      logger.error(`Failed to assess risk for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to assess risk for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -218,7 +218,7 @@ export class SuccessPredictionServiceImpl {
 
       return newModel;
     } catch (error) {
-      logger.error(`Failed to retrain model ${modelId}:`, undefined, error as Error);
+      logger.error(`Failed to retrain model ${modelId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -271,7 +271,7 @@ export class SuccessPredictionServiceImpl {
 
       return updatedProfile;
     } catch (error) {
-      logger.error(`Failed to update success profile for user ${userId}:`, undefined, error as Error);
+      logger.error(`Failed to update success profile for user ${userId}:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }

@@ -10,6 +10,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Video, Upload, TrendingUp, Eye, Heart, Share2, Loader, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface TikTokPost {
   id: number;
@@ -131,28 +133,28 @@ export default function TikTokDashboardWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <Card className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-center py-8">
           <Loader className="w-6 h-6 animate-spin text-gray-400" />
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <Card className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center text-red-600">
           <AlertCircle className="w-5 h-5 mr-2" />
           <span className="text-sm">{error}</span>
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (!status.connected) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <Card className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center mb-4">
           <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center mr-3">
             <Video className="w-5 h-5 text-white" />
@@ -171,12 +173,12 @@ export default function TikTokDashboardWidget() {
         >
           Connect TikTok
         </Link>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <Card className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
@@ -255,12 +257,9 @@ export default function TikTokDashboardWidget() {
           <Upload className="w-4 h-4 mr-2" />
           Upload
         </Link>
-        <button
-          onClick={handleDisconnect}
-          className="flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
-        >
-          Disconnect
-        </button>
+        <Button variant="ghost" onClick={handleDisconnect}>
+  Disconnect
+</Button>
       </div>
 
       {/* View All Link */}
@@ -272,6 +271,6 @@ export default function TikTokDashboardWidget() {
           View all settings →
         </Link>
       </div>
-    </div>
+    </Card>
   );
 }

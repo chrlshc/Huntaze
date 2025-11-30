@@ -304,13 +304,13 @@ function generateReport(results: AnalysisResults): string {
   lines.push(':root {');
   lines.push('  /* Background colors */');
   lines.push('  --bg-primary: theme(colors.zinc.950);');
-  lines.push('  --bg-card: linear-gradient(to-br, rgba(255,255,255,0.03), transparent);');
+  lines.push('  --bg-card: linear-gradient(to-br, rgba(255, 255, 255, 0.03), transparent);');
   lines.push('  ');
   lines.push('  /* Borders */');
-  lines.push('  --border-subtle: rgba(255,255,255,0.08);');
+  lines.push('  --border-subtle: rgba(255, 255, 255, 0.08);');
   lines.push('  ');
   lines.push('  /* Shadows */');
-  lines.push('  --shadow-inner-glow: inset 0 1px 0 0 rgba(255,255,255,0.05);');
+  lines.push('  --shadow-inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);');
   lines.push('  ');
   lines.push('  /* Text colors */');
   lines.push('  --text-primary: theme(colors.zinc.100);');

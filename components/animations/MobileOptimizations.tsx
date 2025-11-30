@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface DeviceInfo {
   isMobile: boolean;
@@ -117,13 +118,8 @@ export function TouchButton({
   const [isPressed, setIsPressed] = useState(false);
 
   return (
-    <button
-      className={`
-        min-h-[44px] min-w-[44px] 
-        touch-manipulation select-none
-        ${isPressed ? 'scale-95' : ''}
-        ${className}
-      `}
+    <Button 
+      variant="primary"
       onTouchStart={() => setIsPressed(true)}
       onTouchEnd={() => {
         setIsPressed(false);
@@ -136,7 +132,7 @@ export function TouchButton({
       }}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -226,7 +222,7 @@ export const mobileStyles = `
   /* Low-end device optimizations */
   .low-end-device .glass-card {
     backdrop-filter: none;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--bg-glass-hover);
   }
 
   .low-end-device [class*="animate-"] {
@@ -247,19 +243,19 @@ export const mobileStyles = `
   /* Mobile-specific layout adjustments */
   @media (max-width: 768px) {
     .glass-card {
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(var(--blur-lg));
     }
 
     .text-6xl {
-      font-size: 2.5rem;
+      font-size: var(--text-5xl);
     }
 
     .text-7xl {
-      font-size: 3rem;
+      font-size: var(--text-5xl);
     }
 
     .text-8xl {
-      font-size: 3.5rem;
+      font-size: var(--text-6xl);
     }
 
     .px-12 {

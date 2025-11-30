@@ -9,13 +9,15 @@
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 import {
   validateSignInCredentials,
   sanitizeEmail,
   getErrorMessage,
   getRecoveryAction,
   AuthError,
-} from '@/lib/auth';
+} from '@/lib/auth/index';
 
 interface SignInFormProps {
   callbackUrl?: string;
@@ -105,7 +107,7 @@ export function SignInForm({ callbackUrl = '/dashboard' }: SignInFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+    <Card className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
         Sign In
       </h2>
@@ -181,7 +183,7 @@ export function SignInForm({ callbackUrl = '/dashboard' }: SignInFormProps) {
                   <button
                     type="button"
                     onClick={handleRecovery}
-                    className="mt-2 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
+                    className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                   >
                     {getRecoveryAction(authError).description}
                   </button>
@@ -291,6 +293,6 @@ export function SignInForm({ callbackUrl = '/dashboard' }: SignInFormProps) {
           </button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

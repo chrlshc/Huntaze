@@ -196,12 +196,12 @@
 }
 
 .status-connected {
-  background: #10b981; /* Green */
+  background: var(--accent-success);
   animation: pulse 2s ease-in-out infinite;
 }
 
 .status-disconnected {
-  background: #ef4444; /* Red */
+  background: var(--accent-error);
   /* No animation - static */
 }
 
@@ -259,12 +259,12 @@
 .skeleton-text {
   background: linear-gradient(
     90deg,
-    var(--bg-surface, #0a0a0a) 0%,
-    var(--bg-hover, #1a1a1a) 50%,
-    var(--bg-surface, #0a0a0a) 100%
+    var(--bg-surface) 0%,
+    var(--bg-hover) 50%,
+    var(--bg-surface) 100%
   );
   background-size: 200% 100%;
-  border-radius: var(--radius-sm, 4px);
+  border-radius: var(--radius-sm);
   animation: shimmer 1.5s ease-in-out infinite;
 }
 

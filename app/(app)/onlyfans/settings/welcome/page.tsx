@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Plus, Edit, Trash2, Copy, Play, Pause, Send, Eye, MessageCircle, Users, TrendingUp, CheckCircle } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface WelcomeTemplate {
   id: number;
@@ -131,19 +133,16 @@ export default function OnlyFansWelcomeMessagesPage() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome Messages</h1>
             <p className="text-gray-600 dark:text-gray-400">Automate your new subscriber onboarding</p>
           </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900 transition-colors"
-          >
+          <Button variant="secondary" onClick={() => setShowCreateModal(true)}>
             <Plus className="w-5 h-5" />
             Create Template
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <MessageCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -152,9 +151,9 @@ export default function OnlyFansWelcomeMessagesPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalSent.toLocaleString()}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">All time</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Eye className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -163,9 +162,9 @@ export default function OnlyFansWelcomeMessagesPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgOpenRate.toFixed(1)}%</p>
           <p className="text-sm text-green-600 dark:text-green-400 mt-1">+5% from last month</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -174,9 +173,9 @@ export default function OnlyFansWelcomeMessagesPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgReplyRate.toFixed(1)}%</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Engagement metric</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <CheckCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -185,11 +184,11 @@ export default function OnlyFansWelcomeMessagesPage() {
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{activeTemplates}/{templates.length}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Currently running</p>
-        </div>
+        </Card>
       </div>
 
       {/* Automation Toggle */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Welcome Message Automation</h3>
@@ -217,10 +216,10 @@ export default function OnlyFansWelcomeMessagesPage() {
             </p>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Templates List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Message Templates</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -358,11 +357,11 @@ export default function OnlyFansWelcomeMessagesPage() {
             </div>
           )}
         </div>
-      </div>
+      </Card>
 
       {/* Create/Edit Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ backgroundColor: 'var(--bg-modal-backdrop)' }}>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
               {editingTemplate ? 'Edit Template' : 'Create Welcome Template'}
@@ -455,7 +454,7 @@ export default function OnlyFansWelcomeMessagesPage() {
 
       {/* Preview Modal */}
       {showPreviewModal && selectedTemplate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ backgroundColor: 'var(--bg-modal-backdrop)' }}>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Message Preview</h3>
             <div className="space-y-4">
@@ -463,11 +462,11 @@ export default function OnlyFansWelcomeMessagesPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                   This is how your message will appear to subscribers:
                 </p>
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <Card className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
                     {selectedTemplate.message.replace(/\{\{name\}\}/g, 'Sarah')}
                   </p>
-                </div>
+                </Card>
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 <p>Sent: {getDelayText(selectedTemplate.delay, selectedTemplate.delayUnit)} after subscription</p>

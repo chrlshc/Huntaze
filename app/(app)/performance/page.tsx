@@ -3,12 +3,13 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import LinearHeader from '@/components/LinearHeader'
+import { Card } from '@/components/ui/card';
 
 export default function PerformancePage() {
   return (
     <>
       <LinearHeader />
-      <section className="relative min-h-screen bg-black">
+      <section className="relative min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16">
           
           {/* Hero Section */}
@@ -38,26 +39,26 @@ export default function PerformancePage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20"
           >
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
+            <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
               <div className="text-4xl font-bold text-white mb-2">99.99%</div>
               <p className="text-white/60">Uptime SLA</p>
               <p className="text-sm text-white/40 mt-2">Zero downtime in 2 years</p>
-            </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
+            </Card>
+            <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
               <div className="text-4xl font-bold text-white mb-2">50ms</div>
               <p className="text-white/60">Response time</p>
               <p className="text-sm text-white/40 mt-2">Lightning fast globally</p>
-            </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
+            </Card>
+            <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
               <div className="text-4xl font-bold text-white mb-2">10M+</div>
               <p className="text-white/60">Messages/day</p>
               <p className="text-sm text-white/40 mt-2">Handles any volume</p>
-            </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
+            </Card>
+            <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center">
               <div className="text-4xl font-bold text-white mb-2">∞</div>
               <p className="text-white/60">Scalability</p>
               <p className="text-sm text-white/40 mt-2">No limits on growth</p>
-            </div>
+            </Card>
           </motion.div>
 
           {/* Infrastructure Features */}
@@ -174,11 +175,11 @@ export default function PerformancePage() {
               </div>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-black/30 rounded-lg p-4 text-center">
+                <div className="rounded-lg p-4 text-center" style={{ backgroundColor: 'var(--bg-glass)' }}>
                   <p className="text-2xl font-bold text-white">47</p>
                   <p className="text-white/60 text-sm">Active regions</p>
                 </div>
-                <div className="bg-black/30 rounded-lg p-4 text-center">
+                <div className="rounded-lg p-4 text-center" style={{ backgroundColor: 'var(--bg-glass)' }}>
                   <p className="text-2xl font-bold text-white">0</p>
                   <p className="text-white/60 text-sm">Incidents today</p>
                 </div>
@@ -203,46 +204,46 @@ export default function PerformancePage() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">⚡</div>
                 <h4 className="text-white font-semibold mb-1">Next.js 14</h4>
                 <p className="text-white/60 text-sm">React framework</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">🚀</div>
                 <h4 className="text-white font-semibold mb-1">Global Edge Network</h4>
                 <p className="text-white/60 text-sm">Worldwide delivery</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">🗄️</div>
                 <h4 className="text-white font-semibold mb-1">PostgreSQL</h4>
                 <p className="text-white/60 text-sm">Database</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">🔄</div>
                 <h4 className="text-white font-semibold mb-1">Redis</h4>
                 <p className="text-white/60 text-sm">Caching layer</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">🤖</div>
                 <h4 className="text-white font-semibold mb-1">GPT-4</h4>
                 <p className="text-white/60 text-sm">AI engine</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">📦</div>
                 <h4 className="text-white font-semibold mb-1">Docker</h4>
                 <p className="text-white/60 text-sm">Containerization</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">☸️</div>
                 <h4 className="text-white font-semibold mb-1">Kubernetes</h4>
                 <p className="text-white/60 text-sm">Orchestration</p>
-              </div>
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
+              </Card>
+              <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 text-center hover:border-purple-600/50 transition-all">
                 <div className="text-3xl mb-3">📊</div>
                 <h4 className="text-white font-semibold mb-1">Grafana</h4>
                 <p className="text-white/60 text-sm">Monitoring</p>
-              </div>
+              </Card>
             </div>
           </motion.div>
 

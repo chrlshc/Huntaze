@@ -43,7 +43,7 @@ export function ShopifyBackdrop({
           // bottom-left glow
           `radial-gradient(800px 400px at 10% 90%, ${a1_15}, transparent 60%)`,
           // base vertical subtle gradient
-          `linear-gradient(180deg, #000 0%, #0a0a0a 50%, #000 100%)`,
+          `linear-gradient(180deg, #000 0%, var(--bg-primary) 50%, #000 100%)`,
         ].join(', '),
       }}
     >

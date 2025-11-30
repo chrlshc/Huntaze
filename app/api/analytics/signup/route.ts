@@ -161,11 +161,11 @@ export async function GET(request: NextRequest) {
     
     // Calculate funnel metrics
     const total = analytics.length;
-    const pageViews = analytics.filter(a => a.pageViewed).length;
-    const formStarts = analytics.filter(a => a.formStarted).length;
-    const formSubmits = analytics.filter(a => a.formSubmitted).length;
-    const completions = analytics.filter(a => a.signupCompleted).length;
-    const errors = analytics.filter(a => a.signupFailed).length;
+    const pageViews = analytics.filter((a: any) => a.pageViewed).length;
+    const formStarts = analytics.filter((a: any) => a.formStarted).length;
+    const formSubmits = analytics.filter((a: any) => a.formSubmitted).length;
+    const completions = analytics.filter((a: any) => a.signupCompleted).length;
+    const errors = analytics.filter((a: any) => a.signupFailed).length;
     
     // Calculate conversion rates
     const metrics = {
@@ -183,21 +183,21 @@ export async function GET(request: NextRequest) {
       },
       averageTimes: {
         timeToSubmit: analytics
-          .filter(a => a.timeToSubmit)
-          .reduce((sum, a) => sum + (a.timeToSubmit || 0), 0) / formSubmits || 0,
+          .filter((a: any) => a.timeToSubmit)
+          .reduce((sum: number, a: any) => sum + (a.timeToSubmit || 0), 0) / formSubmits || 0,
         timeToComplete: analytics
-          .filter(a => a.timeToComplete)
-          .reduce((sum, a) => sum + (a.timeToComplete || 0), 0) / completions || 0,
+          .filter((a: any) => a.timeToComplete)
+          .reduce((sum: number, a: any) => sum + (a.timeToComplete || 0), 0) / completions || 0,
       },
       byMethod: {
-        email: analytics.filter(a => a.methodSelected === 'email').length,
-        google: analytics.filter(a => a.methodSelected === 'google').length,
-        apple: analytics.filter(a => a.methodSelected === 'apple').length,
+        email: analytics.filter((a: any) => a.methodSelected === 'email').length,
+        google: analytics.filter((a: any) => a.methodSelected === 'google').length,
+        apple: analytics.filter((a: any) => a.methodSelected === 'apple').length,
       },
       byDevice: {
-        mobile: analytics.filter(a => a.deviceType === 'mobile').length,
-        tablet: analytics.filter(a => a.deviceType === 'tablet').length,
-        desktop: analytics.filter(a => a.deviceType === 'desktop').length,
+        mobile: analytics.filter((a: any) => a.deviceType === 'mobile').length,
+        tablet: analytics.filter((a: any) => a.deviceType === 'tablet').length,
+        desktop: analytics.filter((a: any) => a.deviceType === 'desktop').length,
       },
     };
     

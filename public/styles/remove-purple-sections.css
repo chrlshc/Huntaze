@@ -65,7 +65,7 @@ section.enterprise-ready {
 .enterprise-ready ul li::before,
 .enterprise-ready .check {
   content: "✓" !important;
-  color: #22c55e !important;
+  color: var(--accent-success) !important;
   margin-right: 8px !important;
 }
 
@@ -89,8 +89,8 @@ section {
 /* Override any inline styles */
 [style*="background-color: rgb(147, 51, 234)"],
 [style*="background: rgb(147, 51, 234)"],
-[style*="background-color: #9333ea"],
-[style*="background: #9333ea"],
+[style*="background-color: var(--accent-primary)"],
+[style*="background: var(--accent-primary)"],
 [style*="purple"] {
   background: #000000 !important;
   background-color: #000000 !important;

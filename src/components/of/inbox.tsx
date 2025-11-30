@@ -6,6 +6,8 @@ import { formatDistanceToNow } from 'date-fns';
 import type { OfConversation } from '@/lib/types/onlyfans';
 import OfConversationView from './conversation-view';
 import { useCachedFetch } from '@/lib/cache-manager';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function OfInbox() {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export default function OfInbox() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+    <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Toolbar */}
       <div className="border-b border-gray-200 dark:border-gray-700 p-4">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -48,8 +50,9 @@ export default function OfInbox() {
           {/* Filters */}
           <div className="flex gap-2">
             {(['all', 'unread', 'vip', 'active'] as const).map((f) => (
-              <button
+              <Button 
                 key={f}
+                variant="ghost" 
                 onClick={() => setFilter(f)}
                 className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
                   filter === f
@@ -58,7 +61,7 @@ export default function OfInbox() {
                 }`}
               >
                 {f}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -125,6 +128,6 @@ export default function OfInbox() {
           ))
         )}
       </div>
-    </div>
+    </Card>
   );
 }

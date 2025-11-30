@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
 
 interface ContentItem {
   postId: string;
@@ -29,28 +30,28 @@ interface TopContentGridProps {
 export function TopContentGrid({ content, loading = false }: TopContentGridProps) {
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-6 animate-pulse"></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-48 bg-gray-200 rounded animate-pulse"></div>
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (content.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold mb-4">Top Performing Content</h3>
         <p className="text-gray-500 text-center py-8">No content data available</p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <Card className="bg-white rounded-lg shadow p-6">
       <h3 className="text-lg font-semibold mb-6">Top Performing Content</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -97,7 +98,7 @@ export function TopContentGrid({ content, loading = false }: TopContentGridProps
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 

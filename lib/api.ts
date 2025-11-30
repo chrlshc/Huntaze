@@ -51,12 +51,13 @@ class ApiClient {
     return this.request('/subscriptions');
   }
 
-  async createCheckoutSession(priceId: string) {
-    return this.request('/subscriptions/create-checkout', {
-      method: 'POST',
-      body: JSON.stringify({ priceId }),
-    });
-  }
+  // Note: Stripe checkout removed
+  // async createCheckoutSession(priceId: string) {
+  //   return this.request('/subscriptions/create-checkout', {
+  //     method: 'POST',
+  //     body: JSON.stringify({ priceId }),
+  //   });
+  // }
 
   // Platform endpoints
   async getPlatforms() {

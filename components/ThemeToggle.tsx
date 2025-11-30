@@ -2,6 +2,7 @@
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 /**
  * ThemeToggle Component
@@ -30,9 +31,10 @@ export default function ThemeToggle() {
   return (
     <div className="inline-flex items-center gap-1 p-1 bg-theme-surface border border-theme-border rounded-lg">
       {buttons.map(({ value, icon: Icon, label }) => (
-        <button
+        <Button 
           key={value}
-          onClick={() => handleThemeChange(value)}
+          variant="primary" 
+          onClick={() => handleThemeChange(value)} 
           aria-pressed={theme === value}
           aria-label={`Switch to ${label} theme`}
           className={`
@@ -47,7 +49,7 @@ export default function ThemeToggle() {
         >
           <Icon className="w-4 h-4" />
           <span className="hidden sm:inline">{label}</span>
-        </button>
+        </Button>
       ))}
     </div>
   );

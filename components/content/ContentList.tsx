@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { format } from 'date-fns';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ContentItem {
   id: string;
@@ -74,7 +76,7 @@ export default function ContentList({ items, onItemClick, onSelectionChange }: C
   };
 
   return (
-    <div className="bg-white rounded-lg border">
+    <Card className="bg-white rounded-lg border">
       {/* Header with Select All */}
       <div className="flex items-center gap-4 p-4 border-b bg-gray-50">
         <input
@@ -190,6 +192,6 @@ export default function ContentList({ items, onItemClick, onSelectionChange }: C
           ))
         )}
       </div>
-    </div>
+    </Card>
   );
 }

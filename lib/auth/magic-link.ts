@@ -124,7 +124,7 @@ function generateMagicLinkEmailHtml(url: string): string {
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       line-height: 1.6;
-      color: #333;
+      color: var(--text-primary);
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
@@ -133,7 +133,7 @@ function generateMagicLinkEmailHtml(url: string): string {
       background-color: #ffffff;
       border-radius: 8px;
       padding: 40px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     .logo {
       text-align: center;
@@ -141,7 +141,7 @@ function generateMagicLinkEmailHtml(url: string): string {
     }
     .logo h1 {
       color: #7c3aed;
-      font-size: 32px;
+      font-size: var(--text-4xl);
       margin: 0;
     }
     .content {
@@ -164,17 +164,17 @@ function generateMagicLinkEmailHtml(url: string): string {
     .footer {
       margin-top: 40px;
       padding-top: 20px;
-      border-top: 1px solid #e5e7eb;
-      font-size: 14px;
-      color: #6b7280;
+      border-top: 1px solid var(--border-subtle);
+      font-size: var(--text-sm);
+      color: var(--text-tertiary);
       text-align: center;
     }
     .warning {
-      background-color: #fef3c7;
-      border-left: 4px solid #f59e0b;
+      background-color: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--accent-warning);
       padding: 12px;
       margin: 20px 0;
-      font-size: 14px;
+      font-size: var(--text-sm);
     }
   </style>
 </head>
@@ -196,7 +196,7 @@ function generateMagicLinkEmailHtml(url: string): string {
         <strong>Security tip:</strong> If you didn't request this email, you can safely ignore it.
       </div>
       
-      <p style="font-size: 14px; color: #6b7280;">
+      <p style="font-size: var(--text-sm); color: var(--text-tertiary);">
         Or copy and paste this URL into your browser:<br>
         <a href="${url}" style="color: #7c3aed; word-break: break-all;">${url}</a>
       </p>

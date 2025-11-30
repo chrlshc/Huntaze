@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 type Platform = 'onlyfans' | 'instagram' | 'tiktok' | 'reddit' | 'other';
 type Goal = 'grow' | 'automate' | 'content' | 'all';
@@ -91,18 +92,16 @@ export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
             </div>
 
             <div className="flex gap-3">
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => setStep(2)}
                 className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-600 font-medium transition-all"
               >
                 Continue
-              </button>
-              <button
-                onClick={onSkip}
-                className="px-6 py-3 rounded-xl border border-neutral-700 hover:border-neutral-600 transition-all"
-              >
+              </Button>
+              <Button variant="primary" onClick={onSkip}>
                 Skip for now
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -125,14 +124,15 @@ export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
                 { id: 'reddit', label: 'Reddit', icon: '🤖' },
                 { id: 'other', label: 'Other', icon: '✨' },
               ].map((platform) => (
-                <button
+                <Button 
                   key={platform.id}
+                  variant="primary" 
                   onClick={() => handlePlatformSelect(platform.id as Platform)}
                   className="p-4 rounded-xl border border-neutral-700 hover:border-violet-500 hover:bg-neutral-800/50 transition-all text-left"
                 >
                   <div className="text-2xl mb-2">{platform.icon}</div>
                   <div className="font-medium">{platform.label}</div>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -171,14 +171,15 @@ export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
                   desc: 'Full feature access',
                 },
               ].map((goal) => (
-                <button
+                <Button 
                   key={goal.id}
+                  variant="primary" 
                   onClick={() => handleGoalSelect(goal.id as Goal)}
                   className="w-full p-4 rounded-xl border border-neutral-700 hover:border-violet-500 hover:bg-neutral-800/50 transition-all text-left"
                 >
                   <div className="font-medium mb-1">{goal.label}</div>
                   <div className="text-sm text-neutral-400">{goal.desc}</div>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -217,23 +218,21 @@ export default function SetupWizardSimple({ onComplete, onSkip }: Props) {
                   desc: 'Flirty, emotionally engaging',
                 },
               ].map((tone) => (
-                <button
+                <Button 
                   key={tone.id}
+                  variant="primary" 
                   onClick={() => handleToneSelect(tone.id as Tone)}
                   className="w-full p-4 rounded-xl border border-neutral-700 hover:border-violet-500 hover:bg-neutral-800/50 transition-all text-left"
                 >
                   <div className="font-medium mb-1">{tone.label}</div>
                   <div className="text-sm text-neutral-400">{tone.desc}</div>
-                </button>
+                </Button>
               ))}
             </div>
 
-            <button
-              onClick={handleSkipTone}
-              className="w-full px-6 py-3 rounded-xl border border-neutral-700 hover:border-neutral-600 transition-all"
-            >
+            <Button variant="primary" onClick={handleSkipTone}>
               Skip (defaults to Professional)
-            </button>
+            </Button>
           </div>
         )}
 

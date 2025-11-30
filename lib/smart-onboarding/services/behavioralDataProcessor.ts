@@ -60,7 +60,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
         queueSize: this.processingQueue.length
       });
     } catch (error) {
-      logger.error('Failed to queue behavioral event', { error, event });
+      logger.error('Failed to queue behavioral event', error instanceof Error ? error : new Error(String(error)), { event });
       throw error;
     }
   }
@@ -108,7 +108,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       });
 
     } catch (error) {
-      logger.error('Batch processing failed', { error });
+      logger.error('Batch processing failed', error instanceof Error ? error : new Error(String(error)), {});
     } finally {
       this.isProcessing = false;
     }
@@ -138,7 +138,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       return processedData;
 
     } catch (error) {
-      logger.error('Event processing failed', { error, eventId: event.id });
+      logger.error('Event processing failed', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       throw error;
     }
   }
@@ -186,7 +186,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       };
 
     } catch (error) {
-      logger.error('Event validation error', { error, eventId: event.id });
+      logger.error('Event validation error', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       return {
         isValid: false,
         errors: ['Validation process failed'],
@@ -239,7 +239,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       return enrichedEvent;
 
     } catch (error) {
-      logger.error('Event enrichment failed', { error, eventId: event.id });
+      logger.error('Event enrichment failed', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       throw error;
     }
   }
@@ -294,7 +294,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       };
 
     } catch (error) {
-      logger.error('Event transformation failed', { error, eventId: event.id });
+      logger.error('Event transformation failed', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       throw error;
     }
   }
@@ -313,14 +313,14 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       // Store in data warehouse for ML training (batch process)
       await this.queueForDataWarehouse(data);
 
-      logger.debug('Processed behavioral data stored', {
+      logger.info('Processed behavioral data stored', {
         userId: data.userId,
         eventType: data.eventType,
         processingTime: Date.now() - data.timestamp.getTime()
       });
 
     } catch (error) {
-      logger.error('Failed to store processed data', { error, dataId: data.id });
+      logger.error('Failed to store processed data', error instanceof Error ? error : new Error(String(error)), { dataId: data.id });
       throw error;
     }
   }
@@ -343,7 +343,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       };
 
     } catch (error) {
-      logger.error('Failed to build enrichment context', { error, userId: event.userId });
+      logger.error('Failed to build enrichment context', error instanceof Error ? error : new Error(String(error)), { userId: event.userId });
       return { timestamp: new Date() };
     }
   }
@@ -378,7 +378,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       return metrics;
 
     } catch (error) {
-      logger.error('Failed to calculate derived metrics', { error, eventId: event.id });
+      logger.error('Failed to calculate derived metrics', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       return {};
     }
   }
@@ -406,7 +406,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       await redisClient.expire(cacheKey, 3600); // 1 hour
 
     } catch (error) {
-      logger.error('Failed to cache recent event', { error, eventId: event.id });
+      logger.error('Failed to cache recent event', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
     }
   }
 
@@ -432,7 +432,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       await redisClient.expire(aggregationKey, 7200); // 2 hours
 
     } catch (error) {
-      logger.error('Failed to update real-time aggregations', { error, dataId: data.id });
+      logger.error('Failed to update real-time aggregations', error instanceof Error ? error : new Error(String(error)), { dataId: data.id });
     }
   }
 
@@ -450,7 +450,7 @@ export class BehavioralDataProcessor implements DataProcessingPipeline {
       await redisClient.lpush(warehouseQueue, queueData);
 
     } catch (error) {
-      logger.error('Failed to queue for data warehouse', { error, dataId: data.id });
+      logger.error('Failed to queue for data warehouse', error instanceof Error ? error : new Error(String(error)), { dataId: data.id });
     }
   }
 

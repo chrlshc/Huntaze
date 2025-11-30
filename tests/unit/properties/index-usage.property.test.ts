@@ -29,11 +29,11 @@ describe('Property 17: Queries use indexes', () => {
       }),
       
       // Transaction queries
-      () => prisma.transactions.findMany({
+      () => prisma.transaction.findMany({
         where: { user_id: 1, type: 'revenue' },
         take: 10,
       }),
-      () => prisma.transactions.findMany({
+      () => prisma.transaction.findMany({
         where: { user_id: 1, status: 'completed' },
         take: 10,
       }),
@@ -89,7 +89,7 @@ describe('Property 17: Queries use indexes', () => {
         orderBy: { created_at: 'desc' },
         take: 10,
       }),
-      () => prisma.transactions.findMany({
+      () => prisma.transaction.findMany({
         where: { user_id: 1 },
         orderBy: { created_at: 'desc' },
         take: 10,
@@ -142,7 +142,7 @@ describe('Property 17: Queries use indexes', () => {
       }),
       
       // user_id + type + created_at
-      () => prisma.transactions.findMany({
+      () => prisma.transaction.findMany({
         where: {
           user_id: 1,
           type: 'revenue',
@@ -192,7 +192,7 @@ describe('Property 17: Queries use indexes', () => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     
     const queries = [
-      () => prisma.transactions.findMany({
+      () => prisma.transaction.findMany({
         where: {
           user_id: 1,
           created_at: { gte: thirtyDaysAgo },
@@ -366,7 +366,7 @@ describe('Property 17: Queries use indexes', () => {
     // Test foreign key lookups are fast
     const foreignKeyQueries = [
       () => prisma.content.findMany({ where: { user_id: 1 } }),
-      () => prisma.transactions.findMany({ where: { user_id: 1 } }),
+      () => prisma.transaction.findMany({ where: { user_id: 1 } }),
       () => prisma.subscriptions.findMany({ where: { user_id: 1 } }),
       () => prisma.oauth_accounts.findMany({ where: { user_id: 1 } }),
       () => prisma.marketing_campaigns.findMany({ where: { user_id: 1 } }),

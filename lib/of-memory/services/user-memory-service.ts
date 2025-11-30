@@ -23,9 +23,13 @@ import type {
   InteractionEvent,
   ConversationMessage,
   PersonalityProfile,
+  PersonalityProfileRecord,
   FanPreferences,
+  FanPreferencesRecord,
   EmotionalState,
-  EngagementMetrics
+  EmotionalStateRecord,
+  EngagementMetrics,
+  EngagementMetricsRecord
 } from '../types';
 
 /**
@@ -192,7 +196,7 @@ export class UserMemoryService implements IUserMemoryService {
             correlationId
           });
           // Return empty arrays/nulls for graceful degradation
-          return [[], null, null, null, null];
+          return [[] as ConversationMessage[], null, null, null, null] as [ConversationMessage[], PersonalityProfileRecord | null, FanPreferencesRecord | null, EmotionalStateRecord | null, EngagementMetricsRecord | null];
         }
       );
 

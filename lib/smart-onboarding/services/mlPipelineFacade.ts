@@ -137,12 +137,11 @@ async function withErrorHandling<T>(
 
     const duration = Date.now() - startTime;
 
-    logger.error(`[ML Pipeline] ${operation} failed`, {
+    logger.error(`[ML Pipeline] ${operation} failed`, error, {
       requestId,
       operation,
       duration,
-      error: error.message,
-    }, error);
+    });
 
     return {
       success: false,

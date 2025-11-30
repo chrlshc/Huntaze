@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, MessageSquare, TrendingUp, Clock, DollarSign } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 const useCases = [
   {
@@ -103,7 +105,7 @@ export default function UseCasesCarousel() {
                     className="absolute inset-0"
                   >
                     <div className={`h-full p-1 rounded-2xl`}>
-                      <div className="h-full bg-white dark:bg-gray-950 rounded-2xl p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8 border border-gray-200 dark:border-gray-800">
+                      <Card className="h-full bg-white dark:bg-gray-950 rounded-2xl p-8 md:p-12 flex flex-col lg:flex-row items-center gap-8 border border-gray-200 dark:border-gray-800">
                         {/* Content */}
                         <div className="flex-1 text-center lg:text-left">
                           <div className={`inline-flex p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 mb-4`}>
@@ -119,14 +121,14 @@ export default function UseCasesCarousel() {
                           <p className="text-lg text-gray-700 dark:text-gray-200 mb-6">
                             {useCase.description}
                           </p>
-                          <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                          <Button variant="primary">
                             Read full story →
-                          </button>
+                          </Button>
                         </div>
 
                         {/* Mockup */}
                         <div className="flex-1 relative">
-                          <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl p-4 shadow-2xl">
+                          <Card className="relative bg-gray-100 dark:bg-gray-900 rounded-xl p-4 shadow-2xl">
                             <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-800 rounded-lg flex items-center justify-center overflow-hidden">
                               {/* TODO: Add actual screenshot images */}
                               <div className="w-full h-full bg-white dark:bg-gray-950 p-4">
@@ -150,9 +152,9 @@ export default function UseCasesCarousel() {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </Card>
                         </div>
-                      </div>
+                      </Card>
                     </div>
                   </motion.div>
                 )
@@ -161,37 +163,21 @@ export default function UseCasesCarousel() {
           </div>
 
           {/* Navigation Buttons - Hidden on mobile, smaller on desktop */}
-          <button
-            onClick={goToPrevious}
-            className="hidden md:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:shadow-lg transition-all items-center justify-center"
-            aria-label="Previous case study"
-          >
+          <Button variant="secondary" onClick={goToPrevious} aria-label="Previous case study" className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-          </button>
-          <button
-            onClick={goToNext}
-            className="hidden md:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:shadow-lg transition-all items-center justify-center"
-            aria-label="Next case study"
-          >
+          </Button>
+          <Button variant="secondary" onClick={goToNext} aria-label="Next case study" className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-          </button>
+          </Button>
 
           {/* Mobile Navigation */}
           <div className="flex md:hidden justify-center gap-3 mt-4">
-            <button
-              onClick={goToPrevious}
-              className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full"
-              aria-label="Previous"
-            >
+            <Button variant="secondary" onClick={goToPrevious} aria-label="Previous" className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center">
               <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-            </button>
-            <button
-              onClick={goToNext}
-              className="bg-gray-100 dark:bg-gray-800 p-2 rounded-full"
-              aria-label="Next"
-            >
+            </Button>
+            <Button variant="secondary" onClick={goToNext} aria-label="Next" className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center">
               <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-            </button>
+            </Button>
           </div>
 
           {/* Dots Indicator */}

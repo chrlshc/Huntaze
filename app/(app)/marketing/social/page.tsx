@@ -14,6 +14,7 @@ import { ToastProvider } from '@/components/ui/toast';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Loader2, AlertCircle, TrendingUp, Users, MessageSquare, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 const SOCIAL_PROVIDERS = ['instagram', 'tiktok', 'reddit', 'onlyfans'] as const;
 
@@ -89,7 +90,7 @@ function SocialMediaContent() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -97,9 +98,9 @@ function SocialMediaContent() {
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Connected Platforms</p>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{connectedPlatforms}</p>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -109,9 +110,9 @@ function SocialMediaContent() {
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               {totalFollowers.toLocaleString()}
             </p>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <MessageSquare className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -119,9 +120,9 @@ function SocialMediaContent() {
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Posts This Week</p>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -129,11 +130,11 @@ function SocialMediaContent() {
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Engagement Rate</p>
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">4.2%</p>
-          </div>
+          </Card>
         </div>
 
         {/* Connected Platforms Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connected Platforms</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -174,10 +175,10 @@ function SocialMediaContent() {
               ));
             })}
           </div>
-        </div>
+        </Card>
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -220,7 +221,7 @@ function SocialMediaContent() {
               </div>
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     </ProtectedRoute>
   );

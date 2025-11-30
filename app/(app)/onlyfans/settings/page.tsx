@@ -17,6 +17,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 import {
   Settings,
   Link as LinkIcon,
@@ -33,6 +34,7 @@ import {
 } from 'lucide-react';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
+import { Button } from "@/components/ui/button";
 
 interface ConnectionStatus {
   isConnected: boolean;
@@ -261,7 +263,7 @@ export default function OnlyFansSettingsPage() {
 
         <div className="space-y-6">
           {/* Connection Settings */}
-          <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center gap-2">
                 <LinkIcon className="w-5 h-5 text-[var(--color-text-main)]" />
@@ -281,13 +283,10 @@ export default function OnlyFansSettingsPage() {
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={disconnectOnlyFans}
-                      className="flex items-center gap-2 px-4 py-2 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    >
+                    <Button variant="danger" onClick={disconnectOnlyFans}>
                       <Unlink className="w-4 h-4" />
                       Disconnect
-                    </button>
+                    </Button>
                   </div>
                   {connectionStatus.lastSync && (
                     <p className="text-sm text-[var(--color-text-sub)]">
@@ -303,26 +302,22 @@ export default function OnlyFansSettingsPage() {
                       Connect your OnlyFans account to enable AI-powered features
                     </p>
                   </div>
-                  <button
-                    onClick={connectOnlyFans}
-                    disabled={connecting}
-                    className="flex items-center gap-2 px-6 py-3 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                  >
+                  <Button variant="primary" onClick={connectOnlyFans} disabled={connecting}>
                     {connecting ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
                       <LinkIcon className="w-5 h-5" />
                     )}
                     Connect OnlyFans Account
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
-          </div>
+          </Card>
 
           {/* AI Quota Settings */}
           {quotaSettings && (
-            <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
+            <Card className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center gap-2">
                   <Zap className="w-5 h-5 text-[var(--color-text-main)]" />
@@ -337,9 +332,9 @@ export default function OnlyFansSettingsPage() {
                       {quotaSettings.plan.charAt(0).toUpperCase() + quotaSettings.plan.slice(1)}
                     </span>
                   </div>
-                  <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-[var(--color-text-main)] hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <Button variant="ghost">
                     Upgrade Plan
-                  </button>
+                  </Button>
                 </div>
 
                 <div>
@@ -376,11 +371,11 @@ export default function OnlyFansSettingsPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           )}
 
           {/* Notification Settings */}
-          <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center gap-2">
                 <Bell className="w-5 h-5 text-[var(--color-text-main)]" />
@@ -414,10 +409,10 @@ export default function OnlyFansSettingsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Automation Settings */}
-          <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)]">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-[var(--color-text-main)]" />
@@ -504,7 +499,7 @@ export default function OnlyFansSettingsPage() {
                 )}
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Save Button */}
           <div className="flex items-center justify-end gap-4">
@@ -514,18 +509,14 @@ export default function OnlyFansSettingsPage() {
                 <span className="text-sm font-medium">Settings saved successfully!</span>
               </div>
             )}
-            <button
-              onClick={saveSettings}
-              disabled={saving}
-              className="flex items-center gap-2 px-6 py-3 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {saving ? (
+            <Button variant="primary" onClick={saveSettings} disabled={saving}>
+  {saving ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <Save className="w-5 h-5" />
               )}
               Save Settings
-            </button>
+</Button>
           </div>
         </div>
       </div>

@@ -10,14 +10,14 @@ import { Button } from './Button';
 
 export function ButtonExamples() {
   return (
-    <div style={{ padding: '32px', background: '#F8F9FB' }}>
-      <h1 style={{ marginBottom: '32px', color: '#111827' }}>
+    <div style={{ padding: '32px', background: 'var(--bg-glass)' }}>
+      <h1 style={{ marginBottom: '32px', color: 'var(--text-primary)' }}>
         Dashboard Button System
       </h1>
 
       {/* Variants */}
       <section style={{ marginBottom: '48px' }}>
-        <h2 style={{ marginBottom: '16px', color: '#1F2937' }}>Variants</h2>
+        <h2 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>Variants</h2>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           <Button variant="primary">Primary Button</Button>
           <Button variant="secondary">Secondary Button</Button>
@@ -27,7 +27,7 @@ export function ButtonExamples() {
 
       {/* Sizes */}
       <section style={{ marginBottom: '48px' }}>
-        <h2 style={{ marginBottom: '16px', color: '#1F2937' }}>Sizes</h2>
+        <h2 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>Sizes</h2>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
           <Button size="small">Small</Button>
           <Button size="medium">Medium</Button>
@@ -37,7 +37,7 @@ export function ButtonExamples() {
 
       {/* States */}
       <section style={{ marginBottom: '48px' }}>
-        <h2 style={{ marginBottom: '16px', color: '#1F2937' }}>States</h2>
+        <h2 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>States</h2>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           <Button>Default</Button>
           <Button disabled>Disabled</Button>
@@ -47,13 +47,13 @@ export function ButtonExamples() {
 
       {/* Full Width */}
       <section style={{ marginBottom: '48px' }}>
-        <h2 style={{ marginBottom: '16px', color: '#1F2937' }}>Full Width</h2>
+        <h2 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>Full Width</h2>
         <Button fullWidth>Full Width Button</Button>
       </section>
 
       {/* Combinations */}
       <section style={{ marginBottom: '48px' }}>
-        <h2 style={{ marginBottom: '16px', color: '#1F2937' }}>Combinations</h2>
+        <h2 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>Combinations</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
           <Button variant="primary" size="large" fullWidth>
             Get Started
@@ -69,7 +69,7 @@ export function ButtonExamples() {
 
       {/* Real-world Examples */}
       <section style={{ marginBottom: '48px' }}>
-        <h2 style={{ marginBottom: '16px', color: '#1F2937' }}>
+        <h2 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>
           Real-world Examples
         </h2>
         
@@ -84,10 +84,10 @@ export function ButtonExamples() {
             maxWidth: '400px',
           }}
         >
-          <h3 style={{ marginBottom: '8px', color: '#111827' }}>
+          <h3 style={{ marginBottom: '8px', color: 'var(--text-primary)' }}>
             Connect Your First Account
           </h3>
-          <p style={{ marginBottom: '16px', color: '#6B7280' }}>
+          <p style={{ marginBottom: '16px', color: 'var(--text-tertiary)' }}>
             Link your social media accounts to start tracking your growth.
           </p>
           <Button variant="primary" fullWidth>
@@ -105,7 +105,7 @@ export function ButtonExamples() {
             maxWidth: '400px',
           }}
         >
-          <h3 style={{ marginBottom: '16px', color: '#111827' }}>
+          <h3 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>
             Save Changes?
           </h3>
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -125,14 +125,14 @@ export function ButtonExamples() {
           background: '#FFFFFF',
           borderRadius: '12px',
           padding: '16px',
-          border: '1px solid #E5E7EB',
+          border: '1px solid var(--border-subtle)',
           maxWidth: '600px',
         }}
       >
-        <h3 style={{ marginBottom: '8px', color: '#111827', fontSize: '14px' }}>
+        <h3 style={{ marginBottom: '8px', color: 'var(--text-primary)', fontSize: 'var(--text-sm)' }}>
           ♿ Accessibility Features
         </h3>
-        <ul style={{ margin: 0, paddingLeft: '20px', color: '#6B7280', fontSize: '14px' }}>
+        <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)' }}>
           <li>Keyboard navigation support (Tab to focus)</li>
           <li>Electric Indigo focus indicators (3px glow)</li>
           <li>Reduced motion support for animations</li>

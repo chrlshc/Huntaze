@@ -22,7 +22,7 @@
  *       <h2>System Metrics</h2>
  *       <p>Total Requests: {metrics.requests.total}</p>
  *       <p>Average Latency: {metrics.requests.averageLatency}ms</p>
- *       <button onClick={refresh}>Refresh</button>
+ *       <Button variant="primary" onClick={refresh}>Refresh</Button>
  *     </div>
  *   );
  * }
@@ -34,6 +34,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { metricsClient, MetricsClientError } from '@/app/api/monitoring/metrics/client';
 import type { MetricsSummary, AlarmInfo } from '@/app/api/monitoring/metrics/types';
+import { Button } from "@/components/ui/button";
 
 /**
  * Hook configuration options

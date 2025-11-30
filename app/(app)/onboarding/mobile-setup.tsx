@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 import { 
   ArrowRight,
   Instagram,
@@ -30,16 +32,16 @@ export default function MobileOnboardingSetup() {
             <p className="text-white/80">No more 50% agency fees. You're in control.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white p-4 rounded-xl border border-gray-100">
+            <Card className="bg-white p-4 rounded-xl border border-gray-100">
               <Bot className="w-8 h-8 text-purple-600 mb-2" />
               <p className="font-medium text-sm">AI Assistant</p>
               <p className="text-xs text-gray-600">24/7 automation</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-100">
+            </Card>
+            <Card className="bg-white p-4 rounded-xl border border-gray-100">
               <DollarSign className="w-8 h-8 text-green-600 mb-2" />
               <p className="font-medium text-sm">More Revenue</p>
               <p className="text-xs text-gray-600">3x your income</p>
-            </div>
+            </Card>
           </div>
         </div>
       )
@@ -164,7 +166,7 @@ export default function MobileOnboardingSetup() {
       <header className="bg-white/80 backdrop-blur border-b border-gray-100 sticky top-0 z-40">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <button 
+            <button
               onClick={() => router.push('/dashboard')}
               className="p-2"
             >
@@ -180,7 +182,7 @@ export default function MobileOnboardingSetup() {
                 />
               ))}
             </div>
-            <button 
+            <button
               onClick={() => router.push('/dashboard')}
               className="text-sm text-gray-600"
             >
@@ -206,18 +208,14 @@ export default function MobileOnboardingSetup() {
 
       {/* Bottom Action */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 safe-bottom">
-        <button
+        <Button
           onClick={handleNext}
           disabled={!canProceed()}
-          className={`w-full py-3 min-h-[44px] rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
-            canProceed()
-              ? 'bg-purple-600 text-white hover:bg-purple-700'
-              : 'bg-gray-100 text-gray-400'
-          }`}
+          className="w-full flex items-center justify-center gap-2"
         >
           {currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'}
           <ArrowRight className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );

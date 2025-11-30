@@ -11,6 +11,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function ConfigurePage() {
   const router = useRouter();
@@ -75,7 +77,7 @@ export default function ConfigurePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-950 shadow-sm border-b border-gray-200 dark:border-gray-800">
+      <header className="shadow-sm border-b" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-subtle)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-4">
@@ -95,7 +97,7 @@ export default function ConfigurePage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Personality Section */}
-          <div className="elevated-card rounded-lg p-6">
+          <Card className="rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Personality</h2>
             <div className="space-y-4">
               <div>
@@ -130,10 +132,10 @@ export default function ConfigurePage() {
                 </select>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Pricing Section */}
-          <div className="elevated-card rounded-lg p-6">
+          <Card className="rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pricing & Welcome Message</h2>
             <div className="space-y-4">
               <div>
@@ -171,7 +173,7 @@ export default function ConfigurePage() {
                 />
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Submit Button */}
           <div className="flex justify-end gap-4">
@@ -181,13 +183,10 @@ export default function ConfigurePage() {
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors flex items-center gap-2"
-            >
+            <Button variant="primary" type="submit">
               <Save className="w-5 h-5" />
               Save Configuration
-            </button>
+            </Button>
           </div>
         </form>
       </main>

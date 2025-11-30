@@ -429,7 +429,7 @@ export class MLTrainingWorker {
 
         await redisClient.setex('ml_training_worker_health', 300, JSON.stringify(healthMetrics));
 
-        logger.debug('ML training worker health updated', healthMetrics);
+        logger.info('ML training worker health updated', healthMetrics);
 
       } catch (error) {
         logger.error('Health monitoring update failed', { error });

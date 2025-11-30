@@ -9,7 +9,7 @@
  * 2. Inter typography system (Medium/Regular weights only)
  * 3. 4px grid spacing system for perfect alignment
  * 4. Minimal borders (max 1px) for clean separation
- * 5. No pure black (#000000) - use anthracite (#0F0F10)
+ * 5. No pure black (#000000) - use anthracite (var(--bg-primary))
  */
 
 :root {
@@ -18,7 +18,7 @@
      ======================================== */
   
   /* Backgrounds */
-  --color-bg-app: #0F0F10;           /* Main app background - anthracite très sombre */
+  --color-bg-app: var(--bg-primary);           /* Main app background - anthracite très sombre */
   --color-bg-surface: #151516;       /* Cards, sidebars - elevated surfaces */
   --color-bg-hover: #1A1A1C;         /* Hover states */
   --color-bg-input: #18181A;         /* Form inputs */
@@ -26,24 +26,24 @@
   /* Borders */
   --color-border-subtle: #2E2E33;    /* Default borders - minimal contrast */
   --color-border-emphasis: #3E3E43;  /* Emphasized borders */
-  --color-border-focus: #7D57C1;     /* Focus state borders */
+  --color-border-focus: var(--accent-primary);     /* Focus state borders */
   
   /* Accent Colors */
-  --color-accent-primary: #7D57C1;   /* Primary violet - high visibility */
-  --color-accent-hover: #6B47AF;     /* Darker violet for hover */
+  --color-accent-primary: var(--accent-primary);   /* Primary violet - high visibility */
+  --color-accent-hover: var(--accent-primary-active);     /* Darker violet for hover */
   --color-accent-active: #5A3A9D;    /* Even darker for active state */
   
   /* Text Colors */
-  --color-text-primary: #EDEDEF;     /* Primary text - blanc cassé */
+  --color-text-primary: var(--text-primary);     /* Primary text - blanc cassé */
   --color-text-secondary: #8A8F98;   /* Secondary text - gris moyen */
-  --color-text-muted: #6B7280;       /* Muted text - gris foncé */
-  --color-text-inverse: #0F0F10;     /* Text on colored backgrounds */
+  --color-text-muted: var(--text-tertiary);       /* Muted text - gris foncé */
+  --color-text-inverse: var(--bg-primary);     /* Text on colored backgrounds */
   
   /* Semantic Colors */
-  --color-success: #10B981;          /* Success states */
-  --color-warning: #F59E0B;          /* Warning states */
-  --color-error: #EF4444;            /* Error states */
-  --color-info: #3B82F6;             /* Info states */
+  --color-success: var(--accent-success);          /* Success states */
+  --color-warning: var(--accent-warning);          /* Warning states */
+  --color-error: var(--accent-error);            /* Error states */
+  --color-info: var(--accent-info);             /* Info states */
   
   /* ========================================
      TYPOGRAPHY - Inter Font System

@@ -72,7 +72,7 @@ export interface ContentItem {
   status: ContentStatus;
   category?: string;
   tags: string[];
-  mediaIds: string[];
+  media_ids: string[];
   scheduledAt?: Date;
   publishedAt?: Date;
   metadata?: Record<string, any>;
@@ -233,7 +233,7 @@ export class ContentService {
             where,
             take: limit,
             skip: offset,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { created_at: 'desc' },
           }),
           prisma.content.count({ where }),
         ]),
@@ -251,7 +251,14 @@ export class ContentService {
       });
 
       return {
-        items: items as ContentItem[],
+        items: items.map(item => ({
+          ...item,
+          userId: item.user_id,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+          scheduledAt: item.scheduled_at || undefined,
+          publishedAt: item.published_at || undefined,
+        })) as ContentItem[],
         pagination: {
           total,
           limit,
@@ -328,10 +335,18 @@ export class ContentService {
       const content = await retryWithBackoff(
         () => prisma.content.create({
           data: {
-            ...data,
-            userId,
+            id: crypto.randomUUID(),
+            user_id: userId,
+            title: data.title,
+            text: data.text,
+            type: data.type,
+            platform: data.platform,
+            status: data.status,
+            category: data.category,
             tags: data.tags || [],
-            mediaIds: data.mediaIds || [],
+            media_ids: data.mediaIds || [],
+            scheduled_at: data.scheduledAt,
+            metadata: data.metadata,
           },
         }),
         correlationId
@@ -346,7 +361,14 @@ export class ContentService {
         duration,
       });
 
-      return content as ContentItem;
+      return {
+        ...content,
+        userId: content.user_id,
+        createdAt: content.created_at,
+        updatedAt: content.updated_at,
+        scheduledAt: content.scheduled_at || undefined,
+        publishedAt: content.published_at || undefined,
+      } as ContentItem;
     } catch (error: any) {
       const duration = Date.now() - startTime;
 
@@ -391,7 +413,7 @@ export class ContentService {
 
       const content = await retryWithBackoff(
         () => prisma.content.findFirst({
-          where: { id: contentId, userId },
+          where: { id: contentId, user_id: userId },
         }),
         correlationId
       );
@@ -421,7 +443,14 @@ export class ContentService {
         duration,
       });
 
-      return content as ContentItem;
+      return {
+        ...content,
+        userId: content.user_id,
+        createdAt: content.created_at,
+        updatedAt: content.updated_at,
+        scheduledAt: content.scheduled_at || undefined,
+        publishedAt: content.published_at || undefined,
+      } as ContentItem;
     } catch (error: any) {
       const duration = Date.now() - startTime;
 
@@ -497,7 +526,7 @@ export class ContentService {
       // Verify ownership
       const content = await retryWithBackoff(
         () => prisma.content.findFirst({
-          where: { id: contentId, userId },
+          where: { id: contentId, user_id: userId },
         }),
         correlationId
       );
@@ -545,7 +574,14 @@ export class ContentService {
         duration,
       });
 
-      return updatedContent as ContentItem;
+      return {
+        ...updatedContent,
+        userId: updatedContent.user_id,
+        createdAt: updatedContent.created_at,
+        updatedAt: updatedContent.updated_at,
+        scheduledAt: updatedContent.scheduled_at || undefined,
+        publishedAt: updatedContent.published_at || undefined,
+      } as ContentItem;
     } catch (error: any) {
       const duration = Date.now() - startTime;
 
@@ -592,7 +628,7 @@ export class ContentService {
       // Verify ownership
       const content = await retryWithBackoff(
         () => prisma.content.findFirst({
-          where: { id: contentId, userId },
+          where: { id: contentId, user_id: userId },
         }),
         correlationId
       );
@@ -629,7 +665,14 @@ export class ContentService {
         duration,
       });
 
-      return deletedContent as ContentItem;
+      return {
+        ...deletedContent,
+        userId: deletedContent.user_id,
+        createdAt: deletedContent.created_at,
+        updatedAt: deletedContent.updated_at,
+        scheduledAt: deletedContent.scheduled_at || undefined,
+        publishedAt: deletedContent.published_at || undefined,
+      } as ContentItem;
     } catch (error: any) {
       const duration = Date.now() - startTime;
 

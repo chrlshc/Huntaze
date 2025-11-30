@@ -25,10 +25,10 @@ class ProductionSafeMonitoring {
   private sessionSampleDecision: boolean | null = null;
 
   constructor() {
-    this.config = this.getConfig();
+    this.config = this.loadConfig();
   }
 
-  private getConfig(): MonitoringConfig {
+  private loadConfig(): MonitoringConfig {
     const isDevelopment = process.env.NODE_ENV === 'development';
     const isTest = process.env.NODE_ENV === 'test';
 

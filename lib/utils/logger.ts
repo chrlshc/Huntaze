@@ -36,6 +36,18 @@ export function generateCorrelationId(): string {
  */
 export function createLogger(service: string) {
   return {
+    debug: (message: string, meta?: Record<string, any>) => {
+      const log: LogContext = {
+        correlationId: generateCorrelationId(),
+        timestamp: new Date().toISOString(),
+        service,
+        level: 'info',
+        message,
+        metadata: meta,
+      };
+      console.debug(JSON.stringify(log));
+      return log.correlationId;
+    },
     info: (message: string, meta?: Record<string, any>) => {
       const log: LogContext = {
         correlationId: generateCorrelationId(),

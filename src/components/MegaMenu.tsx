@@ -44,12 +44,12 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
       }
     }}>
       <summary
-        className="cursor-pointer select-none text-[14px] font-normal text-[#9CA3AF] hover:text-white focus:outline-none flex items-center gap-1.5"
+        className="cursor-pointer select-none text-[14px] font-normal text-[var(--text-secondary)] hover:text-white focus:outline-none flex items-center gap-1.5"
         aria-haspopup="menu"
       >
         <span>{label}</span>
         <svg
-          className="h-3.5 w-3.5 text-[#9CA3AF] transition-transform duration-200 opacity-0 group-hover:opacity-100 group-open:rotate-180 group-open:text-white"
+          className="h-3.5 w-3.5 text-[var(--text-secondary)] transition-transform duration-200 opacity-0 group-hover:opacity-100 group-open:rotate-180 group-open:text-white"
           viewBox="0 0 20 20"
           fill="currentColor"
           aria-hidden="true"

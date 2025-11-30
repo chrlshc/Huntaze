@@ -46,7 +46,7 @@ export async function withRetry<T>(
   
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      logger.debug(`Retry attempt ${attempt + 1}/${maxRetries + 1}`, {
+      logger.info(`Retry attempt ${attempt + 1}/${maxRetries + 1}`, {
         operation: operationName,
         attempt: attempt + 1
       });
@@ -107,10 +107,10 @@ export async function withRetry<T>(
     }
   }
   
-  logger.error(`Operation failed after all retries`, {
+  const error = lastError || new Error('Operation failed after all retries');
+  logger.error(`Operation failed after all retries`, error, {
     operation: operationName,
     attempts: maxRetries + 1,
-    error: lastError?.message
   });
   
   throw new RetryExhaustedError(
@@ -203,7 +203,8 @@ export class CircuitBreaker {
     if (this.failureCount >= threshold) {
       this.state = 'open';
       
-      logger.error(`Circuit breaker opened due to failures`, {
+      const error = new Error(`Circuit breaker opened: ${this.failureCount} failures exceeded threshold ${threshold}`);
+      logger.error(`Circuit breaker opened due to failures`, error, {
         circuitBreaker: this.name,
         failureCount: this.failureCount,
         threshold

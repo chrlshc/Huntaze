@@ -9,7 +9,7 @@ export default function MobileForceLightCSS() {
             /* INLINE MOBILE OVERRIDE - MAXIMUM PRIORITY */
             html, body {
               background-color: white !important;
-              color: #111827 !important;
+              color: var(--text-primary) !important;
             }
             
             body * {
@@ -18,7 +18,7 @@ export default function MobileForceLightCSS() {
             }
             
             h1, h2, h3, h4, h5, h6 {
-              color: #111827 !important;
+              color: var(--text-primary) !important;
             }
             
             p, span, div, li, a, td, th {
@@ -59,7 +59,7 @@ export default function MobileForceLightCSS() {
             
             /* Gradient buttons preserved */
             [class*="from-purple"][class*="to-pink"] {
-              background: linear-gradient(to right, #9333ea, #ec4899) !important;
+              background: linear-gradient(to right, var(--accent-primary), var(--accent-primary)) !important;
               color: white !important;
             }
           `,

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, QuestionMarkCircleIcon, LightBulbIcon } from '@heroicons/react/24/outline';
+import { Button } from "@/components/ui/button";
 
 interface InterventionOverlayProps {
   isVisible: boolean;
@@ -208,12 +209,9 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({
                   {content.title}
                 </h3>
               </div>
-              <button
-                onClick={handleDismiss}
-                className={`${colors.icon} hover:opacity-70 transition-opacity`}
-              >
-                <XMarkIcon className="w-4 h-4" />
-              </button>
+              <Button variant="primary" onClick={handleDismiss}>
+  <XMarkIcon className="w-4 h-4" />
+</Button>
             </div>
 
             {/* Content */}
@@ -232,20 +230,14 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
                     {interventionType !== 'hint' && (
-                      <button
-                        onClick={handleExpand}
-                        className={`px-3 py-1 text-xs font-medium text-white rounded ${colors.button} transition-colors`}
-                      >
-                        Show me how
-                      </button>
+                      <Button variant="primary" onClick={handleExpand}>
+  Show me how
+</Button>
                     )}
                     {content.actionLabel && (
-                      <button
-                        onClick={handleAction}
-                        className={`px-3 py-1 text-xs font-medium text-white rounded ${colors.button} transition-colors`}
-                      >
-                        {content.actionLabel}
-                      </button>
+                      <Button variant="primary" onClick={handleAction}>
+  {content.actionLabel}
+</Button>
                     )}
                   </div>
                 </div>
@@ -287,32 +279,18 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({
 
                       {/* Navigation */}
                       <div className="flex justify-between">
-                        <button
-                          onClick={prevStep}
-                          disabled={currentStep === 0}
-                          className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
-                            currentStep === 0
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                              : `${colors.button} text-white`
-                          }`}
-                        >
-                          Previous
-                        </button>
+                        <Button variant="secondary" onClick={prevStep} disabled={currentStep === 0}>
+  Previous
+</Button>
                         
                         {currentStep < content.steps.length - 1 ? (
-                          <button
-                            onClick={nextStep}
-                            className={`px-3 py-1 text-xs font-medium text-white rounded ${colors.button} transition-colors`}
-                          >
-                            Next
-                          </button>
+                          <Button variant="primary" onClick={nextStep}>
+  Next
+</Button>
                         ) : (
-                          <button
-                            onClick={handleAction || handleDismiss}
-                            className={`px-3 py-1 text-xs font-medium text-white rounded ${colors.button} transition-colors`}
-                          >
-                            {content.actionLabel || 'Got it!'}
-                          </button>
+                          <Button variant="primary" onClick={handleAction || handleDismiss}>
+  {content.actionLabel || 'Got it!'}
+</Button>
                         )}
                       </div>
                     </div>
@@ -320,12 +298,9 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({
 
                   {/* Single Action for Guidance */}
                   {!content.steps && content.actionLabel && (
-                    <button
-                      onClick={handleAction}
-                      className={`w-full py-2 text-sm font-medium text-white rounded ${colors.button} transition-colors`}
-                    >
-                      {content.actionLabel}
-                    </button>
+                    <Button variant="primary" onClick={handleAction}>
+  {content.actionLabel}
+</Button>
                   )}
                 </div>
               )}

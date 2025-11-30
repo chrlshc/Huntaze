@@ -74,6 +74,7 @@ export class PersonalityCalibrator implements IPersonalityCalibrator {
     
     // Initialize circuit breaker for calibration operations
     this.circuitBreaker = new CircuitBreaker({
+      name: 'personality-calibrator',
       failureThreshold: 5,
       resetTimeout: 60000, // 1 minute
       monitoringPeriod: 120000 // 2 minutes

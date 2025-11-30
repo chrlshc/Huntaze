@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 type AIChatAssistantProps = {
   fanId: string;
@@ -85,12 +86,8 @@ export function AIChatAssistant({ fanId, fanName, onSendMessage }: AIChatAssista
           disabled={loading}
         />
         
-        <button
-          className="generate-button"
-          onClick={handleGenerateResponse}
-          disabled={loading || !message.trim()}
-        >
-          {loading ? (
+        <Button variant="primary" onClick={handleGenerateResponse} disabled={loading || !message.trim()}>
+  {loading ? (
             <>
               <span className="spinner" />
               Generating...
@@ -101,7 +98,7 @@ export function AIChatAssistant({ fanId, fanName, onSendMessage }: AIChatAssista
               Generate AI Response
             </>
           )}
-        </button>
+</Button>
       </div>
 
       {error && (
@@ -148,19 +145,12 @@ export function AIChatAssistant({ fanId, fanName, onSendMessage }: AIChatAssista
           )}
 
           <div className="response-actions">
-            <button
-              className="use-response-button"
-              onClick={handleUseResponse}
-            >
-              Use This Response
-            </button>
-            <button
-              className="regenerate-button"
-              onClick={handleGenerateResponse}
-              disabled={loading}
-            >
-              Regenerate
-            </button>
+            <Button variant="primary" onClick={handleUseResponse}>
+  Use This Response
+</Button>
+            <Button variant="primary" onClick={handleGenerateResponse} disabled={loading}>
+  Regenerate
+</Button>
           </div>
         </div>
       )}

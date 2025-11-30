@@ -70,31 +70,31 @@ export class IntegrationsService {
    * Implements 5-minute TTL cache to reduce database load.
    * Requirements: 10.1, 10.2
    */
-  async getConnectedIntegrations(userId: number): Promise<Integration[]> {
-    return getCachedIntegrations(userId, async () => {
+  async getConnectedIntegrations(user_id: number): Promise<Integration[]> {
+    return getCachedIntegrations(user_id, async () => {
       try {
-        const accounts = await prisma.oAuthAccount.findMany({
-          where: { userId },
-          orderBy: { createdAt: 'desc' },
+        const accounts = await prisma.oauth_accounts.findMany({
+          where: { user_id },
+          orderBy: { created_at: 'desc' },
         });
 
         return accounts.map(account => {
           // Determine status based on token expiry
           let status: 'connected' | 'expired' | 'error' | 'disconnected' = 'connected';
-          if (this.isTokenExpired(account.expiresAt)) {
+          if (this.isTokenExpired(account.expires_at)) {
             status = 'expired';
           }
           
           return {
             id: account.id,
             provider: account.provider as Provider,
-            providerAccountId: account.providerAccountId,
+            providerAccountId: account.provider_account_id,
             isConnected: true,
             status,
-            expiresAt: account.expiresAt || undefined,
+            expiresAt: account.expires_at || undefined,
             metadata: account.metadata as Record<string, any> | undefined,
-            createdAt: account.createdAt,
-            updatedAt: account.updatedAt,
+            createdAt: account.created_at,
+            updatedAt: account.updated_at,
           };
         });
       } catch (error) {
@@ -119,7 +119,7 @@ export class IntegrationsService {
    */
   async initiateOAuthFlow(
     provider: Provider,
-    userId: number,
+    user_id: number,
     redirectUrl: string,
     ipAddress?: string,
     userAgent?: string
@@ -129,7 +129,7 @@ export class IntegrationsService {
     
     try {
       // Validate inputs
-      if (!userId || userId <= 0) {
+      if (!user_id || user_id <= 0) {
         throw this.createError('INVALID_USER_ID', 'User ID must be a positive integer', provider);
       }
       
@@ -140,18 +140,18 @@ export class IntegrationsService {
       const adapter = this.getAdapter(provider);
       
       // Generate cryptographically secure state with HMAC signature
-      const state = csrfProtection.generateState(userId, provider);
+      const state = csrfProtection.generateState(user_id, provider);
       
       console.log(`[IntegrationsService] Initiating OAuth flow`, {
         provider,
-        userId,
+        user_id,
         correlationId,
         duration: Date.now() - startTime,
       });
       
       // Audit log OAuth initiation
       await auditLogger.logOAuthInitiated(
-        userId,
+        user_id,
         provider,
         ipAddress,
         userAgent,
@@ -164,7 +164,7 @@ export class IntegrationsService {
     } catch (error) {
       console.error(`[IntegrationsService] OAuth initiation failed`, {
         provider,
-        userId,
+        user_id,
         correlationId,
         error: (error as Error).message,
         duration: Date.now() - startTime,
@@ -172,7 +172,7 @@ export class IntegrationsService {
       
       // Audit log OAuth failure
       await auditLogger.logOAuthFailed(
-        userId,
+        user_id,
         provider,
         (error as Error).message,
         ipAddress,
@@ -215,7 +215,7 @@ export class IntegrationsService {
     state: string,
     ipAddress?: string,
     userAgent?: string
-  ): Promise<{ userId: number; accountId: string }> {
+  ): Promise<{ user_id: number; accountId: string }> {
     const startTime = Date.now();
     const correlationId = `callback-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     
@@ -251,11 +251,11 @@ export class IntegrationsService {
         );
       }
       
-      const userId = stateValidation.userId!;
+      const user_id = stateValidation.userId!;
       
       console.log(`[IntegrationsService] State validation passed`, {
         provider,
-        userId,
+        user_id,
         correlationId,
       });
 
@@ -267,81 +267,81 @@ export class IntegrationsService {
         3,
         'Token exchange',
         correlationId
-      ) as { accessToken: string; refreshToken?: string; expiresIn?: number; tokenType?: string; scope?: string };
+      ) as { access_token: string; refreshToken?: string; expiresIn?: number; tokenType?: string; scope?: string };
       
       // Get user profile with retry logic
       const profile = await this.retryWithBackoff(
-        () => adapter.getUserProfile(tokens.accessToken),
+        () => adapter.getUserProfile(tokens.access_token),
         3,
         'Profile fetch',
         correlationId
-      ) as { providerAccountId: string; metadata?: Record<string, any> };
+      ) as { provider_account_id: string; metadata?: Record<string, any> };
       
       // Calculate expiry date
-      const expiresAt = tokens.expiresIn
+      const expires_at = tokens.expiresIn
         ? new Date(Date.now() + tokens.expiresIn * 1000)
         : null;
       
       // Encrypt tokens
-      const encryptedAccessToken = encryptToken(tokens.accessToken);
+      const encryptedAccessToken = encryptToken(tokens.access_token);
       const encryptedRefreshToken = tokens.refreshToken
         ? encryptToken(tokens.refreshToken)
         : null;
       
       // Store in database (upsert to handle reconnections)
-      const account = await prisma.oAuthAccount.upsert({
+      const account = await prisma.oauth_accounts.upsert({
         where: {
-          provider_providerAccountId: {
+          provider_provider_account_id: {
             provider,
-            providerAccountId: profile.providerAccountId,
+            provider_account_id: profile.provider_account_id,
           },
         },
         create: {
-          userId,
+          user_id,
           provider,
-          providerAccountId: profile.providerAccountId,
-          accessToken: encryptedAccessToken,
-          refreshToken: encryptedRefreshToken,
-          expiresAt,
-          tokenType: tokens.tokenType || 'Bearer',
+          provider_account_id: profile.provider_account_id,
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
+          expires_at,
+          token_type: tokens.tokenType || 'Bearer',
           scope: tokens.scope || null,
           metadata: profile.metadata || {},
         },
         update: {
-          accessToken: encryptedAccessToken,
-          refreshToken: encryptedRefreshToken,
-          expiresAt,
-          tokenType: tokens.tokenType || 'Bearer',
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
+          expires_at,
+          token_type: tokens.tokenType || 'Bearer',
           scope: tokens.scope || null,
           metadata: profile.metadata || {},
-          updatedAt: new Date(),
+          updated_at: new Date(),
         },
       });
       
       console.log(`[IntegrationsService] OAuth callback completed`, {
         provider,
-        userId,
-        accountId: account.providerAccountId,
+        user_id,
+        accountId: account.provider_account_id,
         correlationId,
         duration: Date.now() - startTime,
       });
       
       // Audit log OAuth completion
       await auditLogger.logOAuthCompleted(
-        userId,
+        user_id,
         provider,
-        account.providerAccountId,
+        account.provider_account_id,
         ipAddress,
         userAgent,
         correlationId
       );
       
       // Invalidate cache after connecting new integration
-      integrationCache.invalidate(userId);
+      integrationCache.invalidate(user_id);
       
       return {
-        userId,
-        accountId: account.providerAccountId,
+        user_id,
+        accountId: account.provider_account_id,
       };
     } catch (error) {
       console.error(`[IntegrationsService] OAuth callback failed`, {
@@ -536,11 +536,11 @@ export class IntegrationsService {
     
     try {
       // Get account from database
-      const account = await prisma.oAuthAccount.findUnique({
+      const account = await prisma.oauth_accounts.findUnique({
         where: {
-          provider_providerAccountId: {
+          provider_provider_account_id: {
             provider,
-            providerAccountId: accountId,
+            provider_account_id: accountId,
           },
         },
       });
@@ -549,14 +549,14 @@ export class IntegrationsService {
         throw this.createError('ACCOUNT_NOT_FOUND', 'Integration not found', provider);
       }
       
-      if (!account.refreshToken) {
+      if (!account.refresh_token) {
         throw this.createError('NO_REFRESH_TOKEN', 'No refresh token available', provider);
       }
       
       const adapter = this.getAdapter(provider);
       
       // Decrypt refresh token
-      const refreshToken = decryptToken(account.refreshToken);
+      const refreshToken = decryptToken(account.refresh_token);
       
       // Retry token refresh with exponential backoff
       let tokens;
@@ -632,24 +632,24 @@ export class IntegrationsService {
       }
       
       // Calculate new expiry
-      const expiresAt = tokens.expiresIn
+      const expires_at = tokens.expiresIn
         ? new Date(Date.now() + tokens.expiresIn * 1000)
         : null;
       
       // Encrypt new tokens
-      const encryptedAccessToken = encryptToken(tokens.accessToken);
+      const encryptedAccessToken = encryptToken(tokens.access_token);
       const encryptedRefreshToken = tokens.refreshToken
         ? encryptToken(tokens.refreshToken)
-        : account.refreshToken; // Keep old refresh token if new one not provided
+        : account.refresh_token; // Keep old refresh token if new one not provided
       
       // Update in database
-      const updatedAccount = await prisma.oAuthAccount.update({
+      const updatedAccount = await prisma.oauth_accounts.update({
         where: { id: account.id },
         data: {
-          accessToken: encryptedAccessToken,
-          refreshToken: encryptedRefreshToken,
-          expiresAt,
-          updatedAt: new Date(),
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
+          expires_at,
+          updated_at: new Date(),
         },
       });
       
@@ -664,25 +664,25 @@ export class IntegrationsService {
       
       // Audit log token refresh
       await auditLogger.logTokenRefreshed(
-        account.userId,
+        account.user_id,
         provider,
         accountId,
         auditCorrelationId
       );
       
       // Invalidate cache after token refresh
-      integrationCache.invalidate(account.userId);
+      integrationCache.invalidate(account.user_id);
       
       // Return updated integration
       return {
         provider: updatedAccount.provider as Provider,
-        providerAccountId: updatedAccount.providerAccountId,
+        providerAccountId: updatedAccount.provider_account_id,
         isConnected: true,
         status: 'connected',
-        expiresAt: updatedAccount.expiresAt || undefined,
+        expiresAt: updatedAccount.expires_at || undefined,
         metadata: updatedAccount.metadata as Record<string, any> | undefined,
-        createdAt: updatedAccount.createdAt,
-        updatedAt: updatedAccount.updatedAt,
+        createdAt: updatedAccount.created_at,
+        updatedAt: updatedAccount.updated_at,
       };
     } catch (error) {
       console.error(`[IntegrationsService] Token refresh failed`, {
@@ -695,18 +695,18 @@ export class IntegrationsService {
       // Audit log token refresh failure (if we have account)
       const auditCorrelationId = `refresh-fail-${Date.now()}-${Math.random().toString(36).substring(7)}`;
       try {
-        const failedAccount = await prisma.oAuthAccount.findUnique({
+        const failedAccount = await prisma.oauth_accounts.findUnique({
           where: {
-            provider_providerAccountId: {
+            provider_provider_account_id: {
               provider,
-              providerAccountId: accountId,
+              provider_account_id: accountId,
             },
           },
         });
         
         if (failedAccount) {
           await auditLogger.logTokenRefreshFailed(
-            failedAccount.userId,
+            failedAccount.user_id,
             provider,
             accountId,
             (error as Error).message,
@@ -765,18 +765,18 @@ export class IntegrationsService {
    * @returns Decrypted access token
    */
   async getAccessTokenWithAutoRefresh(
-    userId: number,
+    user_id: number,
     provider: Provider,
     accountId: string
   ): Promise<string> {
     const startTime = Date.now();
     
     try {
-      const account = await prisma.oAuthAccount.findFirst({
+      const account = await prisma.oauth_accounts.findFirst({
         where: {
-          userId,
+          user_id,
           provider,
-          providerAccountId: accountId,
+          provider_account_id: accountId,
         },
       });
       
@@ -784,29 +784,29 @@ export class IntegrationsService {
         throw this.createError('ACCOUNT_NOT_FOUND', 'Integration not found', provider);
       }
       
-      if (!account.accessToken) {
+      if (!account.access_token) {
         throw this.createError('NO_ACCESS_TOKEN', 'No access token available', provider);
       }
       
       // Check if token needs refresh
-      if (this.shouldRefreshToken(account.expiresAt)) {
+      if (this.shouldRefreshToken(account.expires_at)) {
         console.log(`[IntegrationsService] Token needs refresh`, {
           provider,
           accountId,
-          expiresAt: account.expiresAt,
+          expiresAt: account.expires_at,
         });
         
         // Try to refresh if refresh token available
-        if (account.refreshToken) {
+        if (account.refresh_token) {
           try {
             await this.refreshToken(provider, accountId);
             
             // Fetch updated account
-            const updatedAccount = await prisma.oAuthAccount.findFirst({
+            const updatedAccount = await prisma.oauth_accounts.findFirst({
               where: {
-                userId,
+                user_id,
                 provider,
-                providerAccountId: accountId,
+                provider_account_id: accountId,
               },
             });
             
@@ -816,7 +816,7 @@ export class IntegrationsService {
               duration: Date.now() - startTime,
             });
             
-            return decryptToken(updatedAccount!.accessToken!);
+            return decryptToken(updatedAccount!.access_token!);
           } catch (error) {
             console.error(`[IntegrationsService] Auto-refresh failed`, {
               provider,
@@ -840,7 +840,7 @@ export class IntegrationsService {
         }
       }
       
-      return decryptToken(account.accessToken);
+      return decryptToken(account.access_token);
     } catch (error) {
       if ((error as IntegrationsServiceError).code) {
         throw error;
@@ -863,7 +863,7 @@ export class IntegrationsService {
    * @param userAgent - Client user agent for audit logging
    */
   async disconnectIntegration(
-    userId: number,
+    user_id: number,
     provider: Provider,
     accountId: string,
     ipAddress?: string,
@@ -873,11 +873,11 @@ export class IntegrationsService {
     
     try {
       // Get account from database
-      const account = await prisma.oAuthAccount.findFirst({
+      const account = await prisma.oauth_accounts.findFirst({
         where: {
-          userId,
+          user_id,
           provider,
-          providerAccountId: accountId,
+          provider_account_id: accountId,
         },
       });
       
@@ -886,10 +886,10 @@ export class IntegrationsService {
       }
       
       // Try to revoke access on the platform
-      if (account.accessToken) {
+      if (account.access_token) {
         try {
           const adapter = this.getAdapter(provider);
-          const accessToken = decryptToken(account.accessToken);
+          const accessToken = decryptToken(account.access_token);
           await adapter.revokeAccess(accessToken);
         } catch (error) {
           // Log but don't fail - we'll delete locally anyway
@@ -898,13 +898,13 @@ export class IntegrationsService {
       }
       
       // Delete from database (ensures all credentials are removed per requirement 11.5)
-      await prisma.oAuthAccount.delete({
+      await prisma.oauth_accounts.delete({
         where: { id: account.id },
       });
       
       // Audit log disconnection
       await auditLogger.logIntegrationDisconnected(
-        userId,
+        user_id,
         provider,
         accountId,
         ipAddress,
@@ -913,11 +913,11 @@ export class IntegrationsService {
       );
       
       // Invalidate cache after disconnection
-      integrationCache.invalidate(userId);
+      integrationCache.invalidate(user_id);
       
       console.log(`[IntegrationsService] Integration disconnected`, {
         provider,
-        userId,
+        user_id,
         accountId,
         correlationId,
       });
@@ -952,8 +952,8 @@ export class IntegrationsService {
    * @param accountId - Provider account ID
    * @returns Decrypted access token
    */
-  async getAccessToken(userId: number, provider: Provider, accountId: string): Promise<string> {
-    return this.getAccessTokenWithAutoRefresh(userId, provider, accountId);
+  async getAccessToken(user_id: number, provider: Provider, accountId: string): Promise<string> {
+    return this.getAccessTokenWithAutoRefresh(user_id, provider, accountId);
   }
 
   /**

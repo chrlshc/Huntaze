@@ -69,14 +69,14 @@ export class DataWarehouseService {
       // Also queue in Redis for persistence
       await redisClient.lpush('dw_processing_queue', JSON.stringify(data));
 
-      logger.debug('Data queued for warehouse storage', {
+      logger.info('Data queued for warehouse storage', {
         userId: data.userId,
         eventType: data.eventType,
         queueSize: this.processingQueue.length
       });
 
     } catch (error) {
-      logger.error('Failed to queue data for warehouse', { error, dataId: data.id });
+      logger.error('Failed to queue data for warehouse', error instanceof Error ? error : new Error(String(error)), { dataId: data.id });
       throw error;
     }
   }
@@ -138,7 +138,7 @@ export class DataWarehouseService {
       });
 
     } catch (error) {
-      logger.error('Data warehouse batch processing failed', { error });
+      logger.error('Data warehouse batch processing failed', error instanceof Error ? error : new Error(String(error)), {});
     } finally {
       this.isProcessing = false;
     }
@@ -157,9 +157,9 @@ export class DataWarehouseService {
         sampleEventType: batch[0]?.eventType ?? null
       };
       await redisClient.setex(key, 3600, JSON.stringify(snapshot));
-      logger.debug('Data catalog updated', snapshot as any);
+      logger.info('Data catalog updated', snapshot as any);
     } catch (error) {
-      logger.error('Failed to update data catalog', { error });
+      logger.error('Failed to update data catalog', error instanceof Error ? error : new Error(String(error)), {});
     }
   }
 
@@ -213,14 +213,14 @@ export class DataWarehouseService {
 
       await client.query('COMMIT');
 
-      logger.debug('Raw data stored in warehouse', {
+      logger.info('Raw data stored in warehouse', {
         recordCount: batch.length,
         partitions: partitionedData.size
       });
 
     } catch (error) {
       await client.query('ROLLBACK');
-      logger.error('Failed to store raw data in warehouse', { error });
+      logger.error('Failed to store raw data in warehouse', error instanceof Error ? error : new Error(String(error)), {});
       throw error;
     } finally {
       client.release();
@@ -242,14 +242,14 @@ export class DataWarehouseService {
 
       await client.query('COMMIT');
 
-      logger.debug('Aggregations generated', {
+      logger.info('Aggregations generated', {
         recordCount: batch.length,
         levels: this.config.aggregationLevels
       });
 
     } catch (error) {
       await client.query('ROLLBACK');
-      logger.error('Failed to generate aggregations', { error });
+      logger.error('Failed to generate aggregations', error instanceof Error ? error : new Error(String(error)), {});
       throw error;
     } finally {
       client.release();
@@ -368,7 +368,7 @@ export class DataWarehouseService {
             features.ruleId = rule.id;
             featureVectors.push(features);
           } catch (error) {
-            logger.error('Feature extraction rule failed', { error, ruleId: rule.id, userId });
+            logger.error('Feature extraction rule failed', error instanceof Error ? error : new Error(String(error)), { ruleId: rule.id, userId });
           }
         }
       }
@@ -378,13 +378,13 @@ export class DataWarehouseService {
         await this.storeFeatureVectors(featureVectors);
       }
 
-      logger.debug('Features extracted for ML training', {
+      logger.info('Features extracted for ML training', {
         userCount: userGroups.size,
         featureVectorCount: featureVectors.length
       });
 
     } catch (error) {
-      logger.error('Feature extraction failed', { error });
+      logger.error('Feature extraction failed', error instanceof Error ? error : new Error(String(error)), {});
       throw error;
     }
   }
@@ -423,7 +423,7 @@ export class DataWarehouseService {
 
     } catch (error) {
       await client.query('ROLLBACK');
-      logger.error('Failed to store feature vectors', { error });
+      logger.error('Failed to store feature vectors', error instanceof Error ? error : new Error(String(error)), {});
       throw error;
     } finally {
       client.release();
@@ -524,7 +524,7 @@ export class DataWarehouseService {
       return dataset;
 
     } catch (error) {
-      logger.error('Failed to create training dataset', { error });
+      logger.error('Failed to create training dataset', error instanceof Error ? error : new Error(String(error)), {});
       throw error;
     } finally {
       client.release();
@@ -550,7 +550,7 @@ export class DataWarehouseService {
       logger.info('Data warehouse maintenance tasks completed');
 
     } catch (error) {
-      logger.error('Maintenance tasks failed', { error });
+      logger.error('Maintenance tasks failed', error instanceof Error ? error : new Error(String(error)), {});
     }
   }
 
@@ -663,12 +663,12 @@ export class DataWarehouseService {
 
   private async optimizePartitions(): Promise<void> {
     // Implementation for partition optimization
-    logger.debug('Partition optimization completed');
+    logger.info('Partition optimization completed');
   }
 
   private async updateStatistics(): Promise<void> {
     // Implementation for statistics update
-    logger.debug('Statistics update completed');
+    logger.info('Statistics update completed');
   }
 
   private initializeDefaultFeatureRules(): void {
@@ -712,7 +712,7 @@ export class DataWarehouseService {
       const result = await client.query(query, params);
       return result.rows;
     } catch (error) {
-      logger.error('Failed to execute warehouse query', { error, query });
+      logger.error('Failed to execute warehouse query', error instanceof Error ? error : new Error(String(error)), { query });
       throw error;
     } finally {
       client.release();

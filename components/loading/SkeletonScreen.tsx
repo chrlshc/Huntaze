@@ -14,6 +14,7 @@ interface SkeletonProps {
   height?: string | number;
   variant?: 'text' | 'circular' | 'rectangular' | 'rounded';
   animation?: 'pulse' | 'wave' | 'none';
+  style?: React.CSSProperties;
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({
@@ -21,7 +22,8 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   width = '100%',
   height = '1rem',
   variant = 'text',
-  animation = 'pulse'
+  animation = 'pulse',
+  style,
 }) => {
   const baseClasses = 'bg-gray-200 dark:bg-gray-700';
   
@@ -38,15 +40,16 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     none: ''
   };
 
-  const style: React.CSSProperties = {
+  const styleOverrides: React.CSSProperties = {
     width: typeof width === 'number' ? `${width}px` : width,
     height: typeof height === 'number' ? `${height}px` : height,
+    ...style,
   };
 
   return (
     <div
       className={`${baseClasses} ${variantClasses[variant]} ${animationClasses[animation]} ${className}`}
-      style={style}
+      style={styleOverrides}
       role="status"
       aria-label="Loading..."
     />

@@ -16,6 +16,8 @@
 
 import { useValidationHealth, usePlatformHealth } from '@/hooks/useValidationHealth';
 import { RefreshCw, CheckCircle, AlertCircle, XCircle, Clock } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 // Platform status badge
 function PlatformStatusBadge({ status }: { status: 'healthy' | 'unhealthy' }) {
@@ -145,12 +147,9 @@ function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
             Failed to Check Validation Health
           </h3>
           <p className="text-red-700 mb-4">{error.message}</p>
-          <button
-            onClick={onRetry}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-          >
+          <Button variant="danger" onClick={onRetry}>
             Retry
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -184,13 +183,14 @@ export function ValidationHealthDashboard() {
           </p>
         </div>
 
-        <button
+        <Button 
+          variant="ghost" 
           onClick={() => refresh()}
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Refresh
-        </button>
+        </Button>
       </div>
 
       {/* Overall Status */}

@@ -62,7 +62,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { generateCsrfToken, setCsrfTokenCookie } from '@/lib/middleware/csrf';
 import { createLogger } from '@/lib/utils/logger';
-import { successResponse, unauthorized, internalServerError } from '@/lib/api/utils/response';
+import { successResponse, errorResponse, unauthorized, internalServerError } from '@/lib/api/utils/response';
 import crypto from 'crypto';
 
 const logger = createLogger('csrf-token-api');
@@ -210,9 +210,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         duration: Date.now() - startTime,
       });
 
-      return internalServerError(
-        'Failed to generate CSRF token. Please try again.',
-        { correlationId, startTime }
+      return NextResponse.json(
+        errorResponse(
+          'INTERNAL_ERROR',
+          'Failed to generate CSRF token. Please try again.',
+          undefined,
+          { correlationId, startTime }
+        ),
+        { status: 500 }
       );
     }
     
@@ -259,9 +264,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       errorStack: error.stack,
     });
     
-    return internalServerError(
-      'An unexpected error occurred. Please try again.',
-      { correlationId, startTime }
+    return NextResponse.json(
+      errorResponse(
+        'INTERNAL_ERROR',
+        'An unexpected error occurred. Please try again.',
+        undefined,
+        { correlationId, startTime }
+      ),
+      { status: 500 }
     );
   }
 }

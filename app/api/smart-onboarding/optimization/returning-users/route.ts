@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Returning user optimization API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Returning user optimization API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -195,7 +195,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Returning user optimization GET API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Returning user optimization GET API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -246,7 +246,7 @@ export async function DELETE(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Returning user optimization DELETE API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Returning user optimization DELETE API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

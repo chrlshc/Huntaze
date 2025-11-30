@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 export const dynamic = 'force-dynamic';
 
 export default function AccountPage() {
@@ -6,10 +7,10 @@ export default function AccountPage() {
       <div className="hz-page">
         <h1>Account</h1>
         <p>Manage your profile, team, and security settings here.</p>
-        <div className="hz-card" style={{ marginTop: 16 }}>
+        <Card style={{ marginTop: 16 }}>
           <h2>Profile</h2>
           <p>Coming soon.</p>
-        </div>
+        </Card>
       </div>
     </main>
   );

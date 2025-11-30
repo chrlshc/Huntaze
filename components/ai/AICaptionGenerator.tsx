@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 type Platform = 'instagram' | 'tiktok' | 'twitter' | 'onlyfans' | 'facebook';
 
@@ -83,9 +84,9 @@ export function AICaptionGenerator() {
             {platforms.map((p) => (
               <button
                 key={p.value}
-                className={`platform-button ${platform === p.value ? 'active' : ''}`}
                 onClick={() => setPlatform(p.value)}
                 disabled={loading}
+                className={`platform-button ${platform === p.value ? 'active' : ''}`}
               >
                 <span className="platform-icon">{p.icon}</span>
                 <span className="platform-label">{p.label}</span>
@@ -140,9 +141,9 @@ export function AICaptionGenerator() {
         </div>
 
         <button
-          className="generate-button"
           onClick={handleGenerate}
           disabled={loading || !description.trim()}
+          className="generate-button"
         >
           {loading ? (
             <>
@@ -205,17 +206,10 @@ export function AICaptionGenerator() {
           )}
 
           <div className="result-actions">
-            <button
-              className="copy-button"
-              onClick={handleCopyCaption}
-            >
+            <button onClick={handleCopyCaption} className="copy-button">
               📋 Copy Caption
             </button>
-            <button
-              className="regenerate-button"
-              onClick={handleGenerate}
-              disabled={loading}
-            >
+            <button onClick={handleGenerate} disabled={loading} className="regenerate-button">
               🔄 Regenerate
             </button>
           </div>

@@ -27,7 +27,7 @@ export default function VerticalLinesEffect() {
         speed: 2 + Math.random() * 4,
         width: 1 + Math.random() * 3,
         opacity: 0.3 + Math.random() * 0.7,
-        color: Math.random() > 0.5 ? '#8A2BE2' : '#C724B1'
+        color: Math.random() > 0.5 ? 'var(--accent-primary)' : 'var(--accent-primary)'
       };
     }
 

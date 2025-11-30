@@ -5,25 +5,27 @@
  */
 
 import React from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 /**
  * Skeleton for stat cards on home page
  */
 export const StatCardSkeleton: React.FC = () => {
   return (
-    <div className="stat-card animate-pulse">
-      <div className="stat-card-header">
+    <Card className="animate-pulse">
+      <div className="card-header">
         <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
         <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
       </div>
-      <div className="stat-card-value">
+      <div className="card-value">
         <div className="h-8 bg-gray-200 rounded w-32 mb-2"></div>
         <div className="h-4 bg-gray-200 rounded w-20"></div>
       </div>
-      <div className="stat-card-description">
+      <div className="card-description">
         <div className="h-3 bg-gray-200 rounded w-full"></div>
       </div>
-    </div>
+    </Card>
   );
 };
 
@@ -53,7 +55,7 @@ export const QuickActionsSkeleton: React.FC = () => {
  */
 export const PlatformStatusSkeleton: React.FC = () => {
   return (
-    <div className="platform-status-card">
+    <Card>
       <div className="platform-status-header">
         <div className="h-6 bg-gray-200 rounded w-40 animate-pulse"></div>
       </div>
@@ -71,7 +73,7 @@ export const PlatformStatusSkeleton: React.FC = () => {
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };
 
@@ -288,9 +290,7 @@ export const LoadingButton: React.FC<{
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`relative inline-flex items-center justify-center ${className} ${
-        loading || disabled ? 'opacity-60 cursor-not-allowed' : ''
-      }`}
+      className={`relative px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {loading && (
         <Spinner size="sm" className="absolute left-4" />

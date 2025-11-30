@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Card } from '@/components/ui/card';
 
 export default function FansPage() {
   const [fans, setFans] = useState<any[]>([]);
@@ -57,7 +58,7 @@ export default function FansPage() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
         </div>
       ) : fans.length > 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               All Fans ({fans.length})
@@ -80,9 +81,9 @@ export default function FansPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
             fill="none"
@@ -111,7 +112,7 @@ export default function FansPage() {
             </svg>
             Add First Fan
           </Link>
-        </div>
+        </Card>
       )}
       </div>
     </ProtectedRoute>

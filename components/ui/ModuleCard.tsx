@@ -6,6 +6,7 @@ import type { ComponentProps, ReactElement } from 'react';
 import type { HuntazeModule } from '@/contexts/AppStateContext';
 import { cn } from '@/lib/utils';
 import { readModuleStatus, createModuleStatus, type ModuleStatus } from '@/types/branded';
+import { Button } from "@/components/ui/button";
 
 const moduleClassName: Record<HuntazeModule, string> = {
   home: 'border border-gray-200 bg-white shadow-sm hover:border-gray-300 focus-visible:ring-gray-900/10',
@@ -96,20 +97,22 @@ const ModuleCardBase = forwardRef<HTMLDivElement, ModuleCardProps>(function Modu
 
       {onAction ? (
         <div className="mt-4 flex gap-2">
-          <button
+          <Button 
+            variant="ghost" 
+            onClick={() => emitAction('refresh')} 
             type="button"
-            onClick={() => emitAction('refresh')}
             className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100"
           >
             Refresh
-          </button>
-          <button
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => emitAction('open')} 
             type="button"
-            onClick={() => emitAction('open')}
             className="rounded-md bg-gray-900 px-3 py-1 text-xs font-medium text-white shadow hover:bg-gray-800"
           >
             Open module
-          </button>
+          </Button>
         </div>
       ) : null}
     </div>

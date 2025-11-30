@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
 
 interface PlatformData {
   followers: number;
@@ -28,14 +29,14 @@ export function PlatformComparisonChart({
 }: PlatformComparisonChartProps) {
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-6 animate-pulse"></div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-20 bg-gray-200 rounded animate-pulse"></div>
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -43,15 +44,15 @@ export function PlatformComparisonChart({
 
   if (platforms.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold mb-4">Platform Breakdown</h3>
         <p className="text-gray-500 text-center py-8">No platform data available</p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <Card className="bg-white rounded-lg shadow p-6">
       <h3 className="text-lg font-semibold mb-6">Platform Breakdown</h3>
       
       <div className="space-y-6">
@@ -83,11 +84,9 @@ export function PlatformComparisonChart({
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
-
-
 
 function formatNumber(num: number): string {
   if (num >= 1000000) {

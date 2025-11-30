@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Camera, Music, MessageSquare, BarChart3, Shield, HandCoins } from "lucide-react";
+import { Card } from '@/components/ui/card';
 
 type Status = "loading" | "connected" | "attention" | "error";
 
@@ -157,7 +158,7 @@ function Node({ def, status, hideStatus, hideActions, cardWidth }: { def: NodeDe
 
   return (
     <div className="hz-node" style={style} role="group" aria-label={`${def.title} connector`}>
-      <div className="hz-node-card">
+      <Card>
         <div className="hz-node-row">
           <div className="hz-node-icon"><Icon size={16} /></div>
           <div className="hz-node-title">{def.title}</div>
@@ -170,7 +171,7 @@ function Node({ def, status, hideStatus, hideActions, cardWidth }: { def: NodeDe
             </a>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

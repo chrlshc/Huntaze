@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 import { 
   HeartIcon, 
   FireIcon, 
@@ -363,14 +364,11 @@ export const MotivationalElements: React.FC<MotivationalElementsProps> = ({
                 </p>
               </div>
 
-              <button
-                onClick={handleMessageDismiss}
-                className={`flex-shrink-0 ${colors.text} opacity-70 hover:opacity-100 transition-opacity`}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <Button variant="primary" onClick={handleMessageDismiss}>
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+</Button>
             </div>
           </div>
 

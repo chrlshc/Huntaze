@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Bell, X } from 'lucide-react';
 import type { ChangelogEntry, ChangelogResponse } from '@/app/api/changelog/types';
+import { Button } from "@/components/ui/button";
 
 /**
  * Cookie utility functions for managing lastViewedChangelog
@@ -102,20 +103,17 @@ export function ChangelogWidget() {
 
   if (isLoading) {
     return (
-      <button className="relative flex items-center gap-2 p-2 hover:bg-surface rounded-lg transition-colors opacity-50">
-        <Bell strokeWidth={1.5} size={20} />
+      <Button variant="primary">
+  <Bell strokeWidth={1.5} size={20} />
         <span className="text-sm">What's New</span>
-      </button>
+</Button>
     );
   }
 
   return (
     <>
-      <button 
-        onClick={handleOpen}
-        className="relative flex items-center gap-2 p-2 hover:bg-surface rounded-lg transition-colors"
-      >
-        <Bell strokeWidth={1.5} size={20} />
+      <Button variant="primary" onClick={handleOpen} aria-label="New updates available">
+  <Bell strokeWidth={1.5} size={20} />
         <span className="text-sm">What's New</span>
         {/* Requirement 7.2: Pulsing badge for new updates */}
         {hasNewUpdate && (
@@ -124,7 +122,7 @@ export function ChangelogWidget() {
             aria-label="New updates available"
           />
         )}
-      </button>
+</Button>
 
       {/* Sidebar Panel */}
       {isOpen && (
@@ -141,13 +139,9 @@ export function ChangelogWidget() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold">What's New</h2>
-                <button
-                  onClick={handleClose}
-                  className="p-2 hover:bg-surface rounded-lg transition-colors"
-                  aria-label="Close changelog"
-                >
-                  <X strokeWidth={1.5} size={20} />
-                </button>
+                <Button variant="primary" onClick={handleClose} aria-label="Close changelog">
+  <X strokeWidth={1.5} size={20} />
+</Button>
               </div>
               
               {entries.length === 0 ? (

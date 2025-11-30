@@ -7,6 +7,7 @@
 'use client';
 
 import React, { Component, ReactNode } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -100,12 +101,9 @@ function ErrorFallback({ error, onReset }: { error: Error | null; onReset: () =>
             <p className="text-sm text-red-700 dark:text-red-300 mb-4">
               {error?.message || 'An unexpected error occurred'}
             </p>
-            <button
-              onClick={onReset}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
-            >
-              Try again
-            </button>
+            <Button variant="danger" onClick={onReset}>
+  Try again
+</Button>
           </div>
         </div>
       </div>

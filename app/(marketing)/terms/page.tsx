@@ -4,6 +4,7 @@ export const dynamic = 'force-static';
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = {
   title: 'Terms of Service - Huntaze',
@@ -21,7 +22,7 @@ export default function TermsPage() {
             Last updated: 17 Aug 2025
           </p>
 
-          <div className="elevated-card p-6 mb-8">
+          <Card className="p-6 mb-8">
             <p className="text-neutral-700 mb-4">
               Huntaze provides a web platform for creators to manage and publish social content. By using Huntaze, you agree:
             </p>
@@ -34,7 +35,7 @@ export default function TermsPage() {
               <li>TikTok integration: usage is subject to TikTok's Developer and Platform Policies. We may suspend access if policies are violated.</li>
               <li>Termination: you can disconnect and close your account at any time.</li>
             </ul>
-          </div>
+          </Card>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">Contact</h2>

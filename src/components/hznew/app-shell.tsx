@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { APP_SECTIONS } from "@/config/app-sections";
+import { Button } from "@/components/ui/button";
 
 type NavItem = { href: string; label: string; icon: any; badgeKey?: string };
 const NAV: NavItem[] = APP_SECTIONS.filter(s => s.enabled).map(s => ({ href: s.href, label: s.label, icon: s.icon, badgeKey: s.badgeKey }));
@@ -17,9 +18,13 @@ export default function AppShell({ children, navBadges }: { children: React.Reac
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between border-b border-neutral-200 bg-black px-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <button className="lg:hidden text-gray-300 hover:text-white" aria-label="Open menu" onClick={() => setOpen(true)}>
+          <Button 
+            variant="primary" 
+            onClick={() => setOpen(true)} 
+            aria-label="Open menu"
+          >
             <Menu className="h-5 w-5" />
-          </button>
+          </Button>
           <Link href="/app/app" className="hidden md:inline-flex items-center gap-2">
             <img src="/logo.svg" alt="Huntaze" className="h-6" />
           </Link>

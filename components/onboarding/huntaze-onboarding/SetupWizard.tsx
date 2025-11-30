@@ -10,6 +10,7 @@
  */
 
 import * as React from 'react';
+import { Button } from "@/components/ui/button";
 
 type Platform = 'onlyfans' | 'instagram' | 'tiktok' | 'reddit' | 'other';
 type Goal = 'grow' | 'automate' | 'content' | 'all';
@@ -170,11 +171,11 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
       {/* Layered cards for depth */}
       <div 
         aria-hidden 
-        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 to-pink-950/40 backdrop-blur-sm shadow-[0_8px_40px_rgba(167,139,250,0.15)] -z-10" 
+        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 to-pink-950/40 backdrop-blur-sm shadow-[0_8px_40px_rgba(139, 92, 246, 0.15)] -z-10" 
       />
       <div 
         aria-hidden 
-        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 to-pink-950/30 backdrop-blur-sm shadow-[0_8px_40px_rgba(244,114,182,0.12)] -z-10" 
+        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 to-pink-950/30 backdrop-blur-sm shadow-[0_8px_40px_rgba(139, 92, 246, 0.12)] -z-10" 
       />
 
       {/* Main card */}
@@ -223,21 +224,15 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
             </div>
 
             <div className="flex items-center justify-between pt-4">
-              <button
-                onClick={onSkip}
-                className="text-sm font-medium text-neutral-500 hover:text-neutral-400 transition-colors"
-              >
-                Skip for now
-              </button>
-              <button
-                onClick={handleNext}
-                className="inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-white shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 transition-all font-medium"
-              >
-                Continue
+              <Button variant="primary" onClick={onSkip}>
+  Skip for now
+</Button>
+              <Button variant="primary" onClick={handleNext}>
+  Continue
                 <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
                   <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-              </button>
+</Button>
             </div>
           </div>
         )}
@@ -297,22 +292,19 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
             </ul>
 
             <div className="flex items-center justify-between pt-2">
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => setStep(0)}
                 className="text-sm font-medium text-neutral-500 hover:text-neutral-400 transition-colors"
               >
                 ← Back
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className="inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-white shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              </Button>
+              <Button variant="primary" onClick={handleNext} disabled={!canProceed()}>
                 Next
                 <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
                   <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-              </button>
+</Button>
             </div>
           </div>
         )}
@@ -372,22 +364,19 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
             </ul>
 
             <div className="flex items-center justify-between pt-2">
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => setStep(1)}
                 className="text-sm font-medium text-neutral-500 hover:text-neutral-400 transition-colors"
               >
                 ← Back
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className="inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-white shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              </Button>
+              <Button variant="primary" onClick={handleNext} disabled={!canProceed()}>
                 Next
                 <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
                   <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -447,28 +436,23 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
             </ul>
 
             <div className="flex items-center justify-between pt-2">
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => setStep(2)}
                 className="text-sm font-medium text-neutral-500 hover:text-neutral-400 transition-colors"
               >
                 ← Back
-              </button>
+              </Button>
               <div className="flex items-center gap-3">
-                <button
-                  onClick={handleSkipTone}
-                  className="text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors"
-                >
+                <Button variant="primary" onClick={handleSkipTone}>
                   Skip (use Professional)
-                </button>
-                <button
-                  onClick={handleComplete}
-                  className="inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-white shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 transition-all font-medium"
-                >
+                </Button>
+                <Button variant="primary" onClick={handleComplete}>
                   Complete Setup
                   <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
                     <path d="M5 10l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
-                </button>
+</Button>
               </div>
             </div>
           </div>

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Eye, EyeOff } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 /**
  * User Login Page
@@ -79,7 +81,7 @@ export default function LoginPage() {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
+      <Card>
         <div className="auth-header">
           <img src="/logo.svg" alt="Huntaze" className="logo" />
           <h1>Welcome Back</h1>
@@ -125,14 +127,15 @@ export default function LoginPage() {
                 aria-required="true"
                 aria-describedby="password-hint"
               />
-              <button
+              <Button 
+                variant="primary" 
+                onClick={() => setShowPassword(!showPassword)} 
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
                 className="password-toggle"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             </div>
             <span id="password-hint" className="sr-only">
               Enter your password
@@ -154,21 +157,16 @@ export default function LoginPage() {
             </a>
           </div>
 
-          <button
-            type="submit"
-            className="btn-primary btn-full"
-            disabled={isLoading}
-            aria-busy={isLoading}
-          >
+          <Button variant="primary" disabled={isLoading} type="submit" aria-busy={isLoading}>
             {isLoading ? 'Signing in...' : 'Sign In'}
-          </button>
+          </Button>
 
           <p className="form-footer">
             Don't have an account?{' '}
             <a href="/auth/register" className="link">Create one</a>
           </p>
         </form>
-      </div>
+      </Card>
 
       <style jsx>{`
         .auth-container {
@@ -223,7 +221,7 @@ export default function LoginPage() {
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.3);
           border-radius: var(--radius-md);
-          color: #ef4444;
+          color: var(--accent-error);
           font-size: var(--text-sm);
         }
 

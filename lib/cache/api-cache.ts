@@ -14,7 +14,7 @@ interface CacheEntry<T = any> {
   isRevalidating?: boolean; // Flag to prevent duplicate revalidation
 }
 
-interface CacheOptions {
+export interface CacheOptions {
   ttl: number; // Time to live in milliseconds
   tags?: string[]; // Tags for invalidation
   key?: string; // Custom cache key

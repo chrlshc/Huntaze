@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to record consent', { error });
+    logger.error('Failed to record consent', error instanceof Error ? error : new Error(String(error)), {});
     
     if (error instanceof Error && error.message.includes('Required consent not granted')) {
       return NextResponse.json(
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ consents });
 
   } catch (error) {
-    logger.error('Failed to get consent information', { error });
+    logger.error('Failed to get consent information', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to get consent information' },
       { status: 500 }
@@ -103,7 +103,7 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to update consent', { error });
+    logger.error('Failed to update consent', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to update consent' },
       { status: 500 }
@@ -131,7 +131,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to revoke consent', { error });
+    logger.error('Failed to revoke consent', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to revoke consent' },
       { status: 500 }

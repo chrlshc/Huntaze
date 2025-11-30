@@ -18,6 +18,7 @@ import {
   Clock
 } from 'lucide-react';
 import './recent-activity.css';
+import { Button } from "@/components/ui/button";
 
 interface Activity {
   id: string;
@@ -216,12 +217,13 @@ export function RecentActivity() {
       </div>
 
       {activities.length > 5 && (
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => setShowAll(!showAll)}
           className="load-more-button"
         >
           {showAll ? 'Show less' : `Show ${activities.length - 5} more`}
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useHydrationDebug } from '@/hooks/useHydrationError';
 import HydrationDiffViewer from './HydrationDiffViewer';
+import { Button } from "@/components/ui/button";
 
 const HydrationDebugPanel: React.FC = () => {
   const { isEnabled, errors, errorCount, clearErrors, getErrorStats } = useHydrationDebug();
@@ -21,7 +22,8 @@ const HydrationDebugPanel: React.FC = () => {
     <>
       {/* Debug Panel Toggle Button */}
       <div className="fixed bottom-4 right-4 z-50">
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => setIsOpen(!isOpen)}
           className={`px-3 py-2 rounded-full text-white font-medium shadow-lg transition-colors ${
             errorCount > 0 
@@ -30,7 +32,7 @@ const HydrationDebugPanel: React.FC = () => {
           }`}
         >
           🔧 Hydration {errorCount > 0 && `(${errorCount})`}
-        </button>
+        </Button>
       </div>
 
       {/* Debug Panel */}
@@ -43,12 +45,13 @@ const HydrationDebugPanel: React.FC = () => {
                 <h2 className="text-lg font-semibold text-gray-900">
                   Hydration Debug Panel
                 </h2>
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setIsOpen(false)}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -89,18 +92,16 @@ const HydrationDebugPanel: React.FC = () => {
 
               {/* Actions */}
               <div className="mb-6 space-y-2">
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setIsDiffViewerOpen(true)}
                   className="w-full px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
                 >
                   Open Diff Viewer
-                </button>
-                <button
-                  onClick={clearErrors}
-                  className="w-full px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                >
+                </Button>
+                <Button variant="danger" onClick={clearErrors}>
                   Clear All Errors
-                </button>
+                </Button>
               </div>
 
               {/* Error List */}
@@ -157,12 +158,13 @@ const HydrationDebugPanel: React.FC = () => {
                 <h2 className="text-lg font-semibold text-gray-900">
                   Error Details: {selectedErrorData.id}
                 </h2>
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setSelectedError(null)}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
             </div>
             <div className="p-4 space-y-4">

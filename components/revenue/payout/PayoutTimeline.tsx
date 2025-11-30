@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Payout } from '@/lib/services/revenue/types';
+import { Button } from "@/components/ui/button";
 
 interface PayoutTimelineProps {
   payouts: Payout[];
@@ -124,7 +125,8 @@ export function PayoutTimeline({
 
       {/* Platform Filter */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        <button
+        <Button 
+          variant="secondary" 
           onClick={() => setFilterPlatform('all')}
           className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
             filterPlatform === 'all'
@@ -133,10 +135,11 @@ export function PayoutTimeline({
           }`}
         >
           All Platforms ({payouts.length})
-        </button>
+        </Button>
         {platforms.map((platform) => (
-          <button
+          <Button 
             key={platform}
+            variant="secondary" 
             onClick={() => setFilterPlatform(platform)}
             className={`px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center gap-1 ${
               filterPlatform === platform
@@ -147,7 +150,7 @@ export function PayoutTimeline({
             {getPlatformIcon(platform)}
             {platform.charAt(0).toUpperCase() + platform.slice(1)} (
             {payouts.filter((p) => p.platform === platform).length})
-          </button>
+          </Button>
         ))}
       </div>
 

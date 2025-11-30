@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ report });
 
   } catch (error) {
-    logger.error('Failed to generate privacy report', { error });
+    logger.error('Failed to generate privacy report', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to generate report' },
       { status: 500 }

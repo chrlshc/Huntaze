@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from "@/components/ui/button";
 
 function AuthContent() {
   const router = useRouter();
@@ -404,7 +405,7 @@ function AuthContent() {
                       ></div>
                     </div>
                     {passwordStrength.label && (
-                      <span className={`text-[10px] font-semibold ${passwordStrength.color.replace('bg-', 'text-')}`}>
+                      <span className={`text-xs font-semibold ${passwordStrength.color.replace('bg-', 'text-')}`}>
                         {passwordStrength.label}
                       </span>
                     )}
@@ -494,7 +495,7 @@ function AuthContent() {
 
           {/* Security Badge */}
           <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-gray-200">
-            <div className="flex items-center gap-1 text-gray-500 text-[10px]">
+            <div className="flex items-center gap-1 text-gray-500 text-xs">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"

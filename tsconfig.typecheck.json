@@ -10,6 +10,7 @@
     "pages/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "types/**/*.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

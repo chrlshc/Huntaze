@@ -77,10 +77,10 @@ export function FormExample() {
     <CenteredContainer maxWidth="sm" padding={24}>
       <div className="py-[var(--spacing-8)]">
         <div className="mb-[var(--spacing-8)]">
-          <h1 className="text-[var(--font-size-3xl)] font-[var(--font-weight-medium)] text-[var(--color-text-primary)] mb-[var(--spacing-2)]">
+          <h1 className="text-[var(--text-3xl)] font-[var(--font-weight-medium)] text-[var(--color-text-primary)] mb-[var(--spacing-2)]">
             Contact Form
           </h1>
-          <p className="text-[var(--font-size-base)] text-[var(--color-text-secondary)]">
+          <p className="text-[var(--text-base)] text-[var(--color-text-secondary)]">
             Example form using the Linear design system with design tokens
           </p>
         </div>
@@ -199,10 +199,10 @@ export function FormExample() {
 
         {/* Design System Reference */}
         <div className="mt-[var(--spacing-12)] p-[var(--spacing-6)] bg-[var(--color-bg-surface)] border-[length:var(--border-width-thin)] border-[var(--color-border-subtle)] rounded-[var(--border-radius-lg)]">
-          <h3 className="text-[var(--font-size-lg)] font-[var(--font-weight-medium)] text-[var(--color-text-primary)] mb-[var(--spacing-4)]">
+          <h3 className="text-[var(--text-lg)] font-[var(--font-weight-medium)] text-[var(--color-text-primary)] mb-[var(--spacing-4)]">
             Design System Features
           </h3>
-          <ul className="space-y-[var(--spacing-2)] text-[var(--font-size-sm)] text-[var(--color-text-secondary)]">
+          <ul className="space-y-[var(--spacing-2)] text-[var(--text-sm)] text-[var(--color-text-secondary)]">
             <li>✓ Design tokens for colors, spacing, and typography</li>
             <li>✓ Standard input height: 40px (2.5rem)</li>
             <li>✓ Dense input height: 32px (2rem)</li>

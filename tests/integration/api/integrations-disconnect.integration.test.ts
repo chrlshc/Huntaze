@@ -78,7 +78,7 @@ const MOCK_INTEGRATION = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       email: `test-disconnect-${Date.now()}-${Math.random()}@example.com`,
@@ -91,7 +91,7 @@ async function createTestUser() {
  * Create test integration
  */
 async function createTestIntegration(userId: number) {
-  return await prisma.oAuthAccount.create({
+  return await prisma.oauth_accounts.create({
     data: {
       userId,
       ...MOCK_INTEGRATION,
@@ -104,7 +104,7 @@ async function createTestIntegration(userId: number) {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.oAuthAccount.deleteMany({
+  await prisma.oauth_accounts.deleteMany({
     where: {
       user: {
         email: { contains: 'test-disconnect@' },
@@ -112,7 +112,7 @@ async function cleanupTestData() {
     },
   });
   
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-disconnect@' },
     },
@@ -246,7 +246,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
         csrfToken
       );
       
-      const integration = await prisma.oAuthAccount.findFirst({
+      const integration = await prisma.oauth_accounts.findFirst({
         where: {
           userId: testUser.id,
           provider: testIntegration.provider,
@@ -380,7 +380,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
       );
       
       // Integration should still exist
-      const integration = await prisma.oAuthAccount.findFirst({
+      const integration = await prisma.oauth_accounts.findFirst({
         where: {
           userId: testUser.id,
           provider: testIntegration.provider,
@@ -461,7 +461,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
 
     it('should return 404 for other user\'s integration', async () => {
       // Create another user with integration
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: `other-user-${Date.now()}-${Math.random()}@example.com`,
           password: await hash('password', 12),
@@ -482,8 +482,8 @@ describe('Integrations Disconnect API Integration Tests', () => {
       expect(response.status).toBe(404);
       
       // Cleanup
-      await prisma.oAuthAccount.delete({ where: { id: otherIntegration.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.oauth_accounts.delete({ where: { id: otherIntegration.id } });
+      await prisma.users.delete({ where: { id: otherUser.id } });
     });
   });
 
@@ -494,7 +494,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
   describe('User Isolation', () => {
     it('should only disconnect user\'s own integrations', async () => {
       // Create another user with integration
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: `other-user-${Date.now()}-${Math.random()}@example.com`,
           password: await hash('password', 12),
@@ -513,7 +513,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
       );
       
       // Other user's integration should still exist
-      const integration = await prisma.oAuthAccount.findFirst({
+      const integration = await prisma.oauth_accounts.findFirst({
         where: {
           userId: otherUser.id,
           provider: otherIntegration.provider,
@@ -523,8 +523,8 @@ describe('Integrations Disconnect API Integration Tests', () => {
       expect(integration).toBeDefined();
       
       // Cleanup
-      await prisma.oAuthAccount.delete({ where: { id: otherIntegration.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.oauth_accounts.delete({ where: { id: otherIntegration.id } });
+      await prisma.users.delete({ where: { id: otherUser.id } });
     });
   });
 
@@ -536,7 +536,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
     it('should handle concurrent disconnect requests', async () => {
       // Create multiple integrations
       const integrations = await Promise.all([
-        prisma.oAuthAccount.create({
+        prisma.oauth_accounts.create({
           data: {
             userId: testUser.id,
             provider: 'tiktok',
@@ -544,7 +544,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
             accessToken: 'token',
           },
         }),
-        prisma.oAuthAccount.create({
+        prisma.oauth_accounts.create({
           data: {
             userId: testUser.id,
             provider: 'reddit',
@@ -572,7 +572,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
       }
       
       // All should be deleted
-      const remaining = await prisma.oAuthAccount.count({
+      const remaining = await prisma.oauth_accounts.count({
         where: { userId: testUser.id },
       });
       
@@ -643,7 +643,7 @@ describe('Integrations Disconnect API Integration Tests', () => {
   describe('Audit Logging', () => {
     it('should log disconnect action with IP and user agent', async () => {
       // Create a fresh integration for this test
-      const freshIntegration = await prisma.oAuthAccount.create({
+      const freshIntegration = await prisma.oauth_accounts.create({
         data: {
           userId: testUser.id,
           provider: 'tiktok',

@@ -71,9 +71,12 @@ export async function downloadAICostsCSV(
 export async function getHighCostCreators(
   limit: number = 10,
   params: Omit<AICostQueryParams, 'limit'> = {}
-): Promise<AICostResponse['highCostCreators']> {
-  const data = await fetchAICosts({ ...params, limit: limit.toString() });
-  return data.highCostCreators;
+): Promise<import('./types').CreatorBreakdown[]> {
+  const response = await fetchAICosts({ ...params, limit: limit.toString() });
+  if (!response.success) {
+    throw new Error(response.error);
+  }
+  return response.data.highCostCreators;
 }
 
 /**
@@ -81,9 +84,12 @@ export async function getHighCostCreators(
  */
 export async function getAnomalies(
   params: AICostQueryParams = {}
-): Promise<AICostResponse['anomalies']> {
-  const data = await fetchAICosts(params);
-  return data.anomalies;
+): Promise<import('./types').Anomaly[]> {
+  const response = await fetchAICosts(params);
+  if (!response.success) {
+    throw new Error(response.error);
+  }
+  return response.data.anomalies;
 }
 
 /**
@@ -92,9 +98,12 @@ export async function getAnomalies(
 export async function getTotalSpending(
   startDate?: string,
   endDate?: string
-): Promise<AICostResponse['totalSpending']> {
-  const data = await fetchAICosts({ startDate, endDate });
-  return data.totalSpending;
+): Promise<import('./types').TotalSpending> {
+  const response = await fetchAICosts({ startDate, endDate });
+  if (!response.success) {
+    throw new Error(response.error);
+  }
+  return response.data.totalSpending;
 }
 
 /**
@@ -104,12 +113,16 @@ export async function getCreatorSpending(
   creatorId: number,
   startDate?: string,
   endDate?: string
-): Promise<AICostResponse['perCreatorBreakdown'][0] | null> {
-  const data = await fetchAICosts({
+): Promise<import('./types').CreatorBreakdown | null> {
+  const response = await fetchAICosts({
     creatorId: creatorId.toString(),
     startDate,
     endDate,
   });
   
-  return data.perCreatorBreakdown[0] || null;
+  if (!response.success) {
+    throw new Error(response.error);
+  }
+  
+  return response.data.perCreatorBreakdown[0] || null;
 }

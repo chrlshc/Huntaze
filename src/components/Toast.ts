@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 'use client'
 
 export function showToast(message: string) {
@@ -36,11 +38,11 @@ export function showMessageToast(data: { fanName: string; fanAvatar?: string; te
           <p class="font-semibold text-gray-900">${data.fanName}</p>
           <p class="text-sm text-gray-700 truncate">${data.text}</p>
         </div>
-        <button class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200" onclick="this.parentElement.parentElement.remove()" aria-label="Close notification">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Button variant="primary" aria-label="Close notification">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
-        </button>
+</Button>
       </div>
     `
     document.body.appendChild(toast)

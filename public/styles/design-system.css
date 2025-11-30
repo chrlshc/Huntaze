@@ -7,29 +7,29 @@
   --color-primary-200: #e9d5ff;
   --color-primary-300: #d8b4fe;
   --color-primary-400: #c084fc;
-  --color-primary-500: #a855f7;
-  --color-primary-600: #9333ea; /* Main brand color */
+  --color-primary-500: var(--accent-primary);
+  --color-primary-600: var(--accent-primary); /* Main brand color */
   --color-primary-700: #7e22ce;
   --color-primary-800: #6b21a8;
   --color-primary-900: #581c87;
 
   /* Neutral Colors - Clean grays */
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
+  --color-gray-50: var(--bg-glass);
+  --color-gray-100: var(--bg-glass);
+  --color-gray-200: var(--border-subtle);
+  --color-gray-300: var(--border-subtle);
+  --color-gray-400: var(--text-secondary);
+  --color-gray-500: var(--text-tertiary);
+  --color-gray-600: var(--text-tertiary);
   --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
+  --color-gray-800: var(--text-primary);
+  --color-gray-900: var(--text-primary);
 
   /* Accent Colors */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-success: var(--accent-success);
+  --color-warning: var(--accent-warning);
+  --color-error: var(--accent-error);
+  --color-info: var(--accent-info);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -153,7 +153,7 @@ body {
   background: #fff;
   border-radius: 16px;
   padding: 32px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   transition: all .3s cubic-bezier(.4,0,.2,1);
   position: relative;
   overflow: hidden;
@@ -163,7 +163,7 @@ body {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg,#3B82F6,#8B5CF6);
+  background: linear-gradient(90deg,var(--accent-info),var(--accent-primary));
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .3s ease;
@@ -217,7 +217,7 @@ body {
 
 /* Clean, minimal shadows */
 .shadow-soft {
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.3);
 }
 
 .shadow-hover {
@@ -225,5 +225,5 @@ body {
 }
 
 .shadow-hover:hover {
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.3);
 }

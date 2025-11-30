@@ -1,11 +1,11 @@
 import { withAuth } from '@/lib/middleware/auth';
 import { withRateLimit } from '@/lib/middleware/rate-limit';
-import type { RouteHandler } from '@/lib/middleware/types';
 import { analyticsService } from '@/lib/api/services/analytics.service';
 import { successResponse, errorResponse } from '@/lib/api/utils/response';
 import { getCached } from '@/lib/api/utils/cache';
-import { ApiError, ErrorCodes, HttpStatusCodes } from '@/lib/api/utils/errors';
+import { ApiError, ErrorCodes, HttpStatusCodes, isRetryableError } from '@/lib/api/utils/errors';
 import { createLogger } from '@/lib/utils/logger';
+import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 const logger = createLogger('analytics-overview');
@@ -25,6 +25,18 @@ export interface AnalyticsOverviewMetrics {
   totalRevenue: number;
   monthOverMonthGrowth: number;
   timestamp: string;
+}
+
+/**
+ * Analytics metrics from service
+ */
+interface AnalyticsMetrics {
+  arpu: number;
+  ltv: number;
+  churnRate: number;
+  activeSubscribers: number;
+  totalRevenue: number;
+  monthOverMonthGrowth: number;
 }
 
 /**
@@ -134,7 +146,7 @@ async function retryWithBackoff<T>(
  * 
  * @see docs/api/analytics-overview.md
  */
-const analyticsOverviewHandler: RouteHandler = async (req) => {
+const analyticsOverviewHandler = async (req: NextRequest): Promise<NextResponse> => {
   const startTime = Date.now();
   const correlationId = crypto.randomUUID();
   let isCached = false;
@@ -155,14 +167,14 @@ const analyticsOverviewHandler: RouteHandler = async (req) => {
     if (isNaN(userId)) {
       logger.warn('Invalid user ID in analytics overview request', {
         correlationId,
-        userId: req.user.id,
+        userId: user.id,
       });
       
       throw new ApiError(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid user ID',
         HttpStatusCodes.BAD_REQUEST,
-        { userId: req.user.id }
+        { userId: user.id }
       );
     }
 
@@ -184,12 +196,12 @@ const analyticsOverviewHandler: RouteHandler = async (req) => {
         );
         
         // Check if result came from cache
-        isCached = result.cached ?? false;
+        isCached = (result as any).cached ?? false;
         
-        return result.data ?? result;
+        return (result as any).data ?? result;
       },
       correlationId
-    );
+    ) as AnalyticsMetrics;
 
     // Validate response data
     if (!metrics || typeof metrics !== 'object') {
@@ -219,7 +231,7 @@ const analyticsOverviewHandler: RouteHandler = async (req) => {
       correlationId,
     };
 
-    return Response.json(response, {
+    return NextResponse.json(response, {
       status: HttpStatusCodes.OK,
       headers: {
         'X-Correlation-Id': correlationId,
@@ -240,21 +252,23 @@ const analyticsOverviewHandler: RouteHandler = async (req) => {
         duration,
       });
 
+      const retryable = isRetryableError(error);
+      
       const errorResp: AnalyticsOverviewErrorResponse = {
         success: false,
         error: {
           code: error.code,
           message: error.message,
           correlationId,
-          retryable: error.isRetryable(),
+          retryable,
         },
       };
 
-      return Response.json(errorResp, {
+      return NextResponse.json(errorResp, {
         status: error.statusCode,
         headers: {
           'X-Correlation-Id': correlationId,
-          ...(error.isRetryable() && { 'Retry-After': '60' }),
+          ...(retryable && { 'Retry-After': '60' }),
         },
       });
     }
@@ -277,7 +291,7 @@ const analyticsOverviewHandler: RouteHandler = async (req) => {
       },
     };
 
-    return Response.json(errorResp, {
+    return NextResponse.json(errorResp, {
       status: HttpStatusCodes.INTERNAL_SERVER_ERROR,
       headers: {
         'X-Correlation-Id': correlationId,

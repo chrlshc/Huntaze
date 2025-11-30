@@ -557,4 +557,3 @@ export class SmartOnboardingTestFramework {
     return 15 // 15 seconds
   }
 }
-// @ts-nocheck

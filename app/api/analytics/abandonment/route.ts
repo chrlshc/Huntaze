@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
     const fieldCounts: Record<string, number> = {};
     const reasonCounts: Record<string, number> = {};
     
-    abandonments.forEach(a => {
+    abandonments.forEach((a: any) => {
       // Extract field from error message
       const fieldMatch = a.errorMessage?.match(/at field: (\w+)/);
       if (fieldMatch) {
@@ -140,15 +140,15 @@ export async function GET(request: NextRequest) {
     const metrics = {
       total: abandonments.length,
       byField: Object.entries(fieldCounts)
-        .sort(([, a], [, b]) => b - a)
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .slice(0, 10)
         .map(([field, count]) => ({ field, count })),
       byReason: Object.entries(reasonCounts)
-        .sort(([, a], [, b]) => b - a)
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .map(([reason, count]) => ({ reason, count })),
       averageTimeOnForm: abandonments
-        .filter(a => a.timeToComplete)
-        .reduce((sum, a) => sum + (a.timeToComplete || 0), 0) / abandonments.length || 0,
+        .filter((a: any) => a.timeToComplete)
+        .reduce((sum: number, a: any) => sum + (a.timeToComplete || 0), 0) / abandonments.length || 0,
     };
     
     return NextResponse.json({

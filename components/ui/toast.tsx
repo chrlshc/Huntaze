@@ -13,6 +13,7 @@ import {
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type ToastVariant = "default" | "success" | "error";
 
@@ -82,14 +83,16 @@ export function ToastProvider({ children }: PropsWithChildren) {
                   <p className="mt-1 text-sm text-gray-300">{toast.description}</p>
                 ) : null}
               </div>
-              <button
-                type="button"
-                onClick={() => removeToast(toast.id)}
+              <Button 
+                variant="primary" 
+                onClick={() => removeToast(toast.id)} 
+                type="button" 
+                aria-label="Fermer la notification" 
+                aria-hidden="true"
                 className="rounded-md p-1 text-sm text-gray-400 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                aria-label="Fermer la notification"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           </div>
         ))}

@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Prediction request failed', { error });
+    logger.error('Prediction request failed', error instanceof Error ? error : new Error(String(error)), {});
     
     if (error instanceof Error && error.message.includes('No healthy endpoint')) {
       return NextResponse.json(
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     );
 
   } catch (error) {
-    logger.error('Model management request failed', { error });
+    logger.error('Model management request failed', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Request failed' },
       { status: 500 }

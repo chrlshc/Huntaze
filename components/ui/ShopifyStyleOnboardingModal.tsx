@@ -9,6 +9,7 @@
 
 import * as React from 'react';
 import { ShopifyBackdrop } from './ShopifyBackdrop';
+import { Button } from "@/components/ui/button";
 
 export interface ShopifyStyleOnboardingModalProps {
   children: React.ReactNode;
@@ -46,11 +47,11 @@ export function ShopifyStyleOnboardingModal({
           {/* Layered cards behind for depth effect */}
           <div 
             aria-hidden 
-            className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0,0,0,0.45)] -z-10" 
+            className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0, 0, 0, 0.5)] -z-10" 
           />
           <div 
             aria-hidden 
-            className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0,0,0,0.35)] -z-10" 
+            className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0, 0, 0, 0.3)] -z-10" 
           />
           
           {/* Main modal card */}
@@ -61,12 +62,8 @@ export function ShopifyStyleOnboardingModal({
           >
             {/* Close button */}
             {showCloseButton && onClose && (
-              <button
-                onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 transition-colors"
-                aria-label="Close modal"
-              >
-                <svg 
+              <Button variant="primary" onClick={onClose} aria-label="Close modal">
+  <svg 
                   viewBox="0 0 20 20" 
                   fill="none" 
                   className="h-5 w-5 text-neutral-500"
@@ -79,7 +76,7 @@ export function ShopifyStyleOnboardingModal({
                     strokeLinecap="round"
                   />
                 </svg>
-              </button>
+</Button>
             )}
             
             {/* Modal content */}

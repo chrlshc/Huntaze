@@ -108,7 +108,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
     const startTime = Date.now();
     
     try {
-      logger.debug('Generating AI help', {
+      logger.info('Generating AI help', {
         step: context.currentStep,
         action: context.userAction,
         difficulty: context.difficulty
@@ -120,7 +120,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       // Check cache first
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        logger.debug('Returning cached help content', { cacheKey });
+        logger.info('Returning cached help content', { cacheKey });
         return this.buildHelpContent(cached.content, context, userState, cached.confidence, true);
       }
 
@@ -233,7 +233,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       const cached = this.getFromCache(cacheKey);
       
       if (cached) {
-        logger.debug('Returning cached simplified text');
+        logger.info('Returning cached simplified text');
         return cached.content;
       }
 
@@ -241,7 +241,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       this.setCache(cacheKey, response.content);
       
       const duration = Date.now() - startTime;
-      logger.debug('Text simplified successfully', { durationMs: duration });
+      logger.info('Text simplified successfully', { durationMs: duration });
       
       return response.content;
     } catch (error) {
@@ -277,7 +277,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       const cached = this.getFromCache(cacheKey);
       
       if (cached) {
-        logger.debug('Returning cached enhanced text');
+        logger.info('Returning cached enhanced text');
         return cached.content;
       }
 
@@ -285,7 +285,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       this.setCache(cacheKey, response.content);
       
       const duration = Date.now() - startTime;
-      logger.debug('Text enhanced successfully', { durationMs: duration });
+      logger.info('Text enhanced successfully', { durationMs: duration });
       
       return response.content;
     } catch (error) {
@@ -321,7 +321,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       const cached = this.getFromCache(cacheKey);
       
       if (cached) {
-        logger.debug('Returning cached simplified language');
+        logger.info('Returning cached simplified language');
         return cached.content;
       }
 
@@ -329,7 +329,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       this.setCache(cacheKey, response.content);
       
       const duration = Date.now() - startTime;
-      logger.debug('Language simplified successfully', { durationMs: duration });
+      logger.info('Language simplified successfully', { durationMs: duration });
       
       return response.content;
     } catch (error) {
@@ -371,7 +371,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       const cached = this.getFromCache(cacheKey);
       
       if (cached) {
-        logger.debug('Returning cached examples');
+        logger.info('Returning cached examples');
         try {
           return JSON.parse(cached.content);
         } catch {
@@ -386,7 +386,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
         this.setCache(cacheKey, response.content);
         
         const duration = Date.now() - startTime;
-        logger.debug('Examples generated successfully', { 
+        logger.info('Examples generated successfully', { 
           count: examples.length, 
           durationMs: duration 
         });
@@ -436,7 +436,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       const cached = this.getFromCache(cacheKey);
       
       if (cached) {
-        logger.debug('Returning cached visual aids');
+        logger.info('Returning cached visual aids');
         try {
           return JSON.parse(cached.content);
         } catch {
@@ -451,7 +451,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
         this.setCache(cacheKey, response.content);
         
         const duration = Date.now() - startTime;
-        logger.debug('Visual aids generated successfully', { 
+        logger.info('Visual aids generated successfully', { 
           count: aids.length, 
           durationMs: duration 
         });
@@ -501,7 +501,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       const cached = this.getFromCache(cacheKey);
       
       if (cached) {
-        logger.debug('Returning cached interactive elements');
+        logger.info('Returning cached interactive elements');
         try {
           return JSON.parse(cached.content);
         } catch {
@@ -516,7 +516,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
         this.setCache(cacheKey, response.content);
         
         const duration = Date.now() - startTime;
-        logger.debug('Interactive elements generated successfully', { 
+        logger.info('Interactive elements generated successfully', { 
           count: elements.length, 
           durationMs: duration 
         });
@@ -588,7 +588,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
       try {
         if (attempt > 0) {
           const delay = this.calculateBackoffDelay(attempt);
-          logger.debug(`Retrying Azure OpenAI call (attempt ${attempt + 1}/${this.retryConfig.maxRetries + 1}) after ${delay}ms`);
+          logger.info(`Retrying Azure OpenAI call (attempt ${attempt + 1}/${this.retryConfig.maxRetries + 1}) after ${delay}ms`);
           await this.sleep(delay);
         }
 
@@ -672,7 +672,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
         throw new Error('No response from Azure OpenAI');
       }
 
-      logger.debug('Azure OpenAI API call successful', {
+      logger.info('Azure OpenAI API call successful', {
         durationMs: duration,
         tokensUsed: data.usage?.total_tokens,
         promptTokens: data.usage?.prompt_tokens,
@@ -814,7 +814,7 @@ export class AIHelpGeneratorImpl implements AIHelpGenerator {
     // Check if request is already in flight
     const existingRequest = this.requestQueue.get(key);
     if (existingRequest) {
-      logger.debug('Deduplicating concurrent request', { key });
+      logger.info('Deduplicating concurrent request', { key });
       return existingRequest;
     }
 

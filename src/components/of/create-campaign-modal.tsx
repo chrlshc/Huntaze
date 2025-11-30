@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { X, Users, Filter, Send } from 'lucide-react';
 import type { AudienceFilter, AudienceSegment } from '@/lib/types/onlyfans';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface CreateCampaignModalProps {
   onClose: () => void;
@@ -69,18 +71,15 @@ export default function CreateCampaignModal({ onClose, onCreated }: CreateCampai
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+      <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             Create Mass Message Campaign
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
+          <Button variant="ghost" onClick={onClose}>
             <X className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
@@ -124,7 +123,8 @@ export default function CreateCampaignModal({ onClose, onCreated }: CreateCampai
             
             {/* Audience Type */}
             <div className="flex gap-3 mb-4">
-              <button
+              <Button 
+                variant="secondary" 
                 onClick={() => setAudienceType('all')}
                 className={`flex-1 p-3 rounded-lg border-2 transition-all ${
                   audienceType === 'all'
@@ -137,9 +137,10 @@ export default function CreateCampaignModal({ onClose, onCreated }: CreateCampai
                 <span className="block text-sm text-gray-600 dark:text-gray-400">
                   Send to everyone
                 </span>
-              </button>
+              </Button>
               
-              <button
+              <Button 
+                variant="secondary" 
                 onClick={() => setAudienceType('segment')}
                 className={`flex-1 p-3 rounded-lg border-2 transition-all ${
                   audienceType === 'segment'
@@ -152,7 +153,7 @@ export default function CreateCampaignModal({ onClose, onCreated }: CreateCampai
                 <span className="block text-sm text-gray-600 dark:text-gray-400">
                   Target specific groups
                 </span>
-              </button>
+              </Button>
             </div>
 
             {/* Segment Selection */}
@@ -207,27 +208,20 @@ export default function CreateCampaignModal({ onClose, onCreated }: CreateCampai
           </p>
           
           <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            >
+            <Button variant="ghost" onClick={onClose}>
               Cancel
-            </button>
-            <button
-              onClick={handleCreate}
+            </Button>
+            <Button 
+              variant="primary" 
+              onClick={handleCreate} 
               disabled={!name.trim() || !content.trim() || creating || (audienceType === 'segment' && selectedSegments.length === 0)}
-              className={`px-6 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                !name.trim() || !content.trim() || creating || (audienceType === 'segment' && selectedSegments.length === 0)
-                  ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
-              }`}
             >
               <Send className="w-4 h-4" />
               {creating ? 'Creating...' : 'Create Campaign'}
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

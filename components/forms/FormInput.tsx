@@ -30,7 +30,7 @@ export function FormInput({
           htmlFor={inputId}
           className={cn(
             "block",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "font-[var(--font-weight-medium)]",
             "text-[var(--color-text-primary)]",
             "mb-[var(--spacing-2)]"
@@ -79,7 +79,7 @@ export function FormInput({
         <p 
           className={cn(
             "mt-[var(--spacing-2)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-error)]"
           )} 
           role="alert"
@@ -91,7 +91,7 @@ export function FormInput({
         <p 
           className={cn(
             "mt-[var(--spacing-2)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-text-muted)]"
           )}
         >
@@ -125,7 +125,7 @@ export function FormTextarea({
           htmlFor={textareaId}
           className={cn(
             "block",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "font-[var(--font-weight-medium)]",
             "text-[var(--color-text-primary)]",
             "mb-[var(--spacing-2)]"
@@ -173,7 +173,7 @@ export function FormTextarea({
         <p 
           className={cn(
             "mt-[var(--spacing-2)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-error)]"
           )} 
           role="alert"
@@ -185,7 +185,7 @@ export function FormTextarea({
         <p 
           className={cn(
             "mt-[var(--spacing-2)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-text-muted)]"
           )}
         >
@@ -223,7 +223,7 @@ export function FormSelect({
           htmlFor={selectId}
           className={cn(
             "block",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "font-[var(--font-weight-medium)]",
             "text-[var(--color-text-primary)]",
             "mb-[var(--spacing-2)]"
@@ -276,7 +276,7 @@ export function FormSelect({
         <p 
           className={cn(
             "mt-[var(--spacing-2)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-error)]"
           )} 
           role="alert"
@@ -288,7 +288,7 @@ export function FormSelect({
         <p 
           className={cn(
             "mt-[var(--spacing-2)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-text-muted)]"
           )}
         >
@@ -343,7 +343,7 @@ export function FormCheckbox({
           htmlFor={checkboxId}
           className={cn(
             "ml-[var(--spacing-3)]",
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-text-primary)]",
             "cursor-pointer"
           )}
@@ -356,7 +356,7 @@ export function FormCheckbox({
           className={cn(
             "mt-[var(--spacing-2)]",
             "ml-[28px]", // 20px checkbox + 8px spacing
-            "text-[var(--font-size-sm)]",
+            "text-[var(--text-sm)]",
             "text-[var(--color-text-muted)]"
           )}
         >

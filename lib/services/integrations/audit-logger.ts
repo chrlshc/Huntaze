@@ -584,8 +584,6 @@ export class AuditLogger {
         },
         {
           maxRetries: this.config.retryAttempts,
-          retryDelay: this.config.retryDelay,
-          retryOn: [408, 429, 500, 502, 503, 504],
           timeout: 5000,
         }
       );

@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 
 export function IntegrationsHero() {
   return (
@@ -41,12 +42,12 @@ export function IntegrationsHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+          <Button variant="primary">
             Browse All Integrations
-          </button>
-          <button className="px-8 py-4 border-2 border-purple-200 text-purple-600 font-semibold rounded-xl hover:bg-purple-50 transition-all duration-300">
+          </Button>
+          <Button variant="outline">
             Request Integration
-          </button>
+          </Button>
         </motion.div>
       </motion.div>
       

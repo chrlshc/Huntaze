@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Learning path optimization API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Learning path optimization API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Learning path optimization GET API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Learning path optimization GET API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

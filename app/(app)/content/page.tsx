@@ -15,6 +15,8 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 // Lazy load heavy modal component to reduce initial bundle size
 const ContentModal = lazy(() => import('@/components/content/ContentModal').then(mod => ({ default: mod.ContentModal })));
@@ -98,34 +100,31 @@ const ContentItemRow = memo(({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button 
-            className="p-2 text-gray-400 hover:text-[var(--color-text-main)] transition-colors"
-            title="View"
-          >
+          <Button variant="primary">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
-          </button>
-          <button 
-            className="p-2 text-gray-400 hover:text-[var(--color-text-main)] transition-colors"
+          </Button>
+          <Button 
+            variant="primary" 
             onClick={() => onEdit(item)}
             title="Edit"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-          </button>
-          <button 
-            className="p-2 text-red-400 hover:text-red-600 transition-colors"
-            onClick={() => onDelete(item.id)}
+          </Button>
+          <Button 
+            variant="danger" 
+            onClick={() => onDelete(item.id)} 
             disabled={isDeleting}
             title="Delete"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -275,15 +274,12 @@ export default function ContentPage() {
             Create, manage, and publish content across all platforms
           </p>
         </div>
-        <button 
-          onClick={handleCreate}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-all"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <Button variant="primary" onClick={handleCreate}>
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           Create Content
-        </button>
+</Button>
       </div>
 
       {/* Content Modal */}
@@ -320,7 +316,7 @@ export default function ContentPage() {
       {/* Stats Cards */}
       {!isLoading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--color-text-sub)]">Total Content</p>
@@ -334,9 +330,9 @@ export default function ContentPage() {
                 </svg>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--color-text-sub)]">Published</p>
@@ -350,9 +346,9 @@ export default function ContentPage() {
                 </svg>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--color-text-sub)]">Scheduled</p>
@@ -366,9 +362,9 @@ export default function ContentPage() {
                 </svg>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--color-text-sub)]">Drafts</p>
@@ -382,7 +378,7 @@ export default function ContentPage() {
                 </svg>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
@@ -417,7 +413,7 @@ export default function ContentPage() {
       )}
 
       {/* Tabs */}
-      <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
+      <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
         <div className="border-b border-gray-200">
           <nav className="flex gap-8 px-6" aria-label="Tabs">
             {(['all', 'draft', 'scheduled', 'published'] as const).map((tab) => (
@@ -470,15 +466,14 @@ export default function ContentPage() {
                   : 'Start creating content to see it here.'}
               </p>
               {!searchQuery && (
-                <button 
-                  onClick={handleCreate}
-                  className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-all"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Create First Content
-                </button>
+                <div className="mt-6">
+                  <Button variant="primary" onClick={handleCreate}>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Create First Content
+                  </Button>
+                </div>
               )}
             </div>
           ) : (
@@ -497,15 +492,12 @@ export default function ContentPage() {
               {/* Load More Button */}
               {displayCount < filteredContent.length && (
                 <div className="p-6 text-center bg-[var(--bg-surface)]">
-                  <button
-                    onClick={handleLoadMore}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-[var(--color-text-main)] rounded-lg hover:bg-gray-200 transition-all"
-                  >
+                  <Button variant="secondary" onClick={handleLoadMore}>
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                     Load More ({filteredContent.length - displayCount} remaining)
-                  </button>
+                  </Button>
                 </div>
               )}
               
@@ -518,7 +510,7 @@ export default function ContentPage() {
             </>
           )}
         </div>
-      </div>
+      </Card>
       </div>
       </ContentPageErrorBoundary>
     </ProtectedRoute>

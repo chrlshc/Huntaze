@@ -99,14 +99,15 @@ export function useApiCall<T = any>(options: UseApiCallOptions = {}) {
 }
 
 // Specific hooks for common API calls
-export function useStripeCheckout() {
-  return useApiCall({
-    maxRetries: 2,
-    onError: (error) => {
-      console.error('Stripe checkout error:', error);
-    },
-  });
-}
+// Note: Stripe checkout removed
+// export function useStripeCheckout() {
+//   return useApiCall({
+//     maxRetries: 2,
+//     onError: (error) => {
+//       console.error('Stripe checkout error:', error);
+//     },
+//   });
+// }
 
 export function useOnboardingSubmit() {
   return useApiCall({

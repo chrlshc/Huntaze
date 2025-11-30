@@ -3,6 +3,8 @@
  * Tracks server-side render times and component re-renders
  */
 
+import React from 'react';
+
 export interface RenderMetrics {
   page: string;
   component: string;

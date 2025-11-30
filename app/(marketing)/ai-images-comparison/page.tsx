@@ -5,6 +5,8 @@ export const dynamic = 'force-static';
 
 import { Image, Sparkles, Zap, Crown } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function AIImagesComparison() {
   return (
@@ -23,7 +25,7 @@ export default function AIImagesComparison() {
         {/* Visual Examples Grid */}
         <div className="space-y-12">
           {/* Example 1: Sale Banner */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
+          <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Example: "50% OFF Weekend Sale" Banner
             </h2>
@@ -31,12 +33,12 @@ export default function AIImagesComparison() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Starter */}
               <div className="space-y-3">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 h-48 flex items-center justify-center border-2 border-green-200 dark:border-green-800">
+                <Card className="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 h-48 flex items-center justify-center border-2 border-green-200 dark:border-green-800">
                   <div className="text-center">
                     <p className="text-3xl font-bold text-gray-800 dark:text-white">50% OFF</p>
                     <p className="text-gray-600 dark:text-gray-400">This Weekend</p>
                   </div>
-                </div>
+                </Card>
                 <div className="text-center">
                   <p className="font-bold text-green-600">STARTER</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">DALL-E 2</p>
@@ -50,9 +52,9 @@ export default function AIImagesComparison() {
                   <div className="text-center text-white">
                     <p className="text-4xl font-black">50% OFF</p>
                     <p className="text-lg">✨ WEEKEND ONLY ✨</p>
-                    <div className="mt-2 bg-white/20 backdrop-blur rounded-full px-3 py-1 text-sm">
+                    <Card className="mt-2 bg-white/20 backdrop-blur rounded-full px-3 py-1 text-sm">
                       Limited Time
-                    </div>
+                    </Card>
                   </div>
                 </div>
                 <div className="text-center">
@@ -111,10 +113,10 @@ export default function AIImagesComparison() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Example 2: Tip Menu */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
+          <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Example: Tip Menu Design
             </h2>
@@ -122,7 +124,7 @@ export default function AIImagesComparison() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Starter */}
               <div className="space-y-3">
-                <div className="bg-white dark:bg-gray-700 rounded-xl p-4 h-64 border border-gray-300 dark:border-gray-600">
+                <Card className="bg-white dark:bg-gray-700 rounded-xl p-4 h-64 border border-gray-300 dark:border-gray-600">
                   <h3 className="font-bold mb-3">TIP MENU</h3>
                   <ul className="space-y-2 text-sm">
                     <li>Good morning - $5</li>
@@ -130,7 +132,7 @@ export default function AIImagesComparison() {
                     <li>Special request - $25</li>
                     <li>Make my day - $50</li>
                   </ul>
-                </div>
+                </Card>
                 <p className="text-xs text-center text-gray-600 dark:text-gray-400">
                   Basic list format
                 </p>
@@ -221,8 +223,7 @@ export default function AIImagesComparison() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+          </Card>
 
         {/* Summary */}
         <div className="mt-16 bg-gray-100 dark:bg-gray-800 rounded-2xl p-8">
@@ -258,12 +259,13 @@ export default function AIImagesComparison() {
         {/* CTA */}
         <div className="mt-12 text-center">
           <Link href="/pricing">
-            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
+            <Button variant="primary">
               Get The AI That Matches Your Standards →
-            </button>
+            </Button>
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }

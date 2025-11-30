@@ -90,7 +90,7 @@ export class DataValidationService {
       return result;
 
     } catch (error) {
-      logger.error('Validation process failed', { error, eventId: event.id });
+      logger.error('Validation process failed', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       return {
         isValid: false,
         errors: ['Validation process encountered an error'],
@@ -295,7 +295,7 @@ export class DataValidationService {
           errors.push(...result.errors);
         }
       } catch (error) {
-        logger.error('Custom validation rule failed', { error, ruleId: rule.id });
+        logger.error('Custom validation rule failed', error instanceof Error ? error : new Error(String(error)), { ruleId: rule.id });
         errors.push(`Custom rule '${rule.id}' failed to execute`);
       }
     }
@@ -420,7 +420,7 @@ export class DataValidationService {
       return cleanedEvent;
 
     } catch (error) {
-      logger.error('Event cleaning failed', { error, eventId: event.id });
+      logger.error('Event cleaning failed', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       return event; // Return original if cleaning fails
     }
   }

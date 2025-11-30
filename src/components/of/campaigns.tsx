@@ -6,6 +6,8 @@ import type { OfMassMessageCampaign } from '@/lib/types/onlyfans';
 import CreateCampaignModal from './create-campaign-modal';
 import CampaignDetails from './campaign-details';
 import { formatDistanceToNow } from 'date-fns';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function OfCampaigns() {
   const [campaigns, setCampaigns] = useState<OfMassMessageCampaign[]>([]);
@@ -82,20 +84,17 @@ export default function OfCampaigns() {
             </p>
           </div>
           
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-          >
+          <Button variant="primary" onClick={() => setShowCreateModal(true)}>
             <Plus className="w-5 h-5" />
             Create Campaign
-          </button>
+          </Button>
         </div>
 
         {/* Campaigns Grid */}
         {loading ? (
           <div className="text-center py-12 text-gray-500">Loading campaigns...</div>
         ) : campaigns.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+          <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
             <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               No campaigns yet
@@ -103,13 +102,10 @@ export default function OfCampaigns() {
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Create your first mass message campaign to reach multiple fans at once
             </p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
+            <Button variant="primary" onClick={() => setShowCreateModal(true)}>
               Create Campaign
-            </button>
-          </div>
+            </Button>
+          </Card>
         ) : (
           <div className="grid gap-4">
             {campaigns.map((campaign) => (
@@ -136,31 +132,31 @@ export default function OfCampaigns() {
                   {/* Actions */}
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     {campaign.status === 'draft' && (
-                      <button
+                      <Button 
+                        variant="primary" 
                         onClick={() => handleCampaignAction(campaign.id, 'launch')}
-                        className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                         title="Launch campaign"
                       >
                         <Play className="w-5 h-5" />
-                      </button>
+                      </Button>
                     )}
                     {campaign.status === 'sending' && (
-                      <button
+                      <Button 
+                        variant="primary" 
                         onClick={() => handleCampaignAction(campaign.id, 'pause')}
-                        className="p-2 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
                         title="Pause campaign"
                       >
                         <Pause className="w-5 h-5" />
-                      </button>
+                      </Button>
                     )}
                     {campaign.status === 'paused' && (
-                      <button
+                      <Button 
+                        variant="primary" 
                         onClick={() => handleCampaignAction(campaign.id, 'resume')}
-                        className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                         title="Resume campaign"
                       >
                         <Play className="w-5 h-5" />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

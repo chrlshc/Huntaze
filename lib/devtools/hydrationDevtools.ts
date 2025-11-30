@@ -7,6 +7,7 @@
 
 import { hydrationDebugger } from '@/lib/utils/hydrationDebugger';
 import { hydrationMonitoringService } from '@/lib/services/hydrationMonitoringService';
+import { Button } from "@/components/ui/button";
 
 export interface HydrationDevtoolsConfig {
   enabled: boolean;
@@ -109,16 +110,16 @@ export class HydrationDevtools {
       }
       
       .hydration-devtools-pending::before {
-        border-color: #fbbf24;
+        border-color: var(--accent-warning);
         animation: hydration-pulse 1s infinite;
       }
       
       .hydration-devtools-success::before {
-        border-color: #10b981;
+        border-color: var(--accent-success);
       }
       
       .hydration-devtools-error::before {
-        border-color: #ef4444;
+        border-color: var(--accent-error);
         animation: hydration-error-pulse 0.5s infinite;
       }
       
@@ -128,20 +129,20 @@ export class HydrationDevtools {
       
       .hydration-devtools-mismatch {
         background-color: rgba(239, 68, 68, 0.1) !important;
-        outline: 2px dashed #ef4444 !important;
+        outline: 2px dashed var(--accent-error) !important;
       }
       
       .hydration-devtools-tooltip {
         position: absolute;
-        background: #1f2937;
+        background: var(--text-primary);
         color: white;
         padding: 8px 12px;
         border-radius: 6px;
-        font-size: 12px;
-        font-family: monospace;
+        font-size: var(--text-xs);
+        font-family: var(--font-mono);
         z-index: 10001;
         max-width: 300px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         pointer-events: none;
       }
       
@@ -162,7 +163,7 @@ export class HydrationDevtools {
         width: 350px;
         max-height: 500px;
         background: white;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--border-subtle);
         border-radius: 8px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         z-index: 10002;
@@ -171,9 +172,9 @@ export class HydrationDevtools {
       }
       
       .hydration-devtools-panel-header {
-        background: #f3f4f6;
+        background: var(--bg-glass);
         padding: 12px 16px;
-        border-bottom: 1px solid #d1d5db;
+        border-bottom: 1px solid var(--border-subtle);
         font-weight: 600;
         display: flex;
         justify-content: space-between;
@@ -189,24 +190,24 @@ export class HydrationDevtools {
       .hydration-devtools-component {
         margin-bottom: 12px;
         padding: 8px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-subtle);
         border-radius: 4px;
-        font-size: 12px;
+        font-size: var(--text-xs);
       }
       
       .hydration-devtools-component.success {
-        border-color: #10b981;
-        background-color: #f0fdf4;
+        border-color: var(--accent-success);
+        background-color: rgba(16, 185, 129, 0.1);
       }
       
       .hydration-devtools-component.error {
-        border-color: #ef4444;
-        background-color: #fef2f2;
+        border-color: var(--accent-error);
+        background-color: rgba(239, 68, 68, 0.1);
       }
       
       .hydration-devtools-component.pending {
-        border-color: #fbbf24;
-        background-color: #fffbeb;
+        border-color: var(--accent-warning);
+        background-color: rgba(245, 158, 11, 0.1);
       }
     `;
 
@@ -586,7 +587,7 @@ export class HydrationDevtools {
     
     // Flash effect
     const originalBorder = info.domNode.style.border;
-    info.domNode.style.border = '3px solid #3b82f6';
+    info.domNode.style.border = '3px solid var(--accent-info)';
     
     setTimeout(() => {
       info.domNode!.style.border = originalBorder;
@@ -634,7 +635,7 @@ export class HydrationDevtools {
     header.className = 'hydration-devtools-panel-header';
     header.innerHTML = `
       <span>🔧 Hydration Devtools</span>
-      <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 16px; cursor: pointer;">×</button>
+      <Button variant="primary">×</Button>
     `;
 
     const content = document.createElement('div');

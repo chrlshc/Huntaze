@@ -278,7 +278,7 @@ function isValidPassword(password: string): { valid: boolean; error?: string } {
  * POST /api/auth/register
  * Register a new user account
  */
-export async function POST(request: NextRequest): Promise<NextResponse<RegisterResponse>> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const correlationId = `register-${Date.now()}-${Math.random().toString(36).substring(7)}`;
   const startTime = Date.now();
 

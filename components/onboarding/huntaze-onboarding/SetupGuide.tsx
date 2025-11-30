@@ -25,11 +25,11 @@ export default function SetupGuide({
       {/* Layered cards behind for Shopify effect - dark theme */}
       <div 
         aria-hidden 
-        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 to-pink-950/40 backdrop-blur-sm shadow-[0_8px_40px_rgba(167,139,250,0.15)] -z-10" 
+        className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/40 to-pink-950/40 backdrop-blur-sm shadow-[0_8px_40px_rgba(139, 92, 246, 0.15)] -z-10" 
       />
       <div 
         aria-hidden 
-        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 to-pink-950/30 backdrop-blur-sm shadow-[0_8px_40px_rgba(244,114,182,0.12)] -z-10" 
+        className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 to-pink-950/30 backdrop-blur-sm shadow-[0_8px_40px_rgba(139, 92, 246, 0.12)] -z-10" 
       />
       
       {/* Main card */}

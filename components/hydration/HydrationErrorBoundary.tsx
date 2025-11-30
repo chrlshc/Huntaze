@@ -2,6 +2,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { hydrationErrorLogger } from '@/lib/services/hydrationErrorLogger';
+import { Button } from "@/components/ui/button";
 
 interface HydrationErrorBoundaryProps {
   fallback?: React.ComponentType<{error: Error}>;
@@ -127,13 +128,9 @@ class HydrationErrorBoundary extends Component<
                   </p>
                 </div>
                 <div className="mt-4">
-                  <button
-                    type="button"
-                    onClick={this.handleRetry}
-                    className="bg-yellow-50 text-yellow-800 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-600"
-                  >
-                    Retry
-                  </button>
+                  <Button variant="primary" onClick={this.handleRetry} type="button">
+  Retry
+</Button>
                 </div>
               </div>
             </div>
@@ -158,13 +155,9 @@ class HydrationErrorBoundary extends Component<
                 <p>An unexpected error occurred. Please try refreshing the page.</p>
               </div>
               <div className="mt-4">
-                <button
-                  type="button"
-                  onClick={this.handleRetry}
-                  className="bg-red-50 text-red-800 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
-                >
-                  Try Again
-                </button>
+                <Button variant="danger" onClick={this.handleRetry} type="button">
+  Try Again
+</Button>
               </div>
             </div>
           </div>

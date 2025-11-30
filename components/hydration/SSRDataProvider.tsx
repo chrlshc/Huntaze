@@ -25,9 +25,11 @@ const SSRDataContext = createContext<SSRDataContextValue | null>(null);
 interface SSRDataProviderProps {
   children: ReactNode;
   initialData?: SSRData;
+  hydrationId?: string;
+  className?: string;
 }
 
-export function SSRDataProvider({ children, initialData = {} }: SSRDataProviderProps) {
+export function SSRDataProvider({ children, initialData = {}, hydrationId, className }: SSRDataProviderProps) {
   const [data, setDataState] = useState<SSRData>(initialData);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -52,7 +54,9 @@ export function SSRDataProvider({ children, initialData = {} }: SSRDataProviderP
 
   return (
     <SSRDataContext.Provider value={value}>
-      {children}
+      <div className={className} data-hydration-id={hydrationId}>
+        {children}
+      </div>
     </SSRDataContext.Provider>
   );
 }

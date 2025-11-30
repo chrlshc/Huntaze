@@ -7,6 +7,7 @@ import { ChevronDown, ArrowRight } from 'lucide-react'
 import ContactSalesModal from '@/components/ContactSalesModal'
 // import ThemeToggle from '@/components/ThemeToggle'
 import analytics from '@/lib/analytics/enterprise-events'
+import { Button } from "@/components/ui/button";
 
 // Navigation items based on the new IA
 const solutionItems = [
@@ -117,14 +118,14 @@ export default function EnterpriseNav() {
           <div className="hidden lg:flex items-center space-x-6">
             {/* Solutions Dropdown */}
             <div className="relative">
-              <button
-                className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+              <Button 
+                variant="primary"
                 onMouseEnter={() => setSolutionsOpen(true)}
                 onMouseLeave={() => setSolutionsOpen(false)}
               >
                 Solutions
                 <ChevronDown className={`w-4 h-4 transition-transform ${solutionsOpen ? 'rotate-180' : ''}`} />
-              </button>
+              </Button>
 
               <AnimatePresence>
                 {solutionsOpen && (
@@ -172,14 +173,14 @@ export default function EnterpriseNav() {
 
             {/* Resources Dropdown */}
             <div className="relative">
-              <button
-                className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+              <Button 
+                variant="primary"
                 onMouseEnter={() => setResourcesOpen(true)}
                 onMouseLeave={() => setResourcesOpen(false)}
               >
                 Resources
                 <ChevronDown className={`w-4 h-4 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} />
-              </button>
+              </Button>
 
               <AnimatePresence>
                 {resourcesOpen && (

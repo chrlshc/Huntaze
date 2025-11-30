@@ -29,8 +29,8 @@
  *   success: true,
  *   data: {
  *     totalSpending: { costUsd: number, tokensInput: number, tokensOutput: number },
- *     perCreatorBreakdown: Array<CreatorCostBreakdown>,
- *     highCostCreators: Array<CreatorCostBreakdown>,
+ *     perCreatorBreakdown: Array<CreatorBreakdown>,
+ *     highCostCreators: Array<CreatorBreakdown>,
  *     anomalies: Array<Anomaly>
  *   },
  *   metadata: {
@@ -61,9 +61,8 @@ import { createLogger } from '@/lib/utils/logger';
 import { getServerSession } from '@/lib/auth';
 import { isAdmin } from '@/lib/auth/admin';
 import type {
-  AICostsResponse,
-  AICostsErrorResponse,
-  CreatorCostBreakdown,
+  AICostResponse,
+  CreatorBreakdown,
   Anomaly,
   TotalSpending,
 } from './types';
@@ -171,7 +170,7 @@ async function retryWithBackoff<T>(
  * - highCostCreators: Ranked list of creators by spending
  * - anomalies: Detected unusual spending patterns
  */
-export async function GET(request: NextRequest): Promise<NextResponse<AICostsResponse | AICostsErrorResponse>> {
+export async function GET(request: NextRequest): Promise<NextResponse<AICostResponse | AICostResponse>> {
   const correlationId = `ai-costs-${Date.now()}-${Math.random().toString(36).substring(7)}`;
   const startTime = Date.now();
 
@@ -183,7 +182,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
     if (!session?.user?.id) {
       logger.warn('Unauthorized access attempt - no session', { correlationId });
       
-      return NextResponse.json<AICostsErrorResponse>(
+      return NextResponse.json<AICostResponse>(
         {
           success: false,
           error: 'Authentication required',
@@ -209,7 +208,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
         email: session.user.email,
       });
       
-      return NextResponse.json<AICostsErrorResponse>(
+      return NextResponse.json<AICostResponse>(
         {
           success: false,
           error: 'Admin access required. This endpoint is restricted to administrators only.',
@@ -245,7 +244,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
     if (format !== 'json' && format !== 'csv') {
       logger.warn('Invalid format parameter', { correlationId, format });
       
-      return NextResponse.json<AICostsErrorResponse>(
+      return NextResponse.json<AICostResponse>(
         {
           success: false,
           error: 'Invalid format. Must be "json" or "csv"',
@@ -271,7 +270,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       if (isNaN(startDate.getTime())) {
         logger.warn('Invalid startDate parameter', { correlationId, startDateParam });
         
-        return NextResponse.json<AICostsErrorResponse>(
+        return NextResponse.json<AICostResponse>(
           {
             success: false,
             error: 'Invalid startDate format. Use ISO 8601 format',
@@ -294,7 +293,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       if (isNaN(endDate.getTime())) {
         logger.warn('Invalid endDate parameter', { correlationId, endDateParam });
         
-        return NextResponse.json<AICostsErrorResponse>(
+        return NextResponse.json<AICostResponse>(
           {
             success: false,
             error: 'Invalid endDate format. Use ISO 8601 format',
@@ -316,7 +315,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
     if (startDate && endDate && startDate > endDate) {
       logger.warn('Invalid date range', { correlationId, startDate, endDate });
       
-      return NextResponse.json<AICostsErrorResponse>(
+      return NextResponse.json<AICostResponse>(
         {
           success: false,
           error: 'startDate must be before endDate',
@@ -340,7 +339,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       if (isNaN(creatorId) || creatorId <= 0) {
         logger.warn('Invalid creatorId parameter', { correlationId, creatorIdParam });
         
-        return NextResponse.json<AICostsErrorResponse>(
+        return NextResponse.json<AICostResponse>(
           {
             success: false,
             error: 'Invalid creatorId. Must be a positive integer',
@@ -365,7 +364,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       if (isNaN(limit) || limit <= 0) {
         logger.warn('Invalid limit parameter', { correlationId, limitParam });
         
-        return NextResponse.json<AICostsErrorResponse>(
+        return NextResponse.json<AICostResponse>(
           {
             success: false,
             error: 'Invalid limit. Must be a positive integer',
@@ -398,7 +397,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
     }
     
     if (creatorId) {
-      where.creatorId = parseInt(creatorId);
+      where.creatorId = creatorId;
     }
     
     if (feature) {
@@ -461,7 +460,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
         errorCode: dbError.code,
       });
 
-      return NextResponse.json<AICostsErrorResponse>(
+      return NextResponse.json<AICostResponse>(
         {
           success: false,
           error: 'Service temporarily unavailable. Please try again.',
@@ -491,7 +490,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       recordCount: perCreatorLogs.length,
     });
 
-    const creatorMap = new Map<number, CreatorCostBreakdown>();
+    const creatorMap = new Map<number, CreatorBreakdown>();
 
     for (const log of perCreatorLogs) {
       if (!creatorMap.has(log.creatorId)) {
@@ -544,7 +543,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
     });
 
     // 7. Detect anomalies (Requirement 8.4)
-    const anomalies = detectAnomalies(perCreatorBreakdown);
+    const anomalies = detectAnomalies(perCreatorBreakdown).map((anomaly) => ({
+      ...anomaly,
+      type: (anomaly.type === 'feature_concentration' ? 'feature_concentration' : 'high_spending') as 'feature_concentration' | 'high_spending',
+    }));
 
     logger.info('Anomaly detection completed', {
       correlationId,
@@ -555,7 +557,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
     const duration = Date.now() - startTime;
 
     // 8. Build response
-    const responseData: AICostsResponse = {
+    const responseData: AICostResponse = {
       success: true,
       data: {
         totalSpending,
@@ -606,7 +608,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       duration,
     });
 
-    return NextResponse.json<AICostsResponse>(responseData, {
+    return NextResponse.json<AICostResponse>(responseData, {
       status: 200,
       headers: {
         'X-Correlation-Id': correlationId,
@@ -626,7 +628,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
         timeout: REQUEST_TIMEOUT_MS,
       });
 
-      return NextResponse.json<AICostsErrorResponse>(
+      return NextResponse.json<AICostResponse>(
         {
           success: false,
           error: 'Request timed out. Please try again with a smaller date range.',
@@ -653,7 +655,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<AICostsRes
       stack: error.stack?.substring(0, 500),
     });
 
-    return NextResponse.json<AICostsErrorResponse>(
+    return NextResponse.json<AICostResponse>(
       {
         success: false,
         error: 'An unexpected error occurred. Please try again.',

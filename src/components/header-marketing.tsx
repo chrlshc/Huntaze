@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { events } from '@/src/lib/analytics'
+import { Button } from "@/components/ui/button";
 
 const navigation = [
   {
@@ -92,15 +93,16 @@ export default function HeaderMarketing() {
                 <div key={item.name} className="nav-item relative">
                   {item.hasDropdown ? (
                     <>
-                      <button
-                        className="text-gray-400 hover:text-white text-sm flex items-center gap-1 py-2"
+                      <Button 
+                        variant="primary" 
                         onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
+                        className="flex items-center gap-1 text-gray-400 hover:text-white text-sm py-2"
                       >
                         {item.name}
                         <ChevronDown className={`w-4 h-4 transition-transform ${
                           activeDropdown === item.name ? 'rotate-180' : ''
                         }`} />
-                      </button>
+                      </Button>
                       <AnimatePresence>
                         {activeDropdown === item.name && (
                           <motion.div
@@ -161,16 +163,18 @@ export default function HeaderMarketing() {
             <Link href="/" className="flex items-center">
               <span className="text-lg font-semibold text-white">Huntaze</span>
             </Link>
-            <button
-              className="p-2 text-white"
+            <Button 
+              variant="primary" 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-white p-2"
+              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6" />
               ) : (
                 <Menu className="w-6 h-6" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -188,12 +192,13 @@ export default function HeaderMarketing() {
                   <div key={item.name}>
                     {item.hasDropdown ? (
                       <div>
-                        <button
-                          className="text-gray-300 text-base font-medium w-full text-left px-4 py-2"
+                        <Button 
+                          variant="primary" 
                           onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
+                          className="text-gray-400 hover:text-white text-sm w-full text-left"
                         >
                           {item.name}
-                        </button>
+                        </Button>
                         {activeDropdown === item.name && (
                           <div className="ml-4 mt-2 space-y-2">
                             {item.items?.map((subItem) => (

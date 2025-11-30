@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2, Gift } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Platform {
   id: string;
@@ -139,8 +140,9 @@ export function AdditionalPlatforms({ onComplete, onSkip }: AdditionalPlatformsP
                     Connected
                   </div>
                 ) : (
-                  <button
-                    onClick={() => handleConnect(platform.id)}
+                  <Button 
+                    variant="primary" 
+                    onClick={() => handleConnect(platform.id)} 
                     disabled={isConnecting}
                     className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
                   >
@@ -155,7 +157,7 @@ export function AdditionalPlatforms({ onComplete, onSkip }: AdditionalPlatformsP
                         Connect
                       </>
                     )}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -173,18 +175,12 @@ export function AdditionalPlatforms({ onComplete, onSkip }: AdditionalPlatformsP
       )}
 
       <div className="flex gap-3">
-        <button
-          onClick={onSkip}
-          className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition"
-        >
-          Skip for Now
-        </button>
-        <button
-          onClick={handleContinue}
-          className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-        >
-          {connectedPlatforms.length > 0 ? 'Continue' : 'Skip & Continue'}
-        </button>
+        <Button variant="ghost" onClick={onSkip}>
+  Skip for Now
+</Button>
+        <Button variant="primary" onClick={handleContinue}>
+  {connectedPlatforms.length > 0 ? 'Continue' : 'Skip & Continue'}
+</Button>
       </div>
 
       <p className="text-xs text-center text-gray-500">

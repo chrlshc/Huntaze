@@ -6,7 +6,7 @@ export const PlanRequest = z.object({
   correlation: Correlation,
   period: z.enum(["next_week", "next_month"]),
   platforms: z.array(z.enum(["instagram", "onlyfans", "tiktok", "reddit"])).min(1),
-  preferences: z.record(z.any()).optional(),
+  preferences: z.record(z.string(), z.any()).optional(),
 });
 
 export const ContentReady = z.object({

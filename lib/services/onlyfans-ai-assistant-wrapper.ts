@@ -81,7 +81,7 @@ class OnlyFansAIAssistantWrapper {
     try {
       return await onlyFansAIAssistantEnhanced.getEngagementScore(fanId, creatorId);
     } catch (error) {
-      logger.error('Failed to get engagement score', { error });
+      logger.error('Failed to get engagement score', error instanceof Error ? error : new Error(String(error)), {});
       return null;
     }
   }

@@ -29,9 +29,8 @@ export async function POST() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Alert checker worker failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Alert checker worker failed', error instanceof Error ? error : new Error(errorMessage), {});
 
     return NextResponse.json(
       { error: 'Alert checker failed' },

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { Button } from "@/components/ui/button";
 
 interface ImageEditorProps {
   imageId: string;
@@ -83,9 +84,9 @@ export default function ImageEditor({
         {/* Header */}
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-xl font-semibold">Edit Image</h2>
-          <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">
+          <Button variant="primary" onClick={onCancel}>
             ✕
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 flex overflow-hidden">
@@ -204,20 +205,12 @@ export default function ImageEditor({
 
         {/* Footer */}
         <div className="p-4 border-t flex justify-end gap-2">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 border rounded hover:bg-gray-50"
-            disabled={saving}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          <Button variant="ghost" onClick={onCancel} disabled={saving}>
+  Cancel
+</Button>
+          <Button variant="primary" onClick={handleSave} disabled={saving}>
+  {saving ? 'Saving...' : 'Save Changes'}
+</Button>
         </div>
       </div>
     </div>

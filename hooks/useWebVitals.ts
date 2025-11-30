@@ -187,7 +187,7 @@ export function useWebVitals(options?: {
           }
         });
         
-        observer.observe({ type: 'event', buffered: true, durationThreshold: 40 });
+        observer.observe({ type: 'event', buffered: true, durationThreshold: 40 } as PerformanceObserverInit & { durationThreshold?: number });
         
         return () => observer.disconnect();
       } catch (e) {

@@ -8,6 +8,8 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
@@ -121,7 +123,8 @@ export class DashboardErrorBoundary extends Component<Props, State> {
       // Default error UI
       return (
         <div className="min-h-[400px] flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-[var(--bg-surface)] border border-red-200 rounded-[var(--radius-card)] p-8 shadow-[var(--shadow-soft)]">
+          <Card className="max-w-md w-full bg-[var(--bg-surface)] border border-red-200 rounded-[var(--radius-card)] p-8 shadow-[var(--shadow-soft)]">
+
             {/* Error Icon */}
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
@@ -155,13 +158,10 @@ export class DashboardErrorBoundary extends Component<Props, State> {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               {retryCount < this.maxRetries ? (
-                <button
-                  onClick={this.handleRetry}
-                  className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-all font-medium"
-                >
+                <Button variant="primary" onClick={this.handleRetry}>
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Try Again
-                </button>
+                </Button>
               ) : (
                 <p className="text-sm text-red-600 text-center mb-2">
                   Maximum retry attempts reached
@@ -187,7 +187,7 @@ export class DashboardErrorBoundary extends Component<Props, State> {
                 contact support
               </a>
             </p>
-          </div>
+          </Card>
         </div>
       );
     }
@@ -236,7 +236,7 @@ export const ErrorFallback: React.FC<{
       {resetError && (
         <button
           onClick={resetError}
-          className="text-sm text-red-600 hover:text-red-800 font-medium"
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
         >
           Try again
         </button>

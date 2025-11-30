@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Simplified no-op monitoring wrapper for build-time compatibility
 type Handler = (req: Request) => Promise<Response>
 export function withMonitoring(

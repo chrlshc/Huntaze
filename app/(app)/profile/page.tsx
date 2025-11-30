@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft, User, Mail, Shield, CreditCard, Settings, LogOut } from 'lucide-react'
 import PremiumButton from '@/components/premium-button'
+import { Card } from '@/components/ui/card';
 
 export default function ProfilePage() {
   return (
@@ -26,7 +27,7 @@ export default function ProfilePage() {
           </h1>
 
           {/* Profile Section */}
-          <div className="elevated-card rounded-xl p-6 mb-6">
+          <Card className="rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Profile Information
@@ -57,10 +58,10 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Subscription Section */}
-          <div className="elevated-card rounded-xl p-6 mb-6">
+          <Card className="rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Subscription
@@ -89,7 +90,7 @@ export default function ProfilePage() {
               <CreditCard className="w-4 h-4" />
               <span>Next billing date: January 1, 2025</span>
             </div>
-          </div>
+          </Card>
 
           {/* Quick Actions */}
           <div className="grid md:grid-cols-2 gap-4 mb-6">

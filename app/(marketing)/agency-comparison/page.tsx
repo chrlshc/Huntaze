@@ -7,6 +7,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Check, X, ArrowRight } from 'lucide-react';
 import PremiumButton from '@/components/premium-button';
+import { Card } from '@/components/ui/card';
 
 export default function AgencyComparisonPage() {
   const comparisonPoints = [
@@ -110,29 +111,29 @@ export default function AgencyComparisonPage() {
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
+            <Card className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">1. Connect</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Link your platforms</h3>
               <p className="text-gray-700 dark:text-gray-400">
                 Use Instagram, TikTok, Reddit, and Threads to drive traffic to your OnlyFans. Connect OnlyFans for messaging and sales. Your data stays private and secure.
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
+            <Card className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">2. Automate</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">AI learns your style</h3>
               <p className="text-gray-700 dark:text-gray-400">
                 Our AI suggests replies in your voice. You review and approve before sending.
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
+            <Card className="bg-white dark:bg-gray-900 rounded-xl p-6 border dark:border-gray-800">
               <div className="text-purple-600 dark:text-purple-400 font-bold mb-2">3. Grow</div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Scale with insights</h3>
               <p className="text-gray-700 dark:text-gray-400">
                 Track what works, optimize pricing, and keep 93-98.5% of your revenue.
               </p>
-            </div>
+            </Card>
           </div>
         </div>
       </section>

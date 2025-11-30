@@ -100,13 +100,9 @@ export default function CompletionNudge({
           </span>
         )}
 
-        <button
-          onClick={handleDismiss}
-          className="p-1.5 text-content-secondary hover:text-content-primary hover:bg-surface-muted rounded-lg transition-colors"
-          aria-label="Close"
-        >
-          <X className="w-5 h-5" aria-hidden="true" />
-        </button>
+        <Button variant="primary" onClick={handleDismiss} aria-label="Close" aria-hidden="true">
+  <X className="w-5 h-5" aria-hidden="true" />
+</Button>
       </div>
 
       <style jsx>{`

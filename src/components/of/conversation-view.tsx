@@ -6,6 +6,8 @@ import { formatDistanceToNow } from 'date-fns';
 import type { OfMessage } from '@/lib/types/onlyfans';
 import { useCachedFetch } from '@/lib/cache-manager';
 import { InlineQuickReply } from '@/components/mobile/micro-interactions';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ConversationViewProps {
   conversationId: string;
@@ -89,15 +91,12 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-[600px]">
+    <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-[600px]">
       {/* Header */}
       <div className="sticky top-0 z-10 sticky-header-blur p-4 flex items-center gap-4">
-        <button
-          onClick={onBack}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
+        <Button variant="ghost" onClick={onBack}>
+  <ArrowLeft className="w-5 h-5" />
+</Button>
         
         <div className="flex-1">
           <h2 className="font-semibold text-gray-900 dark:text-white">
@@ -105,9 +104,9 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
           </h2>
         </div>
 
-        <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-          <MoreVertical className="w-5 h-5" />
-        </button>
+        <Button variant="ghost">
+  <MoreVertical className="w-5 h-5" />
+</Button>
       </div>
 
       {/* Messages */}
@@ -147,9 +146,9 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
       {/* Input */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-end gap-2">
-          <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-            <Paperclip className="w-5 h-5" />
-          </button>
+          <Button variant="ghost">
+  <Paperclip className="w-5 h-5" />
+</Button>
           
           <textarea
             value={message}
@@ -165,21 +164,13 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
             rows={1}
           />
           
-          <button
-            onClick={sendMessage}
-            disabled={!message.trim() || sending}
-            className={`p-2 rounded-lg transition-all ${
-              message.trim() && !sending
-                ? 'bg-purple-600 text-white hover:bg-purple-700'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-            }`}
-          >
+          <Button variant="primary" onClick={sendMessage} disabled={!message.trim() || sending}>
             <Send className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
         <div className="mt-2 flex items-center gap-2">
-          <button
-            type="button"
+          <Button 
+            variant="ghost" 
             onClick={async () => {
               try {
                 const res = await fetch('/api/ofm/ai/draft', {
@@ -199,9 +190,9 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
             className="inline-flex items-center rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
           >
             AI draft
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button 
+            variant="primary" 
             onClick={async () => {
               try {
                 await fetch('/api/ofm/ai/escalate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ conversationId }) });
@@ -211,7 +202,7 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
             className="inline-flex items-center rounded-lg border border-rose-300 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50"
           >
             Escalate
-          </button>
+          </Button>
         </div>
         
         {/* Rate limit warning */}
@@ -219,6 +210,6 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
           Messages are sent with natural delays to maintain authenticity
         </p>
       </div>
-    </div>
+    </Card>
   );
 }

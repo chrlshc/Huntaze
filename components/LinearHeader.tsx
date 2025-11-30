@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from "@/components/ui/button";
 
 export default function LinearHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -79,7 +80,7 @@ export default function LinearHeader() {
               >
                 Sign up
               </Link>
-              <button 
+              <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden text-white/70 hover:text-white p-2"
               >

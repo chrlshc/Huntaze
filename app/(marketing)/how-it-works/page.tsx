@@ -4,6 +4,7 @@
 export const dynamic = 'force-static';
 
 import { motion } from "framer-motion";
+import { Card } from '@/components/ui/card';
 import { 
   UserPlus, 
   MessageSquare, 
@@ -136,7 +137,7 @@ export default function HowItWorksPage() {
                 {/* Visual */}
                 <div className="flex-1">
                   <div className="relative">
-                    <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
+                    <Card className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl">
                       <div className="flex items-center gap-4 mb-6">
                         <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
                           <step.icon className="w-8 h-8 text-white" />
@@ -153,7 +154,7 @@ export default function HowItWorksPage() {
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </Card>
                   </div>
                 </div>
 

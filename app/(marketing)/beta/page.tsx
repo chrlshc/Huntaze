@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import './beta.css';
+import { Card } from '@/components/ui/card';
 
 /**
  * Beta-Specific Landing Page
@@ -117,7 +118,7 @@ export default function BetaLandingPage() {
           {/* Stats Grid */}
           <div className="beta-stats-grid">
             {stats.map((stat, index) => (
-              <div key={index} className="beta-stat-card">
+              <Card key={index}>
                 {/* Beta Label */}
                 <span className="beta-stat-badge">{stat.betaLabel}</span>
                 
@@ -129,7 +130,7 @@ export default function BetaLandingPage() {
                 
                 {/* Stat Description */}
                 <div className="beta-stat-description">{stat.description}</div>
-              </div>
+              </Card>
             ))}
           </div>
 

@@ -40,11 +40,15 @@ export type Anomaly = {
   severity: 'low' | 'medium' | 'high';
 };
 
-export type AICostResponse = {
-  totalSpending: TotalSpending;
-  perCreatorBreakdown: CreatorBreakdown[];
-  highCostCreators: CreatorBreakdown[];
-  anomalies: Anomaly[];
+// Success response type
+export type AICostSuccessResponse = {
+  success: true;
+  data: {
+    totalSpending: TotalSpending;
+    perCreatorBreakdown: CreatorBreakdown[];
+    highCostCreators: CreatorBreakdown[];
+    anomalies: Anomaly[];
+  };
   metadata: {
     period: {
       start: string;
@@ -56,4 +60,17 @@ export type AICostResponse = {
     };
     recordCount: number;
   };
+  duration: number;
 };
+
+// Error response type
+export type AICostErrorResponse = {
+  success: false;
+  error: string;
+  code: string;
+  correlationId: string;
+  retryable?: boolean;
+};
+
+// Union type for API responses
+export type AICostResponse = AICostSuccessResponse | AICostErrorResponse;

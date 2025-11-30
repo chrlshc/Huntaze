@@ -2,6 +2,9 @@
 
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/export-all";
+import { Card } from '@/components/ui/card';
 
 type Suggestion = {
   asset: { id: string; url: string; thumbUrl?: string; type: string; tags?: string[] };
@@ -59,19 +62,19 @@ export default function RepostPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="elevated-card rounded-xl p-6">
+        <Card className="rounded-xl p-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Repost Engine</h1>
           <p className="text-gray-600 dark:text-gray-300">Top content this week based on performance. Pick a slot and add to calendar.</p>
           <div className="mt-3">
             <label className="text-sm mr-2">Platform</label>
-            <select className="border rounded p-1 bg-white dark:bg-gray-900" value={platform} onChange={(e) => setPlatform(e.target.value as any)}>
+            <Select className="border rounded p-1 bg-white dark:bg-gray-900" value={platform} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPlatform(e.target.value as any)}>
               <option value="ONLYFANS">OnlyFans</option>
               <option value="FANSLY">Fansly</option>
-            </select>
+            </Select>
           </div>
-        </div>
+        </Card>
 
-        <div className="elevated-card rounded-xl p-6">
+        <Card className="rounded-xl p-6">
           {loading ? (
             <div>Loading…</div>
           ) : error ? (
@@ -95,14 +98,14 @@ export default function RepostPage() {
                       <div className="text-xs text-gray-500">Tags: {s.asset.tags?.join(', ') || '-'}</div>
                       <div className="mt-2">
                         <label className="text-xs block mb-1">Pick a slot</label>
-                        <select className="w-full border rounded p-2 bg-white dark:bg-gray-900"
+                        <Select className="w-full border rounded p-2 bg-white dark:bg-gray-900"
                           value={picked[s.asset.id] || s.recommendedSlots[0]}
-                          onChange={(e) => setPicked((prev) => ({ ...prev, [s.asset.id]: e.target.value }))}
+                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPicked((prev) => ({ ...prev, [s.asset.id]: e.target.value }))}
                         >
                           {s.recommendedSlots.map((slot) => (
                             <option key={slot} value={slot}>{new Date(slot).toLocaleString()}</option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
                       <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
@@ -120,7 +123,12 @@ export default function RepostPage() {
                         </div>
                       </div>
                       <div className="mt-3 text-right">
-                        <button className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm" onClick={() => schedule(s)}>Add to calendar</button>
+                        <button
+                          onClick={() => schedule(s)}
+                          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900 transition-colors"
+                        >
+                          Add to calendar
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -128,7 +136,7 @@ export default function RepostPage() {
               ))}
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

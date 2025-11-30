@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getServerSession } from '@/lib/auth';
 import type { MessageThread, UnifiedMessagesResponse } from '@/lib/types/messages';
 
 /**
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // 1. Authentication check
-    const session = await getSession(request);
+    const session = await getServerSession();
     
     if (!session?.user?.id) {
       console.warn('[API] Unified messages - Unauthorized access attempt:', {

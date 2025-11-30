@@ -78,13 +78,13 @@ export const DuotoneIcon: React.FC<DuotoneIconProps> = ({
       <path
         className="icon-primary"
         d={paths.primary}
-        fill="var(--icon-primary, #9CA3AF)"
+        fill="var(--icon-primary, var(--text-secondary))"
         strokeWidth="0"
       />
       <path
         className="icon-secondary"
         d={paths.secondary}
-        fill="var(--icon-secondary, #9CA3AF)"
+        fill="var(--icon-secondary, var(--text-secondary))"
         opacity="0.4"
         strokeWidth="0"
       />

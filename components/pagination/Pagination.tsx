@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
   currentPage: number;
@@ -62,20 +63,22 @@ export function Pagination({
     <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
       {/* Mobile view */}
       <div className="flex flex-1 justify-between sm:hidden">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
+        <Button 
+          variant="ghost" 
+          onClick={() => onPageChange(currentPage - 1)} 
           disabled={currentPage === 1}
           className="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Previous
-        </button>
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
+        </Button>
+        <Button 
+          variant="ghost" 
+          onClick={() => onPageChange(currentPage + 1)} 
           disabled={currentPage === totalPages}
           className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
-        </button>
+        </Button>
       </div>
 
       {/* Desktop view */}
@@ -127,8 +130,9 @@ export function Pagination({
                 }
 
                 return (
-                  <button
-                    key={page}
+                  <Button 
+                    key={`page-${page}`}
+                    variant="ghost" 
                     onClick={() => onPageChange(page as number)}
                     className={`relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                       currentPage === page
@@ -137,7 +141,7 @@ export function Pagination({
                     }`}
                   >
                     {page}
-                  </button>
+                  </Button>
                 );
               })}
             </div>

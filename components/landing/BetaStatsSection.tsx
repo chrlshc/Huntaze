@@ -13,6 +13,7 @@
  */
 
 import './beta-stats-section.css';
+import { Card } from '@/components/ui/card';
 
 interface BetaStat {
   label: string;

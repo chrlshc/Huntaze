@@ -9,6 +9,7 @@
  */
 
 import type { ReactNode } from 'react';
+import { Button } from "@/components/ui/button";
 import {
   SafeAreaTop,
   SafeAreaBottom,
@@ -28,12 +29,12 @@ export function ExampleFixedHeader() {
     <SafeAreaHeader>
       <div className="h-16 px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button className="lg:hidden">Menu</button>
+          <Button variant="primary">Menu</Button>
           <h1 className="text-xl font-bold">App Name</h1>
         </div>
         <nav className="flex items-center gap-4">
-          <button>Notifications</button>
-          <button>Profile</button>
+          <Button variant="primary">Notifications</Button>
+          <Button variant="primary">Profile</Button>
         </nav>
       </div>
     </SafeAreaHeader>
@@ -62,10 +63,10 @@ export function ExampleMobileTabBar() {
 
 function TabBarItem({ icon, label }: { icon: string; label: string }) {
   return (
-    <button className="flex flex-col items-center gap-1">
-      <span className="text-2xl">{icon}</span>
+    <Button variant="primary">
+  <span className="text-2xl">{icon}</span>
       <span className="text-xs">{label}</span>
-    </button>
+</Button>
   );
 }
 
@@ -82,7 +83,7 @@ export function ExampleFullScreenModal({ children }: { children: ReactNode }) {
         {/* Modal Header */}
         <header className="flex-shrink-0 h-16 px-6 flex items-center justify-between border-b border-border">
           <h2 className="text-lg font-semibold">Modal Title</h2>
-          <button>Close</button>
+          <Button variant="primary">Close</Button>
         </header>
 
         {/* Modal Content - Scrollable */}
@@ -92,10 +93,10 @@ export function ExampleFullScreenModal({ children }: { children: ReactNode }) {
 
         {/* Modal Footer */}
         <footer className="flex-shrink-0 h-16 px-6 flex items-center justify-end gap-4 border-t border-border">
-          <button className="px-4 py-2">Cancel</button>
-          <button className="px-4 py-2 bg-primary text-white rounded-lg">
+          <Button variant="primary">Cancel</Button>
+          <Button variant="primary">
             Confirm
-          </button>
+          </Button>
         </footer>
       </SafeAreaInset>
     </div>
@@ -116,8 +117,8 @@ export function ExampleAppLayout({ children }: { children: ReactNode }) {
         <header className="h-16 px-6 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-md">
           <h1 className="text-xl font-bold">App Name</h1>
           <nav className="flex items-center gap-4">
-            <button>Notifications</button>
-            <button>Profile</button>
+            <Button variant="primary">Notifications</Button>
+            <Button variant="primary">Profile</Button>
           </nav>
         </header>
       </SafeAreaTop>
@@ -130,9 +131,9 @@ export function ExampleAppLayout({ children }: { children: ReactNode }) {
       {/* Footer with safe area bottom */}
       <SafeAreaBottom className="flex-shrink-0">
         <footer className="h-16 px-6 flex items-center justify-around border-t border-border bg-surface">
-          <button>Tab 1</button>
-          <button>Tab 2</button>
-          <button>Tab 3</button>
+          <Button variant="primary">Tab 1</Button>
+          <Button variant="primary">Tab 2</Button>
+          <Button variant="primary">Tab 3</Button>
         </footer>
       </SafeAreaBottom>
     </div>

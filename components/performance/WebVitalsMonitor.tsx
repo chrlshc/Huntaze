@@ -12,6 +12,7 @@
 
 import { useWebVitals, getPerformanceGrade, type WebVitals } from '@/hooks/useWebVitals';
 import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 
 interface WebVitalsMonitorProps {
   showDetails?: boolean;
@@ -66,7 +67,7 @@ function DetailedView({
   grade: ReturnType<typeof getPerformanceGrade>;
 }) {
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <Card className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           Web Vitals
@@ -91,7 +92,7 @@ function DetailedView({
           Metrics automatically sent to CloudWatch for monitoring
         </p>
       </div>
-    </div>
+    </Card>
   );
 }
 

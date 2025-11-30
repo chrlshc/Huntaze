@@ -14,7 +14,7 @@
  * @see tests/integration/api/ai-routes.integration.test.ts
  */
 
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/types/responses';
@@ -24,6 +24,7 @@ import { AITeamCoordinator } from '@/lib/ai/coordinator';
 import { createLogger } from '@/lib/utils/logger';
 import { getUserAIPlanFromSubscription } from '@/lib/ai/plan';
 import { z } from 'zod';
+import crypto from 'crypto';
 
 // Force Node.js runtime (required for AI operations)
 export const runtime = 'nodejs';
@@ -53,7 +54,7 @@ const ChatRequestSchema = z.object({
   message: z.string()
     .min(1, 'Message is required')
     .max(MAX_MESSAGE_LENGTH, `Message must be less than ${MAX_MESSAGE_LENGTH} characters`),
-  context: z.record(z.any()).optional(),
+  context: z.record(z.string(), z.any()).optional(),
 });
 
 // ============================================================================
@@ -159,8 +160,12 @@ export const POST = withRateLimit(
       // 1. Parse and validate request body with timeout protection
       let body: any;
       try {
+        const jsonPromise = req.json().catch((e: Error) => {
+          throw new Error(`JSON parse error: ${e.message}`);
+        });
+        
         body = await Promise.race([
-          req.json(),
+          jsonPromise,
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Request timeout')), REQUEST_TIMEOUT_MS)
           ),
@@ -217,17 +222,17 @@ export const POST = withRateLimit(
       if (!validation.success) {
         logger.warn('Request validation failed', {
           correlationId,
-          errors: validation.error.errors,
+          errors: validation.error.issues,
         });
 
         return Response.json(
           createErrorResponse(
-            validation.error.errors[0].message,
+            validation.error.issues[0].message,
             ApiErrorCode.VALIDATION_ERROR,
             {
               correlationId,
               startTime,
-              metadata: { errors: validation.error.errors },
+              metadata: { errors: validation.error.issues },
             }
           ),
           { 
@@ -384,7 +389,7 @@ export const POST = withRateLimit(
         duration,
         confidence: result.data.confidence,
         agentsInvolved: result.agentsInvolved,
-        totalCost: result.usage.totalCostUsd,
+        totalCost: result.usage?.totalCostUsd,
       });
 
       return Response.json(
@@ -510,8 +515,8 @@ export const POST = withRateLimit(
  * 
  * @returns Empty response with Allow and Cache-Control headers
  */
-export async function OPTIONS(): Promise<Response> {
-  return new Response(null, {
+export async function OPTIONS(): Promise<NextResponse> {
+  return NextResponse.json(null, {
     status: 200,
     headers: {
       'Allow': 'POST, OPTIONS',

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface BatchOperationsToolbarProps {
   selectedCount: number;
@@ -119,7 +121,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
             <button
               onClick={handleSchedule}
               disabled={processing}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               📅 Schedule
             </button>
@@ -127,7 +129,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
             <button
               onClick={handleDuplicate}
               disabled={processing}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50"
             >
               📋 Duplicate
             </button>
@@ -135,7 +137,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
             <button
               onClick={handleTag}
               disabled={processing}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               🏷️ Tag
             </button>
@@ -143,7 +145,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
             <button
               onClick={handleDelete}
               disabled={processing}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
             >
               🗑️ Delete
             </button>
@@ -202,7 +204,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
               <button
                 onClick={confirmSchedule}
                 disabled={processing}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
                 {processing ? 'Scheduling...' : 'Schedule'}
               </button>
@@ -245,7 +247,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
               <button
                 onClick={confirmTag}
                 disabled={processing}
-                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300"
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
                 {processing ? 'Adding Tags...' : 'Add Tags'}
               </button>
@@ -280,11 +282,7 @@ export default function BatchOperationsToolbar({ selectedCount, selectedIds, onO
               <button
                 onClick={confirmOperation}
                 disabled={processing}
-                className={`flex-1 px-4 py-2 text-white rounded-lg disabled:bg-gray-300 ${
-                  currentOperation === 'delete' 
-                    ? 'bg-red-600 hover:bg-red-700' 
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
                 {processing ? 'Processing...' : 'Confirm'}
               </button>

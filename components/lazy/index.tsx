@@ -15,38 +15,41 @@ const LoadingSpinner = () => (
 );
 
 // Charts
-export const TrendChart = dynamic(
-  () => import('@/components/charts/TrendChart'),
-  {
-    loading: () => <LoadingSpinner />,
-    ssr: false,
-  }
-);
+// Note: TrendChart component doesn't exist - commented out to fix TS2307
+// export const TrendChart = dynamic(
+//   () => import('@/components/charts/TrendChart'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//     ssr: false,
+//   }
+// );
 
 export const RevenueForecastChart = dynamic(
-  () => import('@/components/revenue/forecast/RevenueForecastChart'),
+  () => import('@/components/revenue/forecast/RevenueForecastChart').then(mod => mod.RevenueForecastChart),
   {
     loading: () => <LoadingSpinner />,
     ssr: false,
   }
 );
 
-export const AnalyticsChart = dynamic(
-  () => import('@/components/charts/AnalyticsChart'),
-  {
-    loading: () => <LoadingSpinner />,
-    ssr: false,
-  }
-);
+// Note: AnalyticsChart component doesn't exist - commented out to fix TS2307
+// export const AnalyticsChart = dynamic(
+//   () => import('@/components/charts/AnalyticsChart'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//     ssr: false,
+//   }
+// );
 
 // Calendar
-export const ContentCalendar = dynamic(
-  () => import('@/components/calendar/ContentCalendar'),
-  {
-    loading: () => <LoadingSpinner />,
-    ssr: false,
-  }
-);
+// Note: ContentCalendar component doesn't exist - commented out to fix TS2307
+// export const ContentCalendar = dynamic(
+//   () => import('@/components/calendar/ContentCalendar'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//     ssr: false,
+//   }
+// );
 
 // Modals
 export const ContentModal = dynamic(
@@ -56,43 +59,48 @@ export const ContentModal = dynamic(
   }
 );
 
-export const CampaignModal = dynamic(
-  () => import('@/components/marketing/CampaignModal'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: CampaignModal component doesn't exist - commented out to fix TS2307
+// export const CampaignModal = dynamic(
+//   () => import('@/components/marketing/CampaignModal'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
-export const PPVModal = dynamic(
-  () => import('@/components/onlyfans/PPVModal'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: PPVModal component doesn't exist - commented out to fix TS2307
+// export const PPVModal = dynamic(
+//   () => import('@/components/onlyfans/PPVModal'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
 // Heavy components
-export const RichTextEditor = dynamic(
-  () => import('@/components/editor/RichTextEditor'),
-  {
-    loading: () => <LoadingSpinner />,
-    ssr: false,
-  }
-);
+// Note: RichTextEditor component doesn't exist - commented out to fix TS2307
+// export const RichTextEditor = dynamic(
+//   () => import('@/components/editor/RichTextEditor'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//     ssr: false,
+//   }
+// );
 
-export const MediaUploader = dynamic(
-  () => import('@/components/media/MediaUploader'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: MediaUploader component doesn't exist - commented out to fix TS2307
+// export const MediaUploader = dynamic(
+//   () => import('@/components/media/MediaUploader'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
-export const VideoPlayer = dynamic(
-  () => import('@/components/media/VideoPlayer'),
-  {
-    loading: () => <LoadingSpinner />,
-    ssr: false,
-  }
-);
+// Note: VideoPlayer component doesn't exist - commented out to fix TS2307
+// export const VideoPlayer = dynamic(
+//   () => import('@/components/media/VideoPlayer'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//     ssr: false,
+//   }
+// );
 
 // Analytics components
 export const ChurnRiskList = dynamic(
@@ -117,34 +125,38 @@ export const PayoutTimeline = dynamic(
 );
 
 // Social media components
-export const InstagramFeed = dynamic(
-  () => import('@/components/social/InstagramFeed'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: InstagramFeed component doesn't exist - commented out to fix TS2307
+// export const InstagramFeed = dynamic(
+//   () => import('@/components/social/InstagramFeed'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
-export const TikTokFeed = dynamic(
-  () => import('@/components/social/TikTokFeed'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: TikTokFeed component doesn't exist - commented out to fix TS2307
+// export const TikTokFeed = dynamic(
+//   () => import('@/components/social/TikTokFeed'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
 // Message components
-export const ConversationView = dynamic(
-  () => import('@/components/messages/ConversationView'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: ConversationView component doesn't exist - commented out to fix TS2307
+// export const ConversationView = dynamic(
+//   () => import('@/components/messages/ConversationView'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
-export const MessageComposer = dynamic(
-  () => import('@/components/messages/MessageComposer'),
-  {
-    loading: () => <LoadingSpinner />,
-  }
-);
+// Note: MessageComposer component doesn't exist - commented out to fix TS2307
+// export const MessageComposer = dynamic(
+//   () => import('@/components/messages/MessageComposer'),
+//   {
+//     loading: () => <LoadingSpinner />,
+//   }
+// );
 
 /**
  * Utility function to create lazy-loaded component with custom loading
@@ -157,7 +169,7 @@ export function createLazyComponent<P = {}>(
   }
 ) {
   return dynamic(importFn, {
-    loading: options?.loading || LoadingSpinner,
+    loading: options?.loading as any || (() => <LoadingSpinner />),
     ssr: options?.ssr ?? true,
   });
 }

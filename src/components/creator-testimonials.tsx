@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Star, DollarSign, TrendingUp } from 'lucide-
 import Image from 'next/image'
 import PlatformLogos from './platform-logos'
 import Avatar from './avatar'
+import { Button } from "@/components/ui/button";
 
 const testimonials = [
   {
@@ -114,9 +115,9 @@ export default function CreatorTestimonials() {
                   "{current.quote}"
                 </blockquote>
 
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <Button variant="primary">
                   Read full story →
-                </button>
+                </Button>
               </div>
 
               {/* Right side - Stats */}
@@ -161,34 +162,22 @@ export default function CreatorTestimonials() {
           </motion.div>
 
           {/* Navigation - Hidden on mobile, visible on desktop */}
-          <button
-            onClick={prev}
-            className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 lg:-translate-x-full p-2 md:p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
-          >
-            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
-          </button>
+          <Button variant="secondary" onClick={prev}>
+  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
+</Button>
 
-          <button
-            onClick={next}
-            className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 lg:translate-x-full p-2 md:p-3 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg hover:shadow-xl transition-all z-10"
-          >
-            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
-          </button>
+          <Button variant="secondary" onClick={next}>
+  <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-purple-600 dark:text-purple-400" />
+</Button>
 
           {/* Mobile navigation - Swipe hint */}
           <div className="flex md:hidden justify-center gap-4 mt-4">
-            <button
-              onClick={prev}
-              className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
-            >
-              <ChevronLeft className="w-3 h-3 text-purple-600 dark:text-purple-400" />
-            </button>
-            <button
-              onClick={next}
-              className="p-2 rounded-full bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg"
-            >
-              <ChevronRight className="w-3 h-3 text-purple-600 dark:text-purple-400" />
-            </button>
+            <Button variant="secondary" onClick={prev}>
+  <ChevronLeft className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+</Button>
+            <Button variant="secondary" onClick={next}>
+  <ChevronRight className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+</Button>
           </div>
 
           {/* Dots Navigation */}

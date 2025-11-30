@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 
 interface FAQItem {
   question: string;
@@ -60,7 +61,8 @@ export function PricingFAQ({ faqs = defaultFAQs }: PricingFAQProps) {
             key={index}
             className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-gray-900"
           >
-            <button
+            <Button 
+              variant="ghost" 
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               aria-expanded={openIndex === index}
@@ -73,7 +75,7 @@ export function PricingFAQ({ faqs = defaultFAQs }: PricingFAQProps) {
                   openIndex === index ? 'rotate-180' : ''
                 }`}
               />
-            </button>
+</Button>
 
             <AnimatePresence>
               {openIndex === index && (

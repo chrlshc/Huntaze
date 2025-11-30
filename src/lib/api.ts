@@ -116,10 +116,8 @@ export const pricingApi = {
 };
 
 // Subscriptions
-export const subscriptionApi = {
-  createCheckout: (priceId: string) =>
-    api.post('/subscriptions/create-checkout', { priceId }),
-};
+// Note: Stripe checkout removed
+export const subscriptionApi = {};
 
 // Platforms
 export const platformsApi = {

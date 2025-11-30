@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PlatformStatusSkeleton } from './PlatformStatusSkeleton';
 import './platform-status.css';
+import { Card } from '@/components/ui/card';
 
 interface Integration {
   id: number;
@@ -142,7 +143,7 @@ export function PlatformStatus() {
       ) : (
         <div className="platform-status-grid">
           {integrations.map((integration) => (
-            <div key={integration.id} className="platform-status-card">
+            <Card key={integration.id}>
               <div className="platform-status-header">
                 <div className="platform-info">
                   <div className="platform-name">
@@ -172,7 +173,7 @@ export function PlatformStatus() {
                   </span>
                 </div>
               )}
-            </div>
+            </Card>
           ))}
         </div>
       )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { Component, ReactNode } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface Props {
   children: ReactNode;
@@ -38,12 +39,9 @@ export class LazyLoadErrorBoundary extends Component<Props, State> {
           <p className="text-red-600 text-sm mb-4">
             {this.state.error?.message || 'An error occurred while loading this component.'}
           </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-          >
+          <Button variant="danger" onClick={() => window.location.reload()}>
             Reload Page
-          </button>
+          </Button>
         </div>
       );
     }

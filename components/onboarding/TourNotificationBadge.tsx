@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Sparkles, X } from 'lucide-react';
 import { featureTourService, FeatureTour } from '@/lib/services/featureTourService';
 import FeatureTourGuide from './FeatureTourGuide';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface TourNotificationBadgeProps {
   userId: string;
@@ -66,7 +68,8 @@ export default function TourNotificationBadge({
       {/* Notification Badge */}
       <div className={`fixed ${positionClasses[position]} z-30`}>
         {!isOpen ? (
-          <button
+          <Button 
+            variant="primary" 
             onClick={() => setIsOpen(true)}
             className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all hover:scale-110 animate-pulse"
             aria-label="New features available"
@@ -77,9 +80,9 @@ export default function TourNotificationBadge({
                 {pendingTours.length}
               </span>
             )}
-          </button>
+          </Button>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 w-80 max-h-96 overflow-y-auto">
+          <Card className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 w-80 max-h-96 overflow-y-auto">
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -88,13 +91,9 @@ export default function TourNotificationBadge({
                   New Features
                 </h3>
               </div>
-              <button
-                onClick={handleDismissNotification}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                aria-label="Close"
-              >
+              <Button variant="primary" onClick={handleDismissNotification} aria-label="Close">
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Description */}
@@ -128,26 +127,24 @@ export default function TourNotificationBadge({
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                     {tour.description}
                   </p>
-                  <button
+                  <Button 
+                    variant="primary" 
                     onClick={() => handleStartTour(tour)}
                     className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                   >
                     Start Tour ({tour.steps.length} steps)
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
 
             {/* Footer */}
             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <button
-                onClick={handleDismissNotification}
-                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
+              <Button variant="primary" onClick={handleDismissNotification}>
                 Remind me later
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         )}
       </div>
 

@@ -22,7 +22,7 @@
  *   <div>
  *     <h1>Status: {health.status}</h1>
  *     <p>Healthy: {health.summary.healthy}/{health.summary.total}</p>
- *     <button onClick={refresh}>Refresh</button>
+ *     <Button variant="primary" onClick={refresh}>Refresh</Button>
  *   </div>
  * );
  * ```
@@ -31,6 +31,7 @@
 'use client';
 
 import useSWR from 'swr';
+import { Button } from "@/components/ui/button";
 
 // Types
 export interface ValidationHealthPlatform {

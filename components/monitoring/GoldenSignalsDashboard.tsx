@@ -6,6 +6,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 import { 
   Activity, 
   AlertTriangle, 
@@ -170,12 +172,9 @@ export function GoldenSignalsDashboard() {
         <div className="flex items-center">
           <XCircle className="w-5 h-5 text-red-500 mr-2" />
           <span className="text-red-700">Error loading monitoring data: {error}</span>
-          <button
-            onClick={fetchData}
-            className="ml-auto px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
-          >
-            Retry
-          </button>
+          <Button variant="danger" onClick={fetchData}>
+  Retry
+</Button>
         </div>
       </div>
     );
@@ -201,18 +200,15 @@ export function GoldenSignalsDashboard() {
               className="rounded"
             />
           </div>
-          <button
-            onClick={fetchData}
-            className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-          >
-            <RefreshCw className="w-4 h-4" />
+          <Button variant="primary" onClick={fetchData}>
+  <RefreshCw className="w-4 h-4" />
             Refresh
-          </button>
+</Button>
         </div>
       </div>
 
       {/* Overall Health Score */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">System Health Score</h2>
@@ -228,12 +224,12 @@ export function GoldenSignalsDashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Golden Signals Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* 1. LATENCY */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Latency</h3>
             <Clock className="w-6 h-6 text-blue-600" />
@@ -256,10 +252,10 @@ export function GoldenSignalsDashboard() {
               <span className="font-medium">{formatDuration(data.goldenSignals.latency.avg)}</span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* 2. TRAFFIC */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Traffic</h3>
             <Globe className="w-6 h-6 text-green-600" />
@@ -278,10 +274,10 @@ export function GoldenSignalsDashboard() {
               <span className="font-medium">{data.goldenSignals.traffic.activeConnections}</span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* 3. ERRORS */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Errors</h3>
             <AlertTriangle className="w-6 h-6 text-red-600" />
@@ -304,10 +300,10 @@ export function GoldenSignalsDashboard() {
               ))}
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* 4. SATURATION */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Saturation</h3>
             <Server className="w-6 h-6 text-purple-600" />
@@ -326,11 +322,11 @@ export function GoldenSignalsDashboard() {
               <span className="font-medium">{data.goldenSignals.saturation.database.activeConnections}/{data.goldenSignals.saturation.database.maxConnections}</span>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* SLOs */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Service Level Objectives (SLOs)</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {data.slos.map((slo) => (
@@ -359,11 +355,11 @@ export function GoldenSignalsDashboard() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Active Alerts */}
       {data.alerts.summary.total > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Active Alerts</h3>
             <div className="flex items-center gap-2">
@@ -401,7 +397,7 @@ export function GoldenSignalsDashboard() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Footer */}

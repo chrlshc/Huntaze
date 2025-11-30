@@ -9,6 +9,10 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/export-all";
+import { Card } from '@/components/ui/card';
 
 type ScheduledPost = {
   id: string;
@@ -87,27 +91,26 @@ export default function SchedulePage() {
       </p>
 
       <div className="space-y-6">
-        <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <Card className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Create Scheduled Post</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Platform</label>
-              <select 
+              <Select 
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" 
                 value={form.platformType} 
-                onChange={(e) => setForm({ ...form, platformType: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({ ...form, platformType: e.target.value })}
               >
                 <option value="ONLYFANS">OnlyFans</option>
                 <option value="FANSLY">Fansly</option>
-              </select>
+              </Select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Scheduled at (UTC)</label>
-              <input 
+              <Input 
                 type="datetime-local" 
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" 
                 value={form.scheduledAt} 
-                onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, scheduledAt: e.target.value })} 
               />
               {slots.length > 0 && (
                 <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -121,30 +124,27 @@ export default function SchedulePage() {
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" 
                 rows={3} 
                 value={form.caption} 
-                onChange={(e) => setForm({ ...form, caption: e.target.value })} 
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setForm({ ...form, caption: e.target.value })} 
               />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Media URL (optional)</label>
-              <input 
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" 
+              <Input 
                 value={form.mediaUrl} 
-                onChange={(e) => setForm({ ...form, mediaUrl: e.target.value })} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, mediaUrl: e.target.value })} 
+                placeholder="https://..."
               />
             </div>
           </div>
           <div className="mt-6">
-            <button 
-              onClick={create} 
-              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
-            >
-              Add scheduled post
-            </button>
+            <Button variant="primary" onClick={create}>
+  Add scheduled post
+</Button>
           </div>
           {error && <div className="text-red-600 mt-3 text-sm">{error}</div>}
-        </div>
+        </Card>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <Card className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Upcoming Posts</h2>
           {topHours.length > 0 && (
             <div className="text-sm text-gray-600 dark:text-gray-400 mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -160,24 +160,24 @@ export default function SchedulePage() {
           ) : (
             <div className="space-y-3">
               {posts.map((p) => (
-                <div key={p.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <Card key={p.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
                   <div className="flex-1">
                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                       {p.platformType} • {new Date(p.scheduledAt).toLocaleString()} • <span className="capitalize">{p.status}</span>
                     </div>
                     <div className="text-gray-900 dark:text-gray-100 line-clamp-2">{p.caption}</div>
                   </div>
-                  <button 
-                    onClick={() => del(p.id)} 
+                  <button
+                    onClick={() => del(p.id)}
                     className="ml-4 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
                   >
                     Delete
                   </button>
-                </div>
+                </Card>
               ))}
             </div>
           )}
-        </div>
+        </Card>
       </div>
       </div>
     </ProtectedRoute>

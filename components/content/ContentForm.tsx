@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { type ContentItem } from '@/hooks/useContent';
 import { MediaUpload } from './MediaUpload';
 import { SchedulePicker } from './SchedulePicker';
+import { Button } from "@/components/ui/button";
 
 interface ContentFormProps {
   initialData?: Partial<ContentItem>;
@@ -230,14 +231,9 @@ export function ContentForm({
             placeholder="Add a tag and press Enter"
             disabled={isLoading}
           />
-          <button
-            type="button"
-            onClick={handleAddTag}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            disabled={isLoading}
-          >
-            Add
-          </button>
+          <Button variant="secondary" onClick={handleAddTag} disabled={isLoading} type="button">
+  Add
+</Button>
         </div>
         {formData.tags && formData.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
@@ -248,10 +244,10 @@ export function ContentForm({
               >
                 {tag}
                 <button
-                  type="button"
                   onClick={() => handleRemoveTag(tag)}
                   className="hover:text-purple-900 dark:hover:text-purple-100"
                   disabled={isLoading}
+                  type="button"
                 >
                   ×
                 </button>
@@ -305,21 +301,12 @@ export function ContentForm({
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          disabled={isLoading}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : initialData?.id ? 'Update Content' : 'Create Content'}
-        </button>
+        <Button variant="ghost" onClick={onCancel} disabled={isLoading} type="button">
+  Cancel
+</Button>
+        <Button variant="primary" disabled type="submit">
+  {isLoading ? 'Saving...' : initialData?.id ? 'Update Content' : 'Create Content'}
+</Button>
       </div>
     </form>
   );

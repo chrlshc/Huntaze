@@ -13,6 +13,8 @@ import { useEffect, useCallback } from 'react';
 import { useOnboarding } from './useOnboarding';
 import SetupGuide from './SetupGuide';
 import { UserRole } from './types';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface SetupGuideContainerProps {
   userId: string;
@@ -68,7 +70,7 @@ export default function SetupGuideContainer({
   // Error state
   if (error && !loading) {
     return (
-      <div className="rounded-2xl border border-danger/20 bg-danger/5 p-6">
+      <Card className="rounded-2xl border border-danger/20 bg-danger/5 p-6">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center">
             <svg
@@ -92,15 +94,12 @@ export default function SetupGuideContainer({
             <p className="text-sm text-content-secondary mb-3">
               {error.message || 'Unable to load setup guide'}
             </p>
-            <button
-              onClick={retry}
-              className="text-sm font-medium text-primary hover:text-primary-hover underline"
-            >
+            <Button variant="primary" onClick={retry}>
               Retry
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 

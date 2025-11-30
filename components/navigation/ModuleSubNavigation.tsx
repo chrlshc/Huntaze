@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { useAppState, type HuntazeModule } from '@/contexts/AppStateContext';
+import { Card } from '@/components/ui/card';
 
 interface SubNavItem {
   href: string;
@@ -51,7 +52,7 @@ export function ModuleSubNavigation() {
   const items = SUB_NAV[activeModule] ?? [];
 
   return (
-    <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/80 backdrop-blur">
+    <Card className="sticky top-0 z-30 border-b border-gray-200 bg-white/80 backdrop-blur">
       <div className="flex h-12 items-center gap-3 px-6">
         {items.map((item) => {
           const isActive =
@@ -78,6 +79,6 @@ export function ModuleSubNavigation() {
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

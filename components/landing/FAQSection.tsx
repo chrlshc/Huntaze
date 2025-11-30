@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface FAQItem {
   question: string;
@@ -61,7 +63,7 @@ function FAQAccordionItem({ faq, index }: { faq: FAQItem; index: number }) {
 
 export function FAQSection({ faqs }: FAQSectionProps) {
   return (
-    <section className="py-24 bg-gray-50 dark:bg-[#1F1F1F]">
+    <section className="py-24 bg-gray-50 dark:bg-[var(--bg-secondary)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,7 +80,7 @@ export function FAQSection({ faqs }: FAQSectionProps) {
           </p>
         </motion.div>
 
-        <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl shadow-lg p-8">
+        <div className="bg-white dark:bg-[var(--bg-secondary)] rounded-2xl shadow-lg p-8">
           {faqs.map((faq, index) => (
             <FAQAccordionItem key={index} faq={faq} index={index} />
           ))}

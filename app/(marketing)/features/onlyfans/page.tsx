@@ -2,6 +2,8 @@
 
 import { CheckCircle, Zap, MessageSquare, DollarSign, Users, BarChart3, Shield, Gift } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function OnlyFansFeatures() {
   return (
@@ -9,10 +11,10 @@ export default function OnlyFansFeatures() {
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-blue-600 to-blue-700">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+          <Card className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
             <Zap className="w-5 h-5 text-yellow-300" />
             <span className="text-white font-semibold">Game-Changing AI for OnlyFans</span>
-          </div>
+          </Card>
           
           <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
             Every OnlyFans Feature You Need
@@ -27,9 +29,9 @@ export default function OnlyFansFeatures() {
           </p>
           
           <Link href="/pricing">
-            <button className="px-8 py-4 bg-white text-blue-600 font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
+            <Button variant="primary">
               View Simple Pricing →
-            </button>
+            </Button>
           </Link>
         </div>
       </section>
@@ -48,7 +50,7 @@ export default function OnlyFansFeatures() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* DM Automation */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
                 <MessageSquare className="w-7 h-7 text-white" />
               </div>
@@ -72,10 +74,10 @@ export default function OnlyFansFeatures() {
                   <span className="text-gray-700 dark:text-gray-300">Natural conversation flow</span>
                 </li>
               </ul>
-            </div>
+            </Card>
 
             {/* PPV Campaigns */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6">
                 <DollarSign className="w-7 h-7 text-white" />
               </div>
@@ -99,10 +101,10 @@ export default function OnlyFansFeatures() {
                   <span className="text-gray-700 dark:text-gray-300">Campaign performance tracking</span>
                 </li>
               </ul>
-            </div>
+            </Card>
 
             {/* Welcome Messages */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-6">
                 <Gift className="w-7 h-7 text-white" />
               </div>
@@ -126,10 +128,10 @@ export default function OnlyFansFeatures() {
                   <span className="text-gray-700 dark:text-gray-300">Re-subscriber detection</span>
                 </li>
               </ul>
-            </div>
+            </Card>
 
             {/* Fan Analytics */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-6">
                 <BarChart3 className="w-7 h-7 text-white" />
               </div>
@@ -153,10 +155,10 @@ export default function OnlyFansFeatures() {
                   <span className="text-gray-700 dark:text-gray-300">Conversion rate tracking</span>
                 </li>
               </ul>
-            </div>
+            </Card>
 
             {/* Fan Management */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center mb-6">
                 <Users className="w-7 h-7 text-white" />
               </div>
@@ -180,10 +182,10 @@ export default function OnlyFansFeatures() {
                   <span className="text-gray-700 dark:text-gray-300">VIP identification</span>
                 </li>
               </ul>
-            </div>
+            </Card>
 
             {/* Security */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <Card className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="w-14 h-14 bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl flex items-center justify-center mb-6">
                 <Shield className="w-7 h-7 text-white" />
               </div>
@@ -207,7 +209,7 @@ export default function OnlyFansFeatures() {
                   <span className="text-gray-700 dark:text-gray-300">Encrypted session management</span>
                 </li>
               </ul>
-            </div>
+            </Card>
           </div>
         </div>
       </section>
@@ -252,9 +254,9 @@ export default function OnlyFansFeatures() {
               Just pick the plan that matches your message volume. That's it.
             </p>
             <Link href="/pricing">
-              <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:shadow-xl transform hover:-translate-y-1 transition-all">
+              <Button variant="primary">
                 See Simple, Honest Pricing
-              </button>
+              </Button>
             </Link>
           </div>
         </div>

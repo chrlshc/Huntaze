@@ -50,7 +50,7 @@ export function ThemeManager({ children }: { children: React.ReactNode }) {
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]')
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', isDark ? '#0F0F10' : '#FFFFFF')
+      metaThemeColor.setAttribute('content', isDark ? 'var(--bg-primary)' : '#FFFFFF')
     }
     
     // Enable smooth transitions after initial load

@@ -215,7 +215,11 @@ export const LazyInteractiveDemo = (props: any) => (
  */
 export const LazyCookieConsent = (props: any) => (
   <LazyComponent
-    loader={() => import('../../components/CookieConsent')}
+    loader={() =>
+      import('../../components/CookieConsent').then((mod) => ({
+        default: mod.CookieConsent,
+      }))
+    }
     fallback={null} // No fallback needed for cookie consent
     componentProps={props}
     maxRetries={2}

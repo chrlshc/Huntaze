@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface TagAnalyticsProps {
   userId: string;
@@ -52,7 +54,7 @@ export default function TagAnalytics({ userId }: TagAnalyticsProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg border p-6">
+    <Card className="bg-white rounded-lg border p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold">Tag Analytics</h3>
         <div className="flex gap-2">
@@ -177,6 +179,6 @@ export default function TagAnalytics({ userId }: TagAnalyticsProps) {
           <div className="text-sm text-gray-600">Tag Pairs</div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

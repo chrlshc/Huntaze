@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { Button } from "@/components/ui/button";
 
 export function IOSA2HSOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
@@ -16,9 +17,9 @@ export function IOSA2HSOverlay({ open, onClose }: { open: boolean; onClose: () =
           iOS ne propose pas de prompt d’installation — le passage par “Ajouter à l’écran d’accueil” est la méthode recommandée.
         </p>
         <div className="mt-4 flex justify-end">
-          <button onClick={onClose} className="px-3 py-1.5 rounded-lg bg-black text-white">
+          <Button variant="primary" onClick={onClose}>
             J’ai compris
-          </button>
+          </Button>
         </div>
       </div>
     </div>

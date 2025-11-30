@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 import {
   ArrowLeft,
   Sparkles,
@@ -34,7 +35,7 @@ export default function AITrainingPage() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {/* Coming Soon Notice */}
           <div className="p-8 text-center">
             <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -81,7 +82,7 @@ export default function AITrainingPage() {
               </Link>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

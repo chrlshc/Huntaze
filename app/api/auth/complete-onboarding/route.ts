@@ -9,7 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from '@/lib/auth';
 import { onboardingService } from '@/lib/services/auth/onboarding';
 import { authLogger } from '@/lib/services/auth/logger';
 import type { AuthError } from '@/lib/services/auth/types';

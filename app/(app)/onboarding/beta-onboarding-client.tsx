@@ -13,6 +13,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
 
 interface OnboardingData {
   contentTypes: string[];
@@ -122,9 +123,9 @@ export default function BetaOnboardingClient() {
       <div className="w-full max-w-2xl">
         {/* Progress Bar (Requirements 5.2, 5.12) */}
         <div className="mb-8">
-          <div className="h-2 bg-[#0a0a0a] rounded-full overflow-hidden">
+          <div className="h-2 bg-[var(--bg-primary)] rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] transition-all duration-500 ease-out"
+              className="h-full bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-primary)] transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
               role="progressbar"
               aria-valuenow={progress}
@@ -133,7 +134,7 @@ export default function BetaOnboardingClient() {
               aria-label={`Step ${currentStep} of 3`}
             />
           </div>
-          <p className="mt-2 text-sm text-[#737373] text-center">
+          <p className="mt-2 text-sm text-[var(--text-tertiary)] text-center">
             Step {currentStep} of 3
           </p>
         </div>
@@ -147,11 +148,11 @@ export default function BetaOnboardingClient() {
 
         {/* Step 1: Content Types (Requirement 5.3) */}
         {currentStep === 1 && (
-          <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-8">
+          <div className="bg-[var(--bg-primary)] border border-[var(--bg-secondary)] rounded-xl p-8">
             <h2 className="text-2xl font-semibold text-white mb-2">
               What type of content do you create?
             </h2>
-            <p className="text-[#a3a3a3] mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               Select all that apply
             </p>
 
@@ -163,19 +164,19 @@ export default function BetaOnboardingClient() {
                   onClick={() => toggleContentType(option.id)}
                   className={`w-full text-left p-4 rounded-lg border transition-all ${
                     data.contentTypes.includes(option.id)
-                      ? 'border-[#8B5CF6] bg-[#8B5CF6]/10'
-                      : 'border-[#1a1a1a] bg-[#0a0a0a] hover:border-[#2a2a2a]'
+                      ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
+                      : 'border-[var(--bg-secondary)] bg-[var(--bg-primary)] hover:border-[var(--bg-tertiary)]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-white font-medium">{option.label}</p>
-                      <p className="text-sm text-[#737373]">{option.description}</p>
+                      <p className="text-sm text-[var(--text-tertiary)]">{option.description}</p>
                     </div>
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                       data.contentTypes.includes(option.id)
-                        ? 'border-[#8B5CF6] bg-[#8B5CF6]'
-                        : 'border-[#2a2a2a]'
+                        ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]'
+                        : 'border-[var(--bg-tertiary)]'
                     }`}>
                       {data.contentTypes.includes(option.id) && (
                         <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,18 +190,16 @@ export default function BetaOnboardingClient() {
             </div>
 
             <div className="flex justify-between">
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => router.push('/home')}
-                className="text-[#a3a3a3] hover:text-white transition-colors"
+                className="text-[var(--text-secondary)] hover:text-white transition-colors"
               >
                 Skip for now
-              </button>
-              <button
-                onClick={handleStep1Next}
-                className="px-6 py-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white rounded-lg hover:opacity-90 transition-opacity"
-              >
+              </Button>
+              <Button variant="primary" onClick={handleStep1Next}>
                 Continue
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -249,11 +248,11 @@ function OnboardingStep2({
   };
 
   return (
-    <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-8">
+    <div className="bg-[var(--bg-primary)] border border-[var(--bg-secondary)] rounded-xl p-8">
       <h2 className="text-2xl font-semibold text-white mb-2">
         Connect your OnlyFans account
       </h2>
-      <p className="text-[#a3a3a3] mb-6">
+      <p className="text-[var(--text-secondary)] mb-6">
         We'll encrypt and securely store your credentials
       </p>
 
@@ -267,7 +266,7 @@ function OnboardingStep2({
             id="of-username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-4 py-2 bg-[#141414] border border-[#1a1a1a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
+            className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--bg-secondary)] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
             placeholder="your-username"
           />
         </div>
@@ -281,33 +280,23 @@ function OnboardingStep2({
             id="of-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 bg-[#141414] border border-[#1a1a1a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
+            className="w-full px-4 py-2 bg-[var(--bg-input)] border border-[var(--bg-secondary)] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
             placeholder="••••••••"
           />
         </div>
       </form>
 
       <div className="flex justify-between">
-        <button
-          onClick={onBack}
-          className="text-[#a3a3a3] hover:text-white transition-colors"
-        >
-          ← Back
-        </button>
+        <Button variant="primary" onClick={onBack}>
+  ← Back
+</Button>
         <div className="flex gap-3">
-          <button
-            onClick={onSkip}
-            className="text-[#a3a3a3] hover:text-white transition-colors"
-          >
-            Skip for now
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!username || !password}
-            className="px-6 py-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Connect
-          </button>
+          <Button variant="primary" onClick={onSkip}>
+  Skip for now
+</Button>
+          <Button variant="primary" onClick={handleSubmit} disabled={!username || !password}>
+  Connect
+</Button>
         </div>
       </div>
     </div>
@@ -338,11 +327,11 @@ function OnboardingStep3({
   };
 
   return (
-    <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-8">
+    <div className="bg-[var(--bg-primary)] border border-[var(--bg-secondary)] rounded-xl p-8">
       <h2 className="text-2xl font-semibold text-white mb-2">
         What's your primary goal?
       </h2>
-      <p className="text-[#a3a3a3] mb-6">
+      <p className="text-[var(--text-secondary)] mb-6">
         Help us personalize your experience
       </p>
 
@@ -355,22 +344,22 @@ function OnboardingStep3({
               onClick={() => setSelectedGoal(option.id)}
               className={`w-full text-left p-4 rounded-lg border transition-all ${
                 selectedGoal === option.id
-                  ? 'border-[#8B5CF6] bg-[#8B5CF6]/10'
-                  : 'border-[#1a1a1a] bg-[#0a0a0a] hover:border-[#2a2a2a]'
+                  ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
+                  : 'border-[var(--bg-secondary)] bg-[var(--bg-primary)] hover:border-[var(--bg-tertiary)]'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-white font-medium">{option.label}</p>
-                  <p className="text-sm text-[#737373]">{option.description}</p>
+                  <p className="text-sm text-[var(--text-tertiary)]">{option.description}</p>
                 </div>
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                   selectedGoal === option.id
-                    ? 'border-[#8B5CF6]'
-                    : 'border-[#2a2a2a]'
+                    ? 'border-[var(--accent-primary)]'
+                    : 'border-[var(--bg-tertiary)]'
                 }`}>
                   {selectedGoal === option.id && (
-                    <div className="w-3 h-3 rounded-full bg-[#8B5CF6]" />
+                    <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)]" />
                   )}
                 </div>
               </div>
@@ -383,7 +372,7 @@ function OnboardingStep3({
             Monthly revenue goal (optional)
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#737373]">$</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]">$</span>
             <input
               type="text"
               id="revenue-goal"
@@ -392,7 +381,7 @@ function OnboardingStep3({
                 const value = e.target.value.replace(/[^0-9]/g, '');
                 setRevenueGoal(value ? parseInt(value, 10).toLocaleString() : '');
               }}
-              className="w-full pl-8 pr-4 py-2 bg-[#141414] border border-[#1a1a1a] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]"
+              className="w-full pl-8 pr-4 py-2 bg-[var(--bg-input)] border border-[var(--bg-secondary)] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
               placeholder="5,000"
             />
           </div>
@@ -400,20 +389,12 @@ function OnboardingStep3({
       </form>
 
       <div className="flex justify-between">
-        <button
-          onClick={onBack}
-          className="text-[#a3a3a3] hover:text-white transition-colors"
-          disabled={isLoading}
-        >
-          ← Back
-        </button>
-        <button
-          onClick={handleSubmit}
-          disabled={!selectedGoal || isLoading}
-          className="px-6 py-2 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Completing...' : 'Complete Setup'}
-        </button>
+        <Button variant="primary" onClick={onBack} disabled={isLoading}>
+  ← Back
+</Button>
+        <Button variant="primary" onClick={handleSubmit} disabled={!selectedGoal || isLoading}>
+  {isLoading ? 'Completing...' : 'Complete Setup'}
+</Button>
       </div>
     </div>
   );

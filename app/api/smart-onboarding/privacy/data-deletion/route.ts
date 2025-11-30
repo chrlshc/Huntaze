@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to delete user data', { error });
+    logger.error('Failed to delete user data', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to delete user data' },
       { status: 500 }
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
     );
 
   } catch (error) {
-    logger.error('Failed to process data deletion request', { error });
+    logger.error('Failed to process data deletion request', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 500 }

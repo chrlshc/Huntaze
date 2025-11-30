@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DuotoneIcon } from './dashboard/DuotoneIcon';
+import { Button } from "@/components/ui/button";
 
 interface SubNavItem {
   name: string;
@@ -160,16 +161,17 @@ export function MobileSidebar() {
             href="/dashboard"
             onClick={() => setIsOpen(false)}
             style={{
-              fontSize: '20px',
+              fontSize: 'var(--text-xl)',
               fontWeight: 'var(--font-weight-heading)',
               color: 'var(--color-indigo)',
-              fontFamily: 'var(--font-heading)',
+              fontFamily: 'var(--font-sans)',
               textDecoration: 'none'
             }}
           >
             Huntaze
           </Link>
-          <button
+          <Button 
+            variant="primary" 
             onClick={() => setIsOpen(false)}
             style={{
               padding: '8px',
@@ -198,7 +200,7 @@ export function MobileSidebar() {
                 d="M6 18L18 6M6 6l12 12"
               />
             </svg>
-          </button>
+</Button>
         </div>
 
         {/* Navigation */}
@@ -228,15 +230,15 @@ export function MobileSidebar() {
                       alignItems: 'center',
                       padding: '12px 16px',
                       gap: '12px',
-                      color: isActive ? 'var(--color-indigo)' : '#4B5563',
+                      color: isActive ? 'var(--color-indigo)' : 'var(--text-tertiary)',
                       backgroundColor: isActive ? 'var(--color-indigo-fade)' : 'transparent',
                       textDecoration: 'none',
                       borderRadius: '0 var(--radius-nav-item) var(--radius-nav-item) 0',
                       marginRight: '12px',
                       transition: 'all var(--transition-fast)',
-                      fontSize: 'var(--font-size-body)',
+                      fontSize: 'var(--text-base)',
                       fontWeight: isActive ? 'var(--font-weight-medium)' : 'var(--font-weight-body)',
-                      fontFamily: 'var(--font-body)'
+                      fontFamily: 'var(--font-sans)'
                     }}
                   >
                     {/* Active indicator border */}
@@ -257,8 +259,8 @@ export function MobileSidebar() {
                     <DuotoneIcon 
                       name={item.icon} 
                       size={20}
-                      primaryColor={isActive ? 'var(--color-indigo)' : '#9CA3AF'}
-                      secondaryColor={isActive ? 'var(--color-indigo)' : '#9CA3AF'}
+                      primaryColor={isActive ? 'var(--color-indigo)' : 'var(--text-secondary)'}
+                      secondaryColor={isActive ? 'var(--color-indigo)' : 'var(--text-secondary)'}
                     />
                     {item.name}
                   </Link>
@@ -288,14 +290,14 @@ export function MobileSidebar() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 padding: '8px 16px',
-                                color: isSubActive ? 'var(--color-indigo)' : '#6B7280',
+                                color: isSubActive ? 'var(--color-indigo)' : 'var(--text-tertiary)',
                                 backgroundColor: isSubActive ? 'var(--color-indigo-fade)' : 'transparent',
                                 textDecoration: 'none',
                                 transition: 'all var(--transition-fast)',
                                 borderRadius: '6px',
-                                fontSize: '13px',
+                                fontSize: 'var(--text-sm)',
                                 fontWeight: isSubActive ? 'var(--font-weight-medium)' : 'var(--font-weight-body)',
-                                fontFamily: 'var(--font-body)'
+                                fontFamily: 'var(--font-sans)'
                               }}
                             >
                               {subItem.name}
@@ -330,8 +332,8 @@ export function MobileSidebar() {
               textDecoration: 'none',
               borderRadius: 'var(--radius-button)',
               transition: 'background var(--transition-fast)',
-              fontSize: 'var(--font-size-small)',
-              fontFamily: 'var(--font-body)'
+              fontSize: 'var(--text-sm)',
+              fontFamily: 'var(--font-sans)'
             }}
           >
             <svg

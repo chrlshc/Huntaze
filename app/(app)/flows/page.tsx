@@ -1,11 +1,14 @@
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
+
 export const dynamic = 'force-static'
 
 const Step = ({ index, title, desc }: { index: number; title: string; desc: string }) => (
-  <div className="rounded-xl border border-border-subtle bg-background-elevated p-5 hover-lift-soft">
+  <Card className="rounded-xl border border-border-subtle bg-background-elevated p-5 hover-lift-soft">
     <div className="text-sm text-text-tertiary mb-1">Step {index}</div>
     <div className="font-semibold mb-1">{title}</div>
     <div className="text-sm text-text-secondary">{desc}</div>
-  </div>
+  </Card>
 )
 
 export default function FlowsPage() {
@@ -35,7 +38,7 @@ export default function FlowsPage() {
               { name: 'Pro', price: '€99/mo', points: ['DM automation', 'Multi account', 'Priority support'] },
               { name: 'Enterprise', price: 'Custom', points: ['SLA', 'SSO', 'Dedicated CSM'] },
             ].map((p) => (
-              <div key={p.name} className="rounded-xl border border-border-subtle bg-background-elevated p-6 hover-lift-soft">
+              <Card key={p.name} className="rounded-xl border border-border-subtle bg-background-elevated p-6 hover-lift-soft">
                 <div className="text-sm text-text-tertiary mb-1">Plan</div>
                 <div className="flex items-baseline justify-between">
                   <h3 className="font-semibold">{p.name}</h3>
@@ -44,8 +47,8 @@ export default function FlowsPage() {
                 <ul className="mt-3 space-y-1 text-sm text-text-secondary">
                   {p.points.map(pt => <li key={pt}>• {pt}</li>)}
                 </ul>
-                <button className="btn-primary w-full mt-4 rounded-full py-2 animate-pulse-soft">Choose {p.name}</button>
-              </div>
+                <Button variant="primary">Choose {p.name}</Button>
+              </Card>
             ))}
           </div>
         </section>

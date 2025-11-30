@@ -17,7 +17,7 @@ const OnlyFansMessageSchema = z.object({
   recipientId: z.string(),
   content: z.string().min(1).max(5000),
   mediaUrls: z.array(z.string().url()).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   priority: z.number().min(1).max(10).optional().default(5),
 });
 
@@ -98,15 +98,16 @@ export class OnlyFansRateLimiterService {
     try {
       this.validateMessage(message);
     } catch (error) {
-      logger.error('OnlyFansRateLimiterService: Message validation failed', {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('OnlyFansRateLimiterService: Message validation failed', err, {
         messageId: message.messageId,
-        error: error instanceof Error ? error.message : 'Unknown error',
       });
-      return {
+      const result: SendResult = {
         messageId: message.messageId,
         status: 'failed',
-        error: error instanceof Error ? error.message : 'Validation failed',
+        error: err.message,
       };
+      return result;
     }
 
     // Envoyer à SQS avec retry
@@ -204,15 +205,16 @@ export class OnlyFansRateLimiterService {
       if (response.Failed) {
         for (const failure of response.Failed) {
           const index = parseInt(failure.Id!);
-          results[index] = {
+          const failedResult: SendResult = {
             messageId: messages[index].messageId,
             status: 'failed',
             error: failure.Message,
           };
+          results[index] = failedResult;
           
-          logger.error('OnlyFansRateLimiterService: Message failed (batch)', {
+          const err = new Error(failure.Message || 'Batch message failed');
+          logger.error('OnlyFansRateLimiterService: Message failed (batch)', err, {
             messageId: messages[index].messageId,
-            error: failure.Message,
             code: failure.Code,
           });
         }
@@ -220,17 +222,20 @@ export class OnlyFansRateLimiterService {
 
       return results;
     } catch (error) {
-      logger.error('OnlyFansRateLimiterService: Batch send failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('OnlyFansRateLimiterService: Batch send failed', err, {
         messageCount: messages.length,
       });
 
       // Retourner tous les messages comme failed
-      return messages.map(msg => ({
-        messageId: msg.messageId,
-        status: 'failed' as const,
-        error: error instanceof Error ? error.message : 'Batch send failed',
-      }));
+      return messages.map(msg => {
+        const result: SendResult = {
+          messageId: msg.messageId,
+          status: 'failed',
+          error: error instanceof Error ? error.message : 'Batch send failed',
+        };
+        return result;
+      });
     }
   }
 
@@ -290,11 +295,10 @@ export class OnlyFansRateLimiterService {
 
       return status;
     } catch (error) {
-      logger.error('OnlyFansRateLimiterService: Failed to get queue status', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('OnlyFansRateLimiterService: Failed to get queue status', err);
 
-      throw new Error(`Failed to get queue status: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Failed to get queue status: ${err.message}`);
     }
   }
 
@@ -306,7 +310,7 @@ export class OnlyFansRateLimiterService {
       OnlyFansMessageSchema.parse(message);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errors = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        const errors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
         throw new Error(`Message validation failed: ${errors}`);
       }
       throw error;
@@ -355,16 +359,17 @@ export class OnlyFansRateLimiterService {
       // Métrique
       metrics.onlyFansMessageQueued(message.userId);
 
-      return {
+      const result: SendResult = {
         messageId: message.messageId,
         status: 'queued',
         queuedAt: new Date(),
       };
+      return result;
     } catch (error) {
-      logger.error('OnlyFansRateLimiterService: Failed to send message to SQS', {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('OnlyFansRateLimiterService: Failed to send message to SQS', err, {
         messageId: message.messageId,
         attempt,
-        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       // Retry avec exponential backoff
@@ -381,16 +386,17 @@ export class OnlyFansRateLimiterService {
       }
 
       // Tous les retries ont échoué
-      logger.error('OnlyFansRateLimiterService: All retries exhausted', {
+      logger.error('OnlyFansRateLimiterService: All retries exhausted', err, {
         messageId: message.messageId,
         attempts: this.maxRetries,
       });
 
-      return {
+      const failedResult: SendResult = {
         messageId: message.messageId,
         status: 'failed',
-        error: error instanceof Error ? error.message : 'Failed to send to SQS',
+        error: err.message,
       };
+      return failedResult;
     }
   }
 

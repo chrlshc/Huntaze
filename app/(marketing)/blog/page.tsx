@@ -8,6 +8,8 @@ import HeaderImproved from "@/src/components/header-improved";
 import FooterImproved from "@/src/components/footer-improved";
 import { Calendar, Clock, ArrowRight, TrendingUp, DollarSign, Brain, Zap, Users, Shield } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 const categories = [
   "All",
@@ -119,16 +121,9 @@ export default function BlogPage() {
         <div className="container-width">
           <div className="flex gap-4 overflow-x-auto no-scrollbar">
             {categories.map((category, index) => (
-              <button
-                key={index}
-                className={`px-6 py-3 rounded-full font-medium whitespace-nowrap transition-all ${
-                  index === 0
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800"
-                }`}
-              >
-                {category}
-              </button>
+              <Button variant="primary">
+  {category}
+</Button>
             ))}
           </div>
         </div>
@@ -203,7 +198,7 @@ export default function BlogPage() {
                 className="group"
               >
                 <Link href={`/blog/${post.slug}`}>
-                  <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden hover:shadow-lg transition-shadow">
                     {/* Image */}
                     <div className="aspect-video bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
                       <post.icon className="w-16 h-16 text-purple-600 opacity-20" />
@@ -237,7 +232,7 @@ export default function BlogPage() {
                         <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 </Link>
               </motion.article>
             ))}
@@ -245,9 +240,9 @@ export default function BlogPage() {
 
           {/* Load More */}
           <div className="text-center mt-12">
-            <button className="px-8 py-3 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-full font-medium hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+            <Button variant="primary">
               Load more articles
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -267,12 +262,9 @@ export default function BlogPage() {
               placeholder="Enter your email"
               className="flex-1 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border border-white/30 focus:outline-none focus:border-white"
             />
-            <button
-              type="submit"
-              className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium hover:bg-gray-100 transition-colors"
-            >
-              Subscribe
-            </button>
+            <Button variant="ghost" type="submit">
+  Subscribe
+</Button>
           </form>
         </div>
       </section>

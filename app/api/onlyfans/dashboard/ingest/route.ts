@@ -18,7 +18,7 @@ import {
 import { toDashboardPayload } from '@/lib/of/dashboard-formatters';
 import type { DailyAction, DashboardSignalFeedItem } from '@/lib/of/dashboard-types';
 
-const dailyActionSchema: z.ZodType<DailyAction> = z.object({
+const dailyActionSchema = z.object({
   id: z.string().min(1),
   fanId: z.string().min(1),
   fanName: z.string().min(1),
@@ -36,10 +36,10 @@ const signalSchema = z.object({
   id: z.string().min(1),
   type: z.string().min(1),
   headline: z.string().min(1),
-  payload: z.record(z.any()).default({}),
+  payload: z.record(z.string(), z.any()).default({}),
   createdAt: z.string().datetime(),
   severity: z.enum(['info', 'success', 'warning', 'error']).optional(),
-}) as z.ZodType<DashboardSignalFeedItem>;
+});
 
 const insightsSchema = z.object({
   title: z.string().min(1),
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, snapshot: toDashboardPayload(snapshot) });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid payload', details: error.issues }, { status: 400 });
     }
 
     console.error('onlyfans.dashboard.ingest.error', error);

@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { CenteredContainer } from './CenteredContainer';
+import { Button } from "@/components/ui/button";
 
 /**
  * Example 1: Basic Dashboard Layout
@@ -107,18 +108,12 @@ export function FormExample() {
         </div>
         
         <div className="flex gap-4">
-          <button
-            type="submit"
-            className="h-10 px-6 bg-accent-primary text-white rounded-md hover:bg-accent-hover"
-          >
-            Save Changes
-          </button>
-          <button
-            type="button"
-            className="h-10 px-6 bg-surface border border-subtle text-primary rounded-md hover:bg-hover"
-          >
-            Cancel
-          </button>
+          <Button variant="primary" type="submit">
+  Save Changes
+</Button>
+          <Button variant="primary" type="button">
+  Cancel
+</Button>
         </div>
       </form>
     </CenteredContainer>
@@ -180,9 +175,9 @@ export function MarketingExample() {
       </div>
       
       <div className="text-center">
-        <button className="h-12 px-8 bg-accent-primary text-white rounded-md hover:bg-accent-hover text-lg">
+        <Button variant="primary">
           Get Started Free
-        </button>
+        </Button>
       </div>
     </CenteredContainer>
   );
@@ -281,9 +276,9 @@ export function MinimalPaddingExample() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <button className="text-accent-primary hover:text-accent-hover">
+                  <Button variant="primary">
                     Edit
-                  </button>
+                  </Button>
                 </td>
               </tr>
               <tr>
@@ -295,9 +290,9 @@ export function MinimalPaddingExample() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <button className="text-accent-primary hover:text-accent-hover">
+                  <Button variant="primary">
                     Edit
-                  </button>
+                  </Button>
                 </td>
               </tr>
             </tbody>
@@ -327,12 +322,12 @@ export function CustomStyledExample() {
           better products faster.
         </p>
         <div className="flex gap-4 justify-center">
-          <button className="h-12 px-8 bg-accent-primary text-white rounded-md hover:bg-accent-hover">
+          <Button variant="primary">
             Start Free Trial
-          </button>
-          <button className="h-12 px-8 bg-transparent border border-subtle text-primary rounded-md hover:bg-hover">
+          </Button>
+          <Button variant="primary">
             Schedule Demo
-          </button>
+          </Button>
         </div>
       </div>
     </CenteredContainer>

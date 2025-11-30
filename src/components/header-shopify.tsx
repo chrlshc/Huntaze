@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown, MessageCircle, Camera, Play, Users2 } from 'lucide-react'
 import { events } from '@/src/lib/analytics'
+import { Button } from "@/components/ui/button";
 
 export default function HeaderShopify() {
   const pathname = usePathname()
@@ -33,7 +34,7 @@ export default function HeaderShopify() {
 
   return (
     <header className={`fixed inset-x-0 top-0 z-[1000] transition-all duration-300 ${
-      isScrolled ? 'bg-[#1a1a1a]/95 backdrop-blur-md' : 'bg-[#1a1a1a]'
+      isScrolled ? 'bg-[var(--bg-secondary)]/95 backdrop-blur-md' : 'bg-[var(--bg-secondary)]'
     }`}>
       <nav className="max-w-[1400px] mx-auto px-8">
         <div className="flex items-center justify-between h-[64px]">
@@ -48,14 +49,14 @@ export default function HeaderShopify() {
             <div className="hidden lg:flex items-center gap-6">
               {/* Solutions Dropdown */}
               <div className="relative group">
-                <button
-                  className="flex items-center gap-1 text-white hover:text-gray-300 text-[16px] font-medium py-2"
+                <Button 
+                  variant="primary"
                   onMouseEnter={() => setActiveDropdown('solutions')}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
                   Solutions
                   <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-                </button>
+                </Button>
 
                 {/* Dropdown Menu */}
                 <AnimatePresence>
@@ -65,7 +66,7 @@ export default function HeaderShopify() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 mt-2 w-80 bg-[#1a1a1a] border border-gray-800 rounded-lg shadow-xl"
+                      className="absolute top-full left-0 mt-2 w-80 bg-[var(--bg-secondary)] border border-gray-800 rounded-lg shadow-xl"
                       onMouseEnter={() => setActiveDropdown('solutions')}
                       onMouseLeave={() => setActiveDropdown(null)}
                     >
@@ -202,8 +203,8 @@ export default function HeaderShopify() {
 
           {/* Mobile: Menu button */}
           <div className="lg:hidden">
-            <button
-              className="p-2 text-white"
+            <Button 
+              variant="primary" 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
@@ -211,7 +212,7 @@ export default function HeaderShopify() {
               ) : (
                 <Menu className="w-6 h-6" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
       </nav>
@@ -223,7 +224,7 @@ export default function HeaderShopify() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="lg:hidden bg-[#1a1a1a]"
+            className="lg:hidden bg-[var(--bg-secondary)]"
           >
             <div className="px-6 py-4 space-y-4">
               <Link

@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
+import {
   ChartBarIcon,
   UserGroupIcon,
   ArrowTrendingUpIcon,
@@ -159,15 +161,15 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
           <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow p-6">
+              <Card key={i} className="bg-white rounded-lg shadow p-6">
                 <div className="h-4 bg-gray-200 rounded mb-2"></div>
                 <div className="h-8 bg-gray-200 rounded"></div>
-              </div>
+              </Card>
             ))}
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <Card className="bg-white rounded-lg shadow p-6">
             <div className="h-64 bg-gray-200 rounded"></div>
-          </div>
+          </Card>
         </div>
       </div>
     );
@@ -210,8 +212,9 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {(['overview', 'cohorts', 'roi'] as const).map((tab) => (
-            <button
+            <Button
               key={tab}
+              variant="secondary"
               onClick={() => setActiveTab(tab)}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab
@@ -220,7 +223,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
               }`}
             >
               {tab === 'roi' ? 'ROI Analysis' : tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
+            </Button>
           ))}
         </nav>
       </div>
@@ -374,7 +377,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
 
       {/* Cohorts Tab */}
       {activeTab === 'cohorts' && selectedReport && (
-        <div className="bg-white rounded-lg shadow">
+        <Card className="bg-white rounded-lg shadow">
           <div className="p-6 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">Cohort Analysis</h3>
             <p className="text-gray-600">Performance breakdown by user segments</p>
@@ -437,7 +440,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ROI Tab */}
@@ -462,7 +465,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
           {/* Comparison Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Smart Onboarding */}
-            <div className="bg-white rounded-lg shadow">
+            <Card className="bg-white rounded-lg shadow">
               <div className="p-6 border-b border-gray-200 bg-blue-50">
                 <h3 className="text-lg font-semibold text-blue-900">Smart Onboarding</h3>
               </div>
@@ -488,10 +491,10 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
                   <span className="font-medium">${roiAnalysis.smartOnboarding.cost.toLocaleString()}</span>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Traditional Onboarding */}
-            <div className="bg-white rounded-lg shadow">
+            <Card className="bg-white rounded-lg shadow">
               <div className="p-6 border-b border-gray-200 bg-gray-50">
                 <h3 className="text-lg font-semibold text-gray-900">Traditional Onboarding</h3>
               </div>
@@ -517,7 +520,7 @@ export const InterventionEffectivenessReporting: React.FC<InterventionEffectiven
                   <span className="font-medium">${roiAnalysis.traditionalOnboarding.cost.toLocaleString()}</span>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Improvements */}

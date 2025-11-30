@@ -30,6 +30,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Parse userId to number (Prisma expects number for id field)
+    const userIdNum = parseInt(userId, 10);
+    if (isNaN(userIdNum)) {
+      return NextResponse.json(
+        { error: 'Invalid userId format' },
+        { status: 400 }
+      );
+    }
+
     const startTime = Date.now();
 
     // Use stale-while-revalidate
@@ -40,12 +49,8 @@ export async function GET(request: NextRequest) {
         // Simulate slow DB query
         await new Promise((resolve) => setTimeout(resolve, 100));
         
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-          include: {
-            profile: true,
-            settings: true,
-          },
+        const user = await prisma.users.findUnique({
+          where: { id: userIdNum },
         });
 
         return user;
@@ -100,9 +105,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse userId to number (Prisma expects number for id field)
+    const userIdNum = parseInt(userId, 10);
+    if (isNaN(userIdNum)) {
+      return NextResponse.json(
+        { error: 'Invalid userId format' },
+        { status: 400 }
+      );
+    }
+
     // Update user in database
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
+    const updatedUser = await prisma.users.update({
+      where: { id: userIdNum },
       data: { name, email },
     });
 

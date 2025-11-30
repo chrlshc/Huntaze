@@ -71,19 +71,26 @@ export function IntegrationIcon({ provider, size = 'md', className }: Integratio
   return (
     <div
       className={cn(
-        'relative grid shrink-0 place-items-center overflow-hidden rounded-xl border border-gray-200 bg-white',
+        'relative grid shrink-0 place-items-center overflow-hidden rounded-xl',
         sizeClasses[size],
         className
       )}
-      style={{ backgroundColor: `${accentColor}15` }}
+      style={{ 
+        backgroundColor: `${accentColor}15`,
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-xl)',
+      }}
     >
       <div className="relative h-full w-full p-2">
         {/* Show loading state */}
         {imageLoading && !imageError && (
           <div className="absolute inset-0 m-auto flex items-center justify-center">
             <div 
-              className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-transparent"
-              style={{ borderTopColor: accentColor }}
+              className="h-4 w-4 animate-spin rounded-full border-2"
+              style={{ 
+                borderColor: 'var(--border-subtle)',
+                borderTopColor: accentColor 
+              }}
             />
           </div>
         )}

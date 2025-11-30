@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Card } from '@/components/ui/card';
 import { 
   Calendar, Clock, BarChart3, Sparkles, Plus, ChevronRight, 
   Twitter, Youtube, Globe, Check, AlertCircle,
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Button } from "@/components/ui/button";
 
 // Mock data for demo
 const scheduledPosts = [
@@ -105,8 +107,9 @@ export default function ContentSchedulerPage() {
             { id: 'analytics', label: 'Analytics', icon: BarChart3 },
             { id: 'ai', label: 'AI Optimize', icon: Sparkles }
           ].map((tab) => (
-            <button
+            <Button 
               key={tab.id}
+              variant="secondary" 
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium transition-all ${
                 activeTab === tab.id
@@ -116,7 +119,7 @@ export default function ContentSchedulerPage() {
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -129,18 +132,18 @@ export default function ContentSchedulerPage() {
           >
             {/* Calendar View */}
             <div className="lg:col-span-2">
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     January 2025
                   </h2>
                   <div className="flex gap-2">
-                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                      <ChevronRight className="w-5 h-5 rotate-180 text-gray-600 dark:text-gray-400" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                      <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                    </button>
+                    <Button variant="ghost">
+  <ChevronRight className="w-5 h-5 rotate-180 text-gray-600 dark:text-gray-400" />
+</Button>
+                    <Button variant="ghost">
+  <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+</Button>
                   </div>
                 </div>
 
@@ -181,15 +184,16 @@ export default function ContentSchedulerPage() {
 
                 {/* Quick Add */}
                 <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <button
+                  <Button 
+                    variant="primary" 
                     onClick={() => setShowScheduleModal(true)}
                     className="w-full flex items-center justify-center gap-2 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
                   >
                     <Plus className="w-5 h-5" />
                     Schedule New Content
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </Card>
             </div>
 
             {/* Scheduled Posts */}
@@ -252,7 +256,7 @@ export default function ContentSchedulerPage() {
           >
             {/* Performance Overview */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Best Times to Post
                 </h3>
@@ -280,9 +284,9 @@ export default function ContentSchedulerPage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </Card>
 
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Content Performance
                 </h3>
@@ -307,7 +311,7 @@ export default function ContentSchedulerPage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </Card>
             </div>
 
             {/* Quick Stats */}
@@ -354,13 +358,14 @@ export default function ContentSchedulerPage() {
                 <p className="text-lg text-gray-700 dark:text-[var(--text-secondary-dark)] mb-8">
                   Let our AI analyze your audience and optimize your posting schedule for maximum engagement
                 </p>
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setAiSuggestions(true)}
                   className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium inline-flex items-center gap-2"
                 >
                   <Sparkles className="w-5 h-5" />
                   Generate AI Schedule
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -373,7 +378,7 @@ export default function ContentSchedulerPage() {
                   exit={{ opacity: 0, y: -20 }}
                   className="grid md:grid-cols-2 gap-6"
                 >
-                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                  <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                       Optimal Schedule This Week
                     </h3>
@@ -396,15 +401,15 @@ export default function ContentSchedulerPage() {
                             <p className="font-medium text-gray-900 dark:text-white">{item.day} - {item.time}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{item.content}</p>
                           </div>
-                          <button className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded">
-                            <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-                          </button>
+                          <Button variant="secondary">
+  <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+</Button>
                         </motion.div>
                       ))}
                     </div>
-                  </div>
+                  </Card>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                  <Card className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                       AI Insights
                     </h3>
@@ -437,7 +442,7 @@ export default function ContentSchedulerPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -477,13 +482,9 @@ export default function ContentSchedulerPage() {
                   </label>
                   <div className="flex gap-2">
                     {['instagram', 'twitter', 'tiktok', 'onlyfans', 'reddit', 'threads'].map((platform) => (
-                      <button
-                        key={platform}
-                        className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-purple-600 dark:hover:border-purple-400 transition-colors overflow-hidden"
-                        title={platformNames[platform]}
-                      >
-                        <PlatformIcon platform={platform} className="w-5 h-5" />
-                      </button>
+                      <Button variant="secondary">
+  <PlatformIcon platform={platform} className="w-5 h-5" />
+</Button>
                     ))}
                   </div>
                 </div>
@@ -498,15 +499,16 @@ export default function ContentSchedulerPage() {
                   />
                 </div>
                 <div className="flex gap-3">
-                  <button
+                  <Button 
+                    variant="ghost" 
                     onClick={() => setShowScheduleModal(false)}
                     className="flex-1 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     Cancel
-                  </button>
-                  <button className="flex-1 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                  </Button>
+                  <Button variant="primary">
                     Schedule Post
-                  </button>
+                  </Button>
                 </div>
               </div>
             </motion.div>

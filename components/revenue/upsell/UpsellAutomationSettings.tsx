@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AutomationSettings } from '@/lib/services/revenue/types';
+import { Button } from "@/components/ui/button";
 
 interface UpsellAutomationSettingsProps {
   settings: AutomationSettings;
@@ -63,20 +64,13 @@ export function UpsellAutomationSettings({
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Automation</span>
-          <button
-            onClick={handleToggleEnabled}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-              settings.enabled ? 'bg-blue-600' : 'bg-gray-300'
-            }`}
-            role="switch"
-            aria-checked={settings.enabled}
-          >
-            <span
+          <Button variant="primary" onClick={handleToggleEnabled} aria-checked={settings.enabled}>
+  <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
                 settings.enabled ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
-          </button>
+</Button>
         </div>
       </div>
 
@@ -102,7 +96,7 @@ export function UpsellAutomationSettings({
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: settings.enabled
-                ? `linear-gradient(to right, #2563eb 0%, #2563eb ${settings.autoSendThreshold * 100}%, #e5e7eb ${settings.autoSendThreshold * 100}%, #e5e7eb 100%)`
+                ? `linear-gradient(to right, #2563eb 0%, #2563eb ${settings.autoSendThreshold * 100}%, var(--border-subtle) ${settings.autoSendThreshold * 100}%, var(--border-subtle) 100%)`
                 : undefined,
             }}
           />
@@ -117,7 +111,8 @@ export function UpsellAutomationSettings({
             Maximum Daily Upsells
           </label>
           <div className="flex items-center gap-3">
-            <button
+            <Button 
+              variant="secondary" 
               onClick={() => handleMaxDailyChange(Math.max(1, settings.maxDailyUpsells - 1))}
               disabled={!settings.enabled || settings.maxDailyUpsells <= 1}
               className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -125,7 +120,7 @@ export function UpsellAutomationSettings({
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
               </svg>
-            </button>
+            </Button>
             <input
               type="number"
               min="1"
@@ -135,7 +130,8 @@ export function UpsellAutomationSettings({
               disabled={!settings.enabled}
               className="flex-1 px-4 py-2 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:bg-gray-50"
             />
-            <button
+            <Button 
+              variant="secondary" 
               onClick={() => handleMaxDailyChange(Math.min(100, settings.maxDailyUpsells + 1))}
               disabled={!settings.enabled || settings.maxDailyUpsells >= 100}
               className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -143,7 +139,7 @@ export function UpsellAutomationSettings({
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-            </button>
+            </Button>
           </div>
           <p className="text-xs text-gray-500 mt-1">
             Limit the number of automated upsells sent per day to avoid overwhelming fans
@@ -164,7 +160,8 @@ export function UpsellAutomationSettings({
                     className="inline-flex items-center gap-1 px-2 py-1 bg-white border border-gray-300 rounded text-sm"
                   >
                     Fan #{fanId}
-                    <button
+                    <Button 
+                      variant="primary" 
                       onClick={() => {
                         setSettings({
                           ...settings,
@@ -177,7 +174,7 @@ export function UpsellAutomationSettings({
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
-                    </button>
+                    </Button>
                   </span>
                 ))}
               </div>
@@ -234,13 +231,9 @@ export function UpsellAutomationSettings({
       {/* Action Buttons */}
       {hasChanges && (
         <div className="mt-6 flex gap-3 pt-6 border-t border-gray-200">
-          <button
-            onClick={handleReset}
-            disabled={isSaving}
-            className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Reset
-          </button>
+          <Button variant="ghost" onClick={handleReset} disabled={isSaving}>
+  Reset
+</Button>
           <button
             onClick={handleSave}
             disabled={isSaving}

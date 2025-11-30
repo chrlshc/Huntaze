@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Card } from '@/components/ui/card';
 import { 
   Sparkles, 
   TrendingUp, 
@@ -18,6 +19,7 @@ import {
   Clock
 } from 'lucide-react';
 import FeatureCard from '@/components/onboarding/FeatureCard';
+import { Button } from "@/components/ui/button";
 
 interface OnboardingStatus {
   progressPercentage: number;
@@ -145,20 +147,17 @@ export default function OnboardingDashboard() {
             </div>
             
             {!isComplete && (
-              <button
-                onClick={handleContinueOnboarding}
-                className="flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
-              >
-                Continue Setup
+              <Button variant="primary" onClick={handleContinueOnboarding}>
+  Continue Setup
                 <ArrowRight className="w-5 h-5" />
-              </button>
+</Button>
             )}
           </div>
         </div>
 
         {/* Next Recommended Step */}
         {!isComplete && status?.nextRecommendedStep && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <Card className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-blue-100 rounded-lg">
                 <Target className="w-6 h-6 text-blue-600" />
@@ -174,21 +173,18 @@ export default function OnboardingDashboard() {
                   <span className="text-sm text-gray-500">
                     ⏱️ {status.nextRecommendedStep.estimatedMinutes} minutes
                   </span>
-                  <button
-                    onClick={handleContinueOnboarding}
-                    className="text-sm text-blue-600 font-medium hover:text-blue-700"
-                  >
+                  <Button variant="primary" onClick={handleContinueOnboarding}>
                     Start Now →
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <Card className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-green-100 rounded-lg">
                 <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -201,9 +197,9 @@ export default function OnboardingDashboard() {
             <p className="text-sm text-gray-600 mt-1">
               Steps finished
             </p>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <Card className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Sparkles className="w-5 h-5 text-purple-600" />
@@ -216,9 +212,9 @@ export default function OnboardingDashboard() {
             <p className="text-sm text-gray-600 mt-1">
               Features available
             </p>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <Card className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-blue-600" />
@@ -231,7 +227,7 @@ export default function OnboardingDashboard() {
             <p className="text-sm text-gray-600 mt-1">
               Setup complete
             </p>
-          </div>
+          </Card>
         </div>
 
         {/* Features Overview */}

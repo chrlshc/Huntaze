@@ -7,6 +7,10 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface LoadingStateOptions {
+  sectionId?: string;
+  loadingType?: string;
+  hasCachedData?: boolean;
+  showProgressAfter?: number;
   /**
    * Minimum time to show loading state (prevents flashing)
    */

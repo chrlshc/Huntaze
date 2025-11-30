@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { Send, Bot, Sparkles, Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Message {
   id: string;
@@ -220,7 +222,7 @@ export default function AssistantClient() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Agents Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-4 mb-4">
+            <Card className="bg-white rounded-lg shadow p-4 mb-4">
               <h3 className="font-semibold text-gray-900 mb-3">Available Agents</h3>
               <div className="space-y-2">
                 {agents.map((agent) => (
@@ -230,10 +232,10 @@ export default function AssistantClient() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow p-4">
+            <Card className="bg-white rounded-lg shadow p-4">
               <h3 className="font-semibold text-gray-900 mb-3">Quick Actions</h3>
               <div className="space-y-2">
                 {quickActions.map((action, idx) => (
@@ -250,12 +252,12 @@ export default function AssistantClient() {
                   </button>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Conversation Area */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow flex flex-col h-[calc(100vh-200px)]">
+            <Card className="bg-white rounded-lg shadow flex flex-col h-[calc(100vh-200px)]">
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {messages.map((msg) => (
@@ -306,20 +308,16 @@ export default function AssistantClient() {
                     className="flex-1 resize-none rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     rows={2}
                   />
-                  <button
-                    onClick={handleSend}
-                    disabled={!input.trim() || isLoading}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
+                  <Button variant="primary" onClick={handleSend} disabled={!input.trim() || isLoading}>
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
                       <Send className="w-5 h-5" />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

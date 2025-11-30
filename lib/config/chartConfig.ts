@@ -55,7 +55,7 @@ export const defaultChartOptions: ChartOptions<'line'> = {
       enabled: true,
       mode: 'index',
       intersect: false,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
       titleFont: {
         size: 13,
         family: "'Inter', sans-serif",
@@ -112,7 +112,7 @@ export const darkModeChartOptions: Partial<ChartOptions<'line'>> = {
       backgroundColor: 'rgba(31, 31, 31, 0.95)',
       titleColor: '#EDEDED',
       bodyColor: '#EDEDED',
-      borderColor: '#2A2A2A',
+      borderColor: 'var(--bg-tertiary)',
       borderWidth: 1,
     },
   },

@@ -23,7 +23,7 @@
  *   return (
  *     <form onSubmit={handleSubmit}>
  *       {error && <div>{error}</div>}
- *       <button disabled={loading}>Complete</button>
+ *       <Button variant="primary" disabled={loading}>Complete</Button>
  *     </form>
  *   );
  * }

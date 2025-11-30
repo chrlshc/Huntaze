@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown } from 'lucide-react'
+import { Button } from "@/components/ui/button";
 
 const navigation = {
   solutions: {
@@ -117,10 +118,10 @@ export default function HeaderMinimal() {
               onMouseEnter={() => setActiveDropdown('solutions')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm focus:outline-none">
-                <span>Solutions</span>
+              <Button variant="primary">
+  <span>Solutions</span>
                 <ChevronDown className="w-4 h-4" />
-              </button>
+</Button>
               
               <AnimatePresence>
                 {activeDropdown === 'solutions' && (
@@ -163,10 +164,10 @@ export default function HeaderMinimal() {
               onMouseEnter={() => setActiveDropdown('resources')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center space-x-1 text-gray-300 hover:text-white text-sm focus:outline-none">
-                <span>Resources</span>
+              <Button variant="primary">
+  <span>Resources</span>
                 <ChevronDown className="w-4 h-4" />
-              </button>
+</Button>
               
               <AnimatePresence>
                 {activeDropdown === 'resources' && (

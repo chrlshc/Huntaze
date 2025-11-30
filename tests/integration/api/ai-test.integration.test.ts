@@ -76,7 +76,7 @@ const TEST_PROMPTS = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       email: `test-ai-${Date.now()}-${Math.random()}@example.com`,
@@ -97,7 +97,7 @@ async function cleanupTestData() {
   });
   
   // Clean up users
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-ai@' },
     },

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { events } from '@/src/lib/analytics'
+import { Button } from "@/components/ui/button";
 
 const navigation = [
   { name: 'Solutions', href: '/solutions', hasDropdown: true },
@@ -46,14 +47,14 @@ export default function HeaderShopifyStyle() {
               <div key={item.name} className="relative">
                 {item.hasDropdown ? (
                   <>
-                    <button
-                      className="text-gray-300 hover:text-white text-[15px] font-medium flex items-center gap-1 py-2"
+                    <Button 
+                      variant="primary"
                       onMouseEnter={() => setActiveDropdown(item.name)}
                       onMouseLeave={() => setActiveDropdown(null)}
                     >
                       {item.name}
                       <ChevronDown className="w-4 h-4" />
-                    </button>
+                    </Button>
                     {/* Dropdown would go here */}
                   </>
                 ) : (

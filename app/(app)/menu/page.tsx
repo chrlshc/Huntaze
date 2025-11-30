@@ -11,6 +11,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import NotificationSettings from '@/components/NotificationSettings';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
 import { 
   User,
   CreditCard,
@@ -186,7 +187,8 @@ export default function MenuPage() {
               </div>
               <span className="font-medium text-gray-900">Dark Mode</span>
             </div>
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => setDarkMode(!darkMode)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                 darkMode ? 'bg-purple-600' : 'bg-gray-200'
@@ -197,22 +199,19 @@ export default function MenuPage() {
                   darkMode ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Logout Button */}
       <div className="mt-4 bg-white">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors"
-        >
-          <div className="p-2 bg-red-50 rounded-xl">
+        <Button variant="danger" onClick={handleLogout}>
+  <div className="p-2 bg-red-50 rounded-xl">
             <LogOut className="w-5 h-5" />
           </div>
           <span className="font-medium">Log Out</span>
-        </button>
+</Button>
       </div>
 
       {/* App Version */}

@@ -87,7 +87,7 @@ const VALID_PROVIDERS = ['instagram', 'tiktok', 'reddit', 'onlyfans'];
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       email: `test-callback-${Date.now()}-${Math.random()}@example.com`,
@@ -100,7 +100,7 @@ async function createTestUser() {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.oAuthAccount.deleteMany({
+  await prisma.oauth_accounts.deleteMany({
     where: {
       user: {
         email: { contains: 'test-callback@' },
@@ -108,7 +108,7 @@ async function cleanupTestData() {
     },
   });
   
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-callback@' },
     },

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface ExtractedContent {
   title: string;
@@ -83,21 +84,13 @@ export default function UrlImporter({ onImportSuccess, onCancel }: UrlImporterPr
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={loading}
           />
-          <button
-            onClick={handleImport}
-            disabled={loading || !url.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? 'Importing...' : 'Import'}
-          </button>
+          <Button variant="primary" onClick={handleImport} disabled={loading || !url.trim()}>
+  {loading ? 'Importing...' : 'Import'}
+</Button>
           {onCancel && (
-            <button
-              onClick={onCancel}
-              disabled={loading}
-              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 transition-colors"
-            >
-              Cancel
-            </button>
+            <Button variant="secondary" onClick={onCancel} disabled={loading}>
+  Cancel
+</Button>
           )}
         </div>
       </div>
