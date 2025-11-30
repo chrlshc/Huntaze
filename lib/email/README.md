@@ -1,342 +1,213 @@
-# Email System - Huntaze
+# Email Styles Module
 
-Ce module gère l'envoi d'emails transactionnels via AWS SES (Simple Email Service).
+## Overview
 
-## 📧 Types d'Emails
+This module provides standardized styles for email templates that mirror our design system tokens but are compatible with email clients.
 
-### 1. Email de Vérification
-Envoyé lors de l'inscription d'un nouvel utilisateur.
+## Why This Exists
 
-**Déclencheur :** POST `/api/auth/register`
+Email clients (Gmail, Outlook, Apple Mail, etc.) have severe limitations:
+- ❌ No support for CSS variables (`var(--token)`)
+- ❌ No support for external stylesheets
+- ❌ Limited CSS support in general
+- ✅ Only inline styles work reliably
 
-**Contenu :**
-- Message de bienvenue personnalisé
-- Lien de vérification (valide 24h)
-- Instructions claires
-- Design responsive
+## Usage
 
-**Fonction :** `sendVerificationEmail(email, name, token)`
-
-### 2. Email de Bienvenue
-Envoyé après vérification réussie de l'email.
-
-**Déclencheur :** GET `/api/auth/verify-email?token=xxx`
-
-**Contenu :**
-- Confirmation de vérification
-- Lien vers le dashboard
-- Message d'encouragement
-
-**Fonction :** `sendWelcomeEmail(email, name)`
-
-## 🔧 Configuration
-
-### Variables d'Environnement
-
-```env
-# Email d'envoi (doit être vérifié dans AWS SES)
-FROM_EMAIL=noreply@huntaze.com
-
-# Région AWS
-AWS_REGION=us-east-1
-
-# Credentials AWS (ou utiliser IAM role)
-AWS_ACCESS_KEY_ID=REDACTED-key
-AWS_SECRET_ACCESS_KEY=REDACTED-secret
-
-# URL de l'application (pour les liens)
-NEXT_PUBLIC_APP_URL=https://huntaze.com
-```
-
-### AWS SES Setup
-
-#### 1. Vérifier l'Email/Domaine
-
-**Option A : Vérifier un email**
-```bash
-aws ses verify-email-identity --email-address noreply@huntaze.com
-# Vérifier l'email reçu
-```
-
-**Option B : Vérifier un domaine (recommandé)**
-```bash
-aws ses verify-domain-identity --domain huntaze.com
-# Ajouter les enregistrements DNS fournis
-```
-
-#### 2. Sortir du Sandbox Mode
-
-En mode sandbox, vous ne pouvez envoyer qu'à des emails vérifiés.
-
-```bash
-# Via Console AWS
-1. Allez dans SES → Account dashboard
-2. Cliquez "Request production access"
-3. Remplissez le formulaire
-4. Attendez l'approbation (24-48h)
-```
-
-#### 3. Configurer les Permissions IAM
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ses:SendEmail",
-        "ses:SendRawEmail"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-```
-
-## 🧪 Tests
-
-### Test Local
-
-```bash
-# Test avec email par défaut
-npm run test:email
-
-# Test avec email spécifique
-npm run test:email user@example.com
-
-# Test avec email et nom
-npm run test:email user@example.com "John Doe"
-```
-
-### Test via API
-
-```bash
-# Créer un compte (envoie l'email de vérification)
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "password": "SecurePass123!"
-  }'
-
-# Vérifier l'email (envoie l'email de bienvenue)
-curl http://localhost:3000/api/auth/verify-email?token=YOUR_TOKEN
-```
-
-## 📝 Utilisation
-
-### Envoyer un Email de Vérification
+### Basic Example
 
 ```typescript
-import { sendVerificationEmail } from '@/lib/email/ses';
-import { createVerificationToken } from '@/lib/auth/tokens';
+import { 
+  EMAIL_FONTS, 
+  EMAIL_FONT_SIZES, 
+  EMAIL_COLORS,
+  EMAIL_COMPONENTS 
+} from '@/lib/email/email-styles';
 
-// Créer un token
-const token = await createVerificationToken(userId, email);
-
-// Envoyer l'email
-await sendVerificationEmail(email, name, token);
+const html = `
+  <div style="${EMAIL_COMPONENTS.container}">
+    <h1 style="${EMAIL_COMPONENTS.heading}; font-size: ${EMAIL_FONT_SIZES['2xl']}">
+      Welcome to Huntaze!
+    </h1>
+    <p style="${EMAIL_COMPONENTS.paragraph}">
+      Thank you for signing up.
+    </p>
+    <a href="https://..." style="${EMAIL_COMPONENTS.button}">
+      Get Started
+    </a>
+    <div style="${EMAIL_COMPONENTS.footer}">
+      © 2024 Huntaze. All rights reserved.
+    </div>
+  </div>
+`;
 ```
 
-### Envoyer un Email de Bienvenue
+### Custom Styles
 
 ```typescript
-import { sendWelcomeEmail } from '@/lib/email/ses';
+import { emailStyle, EMAIL_FONTS, EMAIL_FONT_SIZES, EMAIL_COLORS } from '@/lib/email/email-styles';
 
-await sendWelcomeEmail(email, name);
-```
-
-### Envoyer un Email Personnalisé
-
-```typescript
-import { sendEmail } from '@/lib/email/ses';
-
-await sendEmail({
-  to: 'user@example.com',
-  subject: 'Mon Sujet',
-  htmlBody: '<h1>Hello</h1><p>Message HTML</p>',
-  textBody: 'Hello\n\nMessage texte',
+const customStyle = emailStyle({
+  fontFamily: EMAIL_FONTS.sans,
+  fontSize: EMAIL_FONT_SIZES.lg,
+  color: EMAIL_COLORS.accent.primary,
+  padding: '20px',
+  backgroundColor: EMAIL_COLORS.background.gray,
 });
+
+const html = `<div style="${customStyle}">Custom content</div>`;
 ```
 
-## 🎨 Templates d'Emails
+## Available Constants
 
-Les templates sont définis directement dans `lib/email/ses.ts`.
-
-### Structure HTML
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; font-family: sans-serif; background-color: #f5f5f5;">
-  <table width="100%" cellpadding="0" cellspacing="0">
-    <!-- Header -->
-    <tr>
-      <td style="padding: 40px; text-align: center;">
-        <h1 style="color: #6366f1;">Huntaze</h1>
-      </td>
-    </tr>
-    
-    <!-- Content -->
-    <tr>
-      <td style="padding: 0 40px 40px;">
-        <!-- Votre contenu ici -->
-      </td>
-    </tr>
-    
-    <!-- Footer -->
-    <tr>
-      <td style="padding: 20px; background-color: #f9fafb; text-align: center;">
-        <p style="color: #6b7280; font-size: 12px;">
-          © 2025 Huntaze. Tous droits réservés.
-        </p>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-```
-
-### Bonnes Pratiques
-
-1. **Toujours fournir une version texte** - Certains clients email n'affichent pas le HTML
-2. **Utiliser des tables pour la mise en page** - Meilleure compatibilité
-3. **Styles inline** - Les CSS externes ne fonctionnent pas
-4. **Tester sur plusieurs clients** - Gmail, Outlook, Apple Mail, etc.
-5. **Responsive design** - Utiliser `max-width` et `width="100%"`
-6. **Liens absolus** - Toujours utiliser des URLs complètes
-
-## 📊 Monitoring
-
-### CloudWatch Logs
-
-```bash
-# Voir les logs d'envoi
-aws logs tail /aws/lambda/your-function --follow --filter "Email sent"
-
-# Voir les erreurs
-aws logs tail /aws/lambda/your-function --follow --filter "Failed to send email"
-```
-
-### Métriques SES
-
-Dans AWS Console → SES → Reputation dashboard :
-
-- **Bounce rate** : Doit être < 5%
-- **Complaint rate** : Doit être < 0.1%
-- **Emails sent** : Nombre total
-- **Emails delivered** : Taux de livraison
-
-### Alertes CloudWatch
-
-Créer des alarmes pour :
-- Bounce rate > 5%
-- Complaint rate > 0.1%
-- Erreurs d'envoi
-
-## 🔧 Troubleshooting
-
-### Email Non Reçu
-
-**Causes possibles :**
-1. Email dans le dossier spam
-2. FROM_EMAIL non vérifié dans SES
-3. SES en mode sandbox et TO_EMAIL non vérifié
-4. Quotas SES dépassés
-5. Email invalide
-
-**Solutions :**
-```bash
-# Vérifier le statut de l'email
-aws ses get-identity-verification-attributes \
-  --identities noreply@huntaze.com
-
-# Vérifier les quotas
-aws ses get-send-quota
-
-# Vérifier les statistiques d'envoi
-aws ses get-send-statistics
-```
-
-### Erreur "MessageRejected"
-
-```
-Error: MessageRejected: Email address is not verified
-```
-
-**Solution :** Vérifier FROM_EMAIL dans AWS SES Console
-
-### Erreur "Daily sending quota exceeded"
-
-```
-Error: Daily sending quota exceeded
-```
-
-**Solution :** 
-- En sandbox : 200 emails/jour
-- Production : Demander une augmentation de quota
-
-### Erreur "Credentials not found"
-
-```
-Error: CredentialsError: Missing credentials in config
-```
-
-**Solution :**
-```bash
-# Option 1: Variables d'environnement
-export AWS_ACCESS_KEY_ID=REDACTED-key
-export AWS_SECRET_ACCESS_KEY=REDACTED-secret
-
-# Option 2: AWS CLI
-aws configure
-
-# Option 3: IAM Role (recommandé en production)
-# Attacher le rôle à l'instance/lambda
-```
-
-## 📚 Ressources
-
-- [AWS SES Documentation](https://docs.aws.amazon.com/ses/)
-- [AWS SES Best Practices](https://docs.aws.amazon.com/ses/latest/dg/best-practices.html)
-- [Email Design Guide](https://www.campaignmonitor.com/css/)
-- [Can I Email](https://www.caniemail.com/) - Compatibilité CSS
-
-## 🔐 Sécurité
-
-### Bonnes Pratiques
-
-1. **Ne jamais exposer les credentials** - Utiliser IAM roles en production
-2. **Valider les emails** - Vérifier le format avant d'envoyer
-3. **Rate limiting** - Limiter le nombre d'emails par utilisateur
-4. **Logs** - Logger tous les envois pour audit
-5. **DKIM/SPF** - Configurer pour éviter le spam
-
-### Rate Limiting
+### Fonts
 
 ```typescript
-// Exemple de rate limiting
-const MAX_EMAILS_PER_HOUR = 5;
-
-async function canSendEmail(userId: number): Promise<boolean> {
-  const count = await query(
-    `SELECT COUNT(*) FROM email_logs 
-     WHERE user_id = $1 
-     AND created_at > NOW() - INTERVAL '1 hour'`,
-    [userId]
-  );
-  
-  return count.rows[0].count < MAX_EMAILS_PER_HOUR;
-}
+EMAIL_FONTS.sans  // System font stack
+EMAIL_FONTS.mono  // Monospace font stack
 ```
 
----
+### Font Sizes
 
-**Dernière mise à jour :** 31 octobre 2025  
-**Maintenu par :** Équipe Huntaze
+```typescript
+EMAIL_FONT_SIZES.xs    // 12px
+EMAIL_FONT_SIZES.sm    // 14px
+EMAIL_FONT_SIZES.base  // 16px
+EMAIL_FONT_SIZES.lg    // 18px
+EMAIL_FONT_SIZES.xl    // 20px
+EMAIL_FONT_SIZES['2xl'] // 24px
+EMAIL_FONT_SIZES['3xl'] // 28px
+EMAIL_FONT_SIZES['4xl'] // 32px
+EMAIL_FONT_SIZES['5xl'] // 48px
+```
+
+### Colors
+
+```typescript
+EMAIL_COLORS.text.primary    // #1f2937
+EMAIL_COLORS.text.secondary  // #4b5563
+EMAIL_COLORS.text.tertiary   // #6b7280
+EMAIL_COLORS.text.muted      // #9ca3af
+
+EMAIL_COLORS.background.white // #ffffff
+EMAIL_COLORS.background.gray  // #f9fafb
+
+EMAIL_COLORS.accent.primary  // #6366f1
+EMAIL_COLORS.accent.success  // #10b981
+EMAIL_COLORS.accent.warning  // #f59e0b
+EMAIL_COLORS.accent.error    // #ef4444
+```
+
+### Pre-built Components
+
+```typescript
+EMAIL_COMPONENTS.container  // Main container
+EMAIL_COMPONENTS.heading    // Headings
+EMAIL_COMPONENTS.paragraph  // Paragraphs
+EMAIL_COMPONENTS.button     // Call-to-action buttons
+EMAIL_COMPONENTS.footer     // Footer text
+```
+
+## Design Token Mapping
+
+These constants mirror our design system:
+
+| Email Constant | Design Token | Value |
+|----------------|--------------|-------|
+| `EMAIL_FONTS.sans` | `var(--font-sans)` | System fonts |
+| `EMAIL_FONT_SIZES.sm` | `var(--text-sm)` | 14px |
+| `EMAIL_FONT_SIZES.base` | `var(--text-base)` | 16px |
+| `EMAIL_COLORS.accent.primary` | `var(--accent-primary)` | #6366f1 |
+
+## Best Practices
+
+### ✅ Do
+
+```typescript
+// Use constants
+const html = `
+  <p style="font-family: ${EMAIL_FONTS.sans}; font-size: ${EMAIL_FONT_SIZES.base};">
+    Content
+  </p>
+`;
+
+// Use pre-built components
+const html = `<p style="${EMAIL_COMPONENTS.paragraph}">Content</p>`;
+
+// Combine styles
+const html = `
+  <h1 style="${EMAIL_COMPONENTS.heading}; font-size: ${EMAIL_FONT_SIZES['3xl']};">
+    Title
+  </h1>
+`;
+```
+
+### ❌ Don't
+
+```typescript
+// Don't hardcode values
+const html = `<p style="font-family: Arial; font-size: 14px;">Content</p>`;
+
+// Don't use CSS variables (email clients don't support them)
+const html = `<p style="font-size: var(--text-base);">Content</p>`;
+
+// Don't use external stylesheets
+const html = `<link rel="stylesheet" href="styles.css">`;
+```
+
+## Testing Email Templates
+
+Always test email templates in multiple clients:
+
+- Gmail (web, iOS, Android)
+- Outlook (Windows, Mac, web)
+- Apple Mail (iOS, macOS)
+- Yahoo Mail
+- Proton Mail
+
+Use services like:
+- [Litmus](https://litmus.com/)
+- [Email on Acid](https://www.emailonacid.com/)
+- [Mailtrap](https://mailtrap.io/)
+
+## Migration from Hardcoded Styles
+
+### Before
+```typescript
+const html = `
+  <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+    <h1 style="font-size: 24px; color: #1f2937;">Title</h1>
+    <p style="font-size: 16px; color: #4b5563;">Content</p>
+  </div>
+`;
+```
+
+### After
+```typescript
+import { EMAIL_COMPONENTS, EMAIL_FONT_SIZES, EMAIL_COLORS } from '@/lib/email/email-styles';
+
+const html = `
+  <div style="${EMAIL_COMPONENTS.container}">
+    <h1 style="${EMAIL_COMPONENTS.heading}; font-size: ${EMAIL_FONT_SIZES['2xl']}; color: ${EMAIL_COLORS.text.primary};">
+      Title
+    </h1>
+    <p style="${EMAIL_COMPONENTS.paragraph}">
+      Content
+    </p>
+  </div>
+`;
+```
+
+## Related Files
+
+- `lib/email/email-styles.ts` - Main module
+- `lib/email/ses.ts` - AWS SES integration
+- `lib/services/email-verification.service.ts` - Verification emails
+- `lib/auth/magic-link.ts` - Magic link emails
+
+## Support
+
+For questions or issues with email templates, see:
+- [Design System Documentation](../../docs/design-system/README.md)
+- [Email Best Practices](https://www.campaignmonitor.com/css/)
+- [Can I Email](https://www.caniemail.com/) - CSS support in email clients

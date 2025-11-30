@@ -2,6 +2,7 @@
 
 import React from 'react';
 import styles from './GamifiedOnboarding.module.css';
+import { Button } from "@/components/ui/button";
 
 interface GamifiedOnboardingProps {
   userName: string;
@@ -45,13 +46,9 @@ export function GamifiedOnboarding({
             <div className={styles.logoBlurred} data-platform="tiktok" />
             <div className={styles.logoBlurred} data-platform="youtube" />
           </div>
-          <button
-            className={styles.primaryButton}
-            onClick={onConnectAccount}
-            disabled={hasConnectedAccounts}
-          >
-            {hasConnectedAccounts ? 'Compte connecté ✓' : 'Connecter maintenant'}
-          </button>
+          <Button variant="primary" onClick={onConnectAccount} disabled={hasConnectedAccounts}>
+  {hasConnectedAccounts ? 'Compte connecté ✓' : 'Connecter maintenant'}
+</Button>
         </div>
 
         {/* Latest Stats Card */}
@@ -109,12 +106,9 @@ export function GamifiedOnboarding({
           <p className={styles.cardDescription}>
             Lance-toi et crée ton premier contenu pour engager ton audience
           </p>
-          <button
-            className={styles.primaryButton}
-            onClick={onCreateContent}
-          >
-            Commencer à créer
-          </button>
+          <Button variant="primary" onClick={onCreateContent}>
+  Commencer à créer
+</Button>
         </div>
       </div>
     </div>

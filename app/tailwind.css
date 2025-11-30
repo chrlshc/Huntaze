@@ -11,9 +11,9 @@
   --color-midnight-100: #EDE9FE;
   --color-midnight-200: #DDD6FE;
   --color-midnight-300: #C4B5FD;
-  --color-midnight-400: #A78BFA;
-  --color-midnight-500: #7D57C1;
-  --color-midnight-600: #6B47AF;
+  --color-midnight-400: var(--accent-primary);
+  --color-midnight-500: var(--accent-primary);
+  --color-midnight-600: var(--accent-primary-active);
   --color-midnight-700: #5A3A9D;
   --color-midnight-800: #4C2F85;
   --color-midnight-900: #3E246D;

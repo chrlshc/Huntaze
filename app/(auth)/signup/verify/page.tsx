@@ -10,6 +10,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = {
   title: 'Verify Email - Huntaze',
@@ -23,7 +24,7 @@ function VerificationContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <Card className="bg-white rounded-2xl shadow-xl p-8 text-center">
           {/* Loading State */}
           <div className="mb-6">
             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto">
@@ -41,7 +42,7 @@ function VerificationContent() {
           <div className="text-sm text-gray-500">
             This should only take a moment
           </div>
-        </div>
+        </Card>
 
         <div className="mt-6 text-center">
           <Link 

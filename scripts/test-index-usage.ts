@@ -190,7 +190,7 @@ async function benchmarkQueries() {
   console.log('\n📊 Benchmark: Transaction query (should use index)');
   const txStart = Date.now();
   for (let i = 0; i < iterations; i++) {
-    await prisma.transactions.findMany({
+    await prisma.transaction.findMany({
       where: {
         user_id: 1,
         type: 'revenue',

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { platformOptimizerService } from '@/lib/services/platformOptimizerService';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface PlatformPreviewProps {
   platforms: string[];
@@ -134,9 +136,9 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
             {content.imageUrl && <img src={content.imageUrl} alt="Post" className="w-full" />}
             {content.videoUrl && <video src={content.videoUrl} className="w-full" controls />}
             <div className="p-2 border-t flex justify-around text-gray-600 text-sm">
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">👍 Like</button>
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">💬 Comment</button>
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">📤 Share</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">👍 Like</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">💬 Comment</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">📤 Share</button>
             </div>
           </div>
         );
@@ -160,21 +162,21 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
             {content.imageUrl && <img src={content.imageUrl} alt="Post" className="w-full" />}
             {content.videoUrl && <video src={content.videoUrl} className="w-full" controls />}
             <div className="p-2 border-t flex justify-around text-gray-600 text-sm">
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">👍 Like</button>
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">💬 Comment</button>
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">🔁 Repost</button>
-              <button className="flex items-center gap-2 py-2 px-4 hover:bg-gray-100 rounded">📤 Send</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">👍 Like</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">💬 Comment</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">🔁 Repost</button>
+              <button className="px-3 py-1 hover:bg-gray-100 rounded">📤 Send</button>
             </div>
           </div>
         );
       
       default:
         return (
-          <div className="bg-white rounded-lg border p-4">
+          <Card className="bg-white rounded-lg border p-4">
             <p className="text-sm whitespace-pre-wrap">{displayText}</p>
             {content.imageUrl && <img src={content.imageUrl} alt="Preview" className="w-full rounded mt-3" />}
             {content.videoUrl && <video src={content.videoUrl} className="w-full rounded mt-3" controls />}
-          </div>
+          </Card>
         );
     }
   };
@@ -184,14 +186,14 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold">Platform Previews</h3>
         <div className="flex gap-2">
-          <button 
-            onClick={() => setViewMode('mobile')} 
+          <button
+            onClick={() => setViewMode('mobile')}
             className={`px-4 py-2 text-sm rounded-lg transition-colors ${viewMode === 'mobile' ? 'bg-blue-600 text-white' : 'bg-white border hover:bg-gray-50'}`}
           >
             📱 Mobile
           </button>
-          <button 
-            onClick={() => setViewMode('desktop')} 
+          <button
+            onClick={() => setViewMode('desktop')}
             className={`px-4 py-2 text-sm rounded-lg transition-colors ${viewMode === 'desktop' ? 'bg-blue-600 text-white' : 'bg-white border hover:bg-gray-50'}`}
           >
             💻 Desktop
@@ -234,7 +236,7 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
           </div>
 
           {/* Validation Status */}
-          <div className="bg-white rounded-lg p-4 border">
+          <Card className="bg-white rounded-lg p-4 border">
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold">Validation Status</h4>
               {validationResults[selectedPlatform].isValid ? (
@@ -293,7 +295,7 @@ export default function PlatformPreview({ platforms, content, userName = 'User',
                 ✨ Your content meets all requirements for {selectedPlatform}
               </div>
             )}
-          </div>
+          </Card>
         </div>
       )}
     </div>

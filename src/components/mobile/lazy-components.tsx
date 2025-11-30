@@ -298,20 +298,21 @@ export function useOptimizedFetch(url: string, options?: RequestInit) {
 }
 
 // Bundle Splitting by Route
-export const routeComponents = {
-  '/dashboard': dynamic(() => import('@/app/dashboard/page'), {
-    loading: () => <div className="p-4">Loading dashboard...</div>,
-  }),
-  '/messages': dynamic(() => import('@/app/messages/page'), {
-    loading: () => <div className="p-4">Loading messages...</div>,
-  }),
-  '/analytics': dynamic(() => import('@/app/analytics/page'), {
-    loading: () => <div className="p-4">Loading analytics...</div>,
-  }),
-  '/fans': dynamic(() => import('@/app/fans/page'), {
-    loading: () => <div className="p-4">Loading fans...</div>,
-  }),
-};
+// Note: These page components don't exist at these paths - commented out to fix TS2307
+// export const routeComponents = {
+//   '/dashboard': dynamic(() => import('@/app/dashboard/page'), {
+//     loading: () => <div className="p-4">Loading dashboard...</div>,
+//   }),
+//   '/messages': dynamic(() => import('@/app/messages/page'), {
+//     loading: () => <div className="p-4">Loading messages...</div>,
+//   }),
+//   '/analytics': dynamic(() => import('@/app/analytics/page'), {
+//     loading: () => <div className="p-4">Loading analytics...</div>,
+//   }),
+//   '/fans': dynamic(() => import('@/app/fans/page'), {
+//     loading: () => <div className="p-4">Loading fans...</div>,
+//   }),
+// };
 
 // Optimized Mobile Navigation with Prefetch
 export function OptimizedMobileNav() {

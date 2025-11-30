@@ -86,7 +86,7 @@ const MOCK_STATS = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       password: hashedPassword,
@@ -118,7 +118,7 @@ async function cleanupTestData() {
     },
   });
   
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-home-stats@' },
     },
@@ -619,7 +619,7 @@ describe('Home Stats API Integration Tests', () => {
   describe('Error Handling', () => {
     it('should return 503 for non-existent user (database constraint)', async () => {
       // Delete user but keep session - this causes a foreign key constraint error
-      await prisma.user.delete({
+      await prisma.users.delete({
         where: { id: testUser.id },
       });
       
@@ -637,7 +637,7 @@ describe('Home Stats API Integration Tests', () => {
     });
 
     it('should include correlation ID in error responses', async () => {
-      await prisma.user.delete({
+      await prisma.users.delete({
         where: { id: testUser.id },
       });
       
@@ -661,7 +661,7 @@ describe('Home Stats API Integration Tests', () => {
       await createUserStats(testUser.id, MOCK_STATS);
       
       // Create another user with different stats
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: 'test-home-stats-other@example.com',
           name: 'Other User',
@@ -690,7 +690,7 @@ describe('Home Stats API Integration Tests', () => {
       await prisma.userStats.delete({
         where: { userId: otherUser.id },
       });
-      await prisma.user.delete({
+      await prisma.users.delete({
         where: { id: otherUser.id },
       });
     });

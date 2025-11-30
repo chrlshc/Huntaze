@@ -181,7 +181,7 @@ export function isRetryableError(
  * Extract token from response
  */
 export type ExtractToken<T> = T extends CsrfTokenSuccessResponse
-  ? T['data']['token']
+  ? CsrfTokenData['token']
   : never;
 
 /**

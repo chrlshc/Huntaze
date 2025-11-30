@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { threeJsMonitor } from '../../lib/monitoring/threeJsMonitor';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ErrorStats {
   totalErrors: number;
@@ -130,12 +132,9 @@ export default function ThreeJsHealthDashboard({
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(stats.healthStatus)}`}>
               {stats.healthStatus.toUpperCase()}
             </span>
-            <button
-              onClick={fetchStats}
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
+            <Button variant="primary" onClick={fetchStats} className="text-xs">
               Refresh
-            </button>
+            </Button>
           </div>
         </div>
         <p className="text-sm text-gray-500 mt-1">
@@ -194,12 +193,9 @@ export default function ThreeJsHealthDashboard({
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium text-gray-900">Recent Errors</h4>
-              <button
-                onClick={clearErrors}
-                className="text-xs text-red-600 hover:text-red-800"
-              >
+              <Button variant="danger" onClick={clearErrors} className="text-xs text-red-600 hover:text-red-800">
                 Clear All
-              </button>
+              </Button>
             </div>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {stats.recentErrors.map((error, index) => (
@@ -248,19 +244,21 @@ export default function ThreeJsHealthDashboard({
             Monitoring: WebGL, Rendering, Performance, Memory
           </div>
           <div className="flex space-x-2">
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => window.open('/docs/THREE_JS_TROUBLESHOOTING_GUIDE.md', '_blank')}
               className="text-xs text-blue-600 hover:text-blue-800"
             >
               Troubleshooting Guide
-            </button>
+            </Button>
             <span className="text-gray-300">|</span>
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => window.open('/api/monitoring/three-js-errors', '_blank')}
               className="text-xs text-blue-600 hover:text-blue-800"
             >
               Raw Data
-            </button>
+            </Button>
           </div>
         </div>
       </div>

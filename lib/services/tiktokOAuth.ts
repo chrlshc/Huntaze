@@ -26,12 +26,17 @@ const TIKTOK_USER_INFO_URL = 'https://open.tiktokapis.com/v2/user/info/';
 const DEFAULT_SCOPES = ['user.info.basic', 'video.upload', 'video.list'];
 
 // Retry configuration
-const RETRY_CONFIG = {
+const RETRY_CONFIG: {
+  readonly maxAttempts: number;
+  readonly initialDelay: number;
+  readonly maxDelay: number;
+  readonly backoffFactor: number;
+} = {
   maxAttempts: 3,
   initialDelay: 100, // ms
   maxDelay: 2000, // ms
   backoffFactor: 2,
-} as const;
+};
 
 // Request timeout
 const REQUEST_TIMEOUT_MS = 10000; // 10 seconds

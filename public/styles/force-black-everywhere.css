@@ -107,7 +107,7 @@ footer {
 [style*="purple"],
 [style*="violet"],
 [style*="147, 51, 234"],
-[style*="#9333ea"],
+[style*="var(--accent-primary)"],
 [style*="#8b5cf6"],
 [style*="#7c3aed"],
 [style*="#6d28d9"],

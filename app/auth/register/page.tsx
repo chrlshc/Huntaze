@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { fetchWithCsrf } from '@/lib/utils/csrf-client';
 import { useCsrfToken } from '@/hooks/useCsrfToken';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 /**
  * User Registration Page
@@ -112,7 +114,7 @@ export default function RegisterPage() {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
+      <Card>
         <div className="auth-header">
           <img src="/logo.svg" alt="Huntaze" className="logo" />
           <h1>Join Huntaze Beta</h1>
@@ -164,14 +166,15 @@ export default function RegisterPage() {
                 aria-required="true"
                 aria-describedby="password-hint"
               />
-              <button
+              <Button 
+                variant="primary" 
+                onClick={() => setShowPassword(!showPassword)} 
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
                 className="password-toggle"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             </div>
             <span id="password-hint" className="sr-only">
               Password must be at least 8 characters long
@@ -185,10 +188,10 @@ export default function RegisterPage() {
                     className="strength-fill"
                     style={{
                       width: `${(passwordStrength.strength / 5) * 100}%`,
-                      backgroundColor: passwordStrength.color.includes('red') ? '#ef4444' :
-                                      passwordStrength.color.includes('yellow') ? '#eab308' :
-                                      passwordStrength.color.includes('blue') ? '#3b82f6' :
-                                      passwordStrength.color.includes('green') ? '#22c55e' : '#6b7280'
+                      backgroundColor: passwordStrength.color.includes('red') ? 'var(--accent-error)' :
+                                      passwordStrength.color.includes('yellow') ? 'var(--accent-warning)' :
+                                      passwordStrength.color.includes('blue') ? 'var(--accent-info)' :
+                                      passwordStrength.color.includes('green') ? 'var(--accent-success)' : 'var(--text-tertiary)'
                     }}
                   />
                 </div>
@@ -201,21 +204,16 @@ export default function RegisterPage() {
             )}
           </div>
 
-          <button
-            type="submit"
-            className="btn-primary btn-full"
-            disabled={submitting}
-            aria-busy={submitting}
-          >
+          <Button variant="primary" disabled={submitting} type="submit" aria-busy={submitting}>
             {buttonLabel}
-          </button>
+          </Button>
 
           <p className="form-footer">
             Already have an account?{' '}
             <a href="/auth/login" className="link">Sign in</a>
           </p>
         </form>
-      </div>
+      </Card>
 
       <style jsx>{`
         .auth-container {
@@ -270,7 +268,7 @@ export default function RegisterPage() {
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.3);
           border-radius: var(--radius-md);
-          color: #ef4444;
+          color: var(--accent-error);
           font-size: var(--text-sm);
         }
 

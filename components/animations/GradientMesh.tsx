@@ -256,7 +256,7 @@ const GradientMesh: React.FC<GradientMeshProps> = ({
           .gradient-mesh-fallback {
             background: 
               radial-gradient(at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-              radial-gradient(at 80% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 50%),
+              radial-gradient(at 80% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
               radial-gradient(at 40% 40%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
               radial-gradient(at 60% 60%, rgba(251, 113, 133, 0.3) 0%, transparent 50%);
             animation: gradientShift 20s ease infinite;

@@ -23,8 +23,9 @@ import { useSSE } from "@/hooks/useSSE";
 import { useSSECounter } from "@/src/hooks/useSSECounter";
 import { AnimatePresence, motion } from "framer-motion";
 import "./nav-styles.css";
+import { Button } from "@/components/ui/button";
 
-type BadgeConfig = { type: "unread" | "alerts"; url: string };
+type BadgeConfig = { type: "unread" | "alert"; url: string };
 type NavItem = {
   label: string;
   href: string;
@@ -73,7 +74,7 @@ export const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
         label: "Analytics",
         href: "/analytics",
         icon: BarChart3,
-        badge: { type: "alerts", url: "/api/analytics/alerts-count" },
+        badge: { type: "alert", url: "/api/analytics/alerts-count" },
       },
     ],
   },
@@ -146,7 +147,7 @@ export default function AppSidebar() {
               const count = item.badge
                 ? useSSECounter({
                     url: item.badge.type === "unread" ? `${item.badge.url}?sse=1` : item.badge.url,
-                    eventName: item.badge.type === "unread" ? "unread" : "alerts",
+                    eventName: item.badge.type === "unread" ? "unread" : "alert",
                   })
                 : 0;
               return (
@@ -238,13 +239,14 @@ export default function AppSidebar() {
                   </div>
                   <span className="text-xl font-bold text-content-primary">Huntaze</span>
                 </div>
-                <button
+                <Button 
+                  variant="primary" 
+                  onClick={() => setDrawerOpen(false)} 
                   aria-label="Close menu"
-                  onClick={() => setDrawerOpen(false)}
                   className="mobile-drawer-close"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
               <div className="flex-1 overflow-y-auto px-3 py-4">
                 {NavList}

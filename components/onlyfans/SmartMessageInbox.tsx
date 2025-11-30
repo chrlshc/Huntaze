@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { Send, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Fan {
   id: string;
@@ -144,7 +145,8 @@ export function SmartMessageInbox() {
                   </p>
                 </div>
 
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => toggleQuickReply(fan.id)}
                   className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
@@ -155,7 +157,7 @@ export function SmartMessageInbox() {
                   ) : (
                     <ChevronDown className="w-4 h-4" />
                   )}
-                </button>
+                </Button>
               </div>
 
               {/* Quick Reply Panel */}
@@ -173,13 +175,14 @@ export function SmartMessageInbox() {
                           Suggestions AI
                         </p>
                         {quickReply.suggestions.map((suggestion, idx) => (
-                          <button
+                          <Button 
                             key={idx}
+                            variant="secondary" 
                             onClick={() => setMessages({ ...messages, [fan.id]: suggestion })}
                             className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
                           >
                             <p className="text-sm text-gray-900">{suggestion}</p>
-                          </button>
+                          </Button>
                         ))}
                       </div>
 
@@ -199,13 +202,14 @@ export function SmartMessageInbox() {
                             }
                           }}
                         />
-                        <button
+                        <Button 
+                          variant="primary" 
                           onClick={() => sendQuickMessage(fan.id, messages[fan.id])}
                           disabled={!messages[fan.id]}
                           className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           <Send className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
                     </>
                   )}

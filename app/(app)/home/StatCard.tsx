@@ -1,4 +1,5 @@
 import { TrendingUp, TrendingDown, LucideIcon } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface StatCardProps {
   label: string;
@@ -35,20 +36,20 @@ export function StatCard({
 
   if (loading) {
     return (
-      <div className="stat-card stat-card-loading">
-        <div className="stat-card-skeleton">
+      <Card className="-loading">
+        <div className="-skeleton">
           <div className="skeleton-header"></div>
           <div className="skeleton-value"></div>
           <div className="skeleton-description"></div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
     <div className={`stat-card stat-card-${color}`}>
-      <div className="stat-card-header">
-        <div className="stat-card-label-group">
+      <div className="-header">
+        <div className="-label-group">
           {Icon && (
             <div className={`stat-card-icon stat-card-icon-${color}`}>
               <Icon className="icon" aria-hidden="true" />

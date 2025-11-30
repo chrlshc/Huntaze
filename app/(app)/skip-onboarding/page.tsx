@@ -10,6 +10,8 @@ export const dynamic = 'force-dynamic';
 import { useRouter } from 'next/navigation';
 import { useAsyncOperation, AsyncErrorDisplay, AsyncLoadingSpinner } from '@/components/dashboard/AsyncOperationWrapper';
 import { Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function SkipOnboarding() {
   const router = useRouter();
@@ -39,7 +41,7 @@ export default function SkipOnboarding() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] flex items-center justify-center">
-      <div className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] shadow-[var(--shadow-soft)] p-8 max-w-md text-center">
+      <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] shadow-[var(--shadow-soft)] p-8 max-w-md text-center">
         <h1 className="text-2xl font-bold mb-6 text-[var(--color-text-main)]">Skip Onboarding</h1>
         
         <p className="text-[var(--color-text-sub)] mb-6">
@@ -61,12 +63,12 @@ export default function SkipOnboarding() {
           <button
             onClick={skipOnboarding}
             disabled={isLoading}
-            className="px-6 py-3 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900 transition-colors disabled:opacity-50"
           >
             Skip Onboarding & Go to Dashboard
           </button>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

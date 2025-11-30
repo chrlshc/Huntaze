@@ -17,6 +17,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 import { 
   Send, 
   Search, 
@@ -31,6 +32,7 @@ import {
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { AsyncOperationWrapper } from '@/components/dashboard/AsyncOperationWrapper';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
+import { Button } from "@/components/ui/button";
 
 interface MessageThread {
   id: string;
@@ -255,8 +257,8 @@ export default function OnlyFansMessagesPage() {
       <ContentPageErrorBoundary pageName="OnlyFans Messages">
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-indigo)] mx-auto mb-4"></div>
-            <p className="text-[var(--color-text-sub)]">Loading messages...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)] mx-auto mb-4"></div>
+            <p className="text-[var(--text-secondary)]">Loading messages...</p>
           </div>
         </div>
       </ContentPageErrorBoundary>
@@ -268,8 +270,8 @@ export default function OnlyFansMessagesPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Messages</h1>
-          <p className="text-[var(--color-text-sub)]">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Messages</h1>
+          <p className="text-[var(--text-secondary)]">
             AI-powered messaging for OnlyFans
           </p>
         </div>
@@ -277,40 +279,40 @@ export default function OnlyFansMessagesPage() {
         {/* Stats */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-[var(--color-text-sub)] mb-1">Sent</p>
-              <p className="text-2xl font-bold text-[var(--color-text-main)]">{stats.sent}</p>
-            </div>
-            <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-[var(--color-text-sub)] mb-1">Received</p>
-              <p className="text-2xl font-bold text-[var(--color-text-main)]">{stats.received}</p>
-            </div>
-            <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-[var(--color-text-sub)] mb-1">Response Rate</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.responseRate}%</p>
-            </div>
-            <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-[var(--color-text-sub)] mb-1">Avg Response Time</p>
-              <p className="text-2xl font-bold text-[var(--color-text-main)]">{stats.avgResponseTime}m</p>
-            </div>
+            <Card>
+              <p className="text-sm text-[var(--text-secondary)] mb-1">Sent</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.sent}</p>
+            </Card>
+            <Card>
+              <p className="text-sm text-[var(--text-secondary)] mb-1">Received</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.received}</p>
+            </Card>
+            <Card>
+              <p className="text-sm text-[var(--text-secondary)] mb-1">Response Rate</p>
+              <p className="text-2xl font-bold text-[var(--accent-success)]">{stats.responseRate}%</p>
+            </Card>
+            <Card>
+              <p className="text-sm text-[var(--text-secondary)] mb-1">Avg Response Time</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.avgResponseTime}m</p>
+            </Card>
           </div>
         )}
 
         {/* Messages Interface */}
-        <div className="bg-[var(--bg-surface)] rounded-lg border border-gray-200 shadow-[var(--shadow-soft)] overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="grid grid-cols-12 h-[600px]">
             {/* Thread List */}
-            <div className="col-span-4 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+            <div className="col-span-4 border-r border-[var(--border-subtle)] flex flex-col">
               {/* Search */}
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="p-4 border-b border-[var(--border-subtle)]">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search conversations..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
                   />
                 </div>
               </div>
@@ -321,39 +323,39 @@ export default function OnlyFansMessagesPage() {
                   <button
                     key={thread.id}
                     onClick={() => setSelectedThread(thread)}
-                    className={`w-full p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left ${
-                      selectedThread?.id === thread.id ? 'bg-gray-50 dark:bg-gray-800' : ''
+                    className={`w-full p-4 border-b border-[var(--border-subtle)] hover:bg-[var(--bg-glass-hover)] transition-all text-left ${
+                      selectedThread?.id === thread.id ? 'bg-[var(--bg-glass-hover)]' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <img
                         src={thread.fanAvatar}
                         alt={thread.fanName}
-                        className="w-12 h-12 rounded-full"
+                        className="w-12 h-12 rounded-full ring-2 ring-[var(--border-subtle)]"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2">
-                            <p className="font-medium text-[var(--color-text-main)] truncate">
+                            <p className="font-medium text-[var(--text-primary)] truncate">
                               {thread.fanName}
                             </p>
                             {thread.isVIP && (
-                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <Star className="w-4 h-4 text-[var(--accent-warning)] fill-[var(--accent-warning)]" />
                             )}
                           </div>
-                          <span className="text-xs text-[var(--color-text-sub)]">
+                          <span className="text-xs text-[var(--text-tertiary)]">
                             {new Date(thread.lastMessageTime).toLocaleTimeString([], { 
                               hour: '2-digit', 
                               minute: '2-digit' 
                             })}
                           </span>
                         </div>
-                        <p className="text-sm text-[var(--color-text-sub)] truncate">
+                        <p className="text-sm text-[var(--text-secondary)] truncate">
                           {thread.lastMessage}
                         </p>
                       </div>
                       {thread.unread > 0 && (
-                        <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium">
+                        <div className="flex-shrink-0 w-6 h-6 bg-[var(--accent-info)] text-white rounded-full flex items-center justify-center text-xs font-medium">
                           {thread.unread}
                         </div>
                       )}
@@ -368,61 +370,58 @@ export default function OnlyFansMessagesPage() {
               {selectedThread ? (
                 <>
                   {/* Conversation Header */}
-                  <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <div className="p-4 border-b border-[var(--border-subtle)]">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <img
                           src={selectedThread.fanAvatar}
                           alt={selectedThread.fanName}
-                          className="w-10 h-10 rounded-full"
+                          className="w-10 h-10 rounded-full ring-2 ring-[var(--border-subtle)]"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-medium text-[var(--color-text-main)]">
+                            <p className="font-medium text-[var(--text-primary)]">
                               {selectedThread.fanName}
                             </p>
                             {selectedThread.isVIP && (
-                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <Star className="w-4 h-4 text-[var(--accent-warning)] fill-[var(--accent-warning)]" />
                             )}
                           </div>
-                          <p className="text-sm text-[var(--color-text-sub)]">
+                          <p className="text-sm text-[var(--text-secondary)]">
                             {selectedThread.fanUsername}
                           </p>
                         </div>
                       </div>
-                      <button
-                        onClick={getAISuggestions}
-                        disabled={loadingAI}
-                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
-                      >
-                        {loadingAI ? (
+                      <Button variant="primary" onClick={getAISuggestions} disabled={loadingAI}>
+  {loadingAI ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
                           <Sparkles className="w-4 h-4" />
                         )}
                         AI Suggestions
-                      </button>
+</Button>
                     </div>
                   </div>
 
                   {/* AI Suggestions */}
                   {aiSuggestions.length > 0 && (
-                    <div className="p-4 bg-purple-50 dark:bg-purple-900/20 border-b border-purple-200 dark:border-purple-800">
-                      <p className="text-sm font-medium text-purple-900 dark:text-purple-300 mb-2">
+                    <div className="p-4 bg-[var(--accent-bg-muted)] border-b border-[var(--accent-primary)]">
+                      <p className="text-sm font-medium text-[var(--accent-primary)] mb-2">
                         AI Suggestions:
                       </p>
                       <div className="space-y-2">
                         {aiSuggestions.map((suggestion) => (
-                          <button
-                            key={suggestion.id}
+                          <Button 
+                            key={suggestion.content}
+                            variant="primary" 
                             onClick={() => useSuggestion(suggestion)}
-                            className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg border border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors"
+                            className="w-full text-left p-3 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-default)] hover:bg-[var(--bg-glass-hover)] hover:border-[var(--accent-primary)] transition-all"
                           >
-                            <p className="text-sm text-[var(--color-text-main)]">{suggestion.content}</p>
-                            <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                            <p className="text-sm text-[var(--text-primary)]">{suggestion.content}</p>
+                            <p className="text-xs text-[var(--accent-primary)] mt-1">
                               Tone: {suggestion.tone}
                             </p>
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     </div>
@@ -430,8 +429,8 @@ export default function OnlyFansMessagesPage() {
 
                   {/* AI Error */}
                   {aiError && (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800">
-                      <div className="flex items-center gap-2 text-red-800 dark:text-red-300">
+                    <div className="p-4 bg-[var(--accent-error)]/10 border-b border-[var(--accent-error)]">
+                      <div className="flex items-center gap-2 text-[var(--accent-error)]">
                         <AlertCircle className="w-4 h-4" />
                         <p className="text-sm">{aiError}</p>
                       </div>
@@ -446,10 +445,10 @@ export default function OnlyFansMessagesPage() {
                         className={`flex ${message.isFromCreator ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[70%] rounded-lg p-3 ${
+                          className={`max-w-[70%] rounded-lg p-3 shadow-[var(--shadow-sm)] ${
                             message.isFromCreator
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 dark:bg-gray-800 text-[var(--color-text-main)]'
+                              ? 'bg-[var(--accent-info)] text-white'
+                              : 'bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-subtle)]'
                           }`}
                         >
                           <p className="text-sm">{message.content}</p>
@@ -470,7 +469,7 @@ export default function OnlyFansMessagesPage() {
                   </div>
 
                   {/* Message Input */}
-                  <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="p-4 border-t border-[var(--border-subtle)]">
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
@@ -478,29 +477,25 @@ export default function OnlyFansMessagesPage() {
                         onChange={(e) => setMessageInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                         placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                        className="flex-1 px-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
                       />
-                      <button
-                        onClick={sendMessage}
-                        disabled={!messageInput.trim() || sendingMessage}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {sendingMessage ? (
+                      <Button variant="primary" onClick={sendMessage} disabled={!messageInput.trim() || sendingMessage}>
+  {sendingMessage ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                           <Send className="w-5 h-5" />
                         )}
-                      </button>
+</Button>
                     </div>
                   </div>
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                      <Send className="w-8 h-8 text-gray-400" />
+                    <div className="w-16 h-16 mx-auto mb-4 bg-[var(--bg-tertiary)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
+                      <Send className="w-8 h-8 text-[var(--text-tertiary)]" />
                     </div>
-                    <p className="text-[var(--color-text-sub)]">
+                    <p className="text-[var(--text-secondary)]">
                       Select a conversation to start messaging
                     </p>
                   </div>
@@ -508,7 +503,7 @@ export default function OnlyFansMessagesPage() {
               )}
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </ContentPageErrorBoundary>
   );

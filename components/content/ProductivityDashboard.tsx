@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ProductivityMetrics } from '@/lib/services/productivityMetricsService';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ProductivityDashboardProps {
   userId: string;
@@ -69,31 +71,31 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border p-6">
+        <Card className="bg-white rounded-lg border p-6">
           <div className="text-sm text-gray-600 mb-1">Total Content</div>
           <div className="text-3xl font-bold text-blue-600">{metrics.contentCreated.total}</div>
           <div className="text-xs text-gray-500 mt-2">
             {metrics.productivity.contentPerDay.toFixed(1)} per day
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg border p-6">
+        <Card className="bg-white rounded-lg border p-6">
           <div className="text-sm text-gray-600 mb-1">Avg. Creation Time</div>
           <div className="text-3xl font-bold text-green-600">
             {metrics.averageCreationTime.overall.toFixed(0)}m
           </div>
           <div className="text-xs text-gray-500 mt-2">minutes per content</div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg border p-6">
+        <Card className="bg-white rounded-lg border p-6">
           <div className="text-sm text-gray-600 mb-1">Media Uploads</div>
           <div className="text-3xl font-bold text-purple-600">{metrics.mediaUsage.totalUploads}</div>
           <div className="text-xs text-gray-500 mt-2">
             {formatBytes(metrics.mediaUsage.totalSize)}
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg border p-6">
+        <Card className="bg-white rounded-lg border p-6">
           <div className="text-sm text-gray-600 mb-1">Published</div>
           <div className="text-3xl font-bold text-orange-600">
             {metrics.contentCreated.byStatus.published || 0}
@@ -101,11 +103,11 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
           <div className="text-xs text-gray-500 mt-2">
             {((metrics.contentCreated.byStatus.published || 0) / metrics.contentCreated.total * 100).toFixed(0)}% of total
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Content by Period Chart */}
-      <div className="bg-white rounded-lg border p-6">
+      <Card className="bg-white rounded-lg border p-6">
         <h3 className="font-semibold mb-4">Content Creation Over Time</h3>
         <div className="space-y-2">
           {metrics.contentCreated.byPeriod.slice(0, 10).map((item) => {
@@ -133,11 +135,11 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
             );
           })}
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Platform Distribution */}
-        <div className="bg-white rounded-lg border p-6">
+        <Card className="bg-white rounded-lg border p-6">
           <h3 className="font-semibold mb-4">Platform Distribution</h3>
           <div className="space-y-3">
             {Object.entries(metrics.platformDistribution).map(([platform, count]) => {
@@ -160,10 +162,10 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
               );
             })}
           </div>
-        </div>
+        </Card>
 
         {/* Template Usage */}
-        <div className="bg-white rounded-lg border p-6">
+        <Card className="bg-white rounded-lg border p-6">
           <h3 className="font-semibold mb-4">Most Used Templates</h3>
           {metrics.templateUsage.length === 0 ? (
             <div className="text-center py-8 text-gray-500 text-sm">
@@ -182,11 +184,11 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
               ))}
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Status Breakdown */}
-      <div className="bg-white rounded-lg border p-6">
+      <Card className="bg-white rounded-lg border p-6">
         <h3 className="font-semibold mb-4">Content by Status</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.entries(metrics.contentCreated.byStatus).map(([status, count]) => (
@@ -196,7 +198,7 @@ export default function ProductivityDashboard({ userId }: ProductivityDashboardP
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

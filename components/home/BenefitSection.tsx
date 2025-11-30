@@ -21,7 +21,7 @@ export function BenefitSection({
   imagePosition = 'left',
   background = 'default',
 }: BenefitSectionProps) {
-  const bgClass = background === 'alternate' ? 'bg-[#131316]' : 'bg-[#0F0F10]';
+  const bgClass = background === 'alternate' ? 'bg-[var(--bg-secondary)]' : 'bg-[var(--bg-primary)]';
   const isIconLeft = imagePosition === 'left';
 
   return (

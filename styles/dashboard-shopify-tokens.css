@@ -40,38 +40,38 @@
      ============================================ */
   
   /* Canvas & Surface Colors */
-  --bg-app: #F8F9FB;           /* Gris très pâle - main canvas background */
+  --bg-app: var(--bg-glass);           /* Gris très pâle - main canvas background */
   --bg-surface: #FFFFFF;        /* Pure white - cards, containers, surfaces */
   
   /* Brand Colors - Electric Indigo */
-  --color-indigo: #6366f1;      /* Primary brand color */
+  --color-indigo: var(--accent-info);      /* Primary brand color */
   --color-indigo-dark: #4f46e5; /* Darker shade for gradients */
   --color-indigo-light: #818cf8; /* Lighter shade for hover states */
-  --color-indigo-fade: rgba(99, 102, 241, 0.08); /* Fade for backgrounds */
-  --color-indigo-glow: rgba(99, 102, 241, 0.2);  /* Glow for focus states */
+  --color-indigo-fade: rgba(59, 130, 246, 0.08); /* Fade for backgrounds */
+  --color-indigo-glow: rgba(59, 130, 246, 0.2);  /* Glow for focus states */
   
   /* Text Colors */
-  --color-text-main: #1F2937;   /* Deep gray - primary text */
-  --color-text-sub: #6B7280;    /* Medium gray - secondary text */
-  --color-text-heading: #111827; /* Near-black - headings */
-  --color-text-inactive: #6B7280; /* Medium gray - inactive elements (WCAG compliant: 4.5:1) */
+  --color-text-main: var(--text-primary);   /* Deep gray - primary text */
+  --color-text-sub: var(--text-tertiary);    /* Medium gray - secondary text */
+  --color-text-heading: var(--text-primary); /* Near-black - headings */
+  --color-text-inactive: var(--text-tertiary); /* Medium gray - inactive elements (WCAG compliant: 4.5:1) */
 
   /* Navigation Shell (dark chrome) */
   --nav-surface: #0f0f10;            /* Header background */
   --nav-surface-elevated: #151516;   /* Sidebar background */
   --nav-border: #1f1f22;             /* Divider line */
   --nav-border-strong: #2e2e33;      /* Stronger divider for hover/focus */
-  --nav-text: #e5e7eb;               /* Primary nav text */
-  --nav-text-muted: #9ca3af;         /* Secondary nav text */
-  --nav-text-subtle: #6b7280;        /* Tertiary text/icons */
-  --nav-hover: #1a1a1c;              /* Hover fill */
+  --nav-text: var(--border-subtle);               /* Primary nav text */
+  --nav-text-muted: var(--text-secondary);         /* Secondary nav text */
+  --nav-text-subtle: var(--text-tertiary);        /* Tertiary text/icons */
+  --nav-hover: var(--bg-hover);              /* Hover fill */
   --nav-active-bg: #1e1f24;          /* Active item background */
   --nav-active-indicator: #7d57c1;   /* Accent line for active state */
   --nav-search-bg: #18181a;          /* Search field background */
   --nav-search-border: #2e2e33;      /* Search border */
   
   /* Border Colors */
-  --color-border-light: #6B7280;  /* Medium-dark gray for 3:1 contrast (WCAG compliant) */
+  --color-border-light: var(--text-tertiary);  /* Medium-dark gray for 3:1 contrast (WCAG compliant) */
   --color-border-medium: rgba(107, 114, 128, 0.5);
   
   /* ============================================
@@ -80,9 +80,9 @@
   
   /* Soft shadow physics - diffused, natural */
   --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
-  --shadow-card-hover: 0 12px 24px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 12px 24px rgba(0, 0, 0, 0.3);
   --shadow-search-focus: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --shadow-mobile-drawer: 10px 0 25px rgba(0, 0, 0, 0.1);
+  --shadow-mobile-drawer: 10px 0 25px rgba(0, 0, 0, 0.3);
   
   /* ============================================
      BORDER RADIUS
@@ -117,8 +117,8 @@
      ============================================ */
   
   /* Duotone icon colors - dynamically controlled */
-  --icon-primary: #9CA3AF;      /* Default gray */
-  --icon-secondary: #9CA3AF;    /* Default gray */
+  --icon-primary: var(--text-secondary);      /* Default gray */
+  --icon-secondary: var(--text-secondary);    /* Default gray */
   
   /* ============================================
      TYPOGRAPHY
@@ -233,8 +233,8 @@
    ============================================ */
 
 .nav-item {
-  --icon-primary: #6B7280;
-  --icon-secondary: #6B7280;
+  --icon-primary: var(--text-tertiary);
+  --icon-secondary: var(--text-tertiary);
   color: var(--nav-text-muted);
   background-color: transparent;
 }
@@ -262,76 +262,76 @@
 
 /* Heading styles */
 .huntaze-heading {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
   line-height: 1.2;
 }
 
 .huntaze-h1 {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-h1);
+  font-size: var(--text-4xl);
   line-height: 1.2;
 }
 
 .huntaze-h2 {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-h2);
+  font-size: var(--text-3xl);
   line-height: 1.3;
 }
 
 .huntaze-h3 {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-h3);
+  font-size: var(--text-2xl);
   line-height: 1.4;
 }
 
 .huntaze-welcome-title {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-welcome);
+  font-size: var(--text-3xl);
   letter-spacing: var(--letter-spacing-tight);
   line-height: 1.3;
 }
 
 /* Body text styles */
 .huntaze-body {
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-body);
   color: var(--color-text-main);
-  font-size: var(--font-size-body);
+  font-size: var(--text-base);
   line-height: 1.5;
 }
 
 .huntaze-body-small {
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-body);
   color: var(--color-text-main);
-  font-size: var(--font-size-small);
+  font-size: var(--text-sm);
   line-height: 1.5;
 }
 
 .huntaze-body-secondary {
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-body);
   color: var(--color-text-sub);
-  font-size: var(--font-size-body);
+  font-size: var(--text-base);
   line-height: 1.5;
 }
 
 /* Label styles */
 .huntaze-label {
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-sub);
-  font-size: var(--font-size-label);
+  font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1.4;
@@ -342,10 +342,10 @@
 .huntaze-layout h1,
 [data-dashboard="true"] h1,
 .huntaze-h1 {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-h1);
+  font-size: var(--text-4xl);
   line-height: 1.2;
 }
 
@@ -353,10 +353,10 @@
 .huntaze-layout h2,
 [data-dashboard="true"] h2,
 .huntaze-h2 {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-h2);
+  font-size: var(--text-3xl);
   line-height: 1.3;
 }
 
@@ -364,10 +364,10 @@
 .huntaze-layout h3,
 [data-dashboard="true"] h3,
 .huntaze-h3 {
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
-  font-size: var(--font-size-h3);
+  font-size: var(--text-2xl);
   line-height: 1.4;
 }
 
@@ -375,10 +375,10 @@
 .huntaze-layout p,
 [data-dashboard="true"] p,
 .huntaze-body {
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-body);
   color: var(--color-text-main);
-  font-size: var(--font-size-body);
+  font-size: var(--text-base);
   line-height: 1.5;
 }
 

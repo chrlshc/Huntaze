@@ -1,3 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/export-all";
+import { Card } from '@/components/ui/card';
+
 export const dynamic = 'force-static'
 
 export default function DesignSystemPage() {
@@ -11,9 +16,9 @@ export default function DesignSystemPage() {
         <section className="mb-12">
           <h2 className="text-xl font-semibold mb-4">Buttons</h2>
           <div className="flex flex-wrap gap-4">
-            <button className="btn-primary px-5 py-2 rounded-full hover-lift-soft">Primary</button>
-            <button className="btn-secondary px-5 py-2 rounded-full hover-lift-soft">Secondary</button>
-            <button className="btn-outline px-5 py-2 rounded-full hover-lift-soft">Outline</button>
+            <Button variant="primary">Primary</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="outline">Outline</Button>
           </div>
         </section>
 
@@ -22,10 +27,10 @@ export default function DesignSystemPage() {
           <h2 className="text-xl font-semibold mb-4">Cards</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1,2,3].map((i) => (
-              <div key={i} className="rounded-xl border border-border-subtle bg-background-elevated p-6 hover-lift-soft transition">
+              <Card key={i} className="rounded-xl border border-border-subtle bg-background-elevated p-6 hover-lift-soft transition">
                 <h3 className="font-semibold mb-2">Card {i}</h3>
                 <p className="text-text-secondary text-sm">Surface elevée, bordure subtile, lisible en dark et light.</p>
-              </div>
+              </Card>
             ))}
           </div>
         </section>
@@ -36,15 +41,15 @@ export default function DesignSystemPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm mb-2 text-text-secondary">Email</label>
-              <input className="w-full rounded-md px-3 py-2 border border-border-default bg-background-secondary" placeholder="you@huntaze.com" />
+              <Input placeholder="you@huntaze.com" />
             </div>
             <div>
               <label className="block text-sm mb-2 text-text-secondary">Plan</label>
-              <select className="w-full rounded-md px-3 py-2 border border-border-default bg-background-secondary">
+              <Select className="w-full rounded-md px-3 py-2 border border-border-default bg-background-secondary">
                 <option>Starter</option>
                 <option>Pro</option>
                 <option>Enterprise</option>
-              </select>
+              </Select>
             </div>
           </div>
         </section>

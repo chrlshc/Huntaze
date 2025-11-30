@@ -86,6 +86,7 @@ export class PreferenceLearningEngine implements IPreferenceLearningEngine {
     circuitBreakerConfig?: {
       failureThreshold?: number;
       resetTimeout?: number;
+      monitoringPeriod?: number;
     }
   ) {
     this.retryConfig = {
@@ -96,10 +97,12 @@ export class PreferenceLearningEngine implements IPreferenceLearningEngine {
       ...retryConfig
     };
 
-    this.circuitBreaker = new CircuitBreaker(
-      circuitBreakerConfig?.failureThreshold || 5,
-      circuitBreakerConfig?.resetTimeout || 60000
-    );
+    this.circuitBreaker = new CircuitBreaker({
+      failureThreshold: circuitBreakerConfig?.failureThreshold || 5,
+      resetTimeout: circuitBreakerConfig?.resetTimeout || 60000,
+      monitoringPeriod: circuitBreakerConfig?.monitoringPeriod || 60000,
+      name: 'preference-learning-engine'
+    });
 
     this.cache = new Map();
   }

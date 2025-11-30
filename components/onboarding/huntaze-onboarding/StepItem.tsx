@@ -12,6 +12,7 @@
 import { useState } from 'react';
 import { CheckCircle, Info, Zap, Clock } from 'lucide-react';
 import { StepItemProps } from './types';
+import { Button } from "@/components/ui/button";
 
 export default function StepItem({
   step,
@@ -69,23 +70,23 @@ export default function StepItem({
           {(step.badge || step.impact || step.timeEstimate || step.required) && (
             <div className="flex flex-wrap items-center gap-2 mt-2">
               {step.required && (
-                <span className="text-[11px] rounded-full bg-neutral-900 text-white px-2 py-0.5">
+                <span className="text-xs rounded-full bg-neutral-900 text-white px-2 py-0.5">
                   Required
                 </span>
               )}
               {step.badge && (
-                <span className="text-[11px] rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 inline-flex items-center gap-1">
+                <span className="text-xs rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 inline-flex items-center gap-1">
                   <Zap className="w-3 h-3" aria-hidden="true" />
                   {step.badge}
                 </span>
               )}
               {step.impact && (
-                <span className="text-[11px] rounded-full bg-emerald-100 text-emerald-800 px-2 py-0.5">
+                <span className="text-xs rounded-full bg-emerald-100 text-emerald-800 px-2 py-0.5">
                   {step.impact} impact
                 </span>
               )}
               {step.timeEstimate && (
-                <span className="text-[11px] rounded-full bg-neutral-100 text-neutral-700 px-2 py-0.5 inline-flex items-center gap-1">
+                <span className="text-xs rounded-full bg-neutral-100 text-neutral-700 px-2 py-0.5 inline-flex items-center gap-1">
                   <Clock className="w-3 h-3" aria-hidden="true" />
                   {step.timeEstimate}
                 </span>
@@ -114,14 +115,15 @@ export default function StepItem({
           <div className="flex gap-2 flex-shrink-0">
             {/* Skip Button */}
             {!step.required && (
-              <button
-                onClick={() => handleUpdate('skipped')}
+              <Button 
+                variant="primary" 
+                onClick={() => handleUpdate('skipped')} 
                 disabled={loading}
                 className="text-sm font-medium text-neutral-700 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded-md px-1 disabled:opacity-50"
                 aria-label={`Skip ${step.title} for now`}
               >
                 Skip for now
-              </button>
+              </Button>
             )}
 
             {/* Complete Button */}

@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 import { 
   Check, 
   CreditCard, 
@@ -145,7 +146,8 @@ export default function BillingPage() {
         {/* Billing Toggle */}
         <div className="flex justify-center mb-12">
           <div className="bg-gray-100 p-1 rounded-xl inline-flex">
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => setBillingPeriod('monthly')}
               className={`px-6 py-3 rounded-lg font-medium transition-all ${
                 billingPeriod === 'monthly'
@@ -154,8 +156,9 @@ export default function BillingPage() {
               }`}
             >
               Monthly billing
-            </button>
-            <button
+            </Button>
+            <Button 
+              variant="primary" 
               onClick={() => setBillingPeriod('yearly')}
               className={`px-6 py-3 rounded-lg font-medium transition-all ${
                 billingPeriod === 'yearly'
@@ -165,7 +168,7 @@ export default function BillingPage() {
             >
               Yearly billing
               <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Save 20%</span>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -256,14 +259,15 @@ export default function BillingPage() {
           <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
             Join 5,000+ creators using Huntaze to automate fan interactions and save time
           </p>
-          <button
+          <Button 
+            variant="ghost" 
             onClick={() => {/* handle checkout */}}
             disabled={loading}
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-purple-600 rounded-xl font-bold hover:bg-gray-50 transition-all shadow-xl"
           >
             {loading ? 'Processing...' : 'Continue to Payment'}
             <ArrowRight className="w-5 h-5" />
-          </button>
+          </Button>
           <p className="text-sm text-purple-200 mt-4">
             <Lock className="w-4 h-4 inline mr-1" />
             Secure payment. Cancel anytime. No hidden fees.

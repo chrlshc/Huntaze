@@ -20,7 +20,7 @@ export function BottomNav({ items, className = '' }: BottomNavProps) {
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#1F1F1F] border-t border-gray-200 dark:border-[#2A2A2A] lg:hidden ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[var(--bg-secondary)] border-t border-gray-200 dark:border-[var(--bg-tertiary)] lg:hidden ${className}`}
       role="navigation"
       aria-label="Mobile navigation"
     >

@@ -87,8 +87,8 @@ export default function RevenueGrowthChart() {
             {/* Gradient definition */}
             <defs>
               <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#8B5CF6" />
-                <stop offset="100%" stopColor="#EC4899" />
+                <stop offset="0%" stopColor="var(--accent-primary)" />
+                <stop offset="100%" stopColor="var(--accent-primary)" />
               </linearGradient>
             </defs>
             

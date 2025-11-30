@@ -4,14 +4,26 @@
  * Shared TypeScript types for authentication and authorization
  */
 
-import type { User, Session } from 'next-auth';
+import type { User as NextAuthUser, Session } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
+
+// Re-export User from next-auth
+export type User = NextAuthUser;
+
+// Export AuthState interface
+export interface AuthState {
+  user: ExtendedUser | null;
+  session: ExtendedSession | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  error: AuthError | null;
+}
 
 // ============================================================================
 // User Types
 // ============================================================================
 
-export interface ExtendedUser extends User {
+export interface ExtendedUser extends NextAuthUser {
   id: string;
   email: string;
   name?: string | null;
@@ -19,6 +31,7 @@ export interface ExtendedUser extends User {
   creatorId?: string;
   emailVerified?: Date | null;
   image?: string | null;
+  onboardingCompleted: boolean;
 }
 
 export enum UserRole {
@@ -39,6 +52,7 @@ export interface ExtendedSession extends Session {
     role?: UserRole;
     creatorId?: string;
     image?: string | null;
+    onboardingCompleted: boolean;
   };
   error?: AuthError;
 }
@@ -48,7 +62,7 @@ export interface ExtendedSession extends Session {
 // ============================================================================
 
 export interface ExtendedToken extends JWT {
-  id?: string;
+  id: string;
   email?: string;
   role?: UserRole;
   creatorId?: string;

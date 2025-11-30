@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle, AlertTriangle, XCircle, Loader2, Wand2 } from 'lucide-react';
 import { useComplianceCheck, type ComplianceResult } from '@/hooks/useComplianceCheck';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { Button } from "@/components/ui/button";
 
 interface ComplianceCheckerProps {
   content: string;
@@ -178,13 +179,13 @@ const ComplianceChecker = ({ content, niche, context, className = '', autoCheck 
           </span>
         </div>
         {!autoCheck && (
-          <button
-            onClick={() => checkContent(content, niche, context).then(setResult)}
+          <Button 
+            variant="primary" 
+            onClick={() => checkContent(content, niche, context).then(setResult)} 
             disabled={isChecking || (content?.trim()?.length || 0) < 10}
-            className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
           >
             {isChecking ? 'Checking...' : 'Check'}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -230,15 +231,15 @@ const ComplianceChecker = ({ content, niche, context, className = '', autoCheck 
                     <div className="text-gray-600 ml-3">{risk.suggestion}</div>
                   </div>
                   {quickFix && onContentChange && (
-                    <button
-                      onClick={() => applyQuickFix(risk)}
+                    <Button 
+                      variant="primary" 
+                      onClick={() => applyQuickFix(risk)} 
                       disabled={isApplyingFix}
-                      className="flex items-center gap-1 text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 transition-colors"
                       title={`Fix: ${quickFix.slice(0, 50)}${quickFix.length > 50 ? '…' : ''}`}
                     >
                       {isApplyingFix ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                       {isApplyingFix ? 'Fixing…' : 'Quick Fix'}
-                    </button>
+                    </Button>
                   )}
                 </div>
                 {quickFix && (
@@ -260,13 +261,9 @@ const ComplianceChecker = ({ content, niche, context, className = '', autoCheck 
 
       {result && result.risks.length > 1 && onContentChange && (
         <div className="mt-2 pt-2 border-t border-gray-200">
-          <button
-            onClick={applyBulkFixes}
-            disabled={isApplyingFix}
-            className="w-full text-xs px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
-          >
-            🪄 Fix All Issues ({result.risks.length})
-          </button>
+          <Button variant="primary" onClick={applyBulkFixes} disabled={isApplyingFix}>
+  🪄 Fix All Issues ({result.risks.length})
+</Button>
         </div>
       )}
     </div>

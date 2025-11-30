@@ -51,7 +51,7 @@ class DataPrivacyService {
       const key = Buffer.from(this.config.encryptionKey, 'hex');
       const iv = crypto.randomBytes(16);
       
-      const cipher = crypto.createCipher(algorithm, key);
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
       cipher.setAAD(Buffer.from(dataType));
       
       const dataString = JSON.stringify(data);
@@ -72,7 +72,7 @@ class DataPrivacyService {
       return Buffer.from(JSON.stringify(result)).toString('base64');
       
     } catch (error) {
-      logger.error('Failed to encrypt sensitive data', { error, dataType });
+      logger.error('Failed to encrypt sensitive data', error instanceof Error ? error : new Error(String(error)), { dataType });
       throw new Error('Encryption failed');
     }
   }
@@ -90,7 +90,7 @@ class DataPrivacyService {
       const iv = Buffer.from(encryptionInfo.iv, 'hex');
       const authTag = Buffer.from(encryptionInfo.authTag, 'hex');
       
-      const decipher = crypto.createDecipher(algorithm, key);
+      const decipher = crypto.createDecipheriv(algorithm, key, iv);
       decipher.setAAD(Buffer.from(expectedDataType));
       decipher.setAuthTag(authTag);
       
@@ -100,7 +100,7 @@ class DataPrivacyService {
       return JSON.parse(decrypted);
       
     } catch (error) {
-      logger.error('Failed to decrypt sensitive data', { error, expectedDataType });
+      logger.error('Failed to decrypt sensitive data', error instanceof Error ? error : new Error(String(error)), { expectedDataType });
       throw new Error('Decryption failed');
     }
   }
@@ -118,7 +118,7 @@ class DataPrivacyService {
       };
       
     } catch (error) {
-      logger.error('Failed to anonymize user data', { error, userId });
+      logger.error('Failed to anonymize user data', error instanceof Error ? error : new Error(String(error)), { userId });
       throw new Error('Anonymization failed');
     }
   }
@@ -374,7 +374,7 @@ class DataPrivacyService {
       try {
         await this.performRetentionCleanup();
       } catch (error) {
-        logger.error('Retention cleanup failed', { error });
+        logger.error('Retention cleanup failed', error instanceof Error ? error : new Error(String(error)), {});
       }
     }, 24 * 60 * 60 * 1000); // 24 hours
   }
@@ -386,7 +386,7 @@ class DataPrivacyService {
       try {
         await this.cleanupDataType(dataType, policy);
       } catch (error) {
-        logger.error(`Cleanup failed for data type: ${dataType}`, { error });
+        logger.error(`Cleanup failed for data type: ${dataType}`, error instanceof Error ? error : new Error(String(error)), {});
       }
     }
     
@@ -415,7 +415,7 @@ class DataPrivacyService {
     // 3. Query database for records older than deleteDate
     // 4. Delete those records
     
-    logger.debug(`Simulated cleanup for ${dataType}`, { anonymizeDate, deleteDate });
+    logger.info(`Simulated cleanup for ${dataType}`, { anonymizeDate, deleteDate });
   }
 
   // User Data Management
@@ -436,27 +436,27 @@ class DataPrivacyService {
 
   private async deleteUserBehavioralData(userId: string): Promise<void> {
     // Delete behavioral tracking data
-    logger.debug(`Deleting behavioral data for user: ${userId}`);
+    logger.info(`Deleting behavioral data for user: ${userId}`);
   }
 
   private async deleteUserPersonalizationData(userId: string): Promise<void> {
     // Delete ML personalization data
-    logger.debug(`Deleting personalization data for user: ${userId}`);
+    logger.info(`Deleting personalization data for user: ${userId}`);
   }
 
   private async deleteUserAnalyticsData(userId: string): Promise<void> {
     // Delete analytics data
-    logger.debug(`Deleting analytics data for user: ${userId}`);
+    logger.info(`Deleting analytics data for user: ${userId}`);
   }
 
   private async anonymizeUserAnalyticsData(userId: string): Promise<void> {
     // Anonymize analytics data instead of deleting
-    logger.debug(`Anonymizing analytics data for user: ${userId}`);
+    logger.info(`Anonymizing analytics data for user: ${userId}`);
   }
 
   private async deleteUserMarketingData(userId: string): Promise<void> {
     // Delete marketing data
-    logger.debug(`Deleting marketing data for user: ${userId}`);
+    logger.info(`Deleting marketing data for user: ${userId}`);
   }
 
   // Data Export (GDPR Right to Data Portability)

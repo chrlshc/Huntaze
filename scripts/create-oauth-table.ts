@@ -49,7 +49,7 @@ async function createOAuthTable() {
     console.log('✅ oauth_accounts table created successfully!');
     
     // Verify
-    const count = await prisma.oAuthAccount.count();
+    const count = await prisma.oauth_accounts.count();
     console.log(`OAuthAccount count: ${count}`);
     
   } catch (error: any) {

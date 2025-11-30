@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { hydrationMonitoringService, HydrationMetrics, HydrationError, HydrationAlert } from '@/lib/services/hydrationMonitoringService';
 import { HydrationSafeWrapper } from './HydrationSafeWrapper';
+import { Button } from "@/components/ui/button";
 
 interface HydrationHealthDashboardProps {
   className?: string;
@@ -169,7 +170,8 @@ export function HydrationHealthDashboard({
 
         {/* Section détaillée (collapsible) */}
         <div className="border-t pt-4">
-          <button
+          <Button 
+            variant="primary" 
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
@@ -177,7 +179,7 @@ export function HydrationHealthDashboard({
               ▶
             </span>
             <span className="font-medium">Détails Techniques</span>
-          </button>
+          </Button>
 
           {isExpanded && (
             <div className="mt-4 space-y-4">
@@ -315,12 +317,13 @@ function ErrorCard({
           )}
         </div>
         {showDetails && (
-          <button
+          <Button 
+            variant="primary" 
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-xs text-gray-500 hover:text-gray-700"
           >
             {isExpanded ? 'Masquer' : 'Détails'}
-          </button>
+          </Button>
         )}
       </div>
       

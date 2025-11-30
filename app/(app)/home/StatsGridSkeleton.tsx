@@ -13,6 +13,7 @@
 'use client';
 
 import { Skeleton } from '@/src/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 
 interface StatsGridSkeletonProps {
   className?: string;
@@ -37,7 +38,7 @@ export function StatsGridSkeleton({
             animationDelay: `${index * 100}ms` // Stagger animation
           }}
         >
-          <div className="stat-card-header">
+          <div className="-header">
             <Skeleton variant="text" className="w-3/5 h-4" />
             <Skeleton variant="avatar" className="w-4 h-4" />
           </div>
@@ -63,10 +64,10 @@ export function CompactStatsGridSkeleton({ className = '' }: { className?: strin
   return (
     <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
       {Array.from({ length: 4 }, (_, index) => (
-        <div key={index} className="stat-card p-4">
+        <Card key={index} className="p-4">
           <Skeleton variant="text" className="h-6 w-3/4 mb-2" />
           <Skeleton variant="text" className="h-3 w-1/2" />
-        </div>
+        </Card>
       ))}
     </div>
   );

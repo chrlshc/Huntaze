@@ -88,8 +88,8 @@ export default function ProgressIndicator({
             style={{ 
               width: `${progress}%`,
               background: progress === 100 
-                ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
-                : 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)',
+                ? 'linear-gradient(90deg, var(--accent-success) 0%, var(--accent-success) 100%)'
+                : 'linear-gradient(90deg, var(--accent-info) 0%, #2563eb 100%)',
             }}
           >
             {/* Shimmer Effect */}

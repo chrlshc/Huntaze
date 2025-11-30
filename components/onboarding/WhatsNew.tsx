@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { X, Sparkles, ExternalLink } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface NewFeature {
   id: string;
@@ -71,7 +73,7 @@ export default function WhatsNew({ onClose, onStartTour }: WhatsNewProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+      <Card className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
           <div className="flex items-start justify-between">
@@ -82,13 +84,9 @@ export default function WhatsNew({ onClose, onStartTour }: WhatsNewProps) {
                 <p className="text-blue-100 text-sm">Check out our latest features</p>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition"
-              aria-label="Close"
-            >
+            <Button variant="primary" onClick={onClose} aria-label="Close">
               <X className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -128,13 +126,14 @@ export default function WhatsNew({ onClose, onStartTour }: WhatsNewProps) {
                   </p>
 
                   {feature.tourAvailable && (
-                    <button
+                    <Button 
+                      variant="primary" 
                       onClick={() => handleStartTour(feature.id)}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
                     >
                       <ExternalLink className="w-4 h-4" />
                       Take a Tour
-                    </button>
+                    </Button>
                   )}
                 </div>
               ))}
@@ -144,14 +143,11 @@ export default function WhatsNew({ onClose, onStartTour }: WhatsNewProps) {
 
         {/* Footer */}
         <div className="border-t border-gray-200 p-4 bg-gray-50">
-          <button
-            onClick={onClose}
-            className="w-full py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
-          >
+          <Button variant="secondary" onClick={onClose}>
             Close
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

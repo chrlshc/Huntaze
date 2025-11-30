@@ -34,15 +34,15 @@ export const contentNotificationService = {
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: var(--text-primary); }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
             .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 10px 10px; }
             .preview-box { background: white; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; border-radius: 5px; }
             .info-row { margin: 10px 0; }
             .label { font-weight: bold; color: #667eea; }
             .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+            .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-xs); }
           </style>
         </head>
         <body>
@@ -70,7 +70,7 @@ export const contentNotificationService = {
                 Edit Content
               </a>
               
-              <a href="${process.env.NEXT_PUBLIC_APP_URL}/content/schedule/${content.id}" class="button" style="background: #dc3545;">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL}/content/schedule/${content.id}" class="button" style="background: var(--accent-error);">
                 Cancel Schedule
               </a>
 
@@ -112,13 +112,13 @@ export const contentNotificationService = {
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: var(--text-primary); }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .success-icon { font-size: 48px; margin-bottom: 10px; }
+            .header { background: linear-gradient(135deg, var(--accent-success) 0%, var(--accent-success) 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 10px 10px; }
+            .success-icon { font-size: var(--text-5xl); margin-bottom: 10px; }
             .links-box { background: white; padding: 20px; margin: 20px 0; border-radius: 5px; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+            .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-xs); }
           </style>
         </head>
         <body>
@@ -170,14 +170,14 @@ export const contentNotificationService = {
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: var(--text-primary); }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .error-icon { font-size: 48px; margin-bottom: 10px; }
-            .error-box { background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; margin: 20px 0; border-radius: 5px; }
+            .header { background: linear-gradient(135deg, var(--accent-error) 0%, var(--accent-error) 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 10px 10px; }
+            .error-icon { font-size: var(--text-5xl); margin-bottom: 10px; }
+            .error-box { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-error); padding: 15px; margin: 20px 0; border-radius: 5px; }
             .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+            .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-xs); }
           </style>
         </head>
         <body>

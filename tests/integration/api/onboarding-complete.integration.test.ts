@@ -81,7 +81,7 @@ const MINIMAL_ONBOARDING_DATA = {
 async function createTestUser(onboardingCompleted = false) {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       email: `test-onboarding-${Date.now()}-${Math.random()}@example.com`,
@@ -95,7 +95,7 @@ async function createTestUser(onboardingCompleted = false) {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-onboarding@' },
     },
@@ -197,7 +197,7 @@ describe('Onboarding Complete API Integration Tests', () => {
         csrfToken
       );
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -211,7 +211,7 @@ describe('Onboarding Complete API Integration Tests', () => {
         csrfToken
       );
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -225,7 +225,7 @@ describe('Onboarding Complete API Integration Tests', () => {
         csrfToken
       );
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -239,7 +239,7 @@ describe('Onboarding Complete API Integration Tests', () => {
         csrfToken
       );
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -255,7 +255,7 @@ describe('Onboarding Complete API Integration Tests', () => {
       
       expect(response.status).toBe(200);
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -426,7 +426,7 @@ describe('Onboarding Complete API Integration Tests', () => {
       expect(data.error).toContain('already completed');
       
       // Cleanup
-      await prisma.user.delete({ where: { id: completedUser.id } });
+      await prisma.users.delete({ where: { id: completedUser.id } });
     });
   });
 
@@ -437,7 +437,7 @@ describe('Onboarding Complete API Integration Tests', () => {
   describe('User Isolation', () => {
     it('should only update authenticated user data', async () => {
       // Create another user
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: `other-user-${Date.now()}-${Math.random()}@example.com`,
           password: await hash('password', 12),
@@ -454,14 +454,14 @@ describe('Onboarding Complete API Integration Tests', () => {
       );
       
       // Other user should not be affected
-      const otherUserAfter = await prisma.user.findUnique({
+      const otherUserAfter = await prisma.users.findUnique({
         where: { id: otherUser.id },
       });
       
       expect(otherUserAfter?.onboardingCompleted).toBe(false);
       
       // Cleanup
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.users.delete({ where: { id: otherUser.id } });
     });
   });
 
@@ -644,7 +644,7 @@ describe('Onboarding Complete API Integration Tests', () => {
         csrfToken
       );
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -667,7 +667,7 @@ describe('Onboarding Complete API Integration Tests', () => {
       
       expect(response.status).toBe(200);
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -688,7 +688,7 @@ describe('Onboarding Complete API Integration Tests', () => {
       
       expect(response.status).toBe(200);
       
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       

@@ -315,7 +315,7 @@ export async function getMarketingCampaignContext(userId: number, limit = 5) {
  * Get transaction history for revenue insights
  */
 export async function getTransactionHistory(userId: number, limit = 20) {
-  const transactions = await prisma.transactions.findMany({
+  const transactions = await prisma.transaction.findMany({
     where: {
       user_id: userId,
     },
@@ -537,7 +537,7 @@ export async function getSalesContext(userId: number, fanId?: string) {
     context.fanSubscription = await getFanSubscriptionInfo(userId, fanId);
     
     // Get fan's transaction history
-    const fanTransactions = await prisma.transactions.findMany({
+    const fanTransactions = await prisma.transaction.findMany({
       where: {
         user_id: userId,
         // Note: You may need to add a fan_id field to transactions table

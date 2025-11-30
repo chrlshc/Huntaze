@@ -88,7 +88,7 @@
    ======================================== */
 
 .beta-hero-title {
-  font-size: 48px;
+  font-size: var(--text-5xl);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   margin-bottom: var(--space-6);
@@ -263,7 +263,7 @@
 }
 
 .beta-feature-icon {
-  font-size: 48px;
+  font-size: var(--text-5xl);
   margin-bottom: var(--space-4);
 }
 
@@ -315,7 +315,7 @@
 
 @media (max-width: 768px) {
   .beta-hero-title {
-    font-size: 36px;
+    font-size: var(--text-4xl);
   }
 
   .beta-hero-subtitle {

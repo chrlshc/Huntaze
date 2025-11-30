@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getServerSession } from '@/lib/auth';
 import type { Message } from '@/lib/types/messages';
 
 /**
@@ -15,7 +15,7 @@ export async function GET(
     // Await params in Next.js 16
     const { threadId } = await params;
     
-    const session = await getSession(request);
+    const session = await getServerSession();
     
     if (!session?.user?.id) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });

@@ -480,11 +480,22 @@ export class PerformanceDiagnostics {
     slowRequests: SlowRequestReport[];
     loadingStates: LoadingStateReport;
     excessiveRenders: RenderReport[];
+    webVitals?: {
+      lcp?: number;
+      fid?: number;
+      cls?: number;
+      ttfb?: number;
+      fcp?: number;
+      tti?: number;
+    };
+    bottlenecks?: Bottleneck[];
   } {
     return {
       slowRequests: this.identifySlowRequests(),
       loadingStates: this.analyzeLoadingStates(),
       excessiveRenders: this.detectExcessiveRenders(),
+      webVitals: undefined,
+      bottlenecks: [],
     };
   }
 

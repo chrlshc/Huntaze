@@ -17,7 +17,7 @@ async function checkTables() {
     
     // Try to count oauth accounts
     try {
-      const count = await prisma.oAuthAccount.count();
+      const count = await prisma.oauth_accounts.count();
       console.log(`\nOAuthAccount count: ${count}`);
     } catch (error: any) {
       console.error(`\nError counting OAuthAccount: ${error.message}`);

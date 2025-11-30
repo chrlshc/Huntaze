@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 type Proposal = {
   id: string;
@@ -57,18 +59,20 @@ export default function RoadmapClient() {
         {proposals.map((p) => {
           const total = (p.votes || []).reduce((s, v) => s + (v.weight || 0), 0);
           return (
-            <div key={p.id} className="elevated-card rounded-lg p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{p.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{p.description}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Week: {new Date(p.weekStart).toLocaleDateString()}</p>
+            <div key={p.id}>
+              <Card className="rounded-lg p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{p.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{p.description}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Week: {new Date(p.weekStart).toLocaleDateString()}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-700 dark:text-gray-200">Votes: <b>{total}</b></div>
+                    <Button variant="primary" onClick={() => vote(p.id)}>Vote</Button>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-700 dark:text-gray-200">Votes: <b>{total}</b></div>
-                  <button onClick={() => vote(p.id)} className="mt-2 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm">Vote</button>
-                </div>
-              </div>
+              </Card>
             </div>
           );
         })}

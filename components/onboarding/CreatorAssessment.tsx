@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sparkles, TrendingUp, Users, Zap } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Question {
   id: string;
@@ -110,12 +111,13 @@ export function CreatorAssessment({ onComplete }: CreatorAssessmentProps) {
             {getLevelDescription(calculatedLevel)}
           </p>
         </div>
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => onComplete({ level: calculatedLevel, responses })}
           className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
         >
           Continue
-        </button>
+        </Button>
       </div>
     );
   }
@@ -139,8 +141,9 @@ export function CreatorAssessment({ onComplete }: CreatorAssessmentProps) {
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {question.options.map(option => (
-                <button
+                <Button 
                   key={option.value}
+                  variant="secondary" 
                   onClick={() => handleOptionSelect(question.id, option.value)}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
                     responses[question.id] === option.value
@@ -149,24 +152,16 @@ export function CreatorAssessment({ onComplete }: CreatorAssessmentProps) {
                   }`}
                 >
                   <span className="font-medium text-gray-900">{option.label}</span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
         ))}
       </div>
 
-      <button
-        onClick={calculateLevel}
-        disabled={!isComplete}
-        className={`w-full py-3 rounded-lg font-semibold transition ${
-          isComplete
-            ? 'bg-blue-600 text-white hover:bg-blue-700'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        }`}
-      >
+      <Button variant="primary" onClick={calculateLevel} disabled={!isComplete}>
         See My Level
-      </button>
+      </Button>
     </div>
   );
 }

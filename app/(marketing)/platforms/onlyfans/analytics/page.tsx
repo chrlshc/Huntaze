@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 import { 
   Users, 
   DollarSign, 
@@ -12,6 +13,8 @@ import {
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/export-all";
 
 interface KPIData {
   totalFans: number;
@@ -167,22 +170,19 @@ export default function OnlyFansAnalyticsPage() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <select 
+            <Select 
               value={timeRange} 
-              onChange={(e) => setTimeRange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTimeRange(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="7d">7 days</option>
               <option value="30d">30 days</option>
               <option value="90d">90 days</option>
-            </select>
-            <button 
-              onClick={exportData}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
+            </Select>
+            <Button variant="ghost" onClick={exportData}>
+  <Download className="w-4 h-4" />
               Exporter CSV
-            </button>
+</Button>
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function OnlyFansAnalyticsPage() {
         {/* KPIs */}
         {kpis && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-600">Total Fans</h3>
                 <Users className="h-4 w-4 text-gray-400" />
@@ -200,9 +200,9 @@ export default function OnlyFansAnalyticsPage() {
               <p className="text-xs text-gray-500 mt-1">
                 {kpis.activeFans} active (7d)
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-600">Revenue Total</h3>
                 <DollarSign className="h-4 w-4 text-gray-400" />
@@ -211,9 +211,9 @@ export default function OnlyFansAnalyticsPage() {
               <p className="text-xs text-gray-500 mt-1">
                 {formatCurrency(kpis.avgRevenuePerFan)} par fan
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-600">Messages</h3>
                 <MessageSquare className="h-4 w-4 text-gray-400" />
@@ -222,9 +222,9 @@ export default function OnlyFansAnalyticsPage() {
               <p className="text-xs text-gray-500 mt-1">
                 {formatPercentage(kpis.responseRate)} response rate
               </p>
-            </div>
+            </Card>
 
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-gray-600">Taux d'Engagement</h3>
                 <TrendingUp className="h-4 w-4 text-gray-400" />
@@ -233,38 +233,40 @@ export default function OnlyFansAnalyticsPage() {
               <p className="text-xs text-gray-500 mt-1">
                 +2.5% vs last month
               </p>
-            </div>
+            </Card>
           </div>
         )}
 
         {/* Tabs */}
         <div className="space-y-4">
           <div className="flex space-x-2 border-b border-gray-200">
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => setActiveTab('overview')}
               className={`px-4 py-2 font-medium ${activeTab === 'overview' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
             >
               Vue d'ensemble
-            </button>
-            <button
+            </Button>
+            <Button 
+              variant="primary" 
               onClick={() => setActiveTab('fans')}
               className={`px-4 py-2 font-medium ${activeTab === 'fans' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
             >
               Top Fans
-            </button>
+            </Button>
           </div>
 
           {activeTab === 'overview' && (
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-4">Vue d'ensemble</h3>
               <p className="text-gray-600">
                 Graphiques de revenue et messages à venir (nécessite Recharts)
               </p>
-            </div>
+            </Card>
           )}
 
           {activeTab === 'fans' && (
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-4">Top 10 Fans par Revenue</h3>
               <div className="space-y-4">
                 {topFans.map((fan, index) => (
@@ -291,7 +293,7 @@ export default function OnlyFansAnalyticsPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
         </div>
       </div>

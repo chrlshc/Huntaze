@@ -42,7 +42,7 @@ export const CRITICAL_CSS = `
     max-width: 28rem;
     background: white;
     border-radius: 1rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     padding: 2rem;
   }
 
@@ -50,22 +50,22 @@ export const CRITICAL_CSS = `
   .form-input {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-subtle);
     border-radius: 0.5rem;
-    font-size: 1rem;
+    font-size: var(--text-base);
     transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .form-input:focus {
     outline: none;
-    border-color: #9333ea;
-    box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
   }
 
   .btn-primary {
     width: 100%;
     padding: 0.75rem 1.5rem;
-    background-color: #9333ea;
+    background-color: var(--accent-primary);
     color: white;
     font-weight: 600;
     border: none;
@@ -79,7 +79,7 @@ export const CRITICAL_CSS = `
   }
 
   .btn-primary:disabled {
-    background-color: #d1d5db;
+    background-color: var(--border-subtle);
     cursor: not-allowed;
   }
 `;

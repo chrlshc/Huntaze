@@ -9,6 +9,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Plus, Trash2, MessageCircle } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Message {
   id: string;
@@ -110,13 +112,10 @@ export default function ChatbotPage() {
       {/* Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <button
-            onClick={startNewConversation}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-colors"
-          >
+          <Button variant="primary" onClick={startNewConversation}>
             <Plus className="w-4 h-4" />
             New Chat
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-2">
@@ -128,8 +127,9 @@ export default function ChatbotPage() {
             </div>
           ) : (
             conversations.map((conv) => (
-              <button
+              <Button 
                 key={conv.id}
+                variant="ghost" 
                 onClick={() => setCurrentConversation(conv.id)}
                 className={`w-full text-left p-3 rounded-lg mb-2 transition-colors ${
                   currentConversation === conv.id
@@ -141,7 +141,7 @@ export default function ChatbotPage() {
                 <p className="text-xs text-gray-500 mt-1">
                   {conv.lastMessage.toLocaleDateString()}
                 </p>
-              </button>
+              </Button>
             ))
           )}
         </div>
@@ -172,30 +172,30 @@ export default function ChatbotPage() {
                   Start a new conversation to get help with:
                 </p>
                 <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto text-left">
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  <Card className="bg-white p-4 rounded-lg border border-gray-200">
                     <h3 className="font-semibold mb-2">OnlyFans CRM</h3>
                     <p className="text-sm text-gray-600">
                       Fan management, messaging, campaigns
                     </p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  </Card>
+                  <Card className="bg-white p-4 rounded-lg border border-gray-200">
                     <h3 className="font-semibold mb-2">Content Creation</h3>
                     <p className="text-sm text-gray-600">
                       Create, edit, and schedule content
                     </p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  </Card>
+                  <Card className="bg-white p-4 rounded-lg border border-gray-200">
                     <h3 className="font-semibold mb-2">Social Media</h3>
                     <p className="text-sm text-gray-600">
                       TikTok, Instagram, Reddit integration
                     </p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg border border-gray-200">
+                  </Card>
+                  <Card className="bg-white p-4 rounded-lg border border-gray-200">
                     <h3 className="font-semibold mb-2">Analytics</h3>
                     <p className="text-sm text-gray-600">
                       Track performance and insights
                     </p>
-                  </div>
+                  </Card>
                 </div>
               </div>
             </div>
@@ -253,14 +253,14 @@ export default function ChatbotPage() {
                   rows={3}
                   disabled={isLoading}
                 />
-                <button
-                  onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg px-6 py-3 transition-colors"
+                <Button 
+                  variant="primary" 
+                  onClick={handleSend} 
+                  disabled={!input.trim() || isLoading} 
                   aria-label="Send message"
                 >
                   <Send className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
               <p className="text-xs text-gray-500 mt-2">
                 Press Enter to send, Shift+Enter for new line

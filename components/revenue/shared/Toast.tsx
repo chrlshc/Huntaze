@@ -5,6 +5,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { Button } from "@/components/ui/button";
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -124,7 +125,8 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
     >
       <div className="flex-shrink-0">{icons[toast.type]}</div>
       <p className="flex-1 text-sm font-medium">{toast.message}</p>
-      <button
+      <Button 
+        variant="primary" 
         onClick={() => onClose(toast.id)}
         className="flex-shrink-0 hover:opacity-80 transition-opacity"
       >
@@ -135,7 +137,7 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: string) => 
             clipRule="evenodd"
           />
         </svg>
-      </button>
+      </Button>
     </div>
   );
 }

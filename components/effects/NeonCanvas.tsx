@@ -21,8 +21,10 @@ export interface NeonCanvasProps {
 export default function NeonCanvas({
   className,
   intensity = 1,
-  color = "#a855f7",
+  color, // Will use design token if not provided
 }: NeonCanvasProps) {
+  // Use design token for default color
+  const effectColor = color || getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim() || '#8b5cf6';
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const { ref: containerRef, inView } = useInView({
@@ -80,12 +82,13 @@ export default function NeonCanvas({
     function render() {
       if (!inView || !ctx) return;
 
-      // Clear with semi-transparent black for trail effect
-      ctx.fillStyle = "rgba(11, 6, 20, 0.1)";
+      // Clear with semi-transparent background for trail effect using design token
+      const bgPrimary = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() || '#09090b';
+      ctx.fillStyle = `${bgPrimary}1a`; // Add alpha channel
       ctx.fillRect(0, 0, width, height);
 
       // Draw lines with GPU-friendly operations
-      ctx.strokeStyle = color;
+      ctx.strokeStyle = effectColor;
       ctx.lineWidth = 2;
       ctx.lineCap = "round";
 
@@ -127,7 +130,7 @@ export default function NeonCanvas({
       }
       window.removeEventListener("resize", handleResize);
     };
-  }, [inView, intensity, color]);
+  }, [inView, intensity, effectColor]);
 
   return (
     <div

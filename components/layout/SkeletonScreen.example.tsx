@@ -6,6 +6,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { SkeletonScreen } from './SkeletonScreen';
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/export-all";
 
 /**
  * Example 1: Dashboard Loading State
@@ -88,12 +90,9 @@ export function FormExample() {
                 className="w-full h-24 px-3 py-2 bg-[var(--color-bg-input)] border border-[var(--color-border-subtle)] rounded-md"
               />
             </div>
-            <button 
-              type="submit"
-              className="h-10 px-4 bg-[var(--color-accent-primary)] text-[var(--color-text-inverse)] rounded-md"
-            >
-              Submit
-            </button>
+            <Button variant="primary" type="submit">
+  Submit
+</Button>
           </div>
         </form>
       )}
@@ -119,9 +118,9 @@ export function CardGridExample() {
         <h2 className="text-2xl font-medium">Card Grid Example</h2>
         <div className="flex items-center gap-2">
           <label className="text-sm">Count:</label>
-          <select 
+          <Select 
             value={count} 
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               setCount(Number(e.target.value));
               setIsLoading(true);
               setTimeout(() => setIsLoading(false), 1000);
@@ -132,7 +131,7 @@ export function CardGridExample() {
             <option value={6}>6</option>
             <option value={9}>9</option>
             <option value={12}>12</option>
-          </select>
+          </Select>
         </div>
       </div>
       {isLoading ? (
@@ -174,9 +173,9 @@ export function ListExample() {
         <h2 className="text-2xl font-medium">List Example</h2>
         <div className="flex items-center gap-2">
           <label className="text-sm">Count:</label>
-          <select 
+          <Select 
             value={count} 
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               setCount(Number(e.target.value));
               setIsLoading(true);
               setTimeout(() => setIsLoading(false), 1000);
@@ -187,7 +186,7 @@ export function ListExample() {
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
-          </select>
+          </Select>
         </div>
       </div>
       {isLoading ? (
@@ -334,8 +333,9 @@ export default function SkeletonScreenExamples() {
         <h1 className="text-3xl font-medium mb-4">SkeletonScreen Examples</h1>
         <div className="flex flex-wrap gap-2">
           {Object.keys(examples).map((key) => (
-            <button
+            <Button 
               key={key}
+              variant="primary" 
               onClick={() => setActiveExample(key)}
               className={`px-4 py-2 rounded-md transition-colors ${
                 activeExample === key
@@ -344,7 +344,7 @@ export default function SkeletonScreenExamples() {
               }`}
             >
               {key.charAt(0).toUpperCase() + key.slice(1)}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

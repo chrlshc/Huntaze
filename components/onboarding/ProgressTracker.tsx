@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface Step {
   id: string;
@@ -22,7 +23,7 @@ export default function ProgressTracker({
   estimatedTimeRemaining
 }: ProgressTrackerProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+    <Card className="bg-white rounded-lg shadow-sm p-6 space-y-6">
       {/* Progress Bar */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
@@ -84,7 +85,7 @@ export default function ProgressTracker({
           ))}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 export { ProgressTracker };

@@ -16,7 +16,7 @@ import { ReactNode, useEffect, useState } from 'react';
  * ```
  */
 
-interface HydrationSafeWrapperProps {
+export interface HydrationSafeWrapperProps {
   children: ReactNode;
   fallback?: ReactNode;
   /**
@@ -24,12 +24,20 @@ interface HydrationSafeWrapperProps {
    * Use only when you need SEO content but have minor hydration differences
    */
   suppressWarning?: boolean;
+  suppressHydrationWarning?: boolean;
+  className?: string;
+  id?: string;
+  onHydrationError?: (error: Error) => void;
 }
 
 export function HydrationSafeWrapper({
   children,
   fallback = null,
   suppressWarning = false,
+  suppressHydrationWarning = false,
+  className,
+  id,
+  onHydrationError,
 }: HydrationSafeWrapperProps) {
   const [isClient, setIsClient] = useState(false);
 
@@ -37,17 +45,34 @@ export function HydrationSafeWrapper({
     setIsClient(true);
   }, []);
 
+  const wrap = (content: ReactNode, suppress = false) => {
+    const shouldSuppress = suppress || suppressWarning || suppressHydrationWarning;
+    if (className || id || suppress) {
+      return (
+        <div
+          className={className}
+          id={id}
+          suppressHydrationWarning={shouldSuppress}
+        >
+          {content}
+        </div>
+      );
+    }
+    return <>{content}</>;
+  };
+
   // Server-side: render fallback
   if (!isClient) {
-    return <>{fallback}</>;
+    return wrap(fallback, true);
   }
 
-  // Client-side: render children
-  if (suppressWarning) {
-    return <div suppressHydrationWarning>{children}</div>;
+  try {
+    // Client-side: render children
+    return wrap(children);
+  } catch (error) {
+    onHydrationError?.(error as Error);
+    return wrap(fallback, true);
   }
-
-  return <>{children}</>;
 }
 
 /**
@@ -108,8 +133,9 @@ export function SafeBrowserAPI({ children, fallback = null }: SafeBrowserAPIProp
  * 
  * Renders current year with hydration safety
  */
-export function SafeCurrentYear() {
+export function SafeCurrentYear({ fallback }: { fallback?: ReactNode } = {}) {
   const [year, setYear] = useState<number | null>(null);
+  const fallbackValue = fallback ?? new Date().getFullYear();
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -117,7 +143,7 @@ export function SafeCurrentYear() {
 
   // Server-side: render placeholder
   if (year === null) {
-    return <span suppressHydrationWarning>{new Date().getFullYear()}</span>;
+    return <span suppressHydrationWarning>{fallbackValue}</span>;
   }
 
   // Client-side: render actual year

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRightIcon, LightBulbIcon, PlayIcon } from '@heroicons/react/24/outline';
+import { Button } from "@/components/ui/button";
 
 interface AdaptiveContentProps {
   content: any;
@@ -152,8 +153,9 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
         className="flex justify-end space-x-3"
       >
         {content.actions?.map((action: any, index: number) => (
-          <button
+          <Button 
             key={index}
+            variant="primary" 
             onClick={() => {
               handleInteraction('action_clicked', { action: action.id });
               if (action.completes) {
@@ -167,7 +169,7 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
             }`}
           >
             {action.label}
-          </button>
+          </Button>
         ))}
       </motion.div>
     </div>
@@ -225,13 +227,10 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
         transition={{ delay: 0.5 }}
         className="text-center"
       >
-        <button
-          onClick={handleComplete}
-          className="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
-        >
+        <Button variant="primary" onClick={handleComplete}>
           <PlayIcon className="w-5 h-5 mr-2" />
           Continue Your Journey
-        </button>
+        </Button>
       </motion.div>
     </div>
   );
@@ -276,8 +275,9 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
             <h4 className="font-semibold mb-3">{element.question}</h4>
             <div className="space-y-2">
               {element.options?.map((option: string, optionIndex: number) => (
-                <button
+                <Button 
                   key={optionIndex}
+                  variant="ghost" 
                   onClick={() => handleInteraction('quiz_answer', { 
                     questionIndex: index, 
                     answerIndex: optionIndex,
@@ -286,7 +286,7 @@ export const AdaptiveContent: React.FC<AdaptiveContentProps> = ({
                   className="block w-full text-left p-3 border rounded hover:bg-gray-50 transition-colors"
                 >
                   {option}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

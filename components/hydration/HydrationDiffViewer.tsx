@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { hydrationDebugger, HydrationMismatch } from '@/lib/utils/hydrationDebugger';
 import { htmlDiffer, HtmlComparisonResult } from '@/lib/utils/htmlDiffer';
+import { Button } from "@/components/ui/button";
 
 interface HydrationDiffViewerProps {
   isOpen: boolean;
@@ -123,12 +124,9 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
           <h2 className="text-lg font-semibold text-gray-900">
             Hydration Diff Viewer
           </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-          >
+          <Button variant="primary" onClick={onClose}>
             ×
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
@@ -139,7 +137,8 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
                 <h3 className="font-medium text-gray-900">
                   Mismatches ({mismatches.length})
                 </h3>
-                <button
+                <Button 
+                  variant="danger" 
                   onClick={() => {
                     hydrationDebugger.clearMismatches();
                     setMismatches([]);
@@ -148,7 +147,7 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
                   className="text-sm text-red-600 hover:text-red-800"
                 >
                   Clear All
-                </button>
+                </Button>
               </div>
 
               {mismatches.length === 0 ? (
@@ -194,8 +193,9 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
                 <div className="border-b border-gray-200">
                   <nav className="flex space-x-8 px-4">
                     {['overview', 'diff', 'raw'].map((tab) => (
-                      <button
+                      <Button 
                         key={tab}
+                        variant="primary" 
                         onClick={() => setActiveTab(tab as any)}
                         className={`py-2 px-1 border-b-2 font-medium text-sm ${
                           activeTab === tab
@@ -204,7 +204,7 @@ const HydrationDiffViewer: React.FC<HydrationDiffViewerProps> = ({ isOpen, onClo
                         }`}
                       >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      </button>
+                      </Button>
                     ))}
                   </nav>
                 </div>

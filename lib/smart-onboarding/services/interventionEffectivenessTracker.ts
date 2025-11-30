@@ -118,7 +118,7 @@ export class InterventionEffectivenessTrackerImpl {
         successful
       });
     } catch (error) {
-      logger.error(`Failed to track intervention outcome:`, undefined, error as Error);
+      logger.error(`Failed to track intervention outcome:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -157,7 +157,7 @@ export class InterventionEffectivenessTrackerImpl {
 
       return report;
     } catch (error) {
-      logger.error(`Failed to generate effectiveness report:`, undefined, error as Error);
+      logger.error(`Failed to generate effectiveness report:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -199,7 +199,7 @@ export class InterventionEffectivenessTrackerImpl {
 
       return analytics;
     } catch (error) {
-      logger.error(`Failed to analyze intervention patterns:`, undefined, error as Error);
+      logger.error(`Failed to analyze intervention patterns:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -256,7 +256,7 @@ export class InterventionEffectivenessTrackerImpl {
 
       return suggestions;
     } catch (error) {
-      logger.error(`Failed to get optimization suggestions:`, undefined, error as Error);
+      logger.error(`Failed to get optimization suggestions:`, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -281,13 +281,13 @@ export class InterventionEffectivenessTrackerImpl {
       // Update daily aggregation
       await this.updateDailyAggregation(dailyKey, hourlyAggregation);
 
-      logger.debug(`Updated metrics aggregation:`, {
+      logger.info(`Updated metrics aggregation:`, {
         hourlyKey,
         dailyKey,
         metricsCount: recentMetrics.length
       });
     } catch (error) {
-      logger.error(`Failed to update metrics aggregation:`, undefined, error as Error);
+      logger.error(`Failed to update metrics aggregation:`, error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -695,7 +695,7 @@ export class InterventionEffectivenessTrackerImpl {
       try {
         await this.updateMetricsAggregation();
       } catch (error) {
-        logger.error('Periodic aggregation failed:', undefined, error as Error);
+        logger.error('Periodic aggregation failed:', error instanceof Error ? error : new Error(String(error)));
       }
     }, this.aggregationInterval);
   }

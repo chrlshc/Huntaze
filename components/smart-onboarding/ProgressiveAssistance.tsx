@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
+import {
   LightBulbIcon, 
   QuestionMarkCircleIcon, 
   AcademicCapIcon,
@@ -371,12 +373,9 @@ export const ProgressiveAssistance: React.FC<ProgressiveAssistanceProps> = ({
               <span className="text-xs text-gray-500">
                 Choose what works best for you
               </span>
-              <button
-                onClick={onDismiss}
-                className="text-xs text-gray-600 hover:text-gray-800 transition-colors"
-              >
+              <Button variant="primary" onClick={onDismiss}>
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </motion.div>

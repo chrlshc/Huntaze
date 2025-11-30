@@ -4,6 +4,9 @@ import { motion } from 'framer-motion'
 import { MessageSquare, TrendingUp, Users, DollarSign, BarChart3, Zap } from 'lucide-react'
 import DashboardStats from './dashboard-stats'
 import RevenueGrowthChart from './revenue-growth-chart'
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/export-all";
+import { Card } from '@/components/ui/card';
 
 export function DashboardMockup() {
   return (
@@ -41,9 +44,9 @@ export function DashboardMockup() {
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 Live
               </span>
-              <button className="px-6 py-2.5 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-all hover:shadow-lg hover:scale-105">
+              <Button variant="primary">
                 Export Report
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -107,13 +110,13 @@ export function DashboardMockup() {
 
         {/* Chart Area */}
         <div className="p-8 pt-0">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/50 rounded-2xl p-8 h-80 relative overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
+          <Card className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/50 rounded-2xl p-8 h-80 relative overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg">
             <div className="absolute inset-0 bg-gradient-to-t from-purple-100/50 to-transparent dark:from-purple-900/20"></div>
             <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="revenue-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#9333ea" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#9333ea" stopOpacity="0.1" />
+                  <stop offset="0%" stopColor="var(--accent-primary)" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="var(--accent-primary)" stopOpacity="0.1" />
                 </linearGradient>
               </defs>
               <path
@@ -128,11 +131,11 @@ export function DashboardMockup() {
                   <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Revenue Growth</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Last 7 days performance</p>
                 </div>
-                <select className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 font-medium">
+                <Select className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 font-medium">
                   <option>7 Days</option>
                   <option>30 Days</option>
                   <option>90 Days</option>
-                </select>
+                </Select>
               </div>
               <div className="flex items-baseline gap-3 ml-4">
                 <span className="text-5xl font-black text-gray-900 dark:text-white">$142,847</span>
@@ -142,11 +145,11 @@ export function DashboardMockup() {
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Compared to $116,294 last week</p>
             </div>
-          </div>
-        </div>
+        </Card>
+      </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 export function ChatInterfaceMockup() {
@@ -218,9 +221,9 @@ export function ChatInterfaceMockup() {
               className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-900 rounded-full text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               disabled
             />
-            <button className="p-2 bg-purple-600 text-white rounded-full">
-              <MessageSquare className="w-5 h-5" />
-            </button>
+            <Button variant="primary">
+  <MessageSquare className="w-5 h-5" />
+</Button>
           </div>
         </div>
       </div>
@@ -242,10 +245,10 @@ export function AnalyticsMockup() {
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Fan Analytics</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Track your top performing fans</p>
           </div>
-          <button className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-lg transition-all hover:bg-purple-200 dark:hover:bg-purple-900/50">
-            View Details 
+          <Button variant="primary">
+  View Details 
             <span className="text-lg">→</span>
-          </button>
+</Button>
         </div>
       </div>
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 
 export function LoginForm() {
   const router = useRouter();
@@ -82,13 +83,9 @@ export function LoginForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
-      >
-        {loading ? 'Signing in...' : 'Sign In'}
-      </button>
+      <Button variant="primary" disabled={loading} type="submit">
+  {loading ? 'Signing in...' : 'Sign In'}
+</Button>
     </form>
   );
 }

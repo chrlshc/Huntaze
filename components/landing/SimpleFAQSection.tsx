@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface FAQ {
   question: string;
@@ -37,7 +38,8 @@ export function SimpleFAQSection({ faqs }: SimpleFAQSectionProps) {
               key={index}
               className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
             >
-              <button
+              <Button 
+                variant="ghost" 
                 onClick={() => toggleFAQ(index)}
                 className="w-full px-6 py-6 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
               >
@@ -49,7 +51,7 @@ export function SimpleFAQSection({ faqs }: SimpleFAQSectionProps) {
                     openIndex === index ? 'rotate-180' : ''
                   }`}
                 />
-              </button>
+</Button>
               
               {openIndex === index && (
                 <div className="px-6 pb-6">

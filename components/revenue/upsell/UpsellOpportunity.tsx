@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { UpsellOpportunity as UpsellOpportunityType } from '@/lib/services/revenue/types';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface UpsellOpportunityProps {
   opportunity: UpsellOpportunityType;
@@ -72,7 +74,7 @@ export function UpsellOpportunity({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-shadow">
+    <Card className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-shadow">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
@@ -86,7 +88,8 @@ export function UpsellOpportunity({
             Purchased {opportunity.triggerPurchase.item} • {formatDate(opportunity.triggerPurchase.date)}
           </p>
         </div>
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => onDismiss(opportunity.id)}
           disabled={isSending}
           className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
@@ -95,7 +98,7 @@ export function UpsellOpportunity({
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
-        </button>
+        </Button>
       </div>
 
       {/* Trigger Purchase */}
@@ -152,12 +155,13 @@ export function UpsellOpportunity({
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">Message Preview</label>
-          <button
+          <Button 
+            variant="primary" 
             onClick={() => setIsEditingMessage(!isEditingMessage)}
             className="text-xs text-blue-600 hover:text-blue-700 font-medium"
           >
             {isEditingMessage ? 'Cancel' : 'Edit'}
-          </button>
+          </Button>
         </div>
         {isEditingMessage ? (
           <textarea
@@ -175,13 +179,14 @@ export function UpsellOpportunity({
 
       {/* Actions */}
       <div className="flex gap-2">
-        <button
+        <Button 
+          variant="ghost" 
           onClick={() => onDismiss(opportunity.id)}
           disabled={isSending}
           className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Dismiss
-        </button>
+        </Button>
         <button
           onClick={handleSend}
           disabled={isSending || loading}
@@ -200,6 +205,6 @@ export function UpsellOpportunity({
           )}
         </button>
       </div>
-    </div>
+    </Card>
   );
 }

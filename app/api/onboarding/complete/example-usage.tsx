@@ -12,6 +12,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOnboardingComplete } from '@/hooks/useOnboardingComplete';
 import type { ContentType, CreatorGoal } from '@/app/api/onboarding/complete/types';
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/export-all";
 
 // ============================================================================
 // Example 1: Basic Form with Hook
@@ -67,12 +69,12 @@ export function BasicOnboardingForm() {
       {/* Goal */}
       <fieldset>
         <legend>What's your primary goal?</legend>
-        <select value={goal} onChange={(e) => setGoal(e.target.value as CreatorGoal)}>
+        <Select value={goal} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setGoal(e.target.value as CreatorGoal)}>
           <option value="grow-audience">Grow Audience</option>
           <option value="increase-revenue">Increase Revenue</option>
           <option value="save-time">Save Time</option>
           <option value="all">All of the Above</option>
-        </select>
+        </Select>
       </fieldset>
 
       {/* Revenue Goal */}

@@ -61,7 +61,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#6366f1" />
+        <meta name="theme-color" content="var(--accent-info)" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className="antialiased" suppressHydrationWarning>

@@ -4,6 +4,7 @@ export const dynamic = 'force-static';
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy - Huntaze',
@@ -21,7 +22,7 @@ export default function PrivacyPage() {
             Last updated: 17 Aug 2025
           </p>
 
-          <div className="elevated-card p-6 mb-8 space-y-6">
+          <Card className="p-6 mb-8 space-y-6">
             <section>
               <h2 className="text-xl font-semibold mb-3">Data we process</h2>
               <p className="text-neutral-700">
@@ -63,7 +64,7 @@ export default function PrivacyPage() {
                 Access, rectification, deletion, portability, objection.
               </p>
             </section>
-          </div>
+          </Card>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">Contact</h2>

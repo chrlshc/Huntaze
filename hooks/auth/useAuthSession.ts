@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useCallback } from 'react';
+import { Button } from "@/components/ui/button";
 
 /**
  * User data from session
@@ -43,7 +44,7 @@ export interface UseAuthSessionReturn {
  *   return (
  *     <div>
  *       <p>Welcome, {user.email}!</p>
- *       <button onClick={logout}>Logout</button>
+ *       <Button variant="primary" onClick={logout}>Logout</Button>
  *     </div>
  *   );
  * }

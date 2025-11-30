@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { FeatureTour, TourStep, featureTourService } from '@/lib/services/featureTourService';
+import { Button } from "@/components/ui/button";
 
 interface FeatureTourGuideProps {
   tour: FeatureTour;
@@ -145,13 +146,9 @@ export default function FeatureTourGuide({
               Step {currentStepIndex + 1} of {tour.steps.length}
             </p>
           </div>
-          <button
-            onClick={handleDismiss}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            aria-label="Close tour"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <Button variant="primary" onClick={handleDismiss} aria-label="Close tour">
+  <X className="w-5 h-5" />
+</Button>
         </div>
 
         {/* Content */}
@@ -179,20 +176,13 @@ export default function FeatureTourGuide({
 
         {/* Actions */}
         <div className="flex items-center justify-between">
-          <button
-            onClick={handlePrevious}
-            disabled={isFirstStep}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <ChevronLeft className="w-4 h-4" />
+          <Button variant="primary" onClick={handlePrevious} disabled={isFirstStep}>
+  <ChevronLeft className="w-4 h-4" />
             Previous
-          </button>
+</Button>
 
-          <button
-            onClick={handleNext}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-          >
-            {isLastStep ? (
+          <Button variant="primary" onClick={handleNext}>
+  {isLastStep ? (
               <>
                 <Check className="w-4 h-4" />
                 Finish
@@ -203,17 +193,14 @@ export default function FeatureTourGuide({
                 <ChevronRight className="w-4 h-4" />
               </>
             )}
-          </button>
+</Button>
         </div>
 
         {/* Skip tour option */}
         <div className="mt-4 text-center">
-          <button
-            onClick={handleDismiss}
-            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          >
-            Skip tour
-          </button>
+          <Button variant="primary" onClick={handleDismiss}>
+  Skip tour
+</Button>
         </div>
       </div>
 

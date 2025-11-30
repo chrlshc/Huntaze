@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ReactNode } from 'react';
+import { Card } from '@/components/ui/card';
 
 interface AnimatedCardProps {
   children: ReactNode;
@@ -55,14 +56,14 @@ export default function AnimatedCard({ children, className = '', delay = 0 }: An
       <motion.div
         className="absolute -inset-0.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
-          background: `radial-gradient(600px circle at ${mouseXSpring.get() * 100 + 50}% ${mouseYSpring.get() * 100 + 50}%, rgba(147, 51, 234, 0.15), transparent 40%)`,
+          background: `radial-gradient(600px circle at ${mouseXSpring.get() * 100 + 50}% ${mouseYSpring.get() * 100 + 50}%, rgba(139, 92, 246, 0.15), transparent 40%)`,
         }}
       />
       
       {/* Card content */}
-      <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-purple-500/30 transition-colors duration-300 overflow-hidden">
+      <Card className="relative bg-gray-900/80 backdrop-blur-sm rounded-xl border border-gray-800 hover:border-purple-500/30 transition-colors duration-300 overflow-hidden">
         {children}
-      </div>
+      </Card>
     </motion.div>
   );
 }

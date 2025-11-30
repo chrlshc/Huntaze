@@ -9,7 +9,7 @@
  * @example
  * ```typescript
  * const result = await retryWithBackoff(
- *   async () => await prisma.user.findUnique({ where: { id: 123 } }),
+ *   async () => await prisma.users.findUnique({ where: { id: 123 } }),
  *   'find-user-123'
  * );
  * ```
@@ -143,7 +143,7 @@ export function isRetryableError(error: any): boolean {
  * @example
  * ```typescript
  * const user = await retryWithBackoff(
- *   async () => await prisma.user.findUnique({ where: { id: 123 } }),
+ *   async () => await prisma.users.findUnique({ where: { id: 123 } }),
  *   'find-user-123',
  *   { maxRetries: 5 }
  * );
@@ -378,7 +378,7 @@ export class CircuitBreaker {
  * @example
  * ```typescript
  * const fetchUserWithRetry = createRetryWrapper(
- *   (id: number) => prisma.user.findUnique({ where: { id } }),
+ *   (id: number) => prisma.users.findUnique({ where: { id } }),
  *   { maxRetries: 5 }
  * );
  * 

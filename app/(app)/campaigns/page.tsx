@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Card } from '@/components/ui/card';
 import { 
   Mail, 
   ChevronLeft,
@@ -47,6 +48,7 @@ import {
 } from 'lucide-react';
 import ResumeBanner from '@/components/onboarding/ResumeBanner';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { Button } from "@/components/ui/button";
 
 export default function CampaignsPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -379,18 +381,18 @@ export default function CampaignsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+              <Button variant="ghost">
                 <Filter className="w-4 h-4" />
                 Templates
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+              </Button>
+              <Button variant="ghost">
                 <BarChart3 className="w-4 h-4" />
                 Analytics
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
+              </Button>
+              <Button variant="primary">
                 <Plus className="w-4 h-4" />
                 New Campaign
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -399,7 +401,7 @@ export default function CampaignsPage() {
       <main className="px-6 lg:px-8 py-12 max-w-7xl mx-auto">
         <ResumeBanner />
         {/* Empty State */}
-        <div className="elevated-card rounded-3xl overflow-hidden">
+        <Card className="rounded-3xl overflow-hidden">
           {/* Hero Section */}
           <div className="p-12 text-center border-b border-gray-100">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl mb-6">
@@ -440,41 +442,41 @@ export default function CampaignsPage() {
                 {campaignContent.templates.map((template, index) => {
                   const TemplateIcon = template.icon;
                   return (
-                  <div key={index} className="group elevated-card rounded-xl hover:border-purple-300 hover:shadow-md transition-all cursor-pointer overflow-hidden">
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className={`p-3 rounded-xl bg-${template.color}-50`}>
-                            <TemplateIcon className={`w-6 h-6 text-${template.color}-600`} />
-                          </div>
-                          <div className="flex gap-2">
-                            {template.tags.map((tag) => (
-                              <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
+                  <Card key={index} className="group rounded-xl hover:border-purple-300 hover:shadow-md transition-all cursor-pointer overflow-hidden">
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className={`p-3 rounded-xl bg-${template.color}-50`}>
+                          <TemplateIcon className={`w-6 h-6 text-${template.color}-600`} />
                         </div>
-                        
-                        <h4 className="font-semibold text-gray-900 mb-2">{template.name}</h4>
-                        <p className="text-sm text-gray-600 mb-4">{template.description}</p>
-                        
-                        <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-3">
-                            <span className="text-gray-500">
-                              <TrendingUp className="w-4 h-4 inline mr-1" />
-                              {template.metrics.conversion}
+                        <div className="flex gap-2">
+                          {template.tags.map((tag) => (
+                            <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                              {tag}
                             </span>
-                            <span className="text-gray-500">
-                              <DollarSign className="w-4 h-4 inline mr-1" />
-                              {template.metrics.revenue}
-                            </span>
-                          </div>
-                          <span className="text-purple-600 font-medium group-hover:text-purple-700">
-                            Use template →
-                          </span>
+                          ))}
                         </div>
                       </div>
+                      
+                      <h4 className="font-semibold text-gray-900 mb-2">{template.name}</h4>
+                      <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+                      
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-3">
+                          <span className="text-gray-500">
+                            <TrendingUp className="w-4 h-4 inline mr-1" />
+                            {template.metrics.conversion}
+                          </span>
+                          <span className="text-gray-500">
+                            <DollarSign className="w-4 h-4 inline mr-1" />
+                            {template.metrics.revenue}
+                          </span>
+                        </div>
+                        <span className="text-purple-600 font-medium group-hover:text-purple-700">
+                          Use template →
+                        </span>
+                      </div>
                     </div>
+                  </Card>
                   );
                 })}
               </div>
@@ -542,7 +544,8 @@ export default function CampaignsPage() {
                     : 'Start with proven templates and AI-powered optimization'}
                 </p>
               </div>
-              <button 
+              <Button 
+                variant="primary"
                 onClick={() => {
                   try {
                     localStorage.setItem('first_campaign_started', '1');
@@ -554,10 +557,10 @@ export default function CampaignsPage() {
               >
                 <Rocket className="w-5 h-5" />
                 Launch Campaign
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* AI Optimization Notice */}
         <div className="mt-8 bg-purple-50 border border-purple-200 rounded-2xl p-6">

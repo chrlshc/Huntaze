@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 type TokenResp = { ingestToken: string; userId: string; apiBase?: string };
 
@@ -98,9 +100,9 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
   if (compact) {
     return (
       <div className="flex items-center gap-2">
-        <button onClick={handleIos} disabled={!!busy} className={btn('ios')}>iOS bridge</button>
-        <button onClick={handleDesktop} disabled={!!busy} className={btn('desktop')}>Desktop bridge</button>
-        <button onClick={handleNative} disabled={!!busy} className={btn('native')}>Open in app</button>
+        <Button variant="primary" onClick={handleIos} disabled={!!busy}>iOS bridge</Button>
+        <Button variant="primary" onClick={handleDesktop} disabled={!!busy}>Desktop bridge</Button>
+        <Button variant="primary" onClick={handleNative} disabled={!!busy}>Open in app</Button>
         {err && (
           <span className="ml-2 text-xs text-rose-600">
             {err}{" "}
@@ -114,21 +116,21 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+    <Card className="rounded-2xl border border-slate-200 bg-white p-4">
       <div className="text-sm font-medium text-slate-900">Alternate login bridges</div>
       <p className="mt-1 text-sm text-slate-600">Use the iOS mini-app or the desktop helper to capture OnlyFans session cookies securely.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {variant === 'hz' ? (
           <>
-            <button onClick={handleIos} disabled={!!busy} className="hz-button">
-              {busy === 'ios' ? 'Opening…' : 'Open iOS bridge'}
-            </button>
-            <button onClick={handleDesktop} disabled={!!busy} className="hz-button">
-              {busy === 'desktop' ? 'Opening…' : 'Open desktop bridge'}
-            </button>
-            <button onClick={handleNative} disabled={!!busy} className="hz-button primary">
+            <Button variant="primary" onClick={handleIos} disabled={!!busy}>
+  {busy === 'ios' ? 'Opening…' : 'Open iOS bridge'}
+</Button>
+            <Button variant="primary" onClick={handleDesktop} disabled={!!busy}>
+  {busy === 'desktop' ? 'Opening…' : 'Open desktop bridge'}
+</Button>
+            <Button variant="primary" onClick={handleNative} disabled={!!busy}>
               {busy === 'native' ? 'Opening…' : 'Open in app'}
-            </button>
+            </Button>
             {err && (
               <div className="hz-muted" style={{ marginLeft: 8 }}>
                 {err}{" "}
@@ -140,15 +142,15 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
           </>
         ) : (
           <>
-            <button onClick={handleIos} disabled={!!busy} className="inline-flex items-center rounded-lg bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-50">
+            <Button variant="primary" onClick={handleIos} disabled={!!busy}>
               {busy === "ios" ? "Opening…" : "Open iOS bridge"}
-            </button>
-            <button onClick={handleDesktop} disabled={!!busy} className="inline-flex items-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-black disabled:opacity-50">
+            </Button>
+            <Button variant="primary" onClick={handleDesktop} disabled={!!busy}>
               {busy === "desktop" ? "Opening…" : "Open desktop bridge"}
-            </button>
-            <button onClick={handleNative} disabled={!!busy} className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
+            </Button>
+            <Button variant="primary" onClick={handleNative} disabled={!!busy}>
               {busy === "native" ? "Opening…" : "Open in app"}
-            </button>
+            </Button>
             {err && (
               <span className="text-xs text-rose-600">
                 {err}{" "}
@@ -161,7 +163,7 @@ export function BridgeLauncher({ compact = false, variant = 'default' }: { compa
         )}
       </div>
       {err && <div className="mt-2 text-xs text-rose-600">{err}</div>}
-    </div>
+    </Card>
   );
 }
 

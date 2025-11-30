@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface VariationStats {
   id: string;
@@ -104,27 +106,27 @@ export default function VariationPerformance({ contentId }: VariationPerformance
       {/* Summary Stats */}
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <Card className="bg-white p-4 rounded-lg border border-gray-200">
             <div className="text-sm text-gray-600">Total Variations</div>
             <div className="text-2xl font-bold text-gray-900">{summary.totalVariations}</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          </Card>
+          <Card className="bg-white p-4 rounded-lg border border-gray-200">
             <div className="text-sm text-gray-600">Total Views</div>
             <div className="text-2xl font-bold text-gray-900">{summary.totalViews.toLocaleString()}</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          </Card>
+          <Card className="bg-white p-4 rounded-lg border border-gray-200">
             <div className="text-sm text-gray-600">Total Engagements</div>
             <div className="text-2xl font-bold text-gray-900">{summary.totalEngagements.toLocaleString()}</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
+          </Card>
+          <Card className="bg-white p-4 rounded-lg border border-gray-200">
             <div className="text-sm text-gray-600">Overall Rate</div>
             <div className="text-2xl font-bold text-gray-900">{summary.overallEngagementRate}%</div>
-          </div>
+          </Card>
         </div>
       )}
 
       {/* Variation Comparison */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <Card className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">Variation Performance</h3>
         </div>
@@ -206,10 +208,10 @@ export default function VariationPerformance({ contentId }: VariationPerformance
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
       {/* Event Breakdown */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <Card className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Event Breakdown</h3>
         <div className="space-y-4">
           {variations.map((variation) => (
@@ -229,7 +231,7 @@ export default function VariationPerformance({ contentId }: VariationPerformance
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Refresh Button */}
       <div className="flex justify-end">

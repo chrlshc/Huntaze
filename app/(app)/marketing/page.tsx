@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useMarketingCampaigns } from '@/hooks/marketing/useMarketingCampaigns';
 import { Plus, Filter, TrendingUp, Send, Eye, MousePointer } from 'lucide-react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Card } from '@/components/ui/card';
 
 export default function MarketingPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -65,7 +66,7 @@ export default function MarketingPage() {
     <ProtectedRoute requireOnboarding={false}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Marketing & Social</h1>
             <p className="text-gray-600 dark:text-gray-400">Manage campaigns and social media presence</p>
@@ -95,7 +96,7 @@ export default function MarketingPage() {
       </div>
 
       {/* Social Media & Integrations Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Social Media & Integrations</h2>
@@ -125,7 +126,7 @@ export default function MarketingPage() {
 
           {/* TikTok */}
           <div className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="w-10 h-10 rounded-lg bg-black dark:bg-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
               <svg className="w-6 h-6 text-white dark:text-black" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
               </svg>
@@ -162,11 +163,11 @@ export default function MarketingPage() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -174,9 +175,9 @@ export default function MarketingPage() {
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Active Campaigns</p>
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activeCampaigns}</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Send className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -184,9 +185,9 @@ export default function MarketingPage() {
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Sent</p>
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalSent}</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -194,9 +195,9 @@ export default function MarketingPage() {
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Open Rate</p>
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{(stats.avgOpenRate * 100).toFixed(1)}%</p>
-        </div>
+        </Card>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <MousePointer className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -204,7 +205,7 @@ export default function MarketingPage() {
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Conversions</p>
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.conversions}</p>
-        </div>
+        </Card>
       </div>
 
       {/* Filters */}
@@ -241,7 +242,7 @@ export default function MarketingPage() {
       </div>
 
       {/* Campaigns List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Campaigns</h2>
           
@@ -315,7 +316,7 @@ export default function MarketingPage() {
             </div>
           )}
         </div>
-      </div>
+      </Card>
       </div>
     </ProtectedRoute>
   );

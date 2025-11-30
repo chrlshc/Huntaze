@@ -51,7 +51,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         {...props}
       />
       {error ? (
-        <p className="mt-[var(--spacing-1)] text-[var(--font-size-sm)] text-[var(--color-error)]" role="status">
+        <p className="mt-[var(--spacing-1)] text-[var(--text-sm)] text-[var(--color-error)]" role="status">
           {error}
         </p>
       ) : null}

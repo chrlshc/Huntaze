@@ -13,6 +13,8 @@
 
 import { useState } from 'react';
 import { TrendingUp, Users, DollarSign, MessageSquare, Eye, Heart } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface MetricCardProps {
   icon: React.ReactNode;
@@ -35,10 +37,10 @@ function MetricCard({ icon, label, value, trend, trendUp, tooltip }: MetricCardP
       {/* Tooltip */}
       {showTooltip && (
         <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 -translate-y-full z-10 w-64">
-          <div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
+          <Card className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg">
             {tooltip}
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
-          </div>
+          </Card>
         </div>
       )}
 
@@ -149,7 +151,8 @@ export function DashboardPreview() {
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => setActiveTab('overview')}
           className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${
             activeTab === 'overview'
@@ -158,8 +161,9 @@ export function DashboardPreview() {
           }`}
         >
           Overview
-        </button>
-        <button
+        </Button>
+        <Button 
+          variant="primary" 
           onClick={() => setActiveTab('engagement')}
           className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${
             activeTab === 'engagement'
@@ -168,7 +172,7 @@ export function DashboardPreview() {
           }`}
         >
           Engagement
-        </button>
+        </Button>
       </div>
 
       {/* Metrics Grid */}
@@ -179,7 +183,7 @@ export function DashboardPreview() {
       </div>
 
       {/* Sample Chart Placeholder */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <Card className="bg-white rounded-lg p-6 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Revenue Trend (Last 30 Days)
         </h3>
@@ -197,7 +201,7 @@ export function DashboardPreview() {
           <span>30 days ago</span>
           <span>Today</span>
         </div>
-      </div>
+      </Card>
 
       {/* Info Banner */}
       <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">

@@ -65,56 +65,56 @@ export async function sendVerificationEmail(email: string, name: string, token: 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Email Verification</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 0;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-glass);">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: var(--bg-glass); padding: 40px 0;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);">
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center;">
               <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com'}/huntaze-logo.png" alt="Huntaze" width="60" height="60" style="display: block; margin: 0 auto; border-radius: 12px;" />
-              <h1 style="margin: 15px 0 0; color: #1f2937; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">Huntaze</h1>
-              <p style="margin: 5px 0 0; color: #9ca3af; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">beta</p>
+              <h1 style="margin: 15px 0 0; color: var(--text-primary); font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.5px;">Huntaze</h1>
+              <p style="margin: 5px 0 0; color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">beta</p>
             </td>
           </tr>
           
           <!-- Content -->
           <tr>
             <td style="padding: 0 40px 40px;">
-              <h2 style="margin: 0 0 20px; color: #1f2937; font-size: 24px; font-weight: 600;">
+              <h2 style="margin: 0 0 20px; color: var(--text-primary); font-size: var(--text-2xl); font-weight: 600;">
                 Hi ${firstName},
               </h2>
               
-              <p style="margin: 0 0 20px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+              <p style="margin: 0 0 20px; color: var(--text-tertiary); font-size: var(--text-base); line-height: 1.6;">
                 Welcome to Huntaze (beta) 🎉 Before you get started, please confirm your email to secure your account and access your dashboard.
               </p>
               
-              <div style="margin: 30px 0; padding: 20px; background-color: #f9fafb; border-radius: 6px;">
-                <p style="margin: 0 0 10px; color: #1f2937; font-size: 16px; font-weight: 600;">Why verify?</p>
-                <p style="margin: 5px 0; color: #4b5563; font-size: 14px;">🔐 Protect your account and data</p>
-                <p style="margin: 5px 0; color: #4b5563; font-size: 14px;">🚀 Immediate access to beta features</p>
-                <p style="margin: 5px 0; color: #4b5563; font-size: 14px;">🔗 Seamless integrations (OnlyFans and more)</p>
+              <div style="margin: 30px 0; padding: 20px; background-color: var(--bg-glass); border-radius: 6px;">
+                <p style="margin: 0 0 10px; color: var(--text-primary); font-size: var(--text-base); font-weight: 600;">Why verify?</p>
+                <p style="margin: 5px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🔐 Protect your account and data</p>
+                <p style="margin: 5px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🚀 Immediate access to beta features</p>
+                <p style="margin: 5px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🔗 Seamless integrations (OnlyFans and more)</p>
               </div>
               
               <!-- Button -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                 <tr>
                   <td align="center">
-                    <a href="${verificationUrl}" style="display: inline-block; padding: 16px 32px; background-color: #6366f1; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                    <a href="${verificationUrl}" style="display: inline-block; padding: 16px 32px; background-color: var(--accent-info); color: #ffffff; text-decoration: none; border-radius: 6px; font-size: var(--text-base); font-weight: 600;">
                       Verify Email Address
                     </a>
                   </td>
                 </tr>
               </table>
               
-              <p style="margin: 20px 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+              <p style="margin: 20px 0 0; color: var(--text-tertiary); font-size: var(--text-sm); line-height: 1.6;">
                 This verification link expires in 24 hours. If you didn't sign up, just ignore this email.
               </p>
               
-              <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid var(--border-subtle);">
               
-              <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+              <p style="margin: 0; color: var(--text-tertiary); font-size: var(--text-sm); line-height: 1.6;">
                 See you inside,<br>
                 — The Huntaze Team
               </p>
@@ -123,11 +123,11 @@ export async function sendVerificationEmail(email: string, name: string, token: 
           
           <!-- Footer -->
           <tr>
-            <td style="padding: 20px 40px; background-color: #f9fafb; border-radius: 0 0 8px 8px; text-align: center;">
-              <p style="margin: 0 0 10px; color: #6b7280; font-size: 12px;">
+            <td style="padding: 20px 40px; background-color: var(--bg-glass); border-radius: 0 0 8px 8px; text-align: center;">
+              <p style="margin: 0 0 10px; color: var(--text-tertiary); font-size: var(--text-xs);">
                 Need help? Contact us at support@huntaze.com
               </p>
-              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+              <p style="margin: 0; color: var(--text-secondary); font-size: var(--text-xs);">
                 © ${new Date().getFullYear()} Huntaze. All rights reserved.
               </p>
             </td>
@@ -184,44 +184,44 @@ export async function sendWelcomeEmail(email: string, name: string) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 0;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-glass);">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: var(--bg-glass); padding: 40px 0;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);">
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center;">
               <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://huntaze.com'}/huntaze-logo.png" alt="Huntaze" width="60" height="60" style="display: block; margin: 0 auto; border-radius: 12px;" />
-              <h1 style="margin: 15px 0 0; color: #1f2937; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">Huntaze</h1>
-              <p style="margin: 5px 0 0; color: #9ca3af; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">beta</p>
+              <h1 style="margin: 15px 0 0; color: var(--text-primary); font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.5px;">Huntaze</h1>
+              <p style="margin: 5px 0 0; color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">beta</p>
             </td>
           </tr>
           
           <tr>
             <td style="padding: 0 40px 40px;">
-              <h2 style="margin: 0 0 20px; color: #1f2937; font-size: 24px; font-weight: 600;">
+              <h2 style="margin: 0 0 20px; color: var(--text-primary); font-size: var(--text-2xl); font-weight: 600;">
                 Hi ${firstName},
               </h2>
               
-              <p style="margin: 0 0 20px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+              <p style="margin: 0 0 20px; color: var(--text-tertiary); font-size: var(--text-base); line-height: 1.6;">
                 We're thrilled to have you in the Huntaze beta! Here's everything you need to get productive fast.
               </p>
               
               <!-- Feature Highlights -->
-              <div style="margin: 30px 0; padding: 20px; background-color: #f9fafb; border-radius: 6px;">
-                <p style="margin: 0 0 15px; color: #1f2937; font-size: 16px; font-weight: 600;">6 feature highlights</p>
-                <p style="margin: 8px 0; color: #4b5563; font-size: 14px;">⚡ Multi-channel campaigns out of the box</p>
-                <p style="margin: 8px 0; color: #4b5563; font-size: 14px;">🤖 AI copy & prompt templates to move faster</p>
-                <p style="margin: 8px 0; color: #4b5563; font-size: 14px;">📊 Real-time analytics (opens, clicks, conversions)</p>
-                <p style="margin: 8px 0; color: #4b5563; font-size: 14px;">🧠 Segmentation & tags for smarter sends</p>
-                <p style="margin: 8px 0; color: #4b5563; font-size: 14px;">🔗 OnlyFans connection (beta) to sync your data</p>
-                <p style="margin: 8px 0; color: #4b5563; font-size: 14px;">🧩 API & webhooks (beta) to fit your stack</p>
+              <div style="margin: 30px 0; padding: 20px; background-color: var(--bg-glass); border-radius: 6px;">
+                <p style="margin: 0 0 15px; color: var(--text-primary); font-size: var(--text-base); font-weight: 600;">6 feature highlights</p>
+                <p style="margin: 8px 0; color: var(--text-tertiary); font-size: var(--text-sm);">⚡ Multi-channel campaigns out of the box</p>
+                <p style="margin: 8px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🤖 AI copy & prompt templates to move faster</p>
+                <p style="margin: 8px 0; color: var(--text-tertiary); font-size: var(--text-sm);">📊 Real-time analytics (opens, clicks, conversions)</p>
+                <p style="margin: 8px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🧠 Segmentation & tags for smarter sends</p>
+                <p style="margin: 8px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🔗 OnlyFans connection (beta) to sync your data</p>
+                <p style="margin: 8px 0; color: var(--text-tertiary); font-size: var(--text-sm);">🧩 API & webhooks (beta) to fit your stack</p>
               </div>
               
               <!-- Quick Start -->
               <div style="margin: 30px 0;">
-                <p style="margin: 0 0 15px; color: #1f2937; font-size: 16px; font-weight: 600;">Quick start (4 steps)</p>
-                <ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
+                <p style="margin: 0 0 15px; color: var(--text-primary); font-size: var(--text-base); font-weight: 600;">Quick start (4 steps)</p>
+                <ol style="margin: 0; padding-left: 20px; color: var(--text-tertiary); font-size: var(--text-sm); line-height: 1.8;">
                   <li>Set up your brand profile & preferences</li>
                   <li>Connect OnlyFans (if applicable)</li>
                   <li>Add or import your audience</li>
@@ -230,33 +230,33 @@ export async function sendWelcomeEmail(email: string, name: string) {
               </div>
               
               <!-- Pro Tips -->
-              <div style="margin: 30px 0; padding: 20px; background-color: #fef3c7; border-radius: 6px; border-left: 4px solid #f59e0b;">
-                <p style="margin: 0 0 10px; color: #92400e; font-size: 16px; font-weight: 600;">💡 Pro tips</p>
-                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">• A/B test your subject lines before sending</p>
-                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">• Schedule by your audience's time zone</p>
-                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">• Re-engage non-openers after 24–48 hours</p>
-                <p style="margin: 5px 0; color: #78350f; font-size: 14px;">• Review reports to guide your next iteration</p>
+              <div style="margin: 30px 0; padding: 20px; background-color: rgba(245, 158, 11, 0.1); border-radius: 6px; border-left: 4px solid var(--accent-warning);">
+                <p style="margin: 0 0 10px; color: var(--accent-warning); font-size: var(--text-base); font-weight: 600;">💡 Pro tips</p>
+                <p style="margin: 5px 0; color: var(--accent-warning); font-size: var(--text-sm);">• A/B test your subject lines before sending</p>
+                <p style="margin: 5px 0; color: var(--accent-warning); font-size: var(--text-sm);">• Schedule by your audience's time zone</p>
+                <p style="margin: 5px 0; color: var(--accent-warning); font-size: var(--text-sm);">• Re-engage non-openers after 24–48 hours</p>
+                <p style="margin: 5px 0; color: var(--accent-warning); font-size: var(--text-sm);">• Review reports to guide your next iteration</p>
               </div>
               
               <!-- Buttons -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
                 <tr>
                   <td align="center" style="padding: 10px;">
-                    <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 40px; background-color: #6366f1; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                    <a href="${dashboardUrl}" style="display: inline-block; padding: 16px 40px; background-color: var(--accent-info); color: #ffffff; text-decoration: none; border-radius: 6px; font-size: var(--text-base); font-weight: 600;">
                       Go to Dashboard
                     </a>
                   </td>
                 </tr>
                 <tr>
                   <td align="center" style="padding: 10px;">
-                    <a href="${docsUrl}" style="display: inline-block; padding: 16px 40px; background-color: #ffffff; color: #6366f1; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600; border: 2px solid #6366f1;">
+                    <a href="${docsUrl}" style="display: inline-block; padding: 16px 40px; background-color: #ffffff; color: var(--accent-info); text-decoration: none; border-radius: 6px; font-size: var(--text-base); font-weight: 600; border: 2px solid var(--accent-info);">
                       View Docs
                     </a>
                   </td>
                 </tr>
               </table>
               
-              <p style="margin: 20px 0 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+              <p style="margin: 20px 0 0; color: var(--text-tertiary); font-size: var(--text-sm); line-height: 1.6;">
                 Thanks for joining the beta 💙<br>
                 — The Huntaze Team
               </p>
@@ -264,11 +264,11 @@ export async function sendWelcomeEmail(email: string, name: string) {
           </tr>
           
           <tr>
-            <td style="padding: 20px 40px; background-color: #f9fafb; border-radius: 0 0 8px 8px; text-align: center;">
-              <p style="margin: 0 0 10px; color: #6b7280; font-size: 12px;">
+            <td style="padding: 20px 40px; background-color: var(--bg-glass); border-radius: 0 0 8px 8px; text-align: center;">
+              <p style="margin: 0 0 10px; color: var(--text-tertiary); font-size: var(--text-xs);">
                 📚 Help Center • 🎥 Onboarding • 💬 Community • ✉️ support@huntaze.com
               </p>
-              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+              <p style="margin: 0; color: var(--text-secondary); font-size: var(--text-xs);">
                 © ${new Date().getFullYear()} Huntaze. All rights reserved.
               </p>
             </td>

@@ -191,10 +191,10 @@ export default function FooterImproved() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors">
-                <Globe className="w-4 h-4" />
+              <Button variant="primary">
+  <Globe className="w-4 h-4" />
                 <span>English (US)</span>
-              </button>
+</Button>
             </div>
           </div>
         </div>

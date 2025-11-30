@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { StandardCTA } from '@/components/cta';
+import { Card } from '@/components/ui/card';
 
 interface HeroSectionProps {
   badge?: string;
@@ -37,10 +38,10 @@ export function HeroSection({
       <div className="relative z-10 mx-auto max-w-5xl w-full">
         {/* Beta Badge */}
         <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-xs font-medium text-violet-300 backdrop-blur-sm">
+          <Card className="inline-flex items-center rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-xs font-medium text-violet-300 backdrop-blur-sm">
             <span className="mr-2 h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse motion-reduce:animate-none" />
             {badge}
-          </div>
+          </Card>
         </div>
         
         {/* Title */}

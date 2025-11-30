@@ -94,7 +94,7 @@ class UserConsentManager {
       logger.info('User consent collected', { userId, consents, source });
 
     } catch (error) {
-      logger.error('Failed to collect consent', { error, userId, consents });
+      logger.error('Failed to collect consent', error instanceof Error ? error : new Error(String(error)), { userId, consents });
       throw error;
     }
   }
@@ -128,7 +128,7 @@ class UserConsentManager {
       logger.info('User consent updated', { userId, consentType, granted, source });
 
     } catch (error) {
-      logger.error('Failed to update consent', { error, userId, consentType });
+      logger.error('Failed to update consent', error instanceof Error ? error : new Error(String(error)), { userId, consentType });
       throw error;
     }
   }
@@ -146,7 +146,7 @@ class UserConsentManager {
       logger.info('All non-essential consent revoked', { userId });
 
     } catch (error) {
-      logger.error('Failed to revoke all consent', { error, userId });
+      logger.error('Failed to revoke all consent', error instanceof Error ? error : new Error(String(error)), { userId });
       throw error;
     }
   }
@@ -212,22 +212,22 @@ class UserConsentManager {
 
   private async configureBehavioralTracking(userId: string, enabled: boolean): Promise<void> {
     // Configure behavioral event tracking
-    logger.debug(`Behavioral tracking ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
+    logger.info(`Behavioral tracking ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
   }
 
   private async configureAIPersonalization(userId: string, enabled: boolean): Promise<void> {
     // Configure AI personalization features
-    logger.debug(`AI personalization ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
+    logger.info(`AI personalization ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
   }
 
   private async configureAnalytics(userId: string, enabled: boolean): Promise<void> {
     // Configure analytics data collection
-    logger.debug(`Analytics ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
+    logger.info(`Analytics ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
   }
 
   private async configureMarketing(userId: string, enabled: boolean): Promise<void> {
     // Configure marketing data collection
-    logger.debug(`Marketing ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
+    logger.info(`Marketing ${enabled ? 'enabled' : 'disabled'} for user: ${userId}`);
   }
 
   // Consent Checking

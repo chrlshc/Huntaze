@@ -18,6 +18,8 @@
 
 import { useMonitoringMetrics } from '@/hooks/useMonitoringMetrics';
 import { AlertCircle, Activity, Database, Zap, RefreshCw } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 /**
  * Monitoring Dashboard Component
@@ -52,7 +54,7 @@ export function MonitoringDashboard() {
   if (error) {
     return (
       <div className="monitoring-dashboard error">
-        <div className="error-card">
+        <Card>
           <AlertCircle className="error-icon" />
           <h2>Failed to Load Metrics</h2>
           <p>{error.message}</p>
@@ -61,10 +63,10 @@ export function MonitoringDashboard() {
               Correlation ID: {error.correlationId}
             </p>
           )}
-          <button onClick={refresh} className="btn-retry">
+          <Button variant="primary" onClick={refresh}>
             Retry
-          </button>
-        </div>
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -84,14 +86,10 @@ export function MonitoringDashboard() {
               Last updated: {lastFetched.toLocaleTimeString()}
             </span>
           )}
-          <button
-            onClick={refresh}
-            disabled={isRefreshing}
-            className="btn-refresh"
-          >
-            <RefreshCw className={isRefreshing ? 'animate-spin' : ''} />
+          <Button variant="primary" onClick={refresh} disabled={isRefreshing}>
+  <RefreshCw className={isRefreshing ? 'animate-spin' : ''} />
             Refresh
-          </button>
+</Button>
         </div>
       </div>
 
@@ -125,7 +123,7 @@ export function MonitoringDashboard() {
       {/* Metrics Grid */}
       <div className="metrics-grid">
         {/* Requests Metrics */}
-        <div className="metric-card">
+        <Card>
           <div className="metric-header">
             <Activity className="metric-icon" />
             <h3>Requests</h3>
@@ -154,10 +152,10 @@ export function MonitoringDashboard() {
               </span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Connections Metrics */}
-        <div className="metric-card">
+        <Card>
           <div className="metric-header">
             <Zap className="metric-icon" />
             <h3>Connections</h3>
@@ -170,10 +168,10 @@ export function MonitoringDashboard() {
               </span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Cache Metrics */}
-        <div className="metric-card">
+        <Card>
           <div className="metric-header">
             <Database className="metric-icon" />
             <h3>Cache</h3>
@@ -203,10 +201,10 @@ export function MonitoringDashboard() {
               </span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Database Metrics */}
-        <div className="metric-card">
+        <Card>
           <div className="metric-header">
             <Database className="metric-icon" />
             <h3>Database</h3>
@@ -237,7 +235,7 @@ export function MonitoringDashboard() {
               </span>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
@@ -311,7 +309,7 @@ export const exampleStyles = `
 }
 
 .last-updated {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
 }
 
@@ -354,7 +352,7 @@ export const exampleStyles = `
 }
 
 .alarm-card.alarm-alarm {
-  border-color: #ef4444;
+  border-color: var(--accent-error);
   background: rgba(239, 68, 68, 0.05);
 }
 
@@ -369,17 +367,17 @@ export const exampleStyles = `
   margin-left: auto;
   padding: 0.25rem 0.5rem;
   border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
 .state-alarm {
-  background: #ef4444;
+  background: var(--accent-error);
   color: white;
 }
 
 .state-ok {
-  background: #22c55e;
+  background: var(--accent-success);
   color: white;
 }
 
@@ -422,26 +420,26 @@ export const exampleStyles = `
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
 }
 
 .stat-value {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .stat-value.stat-large {
-  font-size: 2rem;
+  font-size: var(--text-4xl);
 }
 
 .stat-value.stat-success {
-  color: #22c55e;
+  color: var(--accent-success);
 }
 
 .stat-value.stat-error {
-  color: #ef4444;
+  color: var(--accent-error);
 }
 
 .loading-spinner {
@@ -466,7 +464,7 @@ export const exampleStyles = `
 .error-icon {
   width: 48px;
   height: 48px;
-  color: #ef4444;
+  color: var(--accent-error);
 }
 
 .btn-retry {
@@ -495,18 +493,18 @@ export const exampleStyles = `
 }
 
 .widget-label {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--text-secondary);
 }
 
 .widget-value {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .widget-value.widget-error {
-  color: #ef4444;
+  color: var(--accent-error);
 }
 
 .animate-spin {

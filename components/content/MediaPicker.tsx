@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { Button } from "@/components/ui/button";
 
 interface MediaAsset {
   id: string;
@@ -87,12 +88,9 @@ export default function MediaPicker({
         {/* Header */}
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-xl font-semibold">Select Media</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ✕
-          </button>
+          <Button variant="primary" onClick={onClose}>
+  ✕
+</Button>
         </div>
 
         {/* Search */}
@@ -166,19 +164,12 @@ export default function MediaPicker({
             {selectedMedia.size} selected
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border rounded hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleConfirm}
-              disabled={selectedMedia.size === 0}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-            >
-              Insert {selectedMedia.size > 0 && `(${selectedMedia.size})`}
-            </button>
+            <Button variant="ghost" onClick={onClose}>
+  Cancel
+</Button>
+            <Button variant="primary" onClick={handleConfirm} disabled={selectedMedia.size === 0}>
+  Insert {selectedMedia.size > 0 && `(${selectedMedia.size})`}
+</Button>
           </div>
         </div>
       </div>

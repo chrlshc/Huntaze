@@ -72,19 +72,19 @@ function VerifyContent() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-8">
+        <div className="bg-[var(--bg-primary)] border border-[var(--bg-secondary)] rounded-xl p-8">
           {/* Verifying State */}
           {state === 'verifying' && (
             <>
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-[#0f0f0f] border border-[#1a1a1a] flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8B5CF6]"></div>
+                <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--accent-primary)]"></div>
                 </div>
               </div>
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Verifying your email...
               </h1>
-              <p className="text-[#a3a3a3] text-center">
+              <p className="text-[var(--text-secondary)] text-center">
                 Please wait while we verify your account
               </p>
             </>
@@ -94,7 +94,7 @@ function VerifyContent() {
           {state === 'success' && (
             <>
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-[#0f0f0f] border border-[#1a1a1a] flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-green-500"
                     fill="none"
@@ -113,11 +113,11 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Email verified!
               </h1>
-              <p className="text-[#a3a3a3] text-center mb-6">
+              <p className="text-[var(--text-secondary)] text-center mb-6">
                 Your account has been verified. Redirecting to the sign-in/up page...
               </p>
               <div className="flex justify-center">
-                <div className="animate-pulse text-[#8B5CF6]">●</div>
+                <div className="animate-pulse text-[var(--accent-primary)]">●</div>
               </div>
             </>
           )}
@@ -126,7 +126,7 @@ function VerifyContent() {
           {state === 'expired' && (
             <>
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-[#0f0f0f] border border-[#1a1a1a] flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-yellow-500"
                     fill="none"
@@ -145,13 +145,13 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Link expired
               </h1>
-              <p className="text-[#a3a3a3] text-center mb-6">
+              <p className="text-[var(--text-secondary)] text-center mb-6">
                 This verification link has expired. Verification links are valid for 24 hours.
               </p>
               <div className="flex justify-center">
                 <a
                   href="/auth/register"
-                  className="inline-block px-6 py-3 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899] text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+                  className="inline-block px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] via-[var(--accent-primary)] to-[var(--accent-primary)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
                 >
                   Request new link
                 </a>
@@ -163,7 +163,7 @@ function VerifyContent() {
           {state === 'error' && (
             <>
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-[#0f0f0f] border border-[#1a1a1a] flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[var(--bg-primary)] border border-[var(--bg-secondary)] flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-red-500"
                     fill="none"
@@ -182,13 +182,13 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Verification failed
               </h1>
-              <p className="text-[#a3a3a3] text-center mb-6">
+              <p className="text-[var(--text-secondary)] text-center mb-6">
                 {errorMessage || 'Unable to verify your email. Please try again.'}
               </p>
               <div className="flex justify-center">
                 <a
                   href="/auth/register"
-                  className="inline-block px-6 py-3 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899] text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+                  className="inline-block px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] via-[var(--accent-primary)] to-[var(--accent-primary)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
                 >
                   Back to registration
                 </a>
@@ -200,7 +200,7 @@ function VerifyContent() {
           <div className="mt-6 text-center">
             <a
               href="/auth/login"
-              className="text-sm text-[#a3a3a3] hover:text-white transition-colors"
+              className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors"
             >
               Back to login
             </a>

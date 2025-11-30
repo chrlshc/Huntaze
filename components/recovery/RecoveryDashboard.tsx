@@ -6,6 +6,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface RecoveryStatus {
   timestamp: number;
@@ -159,12 +161,9 @@ export default function RecoveryDashboard() {
       <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
         <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Recovery Status</h3>
         <p className="text-red-600 mb-4">{error}</p>
-        <button
-          onClick={fetchStatus}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
+        <Button variant="danger" onClick={fetchStatus}>
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -189,12 +188,9 @@ export default function RecoveryDashboard() {
             />
             Auto-refresh
           </label>
-          <button
-            onClick={fetchStatus}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
+          <Button variant="primary" onClick={fetchStatus}>
             Refresh
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -234,12 +230,13 @@ export default function RecoveryDashboard() {
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Circuit Breakers</h3>
-          <button
+          <Button
+            variant="secondary"
             onClick={() => triggerAction('reset_circuit_breaker')}
             className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
           >
             Reset All
-          </button>
+          </Button>
         </div>
         <div className="grid gap-4">
           {Object.entries(status.recovery.circuitBreakers.breakers).map(([name, breaker]: [string, any]) => (
@@ -255,12 +252,13 @@ export default function RecoveryDashboard() {
                   {breaker.state}
                 </span>
                 {breaker.state !== 'CLOSED' && (
-                  <button
+                  <Button
+                    variant="primary"
                     onClick={() => triggerAction('reset_circuit_breaker', name)}
                     className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
                   >
                     Reset
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -293,12 +291,13 @@ export default function RecoveryDashboard() {
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Auto-Healing Actions</h3>
-          <button
+          <Button
+            variant="primary"
             onClick={() => triggerAction('trigger_healing')}
             className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
           >
             Trigger Healing
-          </button>
+          </Button>
         </div>
         <div className="grid gap-4">
           {Object.entries(status.recovery.autoHealing.actions).map(([name, action]: [string, any]) => (
@@ -310,12 +309,13 @@ export default function RecoveryDashboard() {
                   {action.averageHealingTime > 0 && ` (avg: ${action.averageHealingTime.toFixed(0)}ms)`}
                 </p>
               </div>
-              <button
+              <Button
+                variant="primary"
                 onClick={() => triggerAction('trigger_healing', name)}
                 className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
               >
                 Execute
-              </button>
+              </Button>
             </div>
           ))}
         </div>

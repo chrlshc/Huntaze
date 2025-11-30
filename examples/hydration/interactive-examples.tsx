@@ -9,6 +9,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
   SafeDateRenderer, 
   SafeRandomContent, 
   SafeBrowserAPI, 
@@ -42,13 +44,13 @@ export function HydrationExamplesPage() {
       <div className="flex gap-6">
         {/* Navigation */}
         <nav className="w-64 flex-shrink-0">
-          <div className="bg-white rounded-lg shadow-sm border p-4">
+          <Card className="bg-white rounded-lg shadow-sm border p-4">
             <h2 className="font-semibold mb-4">Exemples</h2>
             <ul className="space-y-2">
               {examples.map((example) => (
                 <li key={example.id}>
-                  <button
-                    onClick={() => setActiveExample(example.id)}
+                  <Button variant="ghost" onClick={() => setActiveExample(example.id)}>
+  setActiveExample(example.id)}
                     className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                       activeExample === example.id
                         ? 'bg-blue-100 text-blue-700'
@@ -56,7 +58,7 @@ export function HydrationExamplesPage() {
                     }`}
                   >
                     {example.title}
-                  </button>
+</Button>
                 </li>
               ))}
             </ul>
@@ -426,13 +428,18 @@ function StorageExamples() {
         
         return (
           <div className={theme}>
-            <button onClick={() => {
+            <Button variant="primary" onClick={() => {
+              const newTheme = theme === 'light' ? 'dark' : 'light';
+              setTheme(newTheme);
+              api.localStorage?.setItem('theme', newTheme);
+            }>
+  {
               const newTheme = theme === 'light' ? 'dark' : 'light';
               setTheme(newTheme);
               api.localStorage?.setItem('theme', newTheme);
             }}>
               Toggle Theme
-            </button>
+</Button>
           </div>
         );
       }}
@@ -468,12 +475,9 @@ function StorageExample() {
           return (
             <div className={theme === 'dark' ? 'bg-gray-800 text-white p-4 rounded' : 'bg-white p-4 rounded border'}>
               <p>Thème actuel: {theme}</p>
-              <button 
-                onClick={toggleTheme}
-                className="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Changer le thème
-              </button>
+              <Button variant="primary" onClick={toggleTheme}>
+  Changer le thème
+</Button>
             </div>
           );
         }}
@@ -593,24 +597,24 @@ function SystemThemeExample() {
               <p>Thème: {theme} (effectif: {effectiveTheme})</p>
               <p>Système: {systemTheme}</p>
               <div className="mt-2 space-x-2">
-                <button 
-                  onClick={() => setTheme('light')}
+                <Button variant="primary" onClick={() => setTheme('light')}>
+  setTheme('light')}
                   className="px-2 py-1 bg-yellow-400 text-black rounded text-sm"
                 >
                   ☀️ Clair
-                </button>
-                <button 
-                  onClick={() => setTheme('dark')}
+</Button>
+                <Button variant="secondary" onClick={() => setTheme('dark')}>
+  setTheme('dark')}
                   className="px-2 py-1 bg-gray-700 text-white rounded text-sm"
                 >
                   🌙 Sombre
-                </button>
-                <button 
-                  onClick={() => setTheme('system')}
+</Button>
+                <Button variant="primary" onClick={() => setTheme('system')}>
+  setTheme('system')}
                   className="px-2 py-1 bg-blue-500 text-white rounded text-sm"
                 >
                   🖥️ Système
-                </button>
+</Button>
               </div>
             </div>
           );
@@ -630,7 +634,7 @@ function ExampleSection({ title, description, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <Card className="bg-white rounded-lg shadow-sm border p-6">
       <header className="mb-6">
         <h2 className="text-2xl font-bold mb-2">{title}</h2>
         <p className="text-gray-600">{description}</p>
@@ -661,12 +665,12 @@ function ExampleCard({ title, description, code, children }: {
             )}
           </div>
           {code && (
-            <button
-              onClick={() => setShowCode(!showCode)}
+            <Button variant="primary" onClick={() => setShowCode(!showCode)}>
+  setShowCode(!showCode)}
               className="text-sm text-blue-600 hover:text-blue-800"
             >
               {showCode ? 'Masquer' : 'Voir'} le code
-            </button>
+</Button>
           )}
         </div>
       </div>

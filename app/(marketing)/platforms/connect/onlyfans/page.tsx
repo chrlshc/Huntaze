@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ofIntegrationApi } from '@/src/lib/api';
 import ComplianceNotice from '@/components/compliance/ComplianceNotice';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function OnlyFansConnectPage() {
   const router = useRouter();
@@ -80,12 +82,7 @@ export default function OnlyFansConnectPage() {
           </div>
           <div className="space-y-3">
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <input
-                type="file"
-                accept=".csv"
-                className="hidden"
-                id="csv-upload"
-                onChange={(e) => {
+              <input type="file" id="csv-upload" accept=".csv" onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
                     setNotice(`File "${file.name}" selected. CSV import will be available soon.`);
@@ -112,7 +109,8 @@ export default function OnlyFansConnectPage() {
               <Link href="/platforms/import/onlyfans" className="inline-flex items-center px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">
                 Import OF CSV
               </Link>
-              <button
+              <Button 
+                variant="ghost" 
                 disabled={waitlistLoading}
                 onClick={async () => {
                   try {
@@ -134,16 +132,16 @@ export default function OnlyFansConnectPage() {
                 className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-60"
               >
                 {waitlistLoading ? 'Joining…' : 'Join API Waitlist'}
-              </button>
+              </Button>
             </div>
             
             <div className="opacity-50 pointer-events-none">
               <p className="text-xs text-gray-500 mb-2">Direct connection (coming soon):</p>
-              <input className="w-full p-3 border border-gray-300 rounded-lg" placeholder="OnlyFans Username" disabled />
-              <input type="password" className="w-full p-3 border border-gray-300 rounded-lg mt-2" placeholder="OnlyFans Password" disabled />
-              <button disabled className="w-full py-2.5 bg-gray-400 text-white rounded-lg font-medium mt-2">
+              <Input placeholder="OnlyFans Username" disabled />
+              <Input type="password" placeholder="OnlyFans Password" disabled />
+              <Button variant="primary" disabled>
                 Direct connection (coming soon)
-              </button>
+              </Button>
             </div>
             <div className="text-xs text-gray-500">After connecting, visit <Link className="underline" href="/messages/onlyfans">Messages → OnlyFans</Link> and click "Sync Now".</div>
           </div>

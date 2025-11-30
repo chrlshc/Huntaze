@@ -3,11 +3,12 @@ import { redirect } from 'next/navigation';
 export const dynamic = 'force-dynamic';
 
 interface VerifyEmailPageProps {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function VerifyEmailPage({ searchParams }: VerifyEmailPageProps) {
-  const tokenParam = searchParams?.token;
+export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageProps) {
+  const resolvedParams = await searchParams;
+  const tokenParam = resolvedParams?.token;
   const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam;
 
   if (!token) {
@@ -15,9 +16,9 @@ export default function VerifyEmailPage({ searchParams }: VerifyEmailPageProps) 
   }
 
   // Delegate verification to the existing API route
-  const userId = Array.isArray(searchParams?.userId)
-    ? searchParams?.userId[0]
-    : searchParams?.userId;
+  const userId = Array.isArray(resolvedParams?.userId)
+    ? resolvedParams?.userId[0]
+    : resolvedParams?.userId;
 
   // Redirect to client verifier page that handles POST with token+userId
   redirect(`/auth/verify?token=${encodeURIComponent(token as string)}${userId ? `&userId=${encodeURIComponent(userId)}` : ''}`);

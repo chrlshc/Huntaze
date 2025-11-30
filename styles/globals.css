@@ -9,7 +9,7 @@ body {
   @apply min-h-screen antialiased;
   background-color: var(--ds-surface-base);
   color: var(--ds-text-primary);
-  font-family: var(--font-inter), Inter, sans-serif;
+  font-family: var(--font-sans), Inter, sans-serif;
 }
 
 a {

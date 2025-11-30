@@ -185,7 +185,7 @@ const MagneticButton: React.FC<MagneticButtonProps> = ({
       <motion.div
         className="absolute inset-0 -top-1/2 -left-1/2 w-[200%] h-[200%] opacity-0"
         style={{
-          background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.7) 50%, transparent 60%)',
+          background: 'linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.7) 50%, transparent 60%)',
         }}
         animate={{
           opacity: [0, 1, 0],
@@ -208,7 +208,7 @@ const MagneticButton: React.FC<MagneticButtonProps> = ({
         .ripple {
           position: absolute;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.5);
+          background: var(--bg-glass-active);
           transform: scale(0);
           animation: ripple-animation 0.6s ease-out;
           pointer-events: none;

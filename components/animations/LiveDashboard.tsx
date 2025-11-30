@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Line, Doughnut } from 'react-chartjs-2';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -111,7 +113,7 @@ const LiveDashboard: React.FC = () => {
       label: 'Revenus',
       data: [32000, 35000, 38000, 42000, 45000, 48000, revenue],
       borderColor: 'rgb(147, 51, 234)',
-      backgroundColor: 'rgba(147, 51, 234, 0.1)',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
       tension: 0.4,
       fill: true,
       pointRadius: 0,
@@ -125,7 +127,7 @@ const LiveDashboard: React.FC = () => {
       data: [45, 35, 20],
       backgroundColor: [
         'rgba(59, 130, 246, 0.8)',
-        'rgba(236, 72, 153, 0.8)',
+        'rgba(139, 92, 246, 0.8)',
         'rgba(34, 197, 94, 0.8)'
       ],
       borderWidth: 0
@@ -141,18 +143,18 @@ const LiveDashboard: React.FC = () => {
     scales: {
       x: {
         grid: { 
-          color: 'rgba(255,255,255,0.05)',
+          color: 'rgba(255, 255, 255, 0.05)',
           drawBorder: false
         },
-        ticks: { color: 'rgba(255,255,255,0.5)' }
+        ticks: { color: 'rgba(255, 255, 255, 0.5)' }
       },
       y: {
         grid: { 
-          color: 'rgba(255,255,255,0.05)',
+          color: 'rgba(255, 255, 255, 0.05)',
           drawBorder: false
         },
         ticks: { 
-          color: 'rgba(255,255,255,0.5)',
+          color: 'rgba(255, 255, 255, 0.5)',
           callback: (value: any) => '€' + value.toLocaleString()
         }
       }
@@ -245,7 +247,7 @@ const LiveDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Live Messages Feed */}
           <div className="lg:col-span-1">
-            <div className="glass-card p-6 h-[500px] overflow-hidden">
+            <Card className="p-6 h-[500px] overflow-hidden">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-white">Messages Live</h3>
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
@@ -292,7 +294,7 @@ const LiveDashboard: React.FC = () => {
                   ))}
                 </AnimatePresence>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Charts */}
@@ -326,7 +328,7 @@ const LiveDashboard: React.FC = () => {
                         legend: {
                           display: true,
                           position: 'bottom',
-                          labels: { color: 'rgba(255,255,255,0.7)' }
+                          labels: { color: 'rgba(255, 255, 255, 0.7)' }
                         }
                       }
                     }}
@@ -398,9 +400,9 @@ const AIInsight: React.FC<{ type: 'success' | 'warning' | 'info'; text: string; 
     >
       <div className="flex justify-between items-start">
         <p className="text-sm text-white">{text}</p>
-        <button className="text-xs text-white/70 hover:text-white transition-colors">
+        <Button variant="primary">
           {action} →
-        </button>
+        </Button>
       </div>
     </motion.div>
   );

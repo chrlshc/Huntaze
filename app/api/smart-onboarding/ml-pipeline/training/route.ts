@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to schedule training job', { error });
+    logger.error('Failed to schedule training job', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to schedule training job' },
       { status: 500 }
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to get training status', { error });
+    logger.error('Failed to get training status', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to get training status' },
       { status: 500 }
@@ -116,7 +116,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to cancel training job', { error });
+    logger.error('Failed to cancel training job', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to cancel training job' },
       { status: 500 }

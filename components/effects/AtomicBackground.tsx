@@ -37,14 +37,19 @@ export default function AtomicBackground({
     let particles: Particle[] = [];
     let animationId: number;
 
+    // Get colors from CSS custom properties
+    const getComputedColor = (property: string) => {
+      return getComputedStyle(document.documentElement).getPropertyValue(property).trim();
+    };
+
     const config = {
       particleCount,
       connectionDistance,
       particleSpeed,
       colors: {
-        purple: '#8A2BE2',
-        pink: '#FF1493',
-        violet: '#9932CC'
+        purple: getComputedColor('--accent-primary') || '#8b5cf6',
+        pink: getComputedColor('--accent-error') || 'var(--accent-error)',
+        violet: getComputedColor('--accent-primary-hover') || '#7c3aed'
       }
     };
 
@@ -114,13 +119,20 @@ export default function AtomicBackground({
         const currentGlowRadius = this.glowRadius + Math.sin(this.pulsePhase) * 5;
         const currentOpacity = this.opacity + Math.sin(this.pulsePhase) * 0.2;
 
-        // Draw glow
+        // Draw glow using design token colors
         const gradient = context.createRadialGradient(
           this.x, this.y, 0,
           this.x, this.y, currentGlowRadius
         );
-        gradient.addColorStop(0, `rgba(138, 43, 226, ${currentOpacity * 0.8})`);
-        gradient.addColorStop(0.4, `rgba(255, 20, 147, ${currentOpacity * 0.3})`);
+        // Convert hex to rgba for gradient
+        const hexToRgba = (hex: string, alpha: number) => {
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        gradient.addColorStop(0, hexToRgba(config.colors.purple, currentOpacity * 0.8));
+        gradient.addColorStop(0.4, hexToRgba(config.colors.pink, currentOpacity * 0.3));
         gradient.addColorStop(1, 'transparent');
 
         context.save();
@@ -161,7 +173,7 @@ export default function AtomicBackground({
             // Base line with glow
             ctx.strokeStyle = `rgba(138, 43, 226, ${opacity})`;
             ctx.lineWidth = 1;
-            ctx.shadowColor = '#8A2BE2';
+            ctx.shadowColor = 'var(--accent-primary)';
             ctx.shadowBlur = 8;
 
             ctx.beginPath();
@@ -222,11 +234,11 @@ export default function AtomicBackground({
 
   return (
     <div className={`absolute inset-0 ${className}`}>
-      {/* Dark gradient background */}
+      {/* Dark gradient background using design tokens */}
       <div 
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #16213e 100%)'
+          background: `linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%)`
         }}
       />
       {/* Canvas */}
@@ -237,11 +249,11 @@ export default function AtomicBackground({
           pointerEvents: 'none',
         }}
       />
-      {/* Gradient overlay for depth */}
+      {/* Gradient overlay for depth using design tokens */}
       <div 
         className="absolute inset-0 z-20 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 50%, transparent 0%, rgba(10, 10, 10, 0.3) 70%)'
+          background: 'radial-gradient(circle at 50% 50%, transparent 0%, var(--bg-primary) 70%)'
         }}
       />
     </div>

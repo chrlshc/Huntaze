@@ -82,7 +82,7 @@ export function checkContrast(foreground: string, background: string): ContrastR
 export const darkModeColors = {
   // Backgrounds
   backgrounds: {
-    primary: '#0F0F10',
+    primary: 'var(--bg-primary)',
     secondary: '#151516',
     elevated: '#1A1A1C',
   },
@@ -91,15 +91,15 @@ export const darkModeColors = {
   text: {
     primary: '#EEEFF1',
     secondary: '#8C99AD',
-    tertiary: '#6B7280',
-    disabled: '#4B5563',
+    tertiary: 'var(--text-tertiary)',
+    disabled: 'var(--text-tertiary)',
   },
   
   // Accent colors
   accents: {
-    primary: '#A855F7',
+    primary: 'var(--accent-primary)',
     hover: '#C084FC',
-    active: '#9333EA',
+    active: 'var(--accent-primary)',
   }
 };
 

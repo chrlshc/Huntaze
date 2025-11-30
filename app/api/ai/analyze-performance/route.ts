@@ -52,12 +52,12 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     if (!validation.success) {
       return Response.json(
         createErrorResponse(
-          validation.error.errors[0].message,
+          validation.error.issues[0].message,
           ApiErrorCode.VALIDATION_ERROR,
           {
             correlationId,
             startTime,
-            metadata: { errors: validation.error.errors },
+            metadata: { errors: validation.error.issues },
           }
         ),
         { status: 400 }

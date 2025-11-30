@@ -171,9 +171,9 @@ class AlertService {
           }
         }
       } catch (error) {
-        logger.error('Error checking alert condition', {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Error checking alert condition', err, {
           alert: config.name,
-          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -240,9 +240,8 @@ class AlertService {
         cache: 'no-store',
       });
     } catch (error) {
-      logger.error('Failed to send Slack notification', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to send Slack notification', err);
     }
   }
 

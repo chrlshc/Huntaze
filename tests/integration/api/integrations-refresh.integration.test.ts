@@ -149,7 +149,7 @@ const MOCK_INTEGRATION = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       email: `test-refresh-${Date.now()}-${Math.random()}@example.com`,
@@ -169,7 +169,7 @@ async function createTestIntegration(userId: number, providerAccountId?: string)
   // Generate unique account ID if not provided
   const accountId = providerAccountId || `${MOCK_INTEGRATION.providerAccountId}-${Date.now()}-${Math.random().toString(36).substring(7)}`;
   
-  return await prisma.oAuthAccount.create({
+  return await prisma.oauth_accounts.create({
     data: {
       userId,
       provider: MOCK_INTEGRATION.provider,
@@ -186,7 +186,7 @@ async function createTestIntegration(userId: number, providerAccountId?: string)
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.oAuthAccount.deleteMany({
+  await prisma.oauth_accounts.deleteMany({
     where: {
       user: {
         email: { contains: 'test-refresh@' },
@@ -194,7 +194,7 @@ async function cleanupTestData() {
     },
   });
   
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-refresh@' },
     },
@@ -297,7 +297,7 @@ describe('Integrations Refresh API Integration Tests', () => {
         csrfToken
       );
       
-      const updated = await prisma.oAuthAccount.findFirst({
+      const updated = await prisma.oauth_accounts.findFirst({
         where: {
           userId: testUser.id,
           provider: testIntegration.provider,
@@ -319,7 +319,7 @@ describe('Integrations Refresh API Integration Tests', () => {
         csrfToken
       );
       
-      const updated = await prisma.oAuthAccount.findFirst({
+      const updated = await prisma.oauth_accounts.findFirst({
         where: {
           userId: testUser.id,
           provider: testIntegration.provider,
@@ -517,7 +517,7 @@ describe('Integrations Refresh API Integration Tests', () => {
 
     it('should return 404 for other user\'s integration', async () => {
       // Create another user with integration
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: `other-user-refresh-${Date.now()}-${Math.random()}@example.com`,
           password: await hash('password', 12),
@@ -538,8 +538,8 @@ describe('Integrations Refresh API Integration Tests', () => {
       expect(response.status).toBe(404);
       
       // Cleanup
-      await prisma.oAuthAccount.delete({ where: { id: otherIntegration.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.oauth_accounts.delete({ where: { id: otherIntegration.id } });
+      await prisma.users.delete({ where: { id: otherUser.id } });
     });
   });
 
@@ -550,7 +550,7 @@ describe('Integrations Refresh API Integration Tests', () => {
   describe('User Isolation', () => {
     it('should only refresh user\'s own integrations', async () => {
       // Create another user with integration
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: `other-user-isolation-${Date.now()}-${Math.random()}@example.com`,
           password: await hash('password', 12),
@@ -570,7 +570,7 @@ describe('Integrations Refresh API Integration Tests', () => {
       );
       
       // Other user's integration should not be updated
-      const integration = await prisma.oAuthAccount.findFirst({
+      const integration = await prisma.oauth_accounts.findFirst({
         where: {
           userId: otherUser.id,
           provider: otherIntegration.provider,
@@ -580,8 +580,8 @@ describe('Integrations Refresh API Integration Tests', () => {
       expect(integration!.accessToken).toBe(oldToken);
       
       // Cleanup
-      await prisma.oAuthAccount.delete({ where: { id: otherIntegration.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.oauth_accounts.delete({ where: { id: otherIntegration.id } });
+      await prisma.users.delete({ where: { id: otherUser.id } });
     });
   });
 
@@ -686,7 +686,7 @@ describe('Integrations Refresh API Integration Tests', () => {
       }
       
       // Verify token was updated
-      const updated = await prisma.oAuthAccount.findFirst({
+      const updated = await prisma.oauth_accounts.findFirst({
         where: {
           userId: testUser.id,
           provider: testIntegration.provider,

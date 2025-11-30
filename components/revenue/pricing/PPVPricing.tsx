@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import type { PPVPricingRecommendation } from '@/lib/services/revenue/types';
+import { Button } from "@/components/ui/button";
 
 interface PPVPricingProps {
   recommendations: PPVPricingRecommendation[];
@@ -84,13 +85,14 @@ export function PPVPricing({ recommendations, onApply }: PPVPricingProps) {
               </div>
             </div>
 
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => handleApply(rec.contentId)}
               disabled={applying === rec.contentId}
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-sm font-medium rounded-lg transition-colors"
             >
               {applying === rec.contentId ? 'Applying...' : 'Apply Price'}
-            </button>
+            </Button>
           </div>
         );
       })}

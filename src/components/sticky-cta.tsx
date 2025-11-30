@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Card } from '@/components/ui/card';
 
 export default function StickyCTA() {
   const pathname = usePathname()
@@ -11,7 +12,7 @@ export default function StickyCTA() {
   if (isApp) return null
 
   return (
-    <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-black/80 backdrop-blur-sm border-t border-gray-800">
+    <Card className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-black/80 backdrop-blur-sm border-t border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
         <div className="text-xs text-gray-300">
           <div className="font-medium">Start for free</div>
@@ -24,7 +25,7 @@ export default function StickyCTA() {
           Get started
         </Link>
       </div>
-    </div>
+    </Card>
   )
 }
 

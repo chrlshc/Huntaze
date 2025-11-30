@@ -8,6 +8,7 @@ import { ToastProvider, useToast } from '@/components/ui/toast';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import './integrations.css';
+import { Button } from "@/components/ui/button";
 
 // Lazy load IntegrationCard component to reduce initial bundle size
 const IntegrationCard = lazy(() => import('@/components/integrations/IntegrationCard').then(mod => ({ default: mod.IntegrationCard })));
@@ -87,12 +88,13 @@ function IntegrationsContent() {
             <AlertCircle className="integrations-error-icon" />
             <h2 className="integrations-error-title">Failed to load integrations</h2>
             <p className="integrations-error-message">{error}</p>
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => window.location.reload()}
               className="integrations-error-retry"
             >
               Retry
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 type BIPEvent = any; // non-standard (Chromium)
 
@@ -37,12 +39,12 @@ export default function PWAInstall({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <div className="hz-card">
+      <Card>
         <div className="hz-card__body">
           <h3 className="hz-card__title">Install the app</h3>
           {/* Android / Chromium */}
           {!isIOS && canInstall && (
-            <button className="hz-button primary" onClick={onInstall}>Install app</button>
+            <Button variant="primary" onClick={onInstall}>Install app</Button>
           )}
           {/* iOS guide */}
           {isIOS && (
@@ -57,7 +59,7 @@ export default function PWAInstall({ className }: { className?: string }) {
             </div>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

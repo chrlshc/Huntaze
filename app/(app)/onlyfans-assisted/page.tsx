@@ -16,6 +16,8 @@ import { HandCoins, CalendarRange, BarChart3, MessageSquare, Settings, Bell, Hom
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
 import type { NodeDef, LinkDef } from '@/components/hz/ConnectorGraph';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // Lazy load heavy SVG visualization component to reduce initial bundle size
 const ConnectorGraph = lazy(() => import('@/components/hz/ConnectorGraph'));
@@ -49,12 +51,12 @@ export default function OnlyFansAssistedPage() {
           <div className="hz-search">
             <div className="hz-searchbar">
               <Search className="hz-search-icon" aria-hidden />
-              <input placeholder="Search" aria-label="Search" />
+              <Input placeholder="Search" aria-label="Search" />
               <kbd className="hz-kbd">/</kbd>
             </div>
           </div>
           <div className="hz-actions">
-            <button className="hz-button" aria-label="Notifications"><Bell className="hz-icon"/></button>
+            <Button variant="primary" aria-label="Notifications"><Bell className="hz-icon"/></Button>
             <a className="hz-user" href="/account">
               <span className="hz-avatar" aria-hidden />
               <span>Alex Doe</span>

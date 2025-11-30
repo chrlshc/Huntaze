@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Bot, MessageSquare, Sparkles, Zap } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface AIConfigurationProps {
   onComplete: (data: { 
@@ -58,8 +60,9 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
             { value: 'concise', label: 'Concise', desc: 'Quick and direct' },
             { value: 'minimal', label: 'Minimal', desc: 'Just the essentials' }
           ].map(option => (
-            <button
+            <Button 
               key={option.value}
+              variant="secondary" 
               onClick={() => handleConfigChange('verbosity', option.value)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 config.verbosity === option.value
@@ -69,7 +72,7 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
             >
               <div className="font-medium text-gray-900 mb-1">{option.label}</div>
               <div className="text-xs text-gray-600">{option.desc}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -86,8 +89,9 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
             { value: 'medium', label: 'Balanced', desc: 'When you need it' },
             { value: 'low', label: 'Minimal', desc: 'Only when asked' }
           ].map(option => (
-            <button
+            <Button 
               key={option.value}
+              variant="secondary" 
               onClick={() => handleConfigChange('helpFrequency', option.value)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 config.helpFrequency === option.value
@@ -97,7 +101,7 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
             >
               <div className="font-medium text-gray-900 mb-1">{option.label}</div>
               <div className="text-xs text-gray-600">{option.desc}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -114,8 +118,9 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
             { value: 'professional', label: 'Professional', desc: 'Polished and refined' },
             { value: 'casual', label: 'Casual', desc: 'Friendly and relatable' }
           ].map(option => (
-            <button
+            <Button 
               key={option.value}
+              variant="secondary" 
               onClick={() => handleConfigChange('suggestionStyle', option.value)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 config.suggestionStyle === option.value
@@ -125,7 +130,7 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
             >
               <div className="font-medium text-gray-900 mb-1">{option.label}</div>
               <div className="text-xs text-gray-600">{option.desc}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -136,20 +141,21 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
           <h3 className="font-medium text-gray-900">Preview AI Response</h3>
           <Bot className="w-5 h-5 text-blue-600" />
         </div>
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
+        <Card className="bg-white rounded-lg p-4 border border-gray-200">
           <p className="text-gray-700">{getPreviewText()}</p>
-        </div>
+        </Card>
         <p className="text-xs text-gray-500">
           You can always change these settings later in your preferences.
         </p>
       </div>
 
-      <button
+      <Button 
+        variant="primary" 
         onClick={() => onComplete(config)}
         className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
       >
         Save AI Preferences
-      </button>
+      </Button>
     </div>
   );
 }

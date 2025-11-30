@@ -17,7 +17,7 @@ export default function FloatingParticles() {
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
-    const colors = ['#8b5cf6', '#ec4899', '#a855f7', '#d946ef', '#c084fc'];
+    const colors = ['#8b5cf6', 'var(--accent-primary)', 'var(--accent-primary)', '#d946ef', '#c084fc'];
     const newParticles: Particle[] = [];
 
     for (let i = 0; i < 20; i++) {

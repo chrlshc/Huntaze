@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
-import type { Subscription, Transaction, Content } from '@prisma/client';
+import type { subscriptions, transactions, content } from '@prisma/client';
 
 /**
  * Fan data structure from OnlyFans
@@ -93,7 +93,7 @@ export class OnlyFansService {
    * @returns Paginated list of fans
    */
   async getFans(
-    userId: number,
+    user_id: number,
     params: PaginationParams = {}
   ): Promise<PaginatedResult<OnlyFansFan>> {
     const { limit = 50, offset = 0 } = params;
@@ -101,62 +101,62 @@ export class OnlyFansService {
     try {
       // Query subscriptions from database
       const [subscriptions, total] = await Promise.all([
-        prisma.subscription.findMany({
+        prisma.subscriptions.findMany({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
           },
           take: limit,
           skip: offset,
-          orderBy: { startedAt: 'desc' },
+          orderBy: { started_at: 'desc' },
         }),
-        prisma.subscription.count({
+        prisma.subscriptions.count({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
           },
         }),
       ]);
 
       // Get transaction data for each fan to calculate total spent and message count
-      const fanIds = subscriptions.map((sub: Subscription) => sub.fanId);
-      const transactions = await prisma.transaction.findMany({
+      const fanIds = subscriptions.map((sub: subscriptions) => sub.fan_id);
+      const transactions = await prisma.transactions.findMany({
         where: {
-          userId,
+          user_id,
           platform: 'onlyfans',
         },
       });
 
       // Transform subscriptions to fan objects
-      const fans: OnlyFansFan[] = subscriptions.map((sub: Subscription) => {
+      const fans: OnlyFansFan[] = subscriptions.map((sub: subscriptions) => {
         // Calculate total spent by this fan
         const totalSpent = transactions
-          .filter((t: Transaction) => t.type === 'subscription' || t.type === 'tip' || t.type === 'ppv')
-          .reduce((sum: number, t: Transaction) => sum + t.amount, 0);
+          .filter((t: transactions) => t.type === 'subscription' || t.type === 'tip' || t.type === 'ppv')
+          .reduce((sum: number, t: transactions) => sum + t.amount, 0);
 
         // Count messages from this fan
         const messageCount = transactions
-          .filter((t: Transaction) => t.type === 'message')
+          .filter((t: transactions) => t.type === 'message')
           .length;
 
         // Find last message date
         const messageTransactions = transactions
-          .filter((t: Transaction) => t.type === 'message')
-          .sort((a: Transaction, b: Transaction) => b.createdAt.getTime() - a.createdAt.getTime());
+          .filter((t: transactions) => t.type === 'message')
+          .sort((a: transactions, b: transactions) => b.created_at.getTime() - a.created_at.getTime());
         
         const lastMessageAt = messageTransactions.length > 0 
-          ? messageTransactions[0].createdAt 
+          ? messageTransactions[0].created_at 
           : undefined;
 
         return {
-          id: sub.fanId,
-          name: `Fan ${sub.fanId.substring(0, 8)}`, // Placeholder - would come from external API
-          username: `@fan_${sub.fanId.substring(0, 8)}`, // Placeholder
+          id: sub.fan_id,
+          name: `Fan ${sub.fan_id.substring(0, 8)}`, // Placeholder - would come from external API
+          username: `@fan_${sub.fan_id.substring(0, 8)}`, // Placeholder
           subscriptionTier: sub.tier || undefined,
           subscriptionAmount: sub.amount,
           subscriptionStatus: sub.status as 'active' | 'cancelled' | 'expired',
-          subscribedAt: sub.startedAt,
-          expiresAt: sub.endsAt || undefined,
+          subscribedAt: sub.started_at,
+          expiresAt: sub.ends_at || undefined,
           totalSpent,
           messageCount,
           lastMessageAt,
@@ -184,31 +184,31 @@ export class OnlyFansService {
    * @param userId - User ID
    * @returns OnlyFans statistics
    */
-  async getStats(userId: number): Promise<OnlyFansStats> {
+  async getStats(user_id: number): Promise<OnlyFansStats> {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
       // Get subscription counts
       const [totalFans, activeFans, newFansThisMonth] = await Promise.all([
-        prisma.subscription.count({
+        prisma.subscriptions.count({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
           },
         }),
-        prisma.subscription.count({
+        prisma.subscriptions.count({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
             status: 'active',
           },
         }),
-        prisma.subscription.count({
+        prisma.subscriptions.count({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
-            startedAt: {
+            started_at: {
               gte: startOfMonth,
             },
           },
@@ -217,9 +217,9 @@ export class OnlyFansService {
 
       // Get revenue data
       const [totalRevenueResult, monthRevenueResult] = await Promise.all([
-        prisma.transaction.aggregate({
+        prisma.transactions.aggregate({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
             status: 'completed',
           },
@@ -227,12 +227,12 @@ export class OnlyFansService {
             amount: true,
           },
         }),
-        prisma.transaction.aggregate({
+        prisma.transactions.aggregate({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
             status: 'completed',
-            createdAt: {
+            created_at: {
               gte: startOfMonth,
             },
           },
@@ -246,9 +246,9 @@ export class OnlyFansService {
       const revenueThisMonth = monthRevenueResult._sum.amount || 0;
 
       // Calculate average subscription price
-      const subscriptionResult = await prisma.subscription.aggregate({
+      const subscriptionResult = await prisma.subscriptions.aggregate({
         where: {
-          userId,
+          user_id,
           platform: 'onlyfans',
           status: 'active',
         },
@@ -265,17 +265,17 @@ export class OnlyFansService {
       // Get top earning content
       const topContent = await prisma.content.findMany({
         where: {
-          userId,
+          user_id,
           platform: 'onlyfans',
           status: 'published',
         },
         take: 5,
         orderBy: {
-          publishedAt: 'desc',
+          published_at: 'desc',
         },
       });
 
-      const topEarningContent = topContent.map((content: Content) => ({
+      const topEarningContent = topContent.map((content: content) => ({
         id: content.id,
         title: content.title,
         revenue: 0, // Would be calculated from transactions in a real implementation
@@ -306,7 +306,7 @@ export class OnlyFansService {
    * @returns Paginated list of OnlyFans content
    */
   async getContent(
-    userId: number,
+    user_id: number,
     params: PaginationParams = {}
   ): Promise<PaginatedResult<OnlyFansContent>> {
     const { limit = 50, offset = 0 } = params;
@@ -316,33 +316,33 @@ export class OnlyFansService {
       const [content, total] = await Promise.all([
         prisma.content.findMany({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
           },
           take: limit,
           skip: offset,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { created_at: 'desc' },
         }),
         prisma.content.count({
           where: {
-            userId,
+            user_id,
             platform: 'onlyfans',
           },
         }),
       ]);
 
       // Transform to OnlyFans content format
-      const items: OnlyFansContent[] = content.map((item: Content) => ({
+      const items: OnlyFansContent[] = content.map((item: content) => ({
         id: item.id,
         title: item.title,
         type: item.type as 'image' | 'video' | 'text',
         status: item.status as 'draft' | 'scheduled' | 'published',
-        publishedAt: item.publishedAt || undefined,
+        publishedAt: item.published_at || undefined,
         views: 0, // Would come from external API or metadata
         likes: 0, // Would come from external API or metadata
         comments: 0, // Would come from external API or metadata
         revenue: 0, // Would be calculated from transactions
-        thumbnailUrl: item.mediaIds.length > 0 ? item.mediaIds[0] : undefined,
+        thumbnailUrl: item.media_ids.length > 0 ? item.media_ids[0] : undefined,
       }));
 
       return {
@@ -367,7 +367,7 @@ export class OnlyFansService {
    * @param userId - User ID
    * @param accessToken - OnlyFans API access token
    */
-  async syncFromExternalAPI(userId: number, accessToken: string): Promise<void> {
+  async syncFromExternalAPI(user_id: number, accessToken: string): Promise<void> {
     // TODO: Implement external OnlyFans API integration
     // This would:
     // 1. Fetch fans/subscribers from OnlyFans API

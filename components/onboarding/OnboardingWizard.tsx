@@ -8,6 +8,8 @@ import { GoalSelection } from './GoalSelection';
 import { PlatformConnection } from './PlatformConnection';
 import { AIConfiguration } from './AIConfiguration';
 import { AdditionalPlatforms } from './AdditionalPlatforms';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface OnboardingWizardProps {
   userId: string;
@@ -159,7 +161,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
           estimatedTimeRemaining={0}
         />
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 mt-8">
+        <Card className="bg-white rounded-2xl shadow-xl p-8 mt-8">
           {currentStep === 'welcome' && (
             <div className="text-center">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -168,14 +170,16 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
               <p className="text-xl text-gray-600 mb-8">
                 Let's get you set up in just a few minutes
               </p>
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => handleStepComplete('welcome')}
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
               >
                 Get Started
-              </button>
+              </Button>
               <div className="mt-4">
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={async () => {
                     try {
                       await fetch('/api/force-complete-onboarding');
@@ -185,7 +189,7 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
                   className="text-sm text-gray-500 hover:text-gray-700 underline"
                 >
                   Skip onboarding for now
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -225,7 +229,8 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
               <p className="text-lg text-gray-600 mb-8">
                 Your account is configured and ready to go
               </p>
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => {
                   handleStepComplete('completion');
                   onComplete?.();
@@ -233,10 +238,10 @@ export function OnboardingWizard({ userId, onComplete }: OnboardingWizardProps) 
                 className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
               >
                 Start Creating Content
-              </button>
+              </Button>
             </div>
           )}
-        </div>
+        </Card>
 
         <StepNavigation
           canGoBack={currentStepIndex > 0}

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ScheduledContent {
   id: string;
@@ -299,7 +301,7 @@ export default function ContentCalendar({ userId, onReschedule, onContentClick }
   };
 
   return (
-    <div className="bg-white rounded-lg border p-6">
+    <Card className="bg-white rounded-lg border p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
@@ -386,6 +388,6 @@ export default function ContentCalendar({ userId, onReschedule, onContentClick }
           ))}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

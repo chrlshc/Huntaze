@@ -101,12 +101,12 @@ export async function sendVerificationEmail(
       <head>
         <meta charset="utf-8">
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: var(--text-primary); }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #9333EA 0%, #4F46E5 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .button { display: inline-block; background: linear-gradient(135deg, #9333EA 0%, #4F46E5 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
-          .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
+          .header { background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+          .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 8px 8px; }
+          .button { display: inline-block; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+          .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm); }
         </style>
       </head>
       <body>
@@ -121,11 +121,11 @@ export async function sendVerificationEmail(
             <div style="text-align: center;">
               <a href="${verificationUrl}" class="button">Verify Email Address</a>
             </div>
-            <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+            <p style="margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm);">
               Or copy and paste this link into your browser:<br>
-              <a href="${verificationUrl}" style="color: #9333EA;">${verificationUrl}</a>
+              <a href="${verificationUrl}" style="color: var(--accent-primary);">${verificationUrl}</a>
             </p>
-            <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+            <p style="margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm);">
               This link will expire in 24 hours.
             </p>
           </div>
@@ -183,12 +183,12 @@ export async function sendWelcomeEmail(
       <head>
         <meta charset="utf-8">
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: var(--text-primary); }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #9333EA 0%, #4F46E5 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+          .header { background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+          .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 8px 8px; }
           .feature { margin: 20px 0; padding: 15px; background: white; border-radius: 6px; }
-          .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
+          .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm); }
         </style>
       </head>
       <body>
@@ -271,13 +271,13 @@ export async function sendPasswordResetEmail(
       <head>
         <meta charset="utf-8">
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: var(--text-primary); }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #9333EA 0%, #4F46E5 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .button { display: inline-block; background: linear-gradient(135deg, #9333EA 0%, #4F46E5 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
-          .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px; }
-          .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
+          .header { background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+          .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 8px 8px; }
+          .button { display: inline-block; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+          .warning { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--accent-warning); padding: 15px; margin: 20px 0; border-radius: 4px; }
+          .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm); }
         </style>
       </head>
       <body>
@@ -291,9 +291,9 @@ export async function sendPasswordResetEmail(
             <div style="text-align: center;">
               <a href="${resetUrl}" class="button">Reset Password</a>
             </div>
-            <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
+            <p style="margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm);">
               Or copy and paste this link into your browser:<br>
-              <a href="${resetUrl}" style="color: #9333EA;">${resetUrl}</a>
+              <a href="${resetUrl}" style="color: var(--accent-primary);">${resetUrl}</a>
             </p>
             <div class="warning">
               <strong>⚠️ Security Notice:</strong><br>

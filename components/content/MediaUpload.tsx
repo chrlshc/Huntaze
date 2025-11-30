@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { uploadMedia } from '@/hooks/useContent';
+import { Button } from "@/components/ui/button";
 
 interface UploadedMedia {
   id: string;
@@ -276,10 +277,10 @@ export function MediaUpload({
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               or{' '}
               <button
-                type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="text-purple-600 hover:text-purple-700 font-medium"
                 disabled={uploading || uploadedFiles.length >= maxFiles}
+                type="button"
               >
                 browse files
               </button>

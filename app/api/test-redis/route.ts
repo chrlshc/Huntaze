@@ -220,7 +220,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RedisTestR
 
     // 1. Validate environment variables
     if (!process.env.ELASTICACHE_REDIS_HOST) {
-      logger.error('Missing ELASTICACHE_REDIS_HOST environment variable', {
+      logger.error('Missing ELASTICACHE_REDIS_HOST environment variable', new Error('ELASTICACHE_REDIS_HOST not set'), {
         correlationId,
       });
 
@@ -302,7 +302,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RedisTestR
     logger.info('Redis connection established', { correlationId });
 
     // 3. Test 1: PING with retry
-    logger.debug('Running PING test', { correlationId });
+    logger.info('Running PING test', { correlationId });
     const pingStart = Date.now();
     const pong = await retryWithBackoff(
       async () => await redis!.ping(),
@@ -318,7 +318,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RedisTestR
 
     // 4. Test 2: SET with retry
     const testKey = `test:connection:${Date.now()}`;
-    logger.debug('Running SET test', { correlationId, key: testKey });
+    logger.info('Running SET test', { correlationId, key: testKey });
     
     const setStart = Date.now();
     await retryWithBackoff(
@@ -334,7 +334,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RedisTestR
     });
 
     // 5. Test 3: GET with retry
-    logger.debug('Running GET test', { correlationId, key: testKey });
+    logger.info('Running GET test', { correlationId, key: testKey });
     
     const getStart = Date.now();
     const value = await retryWithBackoff(
@@ -350,7 +350,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RedisTestR
     });
 
     // 6. Test 4: DELETE with retry
-    logger.debug('Running DELETE test', { correlationId, key: testKey });
+    logger.info('Running DELETE test', { correlationId, key: testKey });
     
     const delStart = Date.now();
     await retryWithBackoff(
@@ -365,7 +365,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<RedisTestR
     });
 
     // 7. Get Redis info
-    logger.debug('Fetching Redis server info', { correlationId });
+    logger.info('Fetching Redis server info', { correlationId });
     
     const info = await retryWithBackoff(
       async () => await redis!.info('server'),

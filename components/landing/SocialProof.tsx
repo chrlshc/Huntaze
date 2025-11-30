@@ -64,7 +64,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export function SocialProof({ stats, testimonials }: SocialProofProps) {
   return (
-    <section className="py-24 bg-gray-50 dark:bg-[#1F1F1F]">
+    <section className="py-24 bg-gray-50 dark:bg-[var(--bg-secondary)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats Grid */}
         <motion.div
@@ -117,7 +117,7 @@ export function SocialProof({ stats, testimonials }: SocialProofProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
-              className="bg-white dark:bg-[#1A1A1A] rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-800"
+              className="bg-white dark:bg-[var(--bg-secondary)] rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-800"
             >
               <div className="flex items-center gap-4 mb-6">
                 {testimonial.avatar ? (

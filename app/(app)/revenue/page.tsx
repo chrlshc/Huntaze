@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Card } from '@/components/ui/card';
 
 export default function RevenuePage() {
   return (
@@ -18,7 +19,7 @@ export default function RevenuePage() {
         Advanced revenue analytics and optimization tools
       </p>
       
-      <div className="mt-8 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-700 dark:bg-gray-800/50">
+      <Card className="mt-8 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-700 dark:bg-gray-800/50">
         <div className="mx-auto max-w-md">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
@@ -41,7 +42,7 @@ export default function RevenuePage() {
             forecasting will be available here.
           </p>
         </div>
-      </div>
+      </Card>
       </div>
     </ProtectedRoute>
   );

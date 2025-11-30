@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useReducedMotion } from "@/src/hooks/useReducedMotion";
+import { Button } from "@/components/ui/button";
 
 type Action = {
   label: string;
@@ -105,20 +106,12 @@ export default function AppTopbar({
           className="w-full border-t border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md"
         >
           <div className="px-6 lg:px-8 py-2 flex items-center gap-2 justify-end">
-            <button
-              type="button"
-              onClick={onDiscard}
-              className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm"
-            >
-              Discard
-            </button>
-            <button
-              type="button"
-              onClick={onSave}
-              className="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-sm"
-            >
-              Save
-            </button>
+            <Button variant="secondary" onClick={onDiscard} type="button">
+  Discard
+</Button>
+            <Button variant="primary" onClick={onSave} type="button">
+  Save
+</Button>
           </div>
         </div>
       ) : null}

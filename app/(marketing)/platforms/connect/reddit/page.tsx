@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function RedditConnectPage() {
   const searchParams = useSearchParams();
@@ -69,7 +71,7 @@ export default function RedditConnectPage() {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+        <Card className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           {/* Success State */}
           {success && username && (
             <div className="text-center">
@@ -85,18 +87,12 @@ export default function RedditConnectPage() {
                 Your Reddit account <span className="font-semibold text-orange-600">u/{username}</span> is now connected.
               </p>
               <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => router.push('/dashboard')}
-                  className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-red-700 transition-all"
-                >
+                <Button variant="primary" onClick={() => router.push('/dashboard')}>
                   Go to Dashboard
-                </button>
-                <button
-                  onClick={handleDisconnect}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all"
-                >
+                </Button>
+                <Button variant="secondary" onClick={handleDisconnect}>
                   Disconnect
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -175,7 +171,7 @@ export default function RedditConnectPage() {
               </button>
             </>
           )}
-        </div>
+        </Card>
 
         {/* Navigation Links */}
         <div className="text-center space-y-2">

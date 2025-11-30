@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { ChurnRiskFan, EngagementDataPoint } from '@/lib/services/revenue/types';
+import { Button } from "@/components/ui/button";
 
 interface ChurnRiskDetailProps {
   fan: ChurnRiskFan;
@@ -90,15 +91,11 @@ export function ChurnRiskDetail({
               </span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-            aria-label="Close modal"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <Button variant="primary" onClick={onClose} aria-label="Close modal">
+  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+</Button>
         </div>
 
         {/* Content */}
@@ -215,18 +212,12 @@ export function ChurnRiskDetail({
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Close
-          </button>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Send Re-engagement Message
-          </button>
+          <Button variant="ghost" onClick={onClose}>
+  Close
+</Button>
+          <Button variant="primary" onClick={onClose}>
+  Send Re-engagement Message
+</Button>
         </div>
       </div>
     </div>

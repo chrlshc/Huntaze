@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         results.failed++;
         results.errors.push(`Event ${event.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        logger.error('Event processing failed', { error, eventId: event.id });
+        logger.error('Event processing failed', error instanceof Error ? error : new Error(String(error)), { eventId: event.id });
       }
     }
 
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Data ingestion endpoint failed', { error });
+    logger.error('Data ingestion endpoint failed', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error) {
-    logger.error('Data pipeline status endpoint failed', { error });
+    logger.error('Data pipeline status endpoint failed', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

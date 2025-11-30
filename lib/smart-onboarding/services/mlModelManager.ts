@@ -65,7 +65,7 @@ class MLModelManager {
       return result;
 
     } catch (error) {
-      logger.error('Prediction failed', { error, request });
+      logger.error('Prediction failed', error instanceof Error ? error : new Error(String(error)), { request });
       
       // Update endpoint metrics for failure
       if (request.modelType) {
@@ -370,7 +370,7 @@ class MLModelManager {
         const age = now - cached.lastUsed.getTime();
         if (age > this.cacheTimeout) {
           this.modelCache.delete(key);
-          logger.debug(`Removed expired model from cache: ${key}`);
+          logger.info(`Removed expired model from cache: ${key}`);
         }
       }
     }, 300000); // Clean every 5 minutes
@@ -407,7 +407,7 @@ class MLModelManager {
         await this.loadModel(modelType);
         logger.info(`Model warmed up: ${modelType}`);
       } catch (error) {
-        logger.error(`Failed to warm up model: ${modelType}`, { error });
+        logger.error(`Failed to warm up model: ${modelType}`, error instanceof Error ? error : new Error(String(error)), {});
       }
     }
   }

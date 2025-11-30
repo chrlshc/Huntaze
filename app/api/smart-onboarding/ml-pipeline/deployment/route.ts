@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to start model deployment', { error });
+    logger.error('Failed to start model deployment', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to start model deployment' },
       { status: 500 }
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ deployments: history });
 
   } catch (error) {
-    logger.error('Failed to get deployment status', { error });
+    logger.error('Failed to get deployment status', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to get deployment status' },
       { status: 500 }
@@ -129,7 +129,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to rollback deployment', { error });
+    logger.error('Failed to rollback deployment', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to rollback deployment' },
       { status: 500 }

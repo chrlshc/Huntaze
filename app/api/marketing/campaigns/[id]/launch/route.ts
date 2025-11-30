@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getServerSession } from '@/lib/auth';
 
 /**
  * POST /api/marketing/campaigns/[id]/launch
@@ -56,7 +56,7 @@ export async function POST(
     const { id: campaignId } = await params;
     
     // 2. Authentication check
-    const session = await getSession(request);
+    const session = await getServerSession();
     
     if (!session?.user?.id) {
       console.warn('[API] Campaign launch - Unauthorized', {

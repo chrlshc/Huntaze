@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { SignupForm } from '@/components/auth/SignupForm';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/config';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = {
   title: 'Sign Up - Huntaze',
@@ -46,9 +47,9 @@ export default async function SignupPage() {
         </div>
 
         {/* Signup Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <Card className="bg-white rounded-2xl shadow-xl p-8">
           <SignupForm />
-        </div>
+        </Card>
 
         {/* Footer */}
         <div className="mt-6 text-center">

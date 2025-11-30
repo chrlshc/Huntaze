@@ -22,16 +22,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Parse userId to number (Prisma expects number for id field)
+    const userIdNum = parseInt(userId, 10);
+    if (isNaN(userIdNum)) {
+      return NextResponse.json(
+        { error: 'Invalid userId format' },
+        { status: 400 }
+      );
+    }
+
     // Use cache middleware with tag-based invalidation
     const userData = await withCache(
       async () => {
         // This DB query only runs on cache miss
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-          include: {
-            profile: true,
-            settings: true,
-          },
+        const user = await prisma.users.findUnique({
+          where: { id: userIdNum },
         });
 
         return user;
@@ -79,9 +84,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse userId to number (Prisma expects number for id field)
+    const userIdNum = parseInt(userId, 10);
+    if (isNaN(userIdNum)) {
+      return NextResponse.json(
+        { error: 'Invalid userId format' },
+        { status: 400 }
+      );
+    }
+
     // Update user in database
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
+    const updatedUser = await prisma.users.update({
+      where: { id: userIdNum },
       data: { name, email },
     });
 
@@ -117,9 +131,18 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // Parse userId to number (Prisma expects number for id field)
+    const userIdNum = parseInt(userId, 10);
+    if (isNaN(userIdNum)) {
+      return NextResponse.json(
+        { error: 'Invalid userId format' },
+        { status: 400 }
+      );
+    }
+
     // Delete user from database
-    await prisma.user.delete({
-      where: { id: userId },
+    await prisma.users.delete({
+      where: { id: userIdNum },
     });
 
     // Invalidate all user-related cache

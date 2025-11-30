@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
+import {
   SparklesIcon, 
   TrophyIcon, 
   FireIcon,
@@ -259,14 +261,15 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
                     </p>
                   </div>
 
-                  <button
+                  <Button
+                    variant="primary"
                     onClick={() => handleFeedbackDismiss(feedback.id)}
                     className={`flex-shrink-0 ${colors.text} opacity-70 hover:opacity-100 transition-opacity`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -289,7 +292,7 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
           animate={{ opacity: 1, x: 0 }}
           className="fixed bottom-4 left-4 z-40"
         >
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+          <Card className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
             <div className="flex items-center space-x-3">
               <div className="text-sm font-medium text-gray-700">
                 Progress
@@ -318,7 +321,7 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
                 </span>
               </div>
             </div>
-          </div>
+          </Card>
         </motion.div>
       )}
 
@@ -329,7 +332,7 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
           animate={{ opacity: 1, x: 0 }}
           className="fixed bottom-4 right-4 z-40"
         >
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+          <Card className="bg-white rounded-lg shadow-lg border border-gray-200 p-3">
             <div className="flex items-center space-x-3">
               <div className="text-sm font-medium text-gray-700">
                 Engagement
@@ -359,7 +362,7 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
                 </span>
               </div>
             </div>
-          </div>
+          </Card>
         </motion.div>
       )}
     </>

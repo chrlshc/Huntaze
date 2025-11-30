@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Calculator, TrendingUp } from 'lucide-react'
+import { Card } from '@/components/ui/card';
 
 export default function SavingsCalculator() {
   const [monthlyRevenue, setMonthlyRevenue] = useState(5000)
@@ -29,7 +30,7 @@ export default function SavingsCalculator() {
           <p className="text-xl text-gray-600">See how much you can save compared to your current agency</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <Card className="bg-white rounded-2xl shadow-xl p-8">
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Monthly revenue (€)</label>
@@ -113,7 +114,7 @@ export default function SavingsCalculator() {
               that’s like getting {Math.floor(calculateSavings('grow').yearlySavings / 66)} months free!
             </p>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )

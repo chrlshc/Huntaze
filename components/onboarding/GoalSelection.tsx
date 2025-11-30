@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Target, TrendingUp, DollarSign, Users, Video, Calendar } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface Goal {
   id: string;
@@ -120,17 +121,18 @@ export function GoalSelection({ onComplete }: GoalSelectionProps) {
         </div>
       )}
 
-      <button
-        onClick={handleContinue}
+      <Button 
+        variant="primary" 
+        onClick={handleContinue} 
         disabled={selectedGoals.length === 0}
-        className={`w-full py-3 rounded-lg font-semibold transition ${
+        className={`px-8 py-3 rounded-lg font-semibold transition ${
           selectedGoals.length > 0
             ? 'bg-blue-600 text-white hover:bg-blue-700'
             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
         }`}
       >
         Continue
-      </button>
+      </Button>
     </div>
   );
 }

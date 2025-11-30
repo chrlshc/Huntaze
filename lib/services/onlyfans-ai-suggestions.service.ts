@@ -74,7 +74,7 @@ export class OnlyFansAISuggestionsService {
         .slice(0, 5);
 
     } catch (error) {
-      logger.error('Failed to generate AI suggestions', { error });
+      logger.error('Failed to generate AI suggestions', error instanceof Error ? error : new Error(String(error)), {});
       return this.getFallbackSuggestions();
     }
   }

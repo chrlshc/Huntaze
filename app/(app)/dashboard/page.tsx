@@ -17,6 +17,7 @@ import { GamifiedOnboarding } from '@/components/dashboard/GamifiedOnboarding';
 import { Button } from '@/components/dashboard/Button';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { Card } from '@/components/ui/card';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function DashboardPage() {
   const hasConnectedIntegrations = integrations.some(i => i.isConnected);
   
   // Check if user has completed onboarding (for gamified onboarding display)
-  const hasCompletedOnboarding = session?.user?.hasCompletedOnboarding ?? true;
+  const hasCompletedOnboarding = session?.user?.onboardingCompleted ?? true;
   const userName = session?.user?.name?.split(' ')[0] || 'there';
 
   if (isLoading || integrationsLoading) {
@@ -57,7 +58,7 @@ export default function DashboardPage() {
             style={{
               color: 'var(--color-error)',
               fontWeight: 'var(--font-weight-medium)',
-              fontSize: 'var(--font-size-lg)'
+              fontSize: 'var(--text-lg)'
             }}
           >
             Error Loading Home
@@ -158,7 +159,7 @@ export default function DashboardPage() {
               className="huntaze-card-grid"
               style={{ marginTop: 'var(--spacing-content-block-gap)' }}
             >
-              <div className="huntaze-card">
+              <Card>
                 <div 
                   className="rounded-lg flex items-center justify-center"
                   style={{
@@ -190,9 +191,9 @@ export default function DashboardPage() {
                 <p className="huntaze-body-secondary">
                   Link your OnlyFans, Instagram, TikTok, or Reddit accounts to get started.
                 </p>
-              </div>
+              </Card>
 
-              <div className="huntaze-card">
+              <Card>
                 <div 
                   className="rounded-lg flex items-center justify-center"
                   style={{
@@ -224,9 +225,9 @@ export default function DashboardPage() {
                 <p className="huntaze-body-secondary">
                   Track your performance and get insights across all your platforms.
                 </p>
-              </div>
+              </Card>
 
-              <div className="huntaze-card">
+              <Card>
                 <div 
                   className="rounded-lg flex items-center justify-center"
                   style={{
@@ -258,7 +259,7 @@ export default function DashboardPage() {
                 <p className="huntaze-body-secondary">
                   Use AI-powered tools to create content and engage with your fans.
                 </p>
-              </div>
+              </Card>
             </div>
           </div>
         </CenteredContainer>
@@ -334,7 +335,7 @@ export default function DashboardPage() {
           className="huntaze-card-grid"
           style={{ marginTop: 'var(--spacing-content-block-gap)' }}
         >
-          <div className="huntaze-card">
+          <Card>
             <h3 
               className="huntaze-label"
               style={{ marginBottom: 'var(--spacing-sm)' }}
@@ -355,9 +356,9 @@ export default function DashboardPage() {
             >
               {formatPercentage(dashboard.summary.totalRevenue.change)} from last month
             </p>
-          </div>
+          </Card>
           
-          <div className="huntaze-card">
+          <Card>
             <h3 
               className="huntaze-label"
               style={{ marginBottom: 'var(--spacing-sm)' }}
@@ -378,9 +379,9 @@ export default function DashboardPage() {
             >
               {formatPercentage(dashboard.summary.activeFans.change)} from last month
             </p>
-          </div>
+          </Card>
           
-          <div className="huntaze-card">
+          <Card>
             <h3 
               className="huntaze-label"
               style={{ marginBottom: 'var(--spacing-sm)' }}
@@ -399,9 +400,9 @@ export default function DashboardPage() {
             >
               {dashboard.summary.messages.unread} unread
             </p>
-          </div>
+          </Card>
           
-          <div className="huntaze-card">
+          <Card>
             <h3 
               className="huntaze-label"
               style={{ marginBottom: 'var(--spacing-sm)' }}
@@ -422,7 +423,7 @@ export default function DashboardPage() {
             >
               {formatPercentage(dashboard.summary.engagement.change)} from last month
             </p>
-          </div>
+          </Card>
         </div>
 
         {/* Quick Actions - Using Button Component */}
@@ -445,7 +446,7 @@ export default function DashboardPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  <div style={{ fontSize: 'var(--font-size-2xl)' }}>
+                  <div style={{ fontSize: 'var(--text-2xl)' }}>
                     {action.icon === 'plus' ? '➕' : action.icon === 'campaign' ? '📧' : action.icon === 'chart' ? '📊' : '💰'}
                   </div>
                   <span className="huntaze-body-small" style={{ fontWeight: 'var(--font-weight-medium)' }}>
@@ -483,7 +484,7 @@ export default function DashboardPage() {
                     className="flex items-start"
                     style={{ gap: 'var(--spacing-md)' }}
                   >
-                    <div style={{ fontSize: 'var(--font-size-2xl)' }}>
+                    <div style={{ fontSize: 'var(--text-2xl)' }}>
                       {activity.type === 'content_published' ? '📝' : 
                        activity.type === 'campaign_sent' ? '📧' : 
                        activity.type === 'fan_subscribed' ? '⭐' : '💬'}

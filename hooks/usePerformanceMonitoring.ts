@@ -196,9 +196,11 @@ export function useAPIPerformance() {
  */
 export function usePerformanceMetrics() {
   const isEnabled = process.env.NODE_ENV === 'development';
+  type PerformanceMetrics = ReturnType<typeof performanceMonitor.getMetrics>;
+  const EMPTY_METRICS: PerformanceMetrics = { performance: [], api: [], scroll: [], interactions: [] };
   
   const getMetrics = useCallback(() => {
-    if (!isEnabled) return [];
+    if (!isEnabled) return EMPTY_METRICS;
     return performanceMonitor.getMetrics();
   }, [isEnabled]);
 

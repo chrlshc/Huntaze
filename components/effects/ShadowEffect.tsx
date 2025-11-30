@@ -29,11 +29,11 @@ export default function ShadowEffect({ variant = 'huntaze' }: ShadowEffectProps)
         time = 0;
         
         colors = {
-          purple: '#9333EA',
-          pink: '#EC4899',
-          purpleLight: '#A855F7',
-          pinkLight: '#F472B6',
-          white: '#FFFFFF'
+          purple: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim() || '#8b5cf6',
+          pink: getComputedStyle(document.documentElement).getPropertyValue('--accent-error').trim() || 'var(--accent-error)',
+          purpleLight: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary-hover').trim() || '#7c3aed',
+          pinkLight: getComputedStyle(document.documentElement).getPropertyValue('--accent-warning').trim() || 'var(--accent-warning)',
+          white: getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#fafafa'
         };
         
         constructor() {
@@ -140,7 +140,9 @@ export default function ShadowEffect({ variant = 'huntaze' }: ShadowEffectProps)
         
         animate = () => {
           if (!ctx || !canvas) return;
-          ctx.fillStyle = 'rgba(11, 6, 20, 0.1)';
+          // Use design token for background with transparency
+          const bgPrimary = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() || '#09090b';
+          ctx.fillStyle = `${bgPrimary}1a`; // Add alpha channel
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           
           this.time++;
@@ -161,11 +163,11 @@ export default function ShadowEffect({ variant = 'huntaze' }: ShadowEffectProps)
         time = 0;
         
         colors = {
-          primary: '#8A2BE2',
-          secondary: '#C724B1',
-          tertiary: '#FF1493',
-          glow: '#E0B0FF',
-          dark: '#4B0082'
+          primary: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim() || '#8b5cf6',
+          secondary: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary-hover').trim() || '#7c3aed',
+          tertiary: getComputedStyle(document.documentElement).getPropertyValue('--accent-error').trim() || 'var(--accent-error)',
+          glow: getComputedStyle(document.documentElement).getPropertyValue('--accent-bg-emphasis').trim() || 'rgba(139, 92, 246, 0.18)',
+          dark: getComputedStyle(document.documentElement).getPropertyValue('--accent-primary-active').trim() || '#6d28d9'
         };
         
         constructor() {
@@ -344,17 +346,17 @@ export default function ShadowEffect({ variant = 'huntaze' }: ShadowEffectProps)
     };
   }, [variant]);
 
-  // Background styles based on variant
+  // Background styles based on variant using design tokens
   const getBackgroundStyle = () => {
     switch (variant) {
       case 'huntaze':
       case 'basic':
-        return { background: '#0b0614' };
+        return { background: 'var(--bg-primary)' };
       case 'perfect':
       case 'eminence':
-        return { background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #16213e 100%)' };
+        return { background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%)' };
       default:
-        return { background: '#0b0614' };
+        return { background: 'var(--bg-primary)' };
     }
   };
 

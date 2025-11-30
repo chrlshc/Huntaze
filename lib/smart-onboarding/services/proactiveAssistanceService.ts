@@ -201,7 +201,7 @@ export class ProactiveAssistanceServiceImpl implements ProactiveAssistanceServic
         retryStrategy: this.generateRetryStrategy(action)
       };
 
-      logger.debug(`Optimized intervention timing for user ${userId}:`, timing);
+      logger.info(`Optimized intervention timing for user ${userId}:`, timing);
       return timing;
     } catch (error) {
       logger.error(`Failed to optimize intervention timing for user ${userId}:`, error);

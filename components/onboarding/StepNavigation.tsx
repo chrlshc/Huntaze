@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
 import { useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface StepNavigationProps {
   canGoBack: boolean;
@@ -61,15 +62,10 @@ export default function StepNavigation({
       <div className="flex items-center gap-3">
         {/* Skip Button */}
         {canSkip && (
-          <button
-            type="button"
-            onClick={onSkip}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg font-medium transition-colors"
-            aria-label="Skip this optional step"
-          >
-            <SkipForward className="w-4 h-4" />
+          <Button variant="ghost" onClick={onSkip} type="button" aria-label="Skip this optional step">
+  <SkipForward className="w-4 h-4" />
             Skip
-          </button>
+</Button>
         )}
 
         {/* Next/Complete Button */}

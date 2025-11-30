@@ -7,6 +7,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 export default function PutCookiesPage() {
   const [text, setText] = useState('[]');
@@ -43,9 +44,9 @@ export default function PutCookiesPage() {
       <form onSubmit={onSubmit}>
         <textarea value={text} onChange={(e) => setText(e.target.value)} rows={12} style={{ width: '100%' }} />
         <div style={{ marginTop: 12 }}>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Envoi…' : 'Déposer'}
-          </button>
+          <Button variant="primary" disabled={loading} type="submit">
+  {loading ? 'Envoi…' : 'Déposer'}
+</Button>
         </div>
       </form>
       {msg && <p style={{ marginTop: 12 }}>{msg}</p>}

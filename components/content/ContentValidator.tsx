@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { contentValidationService, ValidationResult } from '@/lib/services/contentValidationService';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ContentValidatorProps {
   content: {
@@ -44,7 +46,7 @@ export default function ContentValidator({ content, onValidationChange }: Conten
   };
 
   return (
-    <div className="bg-white rounded-lg border p-4">
+    <Card className="bg-white rounded-lg border p-4">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-semibold">Content Validation</h4>
         <div className={`px-3 py-1 rounded-full ${getScoreBgColor(score)}`}>
@@ -133,6 +135,6 @@ export default function ContentValidator({ content, onValidationChange }: Conten
           <div className="text-sm font-medium">All checks passed!</div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

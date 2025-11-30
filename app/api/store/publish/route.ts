@@ -173,14 +173,14 @@ export async function POST(req: Request): Promise<NextResponse<StorePublishSucce
         if (!validation.success) {
           logInfo('Invalid request body', {
             userId: user.id,
-            errors: validation.error.errors,
+            errors: validation.error.issues,
             correlationId
           });
           
           return NextResponse.json(
             {
               error: 'Invalid request body',
-              details: validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
+              details: validation.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
               correlationId
             },
             { status: 400 }

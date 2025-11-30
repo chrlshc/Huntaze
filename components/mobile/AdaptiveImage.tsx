@@ -98,11 +98,11 @@ export function AdaptiveImage({
         style={{
           width: calculatedWidth,
           height: calculatedHeight,
-          backgroundColor: '#f0f0f0',
+          backgroundColor: 'var(--bg-glass)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#999',
+          color: 'var(--text-tertiary)',
         }}
       >
         Failed to load image
@@ -133,7 +133,7 @@ export function AdaptiveImage({
           style={{
             width: calculatedWidth,
             height: calculatedHeight,
-            backgroundColor: '#f0f0f0',
+            backgroundColor: 'var(--bg-glass)',
           }}
         />
       )}

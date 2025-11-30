@@ -7,6 +7,7 @@
  * Requirements: 21.2, 21.3
  */
 
+import React from 'react';
 import dynamic from 'next/dynamic';
 
 /**
@@ -44,14 +45,15 @@ export const DynamicChart = dynamic(
 
 /**
  * Three.js components - very heavy, only load when needed
+ * Note: ThreeScene component doesn't exist - commented out to fix TS2307
  */
-export const DynamicThreeScene = dynamic(
-  () => import('@/components/animations/ThreeScene').catch(() => ({ default: () => null })),
-  {
-    ssr: false,
-    loading: () => <div className="animate-pulse bg-gray-900 h-full rounded-lg" />,
-  }
-);
+// export const DynamicThreeScene = dynamic(
+//   () => import('@/components/animations/ThreeScene').catch(() => ({ default: () => null })),
+//   {
+//     ssr: false,
+//     loading: () => <div className="animate-pulse bg-gray-900 h-full rounded-lg" />,
+//   }
+// );
 
 /**
  * Modal components - load on demand
@@ -119,6 +121,8 @@ export function createDynamicImport<T extends React.ComponentType<any>>(
 ) {
   return dynamic(importFn, {
     ssr: options?.ssr ?? false,
-    loading: options?.loading ?? (() => null),
+    loading: options?.loading
+      ? () => React.createElement(options.loading as React.ComponentType)
+      : () => null,
   });
 }

@@ -121,7 +121,7 @@ export class SoundEffectService {
       right: 20px;
       font-size: 24px;
       font-weight: bold;
-      color: #10b981;
+      color: var(--accent-success);
       z-index: 9999;
       animation: float-up 2s ease-out forwards;
       pointer-events: none;
@@ -176,6 +176,6 @@ export const MONEY_ANIMATION_CSS = `
 }
 
 .floating-money {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 `;

@@ -99,7 +99,7 @@ const MOCK_CHAT_REQUEST = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       email: `test-ai-chat-${Date.now()}-${Math.random()}@example.com`,
@@ -112,7 +112,7 @@ async function createTestUser() {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-ai-chat@' },
     },

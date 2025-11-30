@@ -36,7 +36,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     isAuthenticated: false,
-    isLoading: true
+    isLoading: true,
+    session: null,
+    error: null
   });
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -79,7 +81,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthState({
           user: null,
           isAuthenticated: false,
-          isLoading: false
+          isLoading: false,
+          session: null,
+          error: null
         });
         return;
       }
@@ -96,7 +100,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthState({
           user: data.user,
           isAuthenticated: true,
-          isLoading: false
+          isLoading: false,
+          session: data.session ?? null,
+          error: null
         });
       } else {
         // Token is invalid, clear it
@@ -104,7 +110,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthState({
           user: null,
           isAuthenticated: false,
-          isLoading: false
+          isLoading: false,
+          session: null,
+          error: null
         });
       }
     } catch (error) {
@@ -112,7 +120,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthState({
         user: null,
         isAuthenticated: false,
-        isLoading: false
+        isLoading: false,
+        session: null,
+        error: null
       });
     }
   };
@@ -139,7 +149,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthState({
           user: data.user,
           isAuthenticated: true,
-          isLoading: false
+          isLoading: false,
+          session: data.session ?? null,
+          error: null
         });
 
         return true;
@@ -174,7 +186,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthState({
           user: data.user,
           isAuthenticated: true,
-          isLoading: false
+          isLoading: false,
+          session: data.session ?? null,
+          error: null
         });
 
         return true;
@@ -197,7 +211,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthState({
       user: null,
       isAuthenticated: false,
-      isLoading: false
+      isLoading: false,
+      session: null,
+      error: null
     });
 
     // Redirect to home

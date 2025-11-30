@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Play, Star } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface HeroSectionProps {
   title: string;
@@ -204,12 +206,12 @@ export function HeroSection({ title, subtitle, ctaText, ctaHref, showVideo = tru
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 dark:border-gray-800/50 bg-gradient-to-br from-indigo-500 to-purple-600">
               {/* Placeholder for video/screenshot */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <button className="group relative">
-                  <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all" />
+                <Button variant="primary">
+  <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition-all" />
                   <div className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Play className="w-8 h-8 text-indigo-600 ml-1" fill="currentColor" />
                   </div>
-                </button>
+</Button>
               </div>
               {/* Decorative grid */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

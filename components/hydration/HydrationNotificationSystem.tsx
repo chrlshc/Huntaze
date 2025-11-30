@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { hydrationMonitoringService, HydrationAlert } from '@/lib/services/hydrationMonitoringService';
 import { HydrationSafeWrapper } from './HydrationSafeWrapper';
+import { Button } from "@/components/ui/button";
 
 interface NotificationConfig {
   position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
@@ -150,12 +151,9 @@ export function HydrationNotificationSystem({
           
           {notifications.length > 1 && (
             <div className="flex justify-end">
-              <button
-                onClick={clearAllNotifications}
-                className="text-xs text-gray-500 hover:text-gray-700 underline"
-              >
-                Tout effacer
-              </button>
+              <Button variant="primary" onClick={clearAllNotifications}>
+  Tout effacer
+</Button>
             </div>
           )}
         </div>
@@ -214,8 +212,9 @@ function NotificationCard({
             {notification.actions && notification.actions.length > 0 && (
               <div className="flex gap-2 mt-3">
                 {notification.actions.map((action, index) => (
-                  <button
+                  <Button 
                     key={index}
+                    variant="primary" 
                     onClick={() => {
                       action.action();
                       onClose();
@@ -229,21 +228,18 @@ function NotificationCard({
                     }`}
                   >
                     {action.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
           </div>
         </div>
         
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 ml-2"
-        >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <Button variant="primary" onClick={onClose}>
+  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
-        </button>
+</Button>
       </div>
     </div>
   );

@@ -23,7 +23,10 @@
  */
 
 import { RateLimitResult } from './types';
-import redis from '../../cache/redis';
+import redisModule from '../../cache/redis';
+
+// Get the Redis client
+const getRedis = () => redisModule.client;
 
 // Retry configuration for transient Redis errors
 const RETRY_CONFIG = {
@@ -68,6 +71,7 @@ export class SlidingWindowLimiter {
     correlationId?: string
   ): Promise<RateLimitResult> {
     const corrId = correlationId || this.generateCorrelationId();
+    const redis = getRedis();
 
     if (!redis) {
       console.warn('[SlidingWindow] Redis not available, allowing request', {
@@ -264,6 +268,7 @@ export class SlidingWindowLimiter {
     correlationId?: string
   ): Promise<number> {
     const corrId = correlationId || this.generateCorrelationId();
+    const redis = getRedis();
 
     if (!redis) {
       console.warn('[SlidingWindow] Redis not available for getCount', {
@@ -314,6 +319,7 @@ export class SlidingWindowLimiter {
    */
   async reset(key: string, correlationId?: string): Promise<void> {
     const corrId = correlationId || this.generateCorrelationId();
+    const redis = getRedis();
 
     if (!redis) {
       console.warn('[SlidingWindow] Redis not available for reset', {

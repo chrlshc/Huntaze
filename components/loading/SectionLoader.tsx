@@ -6,10 +6,12 @@
  */
 
 import React from 'react';
-import { useLoadingState, LoadingType } from '@/hooks/useLoadingState';
+import { useLoadingState } from '@/hooks/useLoadingState';
 import { Skeleton } from './SkeletonScreen';
 import { ProgressIndicator } from './ProgressIndicator';
 import { SmoothTransition } from './SmoothTransition';
+
+type LoadingType = 'skeleton' | 'spinner' | 'progress';
 
 interface SectionLoaderProps {
   sectionId: string;
@@ -34,7 +36,7 @@ export const SectionLoader: React.FC<SectionLoaderProps> = ({
   showProgress = false,
   progress = 0
 }) => {
-  const [loadingState] = useLoadingState({
+  const loadingState = useLoadingState({
     sectionId,
     loadingType,
     hasCachedData,
@@ -60,7 +62,9 @@ export const SectionLoader: React.FC<SectionLoaderProps> = ({
       return <div className={className}>{skeleton}</div>;
     }
 
-    if (loadingType === 'progress' && (showProgress || loadingState.showProgress)) {
+    const shouldShowProgress = showProgress || loadingState.progress > 0;
+
+    if (loadingType === 'progress' && shouldShowProgress) {
       return (
         <div className={`flex items-center justify-center p-8 ${className}`}>
           <ProgressIndicator 

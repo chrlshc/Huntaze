@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { HydrationSafeWrapper } from './HydrationSafeWrapper';
 import { hydrationDebugger } from '@/lib/utils/hydrationDebugger';
+import { Button } from "@/components/ui/button";
 
 interface HydrationRecoveryConfig {
   maxRetries?: number;
@@ -275,12 +276,9 @@ export function HydrationRecoverySystem({
               Vos données sont préservées.
             </p>
             {enableManualRecovery && (
-              <button
-                onClick={manualRecovery}
-                className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
-              >
-                Réessayer
-              </button>
+              <Button variant="primary" onClick={manualRecovery}>
+  Réessayer
+</Button>
             )}
           </div>
         )}

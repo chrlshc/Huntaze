@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { usePerformanceMetrics } from '@/hooks/usePerformanceMonitoring';
 import { Activity, TrendingUp, Zap, MousePointer } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 /**
  * Performance Monitor Dashboard Component
@@ -44,21 +46,22 @@ export function PerformanceMonitorDashboard() {
 
       {/* Dashboard Panel */}
       {isOpen && (
-        <div className="fixed bottom-20 right-4 z-[9999] w-96 bg-[var(--bg-surface)] rounded-[var(--radius-card)] shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-gray-200 overflow-hidden">
+        <Card className="fixed bottom-20 right-4 z-[9999] w-96 bg-[var(--bg-surface)] rounded-[var(--radius-card)] shadow-[0_8px_32px_rgba(0, 0, 0, 0.3)] border border-gray-200 overflow-hidden">
           {/* Header */}
           <div className="bg-[var(--color-indigo)] text-white px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="w-5 h-5" />
               <h3 className="font-semibold">Performance Monitor</h3>
             </div>
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => setIsOpen(false)}
               className="hover:bg-white/20 rounded p-1 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
 
           {/* Metrics */}
@@ -72,23 +75,23 @@ export function PerformanceMonitorDashboard() {
               <div className="grid grid-cols-2 gap-2">
                 <MetricCard
                   label="Total Requests"
-                  value={summary.totalAPIRequests}
+                  value={summary?.totalAPIRequests ?? 0}
                   color="blue"
                 />
                 <MetricCard
                   label="Avg Response"
-                  value={`${summary.averageAPITime}ms`}
+                  value={`${summary?.averageAPITime ?? 0}ms`}
                   color="blue"
                 />
                 <MetricCard
                   label="Slow Requests"
-                  value={summary.slowAPIRequests}
-                  color={Number(summary.slowAPIRequests) > 0 ? 'red' : 'green'}
+                  value={summary?.slowAPIRequests ?? 0}
+                  color={Number(summary?.slowAPIRequests ?? 0) > 0 ? 'red' : 'green'}
                 />
                 <MetricCard
                   label="Failed"
-                  value={summary.failedAPIRequests}
-                  color={Number(summary.failedAPIRequests) > 0 ? 'red' : 'green'}
+                  value={summary?.failedAPIRequests ?? 0}
+                  color={Number(summary?.failedAPIRequests ?? 0) > 0 ? 'red' : 'green'}
                 />
               </div>
             </div>
@@ -102,8 +105,8 @@ export function PerformanceMonitorDashboard() {
               <div className="grid grid-cols-1 gap-2">
                 <MetricCard
                   label="Average FPS"
-                  value={summary.averageFPS}
-                  color={Number(summary.averageFPS) >= 50 ? 'green' : Number(summary.averageFPS) >= 30 ? 'yellow' : 'red'}
+                  value={summary?.averageFPS ?? 0}
+                  color={Number(summary?.averageFPS ?? 0) >= 50 ? 'green' : Number(summary?.averageFPS ?? 0) >= 30 ? 'yellow' : 'red'}
                   fullWidth
                 />
               </div>
@@ -118,7 +121,7 @@ export function PerformanceMonitorDashboard() {
               <div className="grid grid-cols-1 gap-2">
                 <MetricCard
                   label="Total Interactions"
-                  value={summary.totalInteractions}
+                  value={summary?.totalInteractions ?? 0}
                   color="purple"
                   fullWidth
                 />
@@ -161,7 +164,7 @@ export function PerformanceMonitorDashboard() {
           <div className="border-t border-gray-200 px-4 py-2 bg-gray-50 text-xs text-gray-600">
             Development Mode Only
           </div>
-        </div>
+        </Card>
       )}
     </>
   );

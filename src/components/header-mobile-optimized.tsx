@@ -8,6 +8,7 @@ import { Menu, X } from 'lucide-react'
 import MegaMenu from '@/src/components/MegaMenu'
 import { solutionsNav, resourcesNav } from '@/src/components/nav.data'
 import { events } from '@/src/lib/analytics'
+import { Button } from "@/components/ui/button";
 
 export default function HeaderMobileOptimized() {
   const pathname = usePathname()
@@ -149,12 +150,9 @@ export default function HeaderMobileOptimized() {
                 >
                   Dashboard
                 </Link>
-                <button 
-                  onClick={handleLogout} 
-                  className="text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2 touch-target-min"
-                >
+                <Button variant="primary" onClick={handleLogout}>
                   Logout
-                </button>
+                </Button>
               </>
             ) : (
               <>
@@ -360,7 +358,8 @@ export default function HeaderMobileOptimized() {
                         >
                           Go to Dashboard
                         </Link>
-                        <button
+                        <Button 
+                          variant="ghost" 
                           onClick={() => {
                             handleLogout()
                             setMobileMenuOpen(false)
@@ -378,7 +377,7 @@ export default function HeaderMobileOptimized() {
                           "
                         >
                           Logout
-                        </button>
+                        </Button>
                       </>
                     ) : (
                       <>

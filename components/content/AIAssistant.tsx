@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/export-all";
+import { Card } from '@/components/ui/card';
 
 interface AISuggestion {
   id: string;
@@ -55,29 +58,29 @@ export default function AIAssistant({ onSuggestionSelect, context }: AIAssistant
       <div className="space-y-3 mb-4">
         <div>
           <label className="text-sm font-medium text-gray-700 mb-1 block">What do you need help with?</label>
-          <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+          <Select value={selectedType} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent">
             <option value="ideas">Content Ideas</option>
             <option value="caption">Write Caption</option>
             <option value="hashtags">Generate Hashtags</option>
             <option value="improvement">Improve Content</option>
-          </select>
+          </Select>
         </div>
 
         {selectedType === 'caption' && (
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">Tone</label>
-            <select value={tone} onChange={(e) => setTone(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            <Select value={tone} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTone(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent">
               <option value="professional">Professional</option>
               <option value="casual">Casual</option>
               <option value="humorous">Humorous</option>
               <option value="inspirational">Inspirational</option>
-            </select>
+            </Select>
           </div>
         )}
 
-        <button onClick={generateSuggestions} disabled={loading} className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 transition-all">
-          {loading ? <div className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Generating...</div> : 'Generate Suggestions'}
-        </button>
+        <Button variant="primary" onClick={generateSuggestions} disabled={loading}>
+  {loading ? <div className="flex items-center justify-center gap-2"><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Generating...</div> : 'Generate Suggestions'}
+</Button>
       </div>
 
       {suggestions.length > 0 && (
@@ -87,7 +90,7 @@ export default function AIAssistant({ onSuggestionSelect, context }: AIAssistant
             <div key={suggestion.id} className="bg-white rounded-lg p-3 border border-gray-200 hover:border-purple-300 transition-colors">
               <div className="flex justify-between items-start mb-2">
                 <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">{Math.round(suggestion.confidence * 100)}% match</span>
-                <button onClick={() => onSuggestionSelect(suggestion.content)} className="text-xs px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors">Use This</button>
+                <Button variant="primary" onClick={() => onSuggestionSelect(suggestion.content)}>Use This</Button>
               </div>
               <p className="text-gray-800 mb-2">{suggestion.content}</p>
               {suggestion.reasoning && <p className="text-xs text-gray-600 italic">💡 {suggestion.reasoning}</p>}

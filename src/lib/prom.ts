@@ -1,4 +1,3 @@
-// @ts-nocheck
 // eslint-disable-next-line no-restricted-imports -- This is the central metrics module
 import client from 'prom-client'
 
@@ -118,7 +117,7 @@ const gauges = {
   }),
 }
 
-export const prom = { counters, histograms, gauges }
+export const prom = { counters, histograms, gauges };
 
 // Debug API 429s counter
 (counters as any).debugApiRateLimited = new client.Counter({

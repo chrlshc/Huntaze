@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import ContentEditor from './ContentEditor';
 import { useAutoSave } from '@/hooks/useAutoSave';
+import { Button } from "@/components/ui/button";
 
 interface ContentEditorWithAutoSaveProps {
   draftId?: string;
@@ -80,13 +81,9 @@ export default function ContentEditorWithAutoSave({
           )}
         </div>
 
-        <button
-          onClick={saveNow}
-          disabled={status.status === 'saving'}
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-        >
-          Save Now
-        </button>
+        <Button variant="primary" onClick={saveNow} disabled={status.status === 'saving'}>
+  Save Now
+</Button>
       </div>
 
       {/* Editor */}

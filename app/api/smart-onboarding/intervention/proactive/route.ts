@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Proactive assistance API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Proactive assistance API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    logger.error('Proactive assistance status API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Proactive assistance status API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -143,7 +143,7 @@ export async function PUT(request: NextRequest) {
       }
     });
   } catch (error) {
-    logger.error('Assistance effectiveness tracking API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Assistance effectiveness tracking API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

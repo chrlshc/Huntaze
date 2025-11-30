@@ -77,7 +77,7 @@ const NON_EXISTENT_USER = {
 async function createTestUser() {
   const hashedPassword = await hash(TEST_USER.password, 12);
   
-  return await prisma.user.create({
+  return await prisma.users.create({
     data: {
       ...TEST_USER,
       password: hashedPassword,
@@ -89,7 +89,7 @@ async function createTestUser() {
  * Clean up test data
  */
 async function cleanupTestData() {
-  await prisma.user.deleteMany({
+  await prisma.users.deleteMany({
     where: {
       email: { contains: 'test-login@' },
     },
@@ -197,7 +197,7 @@ describe('Auth Login API Integration Tests', () => {
 
     it('should allow login with unverified email', async () => {
       // Update user to unverified
-      await prisma.user.update({
+      await prisma.users.update({
         where: { id: testUser.id },
         data: { emailVerified: false },
       });
@@ -384,7 +384,7 @@ describe('Auth Login API Integration Tests', () => {
 
   describe('Security Measures', () => {
     it('should hash passwords in database', async () => {
-      const user = await prisma.user.findUnique({
+      const user = await prisma.users.findUnique({
         where: { id: testUser.id },
       });
       
@@ -514,7 +514,7 @@ describe('Auth Login API Integration Tests', () => {
       // Use unique email to avoid conflicts
       const uniqueEmail = `test-special-${Date.now()}@example.com`;
       
-      const specialUser = await prisma.user.create({
+      const specialUser = await prisma.users.create({
         data: {
           email: uniqueEmail,
           password: hashedPassword,
@@ -527,7 +527,7 @@ describe('Auth Login API Integration Tests', () => {
       expect(response.status).toBe(200);
       
       // Cleanup
-      await prisma.user.delete({ where: { id: specialUser.id } });
+      await prisma.users.delete({ where: { id: specialUser.id } });
     });
 
     it('should handle unicode characters in email', async () => {

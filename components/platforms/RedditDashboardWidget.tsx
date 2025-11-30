@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 
 interface RedditPost {
   id: number;
@@ -53,7 +54,7 @@ export default function RedditDashboardWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Reddit</h3>
           <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-full" />
@@ -63,13 +64,13 @@ export default function RedditDashboardWidget() {
           <div className="h-4 bg-gray-200 rounded w-1/2" />
           <div className="h-4 bg-gray-200 rounded w-5/6" />
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Reddit</h3>
           <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-full" />
@@ -83,12 +84,12 @@ export default function RedditDashboardWidget() {
             Connect Reddit
           </Link>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <Card className="bg-white rounded-lg shadow">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -213,6 +214,6 @@ export default function RedditDashboardWidget() {
           View all posts →
         </Link>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X, ExternalLink, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { Button } from "@/components/ui/button";
 
 interface Feature {
   id: string;
@@ -74,13 +75,9 @@ export default function FeatureUnlockModal({
       >
         {/* Header */}
         <div className="relative p-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-2xl">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <Button variant="primary" onClick={onClose} aria-label="Close modal">
+  <X className="w-5 h-5" />
+</Button>
           
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-4 animate-bounce">
@@ -136,12 +133,9 @@ export default function FeatureUnlockModal({
                 Quick Start Guide
               </a>
             )}
-            <button
-              onClick={onClose}
-              className={`${feature.quickStartUrl ? 'flex-1' : 'w-full'} px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition`}
-            >
-              {feature.quickStartUrl ? 'Later' : 'Got it!'}
-            </button>
+            <Button variant="ghost" onClick={onClose}>
+  {feature.quickStartUrl ? 'Later' : 'Got it!'}
+</Button>
           </div>
         </div>
       </div>

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -70,38 +72,33 @@ export default function CalendarPage() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Content Calendar</h1>
             <p className="text-gray-600 dark:text-gray-400">Plan and schedule your content across all platforms</p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900">
-            <Plus className="w-5 h-5" />
+          <Button variant="secondary">
+  <Plus className="w-5 h-5" />
             Schedule Content
-          </button>
+</Button>
         </div>
       </div>
 
       {/* Calendar Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h2>
           <div className="flex items-center gap-2">
-            <button
-              onClick={previousMonth}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-            >
+            <Button variant="ghost" onClick={previousMonth}>
               <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
-            <button
+            </Button>
+            <Button 
+              variant="ghost" 
               onClick={() => setCurrentDate(new Date())}
               className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Today
-            </button>
-            <button
-              onClick={nextMonth}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-            >
+            </Button>
+            <Button variant="ghost" onClick={nextMonth}>
               <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -156,10 +153,10 @@ export default function CalendarPage() {
             );
           })}
         </div>
-      </div>
+      </Card>
 
       {/* Upcoming Content */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upcoming Content</h2>
         <div className="space-y-3">
           {scheduledContent.slice(0, 5).map(item => (
@@ -182,7 +179,7 @@ export default function CalendarPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Info Banner */}
       <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">

@@ -40,36 +40,36 @@ export function MobilePerformanceMonitor({
   const getConnectionColor = (type: string) => {
     switch (type) {
       case '4g':
-        return '#10b981'; // green
+        return 'var(--accent-success)'; // green
       case '3g':
-        return '#f59e0b'; // yellow
+        return 'var(--accent-warning)'; // yellow
       case '2g':
       case 'slow-2g':
-        return '#ef4444'; // red
+        return 'var(--accent-error)'; // red
       default:
-        return '#6b7280'; // gray
+        return 'var(--text-tertiary)'; // gray
     }
   };
 
   const getClsColor = (value: number) => {
-    if (value < 0.1) return '#10b981'; // green
-    if (value < 0.25) return '#f59e0b'; // yellow
-    return '#ef4444'; // red
+    if (value < 0.1) return 'var(--accent-success)'; // green
+    if (value < 0.25) return 'var(--accent-warning)'; // yellow
+    return 'var(--accent-error)'; // red
   };
 
   const getTouchColor = (time: number) => {
-    if (time < 100) return '#10b981'; // green
-    if (time < 200) return '#f59e0b'; // yellow
-    return '#ef4444'; // red
+    if (time < 100) return 'var(--accent-success)'; // green
+    if (time < 200) return 'var(--accent-warning)'; // yellow
+    return 'var(--accent-error)'; // red
   };
 
   if (compact) {
     return (
       <div style={{
         padding: '8px 12px',
-        backgroundColor: '#f9fafb',
+        backgroundColor: 'var(--bg-glass)',
         borderRadius: '6px',
-        fontSize: '12px',
+        fontSize: 'var(--text-xs)',
         display: 'flex',
         gap: '12px',
         alignItems: 'center',
@@ -108,10 +108,10 @@ export function MobilePerformanceMonitor({
       padding: '16px',
       backgroundColor: '#ffffff',
       borderRadius: '8px',
-      border: '1px solid #e5e7eb',
-      fontSize: '14px',
+      border: '1px solid var(--border-subtle)',
+      fontSize: 'var(--text-sm)',
     }}>
-      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 'bold' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: 'var(--text-base)', fontWeight: 'bold' }}>
         Mobile Performance
       </h3>
 
@@ -128,16 +128,16 @@ export function MobilePerformanceMonitor({
             }}
           />
           <span>{connectionQuality.effectiveType.toUpperCase()}</span>
-          <span style={{ color: '#6b7280' }}>
+          <span style={{ color: 'var(--text-tertiary)' }}>
             ({connectionQuality.downlink.toFixed(1)} Mbps, {connectionQuality.rtt}ms RTT)
           </span>
           {connectionQuality.saveData && (
             <span style={{
               padding: '2px 6px',
-              backgroundColor: '#fef3c7',
-              color: '#92400e',
+              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              color: 'var(--accent-warning)',
               borderRadius: '4px',
-              fontSize: '12px',
+              fontSize: 'var(--text-xs)',
             }}>
               Data Saver
             </span>
@@ -149,7 +149,7 @@ export function MobilePerformanceMonitor({
       {imageSettings && (
         <div style={{ marginBottom: '12px' }}>
           <div style={{ fontWeight: '600', marginBottom: '4px' }}>Image Optimization</div>
-          <div style={{ color: '#6b7280' }}>
+          <div style={{ color: 'var(--text-tertiary)' }}>
             Quality: {imageSettings.quality}% | Format: {imageSettings.format.toUpperCase()} | Max Width: {imageSettings.maxWidth}px
           </div>
         </div>
@@ -159,10 +159,10 @@ export function MobilePerformanceMonitor({
       <div style={{ marginBottom: '12px' }}>
         <div style={{ fontWeight: '600', marginBottom: '4px' }}>Cumulative Layout Shift</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ color: getClsColor(cls), fontWeight: 'bold', fontSize: '18px' }}>
+          <span style={{ color: getClsColor(cls), fontWeight: 'bold', fontSize: 'var(--text-lg)' }}>
             {cls.toFixed(3)}
           </span>
-          <span style={{ color: clsAcceptable ? '#10b981' : '#ef4444' }}>
+          <span style={{ color: clsAcceptable ? 'var(--accent-success)' : 'var(--accent-error)' }}>
             {clsAcceptable ? '✓ Good' : '✗ Needs Improvement'}
           </span>
         </div>
@@ -172,10 +172,10 @@ export function MobilePerformanceMonitor({
       <div style={{ marginBottom: '12px' }}>
         <div style={{ fontWeight: '600', marginBottom: '4px' }}>Touch Responsiveness</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ color: getTouchColor(avgTouchResponseTime), fontWeight: 'bold', fontSize: '18px' }}>
+          <span style={{ color: getTouchColor(avgTouchResponseTime), fontWeight: 'bold', fontSize: 'var(--text-lg)' }}>
             {avgTouchResponseTime.toFixed(0)}ms
           </span>
-          <span style={{ color: touchResponsive ? '#10b981' : '#ef4444' }}>
+          <span style={{ color: touchResponsive ? 'var(--accent-success)' : 'var(--accent-error)' }}>
             {touchResponsive ? '✓ Responsive' : '✗ Slow'}
           </span>
         </div>
@@ -185,14 +185,14 @@ export function MobilePerformanceMonitor({
       {shouldDeferContent && (
         <div style={{
           padding: '8px 12px',
-          backgroundColor: '#fef3c7',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
           borderRadius: '6px',
           marginBottom: '12px',
         }}>
-          <div style={{ fontWeight: '600', color: '#92400e', marginBottom: '4px' }}>
+          <div style={{ fontWeight: '600', color: 'var(--accent-warning)', marginBottom: '4px' }}>
             Adaptive Loading Active
           </div>
-          <div style={{ color: '#92400e', fontSize: '12px' }}>
+          <div style={{ color: 'var(--accent-warning)', fontSize: 'var(--text-xs)' }}>
             Non-essential content is being deferred due to slow connection
           </div>
         </div>
@@ -202,7 +202,7 @@ export function MobilePerformanceMonitor({
       {showRecommendations && recommendations.length > 0 && (
         <div>
           <div style={{ fontWeight: '600', marginBottom: '8px' }}>Recommendations</div>
-          <ul style={{ margin: 0, paddingLeft: '20px', color: '#6b7280' }}>
+          <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-tertiary)' }}>
             {recommendations.map((rec, index) => (
               <li key={index} style={{ marginBottom: '4px' }}>
                 {rec}

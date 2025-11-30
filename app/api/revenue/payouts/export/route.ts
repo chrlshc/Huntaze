@@ -8,7 +8,7 @@ import { getSession, validateOwnership } from '@/lib/auth/session';
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession(request);
+    const session = await getSession();
     
     if (!session) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });

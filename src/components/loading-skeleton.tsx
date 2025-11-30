@@ -50,7 +50,7 @@ export default function LoadingSkeleton({
               delay: i * 0.1
             }}
             style={{
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
             }}
           />
         </motion.div>

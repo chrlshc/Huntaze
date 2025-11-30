@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
+import {
   CpuChipIcon,
   ChartBarIcon,
   ExclamationTriangleIcon,
@@ -201,8 +203,9 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
         <h2 className="text-2xl font-bold text-gray-900">ML Model Monitoring</h2>
         <div className="flex space-x-2">
           {(['overview', 'performance', 'abtests'] as const).map((tab) => (
-            <button
+            <Button
               key={tab}
+              variant="primary"
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium rounded-lg ${
                 activeTab === tab
@@ -211,7 +214,7 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
               }`}
             >
               {tab === 'abtests' ? 'A/B Tests' : tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -284,8 +287,9 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
 
                   {/* Actions */}
                   <div className="mt-4 flex space-x-2">
-                    <button
-                      onClick={(e) => {
+                    <Button
+                      variant="primary"
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation();
                         handleRetrain(model.id);
                       }}
@@ -293,7 +297,7 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
                       className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {model.status === 'training' ? 'Training...' : 'Retrain'}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </motion.div>
@@ -516,14 +520,15 @@ export const MLModelMonitoring: React.FC<MLModelMonitoringProps> = ({
                   <h3 className="text-lg font-semibold text-gray-900">
                     {selectedModel.name} Details
                   </h3>
-                  <button
+                  <Button
+                    variant="primary"
                     onClick={() => setSelectedModel(null)}
                     className="text-gray-400 hover:text-gray-600"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                  </button>
+                  </Button>
                 </div>
                 
                 <div className="space-y-4">

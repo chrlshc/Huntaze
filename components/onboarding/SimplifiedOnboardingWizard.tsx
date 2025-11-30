@@ -13,6 +13,8 @@
 import { useState } from 'react';
 import { Check, ChevronRight, X } from 'lucide-react';
 import { DashboardPreview } from './DashboardPreview';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface OnboardingStep {
   id: number;
@@ -56,22 +58,22 @@ export function SimplifiedOnboardingWizard({
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all">
-              <div className="text-2xl mb-2">🔥</div>
+            <Button variant="outline">
+  <div className="text-2xl mb-2">🔥</div>
               <div className="font-medium">OnlyFans</div>
-            </button>
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all">
-              <div className="text-2xl mb-2">📸</div>
+</Button>
+            <Button variant="outline">
+  <div className="text-2xl mb-2">📸</div>
               <div className="font-medium">Instagram</div>
-            </button>
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all">
-              <div className="text-2xl mb-2">🎵</div>
+</Button>
+            <Button variant="outline">
+  <div className="text-2xl mb-2">🎵</div>
               <div className="font-medium">TikTok</div>
-            </button>
-            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all">
-              <div className="text-2xl mb-2">▶️</div>
+</Button>
+            <Button variant="outline">
+  <div className="text-2xl mb-2">▶️</div>
               <div className="font-medium">YouTube</div>
-            </button>
+</Button>
           </div>
         </div>
       ),
@@ -216,7 +218,7 @@ export function SimplifiedOnboardingWizard({
         </div>
 
         {/* Step Content */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <Card className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {currentStepData.title}
@@ -233,26 +235,20 @@ export function SimplifiedOnboardingWizard({
           {/* Actions */}
           <div className="flex items-center justify-between pt-6 border-t border-gray-200">
             {currentStepData.skippable ? (
-              <button
-                onClick={handleSkip}
-                className="text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
-              >
+              <Button variant="primary" onClick={handleSkip}>
                 <X className="w-4 h-4" />
                 Skip for now
-              </button>
+              </Button>
             ) : (
               <div />
             )}
 
-            <button
-              onClick={handleNext}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
-            >
+            <Button variant="primary" onClick={handleNext}>
               {currentStep < steps.length - 1 ? 'Continue' : 'Get Started'}
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
 
         {/* Help Text */}
         <div className="text-center text-sm text-gray-500">

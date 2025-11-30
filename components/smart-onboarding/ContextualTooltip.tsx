@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Button } from "@/components/ui/button";
 
 interface ContextualTooltipProps {
   isVisible: boolean;
@@ -282,12 +283,9 @@ export const ContextualTooltip: React.FC<ContextualTooltipProps> = ({
               </div>
 
               {showCloseButton && (
-                <button
-                  onClick={handleDismiss}
-                  className={`flex-shrink-0 ${colors.icon} hover:opacity-70 transition-opacity`}
-                >
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
+                <Button variant="primary" onClick={handleDismiss}>
+  <XMarkIcon className="w-4 h-4" />
+</Button>
               )}
             </div>
           </div>

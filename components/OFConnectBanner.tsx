@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { usePWAInstall } from '@/components/usePWAInstall';
 import { IOSA2HSOverlay } from '@/components/IOSA2HSOverlay';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 
 export default function OFConnectBanner() {
   const { isIOS, isStandalone, canInstall, promptInstall } = usePWAInstall();
@@ -28,29 +29,20 @@ export default function OFConnectBanner() {
           <div className="flex flex-wrap items-center gap-2">
             {/* CTA principal = installation PWA quand dispo (Android/Chromium) */}
             {canInstall && (
-              <button
-                onClick={promptInstall}
-                className="px-4 py-2 rounded-xl bg-[#6D28D9] text-white hover:bg-[#5B21B6] transition"
-              >
+              <Button variant="primary" onClick={promptInstall}>
                 Install app
-              </button>
+              </Button>
             )}
             {/* iOS : affiche un guide A2HS */}
             {isIOS && !isStandalone && (
-              <button
-                onClick={() => setShowIOS(true)}
-                className="px-4 py-2 rounded-xl bg-black text-white hover:bg-gray-800 transition"
-              >
+              <Button variant="secondary" onClick={() => setShowIOS(true)}>
                 How to install on iPhone
-              </button>
+              </Button>
             )}
-            {/* Optionnel : ouvrir l’app (jamais auto ici) */}
-            <button
-              onClick={() => (window.location.href = 'huntaze://connect')}
-              className="px-4 py-2 rounded-xl border"
-            >
+            {/* Optionnel : ouvrir l'app (jamais auto ici) */}
+            <Button variant="primary" onClick={() => (window.location.href = 'huntaze://connect')}>
               Open in app
-            </button>
+            </Button>
 
             {/* Liens techniques existants */}
             <Link href="/of-connect" className="px-3 py-2 text-sm text-gray-600 underline">
@@ -73,4 +65,3 @@ export default function OFConnectBanner() {
     </>
   );
 }
-

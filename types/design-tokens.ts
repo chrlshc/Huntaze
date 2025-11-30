@@ -8,7 +8,7 @@
 export interface DesignTokens {
   colors: {
     background: {
-      app: string;      // #0F0F10
+      app: string;      // var(--bg-primary)
       surface: string;  // #151516
       hover: string;    // #1A1A1C
       input: string;    // #18181A
@@ -16,24 +16,24 @@ export interface DesignTokens {
     border: {
       subtle: string;   // #2E2E33
       emphasis: string; // #3E3E43
-      focus: string;    // #7D57C1
+      focus: string;    // var(--accent-primary)
     };
     accent: {
-      primary: string;  // #7D57C1
-      hover: string;    // #6B47AF
+      primary: string;  // var(--accent-primary)
+      hover: string;    // var(--accent-primary-active)
       active: string;   // #5A3A9D
     };
     text: {
-      primary: string;   // #EDEDEF
+      primary: string;   // var(--text-primary)
       secondary: string; // #8A8F98
-      muted: string;     // #6B7280
-      inverse: string;   // #0F0F10
+      muted: string;     // var(--text-tertiary)
+      inverse: string;   // var(--bg-primary)
     };
     semantic: {
-      success: string;  // #10B981
-      warning: string;  // #F59E0B
-      error: string;    // #EF4444
-      info: string;     // #3B82F6
+      success: string;  // var(--accent-success)
+      warning: string;  // var(--accent-warning)
+      error: string;    // var(--accent-error)
+      info: string;     // var(--accent-info)
     };
   };
   typography: {
@@ -133,7 +133,7 @@ export interface DesignTokens {
 export const designTokens: DesignTokens = {
   colors: {
     background: {
-      app: '#0F0F10',
+      app: 'var(--bg-primary)',
       surface: '#151516',
       hover: '#1A1A1C',
       input: '#18181A',
@@ -141,24 +141,24 @@ export const designTokens: DesignTokens = {
     border: {
       subtle: '#2E2E33',
       emphasis: '#3E3E43',
-      focus: '#7D57C1',
+      focus: 'var(--accent-primary)',
     },
     accent: {
-      primary: '#7D57C1',
-      hover: '#6B47AF',
+      primary: 'var(--accent-primary)',
+      hover: 'var(--accent-primary-active)',
       active: '#5A3A9D',
     },
     text: {
-      primary: '#EDEDEF',
+      primary: 'var(--text-primary)',
       secondary: '#8A8F98',
-      muted: '#6B7280',
-      inverse: '#0F0F10',
+      muted: 'var(--text-tertiary)',
+      inverse: 'var(--bg-primary)',
     },
     semantic: {
-      success: '#10B981',
-      warning: '#F59E0B',
-      error: '#EF4444',
-      info: '#3B82F6',
+      success: 'var(--accent-success)',
+      warning: 'var(--accent-warning)',
+      error: 'var(--accent-error)',
+      info: 'var(--accent-info)',
     },
   },
   typography: {

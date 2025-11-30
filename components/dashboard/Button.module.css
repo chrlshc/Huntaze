@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   font-weight: var(--font-weight-medium);
   border: none;
   border-radius: var(--radius-button);
@@ -28,19 +28,19 @@
 /* Size Variants */
 .small {
   padding: 8px 16px;
-  font-size: var(--font-size-small);
+  font-size: var(--text-sm);
   line-height: 20px;
 }
 
 .medium {
   padding: 12px 24px;
-  font-size: var(--font-size-body);
+  font-size: var(--text-base);
   line-height: 24px;
 }
 
 .large {
   padding: 16px 32px;
-  font-size: var(--font-size-h3);
+  font-size: var(--text-2xl);
   line-height: 28px;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .secondary:active:not(:disabled) {
-  background: rgba(99, 102, 241, 0.15);
+  background: rgba(59, 130, 246, 0.15);
   border-color: #4338ca;
   color: #4338ca;
 }
@@ -95,7 +95,7 @@
 }
 
 .ghost:active:not(:disabled) {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* Full Width */

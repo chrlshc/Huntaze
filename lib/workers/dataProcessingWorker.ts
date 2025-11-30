@@ -119,14 +119,14 @@ export class DataProcessingWorker {
           });
         }
 
-        logger.debug('Redis queue batch processed', {
+        logger.info('Redis queue batch processed', {
           processed: successful,
           failed,
           queueRemaining: await redisClient.llen(queueKey)
         });
 
       } catch (error) {
-        logger.error('Redis queue processing failed', { error });
+        logger.error('Redis queue processing failed', error as Error, { });
       }
 
       // Schedule next processing cycle
@@ -152,8 +152,8 @@ export class DataProcessingWorker {
         retries++;
         
         if (retries >= this.config.maxRetries) {
-          logger.error('Event processing failed after max retries', {
-            error,
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.error('Event processing failed after max retries', err, {
             retries,
             eventPreview: eventStr.substring(0, 100)
           });
@@ -189,23 +189,23 @@ export class DataProcessingWorker {
         await redisClient.ltrim(queueKey, items.length, -1);
 
         // Process warehouse items
-        for (const itemStr of items) {
-          try {
-            const data = JSON.parse(itemStr);
-            await dataWarehouseService.queueForWarehouse(data);
-          } catch (error) {
-            logger.error('Warehouse item processing failed', { error, item: itemStr.substring(0, 100) });
-            await this.moveToDeadLetterQueue(itemStr, error, 'warehouse');
-          }
+      for (const itemStr of items) {
+        try {
+          const data = JSON.parse(itemStr);
+          await dataWarehouseService.queueForWarehouse(data);
+        } catch (error) {
+          logger.error('Warehouse item processing failed', error as Error, { item: itemStr.substring(0, 100) });
+          await this.moveToDeadLetterQueue(itemStr, error, 'warehouse');
         }
+      }
 
-        logger.debug('Warehouse queue batch processed', {
+        logger.info('Warehouse queue batch processed', {
           processed: items.length,
           queueRemaining: await redisClient.llen(queueKey)
         });
 
       } catch (error) {
-        logger.error('Warehouse queue processing failed', { error });
+        logger.error('Warehouse queue processing failed', error as Error, { });
       }
 
       setTimeout(processWarehouseQueue, this.config.processingInterval * 2);
@@ -275,7 +275,7 @@ export class DataProcessingWorker {
         }));
 
       } catch (error) {
-        logger.error('Health monitoring failed', { error });
+        logger.error('Health monitoring failed', error as Error, { });
       }
 
       setTimeout(monitorHealth, 60000); // Every minute
@@ -303,7 +303,10 @@ export class DataProcessingWorker {
       await redisClient.expire('dead_letter_queue', 30 * 24 * 60 * 60);
 
     } catch (dlqError) {
-      logger.error('Failed to move item to dead letter queue', { dlqError, originalError: error });
+      const err = dlqError instanceof Error ? dlqError : new Error(String(dlqError));
+      logger.error('Failed to move item to dead letter queue', err, { 
+        originalError: error instanceof Error ? error.message : String(error)
+      });
     }
   }
 
@@ -374,14 +377,14 @@ export class DataProcessingWorker {
           
         } catch (error) {
           results.failed++;
-          logger.error('Dead letter queue item reprocessing failed', { error, item: itemStr.substring(0, 100) });
+          logger.error('Dead letter queue item reprocessing failed', error as Error, { item: itemStr.substring(0, 100) });
         }
       }
 
       logger.info('Dead letter queue processing completed', results);
 
     } catch (error) {
-      logger.error('Dead letter queue processing failed', { error });
+      logger.error('Dead letter queue processing failed', error as Error, { });
     }
 
     return results;

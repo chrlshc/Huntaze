@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { Card } from '@/components/ui/card';
 
 type Status = "connected" | "attention" | "error" | "none";
 

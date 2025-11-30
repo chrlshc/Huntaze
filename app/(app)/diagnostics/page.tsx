@@ -14,6 +14,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { DiagnosticReport, Bottleneck, Recommendation } from '@/lib/diagnostics';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function DiagnosticsPage() {
   const [report, setReport] = useState<DiagnosticReport | null>(null);
@@ -106,42 +108,30 @@ export default function DiagnosticsPage() {
       <h1 className="text-3xl font-bold mb-6">Performance Diagnostics</h1>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <Card className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex gap-4">
-          <button
-            onClick={startDiagnostic}
-            disabled={isRunning || loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
+          <Button variant="primary" onClick={startDiagnostic} disabled={isRunning || loading}>
             {loading ? 'Loading...' : 'Start Diagnostic'}
-          </button>
-          <button
-            onClick={stopDiagnostic}
-            disabled={!isRunning || loading}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
+          </Button>
+          <Button variant="secondary" onClick={stopDiagnostic} disabled={!isRunning || loading}>
             Stop & Generate Report
-          </button>
-          <button
-            onClick={resetDiagnostic}
-            disabled={loading}
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
+          </Button>
+          <Button variant="secondary" onClick={resetDiagnostic} disabled={loading}>
             Reset
-          </button>
+          </Button>
         </div>
         {isRunning && (
           <div className="mt-4 text-sm text-blue-600">
             ⚡ Diagnostic session is running... Navigate through the app to collect data.
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Report */}
       {report && (
         <>
           {/* Summary */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <Card className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">Summary</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-blue-50 p-4 rounded">
@@ -163,10 +153,10 @@ export default function DiagnosticsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Bottlenecks */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <Card className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">Bottlenecks</h2>
             {report.bottlenecks.length === 0 ? (
               <p className="text-gray-600">No bottlenecks detected! 🎉</p>
@@ -207,10 +197,10 @@ export default function DiagnosticsPage() {
                 ))}
               </div>
             )}
-          </div>
+          </Card>
 
           {/* Recommendations */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <Card className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">Recommendations</h2>
             {report.recommendations.length === 0 ? (
               <p className="text-gray-600">No recommendations at this time.</p>
@@ -246,10 +236,10 @@ export default function DiagnosticsPage() {
                 ))}
               </div>
             )}
-          </div>
+          </Card>
 
           {/* Raw Metrics */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <Card className="bg-white rounded-lg shadow p-6">
             <h2 className="text-2xl font-bold mb-4">Raw Metrics</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -325,7 +315,7 @@ export default function DiagnosticsPage() {
                 </ul>
               </div>
             </div>
-          </div>
+          </Card>
         </>
       )}
     </div>

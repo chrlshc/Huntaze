@@ -30,21 +30,24 @@ export class ValidationOrchestrator {
     
     switch (platform) {
       case 'tiktok':
-        result = await this.validators.validateTikTok(credentials);
+        result = await OAuthValidators.validateTikTok();
         break;
       
       case 'instagram':
-        result = await this.validators.validateInstagram(credentials);
+        result = await OAuthValidators.validateInstagram();
         break;
       
       case 'reddit':
-        result = await this.validators.validateReddit(credentials);
+        result = await OAuthValidators.validateReddit();
         break;
       
       default:
         result = {
           platform,
           isValid: false,
+          credentialsSet: false,
+          formatValid: false,
+          apiConnectivity: false,
           errors: ['Unknown platform'],
           warnings: [],
           details: {

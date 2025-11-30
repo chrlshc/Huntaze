@@ -5,6 +5,7 @@ export const dynamic = 'force-static';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 import { 
   TrendingUp, DollarSign, Calendar, Users, Brain, Target, Zap, 
   ChevronRight, ArrowRight, Check, Sparkles, Shield, Clock,
@@ -126,7 +127,7 @@ export default function WhyHuntazePage() {
           </div>
 
           {/* Active Widget Details */}
-          <div className="elevated-card rounded-2xl p-8">
+          <Card className="rounded-2xl p-8">
             <div className={`inline-flex items-center gap-2 px-4 py-2 bg-${currentWidget.color}-100 rounded-lg mb-6`}>
               <currentWidget.icon className={`w-5 h-5 text-${currentWidget.color}-600`} />
               <span className={`font-semibold text-${currentWidget.color}-700`}>{currentWidget.title}</span>
@@ -147,7 +148,7 @@ export default function WhyHuntazePage() {
               <p className="text-sm font-semibold text-purple-900 mb-1">Average impact:</p>
               <p className="text-lg font-bold text-purple-900">{currentWidget.impact}</p>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
 

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface AuthInputProps {
   label: string;

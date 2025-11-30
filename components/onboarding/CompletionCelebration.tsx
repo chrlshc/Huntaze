@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface Achievement {
   icon: React.ReactNode;
@@ -96,7 +98,7 @@ export default function CompletionCelebration({
           isAnimating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-2xl p-12 text-center space-y-8">
+        <Card className="bg-white rounded-2xl shadow-2xl p-12 text-center space-y-8">
           {/* Main Icon */}
           <div className="flex justify-center">
             <div className="relative">
@@ -167,19 +169,13 @@ export default function CompletionCelebration({
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button
-              onClick={handleStartCreating}
-              className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition shadow-lg hover:shadow-xl"
-            >
+            <Button variant="primary" onClick={handleStartCreating}>
               Start Creating Content
               <ArrowRight className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleExploreFeatures}
-              className="flex-1 px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition"
-            >
+            </Button>
+            <Button variant="ghost" onClick={handleExploreFeatures}>
               Explore Features
-            </button>
+            </Button>
           </div>
 
           {/* Footer Note */}
@@ -193,7 +189,7 @@ export default function CompletionCelebration({
               Contact Support
             </a>
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

@@ -36,6 +36,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Button } from "@/components/ui/button";
 
 /**
  * CSRF token response from API
@@ -243,7 +244,7 @@ async function getCsrfToken(
  *     return (
  *       <div>
  *         <p>Failed to load security token. Please refresh the page.</p>
- *         <button onClick={refresh}>Retry</button>
+ *         <Button variant="primary" onClick={refresh}>Retry</Button>
  *       </div>
  *     );
  *   }

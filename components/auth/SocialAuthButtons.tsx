@@ -37,11 +37,15 @@ export function SocialAuthButtons({
     try {
       const result = await signIn(provider, {
         callbackUrl: redirectTo,
-        redirect: true,
+        redirect: false,
       });
 
       if (result?.error) {
         throw new Error(result.error);
+      }
+
+      if (result?.url) {
+        window.location.assign(result.url);
       }
 
       onSuccess?.(provider);

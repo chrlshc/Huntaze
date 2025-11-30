@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 import { 
   ExclamationTriangleIcon,
   InformationCircleIcon,
@@ -188,7 +190,7 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-6 bg-gray-200 rounded w-1/4"></div>
           {[...Array(5)].map((_, i) => (
@@ -198,12 +200,12 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <Card className="bg-white rounded-lg shadow">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center">
@@ -318,7 +320,7 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
                         <div className="mt-3 flex space-x-2">
                           {alert.actions.map((action) => (
                             <button
-                              key={action.id}
+                              key={action.action}
                               onClick={() => handleAction(alert.id, action.action)}
                               className={`px-3 py-1 text-xs font-medium rounded ${
                                 action.type === 'primary' 
@@ -341,7 +343,7 @@ export const SystemAlerts: React.FC<SystemAlertsProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
 

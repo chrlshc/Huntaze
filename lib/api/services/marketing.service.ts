@@ -28,7 +28,7 @@ const logger = createLogger('marketing-service');
 // ============================================================================
 
 export interface CampaignFilters {
-  userId: number;
+  user_id: number;
   status?: 'draft' | 'scheduled' | 'active' | 'paused' | 'completed';
   channel?: 'email' | 'dm' | 'sms' | 'push';
   limit?: number;
@@ -58,7 +58,7 @@ export interface CampaignStats {
 
 export interface Campaign {
   id: string;
-  userId: number;
+  user_id: number;
   name: string;
   status: 'draft' | 'scheduled' | 'active' | 'paused' | 'completed';
   channel: 'email' | 'dm' | 'sms' | 'push';
@@ -69,7 +69,7 @@ export interface Campaign {
   schedule?: Record<string, any>;
   stats: CampaignStats;
   createdAt: Date;
-  updatedAt: Date;
+  updated_at: Date;
 }
 
 export interface CampaignListResponse {
@@ -177,7 +177,7 @@ export class MarketingService {
   async listCampaigns(filters: CampaignFilters): Promise<CampaignListResponse> {
     const startTime = Date.now();
     const {
-      userId,
+      user_id,
       status,
       channel,
       limit = 50,
@@ -186,7 +186,7 @@ export class MarketingService {
 
     try {
       logger.info('Listing campaigns', {
-        userId,
+        user_id,
         status,
         channel,
         limit,
@@ -202,33 +202,36 @@ export class MarketingService {
         throw createApiError('VALIDATION_ERROR', 'Offset must be non-negative', 400);
       }
 
-      const where: Prisma.MarketingCampaignWhereInput = { userId };
+      const where: Prisma.marketing_campaignsWhereInput = { user_id };
 
       if (status) where.status = status;
       if (channel) where.channel = channel;
 
       const [items, total] = await retryWithBackoff(
         () => Promise.all([
-          prisma.marketingCampaign.findMany({
+          prisma.marketing_campaigns.findMany({
             where,
             take: limit,
             skip: offset,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { created_at: 'desc' },
           }),
-          prisma.marketingCampaign.count({ where }),
+          prisma.marketing_campaigns.count({ where }),
         ]),
         'listCampaigns'
       );
 
-      // Calculate stats for each campaign
-      const itemsWithStats = items.map((campaign: any) => ({
+      // Calculate stats for each campaign and map fields
+      const itemsWithStats = items.map((campaign) => ({
         ...campaign,
+        audienceSegment: campaign.audience_segment,
+        audienceSize: campaign.audience_size,
+        createdAt: campaign.created_at,
         stats: this.calculateCampaignStats(campaign.stats as any),
       }));
 
       const duration = Date.now() - startTime;
       logger.info('Campaigns listed successfully', {
-        userId,
+        user_id,
         count: items.length,
         total,
         duration,
@@ -246,7 +249,7 @@ export class MarketingService {
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('Failed to list campaigns', error as Error, {
-        userId,
+        user_id,
         duration,
       });
 
@@ -272,12 +275,12 @@ export class MarketingService {
    * @returns Created campaign
    * @throws ApiError on validation or database failure
    */
-  async createCampaign(userId: number, data: CreateCampaignData): Promise<Campaign> {
+  async createCampaign(user_id: number, data: CreateCampaignData): Promise<Campaign> {
     const startTime = Date.now();
 
     try {
       logger.info('Creating campaign', {
-        userId,
+        user_id,
         name: data.name,
         status: data.status,
         channel: data.channel,
@@ -295,10 +298,18 @@ export class MarketingService {
       };
 
       const campaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.create({
+        () => prisma.marketing_campaigns.create({
           data: {
-            ...data,
-            userId,
+            id: crypto.randomUUID(),
+            user_id: user_id,
+            name: data.name,
+            status: data.status,
+            channel: data.channel,
+            goal: data.goal,
+            audience_segment: data.audienceSegment,
+            audience_size: data.audienceSize,
+            message: data.message,
+            schedule: data.schedule,
             stats: initialStats,
           },
         }),
@@ -307,19 +318,19 @@ export class MarketingService {
 
       const duration = Date.now() - startTime;
       logger.info('Campaign created successfully', {
-        userId,
-        campaignId: campaign.id,
+        user_id,
+        campaignId: (campaign as any).id,
         duration,
       });
 
       return {
-        ...campaign,
-        stats: this.calculateCampaignStats(campaign.stats as any),
+        ...(campaign as any),
+        stats: this.calculateCampaignStats((campaign as any).stats),
       } as Campaign;
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('Failed to create campaign', error as Error, {
-        userId,
+        user_id,
         duration,
       });
 
@@ -347,7 +358,7 @@ export class MarketingService {
    * @throws ApiError on not found or database failure
    */
   async updateCampaign(
-    userId: number,
+    user_id: number,
     campaignId: string,
     data: Partial<CreateCampaignData>
   ): Promise<Campaign> {
@@ -355,7 +366,7 @@ export class MarketingService {
 
     try {
       logger.info('Updating campaign', {
-        userId,
+        user_id,
         campaignId,
         updates: Object.keys(data),
       });
@@ -376,8 +387,8 @@ export class MarketingService {
 
       // Verify ownership
       const campaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.findFirst({
-          where: { id: campaignId, userId },
+        () => prisma.marketing_campaigns.findFirst({
+          where: { id: campaignId, user_id },
         }),
         'updateCampaign:findFirst'
       );
@@ -389,12 +400,12 @@ export class MarketingService {
       // Update campaign stats if status changes
       const updateData: any = {
         ...data,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       };
 
       // If status is changing to 'active', update stats
-      if (data.status === 'active' && campaign.status !== 'active') {
-        const currentStats = (campaign.stats as any) || { sent: 0, opened: 0, clicked: 0, converted: 0 };
+      if (data.status === 'active' && (campaign as any).status !== 'active') {
+        const currentStats = ((campaign as any).stats as any) || { sent: 0, opened: 0, clicked: 0, converted: 0 };
         updateData.stats = {
           ...currentStats,
           lastActivatedAt: new Date().toISOString(),
@@ -402,7 +413,7 @@ export class MarketingService {
       }
 
       const updatedCampaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.update({
+        () => prisma.marketing_campaigns.update({
           where: { id: campaignId },
           data: updateData,
         }),
@@ -411,19 +422,19 @@ export class MarketingService {
 
       const duration = Date.now() - startTime;
       logger.info('Campaign updated successfully', {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
 
       return {
-        ...updatedCampaign,
-        stats: this.calculateCampaignStats(updatedCampaign.stats as any),
+        ...(updatedCampaign as any),
+        stats: this.calculateCampaignStats((updatedCampaign as any).stats),
       } as Campaign;
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('Failed to update campaign', error as Error, {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
@@ -450,19 +461,19 @@ export class MarketingService {
    * @returns Deleted campaign
    * @throws ApiError on not found or database failure
    */
-  async deleteCampaign(userId: number, campaignId: string): Promise<Campaign> {
+  async deleteCampaign(user_id: number, campaignId: string): Promise<Campaign> {
     const startTime = Date.now();
 
     try {
       logger.info('Deleting campaign', {
-        userId,
+        user_id,
         campaignId,
       });
 
       // Verify ownership
       const campaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.findFirst({
-          where: { id: campaignId, userId },
+        () => prisma.marketing_campaigns.findFirst({
+          where: { id: campaignId, user_id },
         }),
         'deleteCampaign:findFirst'
       );
@@ -472,7 +483,7 @@ export class MarketingService {
       }
 
       const deletedCampaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.delete({
+        () => prisma.marketing_campaigns.delete({
           where: { id: campaignId },
         }),
         'deleteCampaign:delete'
@@ -480,19 +491,19 @@ export class MarketingService {
 
       const duration = Date.now() - startTime;
       logger.info('Campaign deleted successfully', {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
 
       return {
-        ...deletedCampaign,
-        stats: this.calculateCampaignStats(deletedCampaign.stats as any),
+        ...(deletedCampaign as any),
+        stats: this.calculateCampaignStats((deletedCampaign as any).stats),
       } as Campaign;
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('Failed to delete campaign', error as Error, {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
@@ -519,18 +530,18 @@ export class MarketingService {
    * @returns Campaign or null if not found
    * @throws ApiError on database failure
    */
-  async getCampaign(userId: number, campaignId: string): Promise<Campaign | null> {
+  async getCampaign(user_id: number, campaignId: string): Promise<Campaign | null> {
     const startTime = Date.now();
 
     try {
       logger.info('Getting campaign', {
-        userId,
+        user_id,
         campaignId,
       });
 
       const campaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.findFirst({
-          where: { id: campaignId, userId },
+        () => prisma.marketing_campaigns.findFirst({
+          where: { id: campaignId, user_id },
         }),
         'getCampaign'
       );
@@ -539,7 +550,7 @@ export class MarketingService {
 
       if (!campaign) {
         logger.info('Campaign not found', {
-          userId,
+          user_id,
           campaignId,
           duration,
         });
@@ -547,19 +558,19 @@ export class MarketingService {
       }
 
       logger.info('Campaign retrieved successfully', {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
 
       return {
-        ...campaign,
-        stats: this.calculateCampaignStats(campaign.stats as any),
+        ...(campaign as any),
+        stats: this.calculateCampaignStats((campaign as any).stats),
       } as Campaign;
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('Failed to get campaign', error as Error, {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
@@ -610,7 +621,7 @@ export class MarketingService {
    * @throws ApiError on not found or database failure
    */
   async updateCampaignStats(
-    userId: number,
+    user_id: number,
     campaignId: string,
     statsUpdate: Partial<{ sent: number; opened: number; clicked: number; converted: number }>
   ): Promise<Campaign> {
@@ -618,7 +629,7 @@ export class MarketingService {
 
     try {
       logger.info('Updating campaign stats', {
-        userId,
+        user_id,
         campaignId,
         updates: Object.keys(statsUpdate),
       });
@@ -631,8 +642,8 @@ export class MarketingService {
       }
 
       const campaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.findFirst({
-          where: { id: campaignId, userId },
+        () => prisma.marketing_campaigns.findFirst({
+          where: { id: campaignId, user_id },
         }),
         'updateCampaignStats:findFirst'
       );
@@ -641,18 +652,18 @@ export class MarketingService {
         throw createApiError('NOT_FOUND', 'Campaign not found or access denied', 404);
       }
 
-      const currentStats = (campaign.stats as any) || { sent: 0, opened: 0, clicked: 0, converted: 0 };
+      const currentStats = ((campaign as any).stats as any) || { sent: 0, opened: 0, clicked: 0, converted: 0 };
       const updatedStats = {
         ...currentStats,
         ...statsUpdate,
       };
 
       const updatedCampaign = await retryWithBackoff(
-        () => prisma.marketingCampaign.update({
+        () => prisma.marketing_campaigns.update({
           where: { id: campaignId },
           data: {
             stats: updatedStats,
-            updatedAt: new Date(),
+            updated_at: new Date(),
           },
         }),
         'updateCampaignStats:update'
@@ -660,19 +671,19 @@ export class MarketingService {
 
       const duration = Date.now() - startTime;
       logger.info('Campaign stats updated successfully', {
-        userId,
+        user_id,
         campaignId,
         duration,
       });
 
       return {
-        ...updatedCampaign,
-        stats: this.calculateCampaignStats(updatedCampaign.stats as any),
+        ...(updatedCampaign as any),
+        stats: this.calculateCampaignStats((updatedCampaign as any).stats),
       } as Campaign;
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('Failed to update campaign stats', error as Error, {
-        userId,
+        user_id,
         campaignId,
         duration,
       });

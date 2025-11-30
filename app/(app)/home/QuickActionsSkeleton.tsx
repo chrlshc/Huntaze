@@ -16,6 +16,7 @@
 'use client';
 
 import { Skeleton } from '@/src/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 
 interface QuickActionsSkeletonProps {
   className?: string;
@@ -67,10 +68,10 @@ export function HorizontalQuickActionsSkeleton({ className = '' }: { className?:
   return (
     <div className={`flex space-x-4 overflow-x-auto pb-2 ${className}`}>
       {Array.from({ length: 6 }, (_, index) => (
-        <div key={index} className="flex-shrink-0 flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
+        <Card key={index} className="flex-shrink-0 flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
           <Skeleton variant="avatar" className="w-6 h-6" />
           <Skeleton variant="text" className="w-20 h-4" />
-        </div>
+        </Card>
       ))}
     </div>
   );

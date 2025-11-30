@@ -38,7 +38,7 @@ export default function PremiumCard({
   
   const glowColors = {
     purple: 'rgba(139, 92, 246, 0.5)',
-    pink: 'rgba(236, 72, 153, 0.5)',
+    pink: 'rgba(139, 92, 246, 0.5)',
     blue: 'rgba(59, 130, 246, 0.5)',
   }
   

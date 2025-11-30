@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Intervention effectiveness API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Intervention effectiveness API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Intervention effectiveness GET API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Intervention effectiveness GET API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -182,7 +182,7 @@ export async function PUT(request: NextRequest) {
         );
     }
   } catch (error) {
-    logger.error('Intervention effectiveness PUT API error:', undefined, error instanceof Error ? error : new Error(String(error)));
+    logger.error('Intervention effectiveness PUT API error', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

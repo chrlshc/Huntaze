@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { SocialAuthButtons } from './SocialAuthButtons';
 import { EmailSignupForm } from './EmailSignupForm';
 import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
 
 interface SignupFormProps {
   redirectTo?: string;
@@ -110,7 +111,8 @@ export function SignupForm({
           </ul>
         </div>
 
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => {
             setEmailSent(false);
             setSentEmail('');
@@ -118,7 +120,7 @@ export function SignupForm({
           className="text-purple-600 hover:text-purple-700 font-medium text-sm"
         >
           Try a different email address
-        </button>
+        </Button>
       </div>
     );
   }

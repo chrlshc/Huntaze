@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface EmojiPickerProps {
   onSelect: (emoji: string) => void;
@@ -38,7 +40,7 @@ export default function EmojiPicker({ onSelect }: EmojiPickerProps) {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute bottom-full mb-2 left-0 z-20 bg-white border rounded-lg shadow-lg w-80">
+          <Card className="absolute bottom-full mb-2 left-0 z-20 bg-white border rounded-lg shadow-lg w-80">
             {/* Category Tabs */}
             <div className="flex border-b">
               {Object.keys(EMOJI_CATEGORIES).map((category) => (
@@ -70,7 +72,7 @@ export default function EmojiPicker({ onSelect }: EmojiPickerProps) {
                 </button>
               ))}
             </div>
-          </div>
+          </Card>
         </>
       )}
     </div>

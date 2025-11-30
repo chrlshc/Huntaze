@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { quote } from "@/src/lib/pricing/engine";
+import { Card } from '@/components/ui/card';
 
 type Plan = "starter" | "pro" | "scale" | "enterprise";
 type Enforcement = "ok" | "warn_1" | "blocked";
@@ -105,10 +106,10 @@ export default function EffectiveTakeRateCard({ accountId }: { accountId: string
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-gray-100 p-4 dark:border-gray-800">
+    <Card className="rounded-lg border border-gray-100 p-4 dark:border-gray-800">
       <div className="text-xs uppercase text-gray-500 dark:text-gray-400">{label}</div>
       <div className="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{value}</div>
-    </div>
+    </Card>
   );
 }
 

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Card } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -491,8 +493,8 @@ export default function OnboardingSetupPage() {
 
                   if (platform.comingSoon) {
                     return (
-                      <div key={platform.id} className="platform-card disabled">
-                        <div className="platform-card-content">
+                      <Card key={platform.id} className="disabled">
+                        <div className="platform-content">
                           <div className={`platform-icon ${platformClass} opacity-50`}>
                             {platform.icon}
                           </div>
@@ -504,7 +506,7 @@ export default function OnboardingSetupPage() {
                         <div className="platform-badge">
                           <span className="text-content-tertiary text-sm">Soon</span>
                         </div>
-                      </div>
+                      </Card>
                     );
                   }
 
@@ -515,7 +517,7 @@ export default function OnboardingSetupPage() {
                         href={platform.url}
                         className={`platform-card ${isConnected ? 'connected' : ''}`}
                       >
-                        <div className="platform-card-content">
+                        <div className="platform-content">
                           <div className={`platform-icon ${platformClass}`}>
                             {platform.icon}
                           </div>
@@ -540,7 +542,7 @@ export default function OnboardingSetupPage() {
                   // OnlyFans custom connection
                   return (
                     <div key={platform.id} className={`platform-card ${isConnected ? 'connected' : ''}`}>
-                      <div className="platform-card-content">
+                      <div className="platform-content">
                         <div className={`platform-icon ${platformClass}`}>
                           {platform.icon}
                         </div>
@@ -555,7 +557,7 @@ export default function OnboardingSetupPage() {
                         {isConnected ? (
                           <Check className="w-5 h-5 text-success" />
                         ) : (
-                          <button 
+                          <button
                             onClick={() => togglePlatform(platform.id)}
                             className="btn-sm btn-primary"
                           >
@@ -761,7 +763,7 @@ export default function OnboardingSetupPage() {
 
             <button
               onClick={handleComplete}
-              className="btn-primary btn-lg mt-8"
+              className="btn-primary"
             >
               <span>Go to Dashboard</span>
               <ArrowRight className="w-5 h-5" />
@@ -818,7 +820,7 @@ export default function OnboardingSetupPage() {
         )}
 
         {/* Main Card */}
-        <div className="onboarding-card">
+        <Card>
           {renderStepContent()}
           
           {/* Navigation */}
@@ -858,7 +860,7 @@ export default function OnboardingSetupPage() {
               </button>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );
@@ -987,14 +989,14 @@ function PlanSelection({ onSkip }: { onSkip: () => void }) {
               ))}
             </ul>
 
-            <button 
-              className={`plan-cta ${plan.id === 'starter' ? 'btn-secondary' : 'btn-primary'}`}
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 if (plan.id === 'starter') {
                   onSkip();
                 }
               }}
+              className="btn-primary"
             >
               {plan.cta}
             </button>

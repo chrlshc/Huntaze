@@ -3,18 +3,18 @@
 :root {
   --color-bg-primary: #000000;
   --color-bg-secondary: #030712; /* gray-950 */
-  --color-bg-tertiary: #111827; /* gray-900 */
-  --color-bg-card: #1f2937; /* gray-800 */
+  --color-bg-tertiary: var(--text-primary); /* gray-900 */
+  --color-bg-card: var(--text-primary); /* gray-800 */
   
   --color-text-primary: #ffffff;
-  --color-text-secondary: #9ca3af; /* gray-400 */
-  --color-text-tertiary: #6b7280; /* gray-500 */
+  --color-text-secondary: var(--text-secondary); /* gray-400 */
+  --color-text-tertiary: var(--text-tertiary); /* gray-500 */
   
   --color-border-primary: #374151; /* gray-700 */
-  --color-border-secondary: #1f2937; /* gray-800 */
+  --color-border-secondary: var(--text-primary); /* gray-800 */
   
-  --color-accent-primary: #a855f7; /* purple-500 */
-  --color-accent-secondary: #ec4899; /* pink-500 */
+  --color-accent-primary: var(--accent-primary); /* purple-500 */
+  --color-accent-secondary: var(--accent-primary); /* pink-500 */
 }
 
 /* Override Tailwind defaults for dark theme */
@@ -71,11 +71,11 @@ body {
 
 /* Glow effects */
 .glow-purple {
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
 }
 
 .glow-purple-sm {
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
 }
 
 /* Glass morphism */

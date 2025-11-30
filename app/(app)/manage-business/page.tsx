@@ -3,12 +3,14 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import LinearHeader from '@/components/LinearHeader'
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function ManageBusinessPage() {
   return (
     <>
       <LinearHeader />
-      <section className="relative min-h-screen bg-black">
+      <section className="relative min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16">
           
           {/* Hero Section */}
@@ -174,7 +176,7 @@ export default function ManageBusinessPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="max-w-6xl mx-auto mb-20"
           >
-            <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30">
+            <Card className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-purple-600/30">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-white mb-4">
                   Automate your entire business workflow
@@ -186,35 +188,35 @@ export default function ManageBusinessPage() {
               
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-black/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--bg-glass)' }}>
                     <span className="text-2xl">📥</span>
                   </div>
                   <h4 className="text-white font-semibold mb-2">New Fan Joins</h4>
                   <p className="text-white/60 text-sm">Automatic welcome sequence</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-black/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--bg-glass)' }}>
                     <span className="text-2xl">🤖</span>
                   </div>
                   <h4 className="text-white font-semibold mb-2">AI Engagement</h4>
                   <p className="text-white/60 text-sm">Personalized conversations</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-black/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--bg-glass)' }}>
                     <span className="text-2xl">💰</span>
                   </div>
                   <h4 className="text-white font-semibold mb-2">Smart Upsell</h4>
                   <p className="text-white/60 text-sm">Optimal timing & pricing</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-black/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--bg-glass)' }}>
                     <span className="text-2xl">📊</span>
                   </div>
                   <h4 className="text-white font-semibold mb-2">Analytics</h4>
                   <p className="text-white/60 text-sm">Track & optimize results</p>
                 </div>
               </div>
-            </div>
+            </Card>
           </motion.div>
 
           {/* Business Insights */}
@@ -224,7 +226,7 @@ export default function ManageBusinessPage() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-20"
           >
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
+            <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
               <h3 className="text-2xl font-semibold text-white mb-6">Advanced Analytics</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -244,28 +246,20 @@ export default function ManageBusinessPage() {
                   <span className="text-green-500 font-semibold">+127% YoY</span>
                 </div>
               </div>
-              <button className="w-full mt-6 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+              <Button variant="primary">
                 View Full Report
-              </button>
-            </div>
+              </Button>
+            </Card>
 
-            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
+            <Card className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
               <h3 className="text-2xl font-semibold text-white mb-6">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full px-4 py-3 bg-black/30 text-white rounded-lg hover:bg-black/50 transition-colors text-left">
-                  📊 Generate Monthly Report
-                </button>
-                <button className="w-full px-4 py-3 bg-black/30 text-white rounded-lg hover:bg-black/50 transition-colors text-left">
-                  💸 Review Pending Payouts
-                </button>
-                <button className="w-full px-4 py-3 bg-black/30 text-white rounded-lg hover:bg-black/50 transition-colors text-left">
-                  📧 Send Bulk Campaign
-                </button>
-                <button className="w-full px-4 py-3 bg-black/30 text-white rounded-lg hover:bg-black/50 transition-colors text-left">
-                  🔧 Adjust AI Settings
-                </button>
+                <Button variant="primary" style={{ backgroundColor: 'var(--bg-glass)' }}>Generate Monthly Report</Button>
+                <Button variant="primary" style={{ backgroundColor: 'var(--bg-glass)' }}>Review Pending Payouts</Button>
+                <Button variant="primary" style={{ backgroundColor: 'var(--bg-glass)' }}>Send Bulk Campaign</Button>
+                <Button variant="primary" style={{ backgroundColor: 'var(--bg-glass)' }}>Adjust AI Settings</Button>
               </div>
-            </div>
+            </Card>
           </motion.div>
 
           {/* CTA Section */}

@@ -166,6 +166,16 @@ export async function fetchCsrfToken(
       }
 
       const duration = Date.now() - startTime;
+      
+      // Validate data.data exists
+      if (!data.data) {
+        throw new CsrfTokenError(
+          'INVALID_RESPONSE' as CsrfTokenErrorCode,
+          'Missing data in response',
+          false
+        );
+      }
+      
       const expiresAt = Date.now() + data.data.expiresIn;
 
       // Cache token

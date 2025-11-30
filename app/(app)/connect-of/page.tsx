@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function ConnectOfLanding() {
   const sp = useSearchParams();
@@ -62,17 +64,17 @@ export default function ConnectOfLanding() {
         <div className="hz-page" style={{ maxWidth: 720 }}>
           <h1>Huntaze Connect</h1>
 
-          <div className="hz-card" style={{ marginTop: 12 }}>
+          <Card style={{ marginTop: 12 }}>
             <div className="hz-card__body">
               <div className="hz-muted">Token</div>
               <code className="hz-code">{token ? `${token.slice(0, 6)}…${token.slice(-6)}` : "—"}</code>
 
               <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                <button onClick={openInApp} className="hz-button">Open in app</button>
+                <Button variant="primary" onClick={openInApp}>Open in app</Button>
                 {!opened && <span className="hz-muted">If nothing happens, install the app then try again.</span>}
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </main>
     </div>

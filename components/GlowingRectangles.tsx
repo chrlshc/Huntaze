@@ -23,8 +23,8 @@ const GlowingRectangle = ({
       style={{
         width: `${width}px`,
         height: `${height}px`,
-        background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(236, 72, 153, 0.3) 100%)',
-        border: '1px solid rgba(168, 85, 247, 0.5)',
+        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%)',
+        border: '1px solid rgba(139, 92, 246, 0.5)',
         filter: `blur(${blur}px)`,
       }}
       animate={{
@@ -140,8 +140,8 @@ export default function GlowingRectangles() {
       <motion.div
         className="absolute top-[25%] left-[20%] w-[180px] h-[120px] rounded-lg"
         style={{
-          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)',
-          border: '1px solid rgba(168, 85, 247, 0.2)',
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
+          border: '1px solid rgba(139, 92, 246, 0.2)',
           backdropFilter: 'blur(2px)',
         }}
         animate={{
@@ -156,8 +156,8 @@ export default function GlowingRectangles() {
       <motion.div
         className="absolute bottom-[35%] right-[15%] w-[150px] h-[100px] rounded-lg"
         style={{
-          background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)',
-          border: '1px solid rgba(236, 72, 153, 0.2)',
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
+          border: '1px solid rgba(139, 92, 246, 0.2)',
           backdropFilter: 'blur(2px)',
         }}
         animate={{

@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { ArrowLeft, LayoutDashboard, DollarSign, Users, Activity, Shield, Smartphone, Globe } from 'lucide-react'
 import { DashboardMockup } from '@/components/product-mockups'
 import PremiumButton from '@/components/premium-button'
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function DashboardPage() {
   return (
@@ -173,11 +175,11 @@ export default function DashboardPage() {
                 </ul>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-8">
-                <div className="elevated-card rounded-lg p-6">
+                <Card className="rounded-lg p-6">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">$—</div>
                   <div className="text-sm text-green-600">Analytics coming soon</div>
                   <div className="mt-4 h-32 bg-gradient-to-r from-purple-600 to-pink-600 rounded opacity-20"></div>
-                </div>
+                </Card>
               </div>
             </motion.div>
 
@@ -190,7 +192,7 @@ export default function DashboardPage() {
             >
               <div className="order-2 lg:order-1">
                 <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-8">
-                <div className="elevated-card rounded-lg p-6">
+                <Card className="rounded-lg p-6">
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Top Fans</h4>
                     <div className="space-y-3">
                       {['John D. - $2,450', 'Mike S. - $1,890', 'Alex R. - $1,560'].map((fan, i) => (
@@ -200,7 +202,7 @@ export default function DashboardPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </Card>
                 </div>
               </div>
               <div className="order-1 lg:order-2">
@@ -242,12 +244,12 @@ export default function DashboardPage() {
               Full dashboard access on iOS and Android. Check stats, respond to fans, and manage your business on the go.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+              <Button variant="primary">
                 Download for iOS
-              </button>
-              <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+              </Button>
+              <Button variant="primary">
                 Download for Android
-              </button>
+              </Button>
             </div>
           </motion.div>
         </div>

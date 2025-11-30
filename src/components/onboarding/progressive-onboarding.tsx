@@ -6,6 +6,7 @@ import { ArrowRight, Check, Sparkles, Users, Zap, MessageSquare, BarChart3 } fro
 import MD3Button from '@/components/ui/md3-button';
 import MD3Card from '@/components/ui/md3-card';
 import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
 
 interface OnboardingStep {
   id: string;
@@ -172,12 +173,13 @@ export default function ProgressiveOnboarding() {
         {/* Skip option for experienced users */}
         {currentStep > 0 && currentStep < steps.length - 1 && (
           <div className="text-center mt-4">
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => completeOnboarding()}
               className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               Skip and explore on my own →
-            </button>
+            </Button>
           </div>
         )}
       </div>

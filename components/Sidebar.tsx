@@ -102,7 +102,7 @@ export function Sidebar() {
                     transition: 'all 0.15s ease',
                     borderRadius: '0 8px 8px 0',
                     marginRight: '12px',
-                    fontSize: '14px',
+                    fontSize: 'var(--text-sm)',
                     fontWeight: isActive ? '500' : '400',
                     ...(isActive && {
                       borderLeft: '3px solid var(--nav-active-indicator)',
@@ -146,7 +146,7 @@ export function Sidebar() {
                               textDecoration: 'none',
                               transition: 'all 0.15s ease',
                               borderRadius: '6px',
-                              fontSize: '13px',
+                              fontSize: 'var(--text-sm)',
                               fontWeight: isSubActive ? '500' : '400',
                             }}
                             onMouseEnter={(e) => {
@@ -187,7 +187,7 @@ export function Sidebar() {
             padding: 'var(--spacing-3)',
             gap: 'var(--spacing-3)',
             color: 'var(--nav-text-muted)',
-            fontSize: 'var(--font-size-sm)',
+            fontSize: 'var(--text-sm)',
             transition: 'all var(--transition-fast)',
             textDecoration: 'none'
           }}

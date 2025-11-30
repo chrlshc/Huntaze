@@ -8,7 +8,7 @@ import { HomeCTA } from '@/components/home/HomeCTA';
 
 export function HomePageContent() {
   return (
-    <div className="min-h-screen bg-[#0F0F10] text-[#EDEDEF] w-full overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] w-full overflow-x-hidden">
       {/* Section 1: Hero */}
       <HeroSection
         badge="Closed Beta • Invite only"

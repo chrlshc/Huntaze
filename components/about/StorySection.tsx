@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
+import { Card } from '@/components/ui/card';
 
 export function StorySection() {
   const ref = useRef(null);
@@ -87,7 +88,7 @@ export function StorySection() {
             <div className="aspect-square relative">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl transform rotate-3"></div>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl transform -rotate-3"></div>
-              <div className="relative bg-white rounded-3xl shadow-xl p-8 h-full flex flex-col justify-center">
+              <Card className="relative bg-white rounded-3xl shadow-xl p-8 h-full flex flex-col justify-center">
                 <blockquote className="text-2xl font-medium text-gray-900 mb-6">
                   "We believe creators should focus on creating, not on spreadsheets and scheduling."
                 </blockquote>
@@ -95,7 +96,7 @@ export function StorySection() {
                   <div className="font-semibold">The Huntaze Team</div>
                   <div className="text-sm">Building the future of creator business</div>
                 </cite>
-              </div>
+              </Card>
             </div>
           </motion.div>
         </div>

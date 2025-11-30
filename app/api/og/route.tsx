@@ -24,7 +24,8 @@
  * <meta property="og:image" content="https://huntaze.com/api/og?title=Features" />
  */
 
-import { ImageResponse } from '@vercel/og';
+// TODO: Install @vercel/og package to enable OG image generation
+// import { ImageResponse } from '@vercel/og';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -54,7 +55,7 @@ const OG_IMAGE_CONFIG = {
 } as const;
 
 const MAGIC_BLUE = '#5E6AD2';
-const BACKGROUND_DARK = '#0F0F10';
+const BACKGROUND_DARK = 'var(--bg-primary)';
 const CARD_BACKGROUND = '#151516';
 const TEXT_COLOR = '#EDEDED';
 
@@ -111,6 +112,17 @@ export async function GET(request: NextRequest): Promise<Response> {
   const startTime = Date.now();
   
   try {
+    // TODO: Restore when @vercel/og is installed
+    // Fallback to static image for now
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: OG_IMAGE_CONFIG.fallbackImage,
+        'Cache-Control': 'public, max-age=3600',
+      },
+    });
+    
+    /* 
     // Extract and validate parameters
     const { searchParams } = new URL(request.url);
     const rawTitle = searchParams.get('title');
@@ -144,7 +156,7 @@ export async function GET(request: NextRequest): Promise<Response> {
               fontWeight: 900,
               color: TEXT_COLOR,
               padding: '20px 40px',
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: 20,
               background: CARD_BACKGROUND,
               boxShadow: `0px 10px 50px rgba(94, 106, 210, 0.3)`, // Magic Blue glow
@@ -167,6 +179,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     });
     
     return response;
+    */
     
   } catch (error) {
     const duration = Date.now() - startTime;

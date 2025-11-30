@@ -24,7 +24,7 @@ export const GET = withRateLimit(withAuth(async (req: AuthenticatedRequest) => {
     const { searchParams } = new URL(req.url);
 
     const filters = {
-      userId: parseInt(req.user.id),
+      user_id: parseInt(req.user.id),
       status: searchParams.get('status') as any,
       channel: searchParams.get('channel') as any,
       limit: parseInt(searchParams.get('limit') || '50'),

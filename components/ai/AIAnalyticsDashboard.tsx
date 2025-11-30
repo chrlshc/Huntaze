@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
 
 type AnalyticsResult = {
   insights: string[];
@@ -71,9 +72,9 @@ export function AIAnalyticsDashboard() {
           {timeframes.map((tf) => (
             <button
               key={tf.value}
-              className={`timeframe-button ${timeframe === tf.value ? 'active' : ''}`}
               onClick={() => setTimeframe(tf.value)}
               disabled={loading}
+              className={`timeframe-button ${timeframe === tf.value ? 'active' : ''}`}
             >
               {tf.label}
             </button>
@@ -92,7 +93,7 @@ export function AIAnalyticsDashboard() {
         <div className="dashboard-error">
           <span className="error-icon">⚠️</span>
           <span className="error-text">{error}</span>
-          <button className="retry-button" onClick={handleAnalyze}>
+          <button onClick={handleAnalyze} className="retry-button">
             Try Again
           </button>
         </div>
@@ -184,11 +185,7 @@ export function AIAnalyticsDashboard() {
           )}
 
           <div className="dashboard-actions">
-            <button
-              className="refresh-button"
-              onClick={handleAnalyze}
-              disabled={loading}
-            >
+            <button onClick={handleAnalyze} disabled={loading} className="refresh-button">
               {loading ? (
                 <>
                   <span className="spinner" />

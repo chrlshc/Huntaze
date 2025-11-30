@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 export function ThreeStepProcess() {
   const steps = [
     { title: 'Connect', desc: 'Securely connect your platforms.' },
@@ -8,10 +9,10 @@ export function ThreeStepProcess() {
     <section className="py-12">
       <div className="container mx-auto px-4 grid gap-6 md:grid-cols-3">
         {steps.map((s) => (
-          <div key={s.title} className="rounded-lg border p-6">
+          <Card key={s.title} className="rounded-lg border p-6">
             <h3 className="font-medium">{s.title}</h3>
             <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
-          </div>
+          </Card>
         ))}
       </div>
     </section>

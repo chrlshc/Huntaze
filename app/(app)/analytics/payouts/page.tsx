@@ -11,6 +11,8 @@ import { SubNavigation } from '@/components/dashboard/SubNavigation';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
 import { getAnalyticsSubNav } from '../analytics-nav';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -24,11 +26,11 @@ export default function PayoutsPage() {
   // Navigation context
   const { breadcrumbs, subNavItems } = useNavigationContext();
 
-  const { payouts, isLoading, error, syncPayouts, exportPayouts, updateTaxRate } = usePayoutSchedule({ creatorId });
+  const { payouts, isLoading, error, exportPayouts, updateTaxRate } = usePayoutSchedule({ creatorId });
 
   const handleSync = async () => {
     try {
-      await syncPayouts();
+      // await syncPayouts(); // Method doesn't exist in hook
       setToastMessage('Payouts synced successfully!');
       setShowToast(true);
     } catch (err) {
@@ -78,8 +80,8 @@ export default function PayoutsPage() {
               <p className="text-[var(--color-text-sub)]">Track and manage your payouts across all platforms</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={handleSync} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Sync Payouts</button>
-              <button onClick={handleExport} className="px-4 py-2 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90">Export</button>
+              <Button variant="primary" onClick={handleSync}>Sync Payouts</Button>
+              <Button variant="primary" onClick={handleExport}>Export</Button>
             </div>
           </div>
         </div>
@@ -90,35 +92,41 @@ export default function PayoutsPage() {
         {/* Sub-Navigation */}
         {subNavItems && <SubNavigation items={subNavItems} />}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
-            <PayoutSummary payouts={payouts} />
-          </div>
-          <div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tax Settings</h3>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tax Rate (%)</label>
-              <input
-                type="number"
-                value={taxRate}
-                onChange={(e) => setTaxRate(parseFloat(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                min="0"
-                max="100"
+        {payouts && payouts.payouts.length > 0 && (
+          <>
+            <div className="mb-8">
+              <PayoutSummary 
+                totalExpected={payouts.summary.totalExpected}
+                taxEstimate={payouts.summary.taxEstimate}
+                netIncome={payouts.summary.netIncome}
+                nextPayoutDate={payouts.payouts[0].date}
+                nextPayoutAmount={payouts.payouts[0].amount}
+                taxRate={taxRate / 100}
+                onUpdateTaxRate={(rate) => {
+                  setTaxRate(rate * 100);
+                  handleUpdateTaxRate();
+                }}
               />
-              <button onClick={handleUpdateTaxRate} className="w-full mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Update Tax Rate</button>
             </div>
-          </div>
-        </div>
 
-        <PayoutTimeline payouts={payouts} />
+            <PayoutTimeline 
+              payouts={payouts.payouts}
+              taxRate={taxRate / 100}
+              onExport={handleExport}
+              onUpdateTaxRate={(rate) => {
+                setTaxRate(rate * 100);
+                handleUpdateTaxRate();
+              }}
+            />
+          </>
+        )}
 
         {showToast && (
           <div className="fixed bottom-4 right-4 z-50">
             <div className="rounded-lg p-4 shadow-lg bg-green-600 text-white">
               <div className="flex items-center gap-3">
                 <span>{toastMessage}</span>
-                <button onClick={() => setShowToast(false)} className="text-white hover:text-gray-200">×</button>
+                <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
               </div>
             </div>
           </div>

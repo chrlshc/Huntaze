@@ -34,7 +34,7 @@ export default function FallingLines() {
       '#a78bfa',  // Violet clair
       '#7c3aed',  // Violet foncé
       '#c4a5fd',  // Lavande
-      '#9333ea'   // Purple
+      'var(--accent-primary)'   // Purple
     ];
 
     // Resize canvas

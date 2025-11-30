@@ -33,10 +33,13 @@ function getClientIp(req: NextRequest): string {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { provider: string } }
+  { params }: { params: Promise<{ provider: string }> }
 ) {
+  // Extract provider early so it's available in catch block
+  const resolvedParams = await params;
+  const provider = resolvedParams.provider as Provider;
+  
   try {
-    const provider = params.provider as Provider;
     
     // Validate provider
     if (!VALID_PROVIDERS.includes(provider)) {
@@ -86,12 +89,12 @@ export async function GET(
 
     // Invalidate integration status cache (Requirements: 12.3)
     try {
-      const cacheKey = `integrations:status:${result.userId}`;
+      const cacheKey = `integrations:status:${result.user_id}`;
       cacheService.invalidate(cacheKey);
       
       console.log('[Cache Invalidation] Integration connected', {
         provider,
-        userId: result.userId,
+        userId: result.user_id,
         accountId: result.accountId,
         cacheKey,
       });
@@ -118,7 +121,7 @@ export async function GET(
     }
     
     return Response.redirect(
-      `${process.env.NEXTAUTH_URL}/integrations?error=${errorType}&provider=${params.provider}`
+      `${process.env.NEXTAUTH_URL}/integrations?error=${errorType}&provider=${provider}`
     );
   }
 }

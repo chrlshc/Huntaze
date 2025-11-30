@@ -78,7 +78,7 @@
 .stat-card:hover {
   border-color: var(--border-emphasis);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-card-header {
@@ -109,30 +109,30 @@
   height: 20px;
 }
 
-/* Icon color variants */
+/* Icon color variants - using design tokens */
 .stat-card-icon-blue {
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--accent-info);
 }
 
 .stat-card-icon-green {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--accent-success);
 }
 
 .stat-card-icon-purple {
-  background: rgba(168, 85, 247, 0.1);
-  color: #a855f7;
+  background: var(--accent-bg-subtle);
+  color: var(--accent-primary);
 }
 
 .stat-card-icon-orange {
   background: rgba(249, 115, 22, 0.1);
-  color: #f97316;
+  color: var(--accent-warning);
 }
 
 .stat-card-icon-red {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--accent-error);
 }
 
 .stat-label {
@@ -225,12 +225,12 @@
 
 .stat-trend-positive {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: var(--accent-success);
 }
 
 .stat-trend-negative {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--accent-error);
 }
 
 .stat-trend-icon {

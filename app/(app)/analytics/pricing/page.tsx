@@ -11,6 +11,8 @@ import { SubNavigation } from '@/components/dashboard/SubNavigation';
 import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
 import { getAnalyticsSubNav } from '../analytics-nav';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -95,7 +97,7 @@ export default function PricingPage() {
         {/* Stats Overview */}
         {recommendations && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -111,9 +113,9 @@ export default function PricingPage() {
                   </svg>
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -129,9 +131,9 @@ export default function PricingPage() {
                   </svg>
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -147,7 +149,7 @@ export default function PricingPage() {
                   </svg>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         )}
 
@@ -175,7 +177,7 @@ export default function PricingPage() {
         </div>
 
         {/* Price History */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Price Change History
           </h2>
@@ -200,7 +202,7 @@ export default function PricingPage() {
               Your price change history will appear here once you apply recommendations.
             </p>
           </div>
-        </div>
+        </Card>
 
         {/* Toast Notification */}
         {showToast && (
@@ -208,12 +210,13 @@ export default function PricingPage() {
             <div className={`rounded-lg p-4 shadow-lg ${toastType === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`}>
               <div className="flex items-center gap-3">
                 <span>{toastMessage}</span>
-                <button
+                <Button 
+                  variant="primary" 
                   onClick={() => setShowToast(false)}
                   className="text-white hover:text-gray-200"
                 >
                   ×
-                </button>
+                </Button>
               </div>
             </div>
           </div>

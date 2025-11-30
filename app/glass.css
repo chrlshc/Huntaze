@@ -27,9 +27,9 @@
 
 /* Glass navbar with stronger blur */
 .glass-navbar {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--bg-glass-active);
+  backdrop-filter: blur(var(--blur-2xl)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--blur-2xl)) saturate(180%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-2xl);
 }
@@ -69,8 +69,8 @@
   /* Reduce blur on mobile for better performance */
   .glass-saturate,
   .glass-navbar {
-    backdrop-filter: blur(8px) saturate(150%);
-    -webkit-backdrop-filter: blur(8px) saturate(150%);
+    backdrop-filter: blur(var(--blur-md)) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(150%);
   }
   
   /* Disable hover effects on mobile */

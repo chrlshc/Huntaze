@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface EditableFieldProps {
   label: string;
@@ -28,7 +29,8 @@ export default function EditableField({ label, value, onSave, placeholder, multi
     <div className="mb-4">
       <div className="flex items-center justify-between">
         <span className="font-medium">{label}</span>
-        <button
+        <Button 
+          variant="primary" 
           onClick={() => {
             setDraft(value);
             setEditing((prev) => !prev);
@@ -36,7 +38,7 @@ export default function EditableField({ label, value, onSave, placeholder, multi
           className="text-sm text-blue-600 hover:underline"
         >
           {editing ? 'Annuler' : 'Personnaliser'}
-        </button>
+        </Button>
       </div>
 
       {editing ? (
@@ -57,9 +59,9 @@ export default function EditableField({ label, value, onSave, placeholder, multi
               className="flex-1 p-2 border rounded"
             />
           )}
-          <button onClick={handleSave} className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          <Button variant="primary" onClick={handleSave}>
             Enregistrer
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="mt-1 text-gray-800 whitespace-pre-wrap">{value}</div>

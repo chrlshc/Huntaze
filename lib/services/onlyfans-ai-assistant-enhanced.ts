@@ -33,12 +33,17 @@ import type {
 /**
  * Configuration for retry behavior
  */
-const RETRY_CONFIG = {
+const RETRY_CONFIG: {
+  maxAttempts: number;
+  initialDelay: number;
+  maxDelay: number;
+  backoffFactor: number;
+} = {
   maxAttempts: 3,
   initialDelay: 100,
   maxDelay: 2000,
   backoffFactor: 2,
-} as const;
+};
 
 /**
  * Timeout configuration (ms)
@@ -138,18 +143,21 @@ export class OnlyFansAIAssistantEnhanced {
       failureThreshold: 5,
       resetTimeout: 60000,
       monitoringPeriod: 120000,
+      name: 'memory-service',
     });
     
     this.emotionCircuitBreaker = new CircuitBreaker({
       failureThreshold: 3,
       resetTimeout: 30000,
       monitoringPeriod: 60000,
+      name: 'emotion-analyzer',
     });
     
     this.personalityCircuitBreaker = new CircuitBreaker({
       failureThreshold: 3,
       resetTimeout: 30000,
       monitoringPeriod: 60000,
+      name: 'personality-calibrator',
     });
     
     this.cache = new Map();
@@ -227,10 +235,10 @@ export class OnlyFansAIAssistantEnhanced {
 
       return enhancedSuggestions;
 
-    } catch (error) {
+    } catch (err) {
       const duration = Date.now() - startTime;
-      logger.error('[AIAssistant] Failed to generate enhanced response', {
-        error: error instanceof Error ? error.message : String(error),
+      const error = err instanceof Error ? err : new Error(String(err));
+      logger.error('[AIAssistant] Failed to generate enhanced response', error, {
         fanId: context.fanId,
         creatorId: context.creatorId,
         duration,
@@ -242,8 +250,8 @@ export class OnlyFansAIAssistantEnhanced {
         logger.info('[AIAssistant] Falling back to base suggestions', { correlationId });
         return await this.baseSuggestionService.generateSuggestions(context);
       } catch (fallbackError) {
-        logger.error('[AIAssistant] Fallback also failed', {
-          error: fallbackError instanceof Error ? fallbackError.message : String(fallbackError),
+        const error = fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError));
+        logger.error('[AIAssistant] Fallback also failed', error, {
           correlationId,
         });
         
@@ -288,12 +296,12 @@ export class OnlyFansAIAssistantEnhanced {
   ): Promise<ResponseStyle> {
     try {
       return await this.personalityCircuitBreaker.execute(
-        () => this.personalityCalibrator.getOptimalResponseStyle(fanId, memoryContext)
+        () => Promise.resolve(this.personalityCalibrator.getOptimalResponseStyle(fanId, memoryContext))
       );
-    } catch (error) {
+    } catch (err) {
       logger.warn('[AIAssistant] Failed to get response style, using default', {
         fanId,
-        error: error instanceof Error ? error.message : String(error),
+        message: err instanceof Error ? err.message : String(err),
       });
       
       // Return default response style
@@ -301,7 +309,8 @@ export class OnlyFansAIAssistantEnhanced {
         tone: 'friendly',
         emojiCount: 1,
         maxLength: 200,
-        formality: 'casual',
+        topics: [],
+        avoidTopics: [],
       };
     }
   }
@@ -338,10 +347,10 @@ export class OnlyFansAIAssistantEnhanced {
       }
       
       return emotionalState;
-    } catch (error) {
+    } catch (err) {
       logger.warn('[AIAssistant] Emotion analysis failed, using default', {
         fanId: context.fanId,
-        error: error instanceof Error ? error.message : String(error),
+        message: err instanceof Error ? err.message : String(err),
         correlationId,
       });
       
@@ -404,9 +413,9 @@ export class OnlyFansAIAssistantEnhanced {
             confidence: emotionalState.confidence || 0.5,
           }
         });
-      } catch (error) {
+      } catch (err) {
         logger.warn('[AIAssistant] Failed to enhance suggestion, using original', {
-          error: error instanceof Error ? error.message : String(error),
+          message: err instanceof Error ? err.message : String(err),
         });
         // Include original suggestion if enhancement fails
         enhanced.push(suggestion);
@@ -450,9 +459,9 @@ export class OnlyFansAIAssistantEnhanced {
 
       // Apply tone
       styled = this.applyTone(styled, personalityProfile.tone || responseStyle.tone);
-    } catch (error) {
+    } catch (err) {
       logger.warn('[AIAssistant] Failed to apply personality style', {
-        error: error instanceof Error ? error.message : String(error),
+        message: err instanceof Error ? err.message : String(err),
       });
       // Return original text if styling fails
       return text;
@@ -485,9 +494,9 @@ export class OnlyFansAIAssistantEnhanced {
           }
           break;
       }
-    } catch (error) {
+    } catch (err) {
       logger.warn('[AIAssistant] Failed to apply tone', {
-        error: error instanceof Error ? error.message : String(error),
+        message: err instanceof Error ? err.message : String(err),
       });
     }
     
@@ -511,9 +520,9 @@ export class OnlyFansAIAssistantEnhanced {
           referencedTopics.push(...lastConversation.topics);
         }
       }
-    } catch (error) {
+    } catch (err) {
       logger.warn('[AIAssistant] Failed to add contextual references', {
-        error: error instanceof Error ? error.message : String(error),
+        message: err instanceof Error ? err.message : String(err),
       });
     }
 
@@ -533,9 +542,9 @@ export class OnlyFansAIAssistantEnhanced {
       if (!text.includes('hope')) {
         text = 'I hope you\'re doing okay! ' + text;
       }
-    } catch (error) {
+    } catch (err) {
       logger.warn('[AIAssistant] Failed to make empathetic', {
-        error: error instanceof Error ? error.message : String(error),
+        message: err instanceof Error ? err.message : String(err),
       });
     }
 
@@ -554,9 +563,9 @@ export class OnlyFansAIAssistantEnhanced {
     setImmediate(async () => {
       try {
         await this.saveInteractionToMemory(context, memoryContext);
-      } catch (error) {
-        logger.error('[AIAssistant] Async interaction save failed', {
-          error: error instanceof Error ? error.message : String(error),
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        logger.error('[AIAssistant] Async interaction save failed', error, {
           fanId: context.fanId,
           correlationId,
         });
@@ -597,9 +606,9 @@ export class OnlyFansAIAssistantEnhanced {
       // Learn from interaction
       await this.preferenceLearning.learnFromInteraction(interaction);
 
-    } catch (error) {
-      logger.error('[AIAssistant] Failed to save interaction to memory', {
-        error: error instanceof Error ? error.message : String(error),
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      logger.error('[AIAssistant] Failed to save interaction to memory', error, {
         fanId: context.fanId,
       });
       // Don't throw - memory save failure shouldn't break response generation
@@ -631,9 +640,9 @@ export class OnlyFansAIAssistantEnhanced {
       this.setCache(cacheKey, score, CACHE_TTL.engagementScore);
 
       return score;
-    } catch (error) {
-      logger.error('[AIAssistant] Failed to get engagement score', {
-        error: error instanceof Error ? error.message : String(error),
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      logger.error('[AIAssistant] Failed to get engagement score', error, {
         fanId,
         creatorId,
       });
@@ -655,16 +664,16 @@ export class OnlyFansAIAssistantEnhanced {
       this.clearCacheForFan(fanId, creatorId);
       
       logger.info('[AIAssistant] Fan memory cleared', { fanId, creatorId });
-    } catch (error) {
-      logger.error('[AIAssistant] Failed to clear fan memory', {
-        error: error instanceof Error ? error.message : String(error),
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      logger.error('[AIAssistant] Failed to clear fan memory', error, {
         fanId,
         creatorId,
       });
       throw new AIAssistantError(
         AIAssistantErrorType.MEMORY_RETRIEVAL_FAILED,
         'Failed to clear fan memory',
-        error instanceof Error ? error : undefined,
+        error,
         { fanId, creatorId }
       );
     }
@@ -682,15 +691,15 @@ export class OnlyFansAIAssistantEnhanced {
         () => this.memoryService.getMemoryStats(creatorId),
         'memory stats retrieval'
       );
-    } catch (error) {
-      logger.error('[AIAssistant] Failed to get memory stats', {
-        error: error instanceof Error ? error.message : String(error),
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      logger.error('[AIAssistant] Failed to get memory stats', error, {
         creatorId,
       });
       throw new AIAssistantError(
         AIAssistantErrorType.MEMORY_RETRIEVAL_FAILED,
         'Failed to get memory statistics',
-        error instanceof Error ? error : undefined,
+        err instanceof Error ? err : undefined,
         { creatorId }
       );
     }
@@ -710,19 +719,18 @@ export class OnlyFansAIAssistantEnhanced {
     for (let attempt = 1; attempt <= RETRY_CONFIG.maxAttempts; attempt++) {
       try {
         return await fn();
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error));
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
         
         if (attempt === RETRY_CONFIG.maxAttempts) {
-          logger.error(`[AIAssistant] ${operation} failed after ${attempt} attempts`, {
-            error: lastError.message,
+          logger.error(`[AIAssistant] ${operation} failed after ${attempt} attempts`, lastError, {
             correlationId,
           });
           throw lastError;
         }
 
         logger.warn(`[AIAssistant] ${operation} failed, retrying (${attempt}/${RETRY_CONFIG.maxAttempts})`, {
-          error: lastError.message,
+          message: lastError.message,
           delay,
           correlationId,
         });
@@ -732,7 +740,7 @@ export class OnlyFansAIAssistantEnhanced {
       }
     }
 
-    throw lastError;
+    throw lastError || new Error(`${operation} failed after ${RETRY_CONFIG.maxAttempts} attempts`);
   }
 
   /**
@@ -822,9 +830,9 @@ export class OnlyFansAIAssistantEnhanced {
    */
   getCircuitBreakerStatus() {
     return {
-      memory: this.memoryCircuitBreaker.getStatus(),
-      emotion: this.emotionCircuitBreaker.getStatus(),
-      personality: this.personalityCircuitBreaker.getStatus(),
+      memory: this.memoryCircuitBreaker.getStats(),
+      emotion: this.emotionCircuitBreaker.getStats(),
+      personality: this.personalityCircuitBreaker.getStats(),
     };
   }
 }

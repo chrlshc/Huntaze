@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface AuthButtonProps {
   children: React.ReactNode;
@@ -25,16 +26,9 @@ export function AuthButton({
   const isDisabled = disabled || loading;
   
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={isDisabled}
-      aria-disabled={isDisabled}
-      aria-busy={loading}
-      className={`auth-button ${variant} ${fullWidth ? 'w-full' : ''} flex items-center justify-center gap-2`}
-    >
-      {loading && <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />}
+    <Button variant="primary" onClick={onClick} disabled={isDisabled} aria-disabled={isDisabled} aria-busy={loading} aria-hidden="true">
+  {loading && <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />}
       {children}
-    </button>
+</Button>
   );
 }

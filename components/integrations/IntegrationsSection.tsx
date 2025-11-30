@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 
 // Integration data structure
 interface Integration {
@@ -201,9 +202,9 @@ export function IntegrationsSection() {
                         className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex flex-col items-center justify-center text-white p-4"
                       >
                         <p className="text-xs text-center mb-3">{integration.description}</p>
-                        <button className="text-xs bg-white text-purple-600 px-3 py-1.5 rounded-full font-medium hover:bg-gray-100 transition-colors">
+                        <Button variant="ghost">
                           Connect
-                        </button>
+                        </Button>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -221,7 +222,7 @@ export function IntegrationsSection() {
             className="text-center py-20"
           >
             <p className="text-gray-500 mb-4">No integrations found matching your criteria.</p>
-            <button 
+            <button
               onClick={() => {
                 setSearchTerm('');
                 setSelectedCategory('all');
@@ -243,9 +244,9 @@ export function IntegrationsSection() {
           <p className="text-gray-600 mb-6">
             Can't find what you're looking for?
           </p>
-          <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <Button variant="primary">
             Request an Integration
-          </button>
+          </Button>
           <p className="text-sm text-gray-500 mt-4">
             We add new integrations every week based on user feedback
           </p>

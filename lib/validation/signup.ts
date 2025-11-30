@@ -135,7 +135,7 @@ export function validateEmail(email: string): {
   }
   
   // Get the first error message from Zod
-  const firstError = result.error?.errors?.[0];
+  const firstError = result.error?.issues?.[0];
   const errorMessage = firstError?.message || 'Invalid email';
   
   return {
@@ -270,7 +270,7 @@ export function validatePassword(password: string): {
   }
   
   // Get the first error message from Zod
-  const firstError = result.error?.errors?.[0];
+  const firstError = result.error?.issues?.[0];
   const errorMessage = firstError?.message || 'Invalid password';
   
   return {
@@ -306,7 +306,7 @@ export function validateSignupForm(data: {
   
   const errors: { email?: string; password?: string } = {};
   
-  result.error.errors.forEach((error) => {
+  result.error.issues.forEach((error) => {
     const field = error.path[0] as 'email' | 'password';
     if (!errors[field]) {
       errors[field] = error.message;

@@ -18,6 +18,7 @@ import {
 import { events } from '@/src/lib/analytics'
 import MegaMenu from '@/src/components/MegaMenu'
 import { solutionsNav, resourcesNav } from '@/src/components/nav.data'
+import { Button } from "@/components/ui/button";
 
 const navigation = {
   creators: {
@@ -280,12 +281,9 @@ export default function HeaderImproved() {
                 >
                   Dashboard
                 </Link>
-                <button 
-                  onClick={handleLogout} 
-                  className="text-text-secondary hover:text-text-primary text-sm font-medium px-3 py-2"
-                >
-                  Logout
-                </button>
+                <Button variant="primary" onClick={handleLogout}>
+  Logout
+</Button>
               </>
             ) : (
               <>
@@ -422,7 +420,8 @@ export default function HeaderImproved() {
                         <span className="text-text-primary">Settings</span>
                       </Link>
                       
-                      <button
+                      <Button 
+                        variant="ghost" 
                         onClick={() => {
                           handleLogout();
                           setMobileMenuOpen(false);
@@ -431,7 +430,7 @@ export default function HeaderImproved() {
                       >
                         <LogOut className="w-5 h-5 text-text-secondary" />
                         <span className="text-text-primary">Logout</span>
-                      </button>
+                      </Button>
                     </>
                   ) : (
                     <>

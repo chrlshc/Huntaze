@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Cookie, Shield, BarChart3, X } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface CookiePreferences {
   necessary: boolean;
@@ -127,37 +128,33 @@ export default function CookieConsent() {
             </p>
             
             {!showDetails && (
-              <button
+              <Button 
+                variant="primary" 
                 onClick={() => setShowDetails(true)}
                 className="text-sm text-purple-600 hover:text-purple-700 mt-2 underline"
               >
                 Customize preferences
-              </button>
+              </Button>
             )}
           </div>
           
           {!showDetails ? (
             <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleRejectAll}
-                className="btn-secondary text-sm"
-              >
+              <Button variant="secondary" onClick={handleRejectAll}>
                 Reject All
-              </button>
-              <button
-                onClick={handleAcceptAll}
-                className="btn-primary text-sm"
-              >
+              </Button>
+              <Button variant="primary" onClick={handleAcceptAll}>
                 Accept All
-              </button>
+              </Button>
             </div>
           ) : (
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => setShowDetails(false)}
               className="lg:hidden absolute top-4 right-4"
             >
               <X className="w-5 h-5 text-gray-500" />
-            </button>
+            </Button>
           )}
         </div>
         
@@ -249,18 +246,12 @@ export default function CookieConsent() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4">
-              <button
-                onClick={handleRejectAll}
-                className="btn-secondary text-sm"
-              >
+              <Button variant="secondary" onClick={handleRejectAll}>
                 Reject All
-              </button>
-              <button
-                onClick={handleAcceptSelected}
-                className="btn-primary text-sm"
-              >
+              </Button>
+              <Button variant="primary" onClick={handleAcceptSelected}>
                 Save Preferences
-              </button>
+              </Button>
             </div>
           </div>
         )}

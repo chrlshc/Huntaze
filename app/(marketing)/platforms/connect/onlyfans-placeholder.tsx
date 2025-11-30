@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { AlertCircle, Mail } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function OnlyFansPlaceholder() {
   const [email, setEmail] = useState('');
@@ -24,9 +26,9 @@ export default function OnlyFansPlaceholder() {
   return (
     <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
       <div className="flex items-start gap-4">
-        <div className="p-3 bg-white rounded-xl shadow-sm">
+        <Card className="p-3 bg-white rounded-xl shadow-sm">
           <Image src="/onlyfans-logo.svg" alt="OnlyFans" width={32} height={32} className="w-8 h-8" />
-        </div>
+        </Card>
         
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900">OnlyFans Integration</h3>
@@ -53,12 +55,9 @@ export default function OnlyFansPlaceholder() {
                 required
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
               />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg text-sm font-medium hover:opacity-90"
-              >
+              <Button variant="primary" type="submit">
                 Notify Me
-              </button>
+              </Button>
             </form>
           ) : (
             <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg text-sm">

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ endpoints });
 
   } catch (error) {
-    logger.error('Failed to get model endpoints', { error });
+    logger.error('Failed to get model endpoints', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to get model endpoints' },
       { status: 500 }
@@ -57,7 +57,7 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to update traffic split', { error });
+    logger.error('Failed to update traffic split', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to update traffic split' },
       { status: 500 }

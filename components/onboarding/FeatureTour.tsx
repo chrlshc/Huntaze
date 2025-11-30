@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface TourStep {
   id: string;
@@ -120,13 +121,9 @@ export default function FeatureTour({
                 {featureName} Tour • Step {currentStepIndex + 1} of {steps.length}
               </p>
             </div>
-            <button
-              onClick={handleSkip}
-              className="p-1 text-gray-400 hover:text-gray-600 transition"
-              aria-label="Close tour"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <Button variant="primary" onClick={handleSkip} aria-label="Close tour">
+  <X className="w-5 h-5" />
+</Button>
           </div>
 
           {/* Content */}
@@ -152,29 +149,19 @@ export default function FeatureTour({
 
           {/* Navigation */}
           <div className="flex items-center justify-between gap-3 pt-2">
-            <button
-              onClick={handleSkip}
-              className="text-sm text-gray-600 hover:text-gray-900 transition"
-            >
-              Skip Tour
-            </button>
+            <Button variant="primary" onClick={handleSkip}>
+  Skip Tour
+</Button>
             
             <div className="flex items-center gap-2">
               {!isFirstStep && (
-                <button
-                  onClick={handleBack}
-                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                  aria-label="Previous step"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
+                <Button variant="ghost" onClick={handleBack} aria-label="Previous step">
+  <ArrowLeft className="w-4 h-4" />
+</Button>
               )}
               
-              <button
-                onClick={handleNext}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
-              >
-                {isLastStep ? (
+              <Button variant="primary" onClick={handleNext}>
+  {isLastStep ? (
                   <>
                     <Check className="w-4 h-4" />
                     Finish
@@ -185,7 +172,7 @@ export default function FeatureTour({
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
-              </button>
+</Button>
             </div>
           </div>
         </div>

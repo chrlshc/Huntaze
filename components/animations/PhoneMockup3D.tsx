@@ -6,6 +6,7 @@ import { Float, PerspectiveCamera, Environment, ContactShadows, Html, RoundedBox
 import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
+import { Card } from '@/components/ui/card';
 
 interface PhoneScreenProps {
   currentApp: number;
@@ -15,11 +16,11 @@ interface PhoneScreenProps {
 function PhoneScreen({ currentApp, texture }: PhoneScreenProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   
-  // App screen colors as fallback
+  // App screen colors using design tokens as fallback
   const appColors = [
-    '#00AFF0', // OnlyFans blue
-    '#E4405F', // Instagram gradient start
-    '#000000', // TikTok black
+    getComputedStyle(document.documentElement).getPropertyValue('--accent-info').trim() || 'var(--accent-info)', // OnlyFans blue
+    getComputedStyle(document.documentElement).getPropertyValue('--accent-error').trim() || 'var(--accent-error)', // Instagram gradient start
+    getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() || '#09090b', // TikTok black
   ];
 
   return (
@@ -80,38 +81,38 @@ function IPhoneModel({ scrollProgress }: IPhoneModelProps) {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        {/* Phone body */}
+        {/* Phone body - using design token */}
         <RoundedBox args={[1, 2, 0.1]} radius={0.1} smoothness={4}>
           <meshStandardMaterial 
-            color="#1a1a1a"
+            color={getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary').trim() || '#18181b'}
             metalness={0.8}
             roughness={0.2}
             envMapIntensity={0.5}
           />
         </RoundedBox>
         
-        {/* Screen bezel */}
+        {/* Screen bezel - using design token */}
         <RoundedBox args={[0.95, 1.85, 0.01]} radius={0.08} position={[0, 0, 0.051]}>
-          <meshStandardMaterial color="#000000" />
+          <meshStandardMaterial color={getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() || '#09090b'} />
         </RoundedBox>
         
         {/* Screen */}
         <PhoneScreen currentApp={currentApp} />
         
-        {/* Camera notch */}
+        {/* Camera notch - using design token */}
         <mesh position={[0, 0.85, 0.055]}>
           <boxGeometry args={[0.3, 0.08, 0.02]} />
-          <meshStandardMaterial color="#000000" />
+          <meshStandardMaterial color={getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() || '#09090b'} />
         </mesh>
         
-        {/* Side buttons */}
+        {/* Side buttons - using design token */}
         <mesh position={[-0.52, 0.3, 0]}>
           <boxGeometry args={[0.02, 0.2, 0.05]} />
-          <meshStandardMaterial color="#2a2a2a" metalness={0.7} />
+          <meshStandardMaterial color={getComputedStyle(document.documentElement).getPropertyValue('--bg-tertiary').trim() || '#27272a'} metalness={0.7} />
         </mesh>
         <mesh position={[-0.52, 0.6, 0]}>
           <boxGeometry args={[0.02, 0.1, 0.05]} />
-          <meshStandardMaterial color="#2a2a2a" metalness={0.7} />
+          <meshStandardMaterial color={getComputedStyle(document.documentElement).getPropertyValue('--bg-tertiary').trim() || '#27272a'} metalness={0.7} />
         </mesh>
         
         {/* Floating UI annotations */}
@@ -125,7 +126,7 @@ function IPhoneModel({ scrollProgress }: IPhoneModelProps) {
             animate={{ opacity: 1, x: 0 }}
             className="phone-annotation"
           >
-            <div className="glass-card p-3 min-w-[200px]">
+            <Card className="p-3 min-w-[200px]">
               <div className="text-white font-bold text-sm">
                 {currentApp === 0 && 'OnlyFans Analytics'}
                 {currentApp === 1 && 'Instagram DM AI'}
@@ -136,7 +137,7 @@ function IPhoneModel({ scrollProgress }: IPhoneModelProps) {
                 {currentApp === 1 && '500+ messages/heure'}
                 {currentApp === 2 && 'Engagement temps réel'}
               </div>
-            </div>
+            </Card>
           </motion.div>
         </Html>
       </group>
@@ -176,10 +177,11 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Platform colors using design tokens
   const platforms = [
-    { name: 'OnlyFans', color: '#00AFF0', icon: '💎', metric: '312% ↑' },
-    { name: 'Instagram', color: '#E4405F', icon: '📸', metric: '500 msg/h' },
-    { name: 'TikTok', color: '#000000', icon: '🎵', metric: '95% rétention' }
+    { name: 'OnlyFans', color: 'var(--accent-info)', icon: '💎', metric: '312% ↑' },
+    { name: 'Instagram', color: 'var(--accent-error)', icon: '📸', metric: '500 msg/h' },
+    { name: 'TikTok', color: 'var(--bg-primary)', icon: '🎵', metric: '95% rétention' }
   ];
   
   const currentPlatform = Math.floor(scrollProgress * 3) % 3;
@@ -323,14 +325,14 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
               <Environment preset="city" />
             </Canvas>
             
-            {/* Gradient glow */}
+            {/* Gradient glow using design tokens */}
             <motion.div
               className="absolute inset-0 pointer-events-none"
               animate={{
                 background: [
-                  'radial-gradient(circle at 50% 50%, rgba(139,92,246,0.15) 0%, transparent 70%)',
-                  'radial-gradient(circle at 60% 40%, rgba(236,72,153,0.15) 0%, transparent 70%)',
-                  'radial-gradient(circle at 40% 60%, rgba(59,130,246,0.15) 0%, transparent 70%)',
+                  'radial-gradient(circle at 50% 50%, var(--accent-bg-emphasis) 0%, transparent 70%)',
+                  'radial-gradient(circle at 60% 40%, var(--accent-bg-muted) 0%, transparent 70%)',
+                  'radial-gradient(circle at 40% 60%, var(--accent-bg-subtle) 0%, transparent 70%)',
                 ],
               }}
               transition={{
@@ -365,14 +367,18 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
   );
 };
 
-// Feature item component
+// Feature item component using design tokens
 const FeatureItem: React.FC<{ text: string }> = ({ text }) => (
   <motion.div
-    className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm"
-    whileHover={{ backgroundColor: 'rgba(139,92,246,0.1)' }}
+    className="flex items-center gap-3 p-3 rounded-lg border backdrop-blur-sm"
+    style={{
+      background: 'var(--bg-glass)',
+      borderColor: 'var(--border-subtle)'
+    }}
+    whileHover={{ backgroundColor: 'var(--accent-bg-subtle)' }}
   >
-    <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" />
-    <span className="text-white">{text}</span>
+    <div className="w-2 h-2 rounded-full" style={{ background: 'linear-gradient(to right, var(--accent-primary), var(--accent-error))' }} />
+    <span style={{ color: 'var(--text-primary)' }}>{text}</span>
   </motion.div>
 );
 

@@ -92,7 +92,7 @@ export class UserPersonaSimulator {
       
       // Check if user would abandon (based on persona characteristics)
       if (this.shouldAbandon(state)) {
-        logger.debug(`User ${state.userId} abandoned simulation at step ${state.currentStep}`);
+        logger.info(`User ${state.userId} abandoned simulation at step ${state.currentStep}`);
         break;
       }
       

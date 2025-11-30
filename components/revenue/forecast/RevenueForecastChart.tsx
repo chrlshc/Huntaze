@@ -13,6 +13,7 @@ import {
   Area,
   ComposedChart,
 } from 'recharts';
+import { Button } from "@/components/ui/button";
 import {
   RevenueDataPoint,
   ForecastDataPoint,
@@ -79,12 +80,9 @@ export function RevenueForecastChart({
           <h2 className="text-xl font-semibold text-gray-900 mb-1">Revenue Forecast</h2>
           <p className="text-sm text-gray-600">12-month trend with predictions</p>
         </div>
-        <button
-          onClick={() => setShowGoalInput(!showGoalInput)}
-          className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
+        <Button variant="primary" onClick={() => setShowGoalInput(!showGoalInput)}>
           Set Goal
-        </button>
+        </Button>
       </div>
 
       {/* Goal Input */}
@@ -101,18 +99,12 @@ export function RevenueForecastChart({
               placeholder="Enter amount"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button
-              onClick={handleSetGoal}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-            >
+            <Button variant="primary" onClick={handleSetGoal}>
               Set
-            </button>
-            <button
-              onClick={() => setShowGoalInput(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
+            </Button>
+            <Button variant="ghost" onClick={() => setShowGoalInput(false)}>
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -121,23 +113,23 @@ export function RevenueForecastChart({
       <div className="mb-6" style={{ height: '400px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
             <XAxis
               dataKey="month"
               tickFormatter={formatMonth}
-              stroke="#6b7280"
-              style={{ fontSize: '12px' }}
+              stroke="var(--text-tertiary)"
+              style={{ fontSize: 'var(--text-xs)' }}
             />
             <YAxis
               tickFormatter={formatCurrency}
-              stroke="#6b7280"
-              style={{ fontSize: '12px' }}
+              stroke="var(--text-tertiary)"
+              style={{ fontSize: 'var(--text-xs)' }}
             />
             <Tooltip
               formatter={(value: number) => formatCurrency(value)}
               contentStyle={{
                 backgroundColor: 'white',
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '8px',
                 padding: '8px 12px',
               }}

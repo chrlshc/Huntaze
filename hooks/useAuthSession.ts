@@ -11,6 +11,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import '@/lib/types/auth'; // Import type augmentation
+import { Button } from "@/components/ui/button";
 
 export interface UseAuthSessionReturn {
   user: {
@@ -44,7 +45,7 @@ export interface UseAuthSessionReturn {
  *   return (
  *     <div>
  *       <p>Welcome, {user?.email}</p>
- *       <button onClick={logout}>Logout</button>
+ *       <Button variant="primary" onClick={logout}>Logout</Button>
  *     </div>
  *   );
  * }

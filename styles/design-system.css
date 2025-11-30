@@ -7,8 +7,8 @@
  * Design Rules:
  * 1. ✅ Rainbow gradient: ONLY on primary CTA buttons and focus states
  * 2. ✅ Backgrounds: Pure black (#000000) - NO gradients
- * 3. ✅ Cards/Surfaces: Solid colors (#0a0a0a, #0f0f0f) - NO gradients
- * 4. ✅ Borders: Minimal gray (#1a1a1a, #2a2a2a) - very subtle
+ * 3. ✅ Cards/Surfaces: Solid colors (var(--bg-primary), var(--bg-primary)) - NO gradients
+ * 4. ✅ Borders: Minimal gray (var(--bg-secondary), var(--bg-tertiary)) - very subtle
  * 5. ✅ Text: High contrast white/gray for readability
  * 6. ✅ Beta badges: Very subtle, muted colors
  * 7. ✅ Professional aesthetic: Clean, minimal, Shopify-inspired
@@ -19,28 +19,28 @@
      BACKGROUNDS - Pure Black, No Gradients
      ======================================== */
   --bg-app: #000000;           /* Main app background - pure black */
-  --bg-surface: #0a0a0a;       /* Elevated surfaces - very subtle lift */
-  --bg-card: #0f0f0f;          /* Card components - minimal contrast */
-  --bg-hover: #1a1a1a;         /* Hover states - subtle feedback */
-  --bg-input: #141414;         /* Form inputs - slightly elevated */
+  --bg-surface: var(--bg-primary);       /* Elevated surfaces - very subtle lift */
+  --bg-card: var(--bg-primary);          /* Card components - minimal contrast */
+  --bg-hover: var(--bg-secondary);         /* Hover states - subtle feedback */
+  --bg-input: var(--bg-input);         /* Form inputs - slightly elevated */
   
   /* ========================================
      TEXT - High Contrast for Readability
      ======================================== */
   --text-primary: #FFFFFF;     /* Primary content - pure white */
-  --text-secondary: #a3a3a3;   /* Secondary content - medium gray */
-  --text-muted: #737373;       /* Disabled/subtle - darker gray */
+  --text-secondary: var(--text-secondary);   /* Secondary content - medium gray */
+  --text-muted: var(--text-tertiary);       /* Disabled/subtle - darker gray */
   --text-inverse: #000000;     /* On colored backgrounds */
   
   /* ========================================
      BRAND - Subtle Rainbow Accents (Use Sparingly)
      ======================================== */
-  --brand-primary: #8B5CF6;    /* Primary purple */
-  --brand-secondary: #EC4899;  /* Secondary pink */
+  --brand-primary: var(--accent-primary);    /* Primary purple */
+  --brand-secondary: var(--accent-primary);  /* Secondary pink */
   
   /* Rainbow gradient - ONLY for primary CTAs and focus states */
-  --brand-gradient: linear-gradient(135deg, #8B5CF6 0%, #A855F7 25%, #EC4899 50%, #A855F7 75%, #8B5CF6 100%);
-  --brand-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #9333EA 25%, #DB2777 50%, #9333EA 75%, #7C3AED 100%);
+  --brand-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary) 25%, var(--accent-primary) 50%, var(--accent-primary) 75%, var(--accent-primary) 100%);
+  --brand-gradient-hover: linear-gradient(135deg, var(--accent-primary-hover) 0%, var(--accent-primary) 25%, #DB2777 50%, var(--accent-primary) 75%, var(--accent-primary-hover) 100%);
   
   /* Subtle rainbow glow - for focus states only */
   --brand-glow: 0 0 0 3px rgba(139, 92, 246, 0.15);
@@ -49,8 +49,8 @@
   /* ========================================
      BORDERS - Minimal Contrast
      ======================================== */
-  --border-default: #1a1a1a;   /* Default borders - barely visible */
-  --border-emphasis: #2a2a2a;  /* Emphasized borders - subtle */
+  --border-default: var(--bg-secondary);   /* Default borders - barely visible */
+  --border-emphasis: var(--bg-tertiary);  /* Emphasized borders - subtle */
   --border-focus: var(--brand-primary); /* Focus state - rainbow accent */
   
   /* ========================================
@@ -106,7 +106,7 @@
      ======================================== */
   --beta-bg: rgba(139, 92, 246, 0.08);      /* Reduced opacity */
   --beta-border: rgba(139, 92, 246, 0.2);   /* Reduced opacity */
-  --beta-text: #9ca3af;                      /* More muted gray */
+  --beta-text: var(--text-secondary);                      /* More muted gray */
   
   /* ========================================
      TRANSITIONS - Smooth Animations (GPU-Accelerated)
@@ -478,7 +478,7 @@ button {
 
 /* Font display swap for better performance */
 @font-face {
-  font-family: system-ui;
+  font-family: var(--font-sans);
   font-display: swap;
 }
 

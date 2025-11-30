@@ -108,7 +108,7 @@ export class ModelVersioningService {
       return modelVersion;
 
     } catch (error) {
-      logger.error('Failed to create model version', { error, modelId });
+      logger.error('Failed to create model version', error instanceof Error ? error : new Error(String(error)), { modelId });
       throw error;
     }
   }
@@ -135,7 +135,7 @@ export class ModelVersioningService {
       return modelVersion;
 
     } catch (error) {
-      logger.error('Failed to get model version', { error, modelId, version });
+      logger.error('Failed to get model version', error instanceof Error ? error : new Error(String(error)), { modelId, version });
       return null;
     }
   }
@@ -192,7 +192,7 @@ export class ModelVersioningService {
       return versions.slice(offset, offset + limit);
 
     } catch (error) {
-      logger.error('Failed to list model versions', { error, modelId });
+      logger.error('Failed to list model versions', error instanceof Error ? error : new Error(String(error)), { modelId });
       return [];
     }
   }
@@ -234,7 +234,7 @@ export class ModelVersioningService {
       return comparison;
 
     } catch (error) {
-      logger.error('Failed to compare model versions', { error, modelId, fromVersion, toVersion });
+      logger.error('Failed to compare model versions', error instanceof Error ? error : new Error(String(error)), { modelId, fromVersion, toVersion });
       throw error;
     }
   }
@@ -283,7 +283,7 @@ export class ModelVersioningService {
       return branch;
 
     } catch (error) {
-      logger.error('Failed to create model branch', { error, modelId, branchName });
+      logger.error('Failed to create model branch', error instanceof Error ? error : new Error(String(error)), { modelId, branchName });
       throw error;
     }
   }
@@ -332,7 +332,7 @@ export class ModelVersioningService {
       return tag;
 
     } catch (error) {
-      logger.error('Failed to create model tag', { error, modelId, tagName });
+      logger.error('Failed to create model tag', error instanceof Error ? error : new Error(String(error)), { modelId, tagName });
       throw error;
     }
   }
@@ -350,7 +350,7 @@ export class ModelVersioningService {
       return registry.lineage;
 
     } catch (error) {
-      logger.error('Failed to get model lineage', { error, modelId });
+      logger.error('Failed to get model lineage', error instanceof Error ? error : new Error(String(error)), { modelId });
       return { nodes: [], edges: [] };
     }
   }
@@ -393,7 +393,7 @@ export class ModelVersioningService {
       logger.info('Model version deleted', { modelId, version, force });
 
     } catch (error) {
-      logger.error('Failed to delete model version', { error, modelId, version });
+      logger.error('Failed to delete model version', error instanceof Error ? error : new Error(String(error)), { modelId, version });
       throw error;
     }
   }
@@ -430,7 +430,7 @@ export class ModelVersioningService {
       return rollbackVersion;
 
     } catch (error) {
-      logger.error('Failed to rollback model version', { error, modelId, targetVersion });
+      logger.error('Failed to rollback model version', error as Error, { modelId, targetVersion });
       throw error;
     }
   }
@@ -463,7 +463,7 @@ export class ModelVersioningService {
       return exportData;
 
     } catch (error) {
-      logger.error('Failed to export model version', { error, modelId, version });
+      logger.error('Failed to export model version', error as Error, { modelId, version });
       throw error;
     }
   }
@@ -495,7 +495,7 @@ export class ModelVersioningService {
       return model;
 
     } catch (error) {
-      logger.error('Failed to import model version', { error });
+      logger.error('Failed to import model version', error as Error, { });
       throw error;
     }
   }
@@ -510,7 +510,7 @@ export class ModelVersioningService {
         this.versionRegistry = JSON.parse(registryData);
       }
     } catch (error) {
-      logger.error('Failed to load version registry', { error });
+      logger.error('Failed to load version registry', error as Error, { });
     }
   }
 
@@ -518,7 +518,7 @@ export class ModelVersioningService {
     try {
       await redisClient.hset('ml_version_registry', modelId, JSON.stringify(this.versionRegistry[modelId]));
     } catch (error) {
-      logger.error('Failed to persist version registry', { error, modelId });
+      logger.error('Failed to persist version registry', error as Error, { modelId });
     }
   }
 
@@ -808,12 +808,12 @@ export class ModelVersioningService {
             await this.deleteVersion(modelId, version.version, true);
             logger.info('Old version cleaned up', { modelId, version: version.version });
           } catch (error) {
-            logger.error('Failed to cleanup old version', { error, modelId, version: version.version });
+            logger.error('Failed to cleanup old version', error as Error, { modelId, version: version.version });
           }
         }
       }
     } catch (error) {
-      logger.error('Version cleanup failed', { error });
+      logger.error('Version cleanup failed', error as Error, { });
     }
   }
 }

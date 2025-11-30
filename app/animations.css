@@ -34,9 +34,9 @@
   background: linear-gradient(
     -45deg,
     var(--accent-primary),
-    #EC4899,
+    var(--accent-primary),
     #F472B6,
-    #A855F7
+    var(--accent-primary)
   );
   background-size: 400% 400%;
   animation: gradientShift 10s ease infinite;
@@ -57,7 +57,7 @@
   background: linear-gradient(
     to right,
     var(--accent-primary),
-    #EC4899,
+    var(--accent-primary),
     var(--accent-primary)
   );
   background-size: 200% auto;

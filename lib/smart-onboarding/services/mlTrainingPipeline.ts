@@ -134,7 +134,7 @@ class MLTrainingPipeline {
       job.endTime = new Date();
       job.errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
-      logger.error(`Training job failed: ${job.id}`, { error });
+      logger.error(`Training job failed: ${job.id}`, error instanceof Error ? error : new Error(String(error)), {});
     }
 
     // Process next job in queue

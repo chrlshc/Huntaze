@@ -4,7 +4,7 @@
 .absolute.top-full,
 nav .absolute {
   border: none !important;
-  background-color: #1a1a1a !important;
+  background-color: var(--bg-secondary) !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
   border-radius: 8px !important;
   overflow: hidden !important;
@@ -83,7 +83,7 @@ nav a[href*="/get-started"],
 }
 
 nav a[href*="/get-started"]:hover {
-  background-color: #f0f0f0 !important;
+  background-color: var(--bg-glass) !important;
 }
 
 /* Dropdown animation */

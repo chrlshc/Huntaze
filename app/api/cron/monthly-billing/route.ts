@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OnlyFansAPI, decryptApiKey } from '@/lib/integrations/onlyfans';
-import { CommissionTracker } from '@/lib/billing/commission-tracker';
+// TODO: Restore when commission tracker is implemented
+// import { CommissionTracker } from '@/lib/billing/commission-tracker';
 
 // Force dynamic rendering to avoid build-time evaluation
 export const dynamic = 'force-dynamic';
@@ -40,15 +41,17 @@ export async function POST(request: NextRequest) {
         );
         
         // Report earnings for commission calculation
-        const commission = await CommissionTracker.reportEarnings({
-          userId: user.id,
-          monthlyRevenue: monthlyEarnings,
-          platform: 'onlyfans',
-          period: {
-            start: new Date(now.getFullYear(), now.getMonth(), 1),
-            end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
-          },
-        });
+        // TODO: Restore when commission tracker is implemented
+        const commission = null;
+        // const commission = await CommissionTracker.reportEarnings({
+        //   userId: user.id,
+        //   monthlyRevenue: monthlyEarnings,
+        //   platform: 'onlyfans',
+        //   period: {
+        //     start: new Date(now.getFullYear(), now.getMonth(), 1),
+        //     end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
+        //   },
+        // });
         
         results.push({
           userId: user.id,

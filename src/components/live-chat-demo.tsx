@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Bot, User, Sparkles } from 'lucide-react'
+import { Card } from '@/components/ui/card';
 
 interface Message {
   id: string
@@ -224,7 +225,7 @@ export default function LiveChatDemo() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-600">
+              <Card className="bg-white dark:bg-gray-700 px-4 py-2 rounded-2xl rounded-bl-sm shadow-sm border border-gray-200 dark:border-gray-600">
                 <div className="flex gap-1">
                   <motion.div
                     animate={{ opacity: [0.4, 1, 0.4] }}
@@ -242,7 +243,7 @@ export default function LiveChatDemo() {
                     className="w-2 h-2 bg-gray-400 dark:bg-gray-400 rounded-full"
                   />
                 </div>
-              </div>
+              </Card>
             </motion.div>
           )}
           <div ref={messagesEndRef} />

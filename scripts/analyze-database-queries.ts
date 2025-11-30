@@ -243,7 +243,7 @@ async function simulateCommonQueries() {
     });
     
     // Query 3: Revenue analytics
-    await prisma.transactions.findMany({
+    await prisma.transaction.findMany({
       where: {
         user_id: 1,
         type: 'revenue',

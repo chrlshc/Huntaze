@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, BarChart3, TrendingUp, Users, DollarSign, PieChart, Activity } from 'lucide-react'
 import { AnalyticsMockup } from '@/components/product-mockups'
 import PremiumButton from '@/components/premium-button'
+import { Card } from '@/components/ui/card';
 
 export default function AnalyticsPage() {
   return (
@@ -178,24 +179,24 @@ export default function AnalyticsPage() {
                 </p>
               </div>
             <div className="space-y-4">
-              <div className="elevated-card p-4">
+              <Card className="p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Churn Risk Detection</span>
                     <span className="text-green-600 font-medium">Active</span>
                   </div>
-                </div>
-              <div className="elevated-card p-4">
+                </Card>
+              <Card className="p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Revenue Forecasting</span>
                     <span className="text-green-600 font-medium">Active</span>
                   </div>
-                </div>
-              <div className="elevated-card p-4">
+                </Card>
+              <Card className="p-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">Content Optimization</span>
                     <span className="text-green-600 font-medium">Active</span>
                   </div>
-                </div>
+                </Card>
               </div>
             </motion.div>
           </div>

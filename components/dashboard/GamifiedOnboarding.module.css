@@ -3,12 +3,12 @@
 }
 
 .greeting {
-  font-size: var(--font-size-welcome);
+  font-size: var(--text-3xl);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
   letter-spacing: var(--letter-spacing-tight);
   margin-bottom: var(--spacing-card-gap);
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
 }
 
 .onboardingGrid {
@@ -52,15 +52,15 @@
 }
 
 .cardTitle {
-  font-size: var(--font-size-h3);
+  font-size: var(--text-2xl);
   font-weight: var(--font-weight-heading);
   color: var(--color-text-heading);
   margin-bottom: 8px;
-  font-family: var(--font-heading);
+  font-family: var(--font-sans);
 }
 
 .cardDescription {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--color-text-sub);
   margin-bottom: 16px;
   line-height: 1.5;
@@ -76,7 +76,7 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
   filter: blur(2px);
   opacity: 0.6;
 }
@@ -100,7 +100,7 @@
   width: 100%;
   margin-bottom: 16px;
   padding: 16px;
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(59, 130, 246, 0.05);
   border-radius: 8px;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .potentialText {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--color-text-sub);
   text-align: center;
   margin-top: 8px;
@@ -125,7 +125,7 @@
   border: none;
   border-radius: var(--radius-button);
   font-weight: var(--font-weight-heading);
-  font-size: var(--font-size-small);
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: all var(--transition-medium);
   margin-top: auto;

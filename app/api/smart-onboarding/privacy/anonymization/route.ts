@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to anonymize data', { error });
+    logger.error('Failed to anonymize data', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to anonymize data' },
       { status: 500 }
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     );
 
   } catch (error) {
-    logger.error('Failed to process anonymization request', { error });
+    logger.error('Failed to process anonymization request', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 500 }

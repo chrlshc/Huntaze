@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ChurnRiskFan } from '@/lib/services/revenue/types';
 import { LoadingState } from '@/components/revenue/shared/LoadingState';
 import { EmptyState } from '@/components/revenue/shared/EmptyState';
+import { Button } from "@/components/ui/button";
 
 interface ChurnRiskListProps {
   fans: ChurnRiskFan[];
@@ -115,7 +116,8 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         {/* Risk Level Filter */}
         <div className="flex gap-2 flex-wrap">
-          <button
+          <Button 
+            variant="secondary" 
             onClick={() => setFilterRisk('all')}
             className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
               filterRisk === 'all'
@@ -124,8 +126,9 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
             }`}
           >
             All ({fans.length})
-          </button>
-          <button
+          </Button>
+          <Button 
+            variant="danger" 
             onClick={() => setFilterRisk('high')}
             className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
               filterRisk === 'high'
@@ -134,8 +137,9 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
             }`}
           >
             High ({fans.filter(f => f.riskLevel === 'high').length})
-          </button>
-          <button
+          </Button>
+          <Button 
+            variant="primary" 
             onClick={() => setFilterRisk('medium')}
             className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
               filterRisk === 'medium'
@@ -144,8 +148,9 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
             }`}
           >
             Medium ({fans.filter(f => f.riskLevel === 'medium').length})
-          </button>
-          <button
+          </Button>
+          <Button 
+            variant="primary" 
             onClick={() => setFilterRisk('low')}
             className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
               filterRisk === 'low'
@@ -154,7 +159,7 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
             }`}
           >
             Low ({fans.filter(f => f.riskLevel === 'low').length})
-          </button>
+          </Button>
         </div>
 
         {/* Sort Controls */}
@@ -235,12 +240,13 @@ export function ChurnRiskList({ fans, onReEngage, onViewDetails, loading }: Chur
 
               {/* Actions */}
               <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
-                <button
+                <Button 
+                  variant="ghost" 
                   onClick={() => onViewDetails(fan.id)}
                   className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   Details
-                </button>
+                </Button>
                 <button
                   onClick={() => handleReEngage(fan.id)}
                   disabled={engagingFans.has(fan.id)}

@@ -6,6 +6,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export default function InstagramDashboardWidget() {
   const [account, setAccount] = useState<any>(null);
@@ -18,18 +20,18 @@ export default function InstagramDashboardWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="animate-pulse">
           <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
           <div className="h-4 bg-gray-200 rounded w-1/2"></div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (!account) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full mb-4">
             <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -45,12 +47,12 @@ export default function InstagramDashboardWidget() {
             Connect Instagram
           </a>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <Card className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-full mr-3"></div>
@@ -59,7 +61,7 @@ export default function InstagramDashboardWidget() {
             <p className="text-sm text-gray-600">{account.followers} followers</p>
           </div>
         </div>
-        <button className="text-sm text-red-600 hover:text-red-700">Disconnect</button>
+        <Button variant="danger">Disconnect</Button>
       </div>
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
@@ -75,6 +77,6 @@ export default function InstagramDashboardWidget() {
           <div className="text-xs text-gray-600">Comments</div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

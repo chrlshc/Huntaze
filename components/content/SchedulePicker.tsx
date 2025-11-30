@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 
 interface SchedulePickerProps {
   value?: string; // ISO 8601 datetime string
@@ -149,7 +150,6 @@ export function SchedulePicker({
       {/* View Mode Toggle */}
       <div className="flex items-center gap-2">
         <button
-          type="button"
           onClick={() => setViewMode('input')}
           className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
             viewMode === 'input'
@@ -157,11 +157,11 @@ export function SchedulePicker({
               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
           }`}
           disabled={disabled}
+          type="button"
         >
           Quick Input
         </button>
         <button
-          type="button"
           onClick={() => setViewMode('calendar')}
           className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
             viewMode === 'calendar'
@@ -169,6 +169,7 @@ export function SchedulePicker({
               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
           }`}
           disabled={disabled}
+          type="button"
         >
           Calendar View
         </button>
@@ -216,10 +217,10 @@ export function SchedulePicker({
                 {getBestTimes().map((suggestion) => (
                   <button
                     key={suggestion.time}
-                    type="button"
                     onClick={() => handleTimeSelect(suggestion.time)}
                     className="px-3 py-1.5 text-sm bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
                     disabled={disabled}
+                    type="button"
                   >
                     {suggestion.label}
                   </button>
@@ -233,29 +234,19 @@ export function SchedulePicker({
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           {/* Calendar Header */}
           <div className="flex items-center justify-between mb-4">
-            <button
-              type="button"
-              onClick={handlePreviousMonth}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              disabled={disabled}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <Button variant="ghost" onClick={handlePreviousMonth} disabled={disabled} type="button">
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-            </button>
+</Button>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
             </h3>
-            <button
-              type="button"
-              onClick={handleNextMonth}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              disabled={disabled}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <Button variant="ghost" onClick={handleNextMonth} disabled={disabled} type="button">
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </button>
+</Button>
           </div>
 
           {/* Day Names */}
@@ -275,7 +266,6 @@ export function SchedulePicker({
             {getCalendarDays().map((date, index) => (
               <button
                 key={index}
-                type="button"
                 onClick={() => date && !isPast(date) && handleDateSelect(date)}
                 disabled={!date || isPast(date) || disabled}
                 className={`
@@ -286,6 +276,7 @@ export function SchedulePicker({
                   ${isToday(date!) && !isSelected(date!) ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium' : ''}
                   ${!isSelected(date!) && !isToday(date!) && !isPast(date!) ? 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white' : ''}
                 `}
+                type="button"
               >
                 {date?.getDate()}
               </button>

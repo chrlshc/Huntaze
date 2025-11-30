@@ -17,3 +17,6 @@ export const getOAuthUrl = (provider: 'google') => {
 export async function getServerSession(): Promise<{ user?: { id: string; email: string } } | null> {
   return null;
 }
+
+// Re-export full auth module for shared utilities/types
+export * from './auth';

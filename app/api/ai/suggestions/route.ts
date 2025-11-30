@@ -177,6 +177,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Suggestio
     const suggestions = await onlyFansAIAssistantEnhanced.generateResponse({
       fanId,
       creatorId,
+      fanName: 'Fan', // Default name if not provided
       lastMessage,
       messageCount: messageCount || 0,
       fanValueCents: fanValueCents || 0,
@@ -218,7 +219,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Suggestio
     return NextResponse.json(
       {
         success: true,
-        suggestions,
+        suggestions: suggestions.map(s => s.text),
         metadata: {
           count: suggestions.length,
           duration,

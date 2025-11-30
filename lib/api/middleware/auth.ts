@@ -152,7 +152,7 @@ export function withAuth(handler: AuthenticatedHandler) {
 
         userId = session.user.id;
         userEmail = session.user.email;
-        userName = session.user.name;
+        userName = session.user.name || null;
         onboardingCompleted = session.user.onboardingCompleted ?? false;
       }
 

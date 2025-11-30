@@ -367,7 +367,7 @@ async function createTestUser() {
     
     const hashedPassword = await hash(TEST_USER.password, 12);
     
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
         ...TEST_USER,
         password: hashedPassword,
@@ -397,7 +397,7 @@ async function createIntegration(userId: number, integration: any) {
     // Generate unique providerAccountId to avoid conflicts
     const uniqueAccountId = `${integration.providerAccountId}-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     
-    const created = await prisma.oAuthAccount.create({
+    const created = await prisma.oauth_accounts.create({
       data: {
         userId,
         ...integration,
@@ -423,7 +423,7 @@ async function cleanupTestData() {
     testLogger.info('Cleaning up test data');
     
     // Delete integrations first (foreign key constraint)
-    const deletedIntegrations = await prisma.oAuthAccount.deleteMany({
+    const deletedIntegrations = await prisma.oauth_accounts.deleteMany({
       where: {
         user: {
           email: { contains: 'test-integrations@' },
@@ -432,7 +432,7 @@ async function cleanupTestData() {
     });
     
     // Then delete users
-    const deletedUsers = await prisma.user.deleteMany({
+    const deletedUsers = await prisma.users.deleteMany({
       where: {
         email: { contains: 'test-integrations@' },
       },
@@ -1087,7 +1087,7 @@ describe('Integrations Status API Integration Tests', () => {
       await createIntegration(testUser.id, MOCK_INTEGRATION_INSTAGRAM);
       
       // Create another user with different integration
-      const otherUser = await prisma.user.create({
+      const otherUser = await prisma.users.create({
         data: {
           email: 'test-integrations-other@example.com',
           name: 'Other User',
@@ -1110,10 +1110,10 @@ describe('Integrations Status API Integration Tests', () => {
       expect(data.data.integrations[0].provider).toBe('instagram');
       
       // Clean up
-      await prisma.oAuthAccount.delete({
-        where: { id: (await prisma.oAuthAccount.findFirst({ where: { userId: otherUser.id } }))!.id },
+      await prisma.oauth_accounts.delete({
+        where: { id: (await prisma.oauth_accounts.findFirst({ where: { userId: otherUser.id } }))!.id },
       });
-      await prisma.user.delete({
+      await prisma.users.delete({
         where: { id: otherUser.id },
       });
     });

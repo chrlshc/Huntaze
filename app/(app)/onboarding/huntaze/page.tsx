@@ -17,6 +17,8 @@ export const dynamic = 'force-dynamic';
  */
 
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 import { 
   SetupGuideContainer, 
   CompletionNudge, 
@@ -114,7 +116,7 @@ export default function ShopifyStyleOnboardingPage() {
           {/* Sidebar - Demo Controls */}
           <div className="space-y-6">
             {/* Demo Info Card */}
-            <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
+            <Card className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
                 📊 Demo status
               </h3>
@@ -140,28 +142,25 @@ export default function ShopifyStyleOnboardingPage() {
                   <span className="font-medium text-content-primary">{mockUser.market}</span>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Demo Actions Card */}
-            <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
+            <Card className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
                 🎮 Test actions
               </h3>
               <div className="space-y-2">
-                <button
-                  onClick={simulateGatedAction}
-                  className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium"
-                >
+                <Button variant="primary" onClick={simulateGatedAction}>
                   Test Guard-Rail Modal
-                </button>
+                </Button>
                 <p className="text-xs text-content-secondary">
                   Simulates a blocked action requiring prior setup
                 </p>
               </div>
-            </div>
+            </Card>
 
             {/* Features Card */}
-            <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
+            <Card className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
                 ✨ Features
               </h3>
@@ -195,10 +194,10 @@ export default function ShopifyStyleOnboardingPage() {
                   <span>Optimistic UI updates</span>
                 </li>
               </ul>
-            </div>
+            </Card>
 
             {/* API Status Card */}
-            <div className="rounded-2xl border border-border-default bg-surface-raised p-4">
+            <Card className="rounded-2xl border border-border-default bg-surface-raised p-4">
               <h3 className="font-semibold text-content-primary mb-3">
                 🔌 Endpoints API
               </h3>
@@ -209,7 +208,7 @@ export default function ShopifyStyleOnboardingPage() {
                 <li>POST /api/store/publish (gated)</li>
                 <li>POST /api/checkout/* (gated)</li>
               </ul>
-            </div>
+            </Card>
           </div>
         </div>
 

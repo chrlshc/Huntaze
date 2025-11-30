@@ -2,6 +2,8 @@
 
 import { Component, ReactNode } from 'react';
 import { AlertCircle, RefreshCw, Home } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface ContentPageErrorBoundaryProps {
   children: ReactNode;
@@ -125,7 +127,7 @@ export class ContentPageErrorBoundary extends Component<
       // Default error UI
       return (
         <div className="min-h-[400px] flex items-center justify-center p-6">
-          <div className="max-w-2xl w-full bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-red-200 shadow-[var(--shadow-soft)] p-8">
+          <Card className="max-w-2xl w-full bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-red-200 shadow-[var(--shadow-soft)] p-8">
             {/* Error Icon */}
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
@@ -176,36 +178,27 @@ export class ContentPageErrorBoundary extends Component<
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={this.handleReset}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-              >
+              <Button variant="primary" onClick={this.handleReset}>
                 <RefreshCw className="w-4 h-4" />
                 Try Again
-              </button>
+              </Button>
 
-              <button
-                onClick={this.handleReload}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 text-[var(--color-text-main)] rounded-lg hover:bg-gray-50 transition-colors font-medium"
-              >
+              <Button variant="ghost" onClick={this.handleReload}>
                 <RefreshCw className="w-4 h-4" />
                 Reload Page
-              </button>
+              </Button>
 
-              <button
-                onClick={this.handleGoHome}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 text-[var(--color-text-main)] rounded-lg hover:bg-gray-50 transition-colors font-medium"
-              >
+              <Button variant="ghost" onClick={this.handleGoHome}>
                 <Home className="w-4 h-4" />
                 Go to Dashboard
-              </button>
+              </Button>
             </div>
 
             {/* Help Text */}
             <p className="text-sm text-[var(--color-text-sub)] text-center mt-6">
               If this problem persists, please contact support with the error details above.
             </p>
-          </div>
+          </Card>
         </div>
       );
     }

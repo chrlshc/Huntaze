@@ -5,6 +5,8 @@ export const dynamic = 'force-static';
 import { Metadata } from 'next'
 import { CheckCircle, AlertCircle, Activity, Shield, Database, Zap } from 'lucide-react'
 import { SafeDateRenderer, SSRDataProvider } from '@/components/hydration';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 
 export const metadata: Metadata = {
@@ -71,7 +73,7 @@ const getStatusBgColor = (status: string) => {
 
 export default function StatusPage() {
   return (
-    <SSRDataProvider hydrationId="status-page">
+    <SSRDataProvider>
       <div className="min-h-screen bg-white dark:bg-gray-900 pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -108,7 +110,7 @@ export default function StatusPage() {
         {/* Services Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           {services.map((service) => (
-            <div key={service.name} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <Card key={service.name} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
@@ -127,7 +129,7 @@ export default function StatusPage() {
                 <span className="text-gray-600 dark:text-[var(--text-secondary-dark)]">Uptime (30 days)</span>
                 <span className="font-medium text-gray-900 dark:text-white">{service.uptime}</span>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
 
@@ -172,9 +174,9 @@ export default function StatusPage() {
               Get notified about system status changes and planned maintenance
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+              <Button variant="primary">
                 Subscribe to Updates
-              </button>
+              </Button>
               <a href="/api/status" className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                 API Status
               </a>

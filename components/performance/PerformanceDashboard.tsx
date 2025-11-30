@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useWebVitals } from '@/hooks/useWebVitals';
+import { Card } from '@/components/ui/card';
 
 interface PerformanceMetric {
   name: string;
@@ -37,7 +38,7 @@ export function PerformanceDashboard({
   refreshInterval = 30000,
   showHistorical = true 
 }: PerformanceDashboardProps) {
-  const { metrics: webVitals } = useWebVitals();
+  const { vitals: webVitals } = useWebVitals();
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
@@ -161,7 +162,7 @@ export function PerformanceDashboard({
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow">
+      <Card className="p-6 bg-white rounded-lg shadow">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
@@ -170,14 +171,14 @@ export function PerformanceDashboard({
             <div className="h-20 bg-gray-200 rounded"></div>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Performance Grade */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Performance Dashboard</h2>
           <div className={`text-4xl font-bold px-6 py-3 rounded-lg ${getGradeColor(performanceGrade)}`}>
@@ -187,12 +188,12 @@ export function PerformanceDashboard({
         <p className="text-sm text-gray-600 mt-2">
           Real-time performance metrics from CloudWatch
         </p>
-      </div>
+      </Card>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((metric) => (
-          <div key={metric.name} className="bg-white rounded-lg shadow p-6">
+          <Card key={metric.name} className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-600">{metric.name}</h3>
               <span className={`px-2 py-1 text-xs font-semibold rounded ${getStatusColor(metric.status)}`}>
@@ -218,13 +219,13 @@ export function PerformanceDashboard({
                 }}
               ></div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* Alerts Section */}
       {alerts.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Alerts</h3>
           <div className="space-y-3">
             {alerts.map((alert) => (
@@ -252,12 +253,12 @@ export function PerformanceDashboard({
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Historical Trends */}
       {showHistorical && historicalData.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Trends</h3>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
@@ -289,7 +290,7 @@ export function PerformanceDashboard({
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

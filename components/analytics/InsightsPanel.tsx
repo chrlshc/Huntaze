@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
 
 interface TrendInsights {
   summary: string;
@@ -26,19 +27,19 @@ interface InsightsPanelProps {
 export function InsightsPanel({ insights, loading = false }: InsightsPanelProps) {
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <Card className="bg-white rounded-lg shadow p-6">
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-6 animate-pulse"></div>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-4 bg-gray-200 rounded animate-pulse"></div>
           ))}
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <Card className="bg-white rounded-lg shadow p-6">
       <h3 className="text-lg font-semibold mb-6">Insights & Recommendations</h3>
       
       {/* Summary */}
@@ -97,6 +98,6 @@ export function InsightsPanel({ insights, loading = false }: InsightsPanelProps)
           Keep up the good work! Your metrics are stable.
         </p>
       )}
-    </div>
+    </Card>
   );
 }

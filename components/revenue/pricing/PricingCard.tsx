@@ -8,6 +8,8 @@
 
 import React, { useState } from 'react';
 import { Spinner } from '../shared/LoadingState';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 interface PricingCardProps {
   currentPrice: number;
@@ -43,7 +45,7 @@ export function PricingCard({
   const impactBg = revenueImpact > 0 ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20';
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+    <Card className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -122,14 +124,10 @@ export function PricingCard({
 
       {/* Mobile Sticky Button */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-10">
-        <button
-          onClick={handleApply}
-          disabled={isApplying || loading}
-          className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors"
-        >
-          {isApplying ? 'Applying...' : `Apply $${recommendedPrice.toFixed(2)}`}
-        </button>
+        <Button variant="primary" onClick={handleApply} disabled={isApplying || loading}>
+  {isApplying ? 'Applying...' : `Apply ${recommendedPrice.toFixed(2)}`}
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

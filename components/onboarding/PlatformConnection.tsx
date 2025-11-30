@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CheckCircle2, ExternalLink, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { Button } from "@/components/ui/button";
 
 interface Platform {
   id: string;
@@ -134,7 +135,8 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
                       Connected
                     </div>
                   ) : (
-                    <button
+                    <Button 
+                      variant="primary" 
                       onClick={() => handleConnect(platform.id)}
                       disabled={!platform.available || isConnecting}
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition ${
@@ -154,7 +156,7 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
                           Connect
                         </>
                       )}
-                    </button>
+</Button>
                   )}
                 </div>
               </div>
@@ -180,17 +182,9 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
         </div>
       )}
 
-      <button
-        onClick={handleContinue}
-        disabled={!canContinue}
-        className={`w-full py-3 rounded-lg font-semibold transition ${
-          canContinue
-            ? 'bg-blue-600 text-white hover:bg-blue-700'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        }`}
-      >
-        Continue
-      </button>
+      <Button variant="primary" onClick={handleContinue} disabled={!canContinue}>
+  Continue
+</Button>
     </div>
   );
 }

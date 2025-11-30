@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from '@/components/ui/card';
 
 interface AuthCardProps {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface AuthCardProps {
 export function AuthCard({ children, title, subtitle }: AuthCardProps) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50">
-      <div className="auth-card w-full">
+      <Card className="w-full">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
           {subtitle && (
@@ -17,7 +18,7 @@ export function AuthCard({ children, title, subtitle }: AuthCardProps) {
           )}
         </div>
         {children}
-      </div>
+      </Card>
     </div>
   );
 }

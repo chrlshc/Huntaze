@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Failed to export user data', { error });
+    logger.error('Failed to export user data', error instanceof Error ? error : new Error(String(error)), {});
     return NextResponse.json(
       { error: 'Failed to export user data' },
       { status: 500 }

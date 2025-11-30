@@ -1,6 +1,7 @@
 "use client";
 
 import { ONBOARDING_COPY as C } from "@/src/lib/onboarding/copy";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   step: number;
@@ -47,21 +48,16 @@ export default function StepShell({
       {/* Sticky footer actions (mobile & desktop) */}
       <footer className="sticky bottom-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto max-w-6xl p-3 flex items-center gap-2">
-          <button className="btn btn-ghost" onClick={onBack} type="button">
-            {C.common.back}
-          </button>
-          <button className="btn" onClick={onSkip} type="button">
-            {C.common.skip}
-          </button>
+          <Button variant="ghost" onClick={onBack} type="button">
+  {C.common.back}
+</Button>
+          <Button variant="primary" onClick={onSkip} type="button">
+  {C.common.skip}
+</Button>
           <div className="ml-auto" />
-          <button
-            className="btn btn-primary"
-            onClick={onContinue}
-            disabled={continueDisabled}
-            type="button"
-          >
-            {C.common.continue}
-          </button>
+          <Button variant="primary" onClick={onContinue} disabled={continueDisabled} type="button">
+  {C.common.continue}
+</Button>
         </div>
       </footer>
     </div>

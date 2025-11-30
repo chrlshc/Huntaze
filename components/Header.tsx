@@ -1,9 +1,11 @@
 'use client';
 
+import React from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { MobileSidebar } from './MobileSidebar';
 import { GlobalSearch } from './dashboard/GlobalSearch';
+import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -16,7 +18,7 @@ export default function Header() {
           <h2 
             className="hidden md:block"
             style={{
-              fontSize: 'var(--font-size-lg)',
+              fontSize: 'var(--text-lg)',
               fontWeight: 'var(--font-weight-medium)',
               color: 'var(--nav-text)'
             }}
@@ -84,7 +86,7 @@ export default function Header() {
                 height: 'var(--spacing-8)',
                 backgroundColor: 'var(--color-accent-primary)',
                 color: 'var(--color-text-inverse)',
-                fontSize: 'var(--font-size-sm)',
+                fontSize: 'var(--text-sm)',
                 fontWeight: 'var(--font-weight-medium)'
               }}
             >
@@ -93,7 +95,7 @@ export default function Header() {
             <div className="hidden md:block">
               <p 
                 style={{
-                  fontSize: 'var(--font-size-sm)',
+                  fontSize: 'var(--text-sm)',
                   fontWeight: 'var(--font-weight-medium)',
                   color: 'var(--nav-text)'
                 }}
@@ -102,14 +104,15 @@ export default function Header() {
               </p>
               <p 
                 style={{
-                  fontSize: 'var(--font-size-xs)',
+                  fontSize: 'var(--text-xs)',
                   color: 'var(--nav-text-muted)'
                 }}
               >
                 {session?.user?.email}
               </p>
             </div>
-            <button
+            <Button 
+              variant="primary" 
               onClick={() => signOut({ callbackUrl: '/' })}
               className="rounded-lg"
               style={{
@@ -118,19 +121,19 @@ export default function Header() {
                 transition: 'all var(--transition-fast)',
                 cursor: 'pointer'
               }}
-              onMouseEnter={(e) => {
+              onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
                 e.currentTarget.style.color = 'var(--nav-text)';
               }}
-              onMouseLeave={(e) => {
+              onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = 'var(--nav-text-muted)';
               }}
-              onFocus={(e) => {
+              onFocus={(e: React.FocusEvent<HTMLButtonElement>) => {
                 e.currentTarget.style.boxShadow = '0 0 0 3px var(--nav-border-strong)';
                 e.currentTarget.style.outline = 'none';
               }}
-              onBlur={(e) => {
+              onBlur={(e: React.FocusEvent<HTMLButtonElement>) => {
                 e.currentTarget.style.boxShadow = 'none';
               }}
               aria-label="Sign out"
@@ -151,7 +154,7 @@ export default function Header() {
                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                 />
               </svg>
-            </button>
+</Button>
           </div>
         </div>
       </div>

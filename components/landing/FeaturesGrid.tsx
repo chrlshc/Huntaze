@@ -3,6 +3,7 @@
 import React from 'react';
 import { ScrollReveal } from '@/components/animations/SimpleScrollReveal';
 import { Check } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface Feature {
   icon: React.ReactNode;

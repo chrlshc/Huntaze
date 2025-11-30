@@ -149,7 +149,7 @@ section {
 
 /* Clean up trust bar */
 .trust-bar {
-  background-color: #0a0a0a !important;
+  background-color: var(--bg-primary) !important;
   padding: 16px 0 !important;
 }
 

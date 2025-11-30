@@ -20,6 +20,8 @@ export interface UseMobileOptimizationOptions {
   enableAboveFoldPriority?: boolean;
   touchResponseThreshold?: number;
   clsThreshold?: number;
+  enableScrollOnFocus?: boolean;
+  preventDoubleSubmit?: boolean;
 }
 
 export interface MobileOptimizationState {
@@ -73,6 +75,9 @@ export function useMobileOptimization(options: UseMobileOptimizationOptions = {}
 
   const optimizer = useRef(getMobileOptimizer(options));
   const touchStartTime = useRef<number>(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // Update state from optimizer
   const updateState = useCallback(() => {
@@ -94,6 +99,7 @@ export function useMobileOptimization(options: UseMobileOptimizationOptions = {}
   useEffect(() => {
     optimizer.current.detectConnectionQuality();
     updateState();
+    setIsMobile(typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false);
 
     // Update on connection change
     const handleConnectionChange = () => {
@@ -129,6 +135,33 @@ export function useMobileOptimization(options: UseMobileOptimizationOptions = {}
       updateState();
     }
   }, [updateState]);
+
+  // Prevent double submit and optionally scroll inputs into view
+  const startSubmit = useCallback(() => {
+    if (options.preventDoubleSubmit) {
+      setIsSubmitting(true);
+    }
+  }, [options.preventDoubleSubmit]);
+
+  const endSubmit = useCallback(() => {
+    setIsSubmitting(false);
+  }, []);
+
+  useEffect(() => {
+    if (!options.enableScrollOnFocus || !formRef.current) return;
+
+    const handleFocus = (event: Event) => {
+      const target = event.target as HTMLElement;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    const inputs = Array.from(formRef.current.querySelectorAll('input, textarea, select'));
+    inputs.forEach((input) => input.addEventListener('focus', handleFocus));
+
+    return () => {
+      inputs.forEach((input) => input.removeEventListener('focus', handleFocus));
+    };
+  }, [options.enableScrollOnFocus]);
 
   // Check if element is above fold
   const isAboveFold = useCallback((element: HTMLElement): boolean => {
@@ -167,6 +200,9 @@ export function useMobileOptimization(options: UseMobileOptimizationOptions = {}
     touchResponsive: state.touchResponsive,
     shouldDeferContent: state.shouldDeferContent,
     recommendations: state.recommendations,
+    isMobile,
+    isSubmitting,
+    formRef,
 
     // Methods
     handleTouchStart,
@@ -175,5 +211,7 @@ export function useMobileOptimization(options: UseMobileOptimizationOptions = {}
     prioritizeContent,
     getImageProps,
     updateState,
+    startSubmit,
+    endSubmit,
   };
 }

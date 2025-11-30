@@ -265,7 +265,7 @@ function generateHTMLTemplate(verificationLink: string): string {
           body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #000000;
           }
           .container {
@@ -274,20 +274,20 @@ function generateHTMLTemplate(verificationLink: string): string {
             padding: 40px 20px;
           }
           .card {
-            background: #0a0a0a;
-            border: 1px solid #1a1a1a;
+            background: var(--bg-primary);
+            border: 1px solid var(--bg-secondary);
             border-radius: 12px;
             padding: 40px;
           }
           h1 {
             color: #FFFFFF;
-            font-size: 24px;
+            font-size: var(--text-2xl);
             font-weight: 600;
             margin: 0 0 16px 0;
           }
           p {
-            color: #a3a3a3;
-            font-size: 15px;
+            color: var(--text-secondary);
+            font-size: var(--text-base);
             line-height: 1.6;
             margin: 0 0 16px 0;
           }
@@ -295,21 +295,21 @@ function generateHTMLTemplate(verificationLink: string): string {
             display: inline-block;
             margin: 32px 0;
             padding: 14px 32px;
-            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 25%, #EC4899 50%, #A855F7 75%, #8B5CF6 100%);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary) 25%, var(--accent-primary) 50%, var(--accent-primary) 75%, var(--accent-primary) 100%);
             background-size: 200% 200%;
             color: white;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 15px;
+            font-size: var(--text-base);
           }
           .footer {
-            color: #737373;
-            font-size: 13px;
+            color: var(--text-tertiary);
+            font-size: var(--text-sm);
             margin-top: 32px;
           }
           .link {
-            color: #8B5CF6;
+            color: var(--accent-primary);
             text-decoration: none;
             word-break: break-all;
           }

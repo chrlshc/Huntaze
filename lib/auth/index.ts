@@ -10,6 +10,7 @@ export * from './types';
 // Session management
 export {
   getSession,
+  getServerSession,
   getSessionFromRequest,
   getCurrentUser,
   getCurrentUserId,

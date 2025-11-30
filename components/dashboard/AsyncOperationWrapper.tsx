@@ -2,6 +2,7 @@
 
 import { useState, useCallback, ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface AsyncOperationWrapperProps {
   children: (props: {
@@ -135,11 +136,8 @@ export function AsyncErrorDisplay({
           <h3 className="text-sm font-medium text-red-800">Operation failed</h3>
           <p className="text-sm text-red-700 mt-1">{error.message}</p>
           {onRetry && (
-            <button
-              onClick={onRetry}
-              className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
-            >
-              <svg
+            <Button variant="danger" onClick={onRetry}>
+  <svg
                 className="w-4 h-4"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -153,7 +151,7 @@ export function AsyncErrorDisplay({
                 />
               </svg>
               Retry
-            </button>
+</Button>
           )}
         </div>
       </div>

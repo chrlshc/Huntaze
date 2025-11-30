@@ -33,7 +33,7 @@ const defaultData = {
       label: 'Revenue',
       data: [1200, 1900, 1500, 2100, 1800, 2400, 2200],
       borderColor: 'rgb(99, 102, 241)',
-      backgroundColor: 'rgba(99, 102, 241, 0.1)',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
     },
     {
       label: 'New Fans',

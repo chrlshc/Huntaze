@@ -270,14 +270,14 @@ export async function POST(req: Request): Promise<NextResponse<WizardResponse | 
     if (!validationResult.success) {
       logInfo('Validation failed', { 
         userId: user.id, 
-        errors: validationResult.error.errors,
+        errors: validationResult.error.issues,
         correlationId 
       });
       
       return NextResponse.json(
         { 
           error: 'Invalid request body',
-          details: validationResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
+          details: validationResult.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
           correlationId 
         },
         { status: 400 }

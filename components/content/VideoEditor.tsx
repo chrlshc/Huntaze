@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface VideoEditorProps {
   videoId: string;
@@ -64,7 +66,7 @@ export default function VideoEditor({ videoId, videoUrl, onSave, onCancel }: Vid
       <div className="bg-white rounded-lg w-full max-w-6xl max-h-[90vh] flex flex-col">
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-xl font-semibold">Edit Video</h2>
-          <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">✕</button>
+          <Button variant="primary" onClick={onCancel}>✕</Button>
         </div>
 
         <div className="flex-1 flex overflow-hidden">
@@ -86,7 +88,7 @@ export default function VideoEditor({ videoId, videoUrl, onSave, onCancel }: Vid
             <div>
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-semibold">Captions</h3>
-                <button onClick={addCaption} className="px-2 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">+ Add</button>
+                <Button variant="primary" onClick={addCaption}>+ Add</Button>
               </div>
               
               <div className="space-y-3">
@@ -94,19 +96,19 @@ export default function VideoEditor({ videoId, videoUrl, onSave, onCancel }: Vid
                   <div key={index} className="border rounded p-3 space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Caption {index + 1}</span>
-                      <button onClick={() => removeCaption(index)} className="text-red-600 hover:text-red-800 text-sm">Remove</button>
+                      <Button variant="danger" onClick={() => removeCaption(index)}>Remove</Button>
                     </div>
                     
-                    <textarea value={caption.text} onChange={(e) => updateCaption(index, 'text', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" rows={2} placeholder="Caption text" />
+                    <textarea value={caption.text} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateCaption(index, 'text', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" rows={2} placeholder="Caption text" />
                     
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-xs text-gray-600">Start (s)</label>
-                        <input type="number" value={caption.startTime} onChange={(e) => updateCaption(index, 'startTime', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm" step="0.1" />
+                        <Input type="number" value={caption.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateCaption(index, 'startTime', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm" step="0.1" />
                       </div>
                       <div>
                         <label className="text-xs text-gray-600">End (s)</label>
-                        <input type="number" value={caption.endTime} onChange={(e) => updateCaption(index, 'endTime', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm" step="0.1" />
+                        <Input type="number" value={caption.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateCaption(index, 'endTime', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm" step="0.1" />
                       </div>
                     </div>
                   </div>
@@ -117,10 +119,10 @@ export default function VideoEditor({ videoId, videoUrl, onSave, onCancel }: Vid
         </div>
 
         <div className="p-4 border-t flex justify-end gap-2">
-          <button onClick={onCancel} className="px-4 py-2 border rounded hover:bg-gray-50" disabled={saving}>Cancel</button>
-          <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-            {saving ? 'Processing...' : 'Save Changes'}
-          </button>
+          <Button variant="ghost" onClick={onCancel} disabled={saving}>Cancel</Button>
+          <Button variant="primary" onClick={handleSave} disabled={saving}>
+  {saving ? 'Processing...' : 'Save Changes'}
+</Button>
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, LucideIcon } from 'lucide-react';
 import { useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from '@/components/ui/card';
 
 export interface FeatureDetailProps {
   id: string;
@@ -81,19 +83,14 @@ export function FeatureDetail({
           >
             {/* Header with gradient */}
             <div className={`bg-gradient-to-br ${gradient} p-8 text-white relative`}>
-              <button
-                onClick={onClose}
-                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
-                aria-label="Close"
-                data-testid="feature-detail-close"
-              >
+              <Button variant="primary" onClick={onClose} aria-label="Close" data-testid="feature-detail-close">
                 <X className="w-6 h-6" />
-              </button>
+              </Button>
 
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Card className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center flex-shrink-0">
                   <Icon className="w-8 h-8" />
-                </div>
+                </Card>
                 <div>
                   <h2 className="text-3xl font-bold mb-2">{title}</h2>
                   <p className="text-white/90">{description}</p>
@@ -136,12 +133,9 @@ export function FeatureDetail({
 
             {/* Footer */}
             <div className="border-t border-gray-100 p-6 bg-gray-50">
-              <button
-                onClick={onClose}
-                className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
-              >
+              <Button variant="primary" onClick={onClose}>
                 Got it
-              </button>
+              </Button>
             </div>
           </motion.div>
         </>

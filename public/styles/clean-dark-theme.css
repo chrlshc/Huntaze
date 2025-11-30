@@ -17,11 +17,11 @@ body {
 :root {
   --background: #000000 !important;
   --foreground: #ffffff !important;
-  --card: #0a0a0a !important;
+  --card: var(--bg-primary) !important;
   --card-foreground: #ffffff !important;
   --primary: #ffffff !important;
   --primary-foreground: #000000 !important;
-  --secondary: #1a1a1a !important;
+  --secondary: var(--bg-secondary) !important;
   --secondary-foreground: #ffffff !important;
   --muted: #262626 !important;
   --muted-foreground: #a1a1a1 !important;
@@ -58,7 +58,7 @@ body {
 nav,
 .enterprise-nav {
   background: #000000 !important;
-  border-bottom: 1px solid #1a1a1a !important;
+  border-bottom: 1px solid var(--bg-secondary) !important;
 }
 
 /* All sections - Pure black */
@@ -78,8 +78,8 @@ section:nth-child(odd) {
 .bg-gray-100,
 .bg-gray-200,
 [class*="bg-gray-"] {
-  background-color: #0a0a0a !important;
-  border: 1px solid #1a1a1a !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
 }
 
 /* Dark mode specific */
@@ -144,22 +144,22 @@ button:hover,
 .capability-card,
 .feature-card,
 [class*="card"] {
-  background-color: #0a0a0a !important;
-  border: 1px solid #1a1a1a !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
 }
 
 /* Dropdown menus */
 .bg-white.rounded-lg.shadow-xl {
-  background-color: #0a0a0a !important;
-  border: 1px solid #1a1a1a !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
 }
 
 /* Input fields */
 input,
 textarea,
 select {
-  background-color: #0a0a0a !important;
-  border: 1px solid #1a1a1a !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
   color: #ffffff !important;
 }
 
@@ -178,7 +178,7 @@ select {
 
 /* Trust bar */
 .trust-bar {
-  background: #0a0a0a !important;
+  background: var(--bg-primary) !important;
 }
 
 /* Remove all box shadows with color */
@@ -196,7 +196,7 @@ select {
 footer,
 .footer-section {
   background-color: #000000 !important;
-  border-top: 1px solid #1a1a1a !important;
+  border-top: 1px solid var(--bg-secondary) !important;
 }
 
 /* Pricing cards */
@@ -233,8 +233,8 @@ footer {
 .rounded-lg,
 .rounded-xl,
 .rounded-2xl {
-  background-color: #0a0a0a !important;
-  border: 1px solid #1a1a1a !important;
+  background-color: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
 }
 
 /* Purple text to white */
@@ -247,7 +247,7 @@ footer {
 /* Hover states */
 .hover\:bg-gray-50:hover,
 .hover\:bg-gray-100:hover {
-  background-color: #1a1a1a !important;
+  background-color: var(--bg-secondary) !important;
 }
 
 /* Remove purple gradients from text */
@@ -287,7 +287,7 @@ div {
 
 /* Modal backgrounds */
 .fixed.inset-0 {
-  background-color: rgba(0, 0, 0, 0.8) !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
 }
 
 /* Scrollbar */
@@ -398,7 +398,7 @@ nav button:hover {
 /* Remove purple from badges */
 .bg-purple-100,
 .bg-purple-900\/30 {
-  background-color: #1a1a1a !important;
+  background-color: var(--bg-secondary) !important;
 }
 
 /* Header buttons */
@@ -426,13 +426,13 @@ nav .bg-white:hover {
 
 /* Theme toggle */
 .theme-toggle {
-  background-color: #1a1a1a !important;
+  background-color: var(--bg-secondary) !important;
   border: 1px solid #262626 !important;
 }
 
 /* Live dashboard mockup */
 .bg-gradient-to-br {
-  background: #0a0a0a !important;
+  background: var(--bg-primary) !important;
 }
 
 /* Remove ALL pseudo elements with colors */
@@ -456,13 +456,13 @@ nav .bg-white:hover {
 
 /* Metrics badges */
 .bg-gray-100 {
-  background-color: #1a1a1a !important;
+  background-color: var(--bg-secondary) !important;
 }
 
 /* Interactive elements */
 .bg-purple-100,
 .bg-purple-900\/20,
 .bg-pink-900\/20 {
-  background: #0a0a0a !important;
-  border: 1px solid #1a1a1a !important;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--bg-secondary) !important;
 }
