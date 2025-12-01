@@ -39,6 +39,16 @@ export interface ContainerProps {
   centered?: boolean;
   
   /**
+   * Nesting level for progressive background lightening
+   * - 0: Page level (--bg-primary)
+   * - 1: Main cards (--bg-card-elevated)
+   * - 2: Nested cards (--bg-secondary)
+   * - 3: Inner elements (--bg-glass-hover)
+   * @default undefined (no nesting background applied)
+   */
+  nestingLevel?: 0 | 1 | 2 | 3;
+  
+  /**
    * Content to be rendered inside the container
    */
   children: React.ReactNode;
@@ -80,11 +90,25 @@ export interface ContainerProps {
  *   <div>Full-width content</div>
  * </Container>
  * ```
+ * 
+ * @example Progressive nesting with background hierarchy
+ * ```tsx
+ * <Container nestingLevel={0}>
+ *   <h1>Page Title</h1>
+ *   <Container nestingLevel={1}>
+ *     <h2>Section Title</h2>
+ *     <Container nestingLevel={2}>
+ *       <p>Nested content</p>
+ *     </Container>
+ *   </Container>
+ * </Container>
+ * ```
  */
 export const Container: React.FC<ContainerProps> = ({
   maxWidth = 'lg',
   padding = 'md',
   centered = true,
+  nestingLevel,
   children,
   className = '',
   as: Component = 'div',
@@ -106,6 +130,9 @@ export const Container: React.FC<ContainerProps> = ({
     lg: { padding: 'var(--space-8)' },
   };
   
+  // Build nesting class if specified
+  const nestingClass = nestingLevel !== undefined ? `nesting-level-${nestingLevel}` : '';
+  
   const style: React.CSSProperties = {
     ...maxWidthStyles[maxWidth],
     ...paddingStyles[padding],
@@ -115,11 +142,12 @@ export const Container: React.FC<ContainerProps> = ({
   
   return (
     <Component 
-      className={className}
+      className={`${nestingClass} ${className}`.trim()}
       style={style}
       data-testid="container"
       data-max-width={maxWidth}
       data-padding={padding}
+      data-nesting-level={nestingLevel}
     >
       {children}
     </Component>

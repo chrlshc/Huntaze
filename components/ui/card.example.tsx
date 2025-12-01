@@ -14,7 +14,7 @@ export function DefaultCardExample() {
       <h3 className="text-[var(--text-primary)] text-[var(--text-xl)] font-[var(--font-weight-semibold)]">
         Default Card
       </h3>
-      <p className="text-[var(--text-secondary)] mt-[var(--space-2)]">
+      <p className="text-[var(--text-primary)] mt-[var(--space-2)]">
         This card uses the default variant with solid background (--bg-tertiary)
         and subtle borders (--border-subtle).
       </p>
@@ -29,7 +29,7 @@ export function GlassCardExample() {
       <h3 className="text-[var(--text-primary)] text-[var(--text-xl)] font-[var(--font-weight-semibold)]">
         Glass Effect Card
       </h3>
-      <p className="text-[var(--text-secondary)] mt-[var(--space-2)]">
+      <p className="text-[var(--text-primary)] mt-[var(--space-2)]">
         This card uses the glass variant with backdrop blur and translucent background.
         Perfect for overlays and premium UI elements.
       </p>
@@ -46,7 +46,7 @@ export function CustomStyledCardExample() {
       <h3 className="text-[var(--accent-primary)] text-[var(--text-xl)] font-[var(--font-weight-semibold)]">
         Accent Card
       </h3>
-      <p className="text-[var(--text-secondary)] mt-[var(--space-2)]">
+      <p className="text-[var(--text-primary)] mt-[var(--space-2)]">
         You can still customize cards using design tokens for special cases.
       </p>
     </Card>
@@ -63,7 +63,7 @@ export function InteractiveCardExample() {
       <h3 className="text-[var(--text-primary)] text-[var(--text-xl)] font-[var(--font-weight-semibold)]">
         Interactive Card
       </h3>
-      <p className="text-[var(--text-secondary)] mt-[var(--space-2)]">
+      <p className="text-[var(--text-primary)] mt-[var(--space-2)]">
         Hover over this card to see the smooth transition effects using design tokens.
       </p>
     </Card>
@@ -76,19 +76,19 @@ export function CardGridExample() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[var(--space-6)]">
       <Card>
         <h4 className="text-[var(--text-primary)] font-[var(--font-weight-semibold)]">Card 1</h4>
-        <p className="text-[var(--text-secondary)] text-[var(--text-sm)] mt-[var(--space-2)]">
+        <p className="text-[var(--text-primary)] text-[var(--text-sm)] mt-[var(--space-2)]">
           Consistent spacing using design tokens
         </p>
       </Card>
       <Card variant="glass">
         <h4 className="text-[var(--text-primary)] font-[var(--font-weight-semibold)]">Card 2</h4>
-        <p className="text-[var(--text-secondary)] text-[var(--text-sm)] mt-[var(--space-2)]">
+        <p className="text-[var(--text-primary)] text-[var(--text-sm)] mt-[var(--space-2)]">
           Glass effect variant
         </p>
       </Card>
       <Card>
         <h4 className="text-[var(--text-primary)] font-[var(--font-weight-semibold)]">Card 3</h4>
-        <p className="text-[var(--text-secondary)] text-[var(--text-sm)] mt-[var(--space-2)]">
+        <p className="text-[var(--text-primary)] text-[var(--text-sm)] mt-[var(--space-2)]">
           Responsive grid layout
         </p>
       </Card>

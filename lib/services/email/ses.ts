@@ -276,7 +276,7 @@ export async function sendPasswordResetEmail(
           .header { background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
           .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 8px 8px; }
           .button { display: inline-block; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
-          .warning { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--accent-warning); padding: 15px; margin: 20px 0; border-radius: 4px; }
+          .warning { background: rgba(245, 158, 11, 0.12); border-left: 4px solid var(--accent-warning); padding: 15px; margin: 20px 0; border-radius: 4px; }
           .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-sm); }
         </style>
       </head>

@@ -76,7 +76,7 @@ function OverallStatusBadge({ status }: { status: 'healthy' | 'degraded' | 'unhe
 // Platform card
 function PlatformCard({ platform }: { platform: any }) {
   return (
-    <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="p-4 bg-white border border-[var(--border-default)] rounded-lg shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold capitalize">{platform.platform}</h3>
         <PlatformStatusBadge status={platform.status} />
@@ -105,7 +105,7 @@ function PlatformCard({ platform }: { platform: any }) {
         </div>
 
         {platform.errors > 0 && (
-          <div className="pt-2 mt-2 border-t border-gray-200">
+          <div className="pt-2 mt-2 border-t border-[var(--border-default)]">
             <span className="text-red-600 font-medium">
               {platform.errors} error{platform.errors !== 1 ? 's' : ''}
             </span>
@@ -113,7 +113,7 @@ function PlatformCard({ platform }: { platform: any }) {
         )}
 
         {platform.warnings > 0 && (
-          <div className="pt-2 mt-2 border-t border-gray-200">
+          <div className="pt-2 mt-2 border-t border-[var(--border-default)]">
             <span className="text-yellow-600 font-medium">
               {platform.warnings} warning{platform.warnings !== 1 ? 's' : ''}
             </span>
@@ -139,7 +139,7 @@ function LoadingState() {
 // Error state
 function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
   return (
-    <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+    <div className="p-6 bg-red-50 border border-[var(--accent-error-border)] rounded-lg">
       <div className="flex items-start gap-3">
         <XCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
@@ -186,7 +186,7 @@ export function ValidationHealthDashboard() {
         <Button 
           variant="ghost" 
           onClick={() => refresh()}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-[var(--border-emphasis)] rounded-lg hover:bg-gray-50 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Refresh
@@ -194,7 +194,7 @@ export function ValidationHealthDashboard() {
       </div>
 
       {/* Overall Status */}
-      <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+      <div className="p-6 bg-white border border-[var(--border-default)] rounded-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <OverallStatusBadge status={health.status} />
           
@@ -237,7 +237,7 @@ export function ValidationHealthDashboard() {
       </div>
 
       {/* Metadata */}
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+      <div className="p-4 bg-gray-50 border border-[var(--border-default)] rounded-lg">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-gray-600">Last Checked:</span>

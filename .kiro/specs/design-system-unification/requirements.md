@@ -109,3 +109,17 @@ L'application Huntaze présente actuellement des incohérences visuelles importa
 3. WHEN consulting documentation THEN the system SHALL explain the design principles
 4. WHEN consulting documentation THEN the system SHALL provide do's and don'ts
 5. WHEN consulting documentation THEN the system SHALL include accessibility guidelines
+
+### Requirement 9
+
+**User Story:** En tant qu'utilisateur, je veux un contraste visuel suffisant entre les éléments d'interface, afin de pouvoir distinguer clairement les différentes sections et composants.
+
+#### Acceptance Criteria
+
+1. WHEN viewing cards on dark backgrounds THEN the system SHALL ensure sufficient contrast between card backgrounds and page backgrounds
+2. WHEN viewing text on cards THEN the system SHALL use lighter text colors (zinc-50/zinc-100) instead of mid-range grays for primary content
+3. WHEN viewing borders and separators THEN the system SHALL use visible border colors with opacity of at least 0.12 for clear separation
+4. WHEN viewing interactive elements THEN the system SHALL provide clear visual distinction through color, borders, or shadows
+5. WHEN viewing nested components THEN the system SHALL maintain visual hierarchy through progressive lightening of backgrounds
+6. WHEN viewing the interface THEN the system SHALL avoid using similar shades of dark colors (zinc-900/zinc-950) in adjacent elements
+7. WHEN viewing cards and containers THEN the system SHALL use white/light accents strategically to create visual breathing room

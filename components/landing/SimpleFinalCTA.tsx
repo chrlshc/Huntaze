@@ -67,7 +67,7 @@ export function SimpleFinalCTA({ title, subtitle, primaryCTA, secondaryCTA }: Si
             
             <Link
               href={secondaryCTA.href}
-              className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white text-lg font-semibold rounded-xl hover:bg-white/20 border-2 border-white/20 hover:border-white/30 transition-all duration-200 backdrop-blur-sm min-w-[200px]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white text-lg font-semibold rounded-xl hover:bg-white/20 border-2 border-[var(--border-default)] hover:border-[var(--border-emphasis)] transition-all duration-200 backdrop-blur-sm min-w-[200px]"
             >
               {secondaryCTA.text}
             </Link>

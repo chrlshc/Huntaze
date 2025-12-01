@@ -3,24 +3,41 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 export type CardProps = HTMLAttributes<HTMLDivElement> & {
-  variant?: 'default' | 'glass';
+  variant?: 'default' | 'glass' | 'elevated';
+  nested?: boolean;
+  /**
+   * Nesting level for progressive background lightening
+   * - 1: Main cards (--bg-card-elevated)
+   * - 2: Nested cards (--bg-secondary)
+   * - 3: Inner elements (--bg-glass-hover)
+   * @default 1
+   */
+  nestingLevel?: 1 | 2 | 3;
 };
 
-export function Card({ className, variant = 'default', ...props }: CardProps) {
+export function Card({ className, variant = 'default', nested = false, nestingLevel, ...props }: CardProps) {
+  // Determine nesting level: explicit prop > nested boolean > default
+  const effectiveNestingLevel = nestingLevel ?? (nested ? 2 : 1);
+  
   return (
     <div
       className={cn(
         // Base styles using design tokens
         "rounded-[var(--card-radius)] p-[var(--card-padding)]",
-        // Variant styles
+        // Variant styles with progressive lightening for nested cards
         variant === 'glass' 
           ? "glass-card" // Uses glass effect from design-tokens.css
-          : "bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] shadow-[var(--shadow-inner-glow)]",
-        // Hover state
+          : variant === 'elevated'
+          ? "card-elevated" // Uses elevated card utility from design-tokens.css
+          : `nesting-level-${effectiveNestingLevel}`, // Use nesting utility classes
+        // Hover state with enhanced border visibility
         "transition-all duration-[var(--transition-base)]",
-        "hover:border-[var(--border-default)] hover:shadow-[var(--shadow-md)]",
+        effectiveNestingLevel >= 2
+          ? "hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-md)]"
+          : "hover:border-[var(--border-emphasis)] hover:shadow-[var(--shadow-md)]",
         className,
       )}
+      data-nesting-level={effectiveNestingLevel}
       {...props}
     />
   );

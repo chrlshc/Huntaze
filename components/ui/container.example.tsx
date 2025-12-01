@@ -141,7 +141,7 @@ export function ArticleContainerExample() {
     <Container maxWidth="md" padding="lg" as="article">
       <header>
         <h1>Understanding Design Tokens</h1>
-        <p style={{ color: 'var(--text-secondary)' }}>
+        <p style={{ color: 'var(--text-primary)' }}>
           Published on November 27, 2025
         </p>
       </header>

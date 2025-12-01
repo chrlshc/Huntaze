@@ -80,7 +80,7 @@ export function FinalCTA({
             >
               <Link
                 href={secondaryCTA.href}
-                className="inline-block px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-white/20 transition-all"
+                className="inline-block px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg border-2 border-[var(--border-default)] hover:border-[var(--border-emphasis)] hover:bg-white/20 transition-all"
               >
                 {secondaryCTA.text}
               </Link>

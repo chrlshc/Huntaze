@@ -27,7 +27,7 @@ export default function ProductScreenshot({
       <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 blur-3xl" />
       
       {/* Container avec bordure subtile */}
-      <div className="relative rounded-xl overflow-hidden border border-white/10 bg-black/50 backdrop-blur-sm">
+      <div className="relative rounded-xl overflow-hidden border border-[var(--border-default)] bg-black/50 backdrop-blur-sm">
         <Image
           src={src}
           alt={alt}

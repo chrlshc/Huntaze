@@ -87,7 +87,7 @@ export function ButtonExamples() {
           <h3 style={{ marginBottom: '8px', color: 'var(--text-primary)' }}>
             Connect Your First Account
           </h3>
-          <p style={{ marginBottom: '16px', color: 'var(--text-tertiary)' }}>
+          <p style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>
             Link your social media accounts to start tracking your growth.
           </p>
           <Button variant="primary" fullWidth>

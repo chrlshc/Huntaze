@@ -47,11 +47,11 @@ export function ShopifyStyleOnboardingModal({
           {/* Layered cards behind for depth effect */}
           <div 
             aria-hidden 
-            className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0, 0, 0, 0.5)] -z-10" 
+            className="absolute inset-x-6 -top-6 h-[86%] rounded-2xl border border-[var(--border-default)] bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0, 0, 0, 0.5)] -z-10" 
           />
           <div 
             aria-hidden 
-            className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0, 0, 0, 0.3)] -z-10" 
+            className="absolute inset-x-10 -top-3 h-[90%] rounded-2xl border border-[var(--border-default)] bg-white/5 backdrop-blur-sm shadow-[0_8px_40px_rgba(0, 0, 0, 0.3)] -z-10" 
           />
           
           {/* Main modal card */}

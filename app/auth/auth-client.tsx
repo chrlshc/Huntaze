@@ -208,7 +208,7 @@ function AuthContent() {
         <div className="relative z-10 text-center text-white max-w-lg">
           {/* Logo */}
           <div className="mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-[var(--border-default)] mb-6">
               <span className="text-2xl font-bold">H</span>
             </div>
           </div>
@@ -236,7 +236,7 @@ function AuthContent() {
           </div>
 
           {/* Stats */}
-          <div className="mt-16 pt-12 border-t border-white/20 grid grid-cols-2 gap-8">
+          <div className="mt-16 pt-12 border-t border-[var(--border-default)] grid grid-cols-2 gap-8">
             <div>
               <p className="text-3xl font-bold text-white">500+</p>
               <p className="text-white/70 text-sm mt-2">Creators Onboarded</p>

@@ -31,7 +31,7 @@ export default function LinearHeader() {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-black/95 backdrop-blur-sm border-b border-white/10' : 'bg-transparent'
+        scrolled ? 'bg-black/95 backdrop-blur-sm border-b border-[var(--border-default)]' : 'bg-transparent'
       }`}>
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
@@ -117,41 +117,41 @@ export default function LinearHeader() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.3 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-black/95 backdrop-blur-xl border-l border-white/10 z-40 md:hidden"
+              className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-black/95 backdrop-blur-xl border-l border-[var(--border-default)] z-40 md:hidden"
             >
               <nav className="flex flex-col h-full pt-20 px-6 pb-6">
                 <div className="flex-1">
                   <Link 
                     href="/features" 
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-white/5"
+                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-[var(--border-subtle)]"
                   >
                     Features
                   </Link>
                   <Link 
                     href="/pricing" 
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-white/5"
+                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-[var(--border-subtle)]"
                   >
                     Pricing
                   </Link>
                   <Link 
                     href="/docs" 
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-white/5"
+                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-[var(--border-subtle)]"
                   >
                     Documentation
                   </Link>
                   <Link 
                     href="/blog" 
                     onClick={() => setIsMenuOpen(false)}
-                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-white/5"
+                    className="block py-4 text-white/90 hover:text-white text-lg font-medium transition-colors border-b border-[var(--border-subtle)]"
                   >
                     Blog
                   </Link>
                 </div>
                 
-                <div className="space-y-4 mt-auto pt-8 border-t border-white/10">
+                <div className="space-y-4 mt-auto pt-8 border-t border-[var(--border-default)]">
                   <Link 
                     href="/login" 
                     onClick={() => setIsMenuOpen(false)}
@@ -169,7 +169,7 @@ export default function LinearHeader() {
                 </div>
 
                 {/* Social links */}
-                <div className="flex items-center justify-center gap-6 mt-8 pt-8 border-t border-white/10">
+                <div className="flex items-center justify-center gap-6 mt-8 pt-8 border-t border-[var(--border-default)]">
                   <a href="#" className="text-white/50 hover:text-white transition-colors">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>

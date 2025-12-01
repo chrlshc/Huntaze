@@ -80,7 +80,7 @@ export function FormExample() {
           <h1 className="text-[var(--text-3xl)] font-[var(--font-weight-medium)] text-[var(--color-text-primary)] mb-[var(--spacing-2)]">
             Contact Form
           </h1>
-          <p className="text-[var(--text-base)] text-[var(--color-text-secondary)]">
+          <p className="text-[var(--text-base)] text-[var(--color-text-primary)]">
             Example form using the Linear design system with design tokens
           </p>
         </div>

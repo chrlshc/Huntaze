@@ -36,7 +36,7 @@ export const SectionLoader: React.FC<SectionLoaderProps> = ({
   showProgress = false,
   progress = 0
 }) => {
-  const loadingState = useLoadingState({
+  const [loadingState] = useLoadingState({
     sectionId,
     loadingType,
     hasCachedData,

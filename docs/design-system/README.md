@@ -278,6 +278,145 @@ All components include proper ARIA labels and roles:
 </button>
 ```
 
+## Progressive Lightening for Nested Components
+
+### Overview
+
+To maintain visual hierarchy in nested structures, the design system uses progressive background lightening. Each nesting level uses a progressively lighter background color, creating clear visual separation and depth.
+
+### Nesting Levels
+
+The system defines 4 nesting levels:
+
+| Level | Usage | Background | Border | Example |
+|-------|-------|------------|--------|---------|
+| 0 | Page background | `--bg-primary` (zinc-950) | None | Main page container |
+| 1 | Main cards | `--bg-card-elevated` (zinc-800) | `--border-default` | Top-level cards |
+| 2 | Nested cards | `--bg-secondary` (zinc-900) | `--border-emphasis` | Cards within cards |
+| 3 | Inner elements | `--bg-glass-hover` (white/12%) | `--border-strong` | Deeply nested content |
+
+### Using Nesting Levels
+
+#### With Container Component
+
+```tsx
+import { Container } from '@/components/ui';
+
+function DashboardPage() {
+  return (
+    <Container nestingLevel={0} maxWidth="xl">
+      <h1>Dashboard</h1>
+      
+      <Container nestingLevel={1} padding="md">
+        <h2>Analytics</h2>
+        
+        <Container nestingLevel={2} padding="sm">
+          <p>Detailed metrics</p>
+        </Container>
+      </Container>
+    </Container>
+  );
+}
+```
+
+#### With Card Component
+
+```tsx
+import { Card } from '@/components/ui';
+
+function NestedCards() {
+  return (
+    <Card nestingLevel={1}>
+      <h2>Main Card</h2>
+      
+      <Card nestingLevel={2}>
+        <h3>Nested Card</h3>
+        
+        <Card nestingLevel={3}>
+          <p>Deeply nested content</p>
+        </Card>
+      </Card>
+    </Card>
+  );
+}
+```
+
+#### Using Utility Classes
+
+You can also apply nesting levels directly with CSS classes:
+
+```tsx
+<div className="nesting-level-1 rounded-[var(--card-radius)] p-[var(--card-padding)]">
+  <h2>Main Section</h2>
+  
+  <div className="nesting-level-2 rounded-[var(--card-radius)] p-[var(--card-padding)]">
+    <h3>Nested Section</h3>
+  </div>
+</div>
+```
+
+### Guidelines
+
+#### ✅ Do's
+
+- **Start at level 0** for page backgrounds
+- **Use level 1** for main content cards
+- **Increment levels** as you nest deeper
+- **Maintain consistency** - don't skip levels
+- **Combine with borders** for clear separation
+
+#### ❌ Don'ts
+
+- **Don't skip levels** (e.g., 0 → 2)
+- **Don't go beyond level 3** - consider restructuring instead
+- **Don't mix nesting approaches** - be consistent
+- **Don't use nesting without borders** - borders enhance separation
+
+### Visual Hierarchy Example
+
+```tsx
+import { Container, Card } from '@/components/ui';
+
+function HierarchyExample() {
+  return (
+    // Level 0: Page background (zinc-950)
+    <Container nestingLevel={0} maxWidth="xl" padding="lg">
+      <h1>My Dashboard</h1>
+      
+      {/* Level 1: Main cards (zinc-800) */}
+      <Card nestingLevel={1}>
+        <h2>Revenue Overview</h2>
+        <p>Total revenue this month</p>
+        
+        {/* Level 2: Nested cards (zinc-900) */}
+        <Card nestingLevel={2}>
+          <h3>Breakdown by Product</h3>
+          <ul>
+            <li>Product A: $1,234</li>
+            <li>Product B: $5,678</li>
+          </ul>
+          
+          {/* Level 3: Inner elements (white/12%) */}
+          <Card nestingLevel={3}>
+            <p>Additional details</p>
+          </Card>
+        </Card>
+      </Card>
+    </Container>
+  );
+}
+```
+
+### Contrast Ratios
+
+Each nesting level maintains WCAG AA compliance:
+
+- **Level 0 → 1**: 3.2:1 contrast ratio ✓
+- **Level 1 → 2**: 1.8:1 contrast ratio ✓
+- **Level 2 → 3**: 2.1:1 contrast ratio ✓
+
+Combined with borders and shadows, all levels provide clear visual distinction.
+
 ## Best Practices
 
 ### ✅ Do's

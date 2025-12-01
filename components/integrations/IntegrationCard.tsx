@@ -170,20 +170,20 @@ export function IntegrationCard({
           </div>
           
           {account?.metadata?.username && (
-            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xs" style={{ color: 'var(--text-primary)' }}>
               @{account.metadata.username}
             </p>
           )}
           
           {account?.createdAt && status === 'connected' && (
-            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xs" style={{ color: 'var(--text-primary)' }}>
               Connected {new Date(account.createdAt).toLocaleDateString()}
             </p>
           )}
         </div>
       </div>
 
-      <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)' }}>{info.description}</p>
+      <p className="mt-4 text-sm" style={{ color: 'var(--text-primary)' }}>{info.description}</p>
 
       {actionError && (
         <div className="mt-4 rounded-lg p-3" style={{ 

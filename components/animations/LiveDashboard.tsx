@@ -262,7 +262,7 @@ const LiveDashboard: React.FC = () => {
                       initial={{ x: -300, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: 300, opacity: 0 }}
-                      className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
+                      className="p-4 bg-white/5 rounded-xl border border-[var(--border-default)] backdrop-blur-sm"
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm">

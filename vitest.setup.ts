@@ -2,6 +2,17 @@ import { beforeAll, afterEach, afterAll } from "vitest";
 
 const useUndici = process.env.USE_UNDICI_MOCKS === "1";
 
+// Polyfill performance.now for Node test environment
+const ensurePerformanceNow = () => {
+  if (typeof globalThis.performance === 'undefined' || typeof globalThis.performance.now !== 'function') {
+    // @ts-expect-error - populate minimal performance object
+    globalThis.performance = {
+      now: () => Date.now(),
+    };
+  }
+};
+ensurePerformanceNow();
+
 if (useUndici) {
   // Undici MockAgent harness (Node native fetch)
   let undiciMod: any;

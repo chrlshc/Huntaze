@@ -29,7 +29,7 @@ export function DashboardExample() {
       ) : (
         <div>
           <h1 className="text-3xl font-medium mb-2">Dashboard</h1>
-          <p className="text-[var(--color-text-secondary)] mb-6">Welcome back!</p>
+          <p className="text-[var(--color-text-primary)] mb-6">Welcome back!</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-[var(--color-bg-surface)] p-6 rounded-md">
               <h3 className="text-lg font-medium mb-2">Total Users</h3>
@@ -143,7 +143,7 @@ export function CardGridExample() {
               <div className="h-48 bg-[var(--color-bg-hover)]" />
               <div className="p-4 space-y-2">
                 <h3 className="text-lg font-medium">Card {i + 1}</h3>
-                <p className="text-[var(--color-text-secondary)]">
+                <p className="text-[var(--color-text-primary)]">
                   This is a sample card with some content.
                 </p>
               </div>
@@ -203,7 +203,7 @@ export function ListExample() {
               </div>
               <div className="flex-1">
                 <h3 className="text-base font-medium">Item {i + 1}</h3>
-                <p className="text-sm text-[var(--color-text-secondary)]">
+                <p className="text-sm text-[var(--color-text-primary)]">
                   This is item number {i + 1} in the list
                 </p>
               </div>
@@ -290,7 +290,7 @@ const LazyContent = React.lazy(() =>
         default: () => (
           <div className="p-6 bg-[var(--color-bg-surface)] rounded-md">
             <h3 className="text-lg font-medium mb-2">Lazy Loaded Content</h3>
-            <p className="text-[var(--color-text-secondary)]">
+            <p className="text-[var(--color-text-primary)]">
               This content was loaded asynchronously with React Suspense.
             </p>
           </div>

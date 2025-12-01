@@ -553,7 +553,7 @@ export default function CampaignsPage() {
                   } catch {}
                   router.push('/campaigns/new');
                 }}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur border border-white/30 rounded-xl hover:bg-white/30 transition-colors font-medium"
+                className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur border border-[var(--border-default)] rounded-xl hover:border-[var(--border-emphasis)] hover:bg-white/30 transition-colors font-medium"
               >
                 <Rocket className="w-5 h-5" />
                 Launch Campaign

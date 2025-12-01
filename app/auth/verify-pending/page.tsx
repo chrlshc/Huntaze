@@ -45,7 +45,7 @@ function VerifyPendingContent() {
           </h1>
 
           {/* Description */}
-          <p className="text-[var(--text-secondary)] text-center mb-6">
+          <p className="text-[var(--text-primary)] text-center mb-6">
             We've sent a verification link to{' '}
             {email && (
               <span className="text-white font-medium">{email}</span>
@@ -66,7 +66,7 @@ function VerifyPendingContent() {
           </div>
 
           {/* Footer note */}
-          <p className="text-xs text-[var(--text-tertiary)] text-center">
+          <p className="text-xs text-[var(--text-primary)] text-center">
             Didn't receive the email? Check your spam folder or{' '}
             <Button 
               variant="primary" 

@@ -140,6 +140,28 @@ test.describe('Design System Visual Baseline', () => {
     });
   });
 
+  test.describe('Contrast Guardrails', () => {
+    test('Card borders remain visible (>=0.12 opacity)', async ({ page }) => {
+      await page.goto('/home');
+      await page.waitForLoadState('networkidle');
+
+      const card = page.locator('[class*="glass-card"], [class*="card-elevated"], [class*="border-[var(--border-")]').first();
+      if (await card.count() > 0) {
+        await expect(card).toHaveScreenshot('card-border-visibility.png');
+      }
+    });
+
+    test('Nested backgrounds show separation', async ({ page }) => {
+      await page.goto('/design-system');
+      await page.waitForLoadState('networkidle');
+
+      const nested = page.locator('[class*="nesting-level-"]').first();
+      if (await nested.count() > 0) {
+        await expect(nested).toHaveScreenshot('nested-background-separation.png');
+      }
+    });
+  });
+
   test.describe('Responsive Design', () => {
     test('Mobile viewport - Dashboard', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });

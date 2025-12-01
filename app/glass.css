@@ -4,7 +4,7 @@
  * Most glass effects can now be achieved with Tailwind utilities:
  * - bg-white/5 or bg-black/5 for background
  * - backdrop-blur-xl for blur effect
- * - border-white/10 for borders
+ * - border-[var(--border-default)] for borders
  * 
  * This file only contains custom glass effects not available in Tailwind.
  * Use design tokens from styles/design-tokens.css for consistency.
@@ -86,12 +86,12 @@
 /*
   OLD GLASS CLASSES → NEW TAILWIND UTILITIES
   
-  .glass → bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl
+  .glass → bg-white/5 backdrop-blur-xl border border-[var(--border-default)] rounded-2xl
   
-  .glass-card → bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8
+  .glass-card → bg-white/5 backdrop-blur-xl border border-[var(--border-default)] rounded-2xl p-8
                 transition-all hover:-translate-y-0.5 hover:shadow-lg
   
-  .glass-button → bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg
+  .glass-button → bg-white/5 backdrop-blur-xl border border-[var(--border-default)] rounded-lg
                   px-6 py-3 transition-all hover:bg-white/10
   
   EXAMPLES:
@@ -100,7 +100,7 @@
   <div className="glass-card">Content</div>
   
   After:
-  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+  <div className="bg-white/5 backdrop-blur-xl border border-[var(--border-default)] rounded-2xl p-8">
     Content
   </div>
   

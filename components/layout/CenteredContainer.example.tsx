@@ -17,26 +17,26 @@ export function DashboardExample() {
     <CenteredContainer maxWidth="lg" padding={24}>
       <header className="mb-8">
         <h1 className="text-3xl font-medium text-primary mb-2">Dashboard</h1>
-        <p className="text-secondary">Welcome back! Here's what's happening.</p>
+        <p className="text-primary">Welcome back! Here's what's happening.</p>
       </header>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-surface p-6 rounded-lg border border-subtle">
-          <h3 className="text-secondary text-sm mb-2">Total Users</h3>
+          <h3 className="text-primary text-sm mb-2">Total Users</h3>
           <p className="text-3xl font-medium text-primary">1,234</p>
-          <p className="text-sm text-secondary mt-2">+12% from last month</p>
+          <p className="text-sm text-primary mt-2">+12% from last month</p>
         </div>
         
         <div className="bg-surface p-6 rounded-lg border border-subtle">
-          <h3 className="text-secondary text-sm mb-2">Revenue</h3>
+          <h3 className="text-primary text-sm mb-2">Revenue</h3>
           <p className="text-3xl font-medium text-primary">$45,678</p>
-          <p className="text-sm text-secondary mt-2">+8% from last month</p>
+          <p className="text-sm text-primary mt-2">+8% from last month</p>
         </div>
         
         <div className="bg-surface p-6 rounded-lg border border-subtle">
-          <h3 className="text-secondary text-sm mb-2">Growth</h3>
+          <h3 className="text-primary text-sm mb-2">Growth</h3>
           <p className="text-3xl font-medium text-primary">+12%</p>
-          <p className="text-sm text-secondary mt-2">Above target</p>
+          <p className="text-sm text-primary mt-2">Above target</p>
         </div>
       </div>
       
@@ -45,15 +45,15 @@ export function DashboardExample() {
         <div className="bg-surface rounded-lg border border-subtle">
           <div className="p-4 border-b border-subtle">
             <p className="text-primary">New user registered</p>
-            <p className="text-sm text-secondary">2 minutes ago</p>
+            <p className="text-sm text-primary">2 minutes ago</p>
           </div>
           <div className="p-4 border-b border-subtle">
             <p className="text-primary">Payment received</p>
-            <p className="text-sm text-secondary">15 minutes ago</p>
+            <p className="text-sm text-primary">15 minutes ago</p>
           </div>
           <div className="p-4">
             <p className="text-primary">New feature deployed</p>
-            <p className="text-sm text-secondary">1 hour ago</p>
+            <p className="text-sm text-primary">1 hour ago</p>
           </div>
         </div>
       </section>
@@ -68,7 +68,7 @@ export function FormExample() {
   return (
     <CenteredContainer maxWidth="sm" padding={32}>
       <h1 className="text-3xl font-medium text-primary mb-2">Account Settings</h1>
-      <p className="text-secondary mb-8">Manage your account preferences</p>
+      <p className="text-primary mb-8">Manage your account preferences</p>
       
       <form className="space-y-6">
         <div>
@@ -130,7 +130,7 @@ export function MarketingExample() {
         <h1 className="text-5xl font-medium text-primary mb-4">
           Build Better Products
         </h1>
-        <p className="text-xl text-secondary max-w-2xl mx-auto">
+        <p className="text-xl text-primary max-w-2xl mx-auto">
           The all-in-one platform for modern teams to collaborate, 
           ship faster, and build products users love.
         </p>
@@ -144,7 +144,7 @@ export function MarketingExample() {
             </svg>
           </div>
           <h3 className="text-xl font-medium text-primary mb-2">Lightning Fast</h3>
-          <p className="text-secondary">
+          <p className="text-primary">
             Optimized for speed and performance. Your team will love how fast it is.
           </p>
         </div>
@@ -156,7 +156,7 @@ export function MarketingExample() {
             </svg>
           </div>
           <h3 className="text-xl font-medium text-primary mb-2">Secure by Default</h3>
-          <p className="text-secondary">
+          <p className="text-primary">
             Enterprise-grade security built in from day one. Your data is safe with us.
           </p>
         </div>
@@ -168,7 +168,7 @@ export function MarketingExample() {
             </svg>
           </div>
           <h3 className="text-xl font-medium text-primary mb-2">Team Collaboration</h3>
-          <p className="text-secondary">
+          <p className="text-primary">
             Built for teams. Collaborate in real-time and ship faster together.
           </p>
         </div>
@@ -191,11 +191,11 @@ export function ArticleExample() {
     <CenteredContainer maxWidth="sm" padding={24} className="py-12">
       <article>
         <header className="mb-8">
-          <p className="text-sm text-secondary mb-2">November 23, 2024</p>
+          <p className="text-sm text-primary mb-2">November 23, 2024</p>
           <h1 className="text-4xl font-medium text-primary mb-4">
             Introducing Our New Design System
           </h1>
-          <p className="text-lg text-secondary">
+          <p className="text-lg text-primary">
             A comprehensive guide to our Linear-inspired design system
             and how it improves the user experience.
           </p>
@@ -245,23 +245,23 @@ export function MinimalPaddingExample() {
       <div className="bg-surface rounded-lg border border-subtle overflow-hidden">
         <div className="p-6 border-b border-subtle">
           <h2 className="text-xl font-medium text-primary">Data Table</h2>
-          <p className="text-sm text-secondary">View and manage your data</p>
+          <p className="text-sm text-primary">View and manage your data</p>
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-hover">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-primary uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-primary uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-primary uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-primary uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -269,7 +269,7 @@ export function MinimalPaddingExample() {
             <tbody className="divide-y divide-subtle">
               <tr>
                 <td className="px-6 py-4 text-sm text-primary">John Doe</td>
-                <td className="px-6 py-4 text-sm text-secondary">john@example.com</td>
+                <td className="px-6 py-4 text-sm text-primary">john@example.com</td>
                 <td className="px-6 py-4 text-sm">
                   <span className="px-2 py-1 text-xs rounded-full bg-green-500/10 text-green-500">
                     Active
@@ -283,7 +283,7 @@ export function MinimalPaddingExample() {
               </tr>
               <tr>
                 <td className="px-6 py-4 text-sm text-primary">Jane Smith</td>
-                <td className="px-6 py-4 text-sm text-secondary">jane@example.com</td>
+                <td className="px-6 py-4 text-sm text-primary">jane@example.com</td>
                 <td className="px-6 py-4 text-sm">
                   <span className="px-2 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-500">
                     Pending
@@ -317,7 +317,7 @@ export function CustomStyledExample() {
         <h2 className="text-3xl font-medium text-primary mb-4">
           Ready to Get Started?
         </h2>
-        <p className="text-lg text-secondary mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-primary mb-8 max-w-2xl mx-auto">
           Join thousands of teams already using our platform to build
           better products faster.
         </p>

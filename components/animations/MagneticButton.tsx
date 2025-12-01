@@ -82,12 +82,12 @@ const MagneticButton: React.FC<MagneticButtonProps> = ({
     `,
     secondary: `
       bg-white/10 text-white backdrop-blur-md
-      border border-white/20 hover:border-white/40
+      border border-[var(--border-default)] hover:border-[var(--border-emphasis)]
       hover:bg-white/20
     `,
     ghost: `
       bg-transparent text-white
-      border-2 border-transparent hover:border-white/20
+      border-2 border-transparent hover:border-[var(--border-emphasis)]
       hover:bg-white/5
     `
   };

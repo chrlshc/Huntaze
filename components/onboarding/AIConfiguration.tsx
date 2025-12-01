@@ -66,8 +66,8 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
               onClick={() => handleConfigChange('verbosity', option.value)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 config.verbosity === option.value
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-[var(--accent-primary)] bg-blue-50'
+                  : 'border-[var(--border-default)] hover:border-[var(--border-emphasis)]'
               }`}
             >
               <div className="font-medium text-gray-900 mb-1">{option.label}</div>
@@ -95,8 +95,8 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
               onClick={() => handleConfigChange('helpFrequency', option.value)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 config.helpFrequency === option.value
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-[var(--accent-primary)] bg-blue-50'
+                  : 'border-[var(--border-default)] hover:border-[var(--border-emphasis)]'
               }`}
             >
               <div className="font-medium text-gray-900 mb-1">{option.label}</div>
@@ -124,8 +124,8 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
               onClick={() => handleConfigChange('suggestionStyle', option.value)}
               className={`p-4 rounded-lg border-2 text-left transition-all ${
                 config.suggestionStyle === option.value
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-[var(--accent-primary)] bg-blue-50'
+                  : 'border-[var(--border-default)] hover:border-[var(--border-emphasis)]'
               }`}
             >
               <div className="font-medium text-gray-900 mb-1">{option.label}</div>
@@ -141,7 +141,7 @@ export function AIConfiguration({ onComplete }: AIConfigurationProps) {
           <h3 className="font-medium text-gray-900">Preview AI Response</h3>
           <Bot className="w-5 h-5 text-blue-600" />
         </div>
-        <Card className="bg-white rounded-lg p-4 border border-gray-200">
+        <Card className="bg-white rounded-lg p-4 border border-[var(--border-default)]">
           <p className="text-gray-700">{getPreviewText()}</p>
         </Card>
         <p className="text-xs text-gray-500">

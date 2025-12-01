@@ -260,7 +260,7 @@ export default function BlogPage() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border border-white/30 focus:outline-none focus:border-white"
+              className="flex-1 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border border-[var(--border-default)] focus:outline-none focus:border-[var(--border-emphasis)]"
             />
             <Button variant="ghost" type="submit">
   Subscribe

@@ -306,7 +306,7 @@ export default function PerformancePage() {
               </a>
               <a
                 href="/docs"
-                className="inline-flex items-center px-8 py-4 border border-white/20 text-white font-medium rounded-xl hover:bg-white/10 transition-colors"
+                className="inline-flex items-center px-8 py-4 border border-[var(--border-default)] text-white font-medium rounded-xl hover:border-[var(--border-emphasis)] hover:bg-white/10 transition-colors"
               >
                 Technical docs
               </a>

@@ -156,7 +156,7 @@ export async function GET(request: NextRequest): Promise<Response> {
               fontWeight: 900,
               color: TEXT_COLOR,
               padding: '20px 40px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
               borderRadius: 20,
               background: CARD_BACKGROUND,
               boxShadow: `0px 10px 50px rgba(94, 106, 210, 0.3)`, // Magic Blue glow
