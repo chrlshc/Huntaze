@@ -20,53 +20,53 @@ interface QuickAction {
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
-    id: 'messages',
-    label: 'Messages',
-    icon: MessageSquare,
-    href: '/messages',
-    description: 'View and respond to messages'
+    id: 'connect-platforms',
+    label: 'Connect your platforms',
+    icon: Zap,
+    href: '/marketing/social',
+    description: 'Link OnlyFans, Instagram, TikTok and more.'
   },
   {
-    id: 'fans',
-    label: 'Fans',
+    id: 'enable-assistant',
+    label: 'Turn on AI assistant',
+    icon: MessageSquare,
+    href: '/onlyfans-assisted',
+    description: 'Let Huntaze handle repetitive messages for you.'
+  },
+  {
+    id: 'import-fans',
+    label: 'Import your fans',
     icon: Users,
     href: '/fans',
-    description: 'Manage your fan relationships'
+    description: 'Centralize fan data and see who your VIPs are.'
   },
   {
-    id: 'analytics',
-    label: 'Analytics',
+    id: 'plan-content',
+    label: 'Plan your content',
+    icon: Calendar,
+    href: '/marketing/calendar',
+    description: 'Map out launches and promos across platforms.'
+  },
+  {
+    id: 'review-analytics',
+    label: 'Review your analytics',
     icon: BarChart3,
     href: '/analytics',
-    description: 'View performance insights'
+    description: 'Understand revenue, growth, and retention trends.'
   },
   {
-    id: 'schedule',
-    label: 'Schedule',
-    icon: Calendar,
-    href: '/schedule',
-    description: 'Plan your content calendar'
-  },
-  {
-    id: 'automations',
-    label: 'Automations',
-    icon: Zap,
-    href: '/automations',
-    description: 'Set up automated workflows'
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
+    id: 'configure-account',
+    label: 'Finish account setup',
     icon: Settings,
     href: '/settings',
-    description: 'Configure your account'
+    description: 'Update profile, team access, and notifications.'
   }
 ];
 
 export function QuickActions() {
   return (
     <section className="quick-actions-section">
-      <h2 className="quick-actions-title">Quick Actions</h2>
+      <h2 className="quick-actions-title">Get set up</h2>
       
       <div className="quick-actions-grid">
         {QUICK_ACTIONS.map((action) => {
