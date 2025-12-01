@@ -28,7 +28,7 @@
      ============================================ */
   
   /* Layout dimensions */
-  --universal-sidebar-width: 356px; /* Match Shopify sidebar width */
+  --universal-sidebar-width: 280px; /* Slightly narrower sidebar for more canvas space */
   --huntaze-sidebar-width: var(--universal-sidebar-width);
   --huntaze-header-height: 64px;
   
@@ -73,16 +73,16 @@
   --nav-search-bg: #F3F4F6;                    /* Search field background */
   --nav-search-border: rgba(15, 23, 42, 0.12); /* Search border */
 
-  /* Sidebar (light Shopify-style) */
-  --sidebar-surface: #F7F7F7;                  /* Light sidebar background */
+  /* Sidebar (light Shopify-style, darker than canvas) */
+  --sidebar-surface: #E5E7EB;                  /* Light gray, darker than canvas */
   --sidebar-border: var(--nav-border);         /* Divider between sidebar and canvas */
   --sidebar-text: #111827;                     /* Primary sidebar text */
   --sidebar-text-muted: #4B5563;               /* Secondary sidebar text */
-  --sidebar-hover: #E5E7EB;                    /* Hover fill inside light sidebar */
+  --sidebar-hover: #D1D5DB;                    /* Slightly darker hover inside sidebar */
   --sidebar-active-bg: var(--nav-active-bg);   /* Active item background on light sidebar */
 
   /* Header-specific colors (dark shell with white text) */
-  --header-bg: #020617;                        /* Header background (dark) */
+  --header-bg: #111827;                        /* Header background (dark slate) */
   --header-border: rgba(15, 23, 42, 0.9);      /* Stronger bottom border for separation */
   --header-text: #F9FAFB;                      /* Primary header text (white) */
   --header-text-muted: #E5E7EB;                /* Secondary header text/icons */

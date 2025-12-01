@@ -17,13 +17,24 @@ export default function Header() {
         <div className="flex items-center gap-[var(--spacing-4)]">
           <MobileSidebar />
           <Link href="/home" className="hidden md:flex items-center" aria-label="Huntaze home">
-            <Image
-              src="/huntaze-logo-horizontal.svg"
-              alt="Huntaze"
-              width={140}
-              height={40}
-              priority
-            />
+            <div
+              className="flex items-center justify-center"
+              style={{
+                padding: '4px 8px',
+                borderRadius: '8px',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--header-border)',
+                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.18)',
+              }}
+            >
+              <Image
+                src="/huntaze-logo-horizontal.svg"
+                alt="Huntaze"
+                width={110}
+                height={32}
+                priority
+              />
+            </div>
             <span className="sr-only">Huntaze</span>
           </Link>
         </div>
