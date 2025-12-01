@@ -177,10 +177,10 @@ export default function BillingPage() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative elevated-card rounded-2xl border-2 transition-all cursor-pointer ${
+              className={`relative elevated-card rounded-2xl border-2 transition-shadow cursor-pointer ${
                 selectedPlan === plan.id
-                  ? 'border-purple-600 shadow-2xl shadow-purple-600/20 scale-105'
-                  : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                  ? 'border-purple-600 shadow-lg shadow-purple-600/15'
+                  : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
               }`}
               onClick={() => setSelectedPlan(plan.id)}
             >

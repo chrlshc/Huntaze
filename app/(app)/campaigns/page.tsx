@@ -420,7 +420,7 @@ export default function CampaignsPage() {
                   }
                 } catch {}
               }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-600/25 transition-all font-medium"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl shadow-md hover:shadow-lg transition-shadow font-medium"
             >
               <campaignContent.action.icon className="w-5 h-5" />
               {campaignContent.action.label}
@@ -442,7 +442,7 @@ export default function CampaignsPage() {
                 {campaignContent.templates.map((template, index) => {
                   const TemplateIcon = template.icon;
                   return (
-                  <Card key={index} className="group rounded-xl hover:border-purple-300 hover:shadow-md transition-all cursor-pointer overflow-hidden">
+                  <Card key={index} className="group rounded-xl hover:border-purple-300 cursor-pointer overflow-hidden">
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className={`p-3 rounded-xl bg-${template.color}-50`}>

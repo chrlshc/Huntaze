@@ -95,18 +95,14 @@ export default function ProfilePage() {
           {/* Quick Actions */}
           <div className="grid md:grid-cols-2 gap-4 mb-6">
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-3 p-4 elevated-card rounded-xl hover:shadow-md transition-all"
+              className="flex items-center justify-center gap-3 p-4 elevated-card rounded-xl transition-colors hover:bg-gray-50"
             >
               <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               <span className="font-medium text-gray-900 dark:text-white">Account Settings</span>
             </motion.button>
             
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-3 p-4 elevated-card rounded-xl hover:shadow-md transition-all"
+              className="flex items-center justify-center gap-3 p-4 elevated-card rounded-xl transition-colors hover:bg-gray-50"
             >
               <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               <span className="font-medium text-gray-900 dark:text-white">Sign Out</span>

@@ -61,10 +61,10 @@ export default function QuickActions({ actions = defaultActions }: QuickActionsP
             href={action.href}
             className={`
               flex items-center gap-3 px-4 py-3 rounded-lg
-              transition-all duration-200
+              transition-colors duration-200
               ${
                 action.variant === 'primary'
-                  ? 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-sm hover:shadow-md'
+                  ? 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-sm'
                   : 'bg-theme-surface border border-theme-border text-theme-text hover:border-indigo-500/50'
               }
             `}

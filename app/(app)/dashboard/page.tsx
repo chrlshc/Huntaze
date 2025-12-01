@@ -440,7 +440,7 @@ export default function DashboardPage() {
                 <Link
                   key={action.id}
                   href={action.href}
-                  className="huntaze-card flex items-center transition-all hover:shadow-[var(--shadow-card-hover)]"
+                  className="huntaze-card flex items-center"
                   style={{
                     gap: 'var(--spacing-md)',
                     cursor: 'pointer'
