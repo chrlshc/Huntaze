@@ -59,9 +59,9 @@
   --color-text-heading: #111827;   /* Near-black - headings */
   --color-text-inactive: #9CA3AF;  /* Muted gray for inactive elements (WCAG compliant: 4.5:1) */
 
-  /* Navigation Shell (light header, dedicated dark sidebar) */
-  --nav-surface: #111827;                       /* Legacy nav surface (unused for header) */
-  --nav-surface-elevated: #F7F7F7;             /* Header/search surface background */
+  /* Navigation Shell (dark header, light sidebar – Shopify-inspired) */
+  --nav-surface: #020617;                      /* Header background (dark) */
+  --nav-surface-elevated: #F7F7F7;             /* Sidebar background (light gray) */
   --nav-border: rgba(15, 23, 42, 0.12);        /* Sidebar/header borders */
   --nav-border-strong: rgba(15, 23, 42, 0.18); /* Stronger divider for focus */
   --nav-text: #111827;                         /* Primary nav text (sidebar) */
@@ -73,21 +73,21 @@
   --nav-search-bg: #F3F4F6;                    /* Search field background */
   --nav-search-border: rgba(15, 23, 42, 0.12); /* Search border */
 
-  /* Sidebar (dark shell that stays black) */
-  --sidebar-surface: #020617;                  /* Deep navy/black for sidebar */
-  --sidebar-border: rgba(15, 23, 42, 0.9);     /* Strong border between sidebar and canvas */
-  --sidebar-text: #F9FAFB;                     /* Primary sidebar text (white) */
-  --sidebar-text-muted: #9CA3AF;               /* Secondary sidebar text */
-  --sidebar-hover: #111827;                    /* Hover fill inside dark sidebar */
-  --sidebar-active-bg: rgba(148, 163, 184, 0.18); /* Active item background on dark sidebar */
+  /* Sidebar (light Shopify-style) */
+  --sidebar-surface: #F7F7F7;                  /* Light sidebar background */
+  --sidebar-border: var(--nav-border);         /* Divider between sidebar and canvas */
+  --sidebar-text: #111827;                     /* Primary sidebar text */
+  --sidebar-text-muted: #4B5563;               /* Secondary sidebar text */
+  --sidebar-hover: #E5E7EB;                    /* Hover fill inside light sidebar */
+  --sidebar-active-bg: var(--nav-active-bg);   /* Active item background on light sidebar */
 
-  /* Header-specific colors (Shopify-style, light shell) */
-  --header-bg: #FFFFFF;                        /* Header background (white) */
-  --header-border: #E1E3E5;                    /* Subtle bottom border */
-  --header-text: #202223;                      /* Primary header text (almost black) */
-  --header-text-muted: #6D7175;                /* Secondary header text/icons */
-  --header-icon-hover-bg: #F1F2F4;             /* Light gray hover for icons */
-  --header-focus-ring: rgba(129, 140, 248, 0.35); /* Softer indigo focus ring */
+  /* Header-specific colors (dark shell with white text) */
+  --header-bg: #020617;                        /* Header background (dark) */
+  --header-border: rgba(15, 23, 42, 0.9);      /* Stronger bottom border for separation */
+  --header-text: #F9FAFB;                      /* Primary header text (white) */
+  --header-text-muted: #E5E7EB;                /* Secondary header text/icons */
+  --header-icon-hover-bg: rgba(15, 23, 42, 0.85); /* Subtle lighter hover inside dark header */
+  --header-focus-ring: rgba(129, 140, 248, 0.6); /* Indigo focus ring on dark background */
   
   /* Border Colors */
   --color-border-light: var(--text-tertiary);  /* Medium-dark gray for 3:1 contrast (WCAG compliant) */
