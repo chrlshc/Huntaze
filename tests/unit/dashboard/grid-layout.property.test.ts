@@ -213,16 +213,16 @@ describe('Dashboard Grid Layout Properties', () => {
     const root = document.documentElement;
     const styles = window.getComputedStyle(root);
 
-    // Structural dimensions
-    expect(styles.getPropertyValue('--huntaze-sidebar-width').trim()).toBe('256px');
+    // Structural dimensions (Shopify-like sidebar width)
+    expect(styles.getPropertyValue('--huntaze-sidebar-width').trim()).toBe('356px');
     expect(styles.getPropertyValue('--huntaze-header-height').trim()).toBe('64px');
 
     // Z-index values
     expect(styles.getPropertyValue('--huntaze-z-index-header').trim()).toBe('500');
     expect(styles.getPropertyValue('--huntaze-z-index-nav').trim()).toBe('400');
 
-    // Color tokens
-    expect(styles.getPropertyValue('--bg-app').trim()).toBe('#F8F9FB');
+    // Color tokens (Shopify-like canvas)
+    expect(styles.getPropertyValue('--bg-app').trim()).toBe('#F1F2F4');
     expect(styles.getPropertyValue('--bg-surface').trim()).toBe('#FFFFFF');
     expect(styles.getPropertyValue('--color-indigo').trim()).toBe('#6366f1');
     expect(styles.getPropertyValue('--color-text-main').trim()).toBe('#1F2937');

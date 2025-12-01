@@ -18,6 +18,9 @@
 
 .beta-stats-section {
   padding: var(--space-12) var(--space-8);
+  /* Ensure stats section stays on pure black even if
+     dashboard tokens switch --bg-app to a light canvas */
+  --bg-app: #000000;
   background: var(--bg-app); /* Pure black - NO gradients */
 }
 

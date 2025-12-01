@@ -66,7 +66,8 @@ describe('Color System Migration - Property Tests', () => {
 
     it('should use var(--bg-app) for canvas backgrounds', () => {
       const css = readCSSModule('styles/dashboard-shopify-tokens.css');
-      expect(css).toContain('--bg-app: #F8F9FB');
+      // Shopify-like admin canvas color
+      expect(css).toContain('--bg-app: #F1F2F4');
     });
   });
 
