@@ -70,15 +70,15 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  transition: all var(--transition-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
   position: relative;
   overflow: hidden;
 }
 
 .stat-card:hover {
   border-color: var(--border-emphasis);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-soft);
+  background-color: var(--bg-surface);
 }
 
 .stat-card-header {
