@@ -8,30 +8,54 @@ interface SearchResult {
   href: string;
 }
 
-// Mock data for navigation items
-const navigationItems = [
+// Navigation items - cover all main app sections
+const navigationItems: Array<Omit<SearchResult, 'type'>> = [
+  // Core dashboard
   { id: 'nav-home', title: 'Home', subtitle: 'Dashboard overview', href: '/home' },
-  { id: 'nav-analytics', title: 'Analytics', subtitle: 'View your stats', href: '/analytics' },
-  { id: 'nav-content', title: 'Content', subtitle: 'Manage your posts', href: '/content' },
-  { id: 'nav-messages', title: 'Messages', subtitle: 'Chat with your audience', href: '/messages' },
-  { id: 'nav-integrations', title: 'Integrations', subtitle: 'Connect platforms', href: '/integrations' },
-  { id: 'nav-settings', title: 'Settings', subtitle: 'Account preferences', href: '/settings' },
+
+  // OnlyFans
+  { id: 'nav-onlyfans', title: 'OnlyFans Dashboard', subtitle: 'Messages, fans, PPV, AI assistant', href: '/onlyfans' },
+  { id: 'nav-onlyfans-messages', title: 'OnlyFans Messages', subtitle: 'Inbox, auto-replies, AI chat', href: '/onlyfans/messages' },
+  { id: 'nav-onlyfans-fans', title: 'OnlyFans Fans', subtitle: 'Subscribers, segments, churn insights', href: '/onlyfans/fans' },
+  { id: 'nav-onlyfans-ppv', title: 'OnlyFans PPV', subtitle: 'Pay-per-view offers & upsells', href: '/onlyfans/ppv' },
+  { id: 'nav-onlyfans-settings', title: 'OnlyFans Settings', subtitle: 'Connection & automation rules', href: '/onlyfans/settings' },
+
+  // Analytics
+  { id: 'nav-analytics', title: 'Analytics Overview', subtitle: 'Revenue, ARPU, LTV, churn', href: '/analytics' },
+  { id: 'nav-analytics-pricing', title: 'Pricing Analytics', subtitle: 'Optimize subscription & PPV pricing', href: '/analytics/pricing' },
+  { id: 'nav-analytics-churn', title: 'Churn Analytics', subtitle: 'Detect at-risk fans and retain them', href: '/analytics/churn' },
+  { id: 'nav-analytics-upsells', title: 'Upsell Automation', subtitle: 'Increase revenue per fan', href: '/analytics/upsells' },
+  { id: 'nav-analytics-forecast', title: 'Revenue Forecast', subtitle: 'Predict future earnings', href: '/analytics/forecast' },
+  { id: 'nav-analytics-payouts', title: 'Payouts', subtitle: 'Track cashouts and payouts', href: '/analytics/payouts' },
+
+  // Marketing & Social
+  { id: 'nav-marketing', title: 'Marketing & Social', subtitle: 'Campaigns, social posts, calendar', href: '/marketing' },
+  { id: 'nav-marketing-campaigns', title: 'Campaigns', subtitle: 'Email, DM, SMS & push campaigns', href: '/marketing/campaigns' },
+  { id: 'nav-marketing-new-campaign', title: 'Create Campaign', subtitle: 'Start a new campaign', href: '/marketing/campaigns/new' },
+  { id: 'nav-marketing-social', title: 'Social Planner', subtitle: 'Instagram, TikTok, Reddit posts', href: '/marketing/social' },
+  { id: 'nav-marketing-calendar', title: 'Marketing Calendar', subtitle: 'Plan your content schedule', href: '/marketing/calendar' },
+
+  // Content
+  { id: 'nav-content', title: 'Content Creation', subtitle: 'Create, schedule and publish content', href: '/content' },
+
+  // Integrations & settings
+  { id: 'nav-integrations', title: 'Integrations', subtitle: 'Connect OnlyFans, Instagram, TikTok, Reddit', href: '/integrations' },
+  { id: 'nav-settings', title: 'Account Settings', subtitle: 'Profile, billing & preferences', href: '/settings' },
 ];
 
-// Mock data for stats
-const statItems = [
-  { id: 'stat-tiktok', title: 'TikTok Stats', subtitle: '1.2M followers', href: '/analytics?platform=tiktok' },
-  { id: 'stat-instagram', title: 'Instagram Stats', subtitle: '850K followers', href: '/analytics?platform=instagram' },
-  { id: 'stat-youtube', title: 'YouTube Stats', subtitle: '500K subscribers', href: '/analytics?platform=youtube' },
-  { id: 'stat-engagement', title: 'Engagement Rate', subtitle: '8.5% average', href: '/analytics?metric=engagement' },
-  { id: 'stat-revenue', title: 'Revenue', subtitle: '$12,450 this month', href: '/analytics?metric=revenue' },
+// Key stats / shortcuts
+const statItems: Array<Omit<SearchResult, 'type'>> = [
+  { id: 'stat-revenue', title: 'Monthly Revenue', subtitle: 'Overview of creator earnings', href: '/analytics?metric=revenue' },
+  { id: 'stat-fans', title: 'Total Fans', subtitle: 'Active, new and churned fans', href: '/analytics?metric=fans' },
+  { id: 'stat-engagement', title: 'Engagement Rate', subtitle: 'Messages, likes and replies', href: '/analytics?metric=engagement' },
+  { id: 'stat-ai-usage', title: 'AI Usage', subtitle: 'AI messages and quota remaining', href: '/home#ai-usage' },
 ];
 
-// Mock data for content
-const contentItems = [
-  { id: 'content-1', title: 'Latest Video Post', subtitle: 'Published 2 days ago', href: '/content/1' },
-  { id: 'content-2', title: 'Collaboration Campaign', subtitle: 'Draft', href: '/content/2' },
-  { id: 'content-3', title: 'Product Launch Announcement', subtitle: 'Scheduled', href: '/content/3' },
+// High-value content/tools
+const contentItems: Array<Omit<SearchResult, 'type'>> = [
+  { id: 'content-create', title: 'Create New Content', subtitle: 'Open the content creation workspace', href: '/content' },
+  { id: 'content-plan', title: 'Plan Social Posts', subtitle: 'Use the social planner and calendar', href: '/marketing/social' },
+  { id: 'content-automation', title: 'Set Up Automations', subtitle: 'Configure smart flows and campaigns', href: '/automations' },
 ];
 
 export async function GET(request: NextRequest) {
@@ -44,12 +68,15 @@ export async function GET(request: NextRequest) {
 
   const results: SearchResult[] = [];
 
-  // Search navigation items
+  // Helper: test if any searchable text matches the query
+  const matchesQuery = (item: { title: string; subtitle?: string }, q: string) => {
+    const haystack = `${item.title} ${item.subtitle || ''}`.toLowerCase();
+    return haystack.includes(q);
+  };
+
+  // Search navigation items (routes / sections)
   navigationItems.forEach((item) => {
-    if (
-      item.title.toLowerCase().includes(query) ||
-      item.subtitle?.toLowerCase().includes(query)
-    ) {
+    if (matchesQuery(item, query)) {
       results.push({
         ...item,
         type: 'navigation',
@@ -59,10 +86,7 @@ export async function GET(request: NextRequest) {
 
   // Search stats
   statItems.forEach((item) => {
-    if (
-      item.title.toLowerCase().includes(query) ||
-      item.subtitle?.toLowerCase().includes(query)
-    ) {
+    if (matchesQuery(item, query)) {
       results.push({
         ...item,
         type: 'stat',
@@ -72,10 +96,7 @@ export async function GET(request: NextRequest) {
 
   // Search content
   contentItems.forEach((item) => {
-    if (
-      item.title.toLowerCase().includes(query) ||
-      item.subtitle?.toLowerCase().includes(query)
-    ) {
+    if (matchesQuery(item, query)) {
       results.push({
         ...item,
         type: 'content',
