@@ -261,7 +261,7 @@ export default function OnlyFansPPVPage() {
               {sortedCampaigns.map((campaign) => (
                 <div
                   key={campaign.id}
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                  className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                 >
                   {/* Thumbnail */}
                   <div className="relative h-48 bg-gray-100 dark:bg-gray-700">

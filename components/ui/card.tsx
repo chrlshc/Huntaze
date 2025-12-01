@@ -30,11 +30,11 @@ export function Card({ className, variant = 'default', nested = false, nestingLe
           : variant === 'elevated'
           ? "card-elevated" // Uses elevated card utility from design-tokens.css
           : `nesting-level-${effectiveNestingLevel}`, // Use nesting utility classes
-        // Hover state with enhanced border visibility
-        "transition-all duration-[var(--transition-base)]",
+        // Hover state with subtle border/shadow adjustments only
+        "transition-shadow duration-[var(--transition-base)]",
         effectiveNestingLevel >= 2
-          ? "hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-md)]"
-          : "hover:border-[var(--border-emphasis)] hover:shadow-[var(--shadow-md)]",
+          ? "hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-soft)]"
+          : "hover:border-[var(--border-emphasis)] hover:shadow-[var(--shadow-soft)]",
         className,
       )}
       data-nesting-level={effectiveNestingLevel}

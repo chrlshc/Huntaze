@@ -74,7 +74,7 @@ export function UpsellOpportunity({
   }
 
   return (
-    <Card className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-shadow">
+    <Card className="bg-white border border-gray-200 rounded-lg p-5">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">

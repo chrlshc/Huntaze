@@ -127,11 +127,11 @@ export default function CalendarPage() {
             return (
               <div
                 key={day}
-                className={`min-h-24 p-2 border rounded-lg ${
+                className={`min-h-24 p-2 border rounded-lg cursor-pointer transition-colors ${
                   isToday 
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                } hover:shadow-md transition-shadow cursor-pointer`}
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                }`}
               >
                 <div className={`text-sm font-semibold mb-1 ${
                   isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'
