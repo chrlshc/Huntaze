@@ -112,7 +112,7 @@ export function PlatformStatus() {
     return (
       <div className="platform-status-section">
         <div className="section-header">
-          <h2 className="section-title">Platform Connections</h2>
+          <h2 className="section-title">Platform connections</h2>
         </div>
         <div className="platform-status-error">
           <p>{error}</p>
@@ -127,17 +127,19 @@ export function PlatformStatus() {
   return (
     <div className="platform-status-section">
       <div className="section-header">
-        <h2 className="section-title">Platform Connections</h2>
+        <h2 className="section-title">Platform connections</h2>
         <Link href="/integrations" className="manage-link">
-          Manage
+          Manage connections
         </Link>
       </div>
 
       {!hasIntegrations ? (
         <div className="platform-status-empty">
-          <p className="empty-message">No platforms connected yet</p>
+          <p className="empty-message">
+            Connect OnlyFans, Instagram, TikTok, and more to see all of your revenue and messages in one place.
+          </p>
           <Link href="/integrations" className="btn-secondary">
-            Connect Platform
+            Connect platforms
           </Link>
         </div>
       ) : (

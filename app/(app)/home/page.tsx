@@ -215,8 +215,11 @@ export default function HomePage() {
     <div className="home-page">
       {/* Page Header */}
       <div className="page-header">
-        <h1 className="page-title">Home</h1>
-        <p className="page-subtitle">Welcome back! Here's your performance overview.</p>
+        <h1 className="page-title">Welcome to Huntaze</h1>
+        <p className="page-subtitle">
+          Get your creator business set up in a few steps. Connect your platforms, turn on your AI
+          assistant, and keep an eye on revenue in one place.
+        </p>
       </div>
 
       {/* Stats Grid with Suspense for loading state */}
