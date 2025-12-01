@@ -48,13 +48,13 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - _Requirements: 1.1, 1.2, 1.3, 1.5_
   - _Note: Leverage existing GeminiService patterns from lib/ai/gemini.service.ts_
 
-- [ ]* 3.1 Write property test for VertexAIService model selection
+- [ ] 3.1 Write property test for VertexAIService model selection
   - **Property 1: Premium Tier Routing Consistency**
   - Test that premium tier always uses gemini-1.5-pro
   - Use fast-check with 100+ iterations
   - _Validates: Requirements 1.1_
 
-- [ ]* 3.2 Write property test for streaming
+- [ ] 3.2 Write property test for streaming
   - **Property 5: Streaming Token Delivery**
   - Test that tokens arrive progressively without waiting for completion
   - _Validates: Requirements 1.5_
@@ -68,13 +68,13 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - _Requirements: 1.4, 6.1, 6.2, 6.3, 6.4, 6.5_
   - _Note: Reference existing circuit breaker in lib/of-memory/utils/circuit-breaker_
 
-- [ ]* 4.1 Write property test for exponential backoff
+- [ ] 4.1 Write property test for exponential backoff
   - **Property 4: Fallback Exponential Backoff**
   - Test that delays increase exponentially with backoff factor
   - Verify max delay is respected
   - _Validates: Requirements 1.4_
 
-- [ ]* 4.2 Write property test for circuit breaker
+- [ ] 4.2 Write property test for circuit breaker
   - **Property 24: Circuit Breaker Opening Threshold**
   - **Property 25: Circuit Breaker Fallback Behavior**
   - **Property 26: Circuit Breaker Half-Open Testing**
@@ -98,7 +98,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
   - _Note: Follow patterns from src/lib/ai/llm-router.ts_
 
-- [ ]* 5.1 Write property test for tier routing
+- [ ] 5.1 Write property test for tier routing
   - **Property 1: Premium Tier Routing Consistency**
   - **Property 2: Standard Tier Routing Consistency**
   - **Property 3: Economy Tier Token Limit Enforcement**
@@ -116,7 +116,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
   - _Note: Follow patterns from src/lib/ai/cost-logger.ts_
 
-- [ ]* 6.1 Write property test for cost tracking
+- [ ] 6.1 Write property test for cost tracking
   - **Property 20: Cost Logging Completeness**
   - **Property 21: Cost Report Aggregation**
   - **Property 22: Rate Limit Quota Enforcement**
@@ -133,7 +133,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Update type definitions to include 'vertexai' provider
   - _Requirements: 15.1, 15.5_
 
-- [ ]* 7.1 Write integration test for router migration
+- [ ] 7.1 Write integration test for router migration
   - Test feature flag toggling (enabled/disabled)
   - Test fallback to OpenAI/Anthropic when Vertex AI fails
   - Test dual-write consistency during migration
@@ -153,7 +153,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add token counting for cost tracking
   - _Requirements: 3.1, 3.4_
 
-- [ ]* 8.1 Write property test for embeddings
+- [ ] 8.1 Write property test for embeddings
   - **Property 11: Embedding Model Consistency**
   - Test that all embeddings use text-embedding-004
   - Test embedding dimensions are always 768
@@ -169,7 +169,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add monitoring for search latency and accuracy
   - _Requirements: 3.2, 3.3, 3.5_
 
-- [ ]* 9.1 Write property test for vector search
+- [ ] 9.1 Write property test for vector search
   - **Property 12: Semantic Search Relevance**
   - **Property 13: Vector Search Latency**
   - **Property 14: GDPR Embedding Deletion**
@@ -187,7 +187,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Update getMemoryContext to use vector search for semantic retrieval
   - _Requirements: 3.1, 3.2_
 
-- [ ]* 10.1 Write integration test for memory service migration
+- [ ] 10.1 Write integration test for memory service migration
   - Test embedding generation and storage
   - Test semantic search accuracy with known relevant interactions
   - Test GDPR deletion compliance
@@ -209,7 +209,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - _Requirements: 2.1, 10.1, 10.2_
   - _Note: This is a new implementation, no existing agent to migrate_
 
-- [ ]* 11.1 Write property test for MessagingAgent
+- [ ] 11.1 Write property test for MessagingAgent
   - **Property 6: MessagingAI Model Selection**
   - **Property 38: JSON Mode Activation**
   - Test that MessagingAI always uses Gemini 1.5 Pro
@@ -225,7 +225,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Test with various analytics scenarios (revenue, engagement, patterns)
   - _Requirements: 2.2, 10.2_
 
-- [ ]* 12.1 Write property test for AnalyticsAgent
+- [ ] 12.1 Write property test for AnalyticsAgent
   - **Property 7: AnalyticsAI Structured Output**
   - Test that output is valid JSON with insights, predictions, recommendations
   - _Validates: Requirements 2.2_
@@ -238,7 +238,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Test upsell suggestion accuracy with various fan profiles
   - _Requirements: 2.3, 10.1_
 
-- [ ]* 13.1 Write property test for SalesAgent
+- [ ] 13.1 Write property test for SalesAgent
   - **Property 8: SalesAI Cost Optimization**
   - Test that SalesAI always uses Gemini 1.5 Flash (not Pro)
   - _Validates: Requirements 2.3_
@@ -252,7 +252,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Test with various content types and edge cases
   - _Requirements: 2.4_
 
-- [ ]* 14.1 Write property test for ComplianceAgent
+- [ ] 14.1 Write property test for ComplianceAgent
   - **Property 9: ComplianceAI Safety Configuration**
   - Test that safety settings are configured to BLOCK_LOW_AND_ABOVE
   - _Validates: Requirements 2.4_
@@ -274,7 +274,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add feature flag ENABLE_VERTEX_AGENTS for gradual rollout
   - _Requirements: 2.5_
 
-- [ ]* 16.1 Write property test for Knowledge Network
+- [ ] 16.1 Write property test for Knowledge Network
   - **Property 10: Knowledge Network Broadcasting**
   - Test that insights are broadcast to all agents
   - _Validates: Requirements 2.5_
@@ -296,7 +296,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - _Requirements: 4.1, 4.3_
   - _Note: This is a new service, not a migration_
 
-- [ ]* 18.1 Write property test for PersonalityCalibrator
+- [ ] 18.1 Write property test for PersonalityCalibrator
   - **Property 15: Personality Profile Confidence**
   - **Property 17: Tone Adaptation Based on Preferences**
   - Test that profiles always include confidence score 0-1
@@ -312,7 +312,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add feature flag ENABLE_VERTEX_EMOTION
   - _Requirements: 4.2, 4.4, 4.5_
 
-- [ ]* 19.1 Write property test for EmotionAnalyzer
+- [ ] 19.1 Write property test for EmotionAnalyzer
   - **Property 16: Multi-Dimensional Emotion Detection**
   - **Property 18: Emotional State Memory Update**
   - **Property 19: Dominant Emotion Prioritization**
@@ -335,7 +335,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Implement proper error handling for unsupported formats
   - _Requirements: 7.1, 7.2, 7.3, 7.5_
 
-- [ ]* 20.1 Write property test for multimodal generation
+- [ ] 20.1 Write property test for multimodal generation
   - **Property 29: Visual Hashtag Relevance**
   - **Property 30: Multimodal Context Integration**
   - **Property 31: Multi-Image Caption Cohesion**
@@ -364,7 +364,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add metric types: vertex_ai_latency_ms, vertex_ai_tokens_input, vertex_ai_tokens_output, vertex_ai_cost_usd
   - _Requirements: 11.1, 11.2_
 
-- [ ]* 22.1 Write property test for monitoring
+- [ ] 22.1 Write property test for monitoring
   - **Property 42: Metrics Emission on Request**
   - Test that every request emits metrics
   - _Validates: Requirements 11.1_
@@ -377,7 +377,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add trace spans for: router, agents, vector search, embeddings
   - _Requirements: 11.3, 11.4_
 
-- [ ]* 23.1 Write property test for tracing
+- [ ] 23.1 Write property test for tracing
   - **Property 43: Distributed Tracing Propagation**
   - **Property 44: Correlation ID in Logs**
   - Test trace propagation across services
@@ -392,7 +392,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Integrate with all logging points (cost tracker, error handler, monitoring)
   - _Requirements: 9.4_
 
-- [ ]* 24.1 Write property test for PII redaction
+- [ ] 24.1 Write property test for PII redaction
   - **Property 35: PII Redaction in Logs**
   - Test that PII is redacted in all log entries
   - _Validates: Requirements 9.4_
@@ -424,7 +424,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Add audit log retention policy (7 years for compliance)
   - _Requirements: 9.5_
 
-- [ ]* 27.1 Write property test for audit logging
+- [ ] 27.1 Write property test for audit logging
   - **Property 36: Immutable Audit Logs**
   - Test that audit logs are immutable
   - _Validates: Requirements 9.5_
@@ -433,19 +433,24 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
 
 ## Phase 9: Prompt Optimization
 
-- [ ] 27. Optimize prompts for Gemini
-  - Update all prompt templates to use Gemini-specific formatting
-  - Implement prompt caching for repeated context
-  - Add intelligent truncation for long prompts
-  - Include few-shot examples where needed
+- [ ] 28. Optimize prompts for Gemini
+  - Create `lib/ai/vertex/prompt-templates.ts` with Gemini-specific formatting
+  - Update all prompt templates to use Gemini best practices
+  - Implement prompt caching for repeated context (system prompts, few-shot examples)
+  - Add intelligent truncation for long prompts (preserve key context)
+  - Include few-shot examples where needed (messaging, analytics, sales)
+  - Test prompt effectiveness with various inputs
   - _Requirements: 10.1, 10.3, 10.4, 10.5_
 
-- [ ]* 27.1 Write property test for prompt optimization
+- [ ] 28.1 Write property test for prompt optimization
   - **Property 37: Gemini Prompt Format Compliance**
   - **Property 39: Prompt Caching Token Reduction**
   - **Property 40: Context-Preserving Truncation**
   - **Property 41: Few-Shot Example Inclusion**
-  - **Validates: Requirements 10.1, 10.3, 10.4, 10.5**
+  - Test prompt format compliance
+  - Test caching reduces tokens
+  - Test truncation preserves context
+  - _Validates: Requirements 10.1, 10.3, 10.4, 10.5_
 
 ---
 
@@ -458,7 +463,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Test memory retrieval relevance
   - _Requirements: 13.1, 13.2, 13.3, 13.4_
 
-- [ ]* 28.1 Write property test for fallback testing
+- [ ] 28.1 Write property test for fallback testing
   - **Property 45: Fallback Testing Graceful Degradation**
   - **Property 46: Cost Tracking Accuracy**
   - **Property 47: Semantic Search Test Relevance**
@@ -489,7 +494,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Document rollback steps
   - _Requirements: 15.1, 15.2, 15.3_
 
-- [ ]* 31.1 Write property test for rollback
+- [ ] 31.1 Write property test for rollback
   - **Property 48: Instant Rollback Capability**
   - **Property 49: Rollback Data Preservation**
   - **Validates: Requirements 15.1, 15.2**
@@ -500,7 +505,7 @@ This implementation plan guides the migration from OpenAI/Anthropic to Google Cl
   - Test dual-write consistency during migration
   - _Requirements: 15.4, 15.5_
 
-- [ ]* 32.1 Write property test for disaster recovery
+- [ ] 32.1 Write property test for disaster recovery
   - **Property 50: Disaster Recovery Time**
   - **Property 51: Dual-Write Consistency**
   - **Validates: Requirements 15.4, 15.5**

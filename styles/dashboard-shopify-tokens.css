@@ -59,19 +59,27 @@
   --color-text-heading: #111827;   /* Near-black - headings */
   --color-text-inactive: #9CA3AF;  /* Muted gray for inactive elements (WCAG compliant: 4.5:1) */
 
-  /* Navigation Shell (light sidebar, dark header – Shopify-like) */
-  --nav-surface: #111827;                       /* Header background (dark) */
+  /* Navigation Shell (light sidebar + header – Shopify-like) */
+  --nav-surface: #FFFFFF;                       /* Header background (light) */
   --nav-surface-elevated: #F7F7F7;             /* Sidebar background (light gray) */
   --nav-border: rgba(15, 23, 42, 0.12);        /* Sidebar/header borders */
   --nav-border-strong: rgba(15, 23, 42, 0.18); /* Stronger divider for focus */
-  --nav-text: #111827;                         /* Primary nav text */
-  --nav-text-muted: #4B5563;                   /* Secondary nav text */
+  --nav-text: #111827;                         /* Primary nav text (sidebar) */
+  --nav-text-muted: #4B5563;                   /* Secondary nav text (sidebar) */
   --nav-text-subtle: #9CA3AF;                  /* Tertiary text/icons */
   --nav-hover: #E5E7EB;                        /* Hover fill (light gray) */
   --nav-active-bg: rgba(99, 102, 241, 0.08);   /* Active item background */
   --nav-active-indicator: #6366f1;             /* Accent line for active state */
   --nav-search-bg: #F3F4F6;                    /* Search field background */
   --nav-search-border: rgba(15, 23, 42, 0.12); /* Search border */
+
+  /* Header-specific colors (Shopify-style, light shell) */
+  --header-bg: #FFFFFF;                        /* Header background (white) */
+  --header-border: #E1E3E5;                    /* Subtle bottom border */
+  --header-text: #202223;                      /* Primary header text (almost black) */
+  --header-text-muted: #6D7175;                /* Secondary header text/icons */
+  --header-icon-hover-bg: #F1F2F4;             /* Light gray hover for icons */
+  --header-focus-ring: rgba(129, 140, 248, 0.35); /* Softer indigo focus ring */
   
   /* Border Colors */
   --color-border-light: var(--text-tertiary);  /* Medium-dark gray for 3:1 contrast (WCAG compliant) */
@@ -82,7 +90,7 @@
      ============================================ */
   
   /* Soft shadow physics - diffused, natural */
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-card-hover: 0 12px 24px rgba(0, 0, 0, 0.3);
   --shadow-search-focus: 0 4px 12px rgba(0, 0, 0, 0.05);
   --shadow-mobile-drawer: 10px 0 25px rgba(0, 0, 0, 0.3);
@@ -174,12 +182,25 @@
     "sidebar main";
 }
 
+/* Shopify-style light card system for dashboard scope */
+.huntaze-dashboard-scope,
+.huntaze-layout,
+[data-dashboard="true"] {
+  /* Invert the old black-card system: cards become white on light gray canvas */
+  --bg-card: var(--bg-surface);      /* Cards are pure white surfaces */
+  --text-primary: #202223;           /* Shopify primary text */
+  --text-secondary: #5C5F62;         /* Shopify secondary text */
+  --text-muted: #8C9196;             /* Subtle meta text */
+  --border-default: #E1E3E5;         /* Light card/section borders */
+  --border-emphasis: #C5C6C8;        /* Slightly stronger border for hover */
+}
+
 /* Grid area assignments */
 .huntaze-header {
   grid-area: header;
-  background: var(--nav-surface);
-  color: var(--nav-text);
-  border-bottom: 1px solid var(--nav-border);
+  background: var(--header-bg, var(--nav-surface));
+  color: var(--header-text, var(--nav-text));
+  border-bottom: 1px solid var(--header-border, var(--nav-border));
   display: flex;
   align-items: center;
   justify-content: space-between;

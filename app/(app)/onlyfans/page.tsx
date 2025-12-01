@@ -183,9 +183,11 @@ export default function OnlyFansPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">OnlyFans Dashboard</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">
+            OnlyFans Dashboard
+          </h1>
           <p className="text-[var(--color-text-sub)]">
-            Manage your OnlyFans account with AI-powered tools
+            Suis tes messages, fans, revenus PPV et ton usage d&rsquo;IA en un coup d&rsquo;œil.
           </p>
         </div>
 

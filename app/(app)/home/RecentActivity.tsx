@@ -160,17 +160,21 @@ export function RecentActivity() {
   if (isLoading) {
     return (
       <div className="recent-activity-section">
-        <h2 className="recent-activity-title">Recent Activity</h2>
-        <div className="recent-activity-list">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="activity-item activity-item-skeleton">
-              <div className="activity-icon-skeleton skeleton"></div>
-              <div className="activity-content-skeleton">
-                <div className="skeleton-text skeleton-text-base" style={{ width: '60%' }}></div>
-                <div className="skeleton-text skeleton-text-sm" style={{ width: '80%', marginTop: '4px' }}></div>
+        <div className="recent-activity-card">
+          <div className="recent-activity-header">
+            <h2 className="recent-activity-title">Recent Activity</h2>
+          </div>
+          <div className="recent-activity-list">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="activity-item activity-item-skeleton">
+                <div className="activity-icon-skeleton skeleton"></div>
+                <div className="activity-content-skeleton">
+                  <div className="skeleton-text skeleton-text-base" style={{ width: '60%' }}></div>
+                  <div className="skeleton-text skeleton-text-sm" style={{ width: '80%', marginTop: '4px' }}></div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -179,9 +183,13 @@ export function RecentActivity() {
   if (activities.length === 0) {
     return (
       <div className="recent-activity-section">
-        <h2 className="recent-activity-title">Recent Activity</h2>
-        <div className="recent-activity-empty">
-          <p>No recent activity</p>
+        <div className="recent-activity-card">
+          <div className="recent-activity-header">
+            <h2 className="recent-activity-title">Recent Activity</h2>
+          </div>
+          <div className="recent-activity-empty">
+            <p>No recent activity</p>
+          </div>
         </div>
       </div>
     );
@@ -189,42 +197,48 @@ export function RecentActivity() {
 
   return (
     <div className="recent-activity-section">
-      <h2 className="recent-activity-title">Recent Activity</h2>
-      
-      <div className="recent-activity-list">
-        {displayedActivities.map((activity) => {
-          const Icon = getActivityIcon(activity.type);
-          const color = getActivityColor(activity.type);
-          
-          return (
-            <div key={activity.id} className="activity-item">
-              <div className={`activity-icon activity-icon-${color}`}>
-                <Icon className="icon" />
-              </div>
-              
-              <div className="activity-content">
-                <div className="activity-header">
-                  <span className="activity-title">{activity.title}</span>
-                  <span className="activity-timestamp">
-                    {formatTimestamp(activity.timestamp)}
-                  </span>
+      <div className="recent-activity-card">
+        <div className="recent-activity-header">
+          <h2 className="recent-activity-title">Recent Activity</h2>
+        </div>
+        
+        <div className="recent-activity-list">
+          {displayedActivities.map((activity) => {
+            const Icon = getActivityIcon(activity.type);
+            const color = getActivityColor(activity.type);
+            
+            return (
+              <div key={activity.id} className="activity-item">
+                <div className={`activity-icon activity-icon-${color}`}>
+                  <Icon className="icon" />
                 </div>
-                <p className="activity-description">{activity.description}</p>
+                
+                <div className="activity-content">
+                  <div className="activity-header">
+                    <span className="activity-title">{activity.title}</span>
+                    <span className="activity-timestamp">
+                      {formatTimestamp(activity.timestamp)}
+                    </span>
+                  </div>
+                  <p className="activity-description">{activity.description}</p>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      {activities.length > 5 && (
-        <Button 
-          variant="primary" 
-          onClick={() => setShowAll(!showAll)}
-          className="load-more-button"
-        >
-          {showAll ? 'Show less' : `Show ${activities.length - 5} more`}
-        </Button>
-      )}
+        {activities.length > 5 && (
+          <div className="recent-activity-footer">
+            <Button 
+              variant="secondary" 
+              onClick={() => setShowAll(!showAll)}
+              className="load-more-button"
+            >
+              {showAll ? 'Show less' : `Show ${activities.length - 5} more`}
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

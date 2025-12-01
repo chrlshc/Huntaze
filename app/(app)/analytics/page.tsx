@@ -150,7 +150,7 @@ export default function AnalyticsPage() {
             <div className="analytics-header">
               <h1 className="analytics-title">Analytics</h1>
               <p className="analytics-subtitle">
-                Track your performance and optimize your revenue across all platforms
+                Visualise tes revenus, abonnés et churn sur tous tes comptes créateurs.
               </p>
             </div>
 
@@ -210,7 +210,7 @@ export default function AnalyticsPage() {
             <div>
               <h1 className="analytics-title">Analytics</h1>
               <p className="analytics-subtitle">
-                Track your performance and optimize your revenue across all platforms
+                Pilote tes chiffres clés (revenus, fans, churn) et repère les opportunités de croissance.
               </p>
             </div>
             

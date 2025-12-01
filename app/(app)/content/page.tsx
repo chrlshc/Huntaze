@@ -269,9 +269,11 @@ export default function ContentPage() {
         <div>
         <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text-main)]">Content Creation</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text-main)]">
+            Content Creation
+          </h1>
           <p className="mt-2 text-[var(--color-text-sub)]">
-            Create, manage, and publish content across all platforms
+            Rédige, programme et publie ton contenu OnlyFans, socials et promos depuis un workspace unique.
           </p>
         </div>
         <Button variant="primary" onClick={handleCreate}>

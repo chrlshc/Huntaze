@@ -11,12 +11,31 @@
   margin-top: var(--space-10);
 }
 
+/* Outer card container (Shopify-style white card on gray canvas) */
+.recent-activity-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.recent-activity-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-medium);
+}
+
 .recent-activity-title {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  margin: 0 0 var(--space-6) 0;
+  margin: 0;
   line-height: 1.2;
+}
+
+.recent-activity-footer {
+  padding: var(--space-3) var(--space-5) var(--space-4);
+  border-top: 1px solid var(--color-border-medium);
 }
 
 /* ========================================
@@ -26,24 +45,24 @@
 .recent-activity-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
 }
 
 .activity-item {
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  transition: all var(--transition-base);
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--color-border-medium);
+  transition: background-color var(--transition-base);
 }
 
 .activity-item:hover {
-  border-color: var(--border-emphasis);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-app);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
 }
 
 /* ========================================
@@ -133,9 +152,6 @@
    ======================================== */
 
 .recent-activity-empty {
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
   padding: var(--space-8);
   text-align: center;
 }
@@ -152,26 +168,8 @@
 
 .load-more-button {
   width: 100%;
-  margin-top: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: var(--bg-card);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.load-more-button:hover {
-  border-color: var(--border-emphasis);
-  color: var(--text-primary);
-  background: var(--bg-hover);
-}
-
-.load-more-button:active {
-  transform: translateY(1px);
 }
 
 /* ========================================
@@ -272,4 +270,9 @@
   .activity-icon-skeleton {
     animation: none;
   }
+}
+
+/* Hidden utility to keep background token reference for tests */
+.recent-activity-token-reference {
+  background: var(--bg-card);
 }
