@@ -29,7 +29,7 @@ export default function Header() {
         </div>
 
         {/* Global Search - Hidden on mobile */}
-        <div className="hidden md:block flex-1 max-w-md mx-8">
+        <div className="hidden md:flex flex-1 justify-center px-8">
           <GlobalSearch />
         </div>
 

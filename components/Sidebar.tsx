@@ -96,8 +96,8 @@ export function Sidebar() {
                     alignItems: 'center',
                     padding: '12px 16px',
                     gap: '12px',
-                    color: isActive ? 'var(--nav-text)' : 'var(--nav-text-muted)',
-                    backgroundColor: isActive ? 'var(--nav-active-bg)' : 'transparent',
+                    color: isActive ? 'var(--sidebar-text)' : 'var(--sidebar-text-muted)',
+                    backgroundColor: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
                     textDecoration: 'none',
                     transition: 'all 0.15s ease',
                     borderRadius: '0 8px 8px 0',
@@ -141,8 +141,8 @@ export function Sidebar() {
                               display: 'flex',
                               alignItems: 'center',
                               padding: '8px 16px',
-                              color: isSubActive ? 'var(--nav-text)' : 'var(--nav-text-muted)',
-                              backgroundColor: isSubActive ? 'var(--nav-active-bg-subtle)' : 'transparent',
+                              color: isSubActive ? 'var(--sidebar-text)' : 'var(--sidebar-text-muted)',
+                              backgroundColor: isSubActive ? 'var(--sidebar-active-bg)' : 'transparent',
                               textDecoration: 'none',
                               transition: 'all 0.15s ease',
                               borderRadius: '6px',
@@ -151,7 +151,7 @@ export function Sidebar() {
                             }}
                             onMouseEnter={(e) => {
                               if (!isSubActive) {
-                                e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
+                                e.currentTarget.style.backgroundColor = 'var(--sidebar-hover)';
                               }
                             }}
                             onMouseLeave={(e) => {
