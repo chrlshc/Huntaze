@@ -3,6 +3,7 @@
 import React from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MobileSidebar } from './MobileSidebar';
 import { GlobalSearch } from './dashboard/GlobalSearch';
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,16 @@ export default function Header() {
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-[var(--spacing-4)]">
           <MobileSidebar />
-          <h2 
-            className="hidden md:block"
-            style={{
-              fontSize: 'var(--text-lg)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--nav-text)'
-            }}
-          >
-            Huntaze
-          </h2>
+          <Link href="/home" className="hidden md:flex items-center" aria-label="Huntaze home">
+            <Image
+              src="/huntaze-logo-horizontal.svg"
+              alt="Huntaze"
+              width={140}
+              height={40}
+              priority
+            />
+            <span className="sr-only">Huntaze</span>
+          </Link>
         </div>
 
         {/* Global Search - Hidden on mobile */}
@@ -38,20 +39,20 @@ export default function Header() {
             className="rounded-lg"
             style={{
               padding: 'var(--spacing-2)',
-              color: 'var(--nav-text-muted)',
+              color: 'var(--header-text-muted)',
               transition: 'all var(--transition-fast)',
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
-              e.currentTarget.style.color = 'var(--nav-text)';
+              e.currentTarget.style.backgroundColor = 'var(--header-icon-hover-bg)';
+              e.currentTarget.style.color = 'var(--header-text)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--nav-text-muted)';
+              e.currentTarget.style.color = 'var(--header-text-muted)';
             }}
             onFocus={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0 3px var(--nav-border-strong)';
+              e.currentTarget.style.boxShadow = '0 0 0 3px var(--header-focus-ring)';
               e.currentTarget.style.outline = 'none';
             }}
             onBlur={(e) => {
@@ -97,7 +98,7 @@ export default function Header() {
                 style={{
                   fontSize: 'var(--text-sm)',
                   fontWeight: 'var(--font-weight-medium)',
-                  color: 'var(--nav-text)'
+                  color: 'var(--header-text)'
                 }}
               >
                 {session?.user?.name || 'User'}
@@ -105,7 +106,7 @@ export default function Header() {
               <p 
                 style={{
                   fontSize: 'var(--text-xs)',
-                  color: 'var(--nav-text-muted)'
+                  color: 'var(--header-text-muted)'
                 }}
               >
                 {session?.user?.email}
@@ -117,20 +118,20 @@ export default function Header() {
               className="rounded-lg"
               style={{
                 padding: 'var(--spacing-2)',
-                color: 'var(--nav-text-muted)',
+                color: 'var(--header-text-muted)',
                 transition: 'all var(--transition-fast)',
                 cursor: 'pointer'
               }}
               onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
-                e.currentTarget.style.color = 'var(--nav-text)';
+                e.currentTarget.style.backgroundColor = 'var(--header-icon-hover-bg)';
+                e.currentTarget.style.color = 'var(--header-text)';
               }}
               onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--nav-text-muted)';
+                e.currentTarget.style.color = 'var(--header-text-muted)';
               }}
               onFocus={(e: React.FocusEvent<HTMLButtonElement>) => {
-                e.currentTarget.style.boxShadow = '0 0 0 3px var(--nav-border-strong)';
+                e.currentTarget.style.boxShadow = '0 0 0 3px var(--header-focus-ring)';
                 e.currentTarget.style.outline = 'none';
               }}
               onBlur={(e: React.FocusEvent<HTMLButtonElement>) => {

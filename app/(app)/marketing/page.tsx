@@ -68,8 +68,12 @@ export default function MarketingPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Marketing & Social</h1>
-            <p className="text-gray-600 dark:text-gray-400">Manage campaigns and social media presence</p>
+            <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">
+              Marketing &amp; Social
+            </h1>
+            <p className="text-[var(--color-text-sub)]">
+              Planifie tes campagnes, orchestre tes posts socials et suis les résultats en un seul endroit.
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -96,7 +100,7 @@ export default function MarketingPage() {
       </div>
 
       {/* Social Media & Integrations Section */}
-      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+      <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)] mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Social Media & Integrations</h2>
@@ -167,7 +171,7 @@ export default function MarketingPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -177,7 +181,7 @@ export default function MarketingPage() {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.activeCampaigns}</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Send className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -187,7 +191,7 @@ export default function MarketingPage() {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalSent}</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -197,7 +201,7 @@ export default function MarketingPage() {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{(stats.avgOpenRate * 100).toFixed(1)}%</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <MousePointer className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -242,7 +246,7 @@ export default function MarketingPage() {
       </div>
 
       {/* Campaigns List */}
-      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Campaigns</h2>
           
