@@ -73,7 +73,7 @@ export default function CreatorTestimonials() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Real creators, real results
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-[var(--text-secondary-dark)]">
+          <p className="text-lg md:text-xl text-[var(--text-primary)]">
             See how creators are transforming their business with Huntaze
           </p>
         </motion.div>

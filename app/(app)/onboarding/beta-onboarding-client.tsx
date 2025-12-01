@@ -134,7 +134,7 @@ export default function BetaOnboardingClient() {
               aria-label={`Step ${currentStep} of 3`}
             />
           </div>
-          <p className="mt-2 text-sm text-[var(--text-tertiary)] text-center">
+          <p className="mt-2 text-sm text-[var(--text-primary)] text-center">
             Step {currentStep} of 3
           </p>
         </div>
@@ -152,7 +152,7 @@ export default function BetaOnboardingClient() {
             <h2 className="text-2xl font-semibold text-white mb-2">
               What type of content do you create?
             </h2>
-            <p className="text-[var(--text-secondary)] mb-6">
+            <p className="text-[var(--text-primary)] mb-6">
               Select all that apply
             </p>
 
@@ -171,7 +171,7 @@ export default function BetaOnboardingClient() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-white font-medium">{option.label}</p>
-                      <p className="text-sm text-[var(--text-tertiary)]">{option.description}</p>
+                      <p className="text-sm text-[var(--text-primary)]">{option.description}</p>
                     </div>
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                       data.contentTypes.includes(option.id)
@@ -252,7 +252,7 @@ function OnboardingStep2({
       <h2 className="text-2xl font-semibold text-white mb-2">
         Connect your OnlyFans account
       </h2>
-      <p className="text-[var(--text-secondary)] mb-6">
+      <p className="text-[var(--text-primary)] mb-6">
         We'll encrypt and securely store your credentials
       </p>
 
@@ -331,7 +331,7 @@ function OnboardingStep3({
       <h2 className="text-2xl font-semibold text-white mb-2">
         What's your primary goal?
       </h2>
-      <p className="text-[var(--text-secondary)] mb-6">
+      <p className="text-[var(--text-primary)] mb-6">
         Help us personalize your experience
       </p>
 
@@ -351,7 +351,7 @@ function OnboardingStep3({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-white font-medium">{option.label}</p>
-                  <p className="text-sm text-[var(--text-tertiary)]">{option.description}</p>
+                  <p className="text-sm text-[var(--text-primary)]">{option.description}</p>
                 </div>
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                   selectedGoal === option.id

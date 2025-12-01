@@ -35,7 +35,7 @@ function MetricCard({ title, value, change, icon, tooltip, isHovered, onHover, o
   
   return (
     <div 
-      className="relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-purple-500/50 transition-all duration-300 cursor-pointer group"
+      className="relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[var(--border-default)] hover:border-purple-500/50 transition-all duration-300 cursor-pointer group"
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       role="button"
@@ -176,7 +176,7 @@ export function InteractiveDashboardDemo() {
   return (
     <section 
       id="dashboard"
-      className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[var(--bg-secondary)] overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center px-4 py-16 md:py-24 md:px-6 bg-[var(--bg-secondary)] border border-[var(--border-default)] shadow-[var(--shadow-sm)] overflow-hidden"
     >
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
@@ -198,7 +198,7 @@ export function InteractiveDashboardDemo() {
 
         {/* Interactive Dashboard */}
         <div 
-          className={`relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm shadow-2xl transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          className={`relative rounded-2xl border border-[var(--border-default)] bg-white/5 p-6 backdrop-blur-sm shadow-2xl transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           onMouseEnter={handleInteraction}
           onClick={handleInteraction}
         >
@@ -208,7 +208,7 @@ export function InteractiveDashboardDemo() {
           {/* Dashboard Content */}
           <div className="relative space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--border-default)]">
               <div>
                 <h3 className="text-white text-xl font-semibold">Dashboard Overview</h3>
                 <p className="text-gray-400 text-sm mt-1">Last 7 days</p>
@@ -237,7 +237,7 @@ export function InteractiveDashboardDemo() {
             </div>
 
             {/* Chart Section */}
-            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[var(--border-default)]">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-purple-500/10 rounded-lg">
@@ -274,7 +274,7 @@ export function InteractiveDashboardDemo() {
             </Card>
 
             {/* Recent Activity */}
-            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[var(--border-default)]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-500/10 rounded-lg">
                   <MessageSquare className="w-5 h-5 text-purple-400" />

@@ -203,7 +203,7 @@ export function HeroSection({ title, subtitle, ctaText, ctaHref, showVideo = tru
             transition={{ duration: 0.8, delay: 0.8 }}
             className="relative max-w-4xl mx-auto"
           >
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 dark:border-gray-800/50 bg-gradient-to-br from-indigo-500 to-purple-600">
+            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-[var(--border-default)] dark:border-[var(--border-default)] bg-gradient-to-br from-indigo-500 to-purple-600">
               {/* Placeholder for video/screenshot */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <Button variant="primary">

@@ -270,9 +270,9 @@ export default function LiveChatDemo() {
               <Send className="w-5 h-5" />
             </motion.button>
           </div>
-          <p className="text-xs text-gray-600 dark:text-[var(--text-secondary-dark)] text-center mt-2">
-            Try it! This AI responds just like the real Huntaze assistant
-          </p>
+        <p className="text-xs text-gray-600 dark:text-[var(--text-primary)] text-center mt-2">
+          Try it! This AI responds just like the real Huntaze assistant
+        </p>
         </div>
       </motion.div>
     </div>

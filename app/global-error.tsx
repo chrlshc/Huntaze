@@ -23,7 +23,7 @@ export default function GlobalError({
             <h1 style={{ fontSize: 'var(--text-2xl)', marginBottom: '1rem' }}>
               Application Error
             </h1>
-            <p style={{ marginBottom: '1rem', color: 'var(--text-tertiary)' }}>
+            <p style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>
               A critical error occurred. Please refresh the page.
             </p>
             <Button 

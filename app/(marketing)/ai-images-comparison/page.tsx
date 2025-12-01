@@ -210,7 +210,7 @@ export default function AIImagesComparison() {
                         ['SURPRISE ME', '$25'],
                         ['VIP TREATMENT', '$100']
                       ].map(([text, price], i) => (
-                        <div key={i} className="flex justify-between items-center border-b border-white/10 pb-2">
+                        <div key={i} className="flex justify-between items-center border-b border-[var(--border-default)] pb-2">
                           <span className="text-xs tracking-wider">{text}</span>
                           <span className="text-yellow-400 font-bold">{price}</span>
                         </div>

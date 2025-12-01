@@ -218,8 +218,8 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
                   className={`
                     px-4 py-3 rounded-xl border transition-all flex items-center gap-3
                     ${currentPlatform === index
-                      ? 'bg-white/10 border-white/30 shadow-lg'
-                      : 'border-white/10 hover:border-white/20'
+                      ? 'bg-white/10 border-[var(--border-emphasis)] shadow-lg'
+                      : 'border-[var(--border-default)] hover:border-[var(--border-emphasis)]'
                     }
                   `}
                   whileHover={{ scale: 1.05 }}
@@ -355,7 +355,7 @@ const PhoneMockup3D: React.FC<PhoneMockup3DProps> = ({ className = '' }) => {
         <div className="flex flex-col items-center gap-2">
           <p className="text-sm text-gray-400">Scrollez pour découvrir</p>
           <motion.div
-            className="w-6 h-10 border-2 border-white/20 rounded-full p-1"
+            className="w-6 h-10 border-2 border-[var(--border-default)] rounded-full p-1"
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >

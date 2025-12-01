@@ -262,7 +262,7 @@ export default function HeaderImproved() {
             <MegaMenu label="Solutions" groups={solutionsNav} columns={3} align="left" panelAlign="viewport-left" panelGutter={320} footerLinks={[{ title: 'See all solutions', href: '/solutions' }, { title: 'Compare plans', href: '/pricing' }]} />
 
             {/* Pricing */}
-            <Link href="/pricing" className="text-text-secondary hover:text-text-primary text-[14px] font-normal">
+            <Link href="/pricing" className="text-text-primary hover:text-text-primary text-[14px] font-normal">
               Pricing
             </Link>
 
@@ -397,7 +397,7 @@ export default function HeaderImproved() {
                           </div>
                           <div>
                             <p className="font-medium text-text-primary">{user.name || user.email}</p>
-                            <p className="text-sm text-text-secondary">{user.email}</p>
+                            <p className="text-sm text-text-primary">{user.email}</p>
                           </div>
                         </div>
                       </div>

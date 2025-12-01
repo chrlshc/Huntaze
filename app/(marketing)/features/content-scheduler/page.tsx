@@ -95,7 +95,7 @@ export default function ContentSchedulerPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Content Scheduler
           </h1>
-          <p className="text-lg text-gray-700 dark:text-[var(--text-secondary-dark)]">
+          <p className="text-lg text-gray-700 dark:text-[var(--text-primary)]">
             Plan, optimize, and automate your content across all platforms
           </p>
         </div>
@@ -355,7 +355,7 @@ export default function ContentSchedulerPage() {
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                   AI-Powered Content Optimization
                 </h2>
-                <p className="text-lg text-gray-700 dark:text-[var(--text-secondary-dark)] mb-8">
+                <p className="text-lg text-gray-700 dark:text-[var(--text-primary)] mb-8">
                   Let our AI analyze your audience and optimize your posting schedule for maximum engagement
                 </p>
                 <Button 

@@ -61,7 +61,7 @@ const variantClasses: Record<CTAVariant, string> = {
   primary:
     'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-[0_4px_14px_0_rgba(125,87,193,0.4)] hover:shadow-[0_6px_20px_0_rgba(125,87,193,0.6)]',
   secondary:
-    'bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-sm',
+    'bg-white/10 text-white border border-[var(--border-default)] hover:bg-white/20 hover:border-[var(--border-emphasis)] backdrop-blur-sm',
   outline:
     'bg-transparent text-purple-600 dark:text-purple-400 border-2 border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20',
 };

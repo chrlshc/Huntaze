@@ -84,7 +84,7 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Verifying your email...
               </h1>
-              <p className="text-[var(--text-secondary)] text-center">
+              <p className="text-[var(--text-primary)] text-center">
                 Please wait while we verify your account
               </p>
             </>
@@ -113,7 +113,7 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Email verified!
               </h1>
-              <p className="text-[var(--text-secondary)] text-center mb-6">
+              <p className="text-[var(--text-primary)] text-center mb-6">
                 Your account has been verified. Redirecting to the sign-in/up page...
               </p>
               <div className="flex justify-center">
@@ -145,7 +145,7 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Link expired
               </h1>
-              <p className="text-[var(--text-secondary)] text-center mb-6">
+              <p className="text-[var(--text-primary)] text-center mb-6">
                 This verification link has expired. Verification links are valid for 24 hours.
               </p>
               <div className="flex justify-center">
@@ -182,7 +182,7 @@ function VerifyContent() {
               <h1 className="text-2xl font-semibold text-white text-center mb-4">
                 Verification failed
               </h1>
-              <p className="text-[var(--text-secondary)] text-center mb-6">
+              <p className="text-[var(--text-primary)] text-center mb-6">
                 {errorMessage || 'Unable to verify your email. Please try again.'}
               </p>
               <div className="flex justify-center">

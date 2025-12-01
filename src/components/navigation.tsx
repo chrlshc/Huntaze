@@ -14,25 +14,25 @@ export default function Navigation() {
       <nav className="hidden md:flex items-center gap-8">
         <Link
           href="/pricing"
-          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
+          className="text-text-primary hover:text-text-primary transition-colors font-medium"
         >
           Pricing
         </Link>
         <Link
           href="/#solutions"
-          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
+          className="text-text-primary hover:text-text-primary transition-colors font-medium"
         >
           Features
         </Link>
         <Link
           href="/#testimonials"
-          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
+          className="text-text-primary hover:text-text-primary transition-colors font-medium"
         >
           Success Stories
         </Link>
         <Link
           href="/#about"
-          className="text-text-secondary hover:text-text-primary transition-colors font-medium"
+          className="text-text-primary hover:text-text-primary transition-colors font-medium"
         >
           About
         </Link>

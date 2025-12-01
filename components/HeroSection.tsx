@@ -3,7 +3,7 @@ import Link from "next/link";
 export function HeroSection() {
   return (
     <section className="mx-auto max-w-4xl space-y-8 py-16 text-center sm:py-24">
-      <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-gray-400">
+      <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-gray-400">
         Huntaze · Revenue OS
       </span>
       <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">

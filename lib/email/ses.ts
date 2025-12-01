@@ -230,7 +230,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
               </div>
               
               <!-- Pro Tips -->
-              <div style="margin: 30px 0; padding: 20px; background-color: rgba(245, 158, 11, 0.1); border-radius: 6px; border-left: 4px solid var(--accent-warning);">
+              <div style="margin: 30px 0; padding: 20px; background-color: rgba(245, 158, 11, 0.12); border-radius: 6px; border-left: 4px solid var(--accent-warning);">
                 <p style="margin: 0 0 10px; color: var(--accent-warning); font-size: var(--text-base); font-weight: 600;">💡 Pro tips</p>
                 <p style="margin: 5px 0; color: var(--accent-warning); font-size: var(--text-sm);">• A/B test your subject lines before sending</p>
                 <p style="margin: 5px 0; color: var(--accent-warning); font-size: var(--text-sm);">• Schedule by your audience's time zone</p>

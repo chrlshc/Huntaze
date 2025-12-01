@@ -156,7 +156,7 @@ export function FullWidthPageExample() {
       }
     >
       <div style={{ width: '100%', height: '400px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-xl)' }}>
-        <p style={{ padding: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+        <p style={{ padding: 'var(--space-4)', color: 'var(--text-primary)' }}>
           Full-width chart or table goes here
         </p>
       </div>

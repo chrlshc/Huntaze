@@ -113,8 +113,8 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
               key={platform.id}
               className={`p-6 rounded-lg border-2 transition-all ${
                 isConnected
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-[var(--accent-success)] bg-green-50'
+                  : 'border-[var(--border-default)] hover:border-[var(--border-emphasis)]'
               }`}
             >
               <div className="flex items-start gap-4">
@@ -166,7 +166,7 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
       </div>
 
       {isFirst && connectedPlatforms.length === 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="bg-yellow-50 border border-[var(--accent-warning-border)] rounded-lg p-4">
           <p className="text-sm text-yellow-900">
             <strong>Note:</strong> You need to connect at least one platform to continue.
           </p>
@@ -174,7 +174,7 @@ export function PlatformConnection({ onComplete, isFirst = false }: PlatformConn
       )}
 
       {connectedPlatforms.length > 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-green-50 border border-[var(--accent-success-border)] rounded-lg p-4">
           <p className="text-sm text-green-900">
             <strong>Great!</strong> You've connected {connectedPlatforms.length} platform{connectedPlatforms.length > 1 ? 's' : ''}.
             {connectedPlatforms.length >= 2 && ' You\'ve unlocked cross-platform scheduling!'}

@@ -21,7 +21,7 @@
   --hz-shadow-100: 0 1px 0 rgba(26,26,26,.07);
   --hz-shadow-200: 0 3px 1px -1px rgba(26,26,26,.07);
   --hz-shadow-300: 0 4px 6px -2px rgba(26,26,26,.20);
-  --hz-border-subtle: rgba(0,0,0,.08);
+  --hz-border-subtle: rgba(0,0,0,0.12);
 
   /* Marque (garde ta couleur ici) */
   /* Slightly darker brand violet for less flashiness */
@@ -49,7 +49,7 @@ body{
 /* Sidebar */
 .hz-sidebar{
   grid-area:hz-sidebar; background:#fff;
-  border-right:1px solid rgba(0,0,0,.08);
+  border-right:1px solid rgba(0,0,0,0.12);
   padding:var(--p-space-600) var(--p-space-400);
   display:flex; flex-direction:column; gap:var(--p-space-600);
   /* Keep sidebar fixed; prevent its own scroll */
@@ -60,7 +60,7 @@ body{
 }
 .hz-sidebar-header{ display:flex; align-items:center; gap:10px; padding:0 var(--p-space-200); }
 .hz-sidebar-nav{ display:flex; flex-direction:column; gap:4px; }
-.hz-sidebar-footer{ margin-top:auto; padding-top:var(--p-space-600); border-top:1px solid rgba(0,0,0,.06); }
+.hz-sidebar-footer{ margin-top:auto; padding-top:var(--p-space-600); border-top:1px solid rgba(0,0,0,0.12); }
 .hz-nav-item{
   display:flex; align-items:center; gap:10px;
   padding:10px 12px; border-radius:6px;
@@ -79,14 +79,39 @@ body{
 .hz-topbar .hz-brand{ grid-column:1; display:flex; align-items:center; gap:10px; margin-left: calc(var(--p-space-600) - var(--p-space-800)); }
 .hz-topbar .hz-search{ grid-column:2; }
 .hz-topbar .hz-actions{ grid-column:3; justify-self:end; display:flex; align-items:center; gap:12px; }
-.hz-topbar input{ width:100%; border:1px solid rgba(255,255,255,.18); border-radius:var(--p-border-radius-200); padding:10px 14px; outline:none; background:rgba(255,255,255,.08); color:#fff; }
+.hz-topbar input{
+  width:100%;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--p-border-radius-200);
+  padding:10px 14px;
+  outline:none;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+}
 .hz-topbar input::placeholder{ color:rgba(255,255,255,.6); }
 
 /* Search bar (Shopify-like) */
 .hz-searchbar{ position:relative; display:block; }
 .hz-search-icon{ position:absolute; left:10px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,.7); width:16px; height:16px; }
 .hz-searchbar input{ padding-left:34px; padding-right:44px; }
-.hz-kbd{ position:absolute; right:8px; top:50%; transform:translateY(-50%); display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 6px; border-radius:6px; border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.06); color:rgba(255,255,255,.8); font-size: var(--text-xs); line-height:1; }
+.hz-kbd{
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:22px;
+  height:22px;
+  padding:0 6px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.8);
+  font-size: var(--text-xs);
+  line-height:1;
+}
 
 /* Contenu */
 .hz-main{ grid-area:hz-main; padding:var(--p-space-800); overflow:auto; -webkit-overflow-scrolling:touch; }
@@ -124,7 +149,7 @@ body{
 .hz-card__footer{
   margin-top: var(--p-space-400);
   padding-top: var(--p-space-400);
-  border-top: 1px solid rgba(0,0,0,.06);
+  border-top: 1px solid rgba(0,0,0,0.12);
   display:flex; gap:12px; align-items:center; flex-wrap:wrap;
 }
 .hz-actions{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
@@ -134,7 +159,7 @@ body{
   margin-top: var(--p-space-800);
   padding: var(--p-space-800);
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,.06);
+  border: 1px solid rgba(0,0,0,0.12);
   background: var(--p-color-bg-surface);
   box-shadow: var(--hz-shadow-100);
   display: flex;
@@ -160,7 +185,7 @@ body{
 .hz-button{
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
   padding:8px 14px; border-radius:8px; font-weight:600; text-decoration:none;
-  border:1px solid rgba(0,0,0,.08); background:#fff; color:var(--p-color-text);
+  border:1px solid rgba(0,0,0,0.12); background:#fff; color:var(--p-color-text);
 }
 .hz-button.primary{ background:var(--brand-primary); color:#fff; border-color:transparent; }
 .hz-button.primary:focus{ outline:2px solid #4b2bb3; outline-offset:2px; }
@@ -191,7 +216,7 @@ body{
 /* Badges (status) */
 .hz-badge{
   display:inline-block; padding:3px 8px; border-radius:9999px;
-  font-size: var(--text-xs); line-height:1; border:1px solid rgba(0,0,0,.08);
+  font-size: var(--text-xs); line-height:1; border:1px solid rgba(0,0,0,0.12);
   background:#fff; color:rgba(48,48,48,.9);
 }
 .hz-badge--success{ background:#e8f8ee; border-color:#9be2bf; color:#065f46; }
@@ -224,7 +249,7 @@ body{
 .hz-marker.error{ background:#ffffff; border-color:var(--accent-error); }
 
 /* Graph-based connectors */
-.hz-graph{ width:100%; max-width:100%; min-height:520px; border-radius:12px; position:relative; background:linear-gradient(180deg,#fafafa, var(--bg-glass)); padding:24px; margin-bottom:32px; border:1px solid rgba(0,0,0,.06); }
+.hz-graph{ width:100%; max-width:100%; min-height:520px; border-radius:12px; position:relative; background:linear-gradient(180deg,#fafafa, var(--bg-glass)); padding:24px; margin-bottom:32px; border:1px solid rgba(0,0,0,0.12); }
 .hz-graph-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
 .hz-link{ stroke:var(--border-subtle); stroke-width:2.5; stroke-linecap:round; }
 /* All connectors in gray (like before) */
@@ -235,7 +260,7 @@ body{
 @keyframes dash-move{ to{ stroke-dashoffset: -20; } }
 
 .hz-node{ pointer-events:auto; }
-.hz-node-card{ background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:10px; box-shadow: var(--hz-shadow-100), var(--hz-shadow-200); padding:16px; }
+.hz-node-card{ background:#fff; border:1px solid rgba(0,0,0,0.12); border-radius:10px; box-shadow: var(--hz-shadow-100), var(--hz-shadow-200); padding:16px; }
 .hz-node-row{ display:flex; align-items:center; gap:10px; }
 .hz-node-icon{ width:28px; height:28px; display:grid; place-items:center; border-radius:8px; background:var(--bg-glass); }
 .hz-node-title{ font-weight:600; font-size: var(--text-sm); }

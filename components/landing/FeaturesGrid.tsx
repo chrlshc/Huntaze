@@ -115,7 +115,7 @@ export function FeaturesGrid({ features }: FeaturesGridProps) {
                 
                 {/* Screenshot Placeholder */}
                 <div className={feature.imagePosition === 'right' ? 'md:order-1' : ''}>
-                  <div className="aspect-video rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-2xl border-4 border-white/20 dark:border-gray-800/50 overflow-hidden">
+                  <div className="aspect-video rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-2xl border-4 border-[var(--border-default)] dark:border-[var(--border-default)] overflow-hidden">
                     <div className="w-full h-full flex items-center justify-center text-white/50 text-sm">
                       Screenshot: {feature.title}
                     </div>
@@ -129,4 +129,3 @@ export function FeaturesGrid({ features }: FeaturesGridProps) {
     </>
   );
 }
-

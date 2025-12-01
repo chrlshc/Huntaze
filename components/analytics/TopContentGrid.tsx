@@ -44,15 +44,15 @@ export function TopContentGrid({ content, loading = false }: TopContentGridProps
   if (content.length === 0) {
     return (
       <Card className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold mb-4">Top Performing Content</h3>
-        <p className="text-gray-500 text-center py-8">No content data available</p>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Top Performing Content</h3>
+        <p className="text-center py-8" style={{ color: 'var(--text-primary)' }}>No content data available</p>
       </Card>
     );
   }
 
   return (
     <Card className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold mb-6">Top Performing Content</h3>
+      <h3 className="text-lg font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Top Performing Content</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {content.map((item) => (
@@ -72,25 +72,25 @@ export function TopContentGrid({ content, loading = false }: TopContentGridProps
             
             <div className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-500 uppercase">
+                <span className="text-xs font-medium uppercase" style={{ color: 'var(--text-secondary)' }}>
                   {item.platform}
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                   {formatDate(item.publishedAt)}
                 </span>
               </div>
               
-              <h4 className="font-medium text-sm mb-3 line-clamp-2">
+              <h4 className="font-medium text-sm mb-3 line-clamp-2" style={{ color: 'var(--text-primary)' }}>
                 {item.title}
               </h4>
               
-              <div className="flex items-center justify-between text-xs text-gray-600">
+              <div className="flex items-center justify-between text-xs" style={{ color: 'var(--text-secondary)' }}>
                 <div className="flex space-x-3">
                   <span>{formatNumber(item.likes)} likes</span>
                   <span>{formatNumber(item.comments)} comments</span>
                   {item.shares > 0 && <span>{formatNumber(item.shares)} shares</span>}
                 </div>
-                <span className="font-semibold">
+                <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
                   {item.engagementRate.toFixed(1)}%
                 </span>
               </div>

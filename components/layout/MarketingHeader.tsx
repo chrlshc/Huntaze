@@ -29,7 +29,7 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 w-full border-b border-white/5 bg-black/80 backdrop-blur-xl',
+        'fixed top-0 left-0 right-0 z-50 w-full border-b border-[var(--border-subtle)] bg-black/80 backdrop-blur-xl',
         className
       )}
     >
@@ -94,7 +94,7 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="border-t border-white/5 bg-black/95 backdrop-blur-xl md:hidden"
+          className="border-t border-[var(--border-subtle)] bg-black/95 backdrop-blur-xl md:hidden"
         >
           <nav className="mx-auto max-w-7xl space-y-1 px-4 py-4" aria-label="Mobile navigation">
             {navigationConfig.main.map((item) => (
@@ -107,7 +107,7 @@ export function MarketingHeader({ className }: MarketingHeaderProps) {
                 {item.label}
               </NavLink>
             ))}
-            <div className="border-t border-white/5 pt-4 space-y-2">
+            <div className="border-t border-[var(--border-subtle)] pt-4 space-y-2">
               <Link
                 href="/auth/login"
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-colors"

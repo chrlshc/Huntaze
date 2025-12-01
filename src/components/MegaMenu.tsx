@@ -85,7 +85,7 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
         })()}
       >
         <div
-          className="rounded-xl border border-white/10 bg-neutral-900/95 backdrop-blur shadow-xl max-h-[calc(100vh-100px)] overflow-y-auto"
+          className="rounded-xl border border-[var(--border-default)] bg-neutral-900/95 backdrop-blur shadow-xl max-h-[calc(100vh-100px)] overflow-y-auto"
           style={panelAlign === 'container-left' ? undefined : ({ width: `min(1200px, calc(100vw - ${panelGutter * 2}px))` } as React.CSSProperties)}
         >
           <div className={`grid gap-y-8 gap-x-12 p-8 ${columns === 4 ? 'md:grid-cols-4' : columns === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
@@ -103,7 +103,7 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
                   aria-label={sectionTitle}
                 >
                   {sectionTitle && !isPopularTopics && (
-                    <div className="mb-4 pb-2 border-b border-white/20 flex items-center gap-3">
+                    <div className="mb-4 pb-2 border-b border-[var(--border-default)] flex items-center gap-3">
                       <div className="grid h-8 w-8 place-items-center rounded-full ring-2 ring-white/30 bg-white/5 text-white">
                         <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3" /></svg>
                       </div>
@@ -114,7 +114,7 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
                     {/* Centered section title between two columns for Popular topics */}
                     {isPopularTopics && (
                       <li className="col-span-2 hidden md:block">
-                        <div className="px-2 py-1 mb-2 pb-2 border-b border-white/20">
+                        <div className="px-2 py-1 mb-2 pb-2 border-b border-[var(--border-default)]">
                           <div className="flex items-center gap-3">
                             <div className="grid h-8 w-8 place-items-center rounded-full ring-2 ring-white/30 bg-white/5 text-white">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3" /></svg>
@@ -157,7 +157,7 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
             )})}
           </div>
           {footerLinks && footerLinks.length > 0 && (
-            <div className="border-t border-white/10 px-6 md:px-8 py-4 flex flex-wrap gap-4 justify-end">
+            <div className="border-t border-[var(--border-default)] px-6 md:px-8 py-4 flex flex-wrap gap-4 justify-end">
               {footerLinks.map((f) => (
                 <Link key={f.href} href={f.href} className="text-xs font-medium text-white/80 hover:text-white" onClick={(e)=>closeParentDetails(e.currentTarget)}>
                   {f.title}

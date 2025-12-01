@@ -21,13 +21,16 @@ export function BenefitSection({
   imagePosition = 'left',
   background = 'default',
 }: BenefitSectionProps) {
-  const bgClass = background === 'alternate' ? 'bg-[var(--bg-secondary)]' : 'bg-[var(--bg-primary)]';
+  const bgClass = background === 'alternate'
+    ? 'bg-[var(--bg-secondary)] shadow-[var(--shadow-sm)]'
+    : 'bg-[var(--bg-primary)] shadow-[var(--shadow-sm)]';
+  const surfaceFrame = 'border border-[var(--border-default)] shadow-[var(--shadow-sm)]';
   const isIconLeft = imagePosition === 'left';
 
   return (
     <section
       id={id}
-      className={`relative min-h-screen md:min-h-screen min-h-[60vh] flex items-center justify-center px-4 py-16 md:py-24 md:px-6 ${bgClass} overflow-hidden`}
+      className={`relative min-h-screen md:min-h-screen min-h-[60vh] flex items-center justify-center px-4 py-16 md:py-24 md:px-6 ${bgClass} ${surfaceFrame} overflow-hidden`}
     >
       <div className="relative z-10 mx-auto max-w-6xl w-full">
         <div className={`flex flex-col ${isIconLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-center gap-12 md:gap-20`}>

@@ -73,7 +73,7 @@ export function ToastProvider({ children }: PropsWithChildren) {
               "pointer-events-auto rounded-lg border px-4 py-3 shadow-lg transition-opacity",
               toast.variant === "success" && "border-green-500/40 bg-green-500/10 text-green-100",
               toast.variant === "error" && "border-red-500/40 bg-red-500/10 text-red-100",
-              toast.variant === "default" && "border-white/10 bg-gray-800 text-gray-100",
+              toast.variant === "default" && "border-[var(--border-default)] bg-gray-800 text-gray-100",
             )}
           >
             <div className="flex items-start justify-between gap-4">

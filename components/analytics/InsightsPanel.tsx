@@ -40,7 +40,7 @@ export function InsightsPanel({ insights, loading = false }: InsightsPanelProps)
 
   return (
     <Card className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold mb-6">Insights & Recommendations</h3>
+      <h3 className="text-lg font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Insights & Recommendations</h3>
       
       {/* Summary */}
       <div className="mb-6 p-4 bg-blue-50 rounded-lg">
@@ -50,7 +50,7 @@ export function InsightsPanel({ insights, loading = false }: InsightsPanelProps)
       {/* Significant Changes */}
       {insights.significantChanges.length > 0 && (
         <div className="mb-6">
-          <h4 className="font-medium text-sm text-gray-700 mb-3">Significant Changes</h4>
+          <h4 className="font-medium text-sm mb-3" style={{ color: 'var(--text-primary)' }}>Significant Changes</h4>
           <div className="space-y-2">
             {insights.significantChanges.map((change, index) => (
               <div
@@ -61,8 +61,8 @@ export function InsightsPanel({ insights, loading = false }: InsightsPanelProps)
                   change.change > 0 ? 'bg-green-500' : 'bg-red-500'
                 }`}></div>
                 <div className="flex-1">
-                  <div className="font-medium text-sm">{change.metric}</div>
-                  <div className="text-sm text-gray-600">{change.description}</div>
+                  <div className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>{change.metric}</div>
+                  <div className="text-sm" style={{ color: 'var(--text-primary)' }}>{change.description}</div>
                 </div>
                 <span
                   className={`text-sm font-semibold ${
@@ -81,12 +81,12 @@ export function InsightsPanel({ insights, loading = false }: InsightsPanelProps)
       {/* Recommendations */}
       {insights.recommendations.length > 0 && (
         <div>
-          <h4 className="font-medium text-sm text-gray-700 mb-3">Recommendations</h4>
+          <h4 className="font-medium text-sm mb-3" style={{ color: 'var(--text-primary)' }}>Recommendations</h4>
           <ul className="space-y-2">
             {insights.recommendations.map((recommendation, index) => (
               <li key={index} className="flex items-start space-x-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2"></span>
-                <span className="text-sm text-gray-700">{recommendation}</span>
+                <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{recommendation}</span>
               </li>
             ))}
           </ul>
@@ -94,7 +94,7 @@ export function InsightsPanel({ insights, loading = false }: InsightsPanelProps)
       )}
 
       {insights.significantChanges.length === 0 && insights.recommendations.length === 0 && (
-        <p className="text-gray-500 text-center py-4">
+        <p className="text-center py-4" style={{ color: 'var(--text-primary)' }}>
           Keep up the good work! Your metrics are stable.
         </p>
       )}

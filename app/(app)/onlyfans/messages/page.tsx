@@ -258,7 +258,7 @@ export default function OnlyFansMessagesPage() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)] mx-auto mb-4"></div>
-            <p className="text-[var(--text-secondary)]">Loading messages...</p>
+            <p className="text-[var(--text-primary)]">Loading messages...</p>
           </div>
         </div>
       </ContentPageErrorBoundary>
@@ -271,7 +271,7 @@ export default function OnlyFansMessagesPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Messages</h1>
-          <p className="text-[var(--text-secondary)]">
+          <p className="text-[var(--text-primary)]">
             AI-powered messaging for OnlyFans
           </p>
         </div>
@@ -280,19 +280,19 @@ export default function OnlyFansMessagesPage() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <Card>
-              <p className="text-sm text-[var(--text-secondary)] mb-1">Sent</p>
+              <p className="text-sm text-[var(--text-primary)] mb-1">Sent</p>
               <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.sent}</p>
             </Card>
             <Card>
-              <p className="text-sm text-[var(--text-secondary)] mb-1">Received</p>
+              <p className="text-sm text-[var(--text-primary)] mb-1">Received</p>
               <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.received}</p>
             </Card>
             <Card>
-              <p className="text-sm text-[var(--text-secondary)] mb-1">Response Rate</p>
+              <p className="text-sm text-[var(--text-primary)] mb-1">Response Rate</p>
               <p className="text-2xl font-bold text-[var(--accent-success)]">{stats.responseRate}%</p>
             </Card>
             <Card>
-              <p className="text-sm text-[var(--text-secondary)] mb-1">Avg Response Time</p>
+              <p className="text-sm text-[var(--text-primary)] mb-1">Avg Response Time</p>
               <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.avgResponseTime}m</p>
             </Card>
           </div>
@@ -312,7 +312,7 @@ export default function OnlyFansMessagesPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search conversations..."
-                    className="w-full pl-10 pr-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
                   />
                 </div>
               </div>
@@ -350,7 +350,7 @@ export default function OnlyFansMessagesPage() {
                             })}
                           </span>
                         </div>
-                        <p className="text-sm text-[var(--text-secondary)] truncate">
+                        <p className="text-sm text-[var(--text-primary)] truncate">
                           {thread.lastMessage}
                         </p>
                       </div>
@@ -387,7 +387,7 @@ export default function OnlyFansMessagesPage() {
                               <Star className="w-4 h-4 text-[var(--accent-warning)] fill-[var(--accent-warning)]" />
                             )}
                           </div>
-                          <p className="text-sm text-[var(--text-secondary)]">
+                          <p className="text-sm text-[var(--text-primary)]">
                             {selectedThread.fanUsername}
                           </p>
                         </div>
@@ -477,7 +477,7 @@ export default function OnlyFansMessagesPage() {
                         onChange={(e) => setMessageInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                         placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
+                        className="flex-1 px-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
                       />
                       <Button variant="primary" onClick={sendMessage} disabled={!messageInput.trim() || sendingMessage}>
   {sendingMessage ? (
@@ -491,14 +491,14 @@ export default function OnlyFansMessagesPage() {
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-[var(--bg-tertiary)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
-                      <Send className="w-8 h-8 text-[var(--text-tertiary)]" />
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-[var(--bg-tertiary)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
+                        <Send className="w-8 h-8 text-[var(--text-tertiary)]" />
+                      </div>
+                      <p className="text-[var(--text-primary)]">
+                        Select a conversation to start messaging
+                      </p>
                     </div>
-                    <p className="text-[var(--text-secondary)]">
-                      Select a conversation to start messaging
-                    </p>
-                  </div>
                 </div>
               )}
             </div>

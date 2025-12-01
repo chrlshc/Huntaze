@@ -8,8 +8,8 @@ export function PricingSection() {
         <h2 className="text-2xl font-bold text-white">Pricing</h2>
         <p className="mt-2 text-base text-gray-400">Bêta ouverte : toutes les fonctionnalités, aucun coût.</p>
       </div>
-      <Card className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-[0_35px_120px_-45px_rgba(0, 0, 0, 0.7)]">
-        <p className="text-4xl font-extrabold text-tertiary">0€</p>
+      <Card className="rounded-2xl border border-[var(--border-default)] bg-white/5 p-8 text-center shadow-[0_35px_120px_-45px_rgba(0, 0, 0, 0.7)]">
+        <p className="text-4xl font-extrabold text-white">0€</p>
         <p className="mt-3 text-gray-300">Accès complet pendant la phase bêta. Passez en production quand vous êtes prêt.</p>
         <Link
           href="/auth/login"

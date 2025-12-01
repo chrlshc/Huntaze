@@ -2,6 +2,48 @@
 
 The Huntaze color system is built around a sophisticated dark palette with subtle glass morphism effects.
 
+## Color Harmonization (Requirements 9.1–9.7)
+
+- **Contrast targets:** Cards and large surfaces must reach at least **3:1** against the page background; primary text must reach **4.5:1**.
+- **Border visibility:** Minimum border opacity is **0.12**. Use `--border-default` for most surfaces and `--border-emphasis` for hover/focus states.
+- **Progressive lightening:** Apply the nesting scale for backgrounds: `--bg-primary` → `--bg-card-elevated` → `--bg-secondary` → `--bg-glass-hover`.
+- **Interactive affordance:** Buttons, inputs, and links should pair color with a border or shadow to stay visually distinct.
+- **Glass effects:** Always pair glass backgrounds with a visible border and inner glow.
+
+**Before vs After (card contrast)**
+
+```tsx
+// ❌ Before – low contrast border and surface
+<div className="bg-zinc-900 border border-white/10">...</div>
+
+// ✅ After – 3:1 surface contrast + 0.12+ border
+<div className="bg-[var(--bg-card-elevated)] border border-[var(--border-default)] shadow-[var(--shadow-inner-glow)]">...</div>
+```
+
+**Border opacity guardrail**
+
+```css
+/* Avoid */
+border: 1px solid rgba(255, 255, 255, 0.1);
+
+/* Do */
+border: 1px solid var(--border-default); /* rgba(255, 255, 255, 0.12) */
+```
+
+**Nested background ladder**
+
+```tsx
+<div className="nesting-level-0">         {/* --bg-primary */}
+  <div className="nesting-level-1">       {/* --bg-card-elevated */}
+    <div className="nesting-level-2">     {/* --bg-secondary */}
+      <div className="nesting-level-3">   {/* --bg-glass-hover */}
+        Nested content
+      </div>
+    </div>
+  </div>
+</div>
+```
+
 ## Background Colors
 
 ### Primary Backgrounds
@@ -31,9 +73,9 @@ The Huntaze color system is built around a sophisticated dark palette with subtl
 ### Glass Morphism Backgrounds
 
 ```css
---bg-glass: rgba(255, 255, 255, 0.05);          /* Base glass effect */
---bg-glass-hover: rgba(255, 255, 255, 0.08);    /* Hover state */
---bg-glass-active: rgba(255, 255, 255, 0.12);   /* Active/pressed state */
+--bg-glass: rgba(255, 255, 255, 0.08);          /* Base glass effect */
+--bg-glass-hover: rgba(255, 255, 255, 0.12);    /* Hover state */
+--bg-glass-active: rgba(255, 255, 255, 0.16);   /* Active/pressed state */
 ```
 
 **Usage:**
@@ -151,7 +193,7 @@ The Huntaze color system is built around a sophisticated dark palette with subtl
 ## Border Colors
 
 ```css
---border-subtle: rgba(255, 255, 255, 0.08);      /* Subtle separation */
+--border-subtle: rgba(255, 255, 255, 0.12);      /* Subtle separation (minimum) */
 --border-default: rgba(255, 255, 255, 0.12);     /* Standard borders */
 --border-emphasis: rgba(255, 255, 255, 0.18);    /* Emphasized borders */
 --border-strong: rgba(255, 255, 255, 0.24);      /* Strong borders */
@@ -181,7 +223,7 @@ All color combinations meet WCAG 2.1 AA standards:
 |------------|------|----------------|
 | `--bg-primary` | `--text-primary` | 18.5:1 ✓ |
 | `--bg-primary` | `--text-secondary` | 7.2:1 ✓ |
-| `--bg-tertiary` | `--text-primary` | 14.8:1 ✓ |
+| `--bg-card-elevated` | `--bg-primary` | ≥ 3:1 ✓ (card-to-canvas) |
 | `--accent-primary` | white | 4.8:1 ✓ |
 
 ## Best Practices

@@ -45,40 +45,40 @@ export function PlatformComparisonChart({
   if (platforms.length === 0) {
     return (
       <Card className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold mb-4">Platform Breakdown</h3>
-        <p className="text-gray-500 text-center py-8">No platform data available</p>
+        <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Platform Breakdown</h3>
+        <p className="text-center py-8" style={{ color: 'var(--text-primary)' }}>No platform data available</p>
       </Card>
     );
   }
 
   return (
     <Card className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold mb-6">Platform Breakdown</h3>
+      <h3 className="text-lg font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Platform Breakdown</h3>
       
       <div className="space-y-6">
         {platforms.map(([platform, data]) => (
           <div key={platform} className="border-b pb-4 last:border-b-0">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
-                <span className="font-medium capitalize">{platform}</span>
+                <span className="font-medium capitalize" style={{ color: 'var(--text-primary)' }}>{platform}</span>
               </div>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {data.engagementRate.toFixed(2)}% engagement
               </span>
             </div>
             
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
-                <div className="text-gray-500">Followers</div>
-                <div className="font-semibold">{formatNumber(data.followers)}</div>
+                <div style={{ color: 'var(--text-secondary)' }}>Followers</div>
+                <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>{formatNumber(data.followers)}</div>
               </div>
               <div>
-                <div className="text-gray-500">Engagement</div>
-                <div className="font-semibold">{formatNumber(data.engagement)}</div>
+                <div style={{ color: 'var(--text-secondary)' }}>Engagement</div>
+                <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>{formatNumber(data.engagement)}</div>
               </div>
               <div>
-                <div className="text-gray-500">Posts</div>
-                <div className="font-semibold">{data.posts}</div>
+                <div style={{ color: 'var(--text-secondary)' }}>Posts</div>
+                <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>{data.posts}</div>
               </div>
             </div>
           </div>

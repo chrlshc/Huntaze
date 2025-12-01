@@ -147,7 +147,7 @@ export interface OGImageColors {
   
   /**
    * Border color (with opacity)
-   * @value "rgba(255, 255, 255, 0.1)"
+   * @value "rgba(255, 255, 255, 0.12)"
    */
   borderColor: string;
 }
@@ -187,7 +187,7 @@ export interface OGImageCardStyle {
   
   /**
    * Border (CSS format)
-   * @default "1px solid rgba(255, 255, 255, 0.1)"
+   * @default "1px solid rgba(255, 255, 255, 0.12)"
    */
   border: string;
   
@@ -269,7 +269,7 @@ export const DEFAULT_OG_IMAGE_COLORS: OGImageColors = {
   backgroundDark: 'var(--bg-primary)',
   cardBackground: '#151516',
   textColor: '#EDEDED',
-  borderColor: 'rgba(255, 255, 255, 0.1)',
+  borderColor: 'rgba(255, 255, 255, 0.12)',
 } as const;
 
 /**
@@ -286,7 +286,7 @@ export const DEFAULT_OG_IMAGE_TYPOGRAPHY: OGImageTypography = {
  */
 export const DEFAULT_OG_IMAGE_CARD_STYLE: OGImageCardStyle = {
   padding: '20px 40px',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
+  border: '1px solid rgba(255, 255, 255, 0.12)',
   borderRadius: 20,
   background: '#151516',
   boxShadow: '0px 10px 50px rgba(94, 106, 210, 0.3)',

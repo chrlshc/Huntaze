@@ -33,8 +33,8 @@ export default function HeaderShopify() {
   if (isApp) return null
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-[1000] transition-all duration-300 ${
-      isScrolled ? 'bg-[var(--bg-secondary)]/95 backdrop-blur-md' : 'bg-[var(--bg-secondary)]'
+    <header className={`fixed inset-x-0 top-0 z-[1000] transition-all duration-300 border-b border-[var(--border-default)] shadow-[var(--shadow-sm)] ${
+      isScrolled ? 'bg-[var(--bg-secondary)]/95 backdrop-blur-md shadow-[var(--shadow-sm)]' : 'bg-[var(--bg-secondary)] shadow-[var(--shadow-sm)]'
     }`}>
       <nav className="max-w-[1400px] mx-auto px-8">
         <div className="flex items-center justify-between h-[64px]">
@@ -224,7 +224,7 @@ export default function HeaderShopify() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="lg:hidden bg-[var(--bg-secondary)]"
+            className="lg:hidden bg-[var(--bg-secondary)] border-b border-[var(--border-default)] shadow-[var(--shadow-sm)]"
           >
             <div className="px-6 py-4 space-y-4">
               <Link

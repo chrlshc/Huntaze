@@ -299,6 +299,34 @@ interface ComponentDefinition {
 *For any* interactive element on mobile, the minimum touch target size should be 44x44px
 **Validates: Requirements 7.4**
 
+### Property 23: Card-Background Contrast Ratio
+*For any* card component on a dark background, the contrast ratio between the card background and page background should meet or exceed 3:1 (WCAG AA for large elements)
+**Validates: Requirements 9.1**
+
+### Property 24: Primary Text Color Lightness
+*For any* text element marked as primary content, the color should use light tokens (zinc-50, zinc-100, or --text-primary) rather than mid-range grays (zinc-400, zinc-500)
+**Validates: Requirements 9.2**
+
+### Property 25: Border Opacity Minimum
+*For any* border color declaration, the opacity (alpha channel) should be at least 0.12 to ensure visible separation
+**Validates: Requirements 9.3**
+
+### Property 26: Interactive Element Visual Distinction
+*For any* interactive element (button, link, input), it should have at least one distinguishing visual feature: distinct color, visible border, or shadow
+**Validates: Requirements 9.4**
+
+### Property 27: Nested Background Hierarchy
+*For any* nested component structure, child element backgrounds should be progressively lighter than parent backgrounds to maintain visual hierarchy
+**Validates: Requirements 9.5**
+
+### Property 28: Adjacent Element Contrast
+*For any* two adjacent sibling elements in the DOM, they should not both use similar dark shades (zinc-900 and zinc-950) without sufficient contrast difference
+**Validates: Requirements 9.6**
+
+### Property 29: Card Light Accent Presence
+*For any* card or container component, it should include at least one light accent feature (white/light border, inner glow, or light shadow) to create visual breathing room
+**Validates: Requirements 9.7**
+
 ## Error Handling
 
 ### Token Not Found
@@ -354,12 +382,20 @@ Each property test will be tagged with: `**Feature: design-system-unification, P
 - Property 20: Test animation timing standardization
 - Property 21: Test mobile breakpoint consistency
 - Property 22: Test touch target size compliance
+- Property 23: Test card-background contrast ratio meets 3:1 minimum
+- Property 24: Test primary text uses light colors (zinc-50/100)
+- Property 25: Test border opacity is at least 0.12
+- Property 26: Test interactive elements have visual distinction
+- Property 27: Test nested backgrounds maintain progressive lightening
+- Property 28: Test adjacent elements avoid similar dark shades
+- Property 29: Test cards include light accent features
 
 ### Integration Tests
 - Test that pages compose components correctly
 - Test that theme switching works across all components
 - Test that responsive behavior is consistent
 - Test that accessibility features work consistently
+- Test that contrast ratios meet WCAG AA standards across all pages
 
 ### Visual Regression Tests
 - Capture screenshots of all components
@@ -406,6 +442,80 @@ Each property test will be tagged with: `**Feature: design-system-unification, P
 - Perform visual regression testing
 - Conduct accessibility audit
 - Get stakeholder approval
+
+## Color Harmonization Strategy
+
+### Problem Statement
+The current implementation suffers from insufficient contrast, with too many similar dark shades (zinc-900, zinc-950) used in adjacent elements, creating a "black on black" effect that reduces readability and visual hierarchy.
+
+### Solution Approach
+
+#### 1. Enhanced Card Contrast
+- Cards should use `--bg-tertiary` (zinc-800) instead of `--bg-secondary` (zinc-900) when on `--bg-primary` (zinc-950) backgrounds
+- This creates a visible 2-step contrast: zinc-950 → zinc-800
+- Glass effect cards should increase opacity to `rgba(255, 255, 255, 0.08)` for better visibility
+
+#### 2. Strategic Use of White Accents
+- All cards must include light borders: `border: 1px solid var(--border-default)` (white/0.12)
+- Interactive elements should have inner glow: `box-shadow: var(--shadow-inner-glow)`
+- Hover states should brighten borders to `--border-emphasis` (white/0.18)
+
+#### 3. Text Color Hierarchy
+- Primary headings: `--text-primary` (zinc-50) - highest contrast
+- Body text: `--text-primary` (zinc-50) for readability
+- Secondary text: `--text-secondary` (zinc-400) - only for labels and metadata
+- Tertiary text: `--text-tertiary` (zinc-500) - only for disabled or very subtle content
+- Avoid using zinc-600 or darker for any visible text
+
+#### 4. Progressive Lightening for Nesting
+When nesting components, follow this hierarchy:
+- Level 0 (page): `--bg-primary` (zinc-950)
+- Level 1 (main cards): `--bg-tertiary` (zinc-800)
+- Level 2 (nested cards): `--bg-secondary` (zinc-900) with increased border opacity
+- Level 3 (inner elements): `--bg-glass-hover` (white/0.08)
+
+#### 5. Border and Separator Visibility
+- Default borders: minimum `--border-default` (white/0.12)
+- Emphasized borders: `--border-emphasis` (white/0.18)
+- Strong borders: `--border-strong` (white/0.24) for important separations
+- Never use borders with opacity < 0.12
+
+#### 6. Interactive Element Distinction
+All interactive elements must have clear visual affordance:
+- Buttons: solid background + border + shadow
+- Inputs: distinct border + focus ring
+- Links: color + underline or hover effect
+- Cards: border + hover state with increased brightness
+
+### Implementation Guidelines
+
+```css
+/* GOOD: Clear contrast between page and card */
+.page {
+  background: var(--bg-primary); /* zinc-950 */
+}
+
+.card {
+  background: var(--bg-tertiary); /* zinc-800 */
+  border: 1px solid var(--border-default); /* white/0.12 */
+  box-shadow: var(--shadow-inner-glow);
+}
+
+/* BAD: Too similar, no contrast */
+.page {
+  background: var(--bg-primary); /* zinc-950 */
+}
+
+.card {
+  background: var(--bg-secondary); /* zinc-900 - too close! */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* too subtle! */
+}
+```
+
+### Contrast Ratio Requirements
+- Card-to-background: minimum 3:1 (WCAG AA for large elements)
+- Text-to-background: minimum 4.5:1 for body text, 3:1 for large text (WCAG AA)
+- Interactive elements: minimum 3:1 against adjacent colors
 
 ## Performance Considerations
 

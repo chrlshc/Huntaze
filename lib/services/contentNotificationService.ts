@@ -175,7 +175,7 @@ export const contentNotificationService = {
             .header { background: linear-gradient(135deg, var(--accent-error) 0%, var(--accent-error) 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
             .content { background: var(--bg-glass); padding: 30px; border-radius: 0 0 10px 10px; }
             .error-icon { font-size: var(--text-5xl); margin-bottom: 10px; }
-            .error-box { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--accent-error); padding: 15px; margin: 20px 0; border-radius: 5px; }
+            .error-box { background: rgba(239, 68, 68, 0.12); border-left: 4px solid var(--accent-error); padding: 15px; margin: 20px 0; border-radius: 5px; }
             .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
             .footer { text-align: center; margin-top: 30px; color: var(--text-tertiary); font-size: var(--text-xs); }
           </style>

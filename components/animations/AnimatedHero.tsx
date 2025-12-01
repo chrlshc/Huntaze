@@ -260,7 +260,7 @@ const AnimatedHero: React.FC = () => {
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
         >
           <span className="text-xs text-gray-400">Explore</span>
-          <div className="w-6 h-10 border-2 border-white/20 rounded-full p-1">
+          <div className="w-6 h-10 border-2 border-[var(--border-default)] rounded-full p-1">
             <motion.div
               className="w-1 h-3 bg-white/50 rounded-full mx-auto"
               animate={{ y: [0, 16, 0] }}

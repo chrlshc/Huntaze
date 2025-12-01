@@ -81,7 +81,7 @@ export default function StatusPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             System Status
           </h1>
-          <p className="text-lg text-gray-700 dark:text-[var(--text-secondary-dark)] max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 dark:text-[var(--text-primary)] max-w-2xl mx-auto">
             Current status of Huntaze services. All times in PST.
           </p>
         </div>
@@ -95,13 +95,13 @@ export default function StatusPage() {
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   All Systems Operational
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">
+                <p className="text-sm text-gray-600 dark:text-[var(--text-primary)]">
                   Last updated: {<SafeDateRenderer date={new Date()} format="full" />}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">Overall Uptime</p>
+              <p className="text-sm text-gray-600 dark:text-[var(--text-primary)]">Overall Uptime</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">99.9%</p>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function StatusPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">{service.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-[var(--text-secondary-dark)]">{service.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-[var(--text-primary)]">{service.description}</p>
                   </div>
                 </div>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBgColor(service.status)} ${getStatusColor(service.status)}`}>
@@ -126,7 +126,7 @@ export default function StatusPage() {
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-[var(--text-secondary-dark)]">Uptime (30 days)</span>
+                <span className="text-gray-600 dark:text-[var(--text-primary)]">Uptime (30 days)</span>
                 <span className="font-medium text-gray-900 dark:text-white">{service.uptime}</span>
               </div>
             </Card>
@@ -138,7 +138,7 @@ export default function StatusPage() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Recent Incidents</h2>
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
             <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-3" />
-            <p className="text-gray-700 dark:text-[var(--text-secondary-dark)]">
+            <p className="text-gray-700 dark:text-[var(--text-primary)]">
               No incidents reported in the last 30 days
             </p>
           </div>
@@ -152,13 +152,13 @@ export default function StatusPage() {
               <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               <h3 className="font-semibold text-gray-900 dark:text-white">Next Maintenance Window</h3>
             </div>
-            <p className="text-gray-700 dark:text-[var(--text-secondary-dark)] mb-2">
+            <p className="text-gray-700 dark:text-[var(--text-primary)] mb-2">
               <strong>Date:</strong> Sunday, January 12, 2025
             </p>
-            <p className="text-gray-700 dark:text-[var(--text-secondary-dark)] mb-2">
+            <p className="text-gray-700 dark:text-[var(--text-primary)] mb-2">
               <strong>Time:</strong> 2:00 AM - 4:00 AM PST
             </p>
-            <p className="text-gray-700 dark:text-[var(--text-secondary-dark)]">
+            <p className="text-gray-700 dark:text-[var(--text-primary)]">
               <strong>Impact:</strong> Brief interruptions possible during database upgrades
             </p>
           </div>
@@ -170,7 +170,7 @@ export default function StatusPage() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Stay Updated
             </h2>
-            <p className="text-gray-700 dark:text-[var(--text-secondary-dark)] mb-6">
+            <p className="text-gray-700 dark:text-[var(--text-primary)] mb-6">
               Get notified about system status changes and planned maintenance
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

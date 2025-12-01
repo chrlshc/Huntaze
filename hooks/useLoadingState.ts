@@ -8,7 +8,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface LoadingStateOptions {
   sectionId?: string;
-  loadingType?: string;
+  loadingType?: 'skeleton' | 'spinner' | 'progress';
   hasCachedData?: boolean;
   showProgressAfter?: number;
   /**
@@ -41,6 +41,10 @@ interface LoadingState {
   isLoading: boolean;
   error: Error | null;
   progress: number;
+  loadingType: LoadingStateOptions['loadingType'];
+  showProgress: boolean;
+  isBackgroundUpdate: boolean;
+  sectionId?: string;
 }
 
 /**
@@ -49,6 +53,10 @@ interface LoadingState {
 export function useLoadingState(options: LoadingStateOptions = {}) {
   const {
     minDuration = 300,
+    loadingType = 'skeleton',
+    hasCachedData = false,
+    sectionId,
+    showProgressAfter,
     timeout,
     onTimeout,
     onComplete,
@@ -59,20 +67,43 @@ export function useLoadingState(options: LoadingStateOptions = {}) {
     isLoading: false,
     error: null,
     progress: 0,
+    loadingType,
+    showProgress: false,
+    isBackgroundUpdate: false,
+    sectionId,
   });
 
   const startTimeRef = useRef<number>(0);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+  const progressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Start loading
    */
   const startLoading = useCallback(() => {
     startTimeRef.current = Date.now();
+
+    // Background update when cached data exists: do not show loader
+    if (hasCachedData) {
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        isBackgroundUpdate: true,
+        loadingType,
+        showProgress: false,
+        sectionId,
+      }));
+      return;
+    }
+
     setState({
       isLoading: true,
       error: null,
       progress: 0,
+      loadingType,
+      showProgress: false,
+      isBackgroundUpdate: false,
+      sectionId,
     });
 
     // Set timeout if specified
@@ -83,8 +114,19 @@ export function useLoadingState(options: LoadingStateOptions = {}) {
           ...prev,
           isLoading: false,
           error: new Error('Operation timed out'),
+          showProgress: false,
         }));
       }, timeout);
+    }
+
+    // Show progress after configured delay for progress loaders
+    if (loadingType === 'progress' && showProgressAfter !== undefined) {
+      progressTimeoutRef.current = setTimeout(() => {
+        setState(prev => ({
+          ...prev,
+          showProgress: true,
+        }));
+      }, showProgressAfter);
     }
   }, [timeout, onTimeout]);
 
@@ -96,6 +138,10 @@ export function useLoadingState(options: LoadingStateOptions = {}) {
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current);
       timeoutIdRef.current = null;
+    }
+    if (progressTimeoutRef.current) {
+      clearTimeout(progressTimeoutRef.current);
+      progressTimeoutRef.current = null;
     }
 
     const elapsed = Date.now() - startTimeRef.current;
@@ -110,6 +156,10 @@ export function useLoadingState(options: LoadingStateOptions = {}) {
       isLoading: false,
       error: error || null,
       progress: 100,
+      loadingType,
+      showProgress: false,
+      isBackgroundUpdate: false,
+      sectionId,
     });
 
     // Call callbacks
@@ -173,14 +223,16 @@ export function useLoadingState(options: LoadingStateOptions = {}) {
     };
   }, []);
 
-  return {
-    ...state,
+  const actions = {
     startLoading,
     stopLoading,
     setProgress,
     execute,
     reset,
   };
+
+  // Return tuple for compatibility with existing tests and usage
+  return [state, actions] as const;
 }
 
 /**
