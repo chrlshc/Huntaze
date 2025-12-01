@@ -16,6 +16,10 @@
    ======================================== */
 
 .beta-landing {
+  /* Force pure black background for beta pages
+     even if global dashboard tokens use a light canvas */
+  --bg-app: #000000;
+
   min-height: 100vh;
   background: var(--bg-app); /* Pure black #000000 */
   color: var(--text-primary);
