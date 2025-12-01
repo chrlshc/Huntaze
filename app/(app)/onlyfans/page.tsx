@@ -375,7 +375,7 @@ export default function OnlyFansPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/onlyfans/messages"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0, 0, 0, 0.3)] hover:-translate-y-1 transition-all group"
+              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:border-gray-300 hover:bg-gray-50 transition-colors group"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
@@ -390,7 +390,7 @@ export default function OnlyFansPage() {
 
             <Link
               href="/onlyfans/fans"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0, 0, 0, 0.3)] hover:-translate-y-1 transition-all group"
+              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:border-gray-300 hover:bg-gray-50 transition-colors group"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors">
@@ -405,7 +405,7 @@ export default function OnlyFansPage() {
 
             <Link
               href="/onlyfans/ppv"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:shadow-[0_12px_24px_rgba(0, 0, 0, 0.3)] hover:-translate-y-1 transition-all group"
+              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:border-gray-300 hover:bg-gray-50 transition-colors group"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">

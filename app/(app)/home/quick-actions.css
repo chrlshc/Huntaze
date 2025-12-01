@@ -58,18 +58,15 @@
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   text-decoration: none;
-  /* GPU-accelerated properties only */
-  transition: transform 200ms ease-out, border-color 200ms ease-out, box-shadow 200ms ease-out;
-  will-change: transform;
+  transition: border-color 200ms ease-out, background-color 200ms ease-out, box-shadow 200ms ease-out;
   cursor: pointer;
   /* NO gradients - pure professional */
 }
 
-/* Requirement 9.3: Hover effect with 2px upward translation and border emphasis */
 .quick-action-button:hover {
-  transform: translateY(-2px) translateZ(0); /* Force GPU acceleration */
   border-color: var(--border-emphasis);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-soft);
+  background: var(--bg-surface);
 }
 
 /* Focus state with brand-colored ring */
@@ -80,7 +77,7 @@
 
 /* Active state */
 .quick-action-button:active {
-  transform: translateY(0) translateZ(0);
+  box-shadow: none;
 }
 
 /* ========================================
