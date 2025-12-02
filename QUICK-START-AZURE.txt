@@ -1,0 +1,72 @@
+╔════════════════════════════════════════════════════════════╗
+║     HUNTAZE AZURE OPENAI - DÉMARRAGE RAPIDE               ║
+╚════════════════════════════════════════════════════════════╝
+
+📋 PRÉREQUIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ☐ Azure CLI installé (brew install azure-cli)
+  ☐ Terraform installé (brew install terraform)
+  ☐ Compte Azure créé (gratuit ou payant)
+
+🚀 DÉPLOIEMENT (10 MINUTES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  cd infra/terraform/azure-ai && ./deploy-simple.sh
+
+  Le script fait tout automatiquement :
+  ✓ Vérification des prérequis
+  ✓ Connexion à Azure
+  ✓ Déploiement de l'infrastructure
+  ✓ Affichage des credentials
+  ✓ Sauvegarde dans .azure-credentials.txt
+
+📦 CE QUI SERA CRÉÉ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  • Azure OpenAI Service
+    - GPT-4 Turbo (premium)
+    - GPT-4 Standard
+    - GPT-3.5 Turbo (économique)
+    - GPT-4 Vision (images)
+    - Text Embeddings (vecteurs)
+  
+  • Cognitive Search (recherche vectorielle)
+  • Key Vault (secrets sécurisés)
+  • Application Insights (monitoring)
+
+💰 COÛT ESTIMÉ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ~$50-100/mois avec usage normal
+  (Pay-per-use, tu paies seulement ce que tu utilises)
+
+🔗 APRÈS LE DÉPLOIEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. Copier les credentials affichés
+  2. Ajouter dans AWS Amplify Console :
+     - AZURE_OPENAI_ENDPOINT
+     - AZURE_OPENAI_API_KEY
+     - AZURE_API_VERSION
+     - AZURE_DEPLOYMENT_PREMIUM
+     - AZURE_DEPLOYMENT_STANDARD
+  3. Redémarrer l'application
+  4. Tester la connexion
+
+📚 DOCUMENTATION COMPLÈTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  • START-HERE-AZURE.md          → Point de départ
+  • AZURE-DOCS-INDEX.md          → Index complet
+  • DEPLOY-AZURE-NOW.md          → Commande unique
+  • AZURE-DEPLOYMENT-GUIDE-SIMPLE.md → Guide détaillé
+  • MISSION-COMPLETE.md          → Résumé complet
+
+✅ AVANTAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ Infrastructure dédiée (pas d'API externe)
+  ✓ Latence réduite (50-100ms vs 200-500ms)
+  ✓ 5 modèles disponibles
+  ✓ Monitoring intégré
+  ✓ Sécurité renforcée
+  ✓ Aucun impact sur AWS existant
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Prêt à déployer ? Lance la commande ci-dessus ! 🚀

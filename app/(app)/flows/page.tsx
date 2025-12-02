@@ -16,7 +16,7 @@ export default function FlowsPage() {
     <div className="min-h-screen bg-background-primary text-text-primary">
       <div className="max-w-6xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-2">Huntaze Flows</h1>
-        <p className="text-text-primary mb-10">Aperçu interactif des 3 flux: App, Pricing, Onboarding.</p>
+        <p className="text-text-primary mb-10">Interactive overview of the three core flows: App, Pricing, and Onboarding.</p>
 
         {/* App Flow */}
         <section className="mb-12">

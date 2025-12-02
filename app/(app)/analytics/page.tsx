@@ -147,10 +147,10 @@ export default function AnalyticsPage() {
       <ProtectedRoute requireOnboarding={false}>
         <ContentPageErrorBoundary pageName="Analytics">
           <div className="analytics-container">
-            <div className="analytics-header">
+          <div className="analytics-header">
               <h1 className="analytics-title">Analytics</h1>
               <p className="analytics-subtitle">
-                Visualise tes revenus, abonnés et churn sur tous tes comptes créateurs.
+                See your revenue, subscribers, and churn across all creator accounts.
               </p>
             </div>
 
@@ -210,7 +210,7 @@ export default function AnalyticsPage() {
             <div>
               <h1 className="analytics-title">Analytics</h1>
               <p className="analytics-subtitle">
-                Pilote tes chiffres clés (revenus, fans, churn) et repère les opportunités de croissance.
+                Track your key metrics (revenue, fans, churn) and spot growth opportunities.
               </p>
             </div>
             

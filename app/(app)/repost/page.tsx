@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/export-all";
 import { Card } from '@/components/ui/card';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { AppPageHeader } from '@/components/layout/AppPageHeader';
 
 type Suggestion = {
   asset: { id: string; url: string; thumbUrl?: string; type: string; tags?: string[] };
@@ -60,45 +62,75 @@ export default function RepostPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <Card className="rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Repost Engine</h1>
-          <p className="text-gray-600 dark:text-gray-300">Top content this week based on performance. Pick a slot and add to calendar.</p>
-          <div className="mt-3">
-            <label className="text-sm mr-2">Platform</label>
-            <Select className="border rounded p-1 bg-white dark:bg-gray-900" value={platform} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPlatform(e.target.value as any)}>
-              <option value="ONLYFANS">OnlyFans</option>
-              <option value="FANSLY">Fansly</option>
-            </Select>
+    <ProtectedRoute requireOnboarding={false}>
+      <main className="flex flex-col gap-6 pb-8">
+        <AppPageHeader
+          title="Content library"
+          description="Browse and reuse your best-performing content."
+          actions={null}
+        />
+
+        <Card>
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <h2 className="text-sm font-semibold text-[var(--color-text-heading)]">
+                Repost Engine
+              </h2>
+              <p className="text-xs text-[var(--color-text-sub)]">
+                Top content this week based on performance. Pick a slot and add it to your calendar.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-[var(--color-text-sub)]">Platform</label>
+              <Select
+                className="border border-[var(--border-subtle)] rounded px-2 py-1 bg-[var(--bg-surface)]"
+                value={platform}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setPlatform(e.target.value as any)
+                }
+              >
+                <option value="ONLYFANS">OnlyFans</option>
+                <option value="FANSLY">Fansly</option>
+              </Select>
+            </div>
           </div>
         </Card>
 
-        <Card className="rounded-xl p-6">
+        <Card>
           {loading ? (
             <div>Loading…</div>
           ) : error ? (
             <div className="text-red-600">{error}</div>
           ) : sugs.length === 0 ? (
-            <div className="text-gray-600 dark:text-gray-300">No suggestions yet.</div>
+            <div className="text-sm text-[var(--color-text-sub)]">No suggestions yet.</div>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               {sugs.map((s) => (
-                <div key={s.asset.id} className="border dark:border-gray-800 rounded-lg p-4">
+                <div
+                  key={s.asset.id}
+                  className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4"
+                >
                   <div className="flex gap-3 items-start">
-                    <div className="w-20 h-20 bg-gray-200 dark:bg-gray-800 rounded overflow-hidden flex items-center justify-center">
+                    <div className="w-20 h-20 rounded overflow-hidden flex items-center justify-center bg-[var(--bg-app)]">
                       {s.asset.thumbUrl ? (
                         <img src={s.asset.thumbUrl} alt={`${s.asset.type} thumbnail`} className="object-cover w-full h-full" />
                       ) : (
-                        <span className="text-xs text-gray-500">{s.asset.type}</span>
+                        <span className="text-xs text-[var(--color-text-sub)]">{s.asset.type}</span>
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm text-gray-500">Score: {Math.round(s.score)}</div>
-                      <div className="text-xs text-gray-500">Tags: {s.asset.tags?.join(', ') || '-'}</div>
+                      <div className="text-sm text-[var(--color-text-sub)]">
+                        Score: {Math.round(s.score)}
+                      </div>
+                      <div className="text-xs text-[var(--color-text-sub)]">
+                        Tags: {s.asset.tags?.join(', ') || '-'}
+                      </div>
                       <div className="mt-2">
-                        <label className="text-xs block mb-1">Pick a slot</label>
-                        <Select className="w-full border rounded p-2 bg-white dark:bg-gray-900"
+                        <label className="text-xs block mb-1 text-[var(--color-text-sub)]">
+                          Pick a slot
+                        </label>
+                        <Select
+                          className="w-full border border-[var(--border-subtle)] rounded px-2 py-1 bg-[var(--bg-surface)]"
                           value={picked[s.asset.id] || s.recommendedSlots[0]}
                           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPicked((prev) => ({ ...prev, [s.asset.id]: e.target.value }))}
                         >
@@ -109,26 +141,36 @@ export default function RepostPage() {
                       </div>
                       <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
-                          <label className="text-xs block mb-1">Caption A</label>
-                          <textarea className="w-full border rounded p-2 bg-white dark:bg-gray-900" rows={2} defaultValue={s.recommendedCaption}
+                          <label className="text-xs block mb-1 text-[var(--color-text-sub)]">
+                            Caption A
+                          </label>
+                          <textarea
+                            className="w-full border border-[var(--border-subtle)] rounded px-2 py-1 bg-[var(--bg-surface)] text-sm"
+                            rows={2}
+                            defaultValue={s.recommendedCaption}
                             onChange={(e) => setCaptionA((prev) => ({ ...prev, [s.asset.id]: e.target.value }))}
                           />
                         </div>
                         <div>
-                          <label className="text-xs block mb-1">Caption B (optional)</label>
-                          <textarea className="w-full border rounded p-2 bg-white dark:bg-gray-900" rows={2}
+                          <label className="text-xs block mb-1 text-[var(--color-text-sub)]">
+                            Caption B (optional)
+                          </label>
+                          <textarea
+                            className="w-full border border-[var(--border-subtle)] rounded px-2 py-1 bg-[var(--bg-surface)] text-sm"
+                            rows={2}
                             placeholder="Add a B variant to run A/B"
                             onChange={(e) => setCaptionB((prev) => ({ ...prev, [s.asset.id]: e.target.value }))}
                           />
                         </div>
                       </div>
                       <div className="mt-3 text-right">
-                        <button
+                        <Button
+                          variant="primary"
+                          size="sm"
                           onClick={() => schedule(s)}
-                          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900 transition-colors"
                         >
                           Add to calendar
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -137,7 +179,7 @@ export default function RepostPage() {
             </div>
           )}
         </Card>
-      </div>
-    </div>
+      </main>
+    </ProtectedRoute>
   );
 }

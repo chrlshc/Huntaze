@@ -226,7 +226,7 @@ export default function OnlyFansAnalyticsPage() {
 
             <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">Taux d'Engagement</h3>
+                <h3 className="text-sm font-medium text-gray-600">Engagement Rate</h3>
                 <TrendingUp className="h-4 w-4 text-gray-400" />
               </div>
               <div className="text-2xl font-bold text-blue-600">{formatPercentage(kpis.responseRate)}</div>
@@ -245,7 +245,7 @@ export default function OnlyFansAnalyticsPage() {
               onClick={() => setActiveTab('overview')}
               className={`px-4 py-2 font-medium ${activeTab === 'overview' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
             >
-              Vue d'ensemble
+              Overview
             </Button>
             <Button 
               variant="primary" 
@@ -258,16 +258,16 @@ export default function OnlyFansAnalyticsPage() {
 
           {activeTab === 'overview' && (
             <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-4">Vue d'ensemble</h3>
+              <h3 className="text-lg font-semibold mb-4">Overview</h3>
               <p className="text-gray-600">
-                Graphiques de revenue et messages à venir (nécessite Recharts)
+                Revenue and upcoming messages charts (requires Recharts integration).
               </p>
             </Card>
           )}
 
           {activeTab === 'fans' && (
             <Card className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-4">Top 10 Fans par Revenue</h3>
+              <h3 className="text-lg font-semibold mb-4">Top 10 Fans by Revenue</h3>
               <div className="space-y-4">
                 {topFans.map((fan, index) => (
                   <div key={fan.id} className="flex items-center space-x-4 p-3 rounded-lg border border-gray-100">

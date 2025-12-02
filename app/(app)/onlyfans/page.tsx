@@ -187,7 +187,7 @@ export default function OnlyFansPage() {
             OnlyFans Dashboard
           </h1>
           <p className="text-[var(--color-text-sub)]">
-            Suis tes messages, fans, revenus PPV et ton usage d&rsquo;IA en un coup d&rsquo;œil.
+            Track your messages, fans, PPV revenue, and AI usage at a glance.
           </p>
         </div>
 

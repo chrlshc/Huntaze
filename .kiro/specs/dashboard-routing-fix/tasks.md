@@ -1,321 +1,237 @@
-# Implementation Plan: Dashboard Routing and Layout Fix
+# Implementation Plan: Dashboard Routing Simplification
 
-- [ ] 1. Set up testing infrastructure
-  - Install fast-check for property-based testing
-  - Configure test environment for routing tests
-  - Set up Playwright for integration tests
-  - _Requirements: All requirements (testing foundation)_
+## Overview
+This plan implements a simplified 5-section navigation structure for the dashboard. Most pages already exist - we only need to create 3 OnlyFans pages and reorganize navigation.
 
-- [ ]* 1.1 Install fast-check and configure
-  - **Property-based testing setup**
-  - **Validates: Testing Strategy**
+## 🎯 Structure Finale - 5 Sections
 
-- [ ] 2. Create OnlyFans main dashboard page
-  - [ ] 2.1 Create `/app/(app)/onlyfans/page.tsx` file
-    - Implement server component for OnlyFans dashboard
-    - Add stats overview cards (messages, fans, PPV)
-    - Include quick action buttons
-    - Add connection status indicator
-    - _Requirements: 1.1, 1.2, 1.3_
+### 🏠 Home
+- **Route**: `/home`
+- **Status**: ✅ Existe déjà
+- **Features**: Stats overview, platform status, quick actions
+- **AI Systems**: Performance monitoring
 
-- [ ]* 2.2 Write property test for OnlyFans page accessibility
-  - **Property 2: OnlyFans Page Accessibility**
-  - **Validates: Requirements 1.1, 1.2**
+### 💙 OnlyFans  
+- **Route principale**: `/onlyfans`
+- **Sub-routes**:
+  - `/onlyfans` - Overview dashboard ⚠️ À créer
+  - `/onlyfans/messages` - Messages avec AI ⚠️ À créer
+  - `/onlyfans/settings` - Paramètres ⚠️ À créer
+  - `/onlyfans/fans` - ✅ Existe
+  - `/onlyfans/ppv` - ✅ Existe
+- **AI Systems**: Gemini AI, rate limiting, billing tracking
 
-- [ ] 2.3 Create API route for OnlyFans stats
-    - Implement `/app/api/onlyfans/stats/route.ts`
-    - Fetch data from database/external APIs
-    - Return formatted stats object
-    - Add error handling and caching
-    - _Requirements: 1.2_
+### 📊 Analytics
+- **Route**: `/analytics`
+- **Status**: ✅ Existe déjà
+- **Sub-routes**:
+  - `/analytics/pricing` - AI pricing recommendations
+  - `/analytics/churn` - Churn risk detection
+  - `/analytics/upsells` - Upsell automation
+  - `/analytics/forecast` - Revenue forecasting
+  - `/analytics/payouts` - Payout scheduling
+- **AI Systems**: AI billing, performance monitoring, data integration
 
-- [ ]* 2.4 Write unit tests for OnlyFans stats API
-    - Test stats data transformation
-    - Test error handling
-    - Test caching behavior
-    - _Requirements: 1.2_
+### 📢 Marketing
+- **Route**: `/marketing`
+- **Status**: ✅ Existe, à enrichir avec intégrations
+- **Sub-routes**:
+  - `/marketing/campaigns` - ✅ Existe
+  - `/marketing/social` - ⚠️ À créer (fusionner /integrations + /social-marketing)
+  - `/marketing/calendar` - ✅ Existe
+- **AI Systems**: Knowledge network, data integration, content generation
 
-- [ ] 3. Fix messages routing
-  - [ ] 3.1 Update `/app/(app)/messages/page.tsx` to redirect
-    - Replace current implementation with redirect to `/onlyfans/messages`
-    - Use Next.js `redirect()` function
-    - Add comment explaining redirect purpose
-    - _Requirements: 2.1, 2.2_
+### 🎨 Content
+- **Route**: `/content`
+- **Status**: ✅ Existe déjà
+- **Features**: Multi-platform content creation, scheduling
+- **AI Systems**: Gemini AI for content generation
 
-- [ ]* 3.2 Write property test for messages redirect
-  - **Property 3: Messages Redirect Correctness**
-  - **Validates: Requirements 2.1, 2.3**
+## 🤖 Existing AI Systems & Integrations
 
-- [ ] 3.3 Verify OnlyFans messages page exists and works
-    - Check `/app/(app)/onlyfans/messages/page.tsx` renders correctly
-    - Ensure it displays OnlyFans-specific messages
-    - Test connection prompt for unconnected users
-    - _Requirements: 2.3, 2.4_
+The following systems are already integrated and functional:
 
-- [ ] 4. Update navigation menu
-  - [ ] 4.1 Add OnlyFans menu item to Sidebar
-    - Update `components/Sidebar.tsx`
-    - Add OnlyFans icon and link to `/onlyfans`
-    - Position appropriately in menu hierarchy
-    - _Requirements: 1.3, 7.1, 7.2_
+### AI Core Systems
+- **AI Billing** (`lib/ai/billing.ts`) - Monthly quota management, usage tracking
+- **Gemini AI Service** (`lib/ai/gemini-client.ts`, `lib/ai/gemini.service.ts`) - AI content generation
+- **Knowledge Network** (`lib/ai/knowledge-network.ts`) - AI knowledge management
+- **Data Integration** (`lib/ai/data-integration.ts`) - Cross-platform data sync
+- **Rate Limiting** (`lib/ai/rate-limit.ts`) - API rate limit management
+- **Quota Management** (`lib/ai/quota.ts`) - Usage quota tracking
 
-- [ ] 4.2 Update Messages menu item
-    - Change link from `/messages` to `/onlyfans/messages`
-    - Update icon if needed
-    - Ensure proper active state detection
-    - _Requirements: 2.2, 7.2_
+### Performance & Monitoring
+- **Performance Monitoring** (`lib/monitoring/performance.ts`) - Real-time tracking
+- **Diagnostics** (`lib/diagnostics/`) - Performance diagnostics
+- **Web Vitals** (`lib/monitoring/WEB-VITALS-README.md`) - Core web vitals tracking
 
-- [ ] 4.3 Ensure Marketing is accessible
-    - Verify Marketing menu item exists
-    - Link to `/marketing` route
-    - Test navigation flow
-    - _Requirements: 3.3, 7.1_
+### Infrastructure
+- **AWS Integration** (`lib/aws/`) - S3, CloudWatch, metrics
+- **Database Optimizations** (`lib/database/`) - Cursor pagination, aggregations, N+1 prevention
+- **Caching Systems** (`lib/cache/`) - API cache, stale-while-revalidate
+- **Error Handling** (`lib/error-handling/`) - Graceful degradation
 
-- [ ] 4.4 Implement active state detection
-    - Update Sidebar to detect current route
-    - Highlight active menu item
-    - Handle nested routes (e.g., `/onlyfans/messages`)
-    - _Requirements: 7.3_
+## 📋 Tasks
 
-- [ ]* 4.5 Write property test for navigation active state
-  - **Property 6: Navigation Active State**
-  - **Validates: Requirements 7.3**
+- [x] 1. Set up routing infrastructure and navigation components
+  - Create unified navigation component with 5 main sections
+  - Implement route resolution and active state management
+  - Set up proper z-index hierarchy for overlays
+  - _Requirements: 1.1, 1.2, 1.3, 2.1_
 
-- [ ]* 4.6 Write unit tests for navigation menu
-    - Test menu item generation
-    - Test active state logic
-    - Test badge display for unread counts
-    - _Requirements: 7.1, 7.2, 7.3_
+- [x]* 1.1 Write property test for route resolution
+  - **Property 1: Route resolution consistency**
+  - **Validates: Requirements 1.1**
 
-- [ ] 5. Fix integrations page structure
-  - [ ] 5.1 Refactor `/app/(app)/integrations/page.tsx`
-    - Remove redirect pattern
-    - Directly render IntegrationsClient component
-    - Keep dynamic rendering configuration
-    - _Requirements: 5.1, 5.2, 5.3_
+- [x]* 1.2 Write property test for navigation active state
+  - **Property 2: Navigation active state correctness**
+  - **Validates: Requirements 1.2**
 
-- [ ] 5.2 Test integrations page rendering
-    - Verify no hydration mismatches
-    - Test connection status updates
-    - Ensure proper error handling
-    - _Requirements: 5.3, 5.4, 5.5_
+- [x]* 1.3 Write property test for z-index hierarchy
+  - **Property 3: Z-index hierarchy preservation**
+  - **Validates: Requirements 1.3**
 
-- [ ] 6. Fix content page layout conflicts
-  - [ ] 6.1 Audit content page for layout issues
-    - Inspect z-index usage in `app/(app)/content/page.tsx`
-    - Check integration with `.huntaze-main` grid area
-    - Identify any absolute positioning conflicts
-    - _Requirements: 9.1, 9.2, 9.4_
+- [ ] 2. Create OnlyFans section pages (3 pages à créer)
 
-- [ ] 6.2 Apply design token z-index values
-    - Replace hardcoded z-index with CSS custom properties
-    - Use `--huntaze-z-index-modal` for modals
-    - Use `--huntaze-z-index-overlay` for overlays
-    - _Requirements: 9.2, 9.3_
+- [ ] 2.1 Create /onlyfans/page.tsx (main dashboard)
+  - Implement OnlyFans overview with stats cards (messages, fans, PPV, revenue)
+  - Add quick action buttons (Send Message, View Fans, Create PPV)
+  - Show AI billing usage and quota status from `lib/ai/billing.ts`
+  - Display performance metrics from `lib/monitoring/performance.ts`
+  - Add connection status indicator
+  - Include navigation to sub-pages (Messages, Fans, PPV, Settings)
+  - Use `usePerformanceMonitoring` hook for tracking
+  - Integrate with existing OnlyFans API connections
+  - _Requirements: 3.1, 3.2_
+  - _AI Systems: lib/ai/billing.ts, lib/monitoring/performance.ts_
+  - _Reference: app/(app)/home/page.tsx for stats card patterns_
 
-- [ ]* 6.3 Write property test for z-index hierarchy
-  - **Property 5: Z-Index Hierarchy Consistency**
-  - **Validates: Requirements 9.2, 9.5**
+- [ ] 2.2 Create /onlyfans/messages/page.tsx
+  - Implement messages interface with thread list and conversation view
+  - Integrate Gemini AI for message suggestions via `lib/ai/gemini.service.ts`
+  - Use rate limiting for AI requests via `lib/ai/rate-limit.ts`
+  - Add AI-powered reply suggestions
+  - Show message stats (sent, received, response rate)
+  - Connect to existing message handling system
+  - Use `ContentPageErrorBoundary` for error handling
+  - Add loading states with `AsyncOperationWrapper`
+  - _Requirements: 3.3, 3.4_
+  - _AI Systems: lib/ai/gemini.service.ts, lib/ai/rate-limit.ts_
+  - _Reference: app/(app)/messages/page.tsx for existing patterns_
 
-- [ ] 6.4 Fix modal positioning
-    - Ensure ContentModal uses proper z-index
-    - Verify modal doesn't conflict with header/sidebar
-    - Test modal on different screen sizes
-    - _Requirements: 9.2, 9.5_
+- [ ] 2.3 Create /onlyfans/settings/page.tsx
+  - Implement OnlyFans-specific settings and preferences
+  - Show AI quota settings and usage via `lib/ai/quota.ts`
+  - Add connection management (connect/disconnect OnlyFans)
+  - Include notification preferences
+  - Add automation settings (auto-reply, message templates)
+  - Connect to user preferences system
+  - Display billing information and plan details
+  - _Requirements: 3.5_
+  - _AI Systems: lib/ai/quota.ts, lib/ai/billing.ts_
+  - _Reference: app/(app)/settings/page.tsx for settings patterns_
 
-- [ ] 6.5 Test content page layout
-    - Verify no element overlapping
-    - Test with different content lengths
-    - Check responsive behavior
-    - _Requirements: 9.1, 9.3, 9.4_
+- [ ] 3. Integrate Marketing with Social Media
 
-- [ ] 7. Optimize analytics page performance
-  - [ ] 7.1 Audit analytics page loading
-    - Measure current load time
-    - Identify slow components
-    - Check for unnecessary re-renders
-    - _Requirements: 4.1, 4.2_
+- [ ] 3.1 Enhance /marketing/page.tsx with integrations
+  - Add "Social Media & Integrations" section to existing page
+  - Display connected platforms (Instagram, TikTok, Reddit, OnlyFans)
+  - Show integration cards from `/integrations` using `IntegrationCard` component
+  - Display data integration status via `lib/ai/data-integration.ts`
+  - Add "Manage Integrations" button linking to `/marketing/social`
+  - Keep existing campaign management functionality
+  - Update navigation to remove standalone integrations link
+  - _Requirements: 4.1, 4.2_
+  - _AI Systems: lib/ai/data-integration.ts_
+  - _Reference: app/(app)/integrations/page.tsx for integration patterns_
 
-- [ ] 7.2 Implement proper loading states
-    - Add skeleton loaders for stats cards
-    - Use Suspense for async components
-    - Show loading indicators within 100ms
-    - _Requirements: 4.3_
+- [ ] 3.2 Create /marketing/social/page.tsx
+  - Implement social media management interface
+  - Merge functionality from `/social-marketing` page
+  - Show all connected social platforms with stats
+  - Use `IntegrationCard` and `IntegrationIcon` components
+  - Integrate with existing social platforms (Instagram, TikTok, Reddit)
+  - Use knowledge network for content recommendations via `lib/ai/knowledge-network.ts`
+  - Add post scheduling and analytics
+  - Display engagement metrics per platform
+  - _Requirements: 4.3_
+  - _AI Systems: lib/ai/knowledge-network.ts, lib/integrations/_
+  - _Reference: app/(app)/social-marketing/page.tsx, app/(app)/integrations/page.tsx_
 
-- [ ] 7.3 Add error handling with retry
-    - Wrap API calls in try-catch
-    - Display user-friendly error messages
-    - Implement retry button with exponential backoff
-    - _Requirements: 4.4, 8.1, 8.2, 8.4_
+- [ ] 4. Set up redirections
 
-- [ ]* 7.4 Write property test for performance loading states
-  - **Property 8: Performance Loading States**
-  - **Validates: Requirements 4.1, 6.1**
+- [ ] 4.1 Create redirect from /messages to /onlyfans/messages
+  - Update `/app/(app)/messages/page.tsx` to use Next.js `redirect()`
+  - Add comment explaining redirect for backward compatibility
+  - Update any internal links in components (search for `href="/messages"`)
+  - Test redirect works correctly
+  - _Requirements: 5.1_
 
-- [ ] 7.5 Optimize data fetching
-    - Implement caching for analytics data
-    - Use SWR for client-side data
-    - Reduce API payload size
-    - _Requirements: 4.1_
+- [ ] 4.2 Create redirect from /integrations to /marketing
+  - Update `/app/(app)/integrations/page.tsx` to redirect to `/marketing`
+  - Add comment explaining consolidation
+  - Update any internal links in components (search for `href="/integrations"`)
+  - Test redirect works correctly
+  - _Requirements: 5.2_
 
-- [ ] 8. Implement authentication guards
-  - [ ] 8.1 Verify ProtectedRoute component usage
-    - Check all dashboard pages use ProtectedRoute
-    - Ensure proper redirect to login
-    - Test with authenticated and unauthenticated users
-    - _Requirements: 7.4, 7.5_
+- [ ] 4.3 Create redirect from /social-marketing to /marketing/social
+  - Update `/app/(app)/social-marketing/page.tsx` to redirect
+  - Add comment explaining new location
+  - Update any internal links in components (search for `href="/social-marketing"`)
+  - Test redirect works correctly
+  - _Requirements: 5.3_
 
-- [ ]* 8.2 Write property test for authentication guard
-  - **Property 7: Authentication Guard**
-  - **Validates: Requirements 7.4, 7.5**
+- [ ] 5. Update navigation component
 
-- [ ] 8.3 Test authentication flow
-    - Test redirect to login for unauthenticated users
-    - Test successful access for authenticated users
-    - Verify session persistence
-    - _Requirements: 7.4, 7.5_
+- [ ] 5.1 Implement 5-section navigation structure
+  - Update main navigation to show: Home, OnlyFans, Analytics, Marketing, Content
+  - Remove standalone "Messages" and "Integrations" from main nav
+  - Update active states and routing logic
+  - Ensure proper highlighting for current section
+  - Use consistent icons and styling
+  - _Requirements: 2.1, 2.2, 2.3_
+  - _Reference: components/Sidebar.tsx or main navigation component_
 
-- [ ] 9. Add error boundaries
-  - [ ] 9.1 Verify error boundary coverage
-    - Check ContentPageErrorBoundary usage
-    - Ensure all pages have error boundaries
-    - Test error boundary behavior
-    - _Requirements: 8.1, 8.2, 8.3_
+- [ ] 5.2 Add sub-navigation for sections with multiple pages
+  - **OnlyFans sub-nav**: Overview, Messages, Fans, PPV, Settings
+  - **Marketing sub-nav**: Campaigns, Social, Calendar
+  - **Analytics sub-nav**: Overview, Pricing, Churn, Upsells, Forecast, Payouts
+  - Show sub-nav only when in that section
+  - Highlight active sub-page
+  - Use collapsible/expandable pattern if needed
+  - _Requirements: 2.4_
 
-- [ ]* 9.2 Write property test for error recovery
-  - **Property 9: Error Recovery**
-  - **Validates: Requirements 8.1, 8.2, 8.4**
+- [x] 6. Final checkpoint - Ensure all tests pass
+  - Verify all routes work correctly
+  - Test navigation active states
+  - Confirm redirects function properly
+  - Validate z-index hierarchy
+  - Test AI system integrations on new pages
+  - Verify performance monitoring is active
+  - Check error boundaries work
+  - Test on mobile and desktop
+  - _Requirements: All_
 
-- [ ] 9.3 Test error scenarios
-    - Simulate API failures
-    - Test component errors
-    - Verify error messages display
-    - Test retry functionality
-    - _Requirements: 8.1, 8.2, 8.4, 8.5_
+## ⏱️ Estimated Time
 
-- [ ] 10. Implement responsive layout fixes
-  - [ ] 10.1 Test mobile layout
-    - Verify sidebar hides on mobile
-    - Test single-column layout
-    - Check touch interactions
-    - _Requirements: 9.3_
+- **Task 2.1** (OnlyFans overview): 1.5 hours
+- **Task 2.2** (OnlyFans messages): 1.5 hours  
+- **Task 2.3** (OnlyFans settings): 1 hour
+- **Task 3.1** (Marketing integration): 1 hour
+- **Task 3.2** (Marketing/Social page): 1 hour
+- **Task 4** (Redirections): 30 minutes
+- **Task 5** (Navigation): 1 hour
+- **Task 6** (Testing): 30 minutes
 
-- [ ]* 10.2 Write property test for responsive layout
-  - **Property 10: Responsive Layout Adaptation**
-  - **Validates: Requirements 9.3**
+**Total: 7-8 hours**
 
-- [ ] 10.3 Fix any mobile-specific issues
-    - Adjust font sizes for mobile
-    - Fix any overflow issues
-    - Ensure proper spacing
-    - _Requirements: 9.3_
+## 📝 Notes
 
-- [ ] 11. Write integration tests
-  - [ ] 11.1 Set up Playwright tests
-    - Configure Playwright for dashboard testing
-    - Create test fixtures and helpers
-    - Set up test data
-    - _Requirements: All requirements_
-
-- [ ]* 11.2 Write route navigation tests
-    - Test navigation through all main routes
-    - Verify correct page loads
-    - Test breadcrumb navigation
-    - _Requirements: 1.3, 2.2, 3.3, 7.2_
-
-- [ ]* 11.3 Write OnlyFans dashboard tests
-    - Test stats display
-    - Test quick actions
-    - Test navigation to sub-pages
-    - _Requirements: 1.1, 1.2, 1.3_
-
-- [ ]* 11.4 Write messages redirect tests
-    - Test redirect from /messages
-    - Verify OnlyFans messages display
-    - Test connection prompt
-    - _Requirements: 2.1, 2.2, 2.3_
-
-- [ ]* 11.5 Write layout tests
-    - Test no element overlapping
-    - Test responsive layouts
-    - Test modal positioning
-    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
-
-- [ ]* 11.6 Write authentication tests
-    - Test protected route access
-    - Test login redirect
-    - Test session persistence
-    - _Requirements: 7.4, 7.5_
-
-- [ ] 12. Property-based testing implementation
-  - [ ]* 12.1 Write route resolution property test
-    - **Property 1: Route Resolution Consistency**
-    - **Validates: Requirements 1.3, 2.2, 3.3, 7.2**
-
-- [ ]* 12.2 Write layout grid integration property test
-    - **Property 4: Layout Grid Integration**
-    - **Validates: Requirements 9.1, 9.2, 9.4**
-
-- [ ] 13. Performance optimization
-  - [ ] 13.1 Implement code splitting
-    - Lazy load heavy components
-    - Use dynamic imports for modals
-    - Split by route
-    - _Requirements: 4.1, 6.1_
-
-- [ ] 13.2 Optimize CSS
-    - Remove unused styles
-    - Minimize reflows
-    - Use GPU acceleration where appropriate
-    - _Requirements: 9.3_
-
-- [ ] 13.3 Implement caching strategy
-    - Cache API responses
-    - Use SWR for client-side data
-    - Implement stale-while-revalidate
-    - _Requirements: 4.1, 6.1_
-
-- [ ] 14. Checkpoint - Ensure all tests pass
-  - Ensure all tests pass, ask the user if questions arise.
-
-- [ ] 15. Documentation and cleanup
-  - [ ] 15.1 Update component documentation
-    - Document new OnlyFans dashboard page
-    - Update navigation menu docs
-    - Document routing changes
-    - _Requirements: All requirements_
-
-- [ ] 15.2 Update user guides
-    - Create guide for new OnlyFans dashboard
-    - Update navigation documentation
-    - Add troubleshooting section
-    - _Requirements: All requirements_
-
-- [ ] 15.3 Code cleanup
-    - Remove unused code
-    - Fix linting issues
-    - Optimize imports
-    - _Requirements: All requirements_
-
-- [ ] 16. Final testing and validation
-  - [ ] 16.1 Manual testing
-    - Test all routes manually
-    - Verify all features work
-    - Check on different browsers
-    - Test on different devices
-    - _Requirements: All requirements_
-
-- [ ] 16.2 Performance testing
-    - Measure page load times
-    - Check bundle sizes
-    - Verify no performance regressions
-    - _Requirements: 4.1, 6.1_
-
-- [ ] 16.3 Accessibility testing
-    - Run accessibility audits
-    - Test keyboard navigation
-    - Verify screen reader compatibility
-    - _Requirements: All requirements_
-
-- [ ] 17. Final Checkpoint - Make sure all tests are passing
-  - Ensure all tests pass, ask the user if questions arise.
+- Most pages already exist and are functional
+- AI systems are already integrated and working
+- Focus is on creating 3 OnlyFans pages and reorganizing navigation
+- All existing AI features (billing, monitoring, caching, etc.) should be leveraged in new pages
+- Use existing component patterns from similar pages
+- Maintain consistent styling with design tokens
+- Ensure all pages use `ProtectedRoute` wrapper
+- Add proper error boundaries with `ContentPageErrorBoundary`
+- Use performance monitoring hooks on all new pages

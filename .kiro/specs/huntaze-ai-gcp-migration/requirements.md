@@ -7,11 +7,11 @@ Ce document définit les exigences pour la migration complète du système d'int
 ## Glossary
 
 - **Vertex AI**: Plateforme d'IA managée de Google Cloud pour l'entraînement et le déploiement de modèles
-- **Gemini**: Famille de modèles d'IA multimodaux de Google (Gemini 1.5 Pro, Gemini 1.5 Flash)
+- **Gemini**: Famille de modèles d'IA multimodaux de Google (Gemini 2.5 Pro, Gemini 2.5 Flash , Gemini 3)
 - **LLM Router**: Système de routage intelligent qui sélectionne le modèle optimal selon le contexte
 - **AI Team System**: Architecture multi-agents avec 4 IA spécialisées (Emma, Alex, Sarah, Claire)
 - **Memory Service**: Service de mémorisation contextuelle des interactions utilisateur
-- **Circuit Breaker**: Pattern de résilience qui protège contre les défaillances en cascade
+- **Circuit Breaker**: Pattern de résilience qui protège contre les défaillances en cascadeti580688
 - **Embedding**: Représentation vectorielle du texte pour la recherche sémantique
 - **Vector Store**: Base de données optimisée pour le stockage et la recherche de vecteurs
 - **Huntaze Platform**: Plateforme SaaS pour créateurs de contenu OnlyFans

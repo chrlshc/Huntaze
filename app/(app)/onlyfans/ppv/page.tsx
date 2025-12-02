@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { Plus, Send, Eye, DollarSign, TrendingUp, Users, Calendar, Image, Video, FileText, Filter, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/export-all";
 import { Card } from '@/components/ui/card';
+import { AppPageHeader } from '@/components/layout/AppPageHeader';
 
 export default function OnlyFansPPVPage() {
   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'drafts' | 'sent'>('all');
@@ -127,23 +128,21 @@ export default function OnlyFansPPVPage() {
   const conversionRate = totalSent > 0 ? (totalPurchased / totalSent) * 100 : 0;
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">PPV Management</h1>
-            <p className="text-gray-600 dark:text-gray-400">Create and manage pay-per-view content</p>
-          </div>
-          <Button variant="secondary" onClick={() => setShowCreateModal(true)}>
+    <main className="flex flex-col gap-6 pb-8">
+      <AppPageHeader
+        title="OnlyFans PPV"
+        description="Create and manage pay-per-view campaigns."
+        actions={
+          <Button variant="primary" size="sm" onClick={() => setShowCreateModal(true)}>
             <Plus className="w-5 h-5" />
             Create PPV
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -154,7 +153,7 @@ export default function OnlyFansPPVPage() {
           <p className="text-sm text-green-600 dark:text-green-400 mt-1">+12% from last month</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Send className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -165,7 +164,7 @@ export default function OnlyFansPPVPage() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Across all campaigns</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -176,7 +175,7 @@ export default function OnlyFansPPVPage() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Total unlocks</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -189,7 +188,7 @@ export default function OnlyFansPPVPage() {
       </div>
 
       {/* Filters and Search */}
-      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+      <Card className="mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -199,7 +198,7 @@ export default function OnlyFansPPVPage() {
                 placeholder="Search PPV campaigns..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
               />
             </div>
           </div>
@@ -208,7 +207,7 @@ export default function OnlyFansPPVPage() {
             <Select
               value={filterStatus}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+              className="px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -219,7 +218,7 @@ export default function OnlyFansPPVPage() {
             <Select
               value={sortBy}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+              className="px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
             >
               <option value="date">Sort by Date</option>
               <option value="revenue">Sort by Revenue</option>
@@ -230,8 +229,8 @@ export default function OnlyFansPPVPage() {
       </Card>
 
       {/* Tabs */}
-      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="border-b border-gray-200 dark:border-gray-700">
+      <Card>
+        <div className="border-b border-[var(--border-subtle)]">
           <nav className="flex space-x-8 px-6">
             {(['all', 'active', 'drafts', 'sent'] as const).map((tab) => {
               const count = tab === 'all' ? ppvCampaigns.length : ppvCampaigns.filter(c => c.status === tab).length;
@@ -241,12 +240,12 @@ export default function OnlyFansPPVPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab
-                      ? 'border-gray-900 text-gray-900 dark:border-white dark:text-white'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                      ? 'border-[var(--accent-primary)] text-[var(--color-text-heading)]'
+                      : 'border-transparent text-[var(--color-text-sub)] hover:text-[var(--color-text-main)] hover:border-[var(--border-subtle)]'
                   }`}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-gray-700">
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-[var(--bg-app)]">
                     {count}
                   </span>
                 </button>
@@ -261,10 +260,10 @@ export default function OnlyFansPPVPage() {
               {sortedCampaigns.map((campaign) => (
                 <div
                   key={campaign.id}
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                  className="border border-[var(--border-subtle)] rounded-lg overflow-hidden hover:shadow-[var(--shadow-soft)] transition-shadow bg-[var(--bg-surface)]"
                 >
                   {/* Thumbnail */}
-                  <div className="relative h-48 bg-gray-100 dark:bg-gray-700">
+                  <div className="relative h-48 bg-[var(--bg-app)]">
                     {campaign.thumbnail ? (
                       <img
                         src={campaign.thumbnail}
@@ -289,7 +288,7 @@ export default function OnlyFansPPVPage() {
 
                   {/* Content */}
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 truncate">
+                    <h3 className="text-lg font-semibold text-[var(--color-text-heading)] mb-2 truncate">
                       {campaign.title}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
@@ -297,7 +296,7 @@ export default function OnlyFansPPVPage() {
                     </p>
 
                     <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1 text-lg font-bold text-gray-900 dark:text-white">
+                      <div className="flex items-center gap-1 text-lg font-bold text-[var(--color-text-main)]">
                         <DollarSign className="w-5 h-5" />
                         {campaign.price}
                       </div>
@@ -310,11 +309,11 @@ export default function OnlyFansPPVPage() {
                     {campaign.status !== 'draft' && (
                       <div className="grid grid-cols-3 gap-2 mb-3 text-center text-sm">
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">{campaign.sentTo}</p>
+                          <p className="font-semibold text-[var(--color-text-main)]">{campaign.sentTo}</p>
                           <p className="text-gray-500 dark:text-gray-400 text-xs">Sent</p>
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">{campaign.opened}</p>
+                          <p className="font-semibold text-[var(--color-text-main)]">{campaign.opened}</p>
                           <p className="text-gray-500 dark:text-gray-400 text-xs">Opened</p>
                         </div>
                         <div>
@@ -384,8 +383,8 @@ export default function OnlyFansPPVPage() {
       {/* Create PPV Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ backgroundColor: 'var(--bg-modal-backdrop)' }}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Create PPV Campaign</h3>
+          <div className="bg-[var(--bg-surface)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-[var(--shadow-soft)]">
+            <h3 className="text-xl font-semibold text-[var(--color-text-heading)] mb-6">Create PPV campaign</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -393,7 +392,7 @@ export default function OnlyFansPPVPage() {
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+                  className="w-full px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                   placeholder="Enter campaign title..."
                 />
               </div>
@@ -405,7 +404,7 @@ export default function OnlyFansPPVPage() {
                   </label>
                   <input
                     type="number"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+                    className="w-full px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                     placeholder="25"
                   />
                 </div>
@@ -413,7 +412,7 @@ export default function OnlyFansPPVPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Media Type
                   </label>
-                  <Select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white">
+                  <Select className="w-full px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent">
                     <option value="video">Video</option>
                     <option value="image">Image</option>
                     <option value="mixed">Mixed</option>
@@ -426,7 +425,7 @@ export default function OnlyFansPPVPage() {
                   Description
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+                  className="w-full px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                   rows={3}
                   placeholder="Describe your content..."
                 />
@@ -436,7 +435,7 @@ export default function OnlyFansPPVPage() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Upload Media
                 </label>
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors cursor-pointer">
+                <div className="border-2 border-dashed border-[var(--border-default)] rounded-lg p-8 text-center hover:border-[var(--accent-primary)] transition-colors cursor-pointer">
                   <div className="flex flex-col items-center">
                     <Image className="w-12 h-12 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
@@ -453,7 +452,7 @@ export default function OnlyFansPPVPage() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Send To
                 </label>
-                <Select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white">
+                <Select className="w-full px-3 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] text-[var(--color-text-main)] focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent">
                   <option value="all">All Fans</option>
                   <option value="vip">VIP Fans Only</option>
                   <option value="active">Active Fans</option>
@@ -462,23 +461,24 @@ export default function OnlyFansPPVPage() {
               </div>
             </div>
             
-            <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <button
+            <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-[var(--border-subtle)]">
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
-              </button>
-              <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              </Button>
+              <Button variant="outline" size="sm">
                 Save as Draft
-              </button>
-              <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:bg-white dark:text-gray-900 transition-colors">
+              </Button>
+              <Button variant="primary" size="sm">
                 Create & Send
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

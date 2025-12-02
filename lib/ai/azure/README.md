@@ -2,6 +2,17 @@
 
 This directory contains the Azure OpenAI Service integration for the Huntaze AI migration.
 
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](./docs/ARCHITECTURE.md) | System architecture and diagrams |
+| [Developer Setup](./docs/DEVELOPER-SETUP.md) | Local development guide |
+| [Runbooks](./docs/RUNBOOKS.md) | Operational procedures |
+| [Troubleshooting](./docs/TROUBLESHOOTING.md) | Issue resolution guide |
+| [Training](./docs/TRAINING.md) | Team training materials |
+| [Changelog](./docs/CHANGELOG.md) | Documentation version history |
+
 ## Overview
 
 The Azure OpenAI Service provides enterprise-grade AI capabilities with:

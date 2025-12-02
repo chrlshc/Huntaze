@@ -49,6 +49,19 @@ next-env.d.ts
 credentials.json
 service-account.json
 
+# Azure credentials
+.azure-credentials.txt
+.azure-credentials.*
+azure-credentials.*
+
+# Terraform
+infra/terraform/**/.terraform/
+infra/terraform/**/.terraform.lock.hcl
+infra/terraform/**/terraform.tfstate
+infra/terraform/**/terraform.tfstate.backup
+infra/terraform/**/tfplan
+infra/terraform/**/*.tfvars
+
 # AWS
 .aws/
 
