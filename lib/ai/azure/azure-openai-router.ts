@@ -1,10 +1,9 @@
 /**
- * Azure OpenAI LLM Router
- * Implements intelligent routing to Azure OpenAI deployments based on tier
- * 
- * Feature: huntaze-ai-azure-migration
- * Task 6: Implement Azure OpenAI LLM Router
- * Validates: Requirements 1.1, 1.2, 1.3
+ * Azure OpenAI LLM Router (stubbed)
+ *
+ * This router is disabled because the Azure integration
+ * is incomplete in this deployment. Any usage will throw
+ * a descriptive AzureOpenAIError.
  */
 
 import { AzureOpenAIService } from './azure-openai.service';
@@ -60,23 +59,19 @@ const TIER_DEPLOYMENT_MAPPING: Record<ModelTier, string> = {
  */
 export class AzureOpenAIRouter {
   private services: Map<string, AzureOpenAIService> = new Map();
+  private initialized = false;
 
   constructor() {
-    // Initialize services for each deployment
-    this.initializeServices();
+    // Defer expensive client initialization until first use.
+    // This keeps `next build` safe even if Azure config is missing.
   }
 
   /**
    * Initialize Azure OpenAI services for each deployment
    */
   private initializeServices(): void {
-    const deployments = Object.values(AZURE_OPENAI_CONFIG.deployments);
-    
-    for (const deployment of deployments) {
-      if (!this.services.has(deployment)) {
-        this.services.set(deployment, new AzureOpenAIService(deployment as any));
-      }
-    }
+    // Stub: do not initialize any Azure services
+    this.initialized = true;
   }
 
   /**
@@ -96,40 +91,13 @@ export class AzureOpenAIRouter {
     messages: ChatMessage[],
     options: GenerationOptions & RouterOptions = {}
   ): Promise<RouterResponse> {
-    // Determine tier based on plan and requested tier
-    const tier = this.determineTier(options.tier, options.plan);
-    
-    // Get deployment for tier
-    const deployment = TIER_DEPLOYMENT_MAPPING[tier];
-    
-    // Get service for deployment
-    const service = this.services.get(deployment);
-    if (!service) {
-      throw new AzureOpenAIError(
-        `No service found for deployment: ${deployment}`,
-        'deployment_not_found' as AzureOpenAIErrorCode,
-        404,
-        false
-      );
-    }
-
-    // Set deployment
-    service.setDeployment(deployment as any);
-
-    // Generate response
-    const response = await service.chat(messages, options);
-
-    // Calculate cost
-    const cost = this.calculateCost(deployment, response.usage);
-
-    // Return enhanced response
-    return {
-      ...response,
-      tier,
-      deployment,
-      region: options.region || AZURE_OPENAI_CONFIG.regions.primary,
-      cost,
-    };
+    // Always throw: Azure router is disabled
+    throw new AzureOpenAIError(
+      'Azure OpenAI router is disabled in this deployment',
+      'deployment_not_found' as AzureOpenAIErrorCode,
+      404,
+      false
+    );
   }
 
   /**
@@ -139,30 +107,13 @@ export class AzureOpenAIRouter {
     messages: ChatMessage[],
     options: GenerationOptions & RouterOptions = {}
   ): AsyncGenerator<string> {
-    // Determine tier based on plan and requested tier
-    const tier = this.determineTier(options.tier, options.plan);
-    
-    // Get deployment for tier
-    const deployment = TIER_DEPLOYMENT_MAPPING[tier];
-    
-    // Get service for deployment
-    const service = this.services.get(deployment);
-    if (!service) {
-      throw new AzureOpenAIError(
-        `No service found for deployment: ${deployment}`,
-        'deployment_not_found' as AzureOpenAIErrorCode,
-        404,
-        false
-      );
-    }
-
-    // Set deployment
-    service.setDeployment(deployment as any);
-
-    // Stream response
-    for await (const chunk of service.chatStream(messages, options)) {
-      yield chunk.content;
-    }
+    // Always throw: Azure router is disabled
+    throw new AzureOpenAIError(
+      'Azure OpenAI router streaming is disabled in this deployment',
+      'deployment_not_found' as AzureOpenAIErrorCode,
+      404,
+      false
+    );
   }
 
   /**

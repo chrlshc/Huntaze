@@ -1,9 +1,9 @@
 /**
  * Azure Cognitive Search Service for Memory Storage
- * 
+ *
  * Provides vector search and semantic search capabilities for the Memory Service.
  * Replaces the current PostgreSQL-based memory storage with Azure Cognitive Search.
- * 
+ *
  * Features:
  * - Vector search with embeddings (1536 dimensions)
  * - Hybrid search (vector + keyword)
@@ -12,7 +12,7 @@
  * - GDPR-compliant deletion
  * - Circuit breaker protection
  * - Retry logic with exponential backoff
- * 
+ *
  * @see https://learn.microsoft.com/en-us/azure/search/
  */
 
@@ -91,43 +91,93 @@ const RETRY_CONFIG = {
 };
 
 /**
+ * Detect Next.js production build phase.
+ * Used to avoid initializing Azure SDK clients during `next build`.
+ */
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
+
+/**
  * Azure Cognitive Search Service
  */
 export class AzureCognitiveSearchService {
-  private searchClient: SearchClient<MemoryDocument>;
-  private indexClient: SearchIndexClient;
+  private searchClient: SearchClient<MemoryDocument> | null = null;
+  private indexClient: SearchIndexClient | null = null;
   private embeddingService: AzureEmbeddingService;
   private config: AzureCognitiveSearchConfig;
+  private enabled: boolean;
 
   constructor(embeddingService?: AzureEmbeddingService) {
     this.config = {
-      endpoint: process.env.AZURE_SEARCH_ENDPOINT!,
+      endpoint: process.env.AZURE_SEARCH_ENDPOINT || '',
       apiKey: process.env.AZURE_SEARCH_API_KEY,
       useManagedIdentity: process.env.AZURE_USE_MANAGED_IDENTITY === 'true',
       indexName: process.env.AZURE_SEARCH_INDEX_NAME || 'memory-index',
       timeout: 5000
     };
 
-    // Initialize credentials
-    const credential = this.config.useManagedIdentity
-      ? new DefaultAzureCredential()
-      : new AzureKeyCredential(this.config.apiKey!);
-
-    // Initialize search client
-    this.searchClient = new SearchClient<MemoryDocument>(
-      this.config.endpoint,
-      this.config.indexName,
-      credential
-    );
-
-    // Initialize index client for management operations
-    this.indexClient = new SearchIndexClient(
-      this.config.endpoint,
-      credential
-    );
-
-    // Initialize embedding service
     this.embeddingService = embeddingService || new AzureEmbeddingService();
+    this.enabled = false;
+
+    // During Next.js build we disable the real client to avoid hard failures
+    if (isBuildTime) {
+      console.log('[AzureCognitiveSearch] Initialized in build mode - Azure Search client disabled');
+      return;
+    }
+
+    // Validate configuration before initializing Azure SDK clients
+    if (!this.config.endpoint) {
+      console.warn('[AzureCognitiveSearch] AZURE_SEARCH_ENDPOINT is not configured - Azure Search client disabled');
+      return;
+    }
+
+    if (!this.config.useManagedIdentity) {
+      const apiKey = this.config.apiKey && this.config.apiKey.trim();
+      if (!apiKey) {
+        console.warn('[AzureCognitiveSearch] AZURE_SEARCH_API_KEY is not configured - Azure Search client disabled');
+        return;
+      }
+      this.config.apiKey = apiKey;
+    }
+
+    try {
+      // Initialize credentials
+      const credential = this.config.useManagedIdentity
+        ? new DefaultAzureCredential()
+        : new AzureKeyCredential(this.config.apiKey!);
+
+      // Initialize search client
+      this.searchClient = new SearchClient<MemoryDocument>(
+        this.config.endpoint,
+        this.config.indexName,
+        credential
+      );
+
+      // Initialize index client for management operations
+      this.indexClient = new SearchIndexClient(
+        this.config.endpoint,
+        credential
+      );
+
+      this.enabled = true;
+    } catch (error) {
+      console.error('[AzureCognitiveSearch] Failed to initialize Azure Search client', {
+        error: error instanceof Error ? error.message : String(error)
+      });
+      this.searchClient = null;
+      this.indexClient = null;
+      this.enabled = false;
+    }
+  }
+
+  /**
+   * Ensure the Search client is available before performing operations.
+   * Throws a descriptive error if the client is not configured.
+   */
+  private ensureSearchClient(): SearchClient<MemoryDocument> {
+    if (!this.enabled || !this.searchClient) {
+      throw new Error('Azure Cognitive Search client is not configured');
+    }
+    return this.searchClient;
   }
 
   /**
@@ -159,7 +209,8 @@ export class AzureCognitiveSearchService {
       // Upload document with retry
       await this.withRetry(
         async () => {
-          const result = await this.searchClient.uploadDocuments([document]);
+          const client = this.ensureSearchClient();
+          const result = await client.uploadDocuments([document]);
           
           // Check for failures
           const failures = result.results.filter(r => !r.succeeded);
@@ -218,7 +269,8 @@ export class AzureCognitiveSearchService {
         
         await this.withRetry(
           async () => {
-            const result = await this.searchClient.uploadDocuments(batch);
+            const client = this.ensureSearchClient();
+            const result = await client.uploadDocuments(batch);
             
             // Check for failures
             const failures = result.results.filter(r => !r.succeeded);
@@ -293,7 +345,8 @@ export class AzureCognitiveSearchService {
       // Execute search
       const searchResults = await this.withRetry(
         async () => {
-          const results = await this.searchClient.search(
+          const client = this.ensureSearchClient();
+          const results = await client.search(
             includeKeywordSearch ? query : undefined,
             {
               top: topK,
@@ -370,7 +423,8 @@ export class AzureCognitiveSearchService {
 
       const results = await this.withRetry(
         async () => {
-          const searchResults = await this.searchClient.search('*', {
+          const client = this.ensureSearchClient();
+          const searchResults = await client.search('*', {
             top: limit,
             filter: filterExpression,
             orderBy: ['timestamp desc'],
@@ -433,7 +487,8 @@ export class AzureCognitiveSearchService {
       
       const documentsToDelete = await this.withRetry(
         async () => {
-          const searchResults = await this.searchClient.search('*', {
+          const client = this.ensureSearchClient();
+          const searchResults = await client.search('*', {
             filter: filterExpression,
             select: ['id']
           });
@@ -497,7 +552,8 @@ export class AzureCognitiveSearchService {
         
         await this.withRetry(
           async () => {
-            await this.searchClient.deleteDocuments('id', batch);
+            const client = this.ensureSearchClient();
+            await client.deleteDocuments('id', batch);
           },
           'deleteDocuments',
           { batchIndex: i / batchSize, correlationId }
@@ -599,7 +655,8 @@ export class AzureCognitiveSearchService {
 
       await this.withRetry(
         async () => {
-          await this.searchClient.deleteDocuments('id', [id]);
+          const client = this.ensureSearchClient();
+          await client.deleteDocuments('id', [id]);
         },
         'deleteMemory',
         { id, correlationId }
@@ -630,7 +687,8 @@ export class AzureCognitiveSearchService {
 
       const count = await this.withRetry(
         async () => {
-          const results = await this.searchClient.search('*', {
+          const client = this.ensureSearchClient();
+          const results = await client.search('*', {
             filter: filterExpression,
             includeTotalCount: true,
             top: 0
