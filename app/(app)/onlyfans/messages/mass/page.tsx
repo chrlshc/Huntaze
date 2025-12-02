@@ -546,6 +546,6 @@ export default function OnlyFansMassMessagingPage() {
           )}
         </div>
       </Card>
-    </div>
+    </main>
   );
 }
