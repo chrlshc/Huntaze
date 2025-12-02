@@ -27,9 +27,9 @@ export default function PutCookiesPage() {
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j?.error || 'Failed');
-      setMsg('✅ Cookies déposés');
+      setMsg('✅ Cookies saved');
     } catch (err: any) {
-      setMsg('❌ ' + (err?.message || 'Erreur'));
+      setMsg('❌ ' + (err?.message || 'Error'));
     } finally {
       setLoading(false);
     }
@@ -37,15 +37,15 @@ export default function PutCookiesPage() {
 
   return (
     <div style={{ maxWidth: 720, margin: '40px auto', padding: 16 }}>
-      <h2>Déposer des cookies OnlyFans</h2>
+      <h2>Save OnlyFans cookies</h2>
       <p>
-        Collez ici l’array JSON de cookies Playwright pour <code>onlyfans.com</code>.
+        Paste the Playwright cookies JSON array for <code>onlyfans.com</code> here.
       </p>
       <form onSubmit={onSubmit}>
         <textarea value={text} onChange={(e) => setText(e.target.value)} rows={12} style={{ width: '100%' }} />
         <div style={{ marginTop: 12 }}>
           <Button variant="primary" disabled={loading} type="submit">
-  {loading ? 'Envoi…' : 'Déposer'}
+  {loading ? 'Sending…' : 'Save'}
 </Button>
         </div>
       </form>
@@ -53,4 +53,3 @@ export default function PutCookiesPage() {
     </div>
   );
 }
-

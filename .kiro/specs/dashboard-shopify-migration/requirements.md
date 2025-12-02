@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This specification defines the comprehensive migration of the Huntaze dashboard from its legacy dark-mode interface to a modern, light-mode "App Shell" architecture inspired by Shopify's Online Store 2.0 (OS 2.0) paradigm. The transformation follows the philosophy of "Copier, S'inspirer, Sublimer" (Copy, Inspire, Sublimate)—leveraging Shopify's proven structural patterns while elevating the visual execution to resonate with the creator economy audience.
+This document specifies the requirements for migrating the Huntaze dashboard from a legacy dark-mode interface to a modern, light-mode "App Shell" architecture inspired ired by Shopify's Online Store 2.0 (OS 2.0) paradigm. The transformation follows the philosophy of "Copier, S'inspirer, Sublimer" (Copy, Inspire, Sublimate)—leveraging Shopify's proven structural patterns while elevating the visual execution to resonate with the creator economy audience.
 
 The migration encompasses a complete architectural overhaul including CSS Grid-based layout system, Electric Indigo brand identity implementation, gamified onboarding experience, and responsive mobile adaptation. The goal is to create a dashboard that functions with enterprise-grade reliability while feeling like a modern consumer application.
 
@@ -200,3 +200,63 @@ The migration encompasses a complete architectural overhaul including CSS Grid-b
 3. WHEN the sidebar scrolls THEN the system SHALL style scrollbars for aesthetic consistency (scrollbar-width: thin)
 4. WHEN interactive elements are rendered THEN the system SHALL ensure sufficient color contrast for WCAG compliance
 5. WHEN the application loads THEN the system SHALL maintain smooth 60fps performance during scrolling and interactions
+
+### Requirement 16: Content Pages Light Mode Migration
+
+**User Story:** As a user, I want all dashboard content pages (Analytics, Content, Messages, Integrations) to use the light mode design system, so that the interface is consistent and easy to read.
+
+#### Acceptance Criteria
+
+1. WHEN viewing any content page THEN the system SHALL use white (#FFFFFF) backgrounds for cards and containers
+2. WHEN viewing any content page THEN the system SHALL use deep gray (#1F2937) for main text and medium gray (#6B7280) for secondary text
+3. WHEN viewing any content page THEN the system SHALL use Electric Indigo (#6366f1) for primary actions and active states
+4. WHEN viewing any content page THEN the system SHALL apply soft diffused shadows (0 4px 20px rgba(0, 0, 0, 0.05)) to cards
+5. WHEN viewing any content page THEN the system SHALL NOT display any dark mode styling (dark: classes)
+
+### Requirement 17: Loading States and Skeleton Loaders
+
+**User Story:** As a user, I want to see loading indicators instead of blank screens or black blocks, so that I understand the application is working and content is being loaded.
+
+#### Acceptance Criteria
+
+1. WHEN a page is loading data THEN the system SHALL display skeleton loaders that match the final content dimensions
+2. WHEN skeleton loaders are displayed THEN the system SHALL use pale gray (#E5E7EB) with subtle shimmer animation
+3. WHEN an API call is in progress THEN the system SHALL display appropriate loading indicators
+4. WHEN loading states transition to content THEN the system SHALL prevent layout shift
+5. WHEN images are loading THEN the system SHALL display placeholder backgrounds instead of black blocks
+
+### Requirement 18: Error Handling and Recovery
+
+**User Story:** As a user, I want clear error messages and retry options when something goes wrong, so that I can recover from errors without refreshing the page.
+
+#### Acceptance Criteria
+
+1. WHEN an API call fails THEN the system SHALL display a user-friendly error message
+2. WHEN an error occurs THEN the system SHALL provide a retry button or automatic retry mechanism
+3. WHEN multiple errors occur THEN the system SHALL use exponential backoff for retries
+4. WHEN an error persists THEN the system SHALL log the error for debugging while showing helpful guidance to the user
+5. WHEN a page encounters an error THEN the system SHALL use error boundaries to prevent the entire application from crashing
+
+### Requirement 19: Performance Optimization for Content Pages
+
+**User Story:** As a user, I want content pages to load quickly and scroll smoothly, so that I can work efficiently without waiting or experiencing lag.
+
+#### Acceptance Criteria
+
+1. WHEN loading a content page THEN the system SHALL display initial content within 2 seconds
+2. WHEN scrolling through large lists THEN the system SHALL maintain 60fps performance
+3. WHEN fetching data THEN the system SHALL implement pagination to load data in chunks (20-50 items at a time)
+4. WHEN the user performs search or filter operations THEN the system SHALL debounce input to reduce unnecessary API calls
+5. WHEN heavy components are needed THEN the system SHALL lazy load them to reduce initial bundle size
+
+### Requirement 20: Messages Page Functionality
+
+**User Story:** As a user, I want the Messages page to load reliably and display my conversations, so that I can communicate with my audience.
+
+#### Acceptance Criteria
+
+1. WHEN the Messages page loads THEN the system SHALL fetch and display message threads without errors
+2. WHEN message threads exceed 20 items THEN the system SHALL implement pagination or infinite scroll
+3. WHEN a message API call fails THEN the system SHALL display a clear error message with retry option
+4. WHEN messages are loading THEN the system SHALL display skeleton loaders for thread items
+5. WHEN offline or experiencing network issues THEN the system SHALL display cached messages if available

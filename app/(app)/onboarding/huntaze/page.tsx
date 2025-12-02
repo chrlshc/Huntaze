@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 /**
  * Huntaze Onboarding Page
  * 
- * Page d'onboarding complète avec guide de configuration flexible.
+ * Full onboarding page with a flexible setup guide.
  * Integrates SetupGuide, CompletionNudge, and GuardRailModal.
  * 
  * Requirements: 1.3, 1.4, 6.2, 6.3, 12.1
@@ -29,7 +29,7 @@ export default function ShopifyStyleOnboardingPage() {
   const [showGuardRail, setShowGuardRail] = useState(false);
   const [guardRailData, setGuardRailData] = useState({
     missingStep: 'payments',
-    message: 'Vous devez configurer les paiements avant de publier votre boutique',
+    message: 'You must configure payments before publishing your store.',
     action: {
       type: 'open_modal' as const,
       modal: 'payments_setup',
@@ -61,12 +61,12 @@ export default function ShopifyStyleOnboardingPage() {
 
   const handleLearnMore = (stepId: string) => {
     console.log('[Demo] Learn more about:', stepId);
-    alert(`Documentation pour l'étape: ${stepId}\n\nCeci ouvrirait normalement un modal d'aide ou redirigerait vers la documentation.`);
+    alert(`Documentation for step: ${stepId}\n\nThis would normally open a help modal or redirect to the documentation.`);
   };
 
   const handleError = (error: Error) => {
     console.error('[Demo] Onboarding error:', error);
-    alert(`Erreur: ${error.message}`);
+    alert(`Error: ${error.message}`);
   };
 
   const simulateGatedAction = () => {

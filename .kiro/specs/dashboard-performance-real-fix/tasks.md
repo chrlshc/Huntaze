@@ -175,32 +175,32 @@
   - Add sampling for development
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [x] 6.1 Disable production monitoring
+- [ ] 6.1 Disable production monitoring
   - Remove PerformanceMonitor component in production
   - Wrap all monitoring code with environment checks
   - _Requirements: 5.1, 5.4_
 
-- [x] 6.2 Implement metric batching
+- [ ] 6.2 Implement metric batching
   - Accumulate metrics in memory
   - Flush in batches every 10 seconds
   - Limit batch size to prevent memory issues
   - _Requirements: 5.3_
 
-- [x] 6.3 Write property test for metric batching
+- [ ] 6.3 Write property test for metric batching
   - **Property 14: Metrics are batched**
   - **Validates: Requirements 5.3**
 
-- [x] 6.4 Implement sampling for development
+- [ ] 6.4 Implement sampling for development
   - Sample 10% of requests in development
   - Limit metrics per session
   - _Requirements: 5.2_
 
-- [x] 6.5 Make monitoring non-blocking
+- [ ] 6.5 Make monitoring non-blocking
   - Wrap all monitoring in try-catch
   - Use async monitoring that doesn't block UI
   - _Requirements: 5.5_
 
-- [x] 6.6 Write property test for non-blocking monitoring
+- [ ] 6.6 Write property test for non-blocking monitoring
   - **Property 15: Non-blocking monitoring**
   - **Validates: Requirements 5.5**
 
@@ -225,18 +225,18 @@
   - Update asset URLs to use CloudFront
   - _Requirements: 6.2, 6.5_
 
-- [ ] 7.3 Write property test for AWS integration
+- [x] 7.3 Write property test for AWS integration
   - **Property 16: AWS services are connected and used**
   - **Validates: Requirements 6.1, 6.2, 6.3**
 
-- [ ] 7.4 Configure CloudWatch logging
+- [x] 7.4 Configure CloudWatch logging
   - Set up CloudWatch log groups
   - Configure application to send logs to CloudWatch
   - Set up log retention policies
   - Create CloudWatch dashboards
   - _Requirements: 6.3_
 
-- [ ] 7.5 Create AWS infrastructure audit script
+- [x] 7.5 Create AWS infrastructure audit script
   - Verify S3 is receiving uploads
   - Verify CloudFront is serving assets
   - Verify CloudWatch is receiving logs
@@ -250,23 +250,23 @@
   - Move aggregations to database
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 8.1 Analyze and add database indexes
+- [x] 8.1 Analyze and add database indexes
   - Run query analyzer on slow queries
   - Add indexes for frequently filtered columns
   - Add composite indexes for multi-column filters
   - _Requirements: 7.1_
 
-- [ ] 8.2 Write property test for index usage
+- [x] 8.2 Write property test for index usage
   - **Property 17: Queries use indexes**
   - **Validates: Requirements 7.1**
 
-- [ ] 8.3 Fix N+1 query issues
+- [x] 8.3 Fix N+1 query issues
   - Identify N+1 patterns in codebase
   - Replace with joins or batch loading
   - Use Prisma's include for relations
   - _Requirements: 7.2_
 
-- [ ] 8.4 Write property test for N+1 prevention
+- [x] 8.4 Write property test for N+1 prevention
   - **Property 18: No N+1 queries**
   - **Validates: Requirements 7.2**
 

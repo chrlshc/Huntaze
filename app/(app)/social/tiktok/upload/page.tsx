@@ -13,6 +13,8 @@ import { ArrowLeft, Upload, Video, Hash, Send } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { AppPageHeader } from '@/components/layout/AppPageHeader';
 
 export default function TikTokUploadPage() {
   const router = useRouter();
@@ -90,24 +92,21 @@ export default function TikTokUploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link href="/dashboard" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Upload to TikTok</h1>
-          {user && (
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Posting as: @{user.display_name}
-            </p>
-          )}
-        </div>
+    <ProtectedRoute requireOnboarding={false}>
+      <main className="flex flex-col gap-6 pb-8">
+        <AppPageHeader
+          title="TikTok upload"
+          description="Upload a video, set captions, and schedule your next post."
+          actions={
+            <Link href="/dashboard" className="inline-flex items-center text-sm text-[var(--color-text-sub)] hover:text-[var(--color-text-main)]">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to dashboard
+            </Link>
+          }
+        />
 
         {/* Upload Form */}
-        <Card className="rounded-xl p-6">
+        <Card>
           {/* Video Upload */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -189,10 +188,12 @@ export default function TikTokUploadPage() {
           )}
 
           {/* Submit Button */}
-          <button
+          <Button
             onClick={handleUpload}
             disabled={isUploading || !videoFile || !caption.trim()}
-            className="w-full py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            variant="primary"
+            size="lg"
+            className="w-full flex items-center justify-center"
           >
             {isUploading ? (
               <>
@@ -205,11 +206,11 @@ export default function TikTokUploadPage() {
                 Publish to TikTok
               </>
             )}
-          </button>
+          </Button>
         </Card>
 
         {/* Info Box */}
-        <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+        <Card className="mt-2">
           <h3 className="text-sm font-medium text-blue-900 dark:text-blue-400 mb-2">
             TikTok Upload Guidelines
           </h3>
@@ -219,8 +220,8 @@ export default function TikTokUploadPage() {
             <li>• Maximum file size: 50MB</li>
             <li>• Use relevant hashtags to increase visibility</li>
           </ul>
-        </div>
-      </div>
-    </div>
+        </Card>
+      </main>
+    </ProtectedRoute>
   );
 }

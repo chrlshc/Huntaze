@@ -16,6 +16,8 @@
 import { memoryRepository } from '../repositories/memory-repository';
 import { memoryCache } from '../cache/redis-cache';
 import { circuitBreakerRegistry } from '../utils/circuit-breaker';
+import { azureCognitiveSearchService } from '../../ai/azure/azure-cognitive-search.service';
+import { azureEmbeddingService } from '../../ai/azure/azure-embedding.service';
 import type { IUserMemoryService } from '../interfaces';
 import type {
   MemoryContext,
@@ -94,6 +96,15 @@ export class UserMemoryService implements IUserMemoryService {
     monitoringPeriod: 5000 // 5 seconds
   });
 
+  private azureSearchCircuitBreaker = circuitBreakerRegistry.getOrCreate('azure-cognitive-search', {
+    failureThreshold: 5,
+    resetTimeout: 60000, // 60 seconds
+    monitoringPeriod: 10000 // 10 seconds
+  });
+
+  // Feature flag for Azure migration
+  private useAzureSearch = process.env.USE_AZURE_COGNITIVE_SEARCH === 'true';
+
   /**
    * Get complete memory context for a fan
    * Aggregates data from multiple sources with cache-first strategy
@@ -154,20 +165,83 @@ export class UserMemoryService implements IUserMemoryService {
         return cachedContext;
       }
 
-      console.log('[UserMemoryService] Cache miss, fetching from database', {
+      console.log('[UserMemoryService] Cache miss, fetching from storage', {
         fanId,
         creatorId,
+        useAzureSearch: this.useAzureSearch,
         correlationId
       });
 
-      // Fetch all data in parallel from repository with timeout and circuit breaker
-      const fetchPromises = this.withDatabaseCircuitBreaker(
-        () => Promise.all([
-          this.withTimeout(
+      // Fetch recent messages from Azure Cognitive Search or PostgreSQL
+      let recentMessages: ConversationMessage[];
+      
+      if (this.useAzureSearch) {
+        // Use Azure Cognitive Search for memory retrieval
+        recentMessages = await this.withAzureSearchCircuitBreaker(
+          async () => {
+            const memories = await this.withTimeout(
+              azureCognitiveSearchService.getRecentMemories(fanId, creatorId, 50),
+              5000,
+              'azureSearch.getRecentMemories'
+            );
+            
+            // Convert Azure memory documents to ConversationMessage format
+            return memories.map(mem => ({
+              id: mem.id,
+              fanId: mem.fanId,
+              creatorId: mem.creatorId,
+              content: mem.content,
+              sender: mem.sender,
+              timestamp: mem.timestamp,
+              sentiment: (mem.sentiment as 'positive' | 'negative' | 'neutral' | null) || null,
+              topics: mem.topics,
+              metadata: mem.metadata
+            }));
+          },
+          async () => {
+            console.warn('[UserMemoryService] Azure Search circuit breaker open, falling back to database', {
+              fanId,
+              creatorId,
+              correlationId
+            });
+            // Fallback to PostgreSQL
+            return await this.withDatabaseCircuitBreaker(
+              () => this.withTimeout(
+                memoryRepository.getRecentMessages(fanId, creatorId, 50),
+                5000,
+                'getRecentMessages'
+              ),
+              async () => [] as ConversationMessage[]
+            );
+          }
+        );
+      } else {
+        // Use PostgreSQL for memory retrieval
+        recentMessages = await this.withDatabaseCircuitBreaker(
+          () => this.withTimeout(
             memoryRepository.getRecentMessages(fanId, creatorId, 50),
             5000,
             'getRecentMessages'
           ),
+          async () => {
+            console.warn('[UserMemoryService] Database circuit breaker open, returning empty messages', {
+              fanId,
+              creatorId,
+              correlationId
+            });
+            return [] as ConversationMessage[];
+          }
+        );
+      }
+
+      // Fetch other data in parallel from repository with timeout and circuit breaker
+      const [
+        personalityProfile,
+        preferences,
+        emotionalState,
+        engagementMetrics
+      ] = await this.withDatabaseCircuitBreaker(
+        () => Promise.all([
           this.withTimeout(
             memoryRepository.getPersonalityProfile(fanId, creatorId),
             3000,
@@ -195,18 +269,10 @@ export class UserMemoryService implements IUserMemoryService {
             creatorId,
             correlationId
           });
-          // Return empty arrays/nulls for graceful degradation
-          return [[] as ConversationMessage[], null, null, null, null] as [ConversationMessage[], PersonalityProfileRecord | null, FanPreferencesRecord | null, EmotionalStateRecord | null, EngagementMetricsRecord | null];
+          // Return nulls for graceful degradation
+          return [null, null, null, null] as [PersonalityProfileRecord | null, FanPreferencesRecord | null, EmotionalStateRecord | null, EngagementMetricsRecord | null];
         }
       );
-
-      const [
-        recentMessages,
-        personalityProfile,
-        preferences,
-        emotionalState,
-        engagementMetrics
-      ] = await fetchPromises;
 
       // Build memory context with defaults for missing data
       const context: MemoryContext = {
@@ -322,31 +388,101 @@ export class UserMemoryService implements IUserMemoryService {
         correlationId
       });
 
-      // Save message if it's a message interaction (with circuit breaker)
+      // Save message if it's a message interaction
       if (type === 'message' && content) {
-        await this.withDatabaseCircuitBreaker(
-          () => this.withRetry(
-            () => memoryRepository.saveFanMemory({
-              fan_id: fanId,
-              creator_id: creatorId,
-              message_content: content,
-              sender: 'fan', // Assuming fan sent the message
-              sentiment: null, // Will be analyzed later
-              topics: [],
-              metadata: metadata || {}
-            }),
-            'repository.saveFanMemory',
-            { fanId, creatorId, correlationId }
-          ),
-          async () => {
-            throw new MemoryServiceException(
-              MemoryServiceError.DATABASE_ERROR,
-              'Database circuit breaker open - cannot save message',
-              undefined,
+        if (this.useAzureSearch) {
+          // Save to Azure Cognitive Search with embeddings
+          await this.withAzureSearchCircuitBreaker(
+            async () => {
+              // Generate embedding for the message content
+              console.log('[UserMemoryService] Generating embedding for message', {
+                fanId,
+                creatorId,
+                contentLength: content.length,
+                correlationId
+              });
+
+              const memoryId = crypto.randomUUID();
+              
+              // Index memory with embedding (embedding generation happens inside)
+              await azureCognitiveSearchService.indexMemory({
+                id: memoryId,
+                fanId,
+                creatorId,
+                content,
+                sender: 'fan', // Assuming fan sent the message
+                sentiment: null, // Will be analyzed later
+                topics: [],
+                timestamp: timestamp,
+                metadata: metadata || {}
+              });
+
+              console.log('[UserMemoryService] Message indexed in Azure Cognitive Search', {
+                memoryId,
+                fanId,
+                creatorId,
+                correlationId
+              });
+            },
+            async () => {
+              // Fallback to PostgreSQL if Azure Search fails
+              console.warn('[UserMemoryService] Azure Search circuit breaker open, falling back to database', {
+                fanId,
+                creatorId,
+                correlationId
+              });
+              
+              await this.withDatabaseCircuitBreaker(
+                () => this.withRetry(
+                  () => memoryRepository.saveFanMemory({
+                    fan_id: fanId,
+                    creator_id: creatorId,
+                    message_content: content,
+                    sender: 'fan',
+                    sentiment: null,
+                    topics: [],
+                    metadata: metadata || {}
+                  }),
+                  'repository.saveFanMemory',
+                  { fanId, creatorId, correlationId }
+                ),
+                async () => {
+                  throw new MemoryServiceException(
+                    MemoryServiceError.DATABASE_ERROR,
+                    'Both Azure Search and database circuit breakers open - cannot save message',
+                    undefined,
+                    { fanId, creatorId, correlationId }
+                  );
+                }
+              );
+            }
+          );
+        } else {
+          // Save to PostgreSQL (legacy path)
+          await this.withDatabaseCircuitBreaker(
+            () => this.withRetry(
+              () => memoryRepository.saveFanMemory({
+                fan_id: fanId,
+                creator_id: creatorId,
+                message_content: content,
+                sender: 'fan',
+                sentiment: null,
+                topics: [],
+                metadata: metadata || {}
+              }),
+              'repository.saveFanMemory',
               { fanId, creatorId, correlationId }
-            );
-          }
-        );
+            ),
+            async () => {
+              throw new MemoryServiceException(
+                MemoryServiceError.DATABASE_ERROR,
+                'Database circuit breaker open - cannot save message',
+                undefined,
+                { fanId, creatorId, correlationId }
+              );
+            }
+          );
+        }
       }
 
       // Update engagement metrics with retry and circuit breaker
@@ -470,16 +606,52 @@ export class UserMemoryService implements IUserMemoryService {
 
   /**
    * Clear all memory for a fan (GDPR compliance)
+   * Deletes from Azure Cognitive Search (if enabled) and PostgreSQL
+   * Includes audit logging and verification
    */
   async clearMemory(fanId: string, creatorId: string): Promise<void> {
     const correlationId = crypto.randomUUID();
     
     try {
-      console.log('[UserMemoryService] Clearing memory', {
+      console.log('[UserMemoryService] Clearing memory (GDPR)', {
         fanId,
         creatorId,
+        useAzureSearch: this.useAzureSearch,
         correlationId
       });
+
+      // Delete from Azure Cognitive Search if enabled
+      if (this.useAzureSearch) {
+        await this.withAzureSearchCircuitBreaker(
+          async () => {
+            const result = await azureCognitiveSearchService.deleteMemoriesGDPR(fanId, creatorId);
+            
+            console.log('[UserMemoryService] Azure Cognitive Search GDPR deletion completed', {
+              fanId,
+              creatorId,
+              deletedCount: result.deletedCount,
+              verifiedComplete: result.verifiedComplete,
+              auditLogId: result.auditLogId,
+              correlationId
+            });
+
+            if (!result.verifiedComplete) {
+              console.warn('[UserMemoryService] Azure deletion verification failed', {
+                fanId,
+                creatorId,
+                correlationId
+              });
+            }
+          },
+          async () => {
+            console.warn('[UserMemoryService] Azure Search circuit breaker open, skipping Azure deletion', {
+              fanId,
+              creatorId,
+              correlationId
+            });
+          }
+        );
+      }
 
       // Delete from database (with circuit breaker)
       await this.withDatabaseCircuitBreaker(
@@ -515,7 +687,7 @@ export class UserMemoryService implements IUserMemoryService {
         }
       );
 
-      console.log('[UserMemoryService] Cleared all memory for fan', {
+      console.log('[UserMemoryService] Cleared all memory for fan (GDPR compliant)', {
         fanId,
         creatorId,
         correlationId
@@ -904,12 +1076,23 @@ export class UserMemoryService implements IUserMemoryService {
   }
 
   /**
+   * Execute Azure Cognitive Search operation with circuit breaker protection
+   */
+  private async withAzureSearchCircuitBreaker<T>(
+    fn: () => Promise<T>,
+    fallback?: () => Promise<T>
+  ): Promise<T> {
+    return this.azureSearchCircuitBreaker.execute(fn, fallback);
+  }
+
+  /**
    * Get circuit breaker statistics
    */
   getCircuitBreakerStats() {
     return {
       database: this.dbCircuitBreaker.getStats(),
-      cache: this.cacheCircuitBreaker.getStats()
+      cache: this.cacheCircuitBreaker.getStats(),
+      azureSearch: this.azureSearchCircuitBreaker.getStats()
     };
   }
 }

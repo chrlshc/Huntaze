@@ -72,7 +72,7 @@ export default function MarketingPage() {
               Marketing &amp; Social
             </h1>
             <p className="text-[var(--color-text-sub)]">
-              Planifie tes campagnes, orchestre tes posts socials et suis les résultats en un seul endroit.
+              Plan your campaigns, orchestrate social posts, and track results in one place.
             </p>
           </div>
           <div className="flex items-center gap-2">

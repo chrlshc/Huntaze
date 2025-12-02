@@ -273,7 +273,7 @@ export default function ContentPage() {
             Content Creation
           </h1>
           <p className="mt-2 text-[var(--color-text-sub)]">
-            Rédige, programme et publie ton contenu OnlyFans, socials et promos depuis un workspace unique.
+            Write, schedule, and publish your OnlyFans, social, and promo content from a single workspace.
           </p>
         </div>
         <Button variant="primary" onClick={handleCreate}>

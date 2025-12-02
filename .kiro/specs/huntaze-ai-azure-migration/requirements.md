@@ -6,7 +6,7 @@ Ce document définit les exigences pour la migration complète du système d'int
 
 ## Glossary
 
-- **Azure OpenAI Service**: Service managé Azure pour déployer des modèles OpenAI (GPT-4, GPT-4 Turbo, GPT-3.5)
+- **Azure OpenAI Service**: Service managé Azure pour déployer des modèles OpenAI (GPT-4, GPT-4 Turbo, GPT-5)
 - **Azure AI Services**: Suite de services IA cognitifs Microsoft (Vision, Language, Speech, etc.)
 - **Azure Cognitive Search**: Service de recherche avec capacités de recherche vectorielle et sémantique
 - **LLM Router**: Système de routage intelligent qui sélectionne le modèle optimal selon le contexte

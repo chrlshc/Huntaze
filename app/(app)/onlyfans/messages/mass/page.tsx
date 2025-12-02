@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { Send, Users, MessageSquare, Clock, CheckCircle, AlertCircle, Plus, Eye, Calendar } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { AppPageHeader } from '@/components/layout/AppPageHeader';
 
 export default function OnlyFansMassMessagingPage() {
   const [activeTab, setActiveTab] = useState<'compose' | 'scheduled' | 'sent'>('compose');
@@ -172,15 +173,21 @@ export default function OnlyFansMassMessagingPage() {
     .replace(/\{\{tier\}\}/g, 'VIP');
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Mass Messaging</h1>
-        <p className="text-gray-600 dark:text-gray-400">Send messages to multiple fans at once</p>
-      </div>
+    <main className="flex flex-col gap-6 pb-8">
+      <AppPageHeader
+        title="Mass messaging"
+        description="Send OnlyFans messages to segments of your fanbase."
+        actions={
+          <Button variant="primary" size="sm" onClick={() => setActiveTab('compose')}>
+            <Plus className="w-4 h-4 mr-2" />
+            New campaign
+          </Button>
+        }
+      />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -191,7 +198,7 @@ export default function OnlyFansMassMessagingPage() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Available to message</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Send className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -202,7 +209,7 @@ export default function OnlyFansMassMessagingPage() {
           <p className="text-sm text-green-600 dark:text-green-400 mt-1">+15% this week</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -213,7 +220,7 @@ export default function OnlyFansMassMessagingPage() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Last 30 days</p>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <Card>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -226,27 +233,26 @@ export default function OnlyFansMassMessagingPage() {
       </div>
 
       {/* Tabs */}
-      <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <div className="border-b border-gray-200 dark:border-gray-700">
+      <Card>
+        <div className="border-b border-[var(--border-subtle)]">
           <nav className="flex space-x-8 px-6">
             {(['compose', 'scheduled', 'sent'] as const).map((tab) => (
-              <Button 
+              <button
                 key={tab}
-                variant="secondary" 
                 onClick={() => setActiveTab(tab)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab
-                    ? 'border-gray-900 text-gray-900 dark:border-white dark:text-white'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                    ? 'border-[var(--accent-primary)] text-[var(--color-text-heading)]'
+                    : 'border-transparent text-[var(--color-text-sub)] hover:text-[var(--color-text-main)] hover:border-[var(--border-subtle)]'
                 }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 {tab === 'scheduled' && scheduledMessages.length > 0 && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800">
                     {scheduledMessages.length}
                   </span>
                 )}
-              </Button>
+              </button>
             ))}
           </nav>
         </div>
@@ -256,7 +262,9 @@ export default function OnlyFansMassMessagingPage() {
             <div className="space-y-6">
               {/* Audience Selection */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Select Audience</h3>
+                <h3 className="text-lg font-semibold text-[var(--color-text-heading)] mb-4">
+                  Select audience
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {audiences.map((audience) => (
                     <button
