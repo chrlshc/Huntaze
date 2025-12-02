@@ -7,10 +7,12 @@
  * Validates: Requirements 3.1
  */
 
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai';
+import { AzureOpenAI } from 'openai';
 import { DefaultAzureCredential } from '@azure/identity';
 import { AZURE_OPENAI_CONFIG } from './azure-openai.config';
 import { AzureOpenAIError, type AzureOpenAIErrorCode } from './azure-openai.types';
+
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 
 /**
  * Embedding configuration
@@ -67,7 +69,7 @@ interface CacheEntry {
  * Generates vector embeddings for semantic search and memory retrieval
  */
 export class AzureEmbeddingService {
-  private client: OpenAIClient;
+  private client: AzureOpenAI | null = null;
   private deployment: string;
   private cache: Map<string, CacheEntry> = new Map();
   private endpoint: string;
@@ -76,26 +78,55 @@ export class AzureEmbeddingService {
     this.endpoint = AZURE_OPENAI_CONFIG.endpoint;
     this.deployment = EMBEDDING_CONFIG.deployment;
 
-    // Initialize client with Managed Identity or API Key
-    if (AZURE_OPENAI_CONFIG.useManagedIdentity) {
-      // Production: Use Managed Identity for passwordless authentication
-      this.client = new OpenAIClient(
-        this.endpoint,
-        new DefaultAzureCredential()
-      );
-    } else {
-      // Development: Use API Key
-      if (!AZURE_OPENAI_CONFIG.apiKey) {
-        throw new Error('AZURE_OPENAI_API_KEY is required when not using Managed Identity');
-      }
-      this.client = new OpenAIClient(
-        this.endpoint,
-        new AzureKeyCredential(AZURE_OPENAI_CONFIG.apiKey)
-      );
+    // During Next.js build we disable the real client to avoid hard failures
+    if (isBuildTime) {
+      console.log('[AzureEmbeddingService] Initialized in build mode - Azure OpenAI client disabled');
+      return;
     }
 
-    // Start cache cleanup interval
-    this.startCacheCleanup();
+    const apiVersion = process.env.AZURE_OPENAI_API_VERSION || process.env.OPENAI_API_VERSION;
+    if (!apiVersion) {
+      console.warn('[AzureEmbeddingService] AZURE_OPENAI_API_VERSION or OPENAI_API_VERSION not set - embeddings disabled');
+      return;
+    }
+
+    try {
+      // Initialize client with Managed Identity or API Key
+      if (AZURE_OPENAI_CONFIG.useManagedIdentity) {
+        const credential = new DefaultAzureCredential();
+
+        this.client = new AzureOpenAI({
+          endpoint: this.endpoint,
+          apiVersion,
+          azureADTokenProvider: async () => {
+            const token = await credential.getToken('https://cognitiveservices.azure.com/.default');
+            if (!token?.token) {
+              throw new Error('Failed to acquire Azure AD token for Azure OpenAI');
+            }
+            return token.token;
+          },
+        });
+      } else {
+        if (!AZURE_OPENAI_CONFIG.apiKey) {
+          console.warn('[AzureEmbeddingService] AZURE_OPENAI_API_KEY is not configured - embeddings disabled');
+          return;
+        }
+
+        this.client = new AzureOpenAI({
+          endpoint: this.endpoint,
+          apiKey: AZURE_OPENAI_CONFIG.apiKey,
+          apiVersion,
+        });
+      }
+
+      // Start cache cleanup interval
+      this.startCacheCleanup();
+    } catch (error) {
+      console.error('[AzureEmbeddingService] Failed to initialize Azure OpenAI client', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      this.client = null;
+    }
   }
 
   /**
@@ -120,6 +151,16 @@ export class AzureEmbeddingService {
       );
     }
 
+    const client = this.client;
+    if (!client) {
+      throw new AzureOpenAIError(
+        'Azure OpenAI embeddings client is not configured',
+        'authentication_error' as AzureOpenAIErrorCode,
+        500,
+        false
+      );
+    }
+
     // Check cache first (unless skipCache is true)
     if (!options.skipCache) {
       const cached = this.getFromCache(text);
@@ -137,13 +178,14 @@ export class AzureEmbeddingService {
 
     // Generate embedding with retry logic
     const result = await this.withRetry(async () => {
-      const response = await this.client.getEmbeddings(
-        this.deployment,
-        [text],
+      const response = await client.embeddings.create(
         {
-          requestOptions: {
-            timeout: EMBEDDING_CONFIG.timeout,
-          },
+          model: this.deployment,
+          input: text,
+          dimensions: EMBEDDING_CONFIG.dimensions,
+        },
+        {
+          timeout: EMBEDDING_CONFIG.timeout,
         }
       );
 
@@ -178,8 +220,8 @@ export class AzureEmbeddingService {
       embedding,
       model: result.model || EMBEDDING_CONFIG.model,
       usage: {
-        promptTokens: result.usage?.promptTokens || this.estimateTokens(text),
-        totalTokens: result.usage?.totalTokens || this.estimateTokens(text),
+        promptTokens: result.usage?.prompt_tokens || this.estimateTokens(text),
+        totalTokens: result.usage?.total_tokens || this.estimateTokens(text),
       },
     };
   }
@@ -213,6 +255,16 @@ export class AzureEmbeddingService {
         'All texts are empty',
         'invalid_request' as AzureOpenAIErrorCode,
         400,
+        false
+      );
+    }
+
+    const client = this.client;
+    if (!client) {
+      throw new AzureOpenAIError(
+        'Azure OpenAI embeddings client is not configured',
+        'authentication_error' as AzureOpenAIErrorCode,
+        500,
         false
       );
     }
@@ -262,13 +314,14 @@ export class AzureEmbeddingService {
 
     for (const batch of batches) {
       const result = await this.withRetry(async () => {
-        const response = await this.client.getEmbeddings(
-          this.deployment,
-          batch,
+        const response = await client.embeddings.create(
           {
-            requestOptions: {
-              timeout: EMBEDDING_CONFIG.timeout,
-            },
+            model: this.deployment,
+            input: batch,
+            dimensions: EMBEDDING_CONFIG.dimensions,
+          },
+          {
+            timeout: EMBEDDING_CONFIG.timeout,
           }
         );
 
@@ -304,8 +357,8 @@ export class AzureEmbeddingService {
       }
 
       // Accumulate usage
-      totalPromptTokens += result.usage?.promptTokens || batch.reduce((sum, t) => sum + this.estimateTokens(t), 0);
-      totalTokens += result.usage?.totalTokens || batch.reduce((sum, t) => sum + this.estimateTokens(t), 0);
+      totalPromptTokens += result.usage?.prompt_tokens || batch.reduce((sum, t) => sum + this.estimateTokens(t), 0);
+      totalTokens += result.usage?.total_tokens || batch.reduce((sum, t) => sum + this.estimateTokens(t), 0);
     }
 
     // Merge cached and generated embeddings in original order
@@ -563,4 +616,3 @@ export class AzureEmbeddingService {
 
 // Export singleton instance
 export const azureEmbeddingService = new AzureEmbeddingService();
-
