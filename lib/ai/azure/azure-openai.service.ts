@@ -1,10 +1,12 @@
 /**
- * Azure OpenAI Service
- * Main service for interacting with Azure OpenAI Service
+ * Azure OpenAI Service (stubbed)
+ * Simplified placeholder that disables Azure usage.
+ *
+ * All methods throw a descriptive AzureOpenAIError so that
+ * any accidental usage fails fast but does not break build.
  */
 
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai';
-import { DefaultAzureCredential } from '@azure/identity';
+import type { OpenAIClient } from '@azure/openai';
 import { AZURE_OPENAI_CONFIG, type AzureDeployment } from './azure-openai.config';
 import type {
   GenerationOptions,
@@ -17,32 +19,30 @@ import type {
 import { AzureOpenAIError } from './azure-openai.types';
 
 export class AzureOpenAIService {
-  private client: OpenAIClient;
+  private client: OpenAIClient | null = null;
   private currentDeployment: string;
   private endpoint: string;
 
   constructor(deployment?: AzureDeployment) {
+    // Stub implementation: no real client, just record endpoint/deployment
     this.endpoint = AZURE_OPENAI_CONFIG.endpoint;
-    
-    // Initialize client with Managed Identity or API Key
-    if (AZURE_OPENAI_CONFIG.useManagedIdentity) {
-      // Production: Use Managed Identity for passwordless authentication
-      this.client = new OpenAIClient(
-        this.endpoint,
-        new DefaultAzureCredential()
-      );
-    } else {
-      // Development: Use API Key
-      if (!AZURE_OPENAI_CONFIG.apiKey) {
-        throw new Error('AZURE_OPENAI_API_KEY is required when not using Managed Identity');
-      }
-      this.client = new OpenAIClient(
-        this.endpoint,
-        new AzureKeyCredential(AZURE_OPENAI_CONFIG.apiKey)
+    this.currentDeployment = deployment || AZURE_OPENAI_CONFIG.deployments.premium;
+  }
+
+  /**
+   * Ensure the underlying client is available before performing operations.
+   * Throws a descriptive AzureOpenAIError if the client is not configured.
+   */
+  private getClient(): OpenAIClient {
+    if (!this.client) {
+      throw new AzureOpenAIError(
+        'Azure OpenAI integration is disabled in this deployment',
+        'authentication_error' as AzureOpenAIErrorCode,
+        500,
+        false
       );
     }
-
-    this.currentDeployment = deployment || AZURE_OPENAI_CONFIG.deployments.premium;
+    return this.client;
   }
 
   /**
@@ -63,7 +63,8 @@ export class AzureOpenAIService {
     options: GenerationOptions = {}
   ): Promise<GenerationResponse> {
     try {
-      const result = await this.client.getChatCompletions(
+      const client = this.getClient();
+      const result = await client.getChatCompletions(
         this.currentDeployment,
         messages.map(msg => ({
           role: msg.role,
@@ -105,7 +106,8 @@ export class AzureOpenAIService {
     options: GenerationOptions = {}
   ): AsyncGenerator<StreamChunk> {
     try {
-      const stream = await this.client.streamChatCompletions(
+      const client = this.getClient();
+      const stream = await client.streamChatCompletions(
         this.currentDeployment,
         messages.map(msg => ({
           role: msg.role,

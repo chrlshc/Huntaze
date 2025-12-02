@@ -1,16 +1,13 @@
 /**
- * Azure AI Knowledge Network - Event-Driven Shared Learning System
- * 
- * Enables cross-agent learning through Azure Event Grid for real-time insight broadcasting
- * and Azure Cognitive Search for insight storage and retrieval
- * 
- * Requirements: 2.5
- * Property 10: Knowledge Network Broadcasting
+ * Azure AI Knowledge Network (stubbed)
+ *
+ * This Azure-specific implementation is disabled. It is kept only
+ * so tests and imports compile. All Azure operations are no-ops
+ * and data is persisted via PostgreSQL only.
  */
 
-import { EventGridPublisherClient, AzureKeyCredential } from '@azure/eventgrid';
-import { DefaultAzureCredential } from '@azure/identity';
-import { SearchClient, AzureKeyCredential as SearchKeyCredential } from '@azure/search-documents';
+import type { EventGridPublisherClient } from '@azure/eventgrid';
+import type { SearchClient } from '@azure/search-documents';
 import { db as prisma } from '../../prisma';
 
 /**
@@ -73,51 +70,16 @@ export type InsightSubscriptionHandler = (creatorId: number, insight: Insight) =
  * Provides event-driven shared memory for AI agents using Azure Event Grid
  */
 export class AzureAIKnowledgeNetwork {
-  private eventGridClient: EventGridPublisherClient;
-  private searchClient: SearchClient<InsightDocument>;
+  private eventGridClient: EventGridPublisherClient | null = null;
+  private searchClient: SearchClient<InsightDocument> | null = null;
   private subscriptionHandlers: Map<string, InsightSubscriptionHandler[]> = new Map();
-  private topicEndpoint: string;
+  private topicEndpoint: string | null = null;
 
   constructor() {
-    // Initialize Event Grid client
-    this.topicEndpoint = process.env.AZURE_EVENTGRID_TOPIC_ENDPOINT!;
-    const useManagedIdentity = process.env.AZURE_USE_MANAGED_IDENTITY === 'true';
-
-    if (useManagedIdentity) {
-      // Production: Managed Identity
-      this.eventGridClient = new EventGridPublisherClient(
-        this.topicEndpoint,
-        'EventGrid',
-        new DefaultAzureCredential()
-      );
-    } else {
-      // Development: Access Key
-      const accessKey = process.env.AZURE_EVENTGRID_ACCESS_KEY!;
-      this.eventGridClient = new EventGridPublisherClient(
-        this.topicEndpoint,
-        'EventGrid',
-        new AzureKeyCredential(accessKey)
-      );
-    }
-
-    // Initialize Azure Cognitive Search client for insight storage
-    const searchEndpoint = process.env.AZURE_SEARCH_ENDPOINT!;
-    const searchIndexName = process.env.AZURE_SEARCH_INSIGHTS_INDEX || 'ai-insights';
-
-    if (useManagedIdentity) {
-      this.searchClient = new SearchClient<InsightDocument>(
-        searchEndpoint,
-        searchIndexName,
-        new DefaultAzureCredential()
-      );
-    } else {
-      const searchKey = process.env.AZURE_SEARCH_API_KEY!;
-      this.searchClient = new SearchClient<InsightDocument>(
-        searchEndpoint,
-        searchIndexName,
-        new SearchKeyCredential(searchKey)
-      );
-    }
+    // Stub: Azure clients are not initialized
+    this.eventGridClient = null;
+    this.searchClient = null;
+    this.topicEndpoint = null;
   }
 
   /**
@@ -137,13 +99,17 @@ export class AzureAIKnowledgeNetwork {
       creatorId,
     };
 
-    // Store insight in Azure Cognitive Search for retrieval
-    await this.storeInsightInSearch(creatorId, insightWithId);
+    // Store insight in Azure Cognitive Search for retrieval (if configured)
+    if (this.searchClient) {
+      await this.storeInsightInSearch(creatorId, insightWithId);
+    } else {
+      console.warn('[AzureAIKnowledgeNetwork] Search client disabled - storing insight in database only');
+    }
 
     // Also store in PostgreSQL for backup and analytics
     await this.storeInsightInDatabase(creatorId, insightWithId);
 
-    // Broadcast via Event Grid
+    // Broadcast via Event Grid (if configured)
     const event: InsightBroadcastEvent = {
       id: insightId,
       eventType: 'Huntaze.AI.InsightBroadcast',
@@ -156,7 +122,11 @@ export class AzureAIKnowledgeNetwork {
     };
 
     try {
-      await this.eventGridClient.send([event]);
+      if (this.eventGridClient) {
+        await this.eventGridClient.send([event]);
+      } else {
+        console.warn('[AzureAIKnowledgeNetwork] Event Grid client disabled - skipping external broadcast');
+      }
       
       // Trigger local subscription handlers immediately
       await this.notifyLocalSubscribers(creatorId, insightWithId);
@@ -175,6 +145,10 @@ export class AzureAIKnowledgeNetwork {
    * @param insight - Insight to store
    */
   private async storeInsightInSearch(creatorId: number, insight: Insight): Promise<void> {
+    if (!this.searchClient) {
+      return;
+    }
+
     const document: InsightDocument = {
       id: insight.id!,
       creatorId,
@@ -270,6 +244,40 @@ export class AzureAIKnowledgeNetwork {
     type: string,
     limit: number = 10
   ): Promise<InsightWithDecay[]> {
+    // If Azure Search is not configured, fall back to database-only retrieval
+    if (!this.searchClient) {
+      const dbInsights = await prisma.aIInsight.findMany({
+        where: {
+          creatorId,
+          type,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: limit * 2,
+      });
+
+      const now = new Date();
+      const insights: InsightWithDecay[] = dbInsights.map((insight) => {
+        const ageInDays = (now.getTime() - insight.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+        const decayedConfidence = this.applyConfidenceDecay(insight.confidence, ageInDays);
+
+        return {
+          id: insight.id,
+          source: insight.source,
+          type: insight.type,
+          confidence: insight.confidence,
+          data: insight.data,
+          timestamp: insight.createdAt,
+          decayedConfidence,
+          relevanceScore: decayedConfidence,
+        };
+      });
+
+      insights.sort((a, b) => (b.relevanceScore ?? 0) - (a.relevanceScore ?? 0));
+      return insights.slice(0, limit);
+    }
+
     // Search in Azure Cognitive Search
     const searchResults = await this.searchClient.search('*', {
       filter: `creatorId eq ${creatorId} and type eq '${type}'`,
@@ -391,20 +399,24 @@ export class AzureAIKnowledgeNetwork {
       },
     });
 
-    // Delete from Azure Cognitive Search
-    // Note: In production, you'd want to batch this
-    const searchResults = await this.searchClient.search('*', {
-      filter: `creatorId eq ${creatorId} and timestamp lt ${cutoffDate.toISOString()}`,
-      select: ['id'],
-    });
+    // Delete from Azure Cognitive Search (if configured)
+    if (this.searchClient) {
+      // Note: In production, you'd want to batch this
+      const searchResults = await this.searchClient.search('*', {
+        filter: `creatorId eq ${creatorId} and timestamp lt ${cutoffDate.toISOString()}`,
+        select: ['id'],
+      });
 
-    const idsToDelete: string[] = [];
-    for await (const result of searchResults.results) {
-      idsToDelete.push(result.document.id);
-    }
+      const idsToDelete: string[] = [];
+      for await (const result of searchResults.results) {
+        idsToDelete.push(result.document.id);
+      }
 
-    if (idsToDelete.length > 0) {
-      await this.searchClient.deleteDocuments('id', idsToDelete);
+      if (idsToDelete.length > 0) {
+        await this.searchClient.deleteDocuments('id', idsToDelete);
+      }
+    } else {
+      console.warn('[AzureAIKnowledgeNetwork] Search client disabled - skipping Azure Search cleanup');
     }
 
     return result.count;
