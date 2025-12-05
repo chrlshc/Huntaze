@@ -1,42 +1,45 @@
 'use client';
 
 /**
- * OnlyFans Main Dashboard Page
- * Requirements: 2.1, 2.2 - OnlyFans Overview with key metrics
- * Feature: dashboard-ux-overhaul
+ * OnlyFans Main Dashboard Page - Shopify Design
+ * Requirements: 1.1-10.4 - OnlyFans Overview with Shopify aesthetic
+ * Feature: onlyfans-shopify-design
  * 
  * Main entry point for OnlyFans features with:
- * - Stats overview (messages, fans, PPV, revenue)
- * - AI billing usage and quota status
- * - Connection status banner
- * - Quick action buttons
- * - Navigation to sub-pages
+ * - ShopifyPageLayout with light gray background
+ * - ShopifyMetricCard grid (4 columns)
+ * - ShopifyBanner for connection status
+ * - ShopifyQuickAction grid (3 columns)
+ * - ShopifyFeatureCard grid (2 columns)
  */
 
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Card } from '@/components/ui/card';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { Button } from '@/components/ui/button';
+import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
+import {
+  ShopifyMetricCard,
+  ShopifyMetricGrid,
+  ShopifyBanner,
+  ShopifyQuickAction,
+  ShopifyFeatureCard,
+  ShopifySectionHeader,
+  ShopifyButton,
+  ShopifyCard,
+} from '@/components/ui/shopify';
 import { 
   MessageSquare, 
   Users, 
   DollarSign, 
-  TrendingUp,
+  Zap,
   Send,
   Eye,
   Settings,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Zap,
   RefreshCw
 } from 'lucide-react';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
-import { CardSkeleton, MetricSkeleton } from '@/components/layout/LoadingSkeletons';
 
 interface OnlyFansStats {
   messages: {
@@ -69,10 +72,12 @@ interface AIQuotaInfo {
   percentUsed: number;
 }
 
+
 export default function OnlyFansPage() {
   const [stats, setStats] = useState<OnlyFansStats | null>(null);
   const [quotaInfo, setQuotaInfo] = useState<AIQuotaInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showBanner, setShowBanner] = useState(true);
 
   // Performance monitoring
   const { trackAPIRequest } = usePerformanceMonitoring({
@@ -118,416 +123,187 @@ export default function OnlyFansPage() {
   };
 
   const getDefaultStats = (): OnlyFansStats => ({
-    messages: {
-      total: 0,
-      unread: 0,
-      responseRate: 0,
-      avgResponseTime: 0,
-    },
-    fans: {
-      total: 0,
-      active: 0,
-      new: 0,
-    },
-    ppv: {
-      totalRevenue: 0,
-      totalSales: 0,
-      conversionRate: 0,
-    },
-    connection: {
-      isConnected: false,
-      lastSync: null,
-      status: 'disconnected',
-    },
+    messages: { total: 0, unread: 0, responseRate: 0, avgResponseTime: 0 },
+    fans: { total: 0, active: 0, new: 0 },
+    ppv: { totalRevenue: 0, totalSales: 0, conversionRate: 0 },
+    connection: { isConnected: false, lastSync: null, status: 'disconnected' },
   });
 
   const getDefaultQuota = (): AIQuotaInfo => ({
-    limit: 10,
-    spent: 0,
-    remaining: 10,
-    percentUsed: 0,
+    limit: 10, spent: 0, remaining: 10, percentUsed: 0,
   });
-
-  const getConnectionStatusColor = (status: string) => {
-    switch (status) {
-      case 'connected': return 'text-green-600 dark:text-green-400';
-      case 'error': return 'text-red-600 dark:text-red-400';
-      default: return 'text-gray-600 dark:text-gray-400';
-    }
-  };
-
-  const getConnectionStatusIcon = (status: string) => {
-    switch (status) {
-      case 'connected': return <CheckCircle className="w-5 h-5" />;
-      case 'error': return <AlertCircle className="w-5 h-5" />;
-      default: return <Clock className="w-5 h-5" />;
-    }
-  };
-
-  const getQuotaColor = (percentUsed: number) => {
-    if (percentUsed >= 95) return 'text-red-600 dark:text-red-400';
-    if (percentUsed >= 80) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-green-600 dark:text-green-400';
-  };
 
   const handleRefresh = () => {
     setLoading(true);
     loadDashboardData();
   };
 
+  // Loading state with Shopify skeleton
   if (loading) {
     return (
       <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
-        <PageLayout
+        <ShopifyPageLayout
           title="OnlyFans Dashboard"
           subtitle="Track your messages, fans, PPV revenue, and AI usage at a glance."
-          breadcrumbs={[
-            { label: 'OnlyFans' }
-          ]}
         >
-          <div className="space-y-6">
-            <MetricSkeleton count={4} />
-            <CardSkeleton count={3} />
-          </div>
-        </PageLayout>
+          <ShopifyMetricGrid columns={4}>
+            {[1, 2, 3, 4].map((i) => (
+              <ShopifyCard key={i} className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
+                <div className="h-8 bg-gray-200 rounded w-1/2" />
+              </ShopifyCard>
+            ))}
+          </ShopifyMetricGrid>
+        </ShopifyPageLayout>
       </ContentPageErrorBoundary>
     );
   }
 
   return (
     <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
-      <PageLayout
+      <ShopifyPageLayout
         title="OnlyFans Dashboard"
         subtitle="Track your messages, fans, PPV revenue, and AI usage at a glance."
-        breadcrumbs={[
-          { label: 'OnlyFans' }
-        ]}
         actions={
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={handleRefresh}>
+          <div className="flex items-center gap-2">
+            <ShopifyButton variant="secondary" size="sm" onClick={handleRefresh}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
-            </Button>
+            </ShopifyButton>
             <Link href="/onlyfans/settings">
-              <Button variant="outline" size="sm">
+              <ShopifyButton variant="secondary" size="sm">
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
-              </Button>
+              </ShopifyButton>
             </Link>
           </div>
         }
       >
-
         {/* Connection Status Banner */}
-        {stats && (
-          <div className={`mb-6 p-4 rounded-lg border ${
-            stats.connection.status === 'connected' 
-              ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800'
-              : 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={getConnectionStatusColor(stats.connection.status)}>
-                  {getConnectionStatusIcon(stats.connection.status)}
-                </div>
-                <div>
-                  <p className="font-medium text-[var(--color-text-main)]">
-                    {stats.connection.status === 'connected' 
-                      ? 'OnlyFans Connected' 
-                      : 'OnlyFans Not Connected'}
-                  </p>
-                  <p className="text-sm text-[var(--color-text-sub)]">
-                    {stats.connection.lastSync 
-                      ? `Last synced: ${new Date(stats.connection.lastSync).toLocaleString()}`
-                      : 'Connect your OnlyFans account to get started'}
-                  </p>
-                </div>
-              </div>
-              {!stats.connection.isConnected && (
-                <Link
-                  href="/onlyfans/settings"
-                  className="px-4 py-2 bg-[var(--color-indigo)] text-white rounded-lg hover:opacity-90 transition-opacity"
-                >
-                  Connect Account
-                </Link>
-              )}
-            </div>
-          </div>
+        {stats && showBanner && (
+          <ShopifyBanner
+            status={stats.connection.status === 'connected' ? 'success' : 'warning'}
+            title={stats.connection.status === 'connected' 
+              ? 'OnlyFans Connected' 
+              : 'OnlyFans Not Connected'}
+            description={stats.connection.lastSync 
+              ? `Last synced: ${new Date(stats.connection.lastSync).toLocaleString()}`
+              : 'Connect your OnlyFans account to get started'}
+            action={!stats.connection.isConnected ? {
+              label: 'Connect Account',
+              onClick: () => window.location.href = '/onlyfans/settings',
+            } : undefined}
+            onDismiss={() => setShowBanner(false)}
+          />
         )}
 
-        {/* Stats Grid */}
+        {/* Metrics Grid - 4 columns */}
         {stats && (
-          <div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-            data-testid="onlyfans-metrics-grid"
-          >
-            {/* Messages Card */}
-            <Card 
-              className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+          <ShopifyMetricGrid columns={4} data-testid="onlyfans-metrics-grid">
+            <ShopifyMetricCard
+              label="Messages"
+              value={stats.messages.total.toLocaleString()}
+              icon={MessageSquare}
+              iconColor="#2c6ecb"
+              trend={stats.messages.unread > 0 ? stats.messages.unread : undefined}
+              trendLabel={stats.messages.unread > 0 ? 'unread' : undefined}
               data-testid="metric-card-messages"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className="font-semibold text-[var(--color-text-main)]">Messages</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--color-text-sub)]">Total</span>
-                  <span className="text-2xl font-bold text-[var(--color-text-main)]" data-testid="metric-messages-total">
-                    {stats.messages.total.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--color-text-sub)]">Unread</span>
-                  <span className="text-lg font-semibold text-blue-600 dark:text-blue-400" data-testid="metric-messages-unread">
-                    {stats.messages.unread}
-                  </span>
-                </div>
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-[var(--color-text-sub)]">Response Rate</span>
-                    <span className="font-medium text-green-600 dark:text-green-400" data-testid="metric-messages-response-rate">
-                      {stats.messages.responseRate}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Fans Card */}
-            <Card 
-              className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+            />
+            <ShopifyMetricCard
+              label="Fans"
+              value={stats.fans.total.toLocaleString()}
+              icon={Users}
+              iconColor="#7c3aed"
+              trend={stats.fans.new > 0 ? stats.fans.new : undefined}
+              trendLabel={stats.fans.new > 0 ? 'new this month' : undefined}
               data-testid="metric-card-fans"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className="font-semibold text-[var(--color-text-main)]">Fans</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--color-text-sub)]">Total</span>
-                  <span className="text-2xl font-bold text-[var(--color-text-main)]" data-testid="metric-fans-total">
-                    {stats.fans.total.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--color-text-sub)]">Active</span>
-                  <span className="text-lg font-semibold text-purple-600 dark:text-purple-400" data-testid="metric-fans-active">
-                    {stats.fans.active}
-                  </span>
-                </div>
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-[var(--color-text-sub)]">New This Month</span>
-                    <span className="font-medium text-green-600 dark:text-green-400" data-testid="metric-fans-new">
-                      +{stats.fans.new}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* PPV Revenue Card */}
-            <Card 
-              className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+            />
+            <ShopifyMetricCard
+              label="PPV Revenue"
+              value={`$${stats.ppv.totalRevenue.toLocaleString()}`}
+              icon={DollarSign}
+              iconColor="#008060"
+              trend={stats.ppv.conversionRate > 0 ? stats.ppv.conversionRate : undefined}
+              trendLabel={stats.ppv.conversionRate > 0 ? 'conversion' : undefined}
               data-testid="metric-card-revenue"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-                <h3 className="font-semibold text-[var(--color-text-main)]">PPV Revenue</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--color-text-sub)]">Total</span>
-                  <span className="text-2xl font-bold text-[var(--color-text-main)]" data-testid="metric-revenue-total">
-                    ${stats.ppv.totalRevenue.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[var(--color-text-sub)]">Sales</span>
-                  <span className="text-lg font-semibold text-green-600 dark:text-green-400" data-testid="metric-revenue-sales">
-                    {stats.ppv.totalSales}
-                  </span>
-                </div>
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-[var(--color-text-sub)]">Conversion</span>
-                    <span className="font-medium text-green-600 dark:text-green-400" data-testid="metric-revenue-conversion">
-                      {stats.ppv.conversionRate}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* AI Quota Card */}
+            />
             {quotaInfo && (
-              <Card 
-                className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+              <ShopifyMetricCard
+                label="AI Quota"
+                value={`${quotaInfo.percentUsed.toFixed(0)}%`}
+                icon={Zap}
+                iconColor="#b98900"
+                trend={quotaInfo.percentUsed < 80 ? (100 - quotaInfo.percentUsed) : -(quotaInfo.percentUsed - 80)}
+                trendLabel={`$${quotaInfo.remaining.toFixed(2)} left`}
                 data-testid="metric-card-ai-quota"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                    <Zap className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                  </div>
-                  <h3 className="font-semibold text-[var(--color-text-main)]">AI Quota</h3>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-[var(--color-text-sub)]">Used</span>
-                    <span className={`text-2xl font-bold ${getQuotaColor(quotaInfo.percentUsed)}`} data-testid="metric-ai-quota-used">
-                      {quotaInfo.percentUsed.toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2" data-testid="metric-ai-quota-bar">
-                    <div
-                      className={`h-2 rounded-full transition-all ${
-                        quotaInfo.percentUsed >= 95 
-                          ? 'bg-red-600' 
-                          : quotaInfo.percentUsed >= 80 
-                          ? 'bg-yellow-600' 
-                          : 'bg-green-600'
-                      }`}
-                      style={{ width: `${Math.min(quotaInfo.percentUsed, 100)}%` }}
-                    />
-                  </div>
-                  <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-[var(--color-text-sub)]">Remaining</span>
-                      <span className="font-medium text-[var(--color-text-main)]" data-testid="metric-ai-quota-remaining">
-                        ${quotaInfo.remaining.toFixed(2)} / ${quotaInfo.limit}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+              />
             )}
-          </div>
+          </ShopifyMetricGrid>
         )}
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-[var(--color-text-main)] mb-4">Quick Actions</h2>
+        {/* Quick Actions Section */}
+        <section>
+          <ShopifySectionHeader title="Quick Actions" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link
+            <ShopifyQuickAction
+              icon={<Send />}
+              iconColor="#2c6ecb"
+              title="Send Message"
+              description="AI-powered messaging"
               href="/onlyfans/messages"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:border-gray-300 hover:bg-gray-50 transition-colors group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                  <Send className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[var(--color-text-main)] mb-1">Send Message</h3>
-                  <p className="text-sm text-[var(--color-text-sub)]">AI-powered messaging</p>
-                </div>
-              </div>
-            </Link>
-
-            <Link
+            />
+            <ShopifyQuickAction
+              icon={<Eye />}
+              iconColor="#7c3aed"
+              title="View Fans"
+              description="Manage subscribers"
               href="/onlyfans/fans"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:border-gray-300 hover:bg-gray-50 transition-colors group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors">
-                  <Eye className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[var(--color-text-main)] mb-1">View Fans</h3>
-                  <p className="text-sm text-[var(--color-text-sub)]">Manage subscribers</p>
-                </div>
-              </div>
-            </Link>
-
-            <Link
+            />
+            <ShopifyQuickAction
+              icon={<DollarSign />}
+              iconColor="#008060"
+              title="Create PPV"
+              description="New pay-per-view"
               href="/onlyfans/ppv"
-              className="bg-[var(--bg-surface)] border border-gray-200 rounded-[var(--radius-card)] p-6 shadow-[var(--shadow-soft)] hover:border-gray-300 hover:bg-gray-50 transition-colors group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
-                  <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[var(--color-text-main)] mb-1">Create PPV</h3>
-                  <p className="text-sm text-[var(--color-text-sub)]">New pay-per-view</p>
-                </div>
-              </div>
-            </Link>
+            />
           </div>
-        </div>
+        </section>
 
-        {/* Navigation to Sub-Pages */}
-        <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-[var(--color-text-main)]">OnlyFans Features</h2>
+        {/* Features Section */}
+        <section>
+          <ShopifySectionHeader title="OnlyFans Features" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ShopifyFeatureCard
+              icon={<MessageSquare />}
+              iconColor="#2c6ecb"
+              title="Messages"
+              description="AI-powered messaging"
+              href="/onlyfans/messages"
+            />
+            <ShopifyFeatureCard
+              icon={<Users />}
+              iconColor="#7c3aed"
+              title="Fans"
+              description="Subscriber management"
+              href="/onlyfans/fans"
+            />
+            <ShopifyFeatureCard
+              icon={<DollarSign />}
+              iconColor="#008060"
+              title="PPV Content"
+              description="Pay-per-view management"
+              href="/onlyfans/ppv"
+            />
+            <ShopifyFeatureCard
+              icon={<Settings />}
+              iconColor="#6b7177"
+              title="Settings"
+              description="Account & preferences"
+              href="/onlyfans/settings"
+            />
           </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link
-                href="/onlyfans/messages"
-                className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <div>
-                    <p className="font-medium text-[var(--color-text-main)]">Messages</p>
-                    <p className="text-sm text-[var(--color-text-sub)]">AI-powered messaging</p>
-                  </div>
-                </div>
-                <TrendingUp className="w-5 h-5 text-gray-400" />
-              </Link>
-
-              <Link
-                href="/onlyfans/fans"
-                className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  <div>
-                    <p className="font-medium text-[var(--color-text-main)]">Fans</p>
-                    <p className="text-sm text-[var(--color-text-sub)]">Subscriber management</p>
-                  </div>
-                </div>
-                <TrendingUp className="w-5 h-5 text-gray-400" />
-              </Link>
-
-              <Link
-                href="/onlyfans/ppv"
-                className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  <div>
-                    <p className="font-medium text-[var(--color-text-main)]">PPV Content</p>
-                    <p className="text-sm text-[var(--color-text-sub)]">Pay-per-view management</p>
-                  </div>
-                </div>
-                <TrendingUp className="w-5 h-5 text-gray-400" />
-              </Link>
-
-              <Link
-                href="/onlyfans/settings"
-                className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                  <div>
-                    <p className="font-medium text-[var(--color-text-main)]">Settings</p>
-                    <p className="text-sm text-[var(--color-text-sub)]">Account & preferences</p>
-                  </div>
-                </div>
-                <TrendingUp className="w-5 h-5 text-gray-400" />
-              </Link>
-            </div>
-          </div>
-        </Card>
-      </PageLayout>
+        </section>
+      </ShopifyPageLayout>
     </ContentPageErrorBoundary>
   );
 }
