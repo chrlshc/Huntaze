@@ -7,8 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { recommendDiscounts, RecommendDiscountsRequest } from '@/lib/ai/offers-ai.service';
 import { z } from 'zod';
 
@@ -43,13 +42,11 @@ const requestSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Auth check
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const authResult = await requireAuth(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+    const session = authResult;
 
     // Parse and validate body
     const body = await request.json();

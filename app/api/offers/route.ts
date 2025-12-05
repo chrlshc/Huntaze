@@ -6,17 +6,17 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth/api-protection';
 import { offersService } from '@/lib/offers/offers.service';
 import { CreateOfferInput, OfferStatus } from '@/lib/offers/types';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authResult = await requireAuth(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+    const session = authResult;
 
     const userId = parseInt(session.user.id, 10);
     const { searchParams } = new URL(request.url);
@@ -43,10 +43,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authResult = await requireAuth(request);
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
+    const session = authResult;
 
     const userId = parseInt(session.user.id, 10);
     const body = await request.json();
