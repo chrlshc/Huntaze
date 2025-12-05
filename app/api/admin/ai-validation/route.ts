@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth/api-protection';
 import {
   runValidation,
   formatReport,
@@ -30,18 +30,15 @@ export const maxDuration = 60; // Allow up to 60 seconds for full validation
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const session = await auth();
+    const authResult = await requireAuth(request);
     
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized', message: 'Authentication required' },
-        { status: 401 }
-      );
+    if (authResult instanceof NextResponse) {
+      return authResult;
     }
 
     // Check admin role (if applicable)
     // For now, any authenticated user can run validation
-    // In production, add role check: if (session.user.role !== 'admin')
+    // In production, add role check: if (authResult.user.role !== 'admin')
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
