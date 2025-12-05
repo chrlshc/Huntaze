@@ -1,22 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
-  LayoutDashboard,
-  MessageSquare,
-  Users,
-  BarChart3,
-  Plug,
-  CreditCard,
-  Settings,
   Menu,
   X,
-  Target,
-  Bell,
-  Shield,
-  Zap
+  DollarSign,
+  ChevronDown,
+  ChevronRight,
+  Bot
 } from "lucide-react";
 import { SafeBadge } from "@/components/hydration/SafeBadge";
 import { useSSE } from "@/hooks/useSSE";
@@ -25,84 +18,161 @@ import { AnimatePresence, motion } from "framer-motion";
 import "./nav-styles.css";
 import { Button } from "@/components/ui/button";
 
-type BadgeConfig = { type: "unread" | "alert"; url: string };
-type NavItem = {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
-  badge?: BadgeConfig;
-};
+// Import configuration from separate file for testability
+import { 
+  SIDEBAR_SECTIONS, 
+  APP_PREFIXES,
+  isRouteActive,
+  isSectionActive,
+  type SidebarSection,
+  type SidebarItem
+} from "./sidebar-config";
 
-const APP_PREFIXES = [
-  "/dashboard",
-  "/messages",
-  "/fans",
-  "/analytics",
-  "/integrations",
-  "/settings",
-  "/platforms",
-  "/billing",
-  "/configure",
-  "/profile",
-  "/social",
-  "/campaigns",
-  "/automations",
-  "/content"
-];
+// Re-export for backwards compatibility
+export { SIDEBAR_SECTIONS, APP_PREFIXES };
 
-export const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
-  { 
-    label: "Main", 
-    items: [
-      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      {
-        label: "Messages",
-        href: "/messages",
-        icon: MessageSquare,
-        badge: { type: "unread", url: "/api/messages/unread-count" },
-      },
-      { label: "Fans", href: "/fans", icon: Users }
-    ] 
-  },
-  {
-    label: "Growth",
-    items: [
-      { label: "Campaigns", href: "/campaigns", icon: Target },
-      { label: "AI Automations", href: "/automations", icon: Zap },
-      { label: "Huntaze AI", href: "/dashboard/huntaze-ai", icon: Zap },
-      {
-        label: "Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        badge: { type: "alert", url: "/api/analytics/alerts-count" },
-      },
-    ],
-  },
-  {
-    label: "Tools",
-    items: [
-      { label: "Content Moderation", href: "/content/moderation", icon: Shield },
-      { label: "Integrations", href: "/integrations", icon: Plug },
-    ],
-  },
-  {
-    label: "Settings",
-    items: [
-      { label: "Billing", href: "/billing", icon: CreditCard },
-      { label: "General", href: "/configure", icon: Settings },
-    ],
-  },
-];
+// Expandable Section Component
+function SidebarSectionItem({ 
+  section, 
+  pathname, 
+  isExpanded, 
+  onToggle,
+  onNavigate
+}: { 
+  section: SidebarSection; 
+  pathname: string | null;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onNavigate?: () => void;
+}) {
+  const Icon = section.icon;
+  const isActive = isSectionActive(pathname, section);
+  const hasItems = section.items && section.items.length > 0;
+
+  // For sections with direct href (no sub-items)
+  if (section.href && !hasItems) {
+    return (
+      <Link href={section.href} onClick={onNavigate}>
+        <div
+          className={`nav-item ${isActive ? "active" : ""}`}
+          aria-current={isActive ? "page" : undefined}
+        >
+          <Icon aria-hidden className="nav-item-icon" />
+          <span className="nav-item-label">{section.label}</span>
+        </div>
+      </Link>
+    );
+  }
+
+  // For sections with sub-items
+  return (
+    <div className="nav-section-expandable">
+      <button
+        onClick={onToggle}
+        className={`nav-item nav-item-expandable ${isActive ? "active-section" : ""}`}
+        aria-expanded={isExpanded}
+      >
+        <Icon aria-hidden className="nav-item-icon" />
+        <span className="nav-item-label">{section.label}</span>
+        {hasItems && (
+          <span className="nav-item-chevron">
+            {isExpanded ? (
+              <ChevronDown className="w-4 h-4" />
+            ) : (
+              <ChevronRight className="w-4 h-4" />
+            )}
+          </span>
+        )}
+      </button>
+      
+      <AnimatePresence initial={false}>
+        {isExpanded && hasItems && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="nav-subitems"
+          >
+            {section.items!.map((item) => (
+              <SidebarSubItem 
+                key={item.href} 
+                item={item} 
+                pathname={pathname}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Sub-item Component with badge support
+function SidebarSubItem({ 
+  item, 
+  pathname,
+  onNavigate
+}: { 
+  item: SidebarItem; 
+  pathname: string | null;
+  onNavigate?: () => void;
+}) {
+  const isActive = isRouteActive(pathname, item.href);
+  const ItemIcon = item.icon;
+  
+  // Get badge count from SSE if configured
+  const badgeCount = item.badge?.url
+    ? useSSECounter({
+        url: item.badge.type === "count" ? `${item.badge.url}?sse=1` : item.badge.url,
+        eventName: item.badge.type === "count" ? "unread" : "alert",
+      })
+    : item.badge?.value || 0;
+
+  return (
+    <Link href={item.href} onClick={onNavigate}>
+      <div
+        className={`nav-subitem ${isActive ? "active" : ""}`}
+        aria-current={isActive ? "page" : undefined}
+      >
+        {ItemIcon && <ItemIcon aria-hidden className="nav-subitem-icon" />}
+        <span className="nav-subitem-label">{item.label}</span>
+        {item.isNew && (
+          <span className="nav-badge-new">New</span>
+        )}
+        {item.badge && badgeCount > 0 && (
+          <SafeBadge
+            count={badgeCount}
+            type={item.badge.type === "count" ? "unread" : "alert"}
+            maxCount={99}
+          />
+        )}
+      </div>
+    </Link>
+  );
+}
 
 export default function AppSidebar() {
   const pathname = usePathname();
   const isApp = useMemo(() => APP_PREFIXES.some((p) => pathname?.startsWith(p)), [pathname]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const drawerRef = useRef<HTMLDivElement>(null);
   const openBtnRef = useRef<HTMLButtonElement>(null);
 
   // Enable SSE for real-time updates
   useSSE(true);
+
+  // Auto-expand active section on mount and route change
+  useEffect(() => {
+    if (!pathname) return;
+    
+    const activeSection = SIDEBAR_SECTIONS.find(section => isSectionActive(pathname, section));
+    if (activeSection && activeSection.items) {
+      setExpandedSections(prev => new Set([...prev, activeSection.id]));
+    }
+  }, [pathname]);
 
   // Flag body so global CSS can indent main on desktop
   useEffect(() => {
@@ -131,54 +201,45 @@ export default function AppSidebar() {
     };
   }, [drawerOpen]);
 
+  const toggleSection = useCallback((sectionId: string) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(sectionId)) {
+        next.delete(sectionId);
+      } else {
+        next.add(sectionId);
+      }
+      return next;
+    });
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setDrawerOpen(false);
+  }, []);
+
   if (!isApp) return null;
 
   const NavList = (
     <nav className="nav-content" aria-label="App Navigation">
-      {NAV_SECTIONS.map((section) => (
-        <div key={section.label} className="nav-section">
-          <div className="nav-section-label">
-            {section.label}
-          </div>
-          <div className="nav-item-list">
-            {section.items.map((item) => {
-              const active = pathname === item.href || pathname?.startsWith(item.href + "/");
-              const Icon = item.icon;
-              const count = item.badge
-                ? useSSECounter({
-                    url: item.badge.type === "unread" ? `${item.badge.url}?sse=1` : item.badge.url,
-                    eventName: item.badge.type === "unread" ? "unread" : "alert",
-                  })
-                : 0;
-              return (
-                <Link key={item.href} href={item.href}>
-                  <div
-                    className={`nav-item ${active ? "active" : ""}`}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    <Icon aria-hidden className="nav-item-icon" />
-                    <span className="nav-item-label">{item.label}</span>
-                    {item.badge && count > 0 ? (
-                      <SafeBadge
-                        count={count}
-                        type={item.badge.type}
-                        maxCount={99}
-                      />
-                    ) : null}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+      <div className="nav-sections">
+        {SIDEBAR_SECTIONS.map((section) => (
+          <SidebarSectionItem
+            key={section.id}
+            section={section}
+            pathname={pathname}
+            isExpanded={expandedSections.has(section.id)}
+            onToggle={() => toggleSection(section.id)}
+            onNavigate={drawerOpen ? closeDrawer : undefined}
+          />
+        ))}
+      </div>
     </nav>
   );
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="app-sidebar">
+      <aside className="app-sidebar hidden lg:flex" data-testid="app-sidebar">
         <div className="app-sidebar-header">
           <Link href="/dashboard" className="app-sidebar-logo" aria-label="Huntaze dashboard">
             <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
@@ -188,14 +249,18 @@ export default function AppSidebar() {
           </Link>
         </div>
         <div className="app-sidebar-content">{NavList}</div>
-        <div className="p-4 border-t border-border-light dark:border-border">
+        <div className="app-sidebar-footer">
           <Link
-            href="/campaigns/new"
+            href="/onlyfans/ppv"
             className="nav-action-button"
           >
-            <Target className="inline-block w-4 h-4 mr-2" />
-            New Campaign
+            <DollarSign className="inline-block w-4 h-4 mr-2" />
+            Create PPV
           </Link>
+          <button className="nav-ai-button" aria-label="Open AI Assistant">
+            <Bot className="w-5 h-5" />
+            <span>AI Assistant</span>
+          </button>
         </div>
       </aside>
 
@@ -205,6 +270,7 @@ export default function AppSidebar() {
         aria-label="Open menu"
         className="mobile-drawer-trigger"
         onClick={() => setDrawerOpen(true)}
+        data-testid="mobile-menu-trigger"
       >
         <Menu className="w-5 h-5" />
       </button>
@@ -212,10 +278,16 @@ export default function AppSidebar() {
       {/* Mobile drawer */}
       <AnimatePresence>
         {drawerOpen && (
-          <motion.div className="lg:hidden fixed inset-0 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div 
+            className="lg:hidden fixed inset-0 z-50" 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            data-testid="mobile-drawer"
+          >
             <motion.div
               className="mobile-drawer-overlay"
-              onClick={() => setDrawerOpen(false)}
+              onClick={closeDrawer}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -240,8 +312,9 @@ export default function AppSidebar() {
                   <span className="text-xl font-bold text-content-primary">Huntaze</span>
                 </div>
                 <Button 
-                  variant="primary" 
-                  onClick={() => setDrawerOpen(false)} 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={closeDrawer} 
                   aria-label="Close menu"
                   className="mobile-drawer-close"
                 >
@@ -251,14 +324,14 @@ export default function AppSidebar() {
               <div className="flex-1 overflow-y-auto px-3 py-4">
                 {NavList}
               </div>
-              <div className="p-4 border-t border-border-light dark:border-border">
+              <div className="app-sidebar-footer">
                 <Link
-                  href="/campaigns/new"
+                  href="/onlyfans/ppv"
                   className="nav-action-button"
-                  onClick={() => setDrawerOpen(false)}
+                  onClick={closeDrawer}
                 >
-                  <Target className="inline-block w-4 h-4 mr-2" />
-                  New Campaign
+                  <DollarSign className="inline-block w-4 h-4 mr-2" />
+                  Create PPV
                 </Link>
               </div>
             </motion.aside>

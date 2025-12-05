@@ -260,13 +260,17 @@
      COMPONENT TOKENS
      ======================================== */
   
-  /* Buttons */
-  --button-height-sm: 2rem;        /* 32px */
-  --button-height-md: 2.5rem;      /* 40px */
-  --button-height-lg: 3rem;        /* 48px */
+  /* Buttons - Touch Target Sizing (Property 22: min 44px for accessibility) */
+  --button-height-sm: 2rem;        /* 32px - compact, use min-height wrapper for touch */
+  --button-height-md: 2.5rem;      /* 40px - standard */
+  --button-height-lg: 3rem;        /* 48px - large */
+  --button-height-dense: 2rem;     /* 32px - dense variant */
+  --button-height-standard: 2.75rem; /* 44px - WCAG touch target minimum */
+  --button-min-touch-target: 2.75rem; /* 44px - minimum touch target size */
   --button-padding-x: var(--space-4);
   --button-padding-y: var(--space-2);
   --button-radius: var(--radius-lg);
+  --button-border-radius: var(--radius-lg);
   
   /* Inputs */
   --input-height-sm: 2rem;         /* 32px */

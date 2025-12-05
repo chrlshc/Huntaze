@@ -1,0 +1,111 @@
+/* Quick Actions FAB Styles */
+
+/* Safe area for mobile devices with notches */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* FAB animations */
+@keyframes fab-scale-in {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fab-scale-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes fab-action-slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* FAB container */
+[data-testid="quick-actions-fab"] {
+  animation: fab-scale-in 0.2s ease-out;
+}
+
+/* Action buttons animation */
+[data-testid^="quick-action-"] {
+  animation: fab-action-slide-up 0.2s ease-out backwards;
+}
+
+/* Touch target enforcement */
+[data-testid="fab-toggle"],
+[data-testid^="quick-action-"],
+[data-testid^="mobile-nav-"] {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+/* Mobile bottom nav styles */
+[data-testid="mobile-bottom-nav"] {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Keyboard shortcut hints */
+.shortcut-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.dark .shortcut-hint {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-testid="quick-actions-fab"],
+  [data-testid^="quick-action-"],
+  [data-testid="fab-toggle"] {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  [data-testid="fab-toggle"] {
+    border: 2px solid currentColor;
+  }
+  
+  [data-testid^="quick-action-"] {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Focus visible styles for keyboard navigation */
+[data-testid="fab-toggle"]:focus-visible,
+[data-testid^="quick-action-"]:focus-visible,
+[data-testid^="mobile-nav-"]:focus-visible {
+  outline: 2px solid var(--primary, #6366f1);
+  outline-offset: 2px;
+}

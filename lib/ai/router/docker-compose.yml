@@ -1,0 +1,40 @@
+# Docker Compose for AI Router
+# Huntaze AI Router - Azure AI Foundry East US 2
+#
+# Usage:
+#   docker-compose up -d
+#   docker-compose logs -f
+#   docker-compose down
+
+version: '3.8'
+
+services:
+  ai-router:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: huntaze-ai-router
+    ports:
+      - "8000:8000"
+    environment:
+      - AZURE_AI_CHAT_ENDPOINT=${AZURE_AI_CHAT_ENDPOINT}
+      - AZURE_AI_CHAT_KEY=${AZURE_AI_CHAT_KEY}
+      - DEPLOY_DEEPSEEK=${DEPLOY_DEEPSEEK:-deepseek-r1-us}
+      - DEPLOY_LLAMA=${DEPLOY_LLAMA:-llama33-70b-us}
+      - DEPLOY_MISTRAL=${DEPLOY_MISTRAL:-mistral-large-2411-us}
+      - DEPLOY_PHI_CLASSIFIER=${DEPLOY_PHI_CLASSIFIER:-phi4mini-classifier-us}
+      - ROUTER_REGION=${ROUTER_REGION:-eastus2}
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
