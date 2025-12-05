@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Card } from "./card";
-import { Skeleton } from "./Skeleton";
+import { Skeleton } from "./skeleton";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 export interface StatCardProps {
