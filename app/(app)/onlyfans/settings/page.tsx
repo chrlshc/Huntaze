@@ -304,7 +304,7 @@ export default function OnlyFansSettingsPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
                 <StatCard
                   label="Current Plan"
-                  value={quotaSettings.plan.charAt(0).toUpperCase() + quotaSettings.plan.slice(1)}
+                  value={quotaSettings.plan ? quotaSettings.plan.charAt(0).toUpperCase() + quotaSettings.plan.slice(1) : 'Starter'}
                 />
                 <StatCard
                   label="Usage"
