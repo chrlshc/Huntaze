@@ -40,7 +40,7 @@ export function ShopifyPageLayout({
     <div
       className={`shopify-page-layout ${className}`}
       style={{
-        backgroundColor: 'var(--shopify-bg-surface-secondary, #f6f6f7)',
+        backgroundColor: 'var(--shopify-bg-page, #f6f6f7)',
         minHeight: '100vh',
         padding: '24px',
       }}
