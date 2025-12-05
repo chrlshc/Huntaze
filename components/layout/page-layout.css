@@ -1,0 +1,102 @@
+/**
+ * PageLayout Styles
+ * 
+ * Consistent styling for dashboard page layouts.
+ * Feature: dashboard-ux-overhaul
+ * Validates: Requirements 7.1, 7.2, 7.3
+ */
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1rem);
+  padding: var(--spacing-lg, 1.5rem);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Breadcrumbs */
+.page-breadcrumbs {
+  margin-bottom: var(--spacing-xs, 0.25rem);
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1rem);
+  margin-bottom: var(--spacing-md, 1rem);
+}
+
+@media (min-width: 640px) {
+  .page-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.page-header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title {
+  font-size: var(--font-size-2xl, 1.5rem);
+  font-weight: 600;
+  color: var(--color-text-main, #1a1a2e);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-sub, #6b7280);
+  margin-top: var(--spacing-xs, 0.25rem);
+  margin-bottom: 0;
+  max-width: 600px;
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm, 0.5rem);
+  flex-shrink: 0;
+}
+
+/* Page Content */
+.page-content {
+  flex: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 639px) {
+  .page-layout {
+    padding: var(--spacing-md, 1rem);
+  }
+
+  .page-title {
+    font-size: var(--font-size-xl, 1.25rem);
+  }
+
+  .page-actions {
+    width: 100%;
+  }
+
+  .page-actions > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .page-title {
+    color: var(--color-text-main-dark, #f3f4f6);
+  }
+
+  .page-subtitle {
+    color: var(--color-text-sub-dark, #9ca3af);
+  }
+}
