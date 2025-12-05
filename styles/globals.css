@@ -5,10 +5,13 @@
 /* Ensure design tokens are available to pages/ */
 @import './design-system.css';
 
+/* Shopify design tokens for OnlyFans dashboard */
+@import './shopify-tokens.css';
+
 body {
   @apply min-h-screen antialiased;
-  background-color: var(--ds-surface-base);
-  color: var(--ds-text-primary);
+  background-color: var(--bg-primary, #09090b);
+  color: var(--text-primary, #fafafa);
   font-family: var(--font-sans), Inter, sans-serif;
 }
 
@@ -20,7 +23,7 @@ a {
 
 ::selection {
   background-color: rgba(107, 70, 255, 0.2);
-  color: var(--ds-text-on-brand);
+  color: var(--text-primary, #fafafa);
 }
 
 @layer base {
