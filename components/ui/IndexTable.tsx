@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { Skeleton } from './Skeleton';
+import { Skeleton } from './skeleton';
 
 /**
  * Column definition for IndexTable
