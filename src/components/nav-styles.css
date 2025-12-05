@@ -34,12 +34,18 @@
   @apply space-y-1;
 }
 
+/* Navigation Sections Container */
+.nav-sections {
+  @apply space-y-1;
+}
+
 /* Navigation Items */
 .nav-item {
   @apply flex items-center gap-3 px-3 py-2.5 rounded-lg;
   @apply transition-all duration-200;
   @apply text-content-secondary hover:text-content-primary;
   @apply hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+  @apply cursor-pointer;
 }
 
 .nav-item:hover {
@@ -63,17 +69,70 @@
   border-radius: inherit;
 }
 
+/* Expandable section button */
+.nav-item-expandable {
+  @apply w-full;
+}
+
+.nav-item-expandable.active-section {
+  @apply text-content-primary font-medium;
+  @apply bg-surface-hover-light dark:bg-surface-hover;
+}
+
+.nav-item-chevron {
+  @apply ml-auto text-content-tertiary;
+  @apply transition-transform duration-200;
+}
+
 .nav-item-icon {
   @apply w-5 h-5 flex-shrink-0;
   @apply text-content-tertiary;
 }
 
-.nav-item.active .nav-item-icon {
+.nav-item.active .nav-item-icon,
+.nav-item-expandable.active-section .nav-item-icon {
   @apply text-purple-600;
 }
 
 .nav-item-label {
+  @apply flex-1 truncate text-left;
+}
+
+/* Sub-items container */
+.nav-subitems {
+  @apply ml-4 pl-4 border-l border-border-light dark:border-border;
+  @apply overflow-hidden;
+}
+
+/* Sub-item styling */
+.nav-subitem {
+  @apply flex items-center gap-2 px-3 py-2 rounded-lg;
+  @apply text-sm text-content-secondary;
+  @apply transition-all duration-200;
+  @apply hover:text-content-primary hover:bg-surface-hover-light dark:hover:bg-surface-hover;
+}
+
+.nav-subitem.active {
+  @apply text-content-primary font-medium;
+  @apply bg-purple-50 dark:bg-purple-900/20;
+}
+
+.nav-subitem-icon {
+  @apply w-4 h-4 flex-shrink-0 text-content-tertiary;
+}
+
+.nav-subitem.active .nav-subitem-icon {
+  @apply text-purple-600;
+}
+
+.nav-subitem-label {
   @apply flex-1 truncate;
+}
+
+/* New badge */
+.nav-badge-new {
+  @apply px-1.5 py-0.5 text-xs font-medium rounded;
+  @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400;
 }
 
 /* Badges */
@@ -97,10 +156,16 @@
   }
 }
 
+/* Sidebar Footer */
+.app-sidebar-footer {
+  @apply p-4 space-y-2;
+  @apply border-t border-border-light dark:border-border;
+}
+
 /* Action Button */
 .nav-action-button {
   @apply w-full px-4 py-3 rounded-lg font-medium;
-  @apply text-center transition-all;
+  @apply text-center transition-all flex items-center justify-center;
   background: var(--gradient-primary);
   color: var(--color-btn-primary-text);
   box-shadow: var(--shadow-sm);
@@ -109,6 +174,21 @@
 .nav-action-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+/* AI Assistant Button */
+.nav-ai-button {
+  @apply w-full px-4 py-2.5 rounded-lg font-medium;
+  @apply flex items-center justify-center gap-2;
+  @apply text-content-secondary;
+  @apply bg-surface-light dark:bg-surface;
+  @apply border border-border-light dark:border-border;
+  @apply transition-all duration-200;
+}
+
+.nav-ai-button:hover {
+  @apply text-purple-600 border-purple-300 dark:border-purple-700;
+  @apply bg-purple-50 dark:bg-purple-900/20;
 }
 
 /* Mobile Drawer */

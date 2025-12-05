@@ -2,12 +2,13 @@
 
 /**
  * OnlyFans Main Dashboard Page
- * Requirements: 1.1, 1.2, 3.1, 3.2
+ * Requirements: 2.1, 2.2 - OnlyFans Overview with key metrics
+ * Feature: dashboard-ux-overhaul
  * 
  * Main entry point for OnlyFans features with:
  * - Stats overview (messages, fans, PPV, revenue)
  * - AI billing usage and quota status
- * - Performance metrics
+ * - Connection status banner
  * - Quick action buttons
  * - Navigation to sub-pages
  */
@@ -17,6 +18,8 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
+import { PageLayout } from '@/components/layout/PageLayout';
+import { Button } from '@/components/ui/button';
 import { 
   MessageSquare, 
   Users, 
@@ -28,10 +31,12 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Zap
+  Zap,
+  RefreshCw
 } from 'lucide-react';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
+import { CardSkeleton, MetricSkeleton } from '@/components/layout/LoadingSkeletons';
 
 interface OnlyFansStats {
   messages: {
@@ -165,31 +170,53 @@ export default function OnlyFansPage() {
     return 'text-green-600 dark:text-green-400';
   };
 
+  const handleRefresh = () => {
+    setLoading(true);
+    loadDashboardData();
+  };
+
   if (loading) {
     return (
       <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-indigo)] mx-auto mb-4"></div>
-            <p className="text-[var(--color-text-sub)]">Loading OnlyFans dashboard...</p>
+        <PageLayout
+          title="OnlyFans Dashboard"
+          subtitle="Track your messages, fans, PPV revenue, and AI usage at a glance."
+          breadcrumbs={[
+            { label: 'OnlyFans' }
+          ]}
+        >
+          <div className="space-y-6">
+            <MetricSkeleton count={4} />
+            <CardSkeleton count={3} />
           </div>
-        </div>
+        </PageLayout>
       </ContentPageErrorBoundary>
     );
   }
 
   return (
     <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">
-            OnlyFans Dashboard
-          </h1>
-          <p className="text-[var(--color-text-sub)]">
-            Track your messages, fans, PPV revenue, and AI usage at a glance.
-          </p>
-        </div>
+      <PageLayout
+        title="OnlyFans Dashboard"
+        subtitle="Track your messages, fans, PPV revenue, and AI usage at a glance."
+        breadcrumbs={[
+          { label: 'OnlyFans' }
+        ]}
+        actions={
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={handleRefresh}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
+            <Link href="/onlyfans/settings">
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+            </Link>
+          </div>
+        }
+      >
 
         {/* Connection Status Banner */}
         {stats && (
@@ -230,9 +257,15 @@ export default function OnlyFansPage() {
 
         {/* Stats Grid */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            data-testid="onlyfans-metrics-grid"
+          >
             {/* Messages Card */}
-            <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+            <Card 
+              className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+              data-testid="metric-card-messages"
+            >
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                   <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -242,20 +275,20 @@ export default function OnlyFansPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--color-text-sub)]">Total</span>
-                  <span className="text-2xl font-bold text-[var(--color-text-main)]">
+                  <span className="text-2xl font-bold text-[var(--color-text-main)]" data-testid="metric-messages-total">
                     {stats.messages.total.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--color-text-sub)]">Unread</span>
-                  <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="text-lg font-semibold text-blue-600 dark:text-blue-400" data-testid="metric-messages-unread">
                     {stats.messages.unread}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-[var(--color-text-sub)]">Response Rate</span>
-                    <span className="font-medium text-green-600 dark:text-green-400">
+                    <span className="font-medium text-green-600 dark:text-green-400" data-testid="metric-messages-response-rate">
                       {stats.messages.responseRate}%
                     </span>
                   </div>
@@ -264,7 +297,10 @@ export default function OnlyFansPage() {
             </Card>
 
             {/* Fans Card */}
-            <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+            <Card 
+              className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+              data-testid="metric-card-fans"
+            >
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                   <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -274,20 +310,20 @@ export default function OnlyFansPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--color-text-sub)]">Total</span>
-                  <span className="text-2xl font-bold text-[var(--color-text-main)]">
+                  <span className="text-2xl font-bold text-[var(--color-text-main)]" data-testid="metric-fans-total">
                     {stats.fans.total.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--color-text-sub)]">Active</span>
-                  <span className="text-lg font-semibold text-purple-600 dark:text-purple-400">
+                  <span className="text-lg font-semibold text-purple-600 dark:text-purple-400" data-testid="metric-fans-active">
                     {stats.fans.active}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-[var(--color-text-sub)]">New This Month</span>
-                    <span className="font-medium text-green-600 dark:text-green-400">
+                    <span className="font-medium text-green-600 dark:text-green-400" data-testid="metric-fans-new">
                       +{stats.fans.new}
                     </span>
                   </div>
@@ -296,7 +332,10 @@ export default function OnlyFansPage() {
             </Card>
 
             {/* PPV Revenue Card */}
-            <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+            <Card 
+              className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+              data-testid="metric-card-revenue"
+            >
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                   <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -306,20 +345,20 @@ export default function OnlyFansPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--color-text-sub)]">Total</span>
-                  <span className="text-2xl font-bold text-[var(--color-text-main)]">
+                  <span className="text-2xl font-bold text-[var(--color-text-main)]" data-testid="metric-revenue-total">
                     ${stats.ppv.totalRevenue.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-[var(--color-text-sub)]">Sales</span>
-                  <span className="text-lg font-semibold text-green-600 dark:text-green-400">
+                  <span className="text-lg font-semibold text-green-600 dark:text-green-400" data-testid="metric-revenue-sales">
                     {stats.ppv.totalSales}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-[var(--color-text-sub)]">Conversion</span>
-                    <span className="font-medium text-green-600 dark:text-green-400">
+                    <span className="font-medium text-green-600 dark:text-green-400" data-testid="metric-revenue-conversion">
                       {stats.ppv.conversionRate}%
                     </span>
                   </div>
@@ -329,7 +368,10 @@ export default function OnlyFansPage() {
 
             {/* AI Quota Card */}
             {quotaInfo && (
-              <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
+              <Card 
+                className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]"
+                data-testid="metric-card-ai-quota"
+              >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                     <Zap className="w-6 h-6 text-orange-600 dark:text-orange-400" />
@@ -339,11 +381,11 @@ export default function OnlyFansPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-[var(--color-text-sub)]">Used</span>
-                    <span className={`text-2xl font-bold ${getQuotaColor(quotaInfo.percentUsed)}`}>
+                    <span className={`text-2xl font-bold ${getQuotaColor(quotaInfo.percentUsed)}`} data-testid="metric-ai-quota-used">
                       {quotaInfo.percentUsed.toFixed(0)}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2" data-testid="metric-ai-quota-bar">
                     <div
                       className={`h-2 rounded-full transition-all ${
                         quotaInfo.percentUsed >= 95 
@@ -358,7 +400,7 @@ export default function OnlyFansPage() {
                   <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-[var(--color-text-sub)]">Remaining</span>
-                      <span className="font-medium text-[var(--color-text-main)]">
+                      <span className="font-medium text-[var(--color-text-main)]" data-testid="metric-ai-quota-remaining">
                         ${quotaInfo.remaining.toFixed(2)} / ${quotaInfo.limit}
                       </span>
                     </div>
@@ -485,7 +527,7 @@ export default function OnlyFansPage() {
             </div>
           </div>
         </Card>
-      </div>
+      </PageLayout>
     </ContentPageErrorBoundary>
   );
 }

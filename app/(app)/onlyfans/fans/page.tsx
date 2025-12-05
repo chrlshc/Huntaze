@@ -1,25 +1,51 @@
 "use client";
 
+/**
+ * OnlyFans Fans Page
+ * Requirements: 2.4 - Fan list with segmentation and AI insights
+ * Feature: dashboard-ux-overhaul
+ * 
+ * Features:
+ * - Fan list with AI-powered segmentation
+ * - LTV and churn risk indicators per fan
+ * - Filters and search functionality
+ */
+
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Filter, Star, TrendingUp, AlertTriangle, Users } from 'lucide-react';
+import { Search, Filter, Star, TrendingUp, AlertTriangle, Users, Sparkles, DollarSign } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AppPageHeader } from '@/components/layout/AppPageHeader';
+import { PageLayout } from '@/components/layout/PageLayout';
 
 type FanSegment = 'all' | 'vip' | 'active' | 'at_risk' | 'churned';
+
+// Fan interface with AI insights
+interface Fan {
+  id: string;
+  name: string;
+  username: string;
+  tier: string;
+  ltv: number;
+  arpu: number;
+  lastActive: string;
+  messages: number;
+  avatar: string;
+  churnRisk: number; // 0-100 percentage
+  aiInsight?: string;
+}
 
 export default function FansPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSegment, setSelectedSegment] = useState<FanSegment>('all');
 
-  // Mock fans data
-  const fans = [
-    { id: '1', name: 'Sarah M.', username: '@sarah_m', tier: 'VIP', ltv: 2450, arpu: 49, lastActive: '2 hours ago', messages: 156, avatar: 'https://i.pravatar.cc/150?img=1' },
-    { id: '2', name: 'Mike R.', username: '@mike_r', tier: 'Active', ltv: 890, arpu: 29, lastActive: '1 day ago', messages: 45, avatar: 'https://i.pravatar.cc/150?img=2' },
-    { id: '3', name: 'Emma L.', username: '@emma_l', tier: 'VIP', ltv: 3200, arpu: 64, lastActive: '5 hours ago', messages: 234, avatar: 'https://i.pravatar.cc/150?img=3' },
-    { id: '4', name: 'John D.', username: '@john_d', tier: 'At-Risk', ltv: 450, arpu: 15, lastActive: '7 days ago', messages: 12, avatar: 'https://i.pravatar.cc/150?img=4' },
-    { id: '5', name: 'Lisa K.', username: '@lisa_k', tier: 'Active', ltv: 1200, arpu: 40, lastActive: '3 hours ago', messages: 78, avatar: 'https://i.pravatar.cc/150?img=5' },
+  // Mock fans data with AI insights
+  const fans: Fan[] = [
+    { id: '1', name: 'Sarah M.', username: '@sarah_m', tier: 'VIP', ltv: 2450, arpu: 49, lastActive: '2 hours ago', messages: 156, avatar: 'https://i.pravatar.cc/150?img=1', churnRisk: 5, aiInsight: 'High engagement, consider exclusive content' },
+    { id: '2', name: 'Mike R.', username: '@mike_r', tier: 'Active', ltv: 890, arpu: 29, lastActive: '1 day ago', messages: 45, avatar: 'https://i.pravatar.cc/150?img=2', churnRisk: 25, aiInsight: 'Moderate activity, send personalized message' },
+    { id: '3', name: 'Emma L.', username: '@emma_l', tier: 'VIP', ltv: 3200, arpu: 64, lastActive: '5 hours ago', messages: 234, avatar: 'https://i.pravatar.cc/150?img=3', churnRisk: 3, aiInsight: 'Top spender, offer VIP perks' },
+    { id: '4', name: 'John D.', username: '@john_d', tier: 'At-Risk', ltv: 450, arpu: 15, lastActive: '7 days ago', messages: 12, avatar: 'https://i.pravatar.cc/150?img=4', churnRisk: 78, aiInsight: 'High churn risk, send re-engagement offer' },
+    { id: '5', name: 'Lisa K.', username: '@lisa_k', tier: 'Active', ltv: 1200, arpu: 40, lastActive: '3 hours ago', messages: 78, avatar: 'https://i.pravatar.cc/150?img=5', churnRisk: 15, aiInsight: 'Growing engagement, upsell opportunity' },
   ];
 
   const segments = [
@@ -50,26 +76,41 @@ export default function FansPage() {
     }
   };
 
+  // Get churn risk color
+  const getChurnRiskColor = (risk: number) => {
+    if (risk >= 70) return 'text-red-600 bg-red-100 dark:bg-red-900/30';
+    if (risk >= 40) return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30';
+    return 'text-green-600 bg-green-100 dark:bg-green-900/30';
+  };
+
+  const getChurnRiskLabel = (risk: number) => {
+    if (risk >= 70) return 'High';
+    if (risk >= 40) return 'Medium';
+    return 'Low';
+  };
+
   return (
-    <main className="flex flex-col gap-6 pb-8">
-      <AppPageHeader
-        title="OnlyFans fans"
-        description="Segment and manage your OnlyFans subscribers."
-        actions={
-          <>
-            <Link href="/fans/import">
-              <Button variant="outline" size="sm">
-                Import fans
-              </Button>
-            </Link>
-            <Link href="/fans/import">
-              <Button variant="primary" size="sm">
-                Add fan
-              </Button>
-            </Link>
-          </>
-        }
-      />
+    <PageLayout
+      title="Fans"
+      subtitle="Segment and manage your OnlyFans subscribers with AI insights."
+      breadcrumbs={[
+        { label: 'OnlyFans', href: '/onlyfans' },
+        { label: 'Fans' }
+      ]}
+      actions={
+        <div className="flex items-center gap-2">
+          <Link href="/fans/import">
+            <Button variant="outline" size="sm">
+              Import fans
+            </Button>
+          </Link>
+          <Button variant="primary" size="sm">
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Segment
+          </Button>
+        </div>
+      }
+    >
 
       {/* Segments */}
       <Card>
@@ -120,7 +161,7 @@ export default function FansPage() {
         </div>
 
         {/* Fans List */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" data-testid="fans-list">
           <table className="w-full">
             <thead className="border-b border-[var(--border-subtle)]">
               <tr>
@@ -131,16 +172,22 @@ export default function FansPage() {
                   Tier
                 </th>
                 <th className="text-left p-3 text-xs font-semibold text-[var(--color-text-sub)] uppercase">
-                  LTV
+                  <div className="flex items-center gap-1">
+                    <DollarSign className="w-3 h-3" />
+                    LTV
+                  </div>
                 </th>
                 <th className="text-left p-3 text-xs font-semibold text-[var(--color-text-sub)] uppercase">
-                  ARPU
+                  <div className="flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    Churn Risk
+                  </div>
                 </th>
                 <th className="text-left p-3 text-xs font-semibold text-[var(--color-text-sub)] uppercase">
                   Last Active
                 </th>
                 <th className="text-left p-3 text-xs font-semibold text-[var(--color-text-sub)] uppercase">
-                  Messages
+                  AI Insight
                 </th>
                 <th className="text-left p-3 text-xs font-semibold text-[var(--color-text-sub)] uppercase">
                   Actions
@@ -152,6 +199,7 @@ export default function FansPage() {
                 <tr
                   key={fan.id}
                   className="border-b border-[var(--border-subtle)] hover:bg-[var(--bg-app)]"
+                  data-testid={`fan-row-${fan.id}`}
                 >
                   <td className="p-3">
                     <Link href={`/onlyfans/fans/${fan.id}`} className="flex items-center gap-3">
@@ -171,10 +219,28 @@ export default function FansPage() {
                       {fan.tier}
                     </span>
                   </td>
-                  <td className="p-3 text-[var(--color-text-main)] font-medium">${fan.ltv}</td>
-                  <td className="p-3 text-[var(--color-text-main)]">${fan.arpu}</td>
+                  <td className="p-3">
+                    <span className="font-semibold text-green-600 dark:text-green-400" data-testid={`fan-ltv-${fan.id}`}>
+                      ${fan.ltv.toLocaleString()}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span 
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getChurnRiskColor(fan.churnRisk)}`}
+                      data-testid={`fan-churn-${fan.id}`}
+                    >
+                      {getChurnRiskLabel(fan.churnRisk)} ({fan.churnRisk}%)
+                    </span>
+                  </td>
                   <td className="p-3 text-xs text-[var(--color-text-sub)]">{fan.lastActive}</td>
-                  <td className="p-3 text-[var(--color-text-main)]">{fan.messages}</td>
+                  <td className="p-3">
+                    {fan.aiInsight && (
+                      <div className="flex items-center gap-1 text-xs text-[var(--color-text-sub)]" data-testid={`fan-insight-${fan.id}`}>
+                        <Sparkles className="w-3 h-3 text-purple-500" />
+                        <span className="max-w-[200px] truncate">{fan.aiInsight}</span>
+                      </div>
+                    )}
+                  </td>
                   <td className="p-3">
                     <Button variant="outline" size="sm">
                       Message
@@ -186,6 +252,6 @@ export default function FansPage() {
           </table>
         </div>
       </Card>
-    </main>
+    </PageLayout>
   );
 }
