@@ -2,37 +2,38 @@
 
 /**
  * OnlyFans Messages Page
- * Requirements: 2.1, 2.3, 3.3, 3.4
+ * Requirements: 7.1-8.4 - Messages interface with design system components
+ * Feature: dashboard-design-refactor
  * 
- * Features:
- * - Messages interface with thread list and conversation view
- * - Gemini AI integration for message suggestions
- * - Rate limiting for AI requests
- * - AI-powered reply suggestions
- * - Message stats (sent, received, response rate)
- * - Error handling with ContentPageErrorBoundary
- * - Loading states with AsyncOperationWrapper
+ * Refactored to use:
+ * - ConversationList component (Requirements 7.1-7.3)
+ * - FanContextSidebar component (Requirements 8.1)
+ * - StatCard component for metrics
+ * - Design tokens throughout
  */
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
+import { PageLayout } from '@/components/layout/PageLayout';
+import { StatCard } from '@/components/ui/StatCard';
+import { ConversationList, type Conversation } from '@/components/messages/ConversationList';
+import { FanContextSidebar, type FanContext } from '@/components/messages/FanContextSidebar';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { 
   Send, 
   Search, 
-  Filter, 
-  Star, 
-  Clock,
   CheckCheck,
   Sparkles,
   AlertCircle,
-  Loader2
+  Loader2,
+  MessageSquare
 } from 'lucide-react';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
-import { AsyncOperationWrapper } from '@/components/dashboard/AsyncOperationWrapper';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 import { Button } from "@/components/ui/button";
+import { MetricSkeleton } from '@/components/layout/LoadingSkeletons';
 
 interface MessageThread {
   id: string;
@@ -43,6 +44,9 @@ interface MessageThread {
   lastMessageTime: Date;
   unread: number;
   isVIP: boolean;
+  ltv?: number;
+  notes?: string[];
+  purchaseHistory?: { date: Date; amount: number; item: string }[];
 }
 
 interface Message {
@@ -98,7 +102,6 @@ export default function OnlyFansMessagesPage() {
 
   const loadMessagesData = async () => {
     try {
-      // Fetch message threads
       await trackAPIRequest('/api/onlyfans/messages/threads', 'GET', async () => {
         const response = await fetch('/api/onlyfans/messages/threads');
         if (response.ok) {
@@ -109,7 +112,6 @@ export default function OnlyFansMessagesPage() {
         }
       });
 
-      // Fetch message stats
       await trackAPIRequest('/api/onlyfans/messages/stats', 'GET', async () => {
         const statsResponse = await fetch('/api/onlyfans/messages/stats');
         if (statsResponse.ok) {
@@ -152,14 +154,13 @@ export default function OnlyFansMessagesPage() {
     setAiError(null);
 
     try {
-      // Use rate limiting via lib/ai/rate-limit.ts
       await trackAPIRequest('/api/ai/message-suggestions', 'POST', async () => {
         const response = await fetch('/api/ai/message-suggestions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             threadId: selectedThread.id,
-            context: messages.slice(-5), // Last 5 messages for context
+            context: messages.slice(-5),
           }),
         });
 
@@ -227,6 +228,12 @@ export default function OnlyFansMessagesPage() {
       lastMessageTime: new Date(Date.now() - 1000 * 60 * 30),
       unread: 2,
       isVIP: true,
+      ltv: 450,
+      notes: ['VIP subscriber since Jan 2024', 'Prefers exclusive content'],
+      purchaseHistory: [
+        { date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7), amount: 25, item: 'PPV Video' },
+        { date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14), amount: 15, item: 'Custom Photo' },
+      ],
     },
     {
       id: '2',
@@ -237,6 +244,24 @@ export default function OnlyFansMessagesPage() {
       lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 2),
       unread: 0,
       isVIP: false,
+      ltv: 120,
+      notes: [],
+      purchaseHistory: [
+        { date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30), amount: 10, item: 'Tip' },
+      ],
+    },
+    {
+      id: '3',
+      fanName: 'Alex K.',
+      fanUsername: '@alex_k',
+      fanAvatar: 'https://i.pravatar.cc/150?img=3',
+      lastMessage: 'Love your work!',
+      lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 5),
+      unread: 1,
+      isVIP: false,
+      ltv: 85,
+      notes: ['New subscriber'],
+      purchaseHistory: [],
     },
   ];
 
@@ -247,181 +272,252 @@ export default function OnlyFansMessagesPage() {
     avgResponseTime: 0,
   });
 
-  const filteredThreads = threads.filter(thread =>
-    thread.fanName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    thread.fanUsername.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Convert threads to Conversation format for ConversationList
+  const conversations: Conversation[] = useMemo(() => {
+    return threads
+      .filter(thread =>
+        thread.fanName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        thread.fanUsername.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .map(thread => ({
+        id: thread.id,
+        name: thread.fanName,
+        avatar: thread.fanAvatar,
+        lastMessage: thread.lastMessage,
+        timestamp: thread.lastMessageTime,
+        unread: thread.unread > 0,
+        ltv: thread.ltv,
+      }));
+  }, [threads, searchQuery]);
+
+  // Convert selected thread to FanContext format
+  const selectedFanContext: FanContext | null = useMemo(() => {
+    if (!selectedThread) return null;
+    return {
+      id: selectedThread.id,
+      name: selectedThread.fanName,
+      ltv: selectedThread.ltv || 0,
+      status: selectedThread.isVIP ? 'vip' : 'active',
+      notes: selectedThread.notes || [],
+      purchaseHistory: (selectedThread.purchaseHistory || []).map(p => ({
+        date: p.date,
+        amount: p.amount,
+        item: p.item,
+      })),
+    };
+  }, [selectedThread]);
+
+  const handleSelectConversation = (id: string) => {
+    const thread = threads.find(t => t.id === id);
+    if (thread) {
+      setSelectedThread(thread);
+    }
+  };
 
   if (loading) {
     return (
       <ContentPageErrorBoundary pageName="OnlyFans Messages">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)] mx-auto mb-4"></div>
-            <p className="text-[var(--text-primary)]">Loading messages...</p>
+        <PageLayout
+          title="Messages"
+          subtitle="AI-powered messaging for OnlyFans"
+          breadcrumbs={[
+            { label: 'OnlyFans', href: '/onlyfans' },
+            { label: 'Messages' }
+          ]}
+        >
+          <div className="space-y-6">
+            <MetricSkeleton count={4} />
+            <div className="h-[600px] bg-[var(--surface-card)] rounded-[var(--radius-base)] animate-pulse" />
           </div>
-        </div>
+        </PageLayout>
       </ContentPageErrorBoundary>
     );
   }
 
   return (
     <ContentPageErrorBoundary pageName="OnlyFans Messages">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Messages</h1>
-          <p className="text-[var(--text-primary)]">
-            AI-powered messaging for OnlyFans
-          </p>
-        </div>
-
-        {/* Stats */}
+      <PageLayout
+        title="Messages"
+        subtitle="AI-powered messaging for OnlyFans"
+        breadcrumbs={[
+          { label: 'OnlyFans', href: '/onlyfans' },
+          { label: 'Messages' }
+        ]}
+        actions={
+          <Button variant="primary" size="sm">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            New Message
+          </Button>
+        }
+      >
+        {/* Stats using StatCard component */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <p className="text-sm text-[var(--text-primary)] mb-1">Sent</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.sent}</p>
-            </Card>
-            <Card>
-              <p className="text-sm text-[var(--text-primary)] mb-1">Received</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.received}</p>
-            </Card>
-            <Card>
-              <p className="text-sm text-[var(--text-primary)] mb-1">Response Rate</p>
-              <p className="text-2xl font-bold text-[var(--accent-success)]">{stats.responseRate}%</p>
-            </Card>
-            <Card>
-              <p className="text-sm text-[var(--text-primary)] mb-1">Avg Response Time</p>
-              <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.avgResponseTime}m</p>
-            </Card>
+          <div 
+            className="grid grid-cols-1 md:grid-cols-4 gap-[var(--space-4)]"
+            style={{ marginBottom: 'var(--space-6)' }}
+          >
+            <StatCard
+              label="Sent"
+              value={stats.sent}
+              isEmpty={stats.sent === 0}
+              emptyMessage="No messages sent yet"
+            />
+            <StatCard
+              label="Received"
+              value={stats.received}
+              isEmpty={stats.received === 0}
+              emptyMessage="No messages received yet"
+            />
+            <StatCard
+              label="Response Rate"
+              value={`${stats.responseRate}%`}
+              trend={stats.responseRate > 80 ? { direction: 'up', value: 'Good' } : undefined}
+              isEmpty={stats.responseRate === 0}
+              emptyMessage="Start responding to see your rate"
+            />
+            <StatCard
+              label="Avg Response Time"
+              value={`${stats.avgResponseTime}m`}
+              trend={stats.avgResponseTime < 30 ? { direction: 'up', value: 'Fast' } : undefined}
+              isEmpty={stats.avgResponseTime === 0}
+              emptyMessage="No response time data yet"
+            />
           </div>
         )}
 
         {/* Messages Interface */}
         <Card className="overflow-hidden">
-          <div className="grid grid-cols-12 h-[600px]">
-            {/* Thread List */}
-            <div className="col-span-4 border-r border-[var(--border-subtle)] flex flex-col">
+          <div className="grid grid-cols-12" style={{ height: '600px' }}>
+            {/* Conversation List - Using design system component */}
+            <div 
+              className="col-span-3 border-r flex flex-col"
+              style={{ borderColor: 'var(--border-default)' }}
+            >
               {/* Search */}
-              <div className="p-4 border-b border-[var(--border-subtle)]">
+              <div 
+                className="border-b"
+                style={{ 
+                  padding: 'var(--space-4)',
+                  borderColor: 'var(--border-default)'
+                }}
+              >
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+                  <Search 
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
+                    style={{ color: 'var(--text-subdued)' }}
+                  />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search conversations..."
-                    className="w-full pl-10 pr-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-2 rounded-[var(--radius-sm)] text-sm transition-all"
+                    style={{
+                      border: '1px solid var(--border-default)',
+                      backgroundColor: 'var(--surface-base)',
+                      color: 'var(--text-primary)',
+                    }}
                   />
                 </div>
               </div>
 
-              {/* Threads */}
-              <div className="flex-1 overflow-y-auto">
-                {filteredThreads.map((thread) => (
-                  <button
-                    key={thread.id}
-                    onClick={() => setSelectedThread(thread)}
-                    className={`w-full p-4 border-b border-[var(--border-subtle)] hover:bg-[var(--bg-glass-hover)] transition-all text-left ${
-                      selectedThread?.id === thread.id ? 'bg-[var(--bg-glass-hover)]' : ''
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <img
-                        src={thread.fanAvatar}
-                        alt={thread.fanName}
-                        className="w-12 h-12 rounded-full ring-2 ring-[var(--border-subtle)]"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-[var(--text-primary)] truncate">
-                              {thread.fanName}
-                            </p>
-                            {thread.isVIP && (
-                              <Star className="w-4 h-4 text-[var(--accent-warning)] fill-[var(--accent-warning)]" />
-                            )}
-                          </div>
-                          <span className="text-xs text-[var(--text-tertiary)]">
-                            {new Date(thread.lastMessageTime).toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            })}
-                          </span>
-                        </div>
-                        <p className="text-sm text-[var(--text-primary)] truncate">
-                          {thread.lastMessage}
-                        </p>
-                      </div>
-                      {thread.unread > 0 && (
-                        <div className="flex-shrink-0 w-6 h-6 bg-[var(--accent-info)] text-white rounded-full flex items-center justify-center text-xs font-medium">
-                          {thread.unread}
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                ))}
+              {/* ConversationList Component */}
+              <div className="flex-1 overflow-hidden">
+                <ConversationList
+                  conversations={conversations}
+                  selectedId={selectedThread?.id}
+                  onSelect={handleSelectConversation}
+                  density="compact"
+                  loading={false}
+                />
               </div>
             </div>
 
             {/* Conversation View */}
-            <div className="col-span-8 flex flex-col">
+            <div className="col-span-6 flex flex-col">
               {selectedThread ? (
                 <>
                   {/* Conversation Header */}
-                  <div className="p-4 border-b border-[var(--border-subtle)]">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={selectedThread.fanAvatar}
-                          alt={selectedThread.fanName}
-                          className="w-10 h-10 rounded-full ring-2 ring-[var(--border-subtle)]"
-                        />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-[var(--text-primary)]">
-                              {selectedThread.fanName}
-                            </p>
-                            {selectedThread.isVIP && (
-                              <Star className="w-4 h-4 text-[var(--accent-warning)] fill-[var(--accent-warning)]" />
-                            )}
-                          </div>
-                          <p className="text-sm text-[var(--text-primary)]">
-                            {selectedThread.fanUsername}
-                          </p>
-                        </div>
+                  <div 
+                    className="border-b flex items-center justify-between"
+                    style={{ 
+                      padding: 'var(--space-4)',
+                      borderColor: 'var(--border-default)'
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={selectedThread.fanAvatar}
+                        alt={selectedThread.fanName}
+                        className="w-10 h-10 rounded-full"
+                        style={{ border: '2px solid var(--border-subdued)' }}
+                      />
+                      <div>
+                        <p 
+                          className="font-semibold"
+                          style={{ color: 'var(--text-primary)', fontSize: '14px' }}
+                        >
+                          {selectedThread.fanName}
+                        </p>
+                        <p 
+                          style={{ color: 'var(--text-secondary)', fontSize: '13px' }}
+                        >
+                          {selectedThread.fanUsername}
+                        </p>
                       </div>
-                      <Button variant="primary" onClick={getAISuggestions} disabled={loadingAI}>
-  {loadingAI ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Sparkles className="w-4 h-4" />
-                        )}
-                        AI Suggestions
-</Button>
                     </div>
+                    <Button 
+                      variant="secondary" 
+                      size="sm"
+                      onClick={getAISuggestions} 
+                      disabled={loadingAI}
+                    >
+                      {loadingAI ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <Sparkles className="w-4 h-4 mr-2" />
+                      )}
+                      AI Suggestions
+                    </Button>
                   </div>
 
                   {/* AI Suggestions */}
                   {aiSuggestions.length > 0 && (
-                    <div className="p-4 bg-[var(--accent-bg-muted)] border-b border-[var(--accent-primary)]">
-                      <p className="text-sm font-medium text-[var(--accent-primary)] mb-2">
+                    <div 
+                      className="border-b"
+                      style={{ 
+                        padding: 'var(--space-4)',
+                        backgroundColor: 'var(--status-info-bg)',
+                        borderColor: 'var(--status-info)'
+                      }}
+                    >
+                      <p 
+                        className="text-sm font-medium mb-2"
+                        style={{ color: 'var(--status-info)' }}
+                      >
                         AI Suggestions:
                       </p>
                       <div className="space-y-2">
                         {aiSuggestions.map((suggestion) => (
-                          <Button 
-                            key={suggestion.content}
-                            variant="primary" 
+                          <button 
+                            key={suggestion.id}
                             onClick={() => useSuggestion(suggestion)}
-                            className="w-full text-left p-3 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-default)] hover:bg-[var(--bg-glass-hover)] hover:border-[var(--accent-primary)] transition-all"
+                            className="w-full text-left p-3 rounded-[var(--radius-sm)] transition-all hover:opacity-80"
+                            style={{
+                              backgroundColor: 'var(--surface-card)',
+                              border: '1px solid var(--border-default)',
+                            }}
                           >
-                            <p className="text-sm text-[var(--text-primary)]">{suggestion.content}</p>
-                            <p className="text-xs text-[var(--accent-primary)] mt-1">
+                            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                              {suggestion.content}
+                            </p>
+                            <p 
+                              className="text-xs mt-1"
+                              style={{ color: 'var(--text-subdued)' }}
+                            >
                               Tone: {suggestion.tone}
                             </p>
-                          </Button>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -429,47 +525,78 @@ export default function OnlyFansMessagesPage() {
 
                   {/* AI Error */}
                   {aiError && (
-                    <div className="p-4 bg-[var(--accent-error)]/10 border-b border-[var(--accent-error)]">
-                      <div className="flex items-center gap-2 text-[var(--accent-error)]">
-                        <AlertCircle className="w-4 h-4" />
-                        <p className="text-sm">{aiError}</p>
+                    <div 
+                      className="border-b"
+                      style={{ 
+                        padding: 'var(--space-4)',
+                        backgroundColor: 'var(--status-critical-bg)',
+                        borderColor: 'var(--status-critical)'
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4" style={{ color: 'var(--status-critical)' }} />
+                        <p className="text-sm" style={{ color: 'var(--status-critical)' }}>
+                          {aiError}
+                        </p>
                       </div>
                     </div>
                   )}
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex ${message.isFromCreator ? 'justify-end' : 'justify-start'}`}
-                      >
+                  <div 
+                    className="flex-1 overflow-y-auto space-y-4"
+                    style={{ padding: 'var(--space-4)' }}
+                  >
+                    {messages.length === 0 ? (
+                      <div className="flex items-center justify-center h-full">
+                        <p style={{ color: 'var(--text-subdued)', fontSize: '14px' }}>
+                          No messages yet. Start the conversation!
+                        </p>
+                      </div>
+                    ) : (
+                      messages.map((message) => (
                         <div
-                          className={`max-w-[70%] rounded-lg p-3 shadow-[var(--shadow-sm)] ${
-                            message.isFromCreator
-                              ? 'bg-[var(--accent-info)] text-white'
-                              : 'bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-subtle)]'
-                          }`}
+                          key={message.id}
+                          className={`flex ${message.isFromCreator ? 'justify-end' : 'justify-start'}`}
                         >
-                          <p className="text-sm">{message.content}</p>
-                          <div className="flex items-center gap-1 mt-1">
-                            <span className="text-xs opacity-70">
-                              {new Date(message.timestamp).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </span>
-                            {message.isFromCreator && message.status === 'read' && (
-                              <CheckCheck className="w-3 h-3 opacity-70" />
-                            )}
+                          <div
+                            className="max-w-[70%] rounded-[var(--radius-base)] p-3"
+                            style={{
+                              backgroundColor: message.isFromCreator 
+                                ? 'var(--action-primary)' 
+                                : 'var(--surface-subdued)',
+                              color: message.isFromCreator 
+                                ? 'white' 
+                                : 'var(--text-primary)',
+                              boxShadow: 'var(--shadow-card)',
+                            }}
+                          >
+                            <p className="text-sm">{message.content}</p>
+                            <div className="flex items-center gap-1 mt-1">
+                              <span className="text-xs opacity-70">
+                                {new Date(message.timestamp).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                              {message.isFromCreator && message.status === 'read' && (
+                                <CheckCheck className="w-3 h-3 opacity-70" />
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
 
                   {/* Message Input */}
-                  <div className="p-4 border-t border-[var(--border-subtle)]">
+                  <div 
+                    className="border-t"
+                    style={{ 
+                      padding: 'var(--space-4)',
+                      borderColor: 'var(--border-default)'
+                    }}
+                  >
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
@@ -477,34 +604,50 @@ export default function OnlyFansMessagesPage() {
                         onChange={(e) => setMessageInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                         placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 border border-[var(--border-default)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
+                        className="flex-1 px-4 py-2 rounded-[var(--radius-base)] text-sm transition-all"
+                        style={{
+                          border: '1px solid var(--border-default)',
+                          backgroundColor: 'var(--surface-base)',
+                          color: 'var(--text-primary)',
+                        }}
                       />
-                      <Button variant="primary" onClick={sendMessage} disabled={!messageInput.trim() || sendingMessage}>
-  {sendingMessage ? (
+                      <Button 
+                        variant="primary" 
+                        onClick={sendMessage} 
+                        disabled={!messageInput.trim() || sendingMessage}
+                        style={{ minWidth: '44px', minHeight: '44px' }}
+                      >
+                        {sendingMessage ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                           <Send className="w-5 h-5" />
                         )}
-</Button>
+                      </Button>
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-[var(--bg-tertiary)] rounded-full flex items-center justify-center border border-[var(--border-subtle)]">
-                        <Send className="w-8 h-8 text-[var(--text-tertiary)]" />
-                      </div>
-                      <p className="text-[var(--text-primary)]">
-                        Select a conversation to start messaging
-                      </p>
-                    </div>
-                </div>
+                <EmptyState
+                  icon={<Send className="w-8 h-8" />}
+                  title="Select a conversation"
+                  description="Choose a conversation from the list to start messaging"
+                />
               )}
+            </div>
+
+            {/* Fan Context Sidebar - Using design system component */}
+            <div 
+              className="col-span-3 border-l"
+              style={{ borderColor: 'var(--border-default)' }}
+            >
+              <FanContextSidebar
+                fan={selectedFanContext}
+                loading={false}
+              />
             </div>
           </div>
         </Card>
-      </div>
+      </PageLayout>
     </ContentPageErrorBoundary>
   );
 }

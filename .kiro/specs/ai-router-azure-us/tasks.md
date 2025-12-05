@@ -1,0 +1,116 @@
+# Implementation Plan
+
+- [x] 1. Set up project structure and dependencies
+  - [x] 1.1 Create router directory structure (`lib/ai/router/`)
+    - Create `__init__.py`, `config.py`, `models.py`, `classifier.py`, `routing.py`, `client.py`
+    - _Requirements: 6.1, 6.2_
+  - [x] 1.2 Add Python dependencies to project
+    - Add `azure-ai-inference`, `fastapi`, `pydantic`, `hypothesis` to requirements
+    - _Requirements: 3.1_
+
+- [x] 2. Implement data models and configuration
+  - [x] 2.1 Create ClassificationResult dataclass with serialization
+    - Implement `from_json()` and `to_json()` methods
+    - Handle missing fields with defaults
+    - _Requirements: 1.2, 1.4_
+  - [x] 2.2 Write property test for ClassificationResult round-trip
+    - **Property 1: Classification Result Round-Trip**
+    - **Validates: Requirements 1.5**
+  - [x] 2.3 Create RouterConfig dataclass with environment loading
+    - Implement `from_env()` class method
+    - Define default deployment names
+    - _Requirements: 6.1, 6.2, 6.3_
+  - [x] 2.4 Write property test for configuration loading with defaults
+    - **Property 7: Configuration Loading with Defaults**
+    - **Validates: Requirements 6.1, 6.2, 6.3**
+
+- [x] 3. Implement Azure client factory
+  - [x] 3.1 Create Azure ChatCompletions client wrapper
+    - Implement `_get_client()` with deployment header
+    - Implement `call_deployment()` for model invocation
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [x] 3.2 Write property test for Azure header inclusion
+    - **Property 5: Azure Header Inclusion**
+    - **Validates: Requirements 3.1, 3.2**
+  - [x] 3.3 Implement response extraction (text, usage, raw)
+    - Handle different response formats
+    - Extract usage statistics
+    - _Requirements: 3.3, 4.2_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - ✅ 25 tests passent (pytest lib/ai/router/tests/)
+
+- [x] 5. Implement classifier service
+  - [x] 5.1 Create classifier system prompt
+    - Define JSON output format instruction
+    - _Requirements: 1.2_
+  - [x] 5.2 Implement `classify_prompt()` function
+    - Call Phi-4-mini deployment
+    - Parse JSON response
+    - _Requirements: 1.1, 1.2_
+  - [x] 5.3 Implement JSON extraction for malformed responses
+    - Extract JSON between curly braces
+    - Return defaults on complete failure
+    - _Requirements: 1.3, 1.4_
+  - [x] 5.4 Write property test for JSON extraction
+    - **Property 3: JSON Extraction from Malformed Response**
+    - **Validates: Requirements 1.3**
+  - [x] 5.5 Write property test for classification schema validity
+    - **Property 2: Classification Schema Validity**
+    - **Validates: Requirements 1.2, 1.4**
+
+- [x] 6. Implement routing engine
+  - [x] 6.1 Define routing rules with priorities
+    - DeepSeek for math/coding + high complexity
+    - Llama for creative/vip/chat
+    - Mistral for French language
+    - Llama as fallback
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [x] 6.2 Implement `select_deployment()` function
+    - Apply rules in priority order
+    - Return deployment name
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [x] 6.3 Write property test for routing rules consistency
+    - **Property 4: Routing Rules Consistency**
+    - **Validates: Requirements 2.1, 2.2, 2.3, 2.4, 2.5**
+
+- [x] 7. Checkpoint - Ensure all tests pass
+  - ✅ 61 tests passent (pytest lib/ai/router/tests/)
+
+- [x] 8. Implement FastAPI endpoints
+  - [x] 8.1 Create `/route` POST endpoint
+    - Accept RouteRequest, return RouteResponse
+    - Orchestrate classify → route → call flow
+    - _Requirements: 1.1, 4.1_
+  - [x] 8.2 Write property test for response structure completeness
+    - **Property 6: Response Structure Completeness**
+    - **Validates: Requirements 4.1**
+  - [x] 8.3 Create `/health` GET endpoint
+    - Return status and region
+    - _Requirements: 5.1_
+  - [x] 8.4 Implement error handling
+    - HTTP 400 for empty prompt
+    - HTTP 500 for internal errors
+    - RuntimeError for missing config
+    - _Requirements: 3.4, 4.3, 4.4_
+
+- [x] 9. Integration and wiring
+  - [x] 9.1 Create main FastAPI application
+    - Wire all components together
+    - Initialize configuration on startup
+    - _Requirements: 5.2, 6.1_
+  - [x] 9.2 Create Dockerfile for deployment
+    - Base image with Python 3.11+
+    - Install dependencies
+    - Expose port 8000
+    - _Requirements: 5.2_
+  - [x] 9.3 Write integration tests
+    - Test full routing flow with mocked Azure responses
+    - Test error scenarios
+    - _Requirements: 4.1, 4.3, 4.4_
+
+- [x] 10. Final Checkpoint - Ensure all tests pass
+  - ✅ 101 tests passent (pytest lib/ai/router/tests/)
+  - Tests unitaires: models, classifier, client, routing
+  - Tests d'intégration: health, validation, routing flow, error scenarios
+  - Tests property-based: round-trip, schema validity, routing consistency

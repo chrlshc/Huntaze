@@ -18,12 +18,17 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 const baseClasses =
   "inline-flex items-center justify-center gap-[var(--spacing-2)] font-[var(--font-weight-medium)] transition-[background-color,border-color,color,box-shadow] duration-[var(--transition-base)] focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-[var(--focus-ring-color)] focus-visible:ring-offset-[length:var(--focus-ring-offset)] disabled:cursor-not-allowed disabled:opacity-60";
 
+/**
+ * Size classes with WCAG touch target compliance (Property 22)
+ * All interactive buttons have minimum 44px touch target
+ * sm uses min-h to ensure touch target while allowing compact visual
+ */
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-[var(--button-height-dense)] rounded-[var(--button-border-radius)] px-[var(--spacing-3)] text-[var(--text-xs)]",
-  md: "h-[var(--button-height-standard)] rounded-[var(--button-border-radius)] px-[var(--spacing-4)] text-[var(--text-sm)]",
-  lg: "h-12 rounded-xl px-[var(--spacing-6)] text-[var(--text-base)]",
-  xl: "h-14 rounded-2xl px-[var(--spacing-7)] text-[var(--text-base)]",
-  pill: "h-11 rounded-full px-[var(--spacing-6)] text-[var(--text-sm)]",
+  sm: "h-8 min-h-[var(--button-min-touch-target)] rounded-[var(--button-border-radius)] px-[var(--space-3)] text-[var(--text-xs)]",
+  md: "h-[var(--button-min-touch-target)] min-h-[var(--button-min-touch-target)] rounded-[var(--button-border-radius)] px-[var(--space-4)] text-[var(--text-sm)]",
+  lg: "h-12 min-h-[var(--button-min-touch-target)] rounded-xl px-[var(--space-6)] text-[var(--text-base)]",
+  xl: "h-14 min-h-[var(--button-min-touch-target)] rounded-2xl px-[var(--space-7)] text-[var(--text-base)]",
+  pill: "h-11 min-h-[var(--button-min-touch-target)] rounded-full px-[var(--space-6)] text-[var(--text-sm)]",
 };
 
 // Task 41: Enhanced visual distinction for all interactive elements (Req 9.4)

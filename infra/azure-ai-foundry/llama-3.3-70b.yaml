@@ -1,0 +1,3 @@
+$schema: https://azuremlschemas.azureedge.net/latest/serverlessEndpoint.schema.json
+name: llama-3-3-70b-endpoint
+model_id: azureml://registries/azureml-meta/models/Llama-3.3-70B-Instruct

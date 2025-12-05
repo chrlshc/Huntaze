@@ -350,3 +350,86 @@ model SignupAnalytics {
   @@index([methodSelected])
   @@map("signup_analytics")
 }
+
+
+// ============================================
+// Automations & Offers - AI Features
+// ============================================
+
+/// Automation workflows for creators
+model Automation {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      Int      @map("user_id")
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  steps       Json     // Array of AutomationStep
+  status      String   @default("draft") @db.VarChar(24) // active, paused, draft
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  executions AutomationExecution[]
+
+  @@index([userId, status], map: "idx_automation_user_status")
+  @@index([userId, createdAt(sort: Desc)], map: "idx_automation_user_created")
+  @@map("automations")
+}
+
+/// Execution logs for automations
+model AutomationExecution {
+  id            String   @id @default(uuid()) @db.Uuid
+  automationId  String   @map("automation_id") @db.Uuid
+  triggerType   String   @map("trigger_type") @db.VarChar(50)
+  triggerData   Json     @map("trigger_data")
+  status        String   @db.VarChar(24) // success, failed, partial
+  stepsExecuted Int      @map("steps_executed")
+  error         String?  @db.Text
+  durationMs    Int      @default(0) @map("duration_ms")
+  executedAt    DateTime @default(now()) @map("executed_at") @db.Timestamptz(6)
+
+  automation Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  @@index([automationId, executedAt(sort: Desc)], map: "idx_execution_automation")
+  @@index([status], map: "idx_execution_status")
+  @@map("automation_executions")
+}
+
+/// Promotional offers for creators
+model Offer {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          Int      @map("user_id")
+  name            String   @db.VarChar(255)
+  description     String?  @db.Text
+  discountType    String   @map("discount_type") @db.VarChar(24) // percentage, fixed, bogo
+  discountValue   Float    @map("discount_value")
+  originalPrice   Float?   @map("original_price")
+  validFrom       DateTime @map("valid_from") @db.Timestamptz(6)
+  validUntil      DateTime @map("valid_until") @db.Timestamptz(6)
+  status          String   @default("draft") @db.VarChar(24) // active, expired, scheduled, draft
+  targetAudience  String?  @map("target_audience") @db.VarChar(255)
+  contentIds      String[] @map("content_ids")
+  redemptionCount Int      @default(0) @map("redemption_count")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  redemptions OfferRedemption[]
+
+  @@index([userId, status], map: "idx_offer_user_status")
+  @@index([userId, validUntil], map: "idx_offer_user_validity")
+  @@index([status, validUntil], map: "idx_offer_status_validity")
+  @@map("offers")
+}
+
+/// Redemption logs for offers
+model OfferRedemption {
+  id         String   @id @default(uuid()) @db.Uuid
+  offerId    String   @map("offer_id") @db.Uuid
+  fanId      String   @map("fan_id") @db.VarChar(255)
+  amount     Float
+  redeemedAt DateTime @default(now()) @map("redeemed_at") @db.Timestamptz(6)
+
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+
+  @@index([offerId, redeemedAt(sort: Desc)], map: "idx_redemption_offer")
+  @@index([fanId], map: "idx_redemption_fan")
+  @@map("offer_redemptions")
+}
