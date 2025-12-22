@@ -1,0 +1,95 @@
+/**
+ * PPV Page Styles
+ * Requirements: 3.2, 3.3, 3.4, 3.5
+ * Feature: dashboard-views-unification
+ */
+
+/* Tab Navigation Styling - Requirements 3.2, 3.3 */
+.ppv-tabs {
+  display: flex;
+  gap: 16px;
+  padding: 0 var(--space-6);
+  border-bottom: 1px solid var(--dashboard-card-border, #E3E3E3);
+}
+
+.ppv-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px var(--space-1);
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.ppv-tab:hover:not(.ppv-tab--active) {
+  color: #111111;
+}
+
+.ppv-tab--active {
+  color: var(--shopify-text-primary, #202223);
+  border-bottom-color: var(--shopify-text-primary, #202223);
+}
+
+.ppv-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6B7280;
+  background: #F3F4F6;
+  border-radius: 999px;
+}
+
+.ppv-tab--active .ppv-tab__count {
+  color: var(--shopify-text-primary, #202223);
+  background: var(--shopify-bg-surface-active, #F1F2F3);
+}
+
+/* Content Card Hover Effects - Requirement 3.4 */
+.ppv-content-card {
+  background: #FFFFFF;
+  border: 1px solid #E3E3E3;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 150ms ease;
+}
+
+.ppv-content-card:hover {
+  background: var(--shopify-bg-surface-hover, #F6F6F7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Card Footer Styling - Requirement 3.5 */
+.ppv-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: #F9FAFF;
+  border-top: 1px solid #E3E3E3;
+}
+
+.ppv-card-footer__stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.ppv-card-footer__stat:not(:last-child)::after {
+  content: '•';
+  margin-left: 16px;
+  color: #D1D5DB;
+}

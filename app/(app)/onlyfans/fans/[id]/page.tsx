@@ -1,36 +1,146 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, MessageSquare, DollarSign, Calendar, TrendingUp } from 'lucide-react';
+import { ArrowLeft, MessageSquare, DollarSign, Calendar, TrendingUp, RefreshCw } from 'lucide-react';
+import useSWR from 'swr';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+
+interface FansApiItem {
+  id: string;
+  name: string;
+  username: string;
+  avatar?: string;
+  subscriptionTier?: string;
+  subscriptionAmount: number;
+  subscriptionStatus: 'active' | 'cancelled' | 'expired';
+  subscribedAt: string;
+  expiresAt?: string;
+  totalSpent: number;
+  messageCount: number;
+  lastMessageAt?: string;
+}
+
+interface FansApiResponse {
+  success: boolean;
+  data?: {
+    items: FansApiItem[];
+  };
+}
+
+function formatRelativeTime(value?: string): string {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  const diff = Date.now() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
 
 export default function FanProfilePage() {
   const params = useParams();
   const fanId = params.id as string;
 
-  // Mock fan data
-  const fan = {
-    id: fanId,
-    name: 'Sarah M.',
-    username: '@sarah_m',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    tier: 'VIP',
-    ltv: 2450,
-    arpu: 49,
-    lastActive: '2 hours ago',
-    joinedDate: '2024-06-15',
-    stats: {
-      totalSpent: 2450,
-      messagesSent: 156,
-      ppvPurchased: 12,
-      tipsGiven: 8,
-    },
-    recentPurchases: [
-      { id: '1', type: 'PPV', title: 'Exclusive Video', amount: 25, date: '2025-11-10' },
-      { id: '2', type: 'Tip', title: 'Tip on post', amount: 10, date: '2025-11-08' },
-      { id: '3', type: 'PPV', title: 'Photo Set', amount: 15, date: '2025-11-05' },
-    ],
-  };
+  const { data, error, isLoading, mutate } = useSWR<FansApiResponse>(
+    '/api/onlyfans/fans?limit=100&offset=0',
+    (url) => internalApiFetch<FansApiResponse>(url),
+  );
+
+  const fan = useMemo(() => {
+    const items = data?.data?.items ?? [];
+    const selected = items.find((item) => item.id === fanId);
+    if (!selected) return null;
+
+    const avatar =
+      selected.avatar ||
+      `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(String(selected.id))}`;
+    const tier = selected.subscriptionTier || (selected.subscriptionAmount >= 50 ? 'VIP' : 'Active');
+
+    return {
+      id: selected.id,
+      name: selected.name || 'Subscriber',
+      username: selected.username || '@unknown',
+      avatar,
+      tier,
+      ltv: selected.totalSpent ?? 0,
+      arpu: selected.subscriptionAmount ?? 0,
+      lastActive: formatRelativeTime(selected.lastMessageAt || selected.subscribedAt),
+      joinedDate: selected.subscribedAt,
+      stats: {
+        totalSpent: selected.totalSpent ?? 0,
+        messagesSent: selected.messageCount ?? 0,
+        ppvPurchased: 0,
+        tipsGiven: 0,
+      },
+      recentPurchases: [] as Array<{ id: string; type: string; title: string; amount: number; date: string }>,
+    };
+  }, [data, fanId]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <Link
+          href="/onlyfans/fans"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Fans
+        </Link>
+        <EmptyState
+          variant="custom"
+          title="Loading fan profile..."
+          description="Fetching the latest subscriber details."
+        />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <Link
+          href="/onlyfans/fans"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Fans
+        </Link>
+        <EmptyState
+          variant="error"
+          title="Failed to load fan profile"
+          description="Please try again."
+          secondaryAction={{ label: 'Retry', onClick: () => void mutate(), icon: RefreshCw }}
+        />
+      </div>
+    );
+  }
+
+  if (!fan) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <Link
+          href="/onlyfans/fans"
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Fans
+        </Link>
+        <EmptyState
+          variant="no-data"
+          title="No fan data yet"
+          description="Connect OnlyFans to sync your fans and view detailed profiles."
+          action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -134,9 +244,12 @@ export default function FanProfilePage() {
           </div>
         </div>
 
-        {/* Recent Purchases */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Purchases</h2>
+      {/* Recent Purchases */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Purchases</h2>
+        {fan.recentPurchases.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400">No recent purchases yet.</p>
+        ) : (
           <div className="space-y-3">
             {fan.recentPurchases.map(purchase => (
               <div key={purchase.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
@@ -150,7 +263,8 @@ export default function FanProfilePage() {
               </div>
             ))}
           </div>
-        </div>
+        )}
+      </div>
       </div>
     </div>
   );

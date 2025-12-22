@@ -20,6 +20,8 @@ import {
 
 import { InstagramApiTester } from './instagramApiTester';
 import { InstagramFormatValidator } from './instagramFormatValidator';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 /**
  * Instagram-specific credential validator
@@ -327,16 +329,14 @@ export class InstagramCredentialValidator extends CredentialValidator {
    */
   private async validateRedirectUri(redirectUri: string): Promise<void> {
     try {
-      // Test that redirect URI is accessible (HEAD request with timeout)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      const response = await fetch(redirectUri, {
+      const response = await externalFetch(redirectUri, {
+        service: 'redirect-uri',
+        operation: 'instagram.validate',
         method: 'HEAD',
-        signal: controller.signal,
+        timeoutMs: 5_000,
+        retry: { maxRetries: 0, retryMethods: ['HEAD'] },
+        throwOnHttpError: false,
       });
-
-      clearTimeout(timeoutId);
 
       // We expect 404 or 405 (Method Not Allowed) for callback endpoints
       // 200, 404, 405 are all acceptable responses
@@ -344,7 +344,7 @@ export class InstagramCredentialValidator extends CredentialValidator {
         throw new Error(`Redirect URI returned ${response.status}`);
       }
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         throw new Error('Redirect URI request timeout');
       }
       throw error;

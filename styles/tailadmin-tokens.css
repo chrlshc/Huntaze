@@ -1,0 +1,125 @@
+/**
+ * TailAdmin Design Tokens
+ * Extracted from TailAdmin Free React Dashboard
+ * Source: https://github.com/TailAdmin/free-react-tailwind-admin-dashboard
+ */
+
+:root {
+  /* Colors - Primary */
+  --tailadmin-primary: #111111;
+  --tailadmin-primary-dark: #000000;
+  --tailadmin-primary-light: #333333;
+  
+  /* Colors - Secondary */
+  --tailadmin-secondary: #80caee;
+  
+  /* Colors - Success */
+  --tailadmin-success: #219653;
+  --tailadmin-success-light: #d4f4dd;
+  
+  /* Colors - Warning */
+  --tailadmin-warning: #ffa70b;
+  --tailadmin-warning-light: #fff4e5;
+  
+  /* Colors - Danger */
+  --tailadmin-danger: #111111;
+  --tailadmin-danger-light: #f5f5f5;
+  
+  /* Colors - Info */
+  --tailadmin-info: #111111;
+  --tailadmin-info-light: #f5f5f5;
+  
+  /* Colors - Neutral */
+  --tailadmin-white: #ffffff;
+  --tailadmin-black: #1c2434;
+  --tailadmin-black-2: #010101;
+  
+  /* Colors - Gray Scale */
+  --tailadmin-body: #64748b;
+  --tailadmin-body-dark: #aeb7c0;
+  --tailadmin-stroke: #e2e8f0;
+  --tailadmin-gray: #eff4fb;
+  --tailadmin-gray-dark: #333a48;
+  --tailadmin-gray-2: #f7f9fc;
+  --tailadmin-gray-3: #fafafa;
+  
+  /* Background Colors */
+  --tailadmin-bg: #f1f5f9;
+  --tailadmin-card-bg: #ffffff;
+  --tailadmin-surface: #ffffff;
+  --tailadmin-input-bg: #ffffff;
+  
+  /* Border Colors */
+  --tailadmin-border-color: #e2e8f0;
+  --tailadmin-border-color-dark: #333a48;
+  
+  /* Text Colors */
+  --tailadmin-text-primary: #1c2434;
+  --tailadmin-text-secondary: #64748b;
+  --tailadmin-text-tertiary: #8a99af;
+  --tailadmin-text-disabled: #d1d5db;
+  
+  /* Spacing */
+  --tailadmin-spacing-xs: 0.25rem;   /* 4px */
+  --tailadmin-spacing-sm: 0.5rem;    /* 8px */
+  --tailadmin-spacing-md: 1rem;      /* 16px */
+  --tailadmin-spacing-lg: 1.5rem;    /* 24px */
+  --tailadmin-spacing-xl: 2rem;      /* 32px */
+  --tailadmin-spacing-2xl: 3rem;     /* 48px */
+  
+  /* Border Radius */
+  --tailadmin-radius-sm: 0.25rem;    /* 4px */
+  --tailadmin-radius-md: 0.5rem;     /* 8px */
+  --tailadmin-radius-lg: 0.75rem;    /* 12px */
+  --tailadmin-radius-xl: 1rem;       /* 16px */
+  
+  /* Shadows */
+  --tailadmin-shadow-default: 0px 8px 13px -3px rgba(0, 0, 0, 0.07);
+  --tailadmin-shadow-card: 0px 1px 3px rgba(0, 0, 0, 0.08);
+  --tailadmin-shadow-card-2: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  --tailadmin-shadow-dropdown: 0px 10px 40px rgba(0, 0, 0, 0.08);
+  --tailadmin-shadow-input: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  
+  /* Typography */
+  --tailadmin-font-family: 'Satoshi', sans-serif;
+  --tailadmin-font-size-xs: 0.75rem;     /* 12px */
+  --tailadmin-font-size-sm: 0.875rem;    /* 14px */
+  --tailadmin-font-size-base: 1rem;      /* 16px */
+  --tailadmin-font-size-lg: 1.125rem;    /* 18px */
+  --tailadmin-font-size-xl: 1.25rem;     /* 20px */
+  --tailadmin-font-size-2xl: 1.5rem;     /* 24px */
+  --tailadmin-font-size-3xl: 1.875rem;   /* 30px */
+  
+  --tailadmin-font-weight-normal: 400;
+  --tailadmin-font-weight-medium: 500;
+  --tailadmin-font-weight-semibold: 600;
+  --tailadmin-font-weight-bold: 700;
+  
+  --tailadmin-line-height-tight: 1.25;
+  --tailadmin-line-height-normal: 1.5;
+  --tailadmin-line-height-relaxed: 1.75;
+  
+  /* Z-Index */
+  --tailadmin-z-dropdown: 9999;
+  --tailadmin-z-modal: 99999;
+  --tailadmin-z-tooltip: 999999;
+  
+  /* Transitions */
+  --tailadmin-transition-fast: 150ms ease-in-out;
+  --tailadmin-transition-base: 200ms ease-in-out;
+  --tailadmin-transition-slow: 300ms ease-in-out;
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --tailadmin-bg: #1c2434;
+  --tailadmin-card-bg: #24303f;
+  --tailadmin-surface: #24303f;
+  --tailadmin-input-bg: #24303f;
+  --tailadmin-border-color: #333a48;
+  --tailadmin-text-primary: #ffffff;
+  --tailadmin-text-secondary: #aeb7c0;
+  --tailadmin-text-tertiary: #8a99af;
+  --tailadmin-stroke: #333a48;
+  --tailadmin-gray: #24303f;
+}

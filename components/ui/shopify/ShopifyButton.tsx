@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type ShopifyButtonVariant = "primary" | "secondary" | "plain" | "destructive";
+export type ShopifyButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "plain" | "destructive";
 export type ShopifyButtonSize = "sm" | "md" | "lg";
 
 export interface ShopifyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,18 +14,19 @@ export interface ShopifyButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   fullWidth?: boolean;
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
+  asChild?: boolean;
 }
 
 /**
  * ShopifyButton - Shopify Polaris-inspired button component
  * 
  * Variants:
- * - primary: Solid dark (#1a1a1a) background with white text
- * - secondary: Outlined with dark border, transparent background
- * - plain: Text-only button with hover underline
+ * - primary: Filled, single preferred action per zone
+ * - secondary: Soft outline, neutral emphasis
+ * - ghost/plain: Text button, lowest emphasis
  * - destructive: Red background for dangerous actions
  * 
- * All buttons use 8px border-radius and proper padding.
+ * Buttons use consistent sizing, radius, and focus rings.
  */
 export const ShopifyButton = forwardRef<HTMLButtonElement, ShopifyButtonProps>(
   function ShopifyButton(
@@ -39,89 +40,112 @@ export const ShopifyButton = forwardRef<HTMLButtonElement, ShopifyButtonProps>(
       fullWidth = false,
       icon,
       iconPosition = "left",
+      asChild = false,
       ...props
     },
     ref
   ) {
     const baseClasses = cn(
-      "inline-flex items-center justify-center gap-2",
-      "font-medium transition-all duration-200",
+      "inline-flex items-center justify-center gap-2 whitespace-nowrap",
+      "font-medium leading-none transition-all duration-200",
+      "select-none",
+      "min-h-0",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
       "disabled:cursor-not-allowed disabled:opacity-50",
-      "rounded-[8px]", // Shopify 8px border-radius
+      "rounded-[var(--button-border-radius)]",
+      // Lucide icons (svg)
+      "[&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0",
       fullWidth && "w-full"
     );
 
     const sizeClasses: Record<ShopifyButtonSize, string> = {
-      sm: "h-8 px-3 text-[13px]",
+      sm: "h-9 px-3 text-[13px]",
       md: "h-10 px-4 text-[14px]",
-      lg: "h-12 px-6 text-[15px]",
+      lg: "h-11 px-5 text-[15px]",
     };
 
     const variantClasses: Record<ShopifyButtonVariant, string> = {
-      // Primary: solid dark background (#1a1a1a) with white text
+      // Primary = noir premium (pas violet plein)
       primary: cn(
-        "bg-[var(--shopify-btn-primary-bg,#1a1a1a)]",
-        "text-[var(--shopify-btn-primary-text,#ffffff)]",
-        "border border-[var(--shopify-btn-primary-bg,#1a1a1a)]",
-        "shadow-sm",
-        "hover:bg-[var(--shopify-btn-primary-hover,#333333)]",
-        "hover:border-[var(--shopify-btn-primary-hover,#333333)]",
-        "focus-visible:ring-[var(--shopify-btn-primary-bg,#1a1a1a)]"
+        "bg-slate-900 text-white",
+        "shadow-sm shadow-black/10",
+        "hover:bg-slate-800 active:bg-slate-900",
+        "focus-visible:ring-[var(--shopify-border-focus)]",
+        "disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
       ),
-      // Secondary: outlined with dark border
+      // Secondary = outline doux (pas de noir)
       secondary: cn(
-        "bg-[var(--shopify-btn-secondary-bg,transparent)]",
-        "text-[var(--shopify-btn-secondary-text,#1a1a1a)]",
-        "border border-[var(--shopify-btn-secondary-border,#1a1a1a)]",
-        "hover:bg-[var(--shopify-btn-secondary-hover,#f6f6f7)]",
-        "focus-visible:ring-[var(--shopify-btn-secondary-border,#1a1a1a)]"
+        "bg-white text-slate-900",
+        "border border-slate-200/70 shadow-sm shadow-black/5",
+        "hover:bg-slate-50 hover:border-slate-300/60 hover:shadow-black/10",
+        "active:bg-slate-100",
+        "focus-visible:ring-[var(--shopify-border-focus)]"
       ),
-      // Plain: text-only button
+      // Accent = violet SOFT (tint) pour AI only
+      accent: cn(
+        "bg-violet-50 text-violet-700",
+        "shadow-sm shadow-black/5",
+        "hover:bg-violet-100 hover:shadow-black/10 active:bg-violet-50",
+        "focus-visible:ring-[var(--shopify-border-focus)]",
+        "disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
+      ),
+      // Ghost: text button
+      ghost: cn(
+        "bg-transparent text-slate-700",
+        "hover:bg-slate-100 active:bg-slate-200/70",
+        "focus-visible:ring-[var(--shopify-border-focus)]",
+        "disabled:text-slate-400"
+      ),
+      // Plain = texte propre (pas de chip)
       plain: cn(
-        "bg-transparent",
-        "text-[var(--shopify-text-primary,#1a1a1a)]",
-        "border-none",
-        "hover:underline",
-        "focus-visible:ring-[var(--shopify-accent-info,#2c6ecb)]",
-        "px-1" // Override padding for plain variant
+        "bg-transparent text-slate-600",
+        "hover:text-slate-900 hover:underline underline-offset-4",
+        "focus-visible:ring-[var(--shopify-border-focus)]",
+        "disabled:text-slate-400"
       ),
       // Destructive: red background
       destructive: cn(
-        "bg-[var(--shopify-accent-error,#d72c0d)]",
-        "text-white",
-        "border border-[var(--shopify-accent-error,#d72c0d)]",
-        "shadow-sm",
-        "hover:brightness-110",
-        "focus-visible:ring-[var(--shopify-accent-error,#d72c0d)]"
+        "bg-rose-600 text-white",
+        "shadow-sm shadow-rose-600/20",
+        "hover:bg-rose-500 active:bg-rose-600",
+        "focus-visible:ring-rose-600/20",
+        "disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none"
       ),
     };
 
+    const Comp = asChild ? "a" : "button";
+
     return (
-      <button
+      <Comp
         ref={ref}
         className={cn(
           baseClasses,
           sizeClasses[size],
           variantClasses[variant],
-          // Override padding for plain variant
-          variant === "plain" && "px-1",
           className
         )}
         aria-busy={loading || undefined}
         aria-disabled={disabled || loading || undefined}
         disabled={disabled || loading}
+        {...(asChild && { role: "button" })}
         {...props}
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
         {!loading && icon && iconPosition === "left" && icon}
-        <span>{children}</span>
+        {children != null ? <span>{children}</span> : null}
         {!loading && icon && iconPosition === "right" && icon}
-      </button>
+      </Comp>
     );
   }
 );
 
 // Export variant and size types for testing
-export const SHOPIFY_BUTTON_VARIANTS: ShopifyButtonVariant[] = ["primary", "secondary", "plain", "destructive"];
+export const SHOPIFY_BUTTON_VARIANTS: ShopifyButtonVariant[] = [
+  "primary",
+  "secondary",
+  "accent",
+  "ghost",
+  "plain",
+  "destructive",
+];
 export const SHOPIFY_BUTTON_SIZES: ShopifyButtonSize[] = ["sm", "md", "lg"];

@@ -11,37 +11,34 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { webhookProcessor } from '@/lib/services/webhookProcessor';
-import crypto from 'crypto';
+import { computeWebhookExternalId, webhookProcessor } from '@/lib/services/webhookProcessor';
 
 const INSTAGRAM_WEBHOOK_SECRET = process.env.INSTAGRAM_WEBHOOK_SECRET;
 
-/**
- * Verify Meta/Facebook webhook signature
- */
-function verifyMetaSignature(payload: string, signature: string, secret: string): boolean {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  
-  // Signature format: sha256=<hash>
-  const receivedSignature = signature.replace('sha256=', '');
-  
-  return crypto.timingSafeEqual(
-    Buffer.from(expectedSignature),
-    Buffer.from(receivedSignature)
-  );
-}
-
 export async function POST(request: NextRequest) {
   try {
+    if (process.env.NODE_ENV === 'production' && !INSTAGRAM_WEBHOOK_SECRET) {
+      return NextResponse.json(
+        { error: 'Instagram webhook not configured' },
+        { status: 503 }
+      );
+    }
+
     const rawBody = await request.text();
     const signature = request.headers.get('x-hub-signature-256');
 
     // Verify signature if secret is configured
-    if (INSTAGRAM_WEBHOOK_SECRET && signature) {
-      const isValid = verifyMetaSignature(rawBody, signature, INSTAGRAM_WEBHOOK_SECRET);
+    if (INSTAGRAM_WEBHOOK_SECRET) {
+      if (!signature) {
+        return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
+      }
+
+      const isValid = webhookProcessor.verifySignature(
+        'instagram',
+        rawBody,
+        signature,
+        INSTAGRAM_WEBHOOK_SECRET
+      );
 
       if (!isValid) {
         console.error('Instagram webhook signature verification failed');
@@ -66,7 +63,12 @@ export async function POST(request: NextRequest) {
         
         for (const change of changes) {
           const eventType = change.field; // 'media', 'comments', 'mentions'
-          const externalId = `${entry.id}_${change.value?.id || Date.now()}`;
+          const externalId = computeWebhookExternalId({
+            provider: 'instagram',
+            eventType,
+            rawBody,
+            payload: { entry, change },
+          });
 
           try {
             await webhookProcessor.processEvent({
@@ -76,7 +78,9 @@ export async function POST(request: NextRequest) {
               payload: { entry, change },
               signature: signature || undefined,
             });
-            console.log(`Instagram webhook processed: ${eventType} (${externalId})`);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`Instagram webhook processed: ${eventType} (${externalId})`);
+            }
           } catch (error) {
             console.error('Instagram webhook processing error:', error);
           }
@@ -87,7 +91,7 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Instagram webhook error:', error);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ error: 'Invalid webhook request' }, { status: 400 });
   }
 }
 
@@ -102,10 +106,18 @@ export async function GET(request: NextRequest) {
   const challenge = searchParams.get('hub.challenge');
 
   // Verify token (should match your configured verify token)
-  const VERIFY_TOKEN = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || 'huntaze_instagram_webhook';
+  const VERIFY_TOKEN =
+    process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN ||
+    (process.env.NODE_ENV === 'production' ? '' : 'huntaze_instagram_webhook');
 
-  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('Instagram webhook verified');
+  if (process.env.NODE_ENV === 'production' && !process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN) {
+    return NextResponse.json({ error: 'Instagram webhook not configured' }, { status: 503 });
+  }
+
+  if (mode === 'subscribe' && VERIFY_TOKEN && token === VERIFY_TOKEN) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Instagram webhook verified');
+    }
     return new NextResponse(challenge, {
       status: 200,
       headers: { 'Content-Type': 'text/plain' },

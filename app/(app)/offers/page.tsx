@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+/**
+ * Offers Page - Huntaze Monochrome Design
+ * Manage promotional offers and track performance
+ */
+
+import { useRef, useState } from 'react';
 import Link from 'next/link';
+import useSWR from 'swr';
+import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
+import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
 import { 
   Plus, 
   Tag, 
@@ -18,420 +24,630 @@ import {
   TrendingUp,
   Calendar,
   Users,
-  DollarSign
+  DollarSign,
+  BarChart3,
+  ArrowUpRight
 } from 'lucide-react';
 import type { Offer, OfferStatus, DiscountType } from '@/lib/offers/types';
+import { standardFetcher } from '@/lib/swr';
 
 type FilterStatus = 'all' | OfferStatus;
 
-// Mock data for development
-const mockOffers: Offer[] = [
-  {
-    id: '1',
-    userId: 1,
-    name: 'Summer Sale 20% Off',
-    description: 'Limited time summer discount on all content',
-    discountType: 'percentage',
-    discountValue: 20,
-    originalPrice: 50,
-    validFrom: new Date('2024-06-01'),
-    validUntil: new Date('2024-08-31'),
-    status: 'active',
-    targetAudience: 'All fans',
-    contentIds: ['c1', 'c2', 'c3'],
-    redemptionCount: 145,
-    createdAt: new Date('2024-05-15'),
-    updatedAt: new Date('2024-05-15'),
-  },
-  {
-    id: '2',
-    userId: 1,
-    name: 'New Subscriber Welcome',
-    description: '$10 off first purchase',
-    discountType: 'fixed',
-    discountValue: 10,
-    originalPrice: null,
-    validFrom: new Date('2024-01-01'),
-    validUntil: new Date('2024-12-31'),
-    status: 'active',
-    targetAudience: 'New subscribers',
-    contentIds: [],
-    redemptionCount: 89,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
-  },
-  {
-    id: '3',
-    userId: 1,
-    name: 'Black Friday Bundle',
-    description: 'Buy 2 get 1 free on selected content',
-    discountType: 'bogo',
-    discountValue: 33,
-    originalPrice: 75,
-    validFrom: new Date('2024-11-25'),
-    validUntil: new Date('2024-11-30'),
-    status: 'scheduled',
-    targetAudience: 'VIP fans',
-    contentIds: ['c4', 'c5', 'c6'],
-    redemptionCount: 0,
-    createdAt: new Date('2024-10-01'),
-    updatedAt: new Date('2024-10-01'),
-  },
-  {
-    id: '4',
-    userId: 1,
-    name: 'Flash Sale Draft',
-    description: 'Quick 24h sale - draft',
-    discountType: 'percentage',
-    discountValue: 30,
-    originalPrice: 40,
-    validFrom: new Date('2024-07-01'),
-    validUntil: new Date('2024-07-02'),
-    status: 'draft',
-    targetAudience: null,
-    contentIds: [],
-    redemptionCount: 0,
-    createdAt: new Date('2024-06-20'),
-    updatedAt: new Date('2024-06-20'),
-  },
-  {
-    id: '5',
-    userId: 1,
-    name: 'Spring Promo',
-    description: '15% off spring collection',
-    discountType: 'percentage',
-    discountValue: 15,
-    originalPrice: 60,
-    validFrom: new Date('2024-03-01'),
-    validUntil: new Date('2024-05-31'),
-    status: 'expired',
-    targetAudience: 'All fans',
-    contentIds: ['c7', 'c8'],
-    redemptionCount: 234,
-    createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15'),
-  },
-];
+// Huntaze Design Tokens
+const hzStyles = `
+  .hz-offers {
+    --hz-radius-card: 14px;
+    --hz-radius-icon: 8px;
+    --hz-radius-pill: 6px;
+    --hz-space-xs: 8px;
+    --hz-space-sm: 12px;
+    --hz-space-md: 16px;
+    --hz-space-lg: 24px;
+    --hz-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+    --hz-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--hz-space-lg);
+  }
+  .hz-offers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--hz-space-lg);
+    flex-wrap: wrap;
+    gap: var(--hz-space-md);
+  }
+  .hz-offers-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #303030;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: var(--hz-space-xs);
+  }
+  .hz-offers-subtitle {
+    font-size: 13px;
+    color: #616161;
+    margin: 0;
+  }
+  .hz-offers-actions {
+    display: flex;
+    gap: var(--hz-space-xs);
+  }
+  .hz-offers-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: var(--hz-radius-icon);
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #616161;
+    cursor: pointer;
+    transition: all 140ms ease;
+    text-decoration: none;
+  }
+  .hz-offers-btn:hover { background: #f3f4f6; color: #303030; border-color: #d1d5db; }
+  .hz-offers-btn-primary {
+    background: linear-gradient(180deg, #1f1f1f, #111);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .hz-offers-btn-primary:hover { 
+    background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+  .hz-offers-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--hz-space-sm);
+    margin-bottom: var(--hz-space-lg);
+  }
+  @media (max-width: 768px) {
+    .hz-offers-stats { grid-template-columns: 1fr; }
+  }
+  .hz-offers-stat {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hz-radius-card);
+    padding: var(--hz-space-md);
+    box-shadow: var(--hz-shadow-card);
+    display: flex;
+    align-items: center;
+    gap: var(--hz-space-sm);
+  }
+  .hz-offers-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--hz-radius-icon);
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+  }
+  .hz-offers-stat-label {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 2px;
+  }
+  .hz-offers-stat-value {
+    font-family: 'SF Mono', ui-monospace, monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: #303030;
+  }
+  .hz-offers-filters {
+    display: flex;
+    gap: 4px;
+    margin-bottom: var(--hz-space-md);
+    overflow-x: auto;
+    padding-bottom: var(--hz-space-xs);
+  }
+  .hz-offers-filter {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--hz-radius-pill);
+    cursor: pointer;
+    transition: all 140ms ease;
+    white-space: nowrap;
+    text-transform: capitalize;
+  }
+  .hz-offers-filter:hover { background: #f3f4f6; color: #374151; }
+  .hz-offers-filter.active { background: #111; color: #fff; border-color: #111; }
+  .hz-offers-filter-count {
+    margin-left: 6px;
+    padding: 1px 6px;
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+  .hz-offers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hz-space-sm);
+  }
+  .hz-offer-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hz-radius-card);
+    padding: var(--hz-space-md);
+    box-shadow: var(--hz-shadow-card);
+    transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+  }
+  .hz-offer-card:hover {
+    transform: translateY(-1px);
+    border-color: #d1d5db;
+    box-shadow: var(--hz-shadow-hover);
+  }
+  .hz-offer-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hz-space-md);
+  }
+  .hz-offer-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--hz-radius-icon);
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    flex-shrink: 0;
+  }
+  .hz-offer-content { flex: 1; min-width: 0; }
+  .hz-offer-header {
+    display: flex;
+    align-items: center;
+    gap: var(--hz-space-xs);
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .hz-offer-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #303030;
+  }
+  .hz-offer-status {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: capitalize;
+  }
+  .hz-offer-status.active { background: #e5e7eb; color: #059669; }
+  .hz-offer-status.expired { background: #e5e7eb; color: #6b7280; }
+  .hz-offer-status.scheduled { background: #e5e7eb; color: #303030; }
+  .hz-offer-status.draft { background: #e5e7eb; color: #9ca3af; }
+  .hz-offer-desc {
+    font-size: 13px;
+    color: #616161;
+    margin-bottom: var(--hz-space-xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hz-offer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--hz-space-md);
+    font-size: 12px;
+    color: #9ca3af;
+  }
+  .hz-offer-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .hz-offer-actions {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .hz-offer-menu-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--hz-radius-icon);
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #9ca3af;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 140ms ease;
+  }
+  .hz-offer-menu-btn:hover { background: #f3f4f6; color: #616161; border-color: #d1d5db; }
+  .hz-offer-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    width: 160px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hz-radius-icon);
+    box-shadow: var(--hz-shadow-hover);
+    z-index: 10;
+    overflow: hidden;
+  }
+  .hz-offer-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--hz-space-xs);
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #616161;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none;
+    transition: background 140ms ease;
+  }
+  .hz-offer-menu-item:hover { background: #f3f4f6; color: #303030; }
+  .hz-offer-menu-item.danger { color: #dc2626; }
+  .hz-offer-menu-item.danger:hover { background: #fef2f2; }
+  .hz-offer-menu-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 4px 0;
+  }
+  .hz-offers-empty {
+    text-align: center;
+    padding: 64px var(--hz-space-lg);
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hz-radius-card);
+  }
+  .hz-offers-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--hz-space-md);
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+  }
+  .hz-offers-empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #303030;
+    margin: 0 0 var(--hz-space-xs);
+  }
+  .hz-offers-empty-desc {
+    font-size: 13px;
+    color: #616161;
+    margin: 0 0 var(--hz-space-lg);
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+`;
 
-const statusColors: Record<OfferStatus, string> = {
-  active: 'bg-green-500/20 text-green-400 border-green-500/30',
-  expired: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-  scheduled: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  draft: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+type OfferDto = Omit<Offer, 'validFrom' | 'validUntil' | 'createdAt' | 'updatedAt'> & {
+  validFrom: string;
+  validUntil: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
-const discountIcons: Record<DiscountType, typeof Percent> = {
-  percentage: Percent,
-  fixed: DollarSign,
-  bogo: Gift,
+type OffersListResponse = {
+  offers: OfferDto[];
+  total: number;
 };
+
+function normalizeOffer(dto: OfferDto): Offer {
+  return {
+    ...dto,
+    validFrom: new Date(dto.validFrom),
+    validUntil: new Date(dto.validUntil),
+    createdAt: new Date(dto.createdAt),
+    updatedAt: new Date(dto.updatedAt),
+  };
+}
+
+const discountIcons: Record<DiscountType, typeof Percent> = { percentage: Percent, fixed: DollarSign, bogo: Gift };
 
 function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date);
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
 }
 
 function formatDiscount(type: DiscountType, value: number): string {
   switch (type) {
-    case 'percentage':
-      return `${value}% off`;
-    case 'fixed':
-      return `$${value} off`;
-    case 'bogo':
-      return 'Buy 2 Get 1';
-    default:
-      return `${value}`;
+    case 'percentage': return `${value}% off`;
+    case 'fixed': return `$${value} off`;
+    case 'bogo': return 'Buy 2 Get 1';
+    default: return `${value}`;
   }
 }
 
 export default function OffersPage() {
-  const [offers, setOffers] = useState<Offer[]>(mockOffers);
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const lastActionRef = useRef<null | (() => Promise<void>)>(null);
 
-  const filteredOffers = filter === 'all' 
-    ? offers 
-    : offers.filter(o => o.status === filter);
+  const { data, error, isLoading, mutate } = useSWR<OffersListResponse>(
+    '/api/offers?limit=100&offset=0',
+    standardFetcher,
+  );
 
+  const offers = (data?.offers ?? []).map(normalizeOffer);
+
+  const filteredOffers = filter === 'all' ? offers : offers.filter(o => o.status === filter);
   const stats = {
     total: offers.length,
     active: offers.filter(o => o.status === 'active').length,
     totalRedemptions: offers.reduce((sum, o) => sum + o.redemptionCount, 0),
   };
 
-  const handleToggleStatus = async (offer: Offer) => {
-    const newStatus: OfferStatus = offer.status === 'active' ? 'draft' : 'active';
-    setOffers(prev => prev.map(o => 
-      o.id === offer.id ? { ...o, status: newStatus } : o
-    ));
-    setOpenMenu(null);
-  };
-
-  const handleDuplicate = async (offer: Offer) => {
-    const duplicated: Offer = {
-      ...offer,
-      id: `${offer.id}-copy-${Date.now()}`,
-      name: `${offer.name} (Copy)`,
-      status: 'draft',
-      redemptionCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setOffers(prev => [duplicated, ...prev]);
-    setOpenMenu(null);
-  };
-
-  const handleDelete = async (offerId: string) => {
-    if (confirm('Are you sure you want to delete this offer?')) {
-      setOffers(prev => prev.filter(o => o.id !== offerId));
+  const getResponseErrorMessage = async (response: Response) => {
+    const payload = await response.json().catch(() => null);
+    if (payload && typeof payload === 'object' && 'error' in payload) {
+      return String((payload as any).error);
     }
-    setOpenMenu(null);
+    return `Request failed (${response.status})`;
   };
 
-  // Empty state
+  const runAction = async (action: () => Promise<void>) => {
+    lastActionRef.current = action;
+    setActionBusy(true);
+    setActionError(null);
+    try {
+      await action();
+      await mutate();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : 'Action failed');
+    } finally {
+      setActionBusy(false);
+      setOpenMenu(null);
+    }
+  };
+
+  const retryLastAction = () => {
+    if (!lastActionRef.current || actionBusy) return;
+    void runAction(lastActionRef.current);
+  };
+
+  const handleToggleStatus = (offer: Offer) => {
+    void runAction(async () => {
+      const newStatus: OfferStatus = offer.status === 'active' ? 'draft' : 'active';
+      const response = await fetch(`/api/offers/${offer.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error(await getResponseErrorMessage(response));
+      }
+    });
+  };
+
+  const handleDuplicate = (offer: Offer) => {
+    void runAction(async () => {
+      const response = await fetch(`/api/offers/${offer.id}/duplicate`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        throw new Error(await getResponseErrorMessage(response));
+      }
+    });
+  };
+
+  const handleDelete = (offerId: string) => {
+    if (!confirm('Are you sure you want to delete this offer?')) return;
+    void runAction(async () => {
+      const response = await fetch(`/api/offers/${offerId}`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error(await getResponseErrorMessage(response));
+      }
+    });
+  };
+
+  if (isLoading && offers.length === 0) {
+    return (
+      <ContentPageErrorBoundary pageName="Offers">
+        <div className="hz-offers">
+          <style>{hzStyles}</style>
+          <div className="hz-offers-header">
+            <div>
+              <h1 className="hz-offers-title"><Gift size={24} /> Offers & Discounts</h1>
+            </div>
+          </div>
+          <div className="hz-offers-empty">
+            <DashboardLoadingState message="Loading offers..." />
+          </div>
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
+
+  if (error && offers.length === 0) {
+    return (
+      <ContentPageErrorBoundary pageName="Offers">
+        <div className="hz-offers">
+          <style>{hzStyles}</style>
+          <div className="hz-offers-header">
+            <div>
+              <h1 className="hz-offers-title"><Gift size={24} /> Offers & Discounts</h1>
+            </div>
+          </div>
+          <div className="hz-offers-empty">
+            <DashboardErrorState
+              message={error instanceof Error ? error.message : 'Failed to load offers'}
+              onRetry={() => void mutate()}
+            />
+          </div>
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
+
   if (offers.length === 0) {
     return (
-      <main className="hz-main" role="main">
-        <div className="hz-page">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Offers & Discounts</h1>
-          </div>
-          
-          <Card className="p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-              <Tag className="w-8 h-8 text-primary" />
+      <ContentPageErrorBoundary pageName="Offers">
+        <div className="hz-offers">
+          <style>{hzStyles}</style>
+          <div className="hz-offers-header">
+            <div>
+              <h1 className="hz-offers-title"><Gift size={24} /> Offers & Discounts</h1>
             </div>
-            <h2 className="text-xl font-semibold mb-2">No offers yet</h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Create your first offer to boost sales and engage your fans with special discounts and bundles.
-            </p>
-            <Link href="/offers/new">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Your First Offer
-              </Button>
-            </Link>
-          </Card>
+          </div>
+          <div className="hz-offers-empty">
+            <div className="hz-offers-empty-icon"><Tag size={28} /></div>
+            <h2 className="hz-offers-empty-title">No offers yet</h2>
+            <p className="hz-offers-empty-desc">Create your first offer to boost sales and engage your fans with special discounts and bundles.</p>
+            <Link href="/offers/new" className="hz-offers-btn hz-offers-btn-primary"><Plus size={16} /> Create Your First Offer</Link>
+          </div>
         </div>
-      </main>
+      </ContentPageErrorBoundary>
     );
   }
 
   return (
-    <main className="hz-main" role="main">
-      <div className="hz-page">
+    <ContentPageErrorBoundary pageName="Offers">
+      <div className="hz-offers">
+        <style>{hzStyles}</style>
+        
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="hz-offers-header">
           <div>
-            <h1 className="text-2xl font-bold">Offers & Discounts</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your promotional offers and track performance
-            </p>
+            <h1 className="hz-offers-title"><Gift size={24} /> Offers & Discounts</h1>
+            <p className="hz-offers-subtitle">Manage your promotional offers and track performance</p>
           </div>
-          <div className="flex gap-2">
-            <Link href="/offers/analytics">
-              <Button variant="outline">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Analytics
-              </Button>
-            </Link>
-            <Link href="/offers/new">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                New Offer
-              </Button>
-            </Link>
+          <div className="hz-offers-actions">
+            <Link href="/offers/analytics" className="hz-offers-btn"><BarChart3 size={16} /> Analytics</Link>
+            <Link href="/offers/new" className="hz-offers-btn hz-offers-btn-primary"><Plus size={16} /> New Offer</Link>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Tag className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Offers</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
-              </div>
+        {actionError && (
+          <div
+            role="alert"
+            style={{
+              background: '#FEF2F2',
+              border: '1px solid #FECACA',
+              borderRadius: 12,
+              padding: '12px 14px',
+              fontSize: 13,
+              color: '#991B1B',
+              marginBottom: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+            }}
+          >
+            <span>{actionError}</span>
+            <button
+              type="button"
+              className="hz-offers-btn"
+              onClick={retryLastAction}
+              disabled={actionBusy}
+              style={{ opacity: actionBusy ? 0.6 : 1 }}
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="hz-offers-stats">
+          <div className="hz-offers-stat">
+            <div className="hz-offers-stat-icon"><Tag size={20} /></div>
+            <div>
+              <div className="hz-offers-stat-label">Total Offers</div>
+              <div className="hz-offers-stat-value">{stats.total}</div>
             </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <Play className="w-5 h-5 text-green-500" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Active Offers</p>
-                <p className="text-2xl font-bold">{stats.active}</p>
-              </div>
+          </div>
+          <div className="hz-offers-stat">
+            <div className="hz-offers-stat-icon"><Play size={20} /></div>
+            <div>
+              <div className="hz-offers-stat-label">Active Offers</div>
+              <div className="hz-offers-stat-value">{stats.active}</div>
             </div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-500" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Redemptions</p>
-                <p className="text-2xl font-bold">{stats.totalRedemptions}</p>
-              </div>
+          </div>
+          <div className="hz-offers-stat">
+            <div className="hz-offers-stat-icon"><Users size={20} /></div>
+            <div>
+              <div className="hz-offers-stat-label">Total Redemptions</div>
+              <div className="hz-offers-stat-value">{stats.totalRedemptions}</div>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="hz-offers-filters">
           {(['all', 'active', 'scheduled', 'draft', 'expired'] as FilterStatus[]).map((status) => (
-            <Button
-              key={status}
-              variant={filter === status ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter(status)}
-              className="capitalize whitespace-nowrap"
-            >
+            <button key={status} className={`hz-offers-filter ${filter === status ? 'active' : ''}`} onClick={() => setFilter(status)}>
               {status}
-              {status !== 'all' && (
-                <span className="ml-2 px-1.5 py-0.5 text-xs rounded-full bg-background/20">
-                  {offers.filter(o => status === 'all' || o.status === status).length}
-                </span>
-              )}
-            </Button>
+              {status !== 'all' && <span className="hz-offers-filter-count">{offers.filter(o => o.status === status).length}</span>}
+            </button>
           ))}
         </div>
 
         {/* Offers List */}
-        <div className="space-y-3">
+        <div className="hz-offers-list">
           {filteredOffers.map((offer) => {
             const DiscountIcon = discountIcons[offer.discountType];
             return (
-              <Card key={offer.id} className="p-4 hover:bg-accent/5 transition-colors">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 flex-1 min-w-0">
-                    {/* Icon */}
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <DiscountIcon className="w-6 h-6 text-primary" />
+              <div key={offer.id} className="hz-offer-card">
+                <div className="hz-offer-row">
+                  <div className="hz-offer-icon"><DiscountIcon size={24} /></div>
+                  <div className="hz-offer-content">
+                    <div className="hz-offer-header">
+                      <span className="hz-offer-name">{offer.name}</span>
+                      <span className={`hz-offer-status ${offer.status}`}>{offer.status}</span>
                     </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold truncate">{offer.name}</h3>
-                        <span className={`px-2 py-0.5 text-xs rounded-full border ${statusColors[offer.status]}`}>
-                          {offer.status}
-                        </span>
-                      </div>
-                      
-                      {offer.description && (
-                        <p className="text-sm text-muted-foreground mb-2 line-clamp-1">
-                          {offer.description}
-                        </p>
-                      )}
-                      
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Percent className="w-3.5 h-3.5" />
-                          {formatDiscount(offer.discountType, offer.discountValue)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {formatDate(offer.validFrom)} - {formatDate(offer.validUntil)}
-                        </span>
-                        {offer.targetAudience && (
-                          <span className="flex items-center gap-1">
-                            <Users className="w-3.5 h-3.5" />
-                            {offer.targetAudience}
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <TrendingUp className="w-3.5 h-3.5" />
-                          {offer.redemptionCount} redemptions
-                        </span>
-                      </div>
+                    {offer.description && <div className="hz-offer-desc">{offer.description}</div>}
+                    <div className="hz-offer-meta">
+                      <span className="hz-offer-meta-item"><Percent size={12} /> {formatDiscount(offer.discountType, offer.discountValue)}</span>
+                      <span className="hz-offer-meta-item"><Calendar size={12} /> {formatDate(offer.validFrom)} - {formatDate(offer.validUntil)}</span>
+                      {offer.targetAudience && <span className="hz-offer-meta-item"><Users size={12} /> {offer.targetAudience}</span>}
+                      <span className="hz-offer-meta-item"><TrendingUp size={12} /> {offer.redemptionCount} redemptions</span>
                     </div>
                   </div>
-
-                  {/* Actions */}
-                  <div className="relative flex-shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setOpenMenu(openMenu === offer.id ? null : offer.id)}
-                    >
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                    
+                  <div className="hz-offer-actions">
+                    <button className="hz-offer-menu-btn" onClick={() => setOpenMenu(openMenu === offer.id ? null : offer.id)}><MoreVertical size={16} /></button>
                     {openMenu === offer.id && (
-                      <div className="absolute right-0 top-full mt-1 w-48 bg-popover border rounded-lg shadow-lg z-10 py-1">
-                        <Link 
-                          href={`/offers/${offer.id}`}
-                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent w-full"
-                          onClick={() => setOpenMenu(null)}
-                        >
-                          <Edit className="w-4 h-4" />
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleToggleStatus(offer)}
-                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent w-full text-left"
-                        >
-                          {offer.status === 'active' ? (
-                            <>
-                              <Pause className="w-4 h-4" />
-                              Pause
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-4 h-4" />
-                              Activate
-                            </>
-                          )}
+                      <div className="hz-offer-menu">
+                        <Link href={`/offers/${offer.id}`} className="hz-offer-menu-item" onClick={() => setOpenMenu(null)}><Edit size={14} /> Edit</Link>
+                        <button className="hz-offer-menu-item" onClick={() => handleToggleStatus(offer)}>
+                          {offer.status === 'active' ? <><Pause size={14} /> Pause</> : <><Play size={14} /> Activate</>}
                         </button>
-                        <button
-                          onClick={() => handleDuplicate(offer)}
-                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent w-full text-left"
-                        >
-                          <Copy className="w-4 h-4" />
-                          Duplicate
-                        </button>
-                        <hr className="my-1 border-border" />
-                        <button
-                          onClick={() => handleDelete(offer.id)}
-                          className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent w-full text-left text-red-500"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </button>
+                        <button className="hz-offer-menu-item" onClick={() => handleDuplicate(offer)}><Copy size={14} /> Duplicate</button>
+                        <div className="hz-offer-menu-divider" />
+                        <button className="hz-offer-menu-item danger" onClick={() => handleDelete(offer.id)}><Trash2 size={14} /> Delete</button>
                       </div>
                     )}
                   </div>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
 
         {/* Empty filtered state */}
         {filteredOffers.length === 0 && offers.length > 0 && (
-          <Card className="p-8 text-center">
-            <p className="text-muted-foreground">
-              No {filter} offers found.
-            </p>
-            <Button 
-              variant="link" 
-              onClick={() => setFilter('all')}
-              className="mt-2"
-            >
-              View all offers
-            </Button>
-          </Card>
+          <div className="hz-offers-empty">
+            <p style={{ color: '#616161', marginBottom: 16 }}>No {filter} offers found.</p>
+            <button className="hz-offers-btn" onClick={() => setFilter('all')}>View all offers</button>
+          </div>
         )}
       </div>
-    </main>
+    </ContentPageErrorBoundary>
   );
 }

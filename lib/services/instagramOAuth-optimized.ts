@@ -57,6 +57,7 @@ export class InstagramOAuthServiceOptimized {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000; // 1 second
   private readonly TOKEN_REFRESH_THRESHOLD = 7 * 24 * 60 * 60 * 1000; // 7 days
+  private readonly REQUEST_TIMEOUT_MS = 15_000;
 
   constructor() {
     this.appId = process.env.FACEBOOK_APP_ID || '';
@@ -304,6 +305,36 @@ export class InstagramOAuthServiceOptimized {
     });
   }
 
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    correlationId: string
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT_MS);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } catch (error) {
+      const message =
+        error instanceof Error && error.name === 'AbortError'
+          ? 'Request timed out'
+          : error instanceof Error
+            ? error.message
+            : 'Network error';
+
+      throw this.createError(
+        InstagramErrorType.NETWORK_ERROR,
+        message,
+        correlationId,
+        undefined,
+        error instanceof Error ? error : undefined
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
   /**
    * Store token for management
    */
@@ -426,15 +457,30 @@ export class InstagramOAuthServiceOptimized {
     });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/2.0',
+      const response = await this.fetchWithTimeout(
+        `${FACEBOOK_TOKEN_URL}?${params.toString()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/2.0',
+          },
         },
-      });
+        correlationId
+      );
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          InstagramErrorType.API_ERROR,
+          'Invalid JSON response from Instagram',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleFacebookError(data, response.status, correlationId);
@@ -467,15 +513,30 @@ export class InstagramOAuthServiceOptimized {
     });
 
     const result = await this.retryApiCall(async () => {
-      const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/2.0',
+      const response = await this.fetchWithTimeout(
+        `${FACEBOOK_TOKEN_URL}?${params.toString()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/2.0',
+          },
         },
-      });
+        correlationId
+      );
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          InstagramErrorType.API_ERROR,
+          'Invalid JSON response from Instagram',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleFacebookError(data, response.status, correlationId);
@@ -514,15 +575,30 @@ export class InstagramOAuthServiceOptimized {
     });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/2.0',
+      const response = await this.fetchWithTimeout(
+        `${FACEBOOK_TOKEN_URL}?${params.toString()}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/2.0',
+          },
         },
-      });
+        correlationId
+      );
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          InstagramErrorType.API_ERROR,
+          'Invalid JSON response from Instagram',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleFacebookError(data, response.status, correlationId);
@@ -548,29 +624,58 @@ export class InstagramOAuthServiceOptimized {
 
     return this.retryApiCall(async () => {
       // Get user ID
-      const meResponse = await fetch(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`, {
-        cache: 'no-store',
-        headers: {
-          'User-Agent': 'Instagram-OAuth-Client/2.0',
+      const meResponse = await this.fetchWithTimeout(
+        `${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`,
+        {
+          cache: 'no-store',
+          headers: {
+            'User-Agent': 'Instagram-OAuth-Client/2.0',
+          },
         },
-      });
-      const meData = await meResponse.json();
+        correlationId
+      );
+
+      let meData: any;
+      try {
+        meData = await meResponse.json();
+      } catch (error) {
+        throw this.createError(
+          InstagramErrorType.API_ERROR,
+          'Invalid JSON response from Instagram',
+          correlationId,
+          meResponse.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!meResponse.ok || meData.error) {
         throw this.handleFacebookError(meData, meResponse.status, correlationId);
       }
 
       // Get pages
-      const pagesResponse = await fetch(
+      const pagesResponse = await this.fetchWithTimeout(
         `${FACEBOOK_GRAPH_URL}/me/accounts?fields=id,name,instagram_business_account{id,username}&access_token=${accessToken}`,
-        { 
+        {
           cache: 'no-store',
           headers: {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
-        }
+        },
+        correlationId
       );
-      const pagesData = await pagesResponse.json();
+
+      let pagesData: any;
+      try {
+        pagesData = await pagesResponse.json();
+      } catch (error) {
+        throw this.createError(
+          InstagramErrorType.API_ERROR,
+          'Invalid JSON response from Instagram',
+          correlationId,
+          pagesResponse.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!pagesResponse.ok || pagesData.error) {
         throw this.handleFacebookError(pagesData, pagesResponse.status, correlationId);
@@ -606,17 +711,29 @@ export class InstagramOAuthServiceOptimized {
     });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(
+      const response = await this.fetchWithTimeout(
         `${FACEBOOK_GRAPH_URL}/${igBusinessId}?fields=id,username,name,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`,
-        { 
+        {
           cache: 'no-store',
           headers: {
             'User-Agent': 'Instagram-OAuth-Client/2.0',
           },
-        }
+        },
+        correlationId
       );
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          InstagramErrorType.API_ERROR,
+          'Invalid JSON response from Instagram',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleFacebookError(data, response.status, correlationId);
@@ -637,19 +754,20 @@ export class InstagramOAuthServiceOptimized {
     });
 
     try {
-      const response = await fetch(
+      const response = await this.fetchWithTimeout(
         `${FACEBOOK_GRAPH_URL}/me/permissions?access_token=${accessToken}`,
         {
           method: 'DELETE',
           cache: 'no-store',
-        }
+        },
+        correlationId
       );
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json().catch(() => ({} as any));
         instagramLogger.warn('Revoke failed', {
           correlationId,
-          error: data.error?.message,
+          error: data.error?.message || response.statusText,
         });
       } else {
         instagramLogger.info('Access revoked successfully', {
@@ -657,7 +775,8 @@ export class InstagramOAuthServiceOptimized {
         });
       }
     } catch (error) {
-      instagramLogger.error('Revoke error', error as Error, {
+      const maybeError = error as any;
+      instagramLogger.error('Revoke error', (maybeError?.originalError as Error) || (error as Error), {
         correlationId,
       });
     }

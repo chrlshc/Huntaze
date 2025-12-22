@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/config';;
 import type { PricingRecommendation } from '@/lib/services/revenue/types';
+import { isMockApiMode } from '@/config/api-mode';
 
 /**
  * GET /api/revenue/pricing
@@ -37,11 +38,30 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
+    if (!isMockApiMode()) {
+      const recommendations: PricingRecommendation = {
+        subscription: {
+          current: 0,
+          recommended: 0,
+          revenueImpact: 0,
+          reasoning: '',
+          confidence: 0,
+        },
+        ppv: [],
+        metadata: {
+          lastUpdated: new Date().toISOString(),
+          dataPoints: 0,
+        },
+      };
+
+      return Response.json(recommendations);
+    }
+
     // TODO: Replace with actual backend service call
     // const recommendations = await backendPricingService.getRecommendations(creatorId);
-    
-    // Mock data for now
-    const recommendations = {
+
+    // Mock data for demo mode only
+    const recommendations: PricingRecommendation = {
       subscription: {
         current: 9.99,
         recommended: 12.99,

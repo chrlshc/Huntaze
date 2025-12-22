@@ -1,0 +1,845 @@
+/**
+ * Chat Container Styles
+ * Ultra neutre - laisse les emojis faire la couleur
+ */
+
+/* Import date separator styles */
+@import './date-separator.css';
+
+/* Import mobile full-screen chat styles */
+@import './mobile-chat-app.css';
+
+.chat-container-wrapper {
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #F8FAFC; /* Slate-50 */
+  border-radius: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure MainContainer fills height */
+.chat-container-wrapper .cs-main-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 0;
+  height: auto;
+  overflow: hidden;
+  border: none;
+  box-sizing: border-box;
+}
+
+/* Chat Container fills available space */
+.chat-container-wrapper .cs-chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex shrinking */
+  max-height: 100%; /* Prevent overflow */
+  overflow: hidden; /* Contain children */
+  background-color: #ffffff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Conversation Header Styling - name, status (sans avatar) */
+.chat-container-wrapper .cs-conversation-header {
+  flex-shrink: 0; /* ✅ Ne jamais réduire le header */
+  padding: var(--msg-space-lg) var(--msg-space-2xl) var(--msg-space-md) var(--msg-space-2xl); /* 16px 24px 12px 24px */
+  background-color: #ffffff;
+  border-bottom: 1px solid #E5E7F0;
+  display: flex;
+  align-items: center;
+  gap: var(--msg-space-md);
+}
+
+/* Masquer l'avatar dans le header */
+.chat-container-wrapper .cs-conversation-header__avatar {
+  display: none !important; /* Complètement masqué */
+}
+
+.chat-container-wrapper .cs-conversation-header__content {
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Keep 2px for tight spacing */
+}
+
+.chat-container-wrapper .cs-conversation-header__user-name {
+  font-size: var(--tailadmin-font-size-lg);
+  font-weight: 600; /* Bold pour le nom */
+  color: #111111;
+  background: transparent !important;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-container-wrapper .cs-conversation-header__info {
+  font-size: var(--tailadmin-font-size-sm);
+  color: #9CA3AF; /* Gray pour "En ligne" */
+  background: transparent !important;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Messages Scroll Area (custom, no MessageList) */
+.chat-container-wrapper .chat-messages-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px 12px 24px !important;
+  background-color: #F8FAFC !important; /* Slate-50 - subtle background */
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.chat-container-wrapper .chat-messages-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-container-wrapper .chat-messages-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-container-wrapper .chat-messages-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.chat-container-wrapper .chat-messages-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: transparent;
+}
+
+.chat-container-wrapper .chat-typing-indicator {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+/* Message Date Group - Container for messages grouped by date */
+.message-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* No gap, spacing controlled by individual items */
+  width: 100%;
+}
+
+/* Date Group - Spacing between chip and first message - Phase 16 Refinement #2 & #4 */
+.message-date-group .date-separator + .message-group-item {
+  margin-top: 0; /* Spacing handled by date-separator margin-bottom */
+}
+
+/* Date Group - Spacing between chip and first message row */
+.message-date-group .date-separator + .message-row {
+  margin-top: 0; /* Spacing handled by date-separator margin-bottom */
+}
+
+/* Message Group Item - Wrapper for grouped messages - Phase 12 Ultra Clean */
+.message-group-item {
+  margin-bottom: 6px !important;
+  width: 100% !important;
+  display: flex !important;
+  padding: 0 !important;
+}
+
+/* Message Row - Custom bubble wrapper */
+.message-row {
+  display: flex !important;
+  width: 100% !important;
+  margin-bottom: 6px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.message-row--incoming {
+  justify-content: flex-start !important;
+}
+
+.message-row--outgoing {
+  justify-content: flex-end !important;
+}
+
+/* Message Bubble - iMessage style - fit content exactly */
+.message-bubble {
+  max-width: 70% !important;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 10px 14px !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  display: inline-block !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  flex-shrink: 1 !important;
+  flex-grow: 0 !important;
+}
+
+.message-bubble--incoming {
+  background-color: #F1F5F9 !important; /* Slate-100 - no border */
+  color: #0F172A !important;
+  border: none !important;
+  border-radius: 20px 20px 20px 6px !important;
+}
+
+.message-bubble--outgoing {
+  background-color: #0F172A !important; /* Slate-900 - dark */
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 20px 20px 6px 20px !important;
+}
+
+/* Ensure bubbles shrink to content - no extra space */
+.chat-container-wrapper .message-row .message-bubble {
+  width: auto !important;
+  max-width: 70% !important;
+  flex: 0 0 auto !important;
+}
+
+/* Override any inherited styles from chat-ui-kit */
+.chat-messages-scroll .message-row {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+.chat-messages-scroll .message-row--outgoing {
+  justify-content: flex-end !important;
+}
+
+.chat-messages-scroll .message-row--incoming {
+  justify-content: flex-start !important;
+}
+
+.chat-messages-scroll .message-bubble {
+  width: auto !important;
+  flex: none !important;
+}
+
+/* Force incoming messages to align left edge */
+.message-group-item:has(.cs-message--incoming) {
+  justify-content: flex-start !important;
+}
+
+/* Force outgoing messages to align right edge */
+.message-group-item:has(.cs-message--outgoing) {
+  justify-content: flex-end !important;
+}
+
+.message-group-item--first {
+  margin-top: 16px !important;
+}
+
+.message-group-item--last {
+  margin-bottom: 16px !important;
+}
+
+.message-group-item--single {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+/* Force les messages à prendre toute la largeur du conteneur */
+.message-group-item .cs-message {
+  width: 100% !important;
+  display: flex !important;
+}
+
+/* Group Timestamp - SUPPRIMÉ - Les timestamps sont maintenant dans les bulles */
+.message-group-timestamp {
+  display: none !important; /* Complètement masqué - timestamps inline uniquement */
+}
+
+/* ========================================
+   INLINE TIMESTAMPS - HIDDEN
+   ======================================== */
+
+/* Timestamps complètement masqués - design épuré iMessage */
+.message-inline-timestamp {
+  display: none !important;
+}
+
+.cs-message--outgoing .message-inline-timestamp {
+  display: none !important;
+}
+
+/* Ajuster le padding de la bulle - compact sans timestamp */
+.chat-container-wrapper .cs-message__content {
+  padding: 10px 14px !important;
+  position: relative;
+}
+
+/* Message Styling - Full width container with aligned bubbles */
+.chat-container-wrapper .cs-message {
+  margin-bottom: 0 !important;
+  display: flex !important;
+  width: 100% !important;
+}
+
+/* Incoming messages - Aligned LEFT (fan messages) */
+.chat-container-wrapper .cs-message--incoming {
+  justify-content: flex-start !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  align-items: flex-start !important;
+}
+
+/* Outgoing messages - Aligned RIGHT (your messages) */
+.chat-container-wrapper .cs-message--outgoing {
+  justify-content: flex-end !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  align-items: flex-start !important;
+  margin-left: auto !important;
+  text-align: right !important;
+}
+
+.chat-container-wrapper .cs-message__content-wrapper {
+  max-width: 70% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Force incoming messages to stay left */
+.chat-container-wrapper .cs-message--incoming .cs-message__content-wrapper {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+
+/* Force outgoing messages to stay right */
+.chat-container-wrapper .cs-message--outgoing .cs-message__content-wrapper {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.chat-container-wrapper .cs-message__content {
+  padding: 10px 14px !important;
+  border-radius: 18px !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  word-wrap: break-word;
+  display: inline-block !important;
+}
+
+/* Incoming messages - Light blue background (fan messages - LEFT) */
+.chat-container-wrapper .cs-message--incoming .cs-message__content {
+  background-color: #CFDEF1 !important; /* Light blue like reference */
+  color: #000000 !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 18px 18px 18px 6px !important;
+}
+
+/* Outgoing messages - Gray background (your messages - RIGHT) */
+.chat-container-wrapper .cs-message--outgoing .cs-message__content {
+  background-color: #E5E5EA !important; /* Light gray like iMessage */
+  color: #000000 !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 18px 18px 6px 18px !important;
+}
+
+/* Message grouping - iMessage/WhatsApp style blocks */
+
+/* Masquer tous les avatars dans les messages - design épuré */
+.chat-container-wrapper .cs-message__avatar {
+  display: none !important; /* Complètement masqué */
+}
+
+/* First message in a group - iMessage style with pointed corner */
+.chat-container-wrapper .cs-message--incoming.cs-message--first .cs-message__content {
+  border-radius: 18px 18px 18px 6px !important; /* Pointed bottom-left (more pronounced) */
+  background-color: #CFDEF1 !important; /* Light blue accent like reference */
+  border: none !important;
+}
+
+.chat-container-wrapper .cs-message--outgoing.cs-message--first .cs-message__content {
+  border-radius: 18px 18px 6px 18px !important; /* Pointed bottom-right (more pronounced) */
+  background-color: #E5E5EA !important; /* Light gray like iMessage */
+}
+
+/* Single message groups: use the same accent colors as group starts */
+.chat-container-wrapper .cs-message--incoming.cs-message--single .cs-message__content {
+  background-color: #CFDEF1 !important;
+  border: none !important;
+}
+
+.chat-container-wrapper .cs-message--outgoing.cs-message--single .cs-message__content {
+  background-color: #E5E5EA !important;
+}
+
+/* Middle messages in a group - iMessage style with pointed corner */
+.chat-container-wrapper .cs-message--incoming.cs-message--normal .cs-message__content {
+  border-radius: 18px 18px 18px 6px !important; /* Pointed bottom-left (more pronounced) */
+  background-color: #CFDEF1 !important;
+  border: none !important;
+}
+
+.chat-container-wrapper .cs-message--outgoing.cs-message--normal .cs-message__content {
+  border-radius: 18px 18px 6px 18px !important; /* Pointed bottom-right (more pronounced) */
+  background-color: #E5E5EA !important;
+}
+
+/* Last message in a group - fully rounded (no pointed corner) */
+.chat-container-wrapper .cs-message--incoming.cs-message--last .cs-message__content {
+  border-radius: 18px 18px 18px 18px !important; /* Fully rounded */
+  background-color: #CFDEF1 !important;
+  border: none !important;
+}
+
+.chat-container-wrapper .cs-message--outgoing.cs-message--last .cs-message__content {
+  border-radius: 18px 18px 18px 18px !important; /* Fully rounded */
+  background-color: #E5E5EA !important;
+}
+
+/* Single message - iMessage style with pointed corner */
+.chat-container-wrapper .cs-message--incoming.cs-message--single .cs-message__content {
+  border-radius: 18px 18px 18px 6px !important; /* Pointed bottom-left (more pronounced) */
+  background-color: #CFDEF1 !important;
+  border: none !important;
+}
+
+.chat-container-wrapper .cs-message--outgoing.cs-message--single .cs-message__content {
+  border-radius: 18px 18px 6px 18px !important; /* Pointed bottom-right (more pronounced) */
+  background-color: #E5E5EA !important;
+}
+
+/* Message footer (timestamp) - HIDDEN */
+.chat-container-wrapper .cs-message__footer {
+  display: none !important;
+}
+
+/* Avatars complètement retirés - design épuré */
+
+/* Typing Indicator - Positionné proche du dernier message (iMessage style) */
+.chat-container-wrapper .cs-typing-indicator {
+  padding: 8px 12px; /* iMessage-style padding */
+  background-color: #FFFFFF; /* Blanc comme les messages incoming */
+  border: 1px solid #E1E5F0; /* Même bordure que les messages incoming */
+  border-radius: 18px; /* iMessage-style rounded */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--msg-space-xs);
+  margin-top: 4px; /* ✅ FIX: Proche du dernier message, pas trop bas */
+  margin-bottom: 0; /* ✅ FIX: Pas de margin en bas pour éviter le scroll */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); /* Minimal shadow comme les messages */
+}
+
+.chat-container-wrapper .cs-typing-indicator__text {
+  font-size: var(--tailadmin-font-size-sm);
+  color: var(--msg-text-secondary, #6c7680);
+  margin-right: var(--tailadmin-spacing-xs);
+}
+
+.chat-container-wrapper .cs-typing-indicator__dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--msg-text-tertiary, #9ca3af);
+  border-radius: 50%;
+  animation: typing-bounce 1.4s infinite ease-in-out;
+}
+
+.chat-container-wrapper .cs-typing-indicator__dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-container-wrapper .cs-typing-indicator__dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Message Input Wrapper */
+.chat-composer-wrapper-inner {
+  flex-shrink: 0;
+  background-color: #FFFFFF;
+  padding: 16px 24px 20px 24px;
+  border-top: 1px solid #CCCCCC;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Message Input Container */
+.chat-container-wrapper .cs-message-input {
+  flex-shrink: 0;
+  background-color: #FFFFFF !important;
+  padding: 12px 24px 8px 24px;
+  border-top: 1px solid #E5E5E5 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Input wrapper */
+.chat-container-wrapper .cs-message-input__content-editor-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 24px;
+  padding: 10px 16px;
+  box-shadow: none;
+  height: 48px;
+  margin: 0;
+  width: 100%;
+}
+
+.chat-container-wrapper .cs-message-input__content-editor-wrapper:focus-within {
+  background-color: #FFFFFF;
+  border-color: #9CA3AF;
+  box-shadow: none;
+  outline: none;
+}
+
+.chat-container-wrapper .cs-message-input__content-editor-container {
+  flex: 1;
+  min-width: 0; /* Permet la troncature */
+  display: flex;
+  align-items: center;
+}
+
+.chat-container-wrapper .cs-message-input__content-editor {
+  width: 100%;
+  background-color: transparent !important;
+  background: transparent !important;
+  /* Fix #3: Supprimer TOUTE bordure */
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  /* Fix #3: Supprimer TOUT outline */
+  outline: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  box-shadow: none !important;
+  color: var(--msg-text-primary, #1a1d1f);
+  font-size: 15px;
+  font-family: var(--tailadmin-font-family);
+  line-height: 1.5;
+  min-height: 24px;
+  max-height: 120px;
+  overflow-y: auto;
+  transition: none !important;
+  resize: none;
+}
+
+.chat-container-wrapper .cs-message-input__content-editor:focus,
+.chat-container-wrapper .cs-message-input__content-editor:focus-visible,
+.chat-container-wrapper .cs-message-input__content-editor:focus-within {
+  /* Fix #3: Aucune bordure au focus */
+  border: 0 !important;
+  border-width: 0 !important;
+  outline: 0 !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Override any potential library styles - Fix #3 */
+.chat-container-wrapper .cs-message-input__content-editor[contenteditable="true"],
+.chat-container-wrapper .cs-message-input__content-editor[contenteditable="true"]:focus,
+.chat-container-wrapper .cs-message-input__content-editor[contenteditable="true"]:focus-visible {
+  border: 0 !important;
+  border-width: 0 !important;
+  outline: 0 !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+}
+
+.chat-container-wrapper .cs-message-input__content-editor[data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: #B0B0B0; /* Gris clair pour placeholder */
+  pointer-events: none;
+}
+
+/* Texte tapé en gris foncé */
+.chat-container-wrapper .cs-message-input__content-editor:not(:empty) {
+  color: #1F2937; /* Gris foncé pour le texte tapé */
+}
+
+/* AI Disclaimer sous le composer - Style ChatGPT */
+.chat-container-wrapper .ai-disclaimer {
+  text-align: center;
+  font-size: 11px !important;
+  line-height: 14px !important;
+  color: #9CA3AF !important;
+  padding: 4px 24px 8px 24px !important;
+  margin: 0;
+  background-color: transparent !important;
+  flex-shrink: 0;
+}
+
+/* Attach Button - INTÉGRÉ dans la pilule, à gauche */
+.chat-container-wrapper .cs-button--attachment {
+  width: var(--msg-space-xl); /* 20px */
+  height: var(--msg-space-xl); /* 20px */
+  border-radius: 0;
+  background-color: transparent;
+  border: none !important;
+  color: #6B7280; /* Gris moyen pour visibilité */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.chat-container-wrapper .cs-button--attachment svg {
+  width: var(--msg-space-xl); /* 20px */
+  height: var(--msg-space-xl); /* 20px */
+  stroke-width: 2;
+  display: block;
+}
+
+.chat-container-wrapper .cs-button--attachment:hover {
+  color: #374151; /* Plus foncé au hover */
+}
+
+.chat-container-wrapper .cs-button--attachment:active {
+  transform: scale(0.95);
+}
+
+.chat-container-wrapper .cs-button--attachment:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Send Button - INTÉGRÉ dans la pilule, à droite */
+.chat-container-wrapper .cs-button--send {
+  width: var(--msg-space-xl); /* 20px */
+  height: var(--msg-space-xl); /* 20px */
+  border-radius: 0;
+  background-color: transparent;
+  color: #6B7280; /* Gris moyen par défaut - toujours visible */
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.chat-container-wrapper .cs-button--send svg {
+  width: var(--msg-space-xl); /* 20px */
+  height: var(--msg-space-xl); /* 20px */
+  stroke-width: 2;
+  display: block;
+}
+
+/* État actif quand il y a du texte */
+.chat-container-wrapper .cs-button--send.has-text {
+  color: #111111; /* Black - feedback visuel fort quand texte */
+}
+
+.chat-container-wrapper .cs-button--send:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+.chat-container-wrapper .cs-button--send:active {
+  transform: scale(0.95);
+}
+
+.chat-container-wrapper .cs-button--send:disabled {
+  color: #D1D5DB;
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+.chat-container-wrapper .cs-button--send:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark Mode Support - DISABLED FOR NOW */
+/* .dark .chat-container-wrapper {
+  background-color: var(--tailadmin-card-bg);
+}
+
+.dark .chat-container-wrapper .cs-conversation-header {
+  background-color: var(--tailadmin-card-bg);
+}
+
+.dark .chat-container-wrapper .cs-message-list {
+  background-color: var(--tailadmin-bg);
+}
+
+.dark .chat-container-wrapper .cs-message--incoming .cs-message__content {
+  background-color: var(--tailadmin-gray);
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .chat-container-wrapper .cs-message-input {
+  background-color: var(--tailadmin-card-bg);
+}
+
+.dark .chat-container-wrapper .cs-message-input__content-editor {
+  background-color: var(--tailadmin-input-bg);
+  border-color: var(--tailadmin-border-color);
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .chat-container-wrapper .cs-button--attachment {
+  border-color: var(--tailadmin-border-color);
+  color: var(--tailadmin-text-secondary);
+}
+
+.dark .chat-container-wrapper .cs-button--attachment:hover {
+  background-color: var(--tailadmin-gray);
+} */
+
+/* Loading indicator for older messages */
+.message-loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--msg-space-sm);
+  padding: var(--msg-space-md);
+  color: #9CA3AF;
+  font-size: 14px; /* Keep 14px for readability */
+}
+
+.message-loading-spinner {
+  width: var(--msg-space-lg); /* 16px */
+  height: var(--msg-space-lg); /* 16px */
+  border: 2px solid #E5E5E5;
+  border-top-color: #6B7280;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chat-container-wrapper .cs-conversation-header {
+    padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  }
+
+  .chat-container-wrapper .chat-messages-scroll {
+    padding: var(--msg-space-lg); /* 16px padding on mobile */
+  }
+
+  .chat-container-wrapper .cs-message-input {
+    padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  }
+
+  .chat-container-wrapper .cs-message__content-wrapper {
+    max-width: 75%; /* Slightly wider on mobile but still constrained */
+  }
+  
+  .chat-container-wrapper .cs-message__content {
+    padding: 8px 12px; /* Keep iMessage-style padding on mobile */
+  }
+}
+
+
+/* ============================================
+   NOTES TOGGLE BUTTON IN HEADER (Desktop)
+   ============================================ */
+
+/* Container for header actions (Notes button) */
+.chat-header-actions {
+  display: none; /* Hidden by default on mobile */
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .chat-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+/* Notes button in conversation header - desktop only */
+.chat-header-notes-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #F3F4F6;
+  border: none;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: background 150ms ease;
+  flex-shrink: 0;
+}
+
+.chat-header-notes-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.chat-header-notes-btn:hover {
+  background: #E5E7EB;
+}
+
+.chat-header-notes-btn:active {
+  background: #D1D5DB;
+}
+
+/* Active state when notes panel is visible */
+.chat-header-notes-btn--active {
+  background: #0F172A;
+  color: #FFFFFF;
+}
+
+.chat-header-notes-btn--active:hover {
+  background: #1E293B;
+}
+
+/* Position the actions in the header */
+.chat-container-wrapper {
+  position: relative; /* For absolute positioning of header actions */
+}
+
+.chat-container-wrapper .cs-conversation-header {
+  position: relative;
+}

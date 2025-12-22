@@ -24,8 +24,10 @@ class ApiClient {
 
       if (response.status === 401) {
         if (typeof window !== 'undefined') {
-          // Redirect to auth page - NextAuth will handle session cleanup
-          window.location.href = '/auth';
+          const callbackUrl = encodeURIComponent(
+            `${window.location.pathname}${window.location.search}`,
+          );
+          window.location.href = `/auth/login?error=session_expired&callbackUrl=${callbackUrl}`;
         }
         throw new Error('Unauthorized');
       }

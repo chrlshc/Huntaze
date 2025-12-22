@@ -8,6 +8,7 @@ import { useCachedFetch } from '@/lib/cache-manager';
 import { InlineQuickReply } from '@/components/mobile/micro-interactions';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { SmartReplySuggestions } from './smart-reply-suggestions';
 
 interface ConversationViewProps {
   conversationId: string;
@@ -135,6 +136,18 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Smart Reply Suggestions */}
+      {messages.length > 0 && messages[messages.length - 1]?.role === 'fan' && (
+        <div className="p-4">
+          <SmartReplySuggestions
+            fanMessage={messages[messages.length - 1]?.content?.text || ''}
+            onSelectReply={(reply) => setMessage(reply)}
+            userId={1} // TODO: Get from session
+            niche="lifestyle" // TODO: Get from user profile
+          />
+        </div>
+      )}
+
       {/* Quick Replies */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-2">
         <InlineQuickReply
@@ -160,7 +173,7 @@ export default function OfConversationView({ conversationId, onBack }: Conversat
               }
             }}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-[#2c6ecb] resize-none"
             rows={1}
           />
           

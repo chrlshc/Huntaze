@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { 
-  TrendingUp, 
   Users, 
   DollarSign, 
   Eye,
@@ -17,41 +16,23 @@ import {
   Info
 } from 'lucide-react';
 import { useDemoTracking } from '@/lib/analytics/demo-tracking';
-import { Button } from "@/components/ui/button";
 
 interface MetricCardProps {
   title: string;
   value: string;
   change: number;
   icon: React.ReactNode;
-  tooltip: string;
-  isHovered: boolean;
-  onHover: () => void;
-  onLeave: () => void;
 }
 
-function MetricCard({ title, value, change, icon, tooltip, isHovered, onHover, onLeave }: MetricCardProps) {
+function MetricCard({ title, value, change, icon }: MetricCardProps) {
   const isPositive = change >= 0;
   
   return (
     <div 
-      className="relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[var(--border-default)] hover:border-purple-500/50 transition-all duration-300 cursor-pointer group"
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      role="button"
-      tabIndex={0}
-      aria-label={`${title}: ${value}, ${isPositive ? 'up' : 'down'} ${Math.abs(change)}%`}
+      className="relative bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-[var(--border-default)]"
     >
-      {/* Tooltip */}
-      {isHovered && (
-        <Card className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap z-20 border border-purple-500/30">
-          {tooltip}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 border-r border-b border-purple-500/30" />
-        </Card>
-      )}
-      
       <div className="flex items-start justify-between mb-3">
-        <div className="p-2 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors">
+        <div className="p-2 bg-purple-500/10 rounded-lg">
           {icon}
         </div>
         <div className={`flex items-center gap-1 text-xs font-medium ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
@@ -72,26 +53,17 @@ interface ChartBarProps {
   height: number;
   label: string;
   value: string;
-  isActive: boolean;
-  onClick: () => void;
 }
 
-function ChartBar({ height, label, value, isActive, onClick }: ChartBarProps) {
+function ChartBar({ height, label }: ChartBarProps) {
   return (
     <div className="flex flex-col items-center gap-2 flex-1">
       <div className="relative w-full flex items-end justify-center h-32">
-        <Button 
-          variant="primary" 
-          onClick={onClick} 
+        <div
           style={{ height: `${height}%` }}
-          className="w-full bg-purple-500 hover:bg-purple-600 rounded-t-lg transition-all duration-300 cursor-pointer relative"
+          className="w-full bg-purple-500 rounded-t-lg"
         >
-          {isActive && (
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-500/30">
-              {value}
-            </div>
-          )}
-        </Button>
+        </div>
       </div>
       <span className="text-gray-400 text-xs">{label}</span>
     </div>
@@ -99,34 +71,16 @@ function ChartBar({ height, label, value, isActive, onClick }: ChartBarProps) {
 }
 
 export function InteractiveDashboardDemo() {
-  const [hoveredMetric, setHoveredMetric] = useState<string | null>(null);
-  const [activeBar, setActiveBar] = useState<string | null>(null);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [animateIn, setAnimateIn] = useState(false);
-  const { trackHover, trackClick, trackView, trackCTAShown, trackCTAClick } = useDemoTracking();
+  const { trackView, trackCTAShown, trackCTAClick } = useDemoTracking();
 
   useEffect(() => {
-    // Trigger animation after component mounts
-    const timer = setTimeout(() => setAnimateIn(true), 100);
-    
     // Track demo view
     trackView('dashboard_demo');
-    
-    return () => clearTimeout(timer);
   }, [trackView]);
 
   useEffect(() => {
-    // Track when CTA is shown
-    if (hasInteracted) {
-      trackCTAShown();
-    }
-  }, [hasInteracted, trackCTAShown]);
-
-  const handleInteraction = () => {
-    if (!hasInteracted) {
-      setHasInteracted(true);
-    }
-  };
+    trackCTAShown();
+  }, [trackCTAShown]);
 
   const metrics = [
     {
@@ -135,7 +89,6 @@ export function InteractiveDashboardDemo() {
       value: '24.5K',
       change: 12.5,
       icon: <Users className="w-5 h-5 text-purple-400" />,
-      tooltip: 'Followers across all platforms'
     },
     {
       id: 'engagement',
@@ -143,7 +96,6 @@ export function InteractiveDashboardDemo() {
       value: '8.2%',
       change: 3.1,
       icon: <Heart className="w-5 h-5 text-purple-400" />,
-      tooltip: 'Average engagement across posts'
     },
     {
       id: 'revenue',
@@ -151,7 +103,6 @@ export function InteractiveDashboardDemo() {
       value: '$3,240',
       change: 18.3,
       icon: <DollarSign className="w-5 h-5 text-purple-400" />,
-      tooltip: 'Revenue from all monetization sources'
     },
     {
       id: 'views',
@@ -159,7 +110,6 @@ export function InteractiveDashboardDemo() {
       value: '156K',
       change: -2.4,
       icon: <Eye className="w-5 h-5 text-purple-400" />,
-      tooltip: 'Views across all content'
     }
   ];
 
@@ -192,15 +142,13 @@ export function InteractiveDashboardDemo() {
           </p>
           <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-500">
             <Info className="w-4 h-4" />
-            <span>Hover over elements to explore features</span>
+            <span>Static preview of your dashboard layout</span>
           </div>
         </div>
 
         {/* Interactive Dashboard */}
         <div 
-          className={`relative rounded-2xl border border-[var(--border-default)] bg-white/5 p-6 backdrop-blur-sm shadow-2xl transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-          onMouseEnter={handleInteraction}
-          onClick={handleInteraction}
+          className="relative rounded-2xl border border-[var(--border-default)] bg-white/5 p-6 backdrop-blur-sm shadow-2xl"
         >
           {/* Purple glow shadow */}
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-violet-600/20 rounded-2xl blur-xl opacity-50" />
@@ -225,19 +173,12 @@ export function InteractiveDashboardDemo() {
                 <MetricCard
                   key={metric.id}
                   {...metric}
-                  isHovered={hoveredMetric === metric.id}
-                  onHover={() => {
-                    setHoveredMetric(metric.id);
-                    handleInteraction();
-                    trackHover(`metric_${metric.id}`);
-                  }}
-                  onLeave={() => setHoveredMetric(null)}
                 />
               ))}
             </div>
 
             {/* Chart Section */}
-            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[var(--border-default)]">
+            <Card disableHover className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[var(--border-default)]">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-purple-500/10 rounded-lg">
@@ -245,7 +186,7 @@ export function InteractiveDashboardDemo() {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold">Weekly Engagement</h4>
-                    <p className="text-gray-400 text-sm">Click bars to see details</p>
+                    <p className="text-gray-400 text-sm">Last 7 days</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -262,19 +203,13 @@ export function InteractiveDashboardDemo() {
                   <ChartBar
                     key={bar.label}
                     {...bar}
-                    isActive={activeBar === bar.label}
-                    onClick={() => {
-                      setActiveBar(activeBar === bar.label ? null : bar.label);
-                      handleInteraction();
-                      trackClick(`chart_bar_${bar.label}`);
-                    }}
                   />
                 ))}
               </div>
             </Card>
 
             {/* Recent Activity */}
-            <Card className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[var(--border-default)]">
+            <Card disableHover className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-[var(--border-default)]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-purple-500/10 rounded-lg">
                   <MessageSquare className="w-5 h-5 text-purple-400" />
@@ -290,13 +225,9 @@ export function InteractiveDashboardDemo() {
                 ].map((activity, index) => (
                   <div 
                     key={index}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
-                    onMouseEnter={() => {
-                      handleInteraction();
-                      trackHover(`activity_${activity.platform.toLowerCase()}`);
-                    }}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white/5"
                   >
-                    <div className="p-2 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors">
+                    <div className="p-2 bg-purple-500/10 rounded-lg">
                       {activity.icon}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -312,24 +243,22 @@ export function InteractiveDashboardDemo() {
         </div>
 
         {/* CTA - Shows after interaction */}
-        {hasInteracted && (
-          <div className="mt-8 text-center animate-fade-in">
-            <div className="inline-flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-r from-purple-600/10 to-violet-600/10 border border-purple-500/20">
-              <p className="text-white text-lg font-medium">
-                Ready to see your own data?
-              </p>
-              <a
-                href="/signup"
-                onClick={() => trackCTAClick()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-              >
-                Get Started Free
-                <ArrowUpRight className="w-4 h-4" />
-              </a>
-              <p className="text-gray-400 text-sm">No credit card required</p>
-            </div>
+        <div className="mt-8 text-center">
+          <div className="inline-flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-r from-purple-600/10 to-violet-600/10 border border-purple-500/20">
+            <p className="text-white text-lg font-medium">
+              Ready to see your own data?
+            </p>
+            <a
+              href="/signup"
+              onClick={() => trackCTAClick()}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2c6ecb] focus:ring-offset-2 focus:ring-offset-gray-900"
+            >
+              Get Started Free
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+            <p className="text-gray-400 text-sm">No credit card required</p>
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

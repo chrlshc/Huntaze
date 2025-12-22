@@ -49,6 +49,10 @@ interface StandardCTAProps {
    * Full width button
    */
   fullWidth?: boolean;
+  /**
+   * Disable hover effects and motion
+   */
+  disableHover?: boolean;
 }
 
 const sizeClasses: Record<CTASize, string> = {
@@ -64,6 +68,15 @@ const variantClasses: Record<CTAVariant, string> = {
     'bg-white/10 text-white border border-[var(--border-default)] hover:bg-white/20 hover:border-[var(--border-emphasis)] backdrop-blur-sm',
   outline:
     'bg-transparent text-purple-600 dark:text-purple-400 border-2 border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20',
+};
+
+const variantClassesStatic: Record<CTAVariant, string> = {
+  primary:
+    'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-[0_4px_14px_0_rgba(125,87,193,0.4)]',
+  secondary:
+    'bg-white/10 text-white border border-[var(--border-default)] backdrop-blur-sm',
+  outline:
+    'bg-transparent text-purple-600 dark:text-purple-400 border-2 border-purple-600 dark:border-purple-400',
 };
 
 /**
@@ -98,6 +111,7 @@ export function StandardCTA({
   ignoreAuth = false,
   icon,
   fullWidth = false,
+  disableHover = false,
 }: StandardCTAProps) {
   const { data: session, status } = useSession();
   const isAuthenticated = !ignoreAuth && status === 'authenticated';
@@ -110,9 +124,13 @@ export function StandardCTA({
   const finalHref = href || defaultHref;
 
   const baseClasses =
-    'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none no-underline focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none';
+    'inline-flex items-center justify-center font-semibold rounded-xl no-underline focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none';
+  const hoverClasses = disableHover
+    ? 'transition-none'
+    : 'transition-all duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none';
 
   const widthClass = fullWidth ? 'w-full' : '';
+  const variantClass = disableHover ? variantClassesStatic[variant] : variantClasses[variant];
 
   return (
     <div className={`flex flex-col items-center gap-2 ${fullWidth ? 'w-full' : ''}`}>
@@ -120,8 +138,9 @@ export function StandardCTA({
         href={finalHref}
         className={`
           ${baseClasses}
+          ${hoverClasses}
           ${sizeClasses[size]}
-          ${variantClasses[variant]}
+          ${variantClass}
           ${widthClass}
           ${className}
         `}

@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { internalHandlers } from "./handlers-internal";
 
 const json = (data: any, init?: ResponseInit) => HttpResponse.json(data as any, init);
 
@@ -75,6 +76,10 @@ handlers.push(
     HttpResponse.json({ data: { open_id: 'open_1', follower_count: 123, likes_count: 456, video_count: 7 } })
   ),
 )
+
+// Internal API mocks (only active when MSW worker/server is enabled)
+handlers.push(...internalHandlers);
+
 
 // Instagram Insights
 handlers.push(

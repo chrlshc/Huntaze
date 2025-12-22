@@ -2,9 +2,10 @@ import { defineConfig } from 'vitest/config';
 import path from 'path';
 import react from '@vitejs/plugin-react';
 import { config } from 'dotenv';
+import fs from 'fs';
 
 // Load .env.test for tests
-config({ path: '.env.test' });
+config({ path: fs.existsSync('.env.test') ? '.env.test' : '.env.test.example' });
 
 export default defineConfig(() => ({
   plugins: [react()],

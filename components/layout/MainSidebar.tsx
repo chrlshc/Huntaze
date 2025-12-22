@@ -24,21 +24,8 @@ const NAV_SECTIONS: NavSection[] = [
     id: 'main',
     label: 'Main',
     items: [
-      { id: 'dashboard', href: '/dashboard', label: 'Dashboard', icon: HomeIcon },
-      { id: 'content', href: '/content', label: 'Content', icon: PhotoIcon },
-    ],
-  },
-  {
-    id: 'analytics',
-    label: 'Analytics & Revenue',
-    items: [
       { id: 'analytics', href: '/analytics', label: 'Analytics', icon: ChartIcon },
-    ],
-  },
-  {
-    id: 'marketing',
-    label: 'Marketing & Social',
-    items: [
+      { id: 'content', href: '/content', label: 'Content', icon: PhotoIcon },
       { id: 'marketing', href: '/marketing', label: 'Marketing', icon: MegaphoneIcon },
     ],
   },
@@ -87,7 +74,7 @@ export function MainSidebar() {
         {/* Logo section */}
         <div className="px-6 py-6">
           <Link
-            href="/dashboard"
+            href="/home"
             onClick={handleNavClick}
             className="block text-xl font-semibold tracking-tight text-gray-900 dark:text-white"
           >
@@ -112,8 +99,8 @@ export function MainSidebar() {
                 {section.items.map((item) => {
                   const Icon = item.icon;
                   const isActive =
-                    pathname === item.href ||
-                    (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+                    pathname === item.href || pathname?.startsWith(item.href + '/');
+                  const isAnalytics = item.id === 'analytics';
 
                   return (
                     <Link
@@ -123,7 +110,9 @@ export function MainSidebar() {
                       className={[
                         'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150',
                         isActive
-                          ? 'bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900'
+                          ? 'bg-gray-900 text-white shadow-sm dark:bg-zinc-800 dark:text-zinc-50'
+                          : isAnalytics
+                          ? 'text-purple-700 hover:bg-purple-50 hover:text-purple-900 dark:text-purple-400 dark:hover:bg-purple-900/20 dark:hover:text-purple-300 font-semibold'
                           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
                       ].join(' ')}
                     >
@@ -149,7 +138,7 @@ export function MainSidebar() {
               className={[
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150',
                 pathname === '/settings'
-                  ? 'bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900'
+                  ? 'bg-gray-900 text-white shadow-sm dark:bg-zinc-800 dark:text-zinc-50'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
               ].join(' ')}
             >

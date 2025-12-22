@@ -1,0 +1,293 @@
+/* Shopify-style Content Area for PPV Create Page */
+
+/* Content wrapper - fond gris clair Shopify */
+.ppv-content-wrapper {
+  background: #f6f6f7;
+  /* Fit the dashboard main scroll container (avoid extra blank area from 100vh) */
+  min-height: 100%;
+  padding: 20px;
+}
+
+/* Main content card - blanc avec ombre */
+.ppv-form-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* Section spacing */
+.ppv-form-section {
+  margin-bottom: 24px;
+}
+
+.ppv-form-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Labels - au-dessus des inputs */
+.ppv-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #202223;
+  margin-bottom: 8px;
+  line-height: 16px;
+}
+
+/* Inputs - style Shopify */
+.ppv-form-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #202223;
+  background: #ffffff;
+  border: 1px solid #c9cccf;
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.ppv-form-input:focus {
+  outline: none;
+  border-color: #005bd3;
+  box-shadow: 0 0 0 1px #005bd3;
+}
+
+.ppv-form-input::placeholder {
+  color: #8c9196;
+}
+
+/* Textarea */
+.ppv-form-textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #202223;
+  background: #ffffff;
+  border: 1px solid #c9cccf;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 20px;
+}
+
+.ppv-form-textarea:focus {
+  outline: none;
+  border-color: #005bd3;
+  box-shadow: 0 0 0 1px #005bd3;
+}
+
+/* Section headers */
+.ppv-section-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #202223;
+  margin-bottom: 16px;
+  line-height: 20px;
+}
+
+/* Helper text */
+.ppv-helper-text {
+  font-size: 13px;
+  color: #6d7175;
+  margin-top: 8px;
+  line-height: 16px;
+}
+
+/* Media upload area */
+.ppv-media-upload {
+  border: 2px dashed #c9cccf;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #fafbfb;
+  transition: border-color 0.15s ease;
+}
+
+.ppv-media-upload:hover {
+  border-color: #8c9196;
+  background: #f6f6f7;
+}
+
+.ppv-media-upload-text {
+  font-size: 14px;
+  color: #202223;
+  margin-bottom: 8px;
+}
+
+.ppv-media-upload-subtext {
+  font-size: 13px;
+  color: #6d7175;
+}
+
+/* Buttons */
+.ppv-button-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ppv-button-primary {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #008060;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.ppv-button-primary:hover {
+  background: #006e52;
+}
+
+.ppv-button-secondary {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #202223;
+  background: #ffffff;
+  border: 1px solid #c9cccf;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ppv-button-secondary:hover {
+  background: #f6f6f7;
+  border-color: #8c9196;
+}
+
+/* Price input avec symbole */
+.ppv-price-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+}
+
+.ppv-price-symbol {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #6d7175;
+  pointer-events: none;
+}
+
+.ppv-price-input {
+  padding-left: 28px;
+}
+
+/* Select dropdown */
+.ppv-form-select {
+  width: 100%;
+  height: 36px;
+  padding: 0 32px 0 12px;
+  font-size: 14px;
+  color: #202223;
+  background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236d7175' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid #c9cccf;
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ppv-form-select:focus {
+  outline: none;
+  border-color: #005bd3;
+  box-shadow: 0 0 0 1px #005bd3;
+}
+
+/* Status badge */
+.ppv-status-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.ppv-status-badge.draft {
+  color: #6d7175;
+  background: #e4e5e7;
+}
+
+.ppv-status-badge.active {
+  color: #004c3f;
+  background: #aee9d1;
+}
+
+/* Divider */
+.ppv-divider {
+  height: 1px;
+  background: #e1e3e5;
+  margin: 20px 0;
+}
+
+/* Grid layout pour les champs */
+.ppv-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .ppv-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Checkbox/Toggle style Shopify */
+.ppv-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ppv-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #c9cccf;
+  border-radius: 4px;
+  cursor: pointer;
+  appearance: none;
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.ppv-checkbox:checked {
+  background: #008060;
+  border-color: #008060;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ppv-checkbox-label {
+  font-size: 14px;
+  color: #202223;
+  cursor: pointer;
+}
+
+/* Error state */
+.ppv-form-input.error,
+.ppv-form-textarea.error,
+.ppv-form-select.error {
+  border-color: #d72c0d;
+}
+
+.ppv-error-message {
+  font-size: 13px;
+  color: #d72c0d;
+  margin-top: 4px;
+}

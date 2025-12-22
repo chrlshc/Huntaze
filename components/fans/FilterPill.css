@@ -1,0 +1,145 @@
+/**
+ * FilterPill Component Styles
+ * 
+ * Implements the design specification for active filter indicators
+ * used on the Fans page to show which segment is currently selected.
+ * 
+ * Requirements: 7.2, 7.3
+ */
+
+.filter-pill {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--polish-space-sm);
+  padding: var(--polish-filter-pill-padding);
+  
+  /* Visual styling */
+  background: var(--polish-filter-pill-bg);
+  border: 1px solid var(--polish-filter-pill-border);
+  border-radius: var(--polish-filter-pill-radius);
+  
+  /* Typography */
+  font-size: var(--polish-text-secondary);
+  font-weight: 500;
+  color: var(--accent-primary);
+  
+  /* Interaction */
+  transition: var(--polish-hover-transition);
+}
+
+/* Hover state - subtle emphasis */
+.filter-pill:hover {
+  background: rgba(31, 41, 55, 0.15);
+  border-color: rgba(31, 41, 55, 0.4);
+}
+
+/* Label text */
+.filter-pill__label {
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* Remove button */
+.filter-pill__remove {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  
+  /* Visual styling */
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  
+  /* Typography */
+  color: var(--accent-primary);
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: var(--polish-hover-transition);
+  
+  /* Reset button styles */
+  font-family: inherit;
+}
+
+/* Remove button hover state */
+.filter-pill__remove:hover {
+  background: rgba(31, 41, 55, 0.2);
+  color: rgba(31, 41, 55, 1);
+}
+
+/* Remove button focus state - keyboard navigation accessibility */
+.filter-pill__remove:focus {
+  outline: var(--polish-focus-ring);
+  outline-offset: 2px;
+}
+
+.filter-pill__remove:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.filter-pill__remove:focus-visible {
+  outline: var(--polish-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Remove button active state */
+.filter-pill__remove:active {
+  transform: scale(0.95);
+  transition: var(--polish-click-transition);
+}
+
+/* X icon sizing */
+.filter-pill__icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Slightly smaller padding */
+@media (max-width: 767px) {
+  .filter-pill {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+  
+  .filter-pill__icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* ========================================
+   Accessibility - Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-pill,
+  .filter-pill__remove {
+    transition: none;
+  }
+  
+  .filter-pill__remove:active {
+    transform: none;
+  }
+}
+
+/* ========================================
+   Accessibility - High Contrast
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  .filter-pill {
+    border-width: 2px;
+  }
+  
+  .filter-pill__remove:focus-visible {
+    outline-width: 3px;
+  }
+}

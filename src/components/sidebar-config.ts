@@ -27,6 +27,8 @@ import {
   LayoutGrid,
   CreditCard,
   User,
+  Gift,
+  PlusCircle,
   type LucideIcon
 } from "lucide-react";
 
@@ -81,7 +83,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     id: "home",
     label: "Home",
     icon: Home,
-    href: "/dashboard"
+    href: "/home"
   },
   {
     id: "onlyfans",
@@ -109,24 +111,25 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     ]
   },
   {
-    id: "marketing",
-    label: "Marketing",
-    icon: Megaphone,
-    items: [
-      { label: "Campaigns", href: "/marketing/campaigns", icon: Target },
-      { label: "Social Planner", href: "/marketing/social", icon: Share2 },
-      { label: "Calendar", href: "/marketing/calendar", icon: Calendar }
-    ]
-  },
-  {
     id: "content",
     label: "Content",
     icon: Image,
     items: [
       { label: "Library", href: "/content", icon: LayoutGrid },
+      { label: "AI Generator", href: "/content/generator", icon: Zap, isNew: true },
       { label: "Editor", href: "/content/editor", icon: Palette },
       { label: "Templates", href: "/content/templates", icon: FileText },
       { label: "Schedule", href: "/content/schedule", icon: Clock }
+    ]
+  },
+  {
+    id: "marketing",
+    label: "Marketing",
+    icon: Megaphone,
+    items: [
+      { label: "Overview", href: "/marketing", icon: LayoutGrid },
+      { label: "Calendar", href: "/marketing/calendar", icon: Calendar },
+      { label: "Campaigns", href: "/marketing/campaigns", icon: Target }
     ]
   },
   {
@@ -138,6 +141,16 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
       { label: "Flows", href: "/automations/flows", icon: Zap },
       { label: "Templates", href: "/automations/templates", icon: FileText },
       { label: "Analytics", href: "/automations/analytics", icon: BarChart3 }
+    ]
+  },
+  {
+    id: "offers",
+    label: "Offers",
+    icon: Gift,
+    items: [
+      { label: "All Offers", href: "/offers", icon: LayoutGrid },
+      { label: "New Offer", href: "/offers/new", icon: PlusCircle },
+      { label: "Analytics", href: "/offers/analytics", icon: BarChart3 }
     ]
   },
   {

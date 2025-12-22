@@ -69,7 +69,7 @@ export function PricingCard({ tier }: PricingCardProps) {
         className={`block w-full rounded-lg px-6 py-3 text-center text-sm font-semibold transition-colors ${
           highlighted
             ? 'bg-purple-600 text-white hover:bg-purple-700'
-            : 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100'
+            : 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-700'
         }`}
       >
         {isBeta ? 'Request Access' : cta.text}

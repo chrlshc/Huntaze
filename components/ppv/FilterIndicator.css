@@ -1,0 +1,95 @@
+/**
+ * FilterIndicator Component Styles
+ * 
+ * Implements the design specification for the active filter dot indicator
+ * used on the PPV Content page to show when filters are active.
+ * 
+ * Requirements: 10.1, 10.5
+ */
+
+.filter-indicator {
+  /* Positioning - absolute to parent button */
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  
+  /* Size - 6px circle */
+  width: var(--polish-filter-dot-size);
+  height: var(--polish-filter-dot-size);
+  
+  /* Visual styling - violet dot */
+  background: var(--polish-filter-dot-color);
+  border: var(--polish-filter-dot-border);
+  border-radius: 50%;
+  
+  /* Ensure it's above button content */
+  z-index: 1;
+  
+  /* Pointer events - don't interfere with button clicks */
+  pointer-events: none;
+  
+  /* Accessibility - screen readers will announce via aria-label */
+  display: block;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Slightly adjusted positioning */
+@media (max-width: 767px) {
+  .filter-indicator {
+    top: 6px;
+    right: 6px;
+  }
+}
+
+/* ========================================
+   Accessibility - High Contrast
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  .filter-indicator {
+    border-width: 2px;
+    /* Ensure high visibility in high contrast mode */
+    background: var(--accent-primary);
+  }
+}
+
+/* ========================================
+   Dark Mode Adjustments
+   ======================================== */
+
+/* Ensure the indicator is visible on dark backgrounds */
+@media (prefers-color-scheme: dark) {
+  .filter-indicator {
+    /* Border helps separate from dark button backgrounds */
+    border-color: var(--bg-primary);
+  }
+}
+
+/* ========================================
+   Animation - Subtle entrance
+   ======================================== */
+
+@keyframes filter-indicator-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.filter-indicator {
+  animation: filter-indicator-appear 200ms ease-out;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .filter-indicator {
+    animation: none;
+  }
+}

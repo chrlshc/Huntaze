@@ -10,6 +10,9 @@
  * @see https://developers.tiktok.com/doc/content-posting-api-get-started
  */
 
+import { externalFetch } from '@/lib/services/external/http';
+import { ExternalServiceError } from '@/lib/services/external/errors';
+
 // TikTok Content Posting API endpoints
 const TIKTOK_API_BASE = 'https://open.tiktokapis.com';
 const INIT_UPLOAD_URL = `${TIKTOK_API_BASE}/v2/post/publish/inbox/video/init/`;
@@ -115,15 +118,22 @@ export class TikTokUploadService {
       body.source_info.video_url = videoUrl;
     }
 
-    // Make API request
-    const response = await fetch(INIT_UPLOAD_URL, {
+    const response = await externalFetch(INIT_UPLOAD_URL, {
+      service: 'tiktok',
+      operation: 'post.publish.inbox.init',
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
       cache: 'no-store',
+      timeoutMs: 20_000,
+      retry: {
+        // Non-idempotent: no automatic retries here.
+        maxRetries: 0,
+        retryMethods: [],
+      },
     });
 
     // Track rate limit
@@ -165,7 +175,9 @@ export class TikTokUploadService {
     const end = start + chunkSize - 1;
     const totalSize = totalChunks * chunkSize;
 
-    const response = await fetch(uploadUrl, {
+    await externalFetch(uploadUrl, {
+      service: 'tiktok',
+      operation: 'uploadChunk',
       method: 'PUT',
       headers: {
         'Content-Type': 'video/mp4',
@@ -174,12 +186,13 @@ export class TikTokUploadService {
       },
       body: chunk as any, // Buffer is compatible with BodyInit
       cache: 'no-store',
+      timeoutMs: 30_000,
+      retry: {
+        maxRetries: 1,
+        retryMethods: ['PUT'],
+      },
+      throwOnHttpError: true,
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Chunk upload failed: ${response.status} ${errorText}`);
-    }
   }
 
   /**
@@ -193,16 +206,23 @@ export class TikTokUploadService {
     // Check rate limit
     await this.checkRateLimit(accessToken);
 
-    const response = await fetch(QUERY_STATUS_URL, {
+    const response = await externalFetch(QUERY_STATUS_URL, {
+      service: 'tiktok',
+      operation: 'post.publish.status.fetch',
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         publish_id: publishId,
       }),
       cache: 'no-store',
+      timeoutMs: 15_000,
+      retry: {
+        maxRetries: 1,
+        retryMethods: ['POST'],
+      },
     });
 
     // Track rate limit
@@ -210,13 +230,13 @@ export class TikTokUploadService {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Status query failed: ${response.status} ${JSON.stringify(errorData)}`);
+      throw this.handleUploadError(response.status, errorData);
     }
 
     const data = await response.json();
 
     if (data.error?.code) {
-      throw new Error(`TikTok API error: ${data.error.code} - ${data.error.message}`);
+      throw this.handleUploadError(response.status, data);
     }
 
     if (!data.data?.status) {
@@ -277,31 +297,88 @@ export class TikTokUploadService {
   private handleUploadError(status: number, errorData: any): Error {
     const errorCode = errorData.error?.code || 'unknown_error';
     const errorMessage = errorData.error?.message || 'Unknown error';
+    const details = { status, errorCode, errorMessage };
 
     switch (errorCode) {
       case 'access_token_invalid':
-        return new Error('Access token is invalid or expired. Please reconnect your TikTok account.');
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'UNAUTHORIZED',
+          retryable: false,
+          status,
+          message: 'Access token is invalid or expired. Please reconnect your TikTok account.',
+          details,
+        });
       
       case 'scope_not_authorized':
-        return new Error('Missing required permissions. Please reconnect with video.upload scope.');
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'FORBIDDEN',
+          retryable: false,
+          status,
+          message: 'Missing required permissions. Please reconnect with video.upload scope.',
+          details,
+        });
       
       case 'url_ownership_unverified':
-        return new Error('Video URL ownership not verified. Please use a verified domain.');
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'BAD_REQUEST',
+          retryable: false,
+          status,
+          message: 'Video URL ownership not verified. Please use a verified domain.',
+          details,
+        });
       
       case 'rate_limit_exceeded':
-        return new Error('Rate limit exceeded. Maximum 6 requests per minute.');
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'RATE_LIMIT',
+          retryable: true,
+          status,
+          message: 'Rate limit exceeded. Maximum 6 requests per minute.',
+          details,
+        });
       
       case 'spam_risk_too_many_pending_share':
-        return new Error(`Too many pending uploads. Maximum ${MAX_PENDING_SHARES} pending uploads per 24 hours.`);
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'RATE_LIMIT',
+          retryable: false,
+          status,
+          message: `Too many pending uploads. Maximum ${MAX_PENDING_SHARES} pending uploads per 24 hours.`,
+          details,
+        });
       
       case 'invalid_param':
-        return new Error(`Invalid parameters: ${errorMessage}`);
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'BAD_REQUEST',
+          retryable: false,
+          status,
+          message: `Invalid parameters: ${errorMessage}`,
+          details,
+        });
       
       case 'server_error':
-        return new Error('TikTok server error. Please try again later.');
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: 'UPSTREAM_5XX',
+          retryable: true,
+          status,
+          message: 'TikTok server error. Please try again later.',
+          details,
+        });
       
       default:
-        return new Error(`TikTok API error (${errorCode}): ${errorMessage}`);
+        return new ExternalServiceError({
+          service: 'tiktok',
+          code: status === 429 ? 'RATE_LIMIT' : status >= 500 ? 'UPSTREAM_5XX' : 'UNKNOWN',
+          retryable: status === 429 || status >= 500,
+          status,
+          message: `TikTok API error (${errorCode}): ${errorMessage}`,
+          details,
+        });
     }
   }
 

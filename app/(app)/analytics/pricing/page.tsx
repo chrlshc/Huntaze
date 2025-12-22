@@ -1,276 +1,381 @@
 'use client';
 
 /**
- * Analytics Pricing Page
+ * Pricing Analytics Page - Huntaze Monochrome Style
  * 
- * Displays current vs recommended pricing with projected revenue impact.
- * Uses PageLayout for consistent structure.
- * 
- * Feature: dashboard-ux-overhaul
- * Requirements: 4.5, 3.6.1, 3.6.2
+ * Analyze pricing strategies and optimize revenue.
  */
 
-export const dynamic = 'force-dynamic';
-
-import { useState } from 'react';
-import { PageLayout } from '@/components/layout/PageLayout';
-import { usePricingRecommendations } from '@/hooks/revenue/usePricingRecommendations';
-import { PricingCard } from '@/components/revenue/pricing/PricingCard';
-import { PPVPricing } from '@/components/revenue/pricing/PPVPricing';
-import { LoadingState } from '@/components/revenue/shared/LoadingState';
-import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { useMemo, useState } from 'react';
+import Link from 'next/link';
+import useSWR from 'swr';
 import { 
   DollarSign, 
   TrendingUp, 
+  TrendingDown,
+  Users,
+  ArrowRight,
   BarChart3,
+  Target,
   Sparkles,
-  History,
-  ArrowRight
+  RefreshCw
 } from 'lucide-react';
+import '../analytics.css';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { useAuthSession } from '@/hooks/useAuthSession';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import type { PricingRecommendation } from '@/lib/services/revenue/types';
 
-export default function PricingPage() {
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+export default function PricingAnalyticsPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState('30d');
+  const { user, isLoading: sessionLoading } = useAuthSession();
 
-  // TODO: Get creatorId from session
-  const creatorId = 'creator_123';
+  const pricingKey = user?.id ? `/api/revenue/pricing?creatorId=${encodeURIComponent(user.id)}` : null;
+  const { data, error, isLoading, mutate } = useSWR<PricingRecommendation>(
+    pricingKey,
+    (url) => internalApiFetch<PricingRecommendation>(url),
+  );
 
-  const {
-    recommendations,
-    isLoading,
-    error,
-    applyPricing,
-    isApplying,
-  } = usePricingRecommendations({ creatorId });
+  const pricingTiers = useMemo(() => {
+    if (!data) return [];
+    const subscribers = data.metadata?.dataPoints ?? 0;
+    const currentRevenue = data.subscription.current * subscribers;
+    const recommendedRevenue = data.subscription.recommended * subscribers;
+    return [
+      {
+        name: 'Current',
+        price: data.subscription.current,
+        subscribers,
+        revenue: currentRevenue,
+        trend: 0,
+      },
+      {
+        name: 'Recommended',
+        price: data.subscription.recommended,
+        subscribers,
+        revenue: recommendedRevenue,
+        trend: data.subscription.revenueImpact,
+      },
+    ].filter((tier) => tier.price > 0);
+  }, [data]);
 
-  const handleApplyPricing = async (priceType: 'subscription' | 'ppv', newPrice: number) => {
-    try {
-      await applyPricing({
-        creatorId,
-        priceType,
-        newPrice,
+  const ppvPricing = useMemo(() => {
+    if (!data?.ppv?.length) return [];
+    return data.ppv.map((rec) => {
+      const avgPrice = (rec.recommendedRange.min + rec.recommendedRange.max) / 2;
+      const avgRevenue = (rec.expectedRevenue.min + rec.expectedRevenue.max) / 2;
+      return {
+        range: `$${rec.recommendedRange.min}-${rec.recommendedRange.max}`,
+        sales: 0,
+        avgPrice,
+        revenue: avgRevenue,
+      };
+    });
+  }, [data]);
+
+  const aiSuggestions = useMemo(() => {
+    if (!data) return [];
+    const suggestions = [
+      {
+        title: `Adjust subscription to $${data.subscription.recommended.toFixed(2)}`,
+        impact: `${data.subscription.revenueImpact}% impact`,
+        confidence: Math.round(data.subscription.confidence * 100),
+      },
+    ];
+    data.ppv.forEach((rec) => {
+      suggestions.push({
+        title: `Price ${rec.contentType} at $${rec.recommendedRange.min}-${rec.recommendedRange.max}`,
+        impact: `+$${rec.expectedRevenue.max.toLocaleString()}/mo`,
+        confidence: Math.round(data.subscription.confidence * 100),
       });
+    });
+    return suggestions;
+  }, [data]);
 
-      setToastMessage(`${priceType === 'subscription' ? 'Subscription' : 'PPV'} price updated successfully!`);
-      setToastType('success');
-      setShowToast(true);
-    } catch (err) {
-      setToastMessage('Failed to update pricing. Please try again.');
-      setToastType('error');
-      setShowToast(true);
-    }
-  };
+  const hasPricingData = Boolean(
+    data &&
+      ((data.subscription?.current ?? 0) > 0 ||
+        (data.subscription?.recommended ?? 0) > 0 ||
+        data.ppv?.length > 0),
+  );
 
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
-
-  if (isLoading) {
+  if (sessionLoading || isLoading) {
     return (
-      <PageLayout
-        title="Dynamic Pricing"
-        subtitle="Loading pricing recommendations..."
-        breadcrumbs={[
-          { label: 'Analytics', href: '/analytics' },
-          { label: 'Pricing' }
-        ]}
-      >
-        <div className="py-12">
-          <LoadingState variant="card" count={2} />
+      <div className="polaris-analytics">
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Pricing Analytics</h1>
+            <p className="page-meta">Optimize your pricing strategy</p>
+          </div>
         </div>
-      </PageLayout>
+        <div className="content-wrapper">
+          <EmptyState
+            variant="custom"
+            title="Loading pricing insights..."
+            description="Fetching the latest pricing recommendations."
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!sessionLoading && !isLoading && !hasPricingData && !error) {
+    return (
+      <div className="polaris-analytics">
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Pricing Analytics</h1>
+            <p className="page-meta">Optimize your pricing strategy</p>
+          </div>
+        </div>
+        <div className="content-wrapper">
+          <EmptyState
+            variant="no-data"
+            title="No pricing data yet"
+            description="Connect your revenue sources to see subscription and PPV pricing insights."
+            action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
+          />
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <PageLayout
-        title="Dynamic Pricing"
-        subtitle="AI-powered pricing recommendations to maximize your revenue"
-        breadcrumbs={[
-          { label: 'Analytics', href: '/analytics' },
-          { label: 'Pricing' }
-        ]}
-      >
-        <Card className="p-6 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
-          <h3 className="text-red-800 dark:text-red-200 font-semibold mb-2">Error Loading Pricing</h3>
-          <p className="text-red-600 dark:text-red-300 text-sm">
-            {error.message || 'Failed to load pricing recommendations. Please try again.'}
-          </p>
-        </Card>
-      </PageLayout>
+      <div className="polaris-analytics">
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Pricing Analytics</h1>
+            <p className="page-meta">Optimize your pricing strategy</p>
+          </div>
+        </div>
+        <div className="content-wrapper">
+          <EmptyState
+            variant="error"
+            title="Failed to load pricing data"
+            description="Please retry."
+            secondaryAction={{ label: 'Retry', onClick: () => void mutate(), icon: RefreshCw }}
+          />
+        </div>
+      </div>
     );
   }
 
+  const totalRevenue = pricingTiers.reduce((sum, t) => sum + t.revenue, 0);
+  const totalSubscribers = pricingTiers.reduce((sum, t) => sum + t.subscribers, 0);
+  const avgPrice = totalSubscribers > 0 ? totalRevenue / totalSubscribers : 0;
 
   return (
-    <ErrorBoundary>
-      <PageLayout
-        title="Dynamic Pricing"
-        subtitle="AI-powered pricing recommendations to maximize your revenue"
-        breadcrumbs={[
-          { label: 'Analytics', href: '/analytics' },
-          { label: 'Pricing' }
-        ]}
-      >
-        {/* Stats Overview */}
-        {recommendations && (
-          <section className="mb-8" data-testid="pricing-overview">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Current Subscription */}
-              <Card className="p-6" data-testid="pricing-current">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-[var(--color-text-sub)]">Current Subscription</span>
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <DollarSign className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                </div>
-                <div 
-                  className="text-2xl font-bold text-[var(--color-text-main)]" 
-                  data-testid="pricing-current-value"
-                >
-                  {formatCurrency(recommendations.subscription.current)}
-                </div>
-                <p className="text-sm text-[var(--color-text-sub)] mt-1">per month</p>
-              </Card>
+    <div className="polaris-analytics">
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Pricing Analytics</h1>
+          <p className="page-meta">Optimize your pricing strategy</p>
+        </div>
+        <div className="filter-pills">
+          {['7d', '30d', '90d'].map(period => (
+            <button
+              key={period}
+              className={`filter-pill ${selectedPeriod === period ? 'active' : ''}`}
+              onClick={() => setSelectedPeriod(period)}
+            >
+              {period}
+            </button>
+          ))}
+        </div>
+      </div>
 
-              {/* Recommended Price */}
-              <Card className="p-6" data-testid="pricing-recommended">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-[var(--color-text-sub)]">AI Recommended</span>
-                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                    <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  </div>
-                </div>
-                <div 
-                  className="text-2xl font-bold text-[var(--color-text-main)]" 
-                  data-testid="pricing-recommended-value"
-                >
-                  {formatCurrency(recommendations.subscription.recommended)}
-                </div>
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowRight className="h-3 w-3 text-green-600" />
-                  <span className="text-sm text-green-600">
-                    {recommendations.subscription.recommended > recommendations.subscription.current ? '+' : ''}
-                    {formatCurrency(recommendations.subscription.recommended - recommendations.subscription.current)}
-                  </span>
-                </div>
-              </Card>
-
-              {/* Potential Revenue Increase */}
-              <Card className="p-6" data-testid="pricing-impact">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-[var(--color-text-sub)]">Potential Revenue Increase</span>
-                  <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                    <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  </div>
-                </div>
-                <div 
-                  className="text-2xl font-bold text-green-600 dark:text-green-400" 
-                  data-testid="pricing-impact-value"
-                  data-impact-percent={recommendations.subscription.revenueImpact}
-                >
-                  +{recommendations.subscription.revenueImpact.toFixed(0)}%
-                </div>
-                <p className="text-sm text-[var(--color-text-sub)] mt-1">estimated monthly</p>
-              </Card>
+      <div className="content-wrapper">
+        {/* KPI Grid */}
+        <div className="kpi-grid">
+          <div className="kpi-card">
+            <div className="kpi-label">AVG SUBSCRIPTION</div>
+            <div className="kpi-value">${avgPrice.toFixed(2)}</div>
+            <div className="kpi-change positive">
+              <TrendingUp size={12} /> +5.2%
             </div>
-          </section>
-        )}
-
-        {/* AI Recommendation Banner */}
-        <section className="mb-6">
-          <Card className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-blue-200 dark:border-blue-800">
-            <div className="flex items-start gap-4">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-[var(--color-text-main)] mb-1">AI Pricing Analysis</h3>
-                <p className="text-sm text-[var(--color-text-sub)]">
-                  Our AI analyzes your audience demographics, engagement patterns, and market trends 
-                  to suggest optimal pricing that maximizes revenue while maintaining subscriber retention.
-                </p>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* Pricing Cards */}
-        <section className="mb-8" data-testid="pricing-cards">
-          <h2 className="text-lg font-semibold text-[var(--color-text-main)] mb-4">Pricing Recommendations</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Subscription Pricing */}
-            {recommendations?.subscription && (
-              <div data-testid="subscription-pricing-card">
-                <PricingCard
-                  currentPrice={recommendations.subscription.current}
-                  recommendedPrice={recommendations.subscription.recommended}
-                  revenueImpact={recommendations.subscription.revenueImpact}
-                  confidence={recommendations.subscription.confidence}
-                  reasoning={recommendations.subscription.reasoning}
-                  onApply={() => handleApplyPricing('subscription', recommendations.subscription.recommended)}
-                />
-              </div>
-            )}
-
-            {/* PPV Pricing */}
-            {recommendations?.ppv && (
-              <div data-testid="ppv-pricing-card">
-                <PPVPricing
-                  recommendations={recommendations.ppv}
-                  onApply={(newPrice) => handleApplyPricing('ppv', parseFloat(newPrice))}
-                />
-              </div>
-            )}
           </div>
-        </section>
-
-        {/* Price History */}
-        <section data-testid="pricing-history">
-          <Card className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <History className="h-5 w-5 text-[var(--color-text-sub)]" />
-              <h2 className="text-lg font-semibold text-[var(--color-text-main)]">Price Change History</h2>
+          <div className="kpi-card">
+            <div className="kpi-label">TOTAL SUBSCRIBERS</div>
+            <div className="kpi-value">{totalSubscribers.toLocaleString()}</div>
+            <div className="kpi-change positive">
+              <TrendingUp size={12} /> +18
             </div>
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <BarChart3 className="h-12 w-12 text-[var(--color-text-muted)] mb-4" />
-              <h3 className="text-lg font-semibold text-[var(--color-text-main)] mb-2">No price changes yet</h3>
-              <p className="text-[var(--color-text-sub)] max-w-md">
-                Your price change history will appear here once you apply recommendations.
-              </p>
+          </div>
+          <div className="kpi-card">
+            <div className="kpi-label">MRR</div>
+            <div className="kpi-value">${totalRevenue.toLocaleString()}</div>
+            <div className="kpi-change positive">
+              <TrendingUp size={12} /> +8.4%
             </div>
-          </Card>
-        </section>
+          </div>
+          <div className="kpi-card">
+            <div className="kpi-label">AVG PPV PRICE</div>
+            <div className="kpi-value">$24.50</div>
+            <div className="kpi-change negative">
+              <TrendingDown size={12} /> -2.1%
+            </div>
+          </div>
+        </div>
 
-        {/* Toast Notification */}
-        {showToast && (
-          <div className="fixed bottom-4 right-4 z-50">
-            <div className={`rounded-lg p-4 shadow-lg ${
-              toastType === 'success' ? 'bg-green-600' : 'bg-red-600'
-            } text-white`}>
-              <div className="flex items-center gap-3">
-                <span>{toastMessage}</span>
-                <button 
-                  onClick={() => setShowToast(false)}
-                  className="text-white hover:text-gray-200 font-bold"
-                >
-                  ×
-                </button>
+        {/* Subscription Tiers */}
+        <div className="p-card">
+          <div className="p-card-header">
+            <h2 className="p-card-title">Subscription Tiers</h2>
+          </div>
+          <div className="p-card-body no-padding">
+            <div className="breakdown-list">
+              {pricingTiers.map(tier => (
+                <div key={tier.name} className="breakdown-item">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      borderRadius: '8px', 
+                      background: '#f3f4f6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <DollarSign size={16} style={{ color: '#6b7280' }} />
+                    </div>
+                    <div>
+                      <div className="breakdown-value">{tier.name}</div>
+                      <div className="breakdown-label">${tier.price}/mo · {tier.subscribers} subs</div>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div className="breakdown-value">${tier.revenue.toLocaleString()}</div>
+                    <div className={`kpi-change ${tier.trend >= 0 ? 'positive' : 'negative'}`}>
+                      {tier.trend >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                      {tier.trend >= 0 ? '+' : ''}{tier.trend}%
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="chart-section">
+          {/* PPV Pricing */}
+          <div className="p-card">
+            <div className="p-card-header">
+              <h2 className="p-card-title">PPV Price Distribution</h2>
+            </div>
+            <div className="p-card-body no-padding">
+              <div className="breakdown-list">
+                {ppvPricing.map(range => (
+                  <div key={range.range} className="breakdown-item">
+                    <div>
+                      <div className="breakdown-value">{range.range}</div>
+                      <div className="breakdown-label">{range.sales} sales · avg ${range.avgPrice}</div>
+                    </div>
+                    <div className="breakdown-value">${range.revenue.toLocaleString()}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        )}
-      </PageLayout>
-    </ErrorBoundary>
+
+          {/* AI Suggestions */}
+          <div className="p-card">
+            <div className="p-card-header">
+              <h2 className="p-card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={16} /> AI Pricing Suggestions
+              </h2>
+            </div>
+            <div className="p-card-body no-padding">
+              <div className="breakdown-list">
+                {aiSuggestions.map((suggestion, i) => (
+                  <div key={i} className="breakdown-item" style={{ cursor: 'pointer' }}>
+                    <div>
+                      <div className="breakdown-value">{suggestion.title}</div>
+                      <div className="breakdown-label">{suggestion.confidence}% confidence</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ 
+                        fontFamily: 'SF Mono, monospace',
+                        fontWeight: 600,
+                        color: '#111'
+                      }}>
+                        {suggestion.impact}
+                      </span>
+                      <ArrowRight size={14} style={{ color: '#9ca3af' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="p-card">
+          <div className="p-card-header">
+            <h2 className="p-card-title">Quick Actions</h2>
+          </div>
+          <div className="p-card-body">
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <Link 
+                href="/offers/new"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  background: '#111',
+                  color: '#fff',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  textDecoration: 'none'
+                }}
+              >
+                <Target size={16} /> Create Offer
+              </Link>
+              <Link 
+                href="/analytics/revenue"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  background: '#f3f4f6',
+                  color: '#374151',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  border: '1px solid #e5e7eb'
+                }}
+              >
+                <BarChart3 size={16} /> Revenue Details
+              </Link>
+              <Link 
+                href="/onlyfans/fans"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  background: '#f3f4f6',
+                  color: '#374151',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  border: '1px solid #e5e7eb'
+                }}
+              >
+                <Users size={16} /> View Fans
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

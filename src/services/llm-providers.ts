@@ -75,33 +75,49 @@ export class ClaudeProvider implements LLMProvider {
     const userPrompt = this.buildUserPrompt(params);
 
     try {
-      const response = await fetch(this.apiUrl, {
+      const data = await externalFetchJson<{ content?: Array<{ text?: string }> }>(this.apiUrl, {
+        service: 'anthropic',
+        operation: 'messages.create',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
           model: 'claude-3-5-sonnet-20241022',
           max_tokens: 300,
           temperature: 0.7,
           system: systemPrompt,
-          messages: [{
-            role: 'user',
-            content: userPrompt
-          }]
-        })
+          messages: [
+            {
+              role: 'user',
+              content: userPrompt,
+            },
+          ],
+        }),
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['POST'] },
       });
 
-      if (!response.ok) {
-        throw new Error(`Claude API error: ${response.status}`);
+      const text = data?.content?.[0]?.text;
+      if (!text) {
+        throw new ExternalServiceError({
+          service: 'anthropic',
+          code: 'INVALID_RESPONSE',
+          retryable: false,
+          message: 'Anthropic response missing content',
+        });
       }
 
-      const data = await response.json();
-      return this.parseClaudeResponse(data.content[0].text, params);
+      return this.parseClaudeResponse(text, params);
     } catch (error) {
-      console.error('Claude API error:', error);
+      if (isExternalServiceError(error)) {
+        console.error('Claude API error:', error.code, error.message);
+      } else {
+        console.error('Claude API error:', error);
+      }
       return this.fallbackResponse(params);
     }
   }
@@ -281,3 +297,5 @@ export function getLLMProvider(providerName?: string): LLMProvider {
       return new ClaudeProvider(apiKey);
   }
 }
+import { externalFetchJson } from '@/lib/services/external/http';
+import { ExternalServiceError, isExternalServiceError } from '@/lib/services/external/errors';

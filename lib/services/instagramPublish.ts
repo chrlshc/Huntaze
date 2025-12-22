@@ -9,6 +9,9 @@
  * @see https://developers.facebook.com/docs/instagram-api/guides/content-publishing
  */
 
+import { externalFetch } from '@/lib/services/external/http';
+import { ExternalServiceError, mapHttpStatusToExternalCode } from '@/lib/services/external/errors';
+
 const FACEBOOK_GRAPH_URL = 'https://graph.facebook.com/v18.0';
 
 export type MediaType = 'IMAGE' | 'VIDEO' | 'CAROUSEL';
@@ -60,6 +63,28 @@ export interface CreateCarouselParams {
  * Instagram Publish Service
  */
 export class InstagramPublishService {
+  private buildInstagramApiError(operation: string, status: number, data: any): ExternalServiceError {
+    const { code, retryable } = mapHttpStatusToExternalCode(status);
+    const message =
+      data?.error?.message ||
+      data?.error_message ||
+      `Instagram API error (${status})`;
+
+    return new ExternalServiceError({
+      service: 'instagram',
+      code,
+      retryable,
+      status,
+      message,
+      details: {
+        operation,
+        errorType: data?.error?.type,
+        errorCode: data?.error?.code,
+        fbTraceId: data?.error?.fbtrace_id,
+      },
+    });
+  }
+
   /**
    * Create a single media container (photo or video)
    * 
@@ -79,64 +104,53 @@ export class InstagramPublishService {
       isCarouselItem = false,
     } = params;
 
-    try {
-      // Build request body
-      const body: Record<string, string> = {
-        access_token: accessToken,
-      };
+    // Build request body
+    const body: Record<string, string> = {
+      access_token: accessToken,
+    };
 
-      if (mediaType === 'IMAGE') {
-        body.image_url = mediaUrl;
-        if (!isCarouselItem && caption) {
-          body.caption = caption;
-        }
-      } else if (mediaType === 'VIDEO') {
-        body.media_type = 'VIDEO';
-        body.video_url = mediaUrl;
-        if (coverUrl) {
-          body.thumb_offset = '0'; // Can be customized
-        }
-        if (!isCarouselItem && caption) {
-          body.caption = caption;
-        }
+    if (mediaType === 'IMAGE') {
+      body.image_url = mediaUrl;
+      if (!isCarouselItem && caption) {
+        body.caption = caption;
       }
-
-      if (locationId && !isCarouselItem) {
-        body.location_id = locationId;
+    } else if (mediaType === 'VIDEO') {
+      body.media_type = 'VIDEO';
+      body.video_url = mediaUrl;
+      if (coverUrl) {
+        body.thumb_offset = '0'; // Can be customized
       }
-
-      if (isCarouselItem) {
-        body.is_carousel_item = 'true';
+      if (!isCarouselItem && caption) {
+        body.caption = caption;
       }
-
-      // Create container
-      const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${igUserId}/media`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-          cache: 'no-store',
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(
-          data.error?.message || `Container creation failed: ${response.status}`
-        );
-      }
-
-      return { id: data.id };
-    } catch (error) {
-      console.error('Instagram create container error:', error);
-      throw new Error(
-        `Failed to create container: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
     }
+
+    if (locationId && !isCarouselItem) {
+      body.location_id = locationId;
+    }
+
+    if (isCarouselItem) {
+      body.is_carousel_item = 'true';
+    }
+
+    const response = await externalFetch(`${FACEBOOK_GRAPH_URL}/${igUserId}/media`, {
+      service: 'instagram',
+      operation: 'createContainer',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+      timeoutMs: 20_000,
+      retry: { maxRetries: 0, retryMethods: [] },
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error) {
+      throw this.buildInstagramApiError('createContainer', response.status, data);
+    }
+
+    return { id: data.id };
   }
 
   /**
@@ -149,64 +163,54 @@ export class InstagramPublishService {
   async createCarousel(params: CreateCarouselParams): Promise<CreateContainerResponse> {
     const { igUserId, accessToken, children, caption, locationId } = params;
 
-    try {
-      // Step 1: Create containers for each child item
-      const childContainerIds: string[] = [];
+    // Step 1: Create containers for each child item
+    const childContainerIds: string[] = [];
 
-      for (const child of children) {
-        const childContainer = await this.createContainer({
-          igUserId,
-          accessToken,
-          mediaType: child.mediaType,
-          mediaUrl: child.mediaUrl,
-          coverUrl: child.coverUrl,
-          isCarouselItem: true,
-        });
-        childContainerIds.push(childContainer.id);
-      }
-
-      // Step 2: Create carousel container with children
-      const body: Record<string, string> = {
-        media_type: 'CAROUSEL',
-        children: childContainerIds.join(','),
-        access_token: accessToken,
-      };
-
-      if (caption) {
-        body.caption = caption;
-      }
-
-      if (locationId) {
-        body.location_id = locationId;
-      }
-
-      const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${igUserId}/media`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-          cache: 'no-store',
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(
-          data.error?.message || `Carousel creation failed: ${response.status}`
-        );
-      }
-
-      return { id: data.id };
-    } catch (error) {
-      console.error('Instagram create carousel error:', error);
-      throw new Error(
-        `Failed to create carousel: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    for (const child of children) {
+      const childContainer = await this.createContainer({
+        igUserId,
+        accessToken,
+        mediaType: child.mediaType,
+        mediaUrl: child.mediaUrl,
+        coverUrl: child.coverUrl,
+        isCarouselItem: true,
+      });
+      childContainerIds.push(childContainer.id);
     }
+
+    // Step 2: Create carousel container with children
+    const body: Record<string, string> = {
+      media_type: 'CAROUSEL',
+      children: childContainerIds.join(','),
+      access_token: accessToken,
+    };
+
+    if (caption) {
+      body.caption = caption;
+    }
+
+    if (locationId) {
+      body.location_id = locationId;
+    }
+
+    const response = await externalFetch(`${FACEBOOK_GRAPH_URL}/${igUserId}/media`, {
+      service: 'instagram',
+      operation: 'createCarousel',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+      timeoutMs: 20_000,
+      retry: { maxRetries: 0, retryMethods: [] },
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error) {
+      throw this.buildInstagramApiError('createCarousel', response.status, data);
+    }
+
+    return { id: data.id };
   }
 
   /**
@@ -221,30 +225,28 @@ export class InstagramPublishService {
     containerId: string,
     accessToken: string
   ): Promise<ContainerStatusResponse> {
-    try {
-      const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${containerId}?fields=status_code&access_token=${accessToken}`,
-        { cache: 'no-store' }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(
-          data.error?.message || `Status check failed: ${response.status}`
-        );
+    const response = await externalFetch(
+      `${FACEBOOK_GRAPH_URL}/${containerId}?fields=status_code&access_token=${accessToken}`,
+      {
+        service: 'instagram',
+        operation: 'getContainerStatus',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 15_000,
+        retry: { maxRetries: 2, retryMethods: ['GET'] },
       }
+    );
 
-      return {
-        status_code: data.status_code as ContainerStatus,
-        error_message: data.error_message,
-      };
-    } catch (error) {
-      console.error('Instagram get container status error:', error);
-      throw new Error(
-        `Failed to get container status: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error) {
+      throw this.buildInstagramApiError('getContainerStatus', response.status, data);
     }
+
+    return {
+      status_code: data.status_code as ContainerStatus,
+      error_message: data.error_message,
+    };
   }
 
   /**
@@ -292,40 +294,34 @@ export class InstagramPublishService {
    */
   async publishContainer(params: PublishContainerParams): Promise<PublishContainerResponse> {
     const { igUserId, containerId, accessToken } = params;
+    const body = {
+      creation_id: containerId,
+      access_token: accessToken,
+    };
 
-    try {
-      const body = {
-        creation_id: containerId,
-        access_token: accessToken,
-      };
-
-      const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${igUserId}/media_publish`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-          cache: 'no-store',
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(
-          data.error?.message || `Publish failed: ${response.status}`
-        );
+    const response = await externalFetch(
+      `${FACEBOOK_GRAPH_URL}/${igUserId}/media_publish`,
+      {
+        service: 'instagram',
+        operation: 'publishContainer',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        cache: 'no-store',
+        timeoutMs: 20_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       }
+    );
 
-      return { id: data.id };
-    } catch (error) {
-      console.error('Instagram publish container error:', error);
-      throw new Error(
-        `Failed to publish container: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error) {
+      throw this.buildInstagramApiError('publishContainer', response.status, data);
     }
+
+    return { id: data.id };
   }
 
   /**
@@ -336,27 +332,18 @@ export class InstagramPublishService {
    * @throws Error if any step fails
    */
   async publishMedia(params: CreateContainerParams): Promise<PublishContainerResponse> {
-    try {
-      // Step 1: Create container
-      const container = await this.createContainer(params);
+    // Step 1: Create container
+    const container = await this.createContainer(params);
 
-      // Step 2: Poll until finished
-      await this.pollContainerStatus(container.id, params.accessToken);
+    // Step 2: Poll until finished
+    await this.pollContainerStatus(container.id, params.accessToken);
 
-      // Step 3: Publish
-      const published = await this.publishContainer({
-        igUserId: params.igUserId,
-        containerId: container.id,
-        accessToken: params.accessToken,
-      });
-
-      return published;
-    } catch (error) {
-      console.error('Instagram publish media error:', error);
-      throw new Error(
-        `Failed to publish media: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    // Step 3: Publish
+    return this.publishContainer({
+      igUserId: params.igUserId,
+      containerId: container.id,
+      accessToken: params.accessToken,
+    });
   }
 
   /**
@@ -367,27 +354,18 @@ export class InstagramPublishService {
    * @throws Error if any step fails
    */
   async publishCarousel(params: CreateCarouselParams): Promise<PublishContainerResponse> {
-    try {
-      // Step 1: Create carousel container
-      const container = await this.createCarousel(params);
+    // Step 1: Create carousel container
+    const container = await this.createCarousel(params);
 
-      // Step 2: Poll until finished
-      await this.pollContainerStatus(container.id, params.accessToken);
+    // Step 2: Poll until finished
+    await this.pollContainerStatus(container.id, params.accessToken);
 
-      // Step 3: Publish
-      const published = await this.publishContainer({
-        igUserId: params.igUserId,
-        containerId: container.id,
-        accessToken: params.accessToken,
-      });
-
-      return published;
-    } catch (error) {
-      console.error('Instagram publish carousel error:', error);
-      throw new Error(
-        `Failed to publish carousel: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
+    // Step 3: Publish
+    return this.publishContainer({
+      igUserId: params.igUserId,
+      containerId: container.id,
+      accessToken: params.accessToken,
+    });
   }
 
   /**
@@ -408,27 +386,25 @@ export class InstagramPublishService {
     timestamp: string;
     caption?: string;
   }> {
-    try {
-      const response = await fetch(
-        `${FACEBOOK_GRAPH_URL}/${mediaId}?fields=id,media_type,media_url,permalink,timestamp,caption&access_token=${accessToken}`,
-        { cache: 'no-store' }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || data.error) {
-        throw new Error(
-          data.error?.message || `Failed to get media details: ${response.status}`
-        );
+    const response = await externalFetch(
+      `${FACEBOOK_GRAPH_URL}/${mediaId}?fields=id,media_type,media_url,permalink,timestamp,caption&access_token=${accessToken}`,
+      {
+        service: 'instagram',
+        operation: 'getMediaDetails',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 15_000,
+        retry: { maxRetries: 2, retryMethods: ['GET'] },
       }
+    );
 
-      return data;
-    } catch (error) {
-      console.error('Instagram get media details error:', error);
-      throw new Error(
-        `Failed to get media details: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error) {
+      throw this.buildInstagramApiError('getMediaDetails', response.status, data);
     }
+
+    return data;
   }
 }
 

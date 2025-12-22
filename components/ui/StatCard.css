@@ -1,0 +1,177 @@
+/**
+ * StatCard Component Styles
+ * 
+ * Implements the design specification for stat cards used across
+ * Smart Messages, Fans, and PPV Content dashboard views.
+ */
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--dashboard-card-padding);
+  background: var(--dashboard-card-bg);
+  border: 1px solid var(--dashboard-card-border);
+  border-radius: var(--dashboard-card-radius);
+  transition: var(--polish-hover-transition, transform 200ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1), border-color 200ms cubic-bezier(0.4, 0, 0.2, 1));
+  cursor: pointer;
+  /* Performance: Optimize hover animations with will-change */
+  will-change: transform, box-shadow;
+}
+
+/* Remove will-change when not hovering to free GPU resources */
+.stat-card:not(:hover):not(:focus-visible) {
+  will-change: auto;
+}
+
+.stat-card:hover {
+  border-color: var(--dashboard-card-hover-border);
+  box-shadow: var(--polish-hover-shadow, 0 4px 12px rgba(0, 0, 0, 0.15));
+  transform: translateY(var(--polish-hover-translate, -1px));
+}
+
+/* Keyboard focus indicator - saturated border for accessibility */
+.stat-card:focus {
+  outline: var(--polish-focus-ring, 2px solid rgba(44, 110, 203, 0.5));
+  outline-offset: var(--polish-focus-offset, 2px);
+  border-color: rgba(44, 110, 203, 0.8);
+}
+
+.stat-card:focus:not(:focus-visible) {
+  outline: none;
+  border-color: var(--dashboard-card-border);
+}
+
+.stat-card:focus-visible {
+  outline: var(--polish-focus-ring, 2px solid rgba(44, 110, 203, 0.5));
+  outline-offset: var(--polish-focus-offset, 2px);
+  border-color: rgba(44, 110, 203, 0.8);
+}
+
+/* Click state - tactile feedback */
+.stat-card:active {
+  transform: scale(var(--polish-click-scale, 0.99));
+  transition: var(--polish-click-transition, transform 100ms ease);
+}
+
+/* Icon container */
+.stat-card__icon {
+  width: var(--dashboard-icon-container-size);
+  height: var(--dashboard-icon-container-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dashboard-icon-container-bg);
+  color: var(--dashboard-icon-container-color);
+  margin-bottom: var(--dashboard-gap-sm);
+  flex-shrink: 0;
+}
+
+.stat-card__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Label styling */
+.stat-card__label {
+  font-size: var(--dashboard-label-size);
+  text-transform: uppercase;
+  letter-spacing: var(--dashboard-label-spacing);
+  color: var(--dashboard-label-color);
+  font-weight: var(--dashboard-label-weight);
+  line-height: 1.2;
+}
+
+/* Value styling */
+.stat-card__value {
+  font-size: var(--dashboard-value-size);
+  font-weight: var(--dashboard-value-weight);
+  color: var(--dashboard-value-color);
+  line-height: 1.2;
+}
+
+/* Delta/trend indicator - inline with value, no background */
+.stat-card__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.stat-card__delta--up {
+  color: var(--dashboard-delta-positive, #047857);
+}
+
+.stat-card__delta--down {
+  color: var(--dashboard-delta-negative, #dc2626);
+}
+
+.stat-card__delta--neutral {
+  color: var(--dashboard-label-color);
+}
+
+.stat-card__delta-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Variant styling */
+.stat-card--warning .stat-card__icon {
+  background: var(--dashboard-warning-bg);
+  color: var(--dashboard-warning-text);
+}
+
+.stat-card--error .stat-card__icon {
+  background: var(--dashboard-error-bg);
+  color: var(--dashboard-error-text);
+}
+
+.stat-card--success .stat-card__icon {
+  background: var(--dashboard-success-bg);
+  color: var(--dashboard-success-text);
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Full width, reduced padding */
+@media (max-width: 767px) {
+  .stat-card {
+    width: 100%;
+    padding: 8px 10px;
+  }
+  
+  .stat-card__icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+  
+  .stat-card__icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .stat-card__value {
+    font-size: 18px;
+  }
+}
+
+/* Tablet (768px-1024px) - 2-column grid handled by parent */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .stat-card {
+    /* Inherits from parent grid */
+  }
+}
+
+/* Desktop (>1024px) - Flexible row layout handled by parent */
+@media (min-width: 1024px) {
+  .stat-card {
+    /* Inherits from parent grid */
+  }
+}

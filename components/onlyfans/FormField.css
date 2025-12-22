@@ -1,0 +1,118 @@
+/**
+ * FormField Styles
+ * Feature: onlyfans-settings-saas-transformation
+ * Property 7: Form Label Positioning
+ * Property 8: Validation Message Presence
+ */
+
+.of-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* 4px spacing between elements */
+  margin-bottom: 16px;
+}
+
+/* Label */
+.of-form-field__label {
+  font-size: var(--of-text-body); /* 14px */
+  font-weight: var(--of-font-semibold); /* 600 */
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Required Indicator */
+.of-form-field__required {
+  color: #EF4444;
+  font-weight: 600;
+}
+
+/* Input Container */
+.of-form-field__input {
+  /* Input element inherits styling from child */
+}
+
+/* Helper Text */
+.of-form-field__helper {
+  font-size: 12px;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Error Message */
+.of-form-field__error {
+  font-size: 12px;
+  color: #EF4444;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Error State */
+.of-form-field--error .of-form-field__label {
+  color: #EF4444;
+}
+
+/* Input styling (applied to children) */
+.of-form-field input,
+.of-form-field textarea,
+.of-form-field select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--of-radius-input); /* 8px */
+  border: 1px solid var(--of-border-color);
+  background: var(--of-input-bg); /* #F3F4F6 */
+  font-size: var(--of-text-body); /* 14px */
+  color: #1a1a1a;
+  transition: all 0.2s ease;
+}
+
+.of-form-field input:focus,
+.of-form-field textarea:focus,
+.of-form-field select:focus {
+  outline: none;
+  border-color: var(--of-input-focus-border); /* #4F46E5 */
+  box-shadow: var(--of-input-focus-shadow);
+  background: #FFFFFF;
+}
+
+/* Error state for inputs */
+.of-form-field--error input,
+.of-form-field--error textarea,
+.of-form-field--error select {
+  border-color: #EF4444;
+  border-width: 1.5px;
+}
+
+.of-form-field--error input:focus,
+.of-form-field--error textarea:focus,
+.of-form-field--error select:focus {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+}
+
+/* Disabled state */
+.of-form-field input:disabled,
+.of-form-field textarea:disabled,
+.of-form-field select:disabled {
+  background: #F3F4F6;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Textarea specific */
+.of-form-field textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .of-form-field {
+    margin-bottom: 12px;
+  }
+}

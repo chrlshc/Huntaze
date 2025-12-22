@@ -50,6 +50,7 @@ export function HomeCTA({
               microcopy={ctaMicrocopy}
               size="lg"
               variant="primary"
+              disableHover
             />
           </div>
         
@@ -57,19 +58,19 @@ export function HomeCTA({
           <div className="flex flex-wrap items-center justify-center gap-8 text-base">
             <Link
               href={featuresLink}
-              className="text-gray-400 hover:text-white transition-colors no-underline focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none rounded px-2 py-1"
+              className="text-gray-400 no-underline focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none rounded px-2 py-1"
             >
               Explore Features →
             </Link>
             <Link
               href={pricingLink}
-              className="text-gray-400 hover:text-white transition-colors no-underline focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none rounded px-2 py-1"
+              className="text-gray-400 no-underline focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none rounded px-2 py-1"
             >
               View Pricing →
             </Link>
             <Link
               href={aboutLink}
-              className="text-gray-400 hover:text-white transition-colors no-underline focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none rounded px-2 py-1"
+              className="text-gray-400 no-underline focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] focus:outline-none rounded px-2 py-1"
             >
               About Us →
             </Link>

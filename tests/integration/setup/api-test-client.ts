@@ -147,6 +147,26 @@ export async function mockFetch(url: string, init?: RequestInit): Promise<Respon
           { status: 405 }
         );
       }
+    } else if (pathname === '/api/marketing-war-room/state') {
+      if (request.method === 'GET') {
+        const { GET } = await import('@/app/api/marketing-war-room/state/route');
+        response = await GET();
+      } else {
+        response = NextResponse.json(
+          { error: 'Method Not Allowed' },
+          { status: 405 }
+        );
+      }
+    } else if (pathname === '/api/onlyfans/fans') {
+      if (request.method === 'GET') {
+        const { GET } = await import('@/app/api/onlyfans/fans/route');
+        response = await GET(request);
+      } else {
+        response = NextResponse.json(
+          { error: 'Method Not Allowed' },
+          { status: 405 }
+        );
+      }
     } else {
       // Return 404 for unknown routes
       response = NextResponse.json(

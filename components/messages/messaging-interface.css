@@ -1,0 +1,785 @@
+/**
+ * Messaging Interface Layout Styles
+ * 
+ * Three-column responsive grid system:
+ * - Desktop: 25% / 45-50% / 25-30%
+ * - Tablet: Two columns (adaptive)
+ * - Mobile: Single column with navigation
+ * 
+ * Palette calme: 60% neutres, 30% surfaces, 10% accent
+ */
+
+.messaging-interface {
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 64px); /* Ensure minimum height */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--bg-surface, #FFFFFF);
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Grid Layout - Full height without header */
+.messaging-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px; /* Default: 3 columns */
+  grid-template-areas: "fan-list chat context";
+  gap: 0;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scroll on grid */
+  margin: 0;
+  box-sizing: border-box;
+  background: #FFFFFF;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+/* Default column display */
+.messaging-column {
+  display: flex;
+}
+
+.messaging-column--left {
+  grid-area: fan-list;
+}
+
+.messaging-column--center {
+  grid-area: chat;
+}
+
+.messaging-column--right {
+  grid-area: context;
+}
+
+/* ============================================
+   PHASE 14 - Task 14.6: Perfect Column Alignment
+   ============================================ */
+
+/* Desktop Layout (>1024px) - Three columns */
+@media (min-width: 1024px) {
+  .messaging-grid {
+    display: grid !important;
+    grid-template-columns: 280px 1fr 280px !important;
+    grid-template-areas: "fan-list chat context" !important;
+    gap: 0;
+    background: #FFFFFF;
+    border: none;
+    border-radius: 0;
+    column-gap: 0;
+    border-top: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    
+    /* Full width layout */
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  .messaging-column--left {
+    grid-area: fan-list !important;
+    border-right: 1px solid #CCCCCC;
+    min-width: 280px;
+    display: flex !important;
+  }
+
+  .messaging-column--center {
+    grid-area: chat !important;
+    flex: 1;
+    display: flex !important;
+  }
+
+  .messaging-column--right {
+    grid-area: context !important;
+    border-left: 1px solid #CCCCCC;
+    min-width: 280px;
+    display: flex !important;
+  }
+
+  /* Desktop: Force left and center columns visible regardless of mobile-view classes */
+  .messaging-grid .messaging-column--left,
+  .messaging-grid .messaging-column--center,
+  .messaging-grid.mobile-view-list .messaging-column--left,
+  .messaging-grid.mobile-view-list .messaging-column--center,
+  .messaging-grid.mobile-view-chat .messaging-column--left,
+  .messaging-grid.mobile-view-chat .messaging-column--center,
+  .messaging-grid.mobile-view-notes .messaging-column--left,
+  .messaging-grid.mobile-view-notes .messaging-column--center {
+    display: flex !important;
+  }
+
+  /* Desktop: Right column (context panel) hidden by default */
+  .messaging-grid .messaging-column--right {
+    display: none !important;
+  }
+
+  /* Desktop: Show right column when showContext is true */
+  .messaging-grid.show-context .messaging-column--right {
+    display: flex !important;
+  }
+
+  /* Desktop: Adjust grid when context panel is hidden (2 columns) */
+  .messaging-grid:not(.show-context) {
+    grid-template-columns: 280px 1fr !important;
+    grid-template-areas: "fan-list chat" !important;
+  }
+
+  /* Desktop: Full 3-column layout when context panel is shown */
+  .messaging-grid.show-context {
+    grid-template-columns: 280px 1fr 280px !important;
+    grid-template-areas: "fan-list chat context" !important;
+  }
+
+  /* Hide mobile navigation headers on desktop */
+  .mobile-chat-header,
+  .mobile-notes-header {
+    display: none !important;
+  }
+
+  .messaging-mobile-nav {
+    display: none;
+  }
+}
+
+/* Tablet Layout (768px - 1024px) - Two columns */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .messaging-grid {
+    display: grid !important;
+    grid-template-columns: 35% 1fr !important; /* 35% left, flexible center */
+    grid-template-areas: "fan-list chat" !important;
+  }
+
+  .messaging-column--left {
+    grid-area: fan-list !important;
+    display: flex !important;
+  }
+
+  .messaging-column--center {
+    grid-area: chat !important;
+    display: flex !important;
+  }
+
+  /* Context panel hidden by default on tablet, shown via toggle */
+  .messaging-column--right {
+    display: none !important;
+  }
+
+  /* Hide mobile navigation headers on tablet */
+  .mobile-chat-header,
+  .mobile-notes-header {
+    display: none !important;
+  }
+
+  .messaging-grid.show-context {
+    grid-template-areas: "chat context" !important;
+  }
+
+  .messaging-grid.show-context .messaging-column--left {
+    display: none !important;
+  }
+
+  .messaging-grid.show-context .messaging-column--right {
+    display: flex !important;
+    grid-area: context !important;
+  }
+
+  .messaging-mobile-nav {
+    display: flex;
+    justify-content: center;
+    padding: var(--tailadmin-spacing-sm);
+    background: var(--tailadmin-card-bg);
+    border-top: 1px solid var(--tailadmin-border-color);
+  }
+}
+
+/* Mobile Layout (<768px) - Single column with 3 views */
+@media (max-width: 767px) {
+  .messaging-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "fan-list";
+  }
+
+  .messaging-column--left {
+    grid-area: fan-list;
+  }
+
+  /* Center and right columns hidden by default */
+  .messaging-column--center,
+  .messaging-column--right {
+    display: none;
+  }
+
+  /* Mobile View States */
+  
+  /* View 1: List (default) */
+  .messaging-grid.mobile-view-list {
+    grid-template-areas: "fan-list";
+  }
+  
+  .messaging-grid.mobile-view-list .messaging-column--left {
+    display: flex;
+  }
+  
+  .messaging-grid.mobile-view-list .messaging-column--center,
+  .messaging-grid.mobile-view-list .messaging-column--right {
+    display: none;
+  }
+
+  /* View 2: Chat */
+  .messaging-grid.mobile-view-chat {
+    grid-template-areas: "chat";
+  }
+  
+  .messaging-grid.mobile-view-chat .messaging-column--left {
+    display: none;
+  }
+  
+  .messaging-grid.mobile-view-chat .messaging-column--center {
+    display: flex;
+  }
+  
+  .messaging-grid.mobile-view-chat .messaging-column--right {
+    display: none;
+  }
+
+  /* View 3: Notes */
+  .messaging-grid.mobile-view-notes {
+    grid-template-areas: "context";
+  }
+  
+  .messaging-grid.mobile-view-notes .messaging-column--left,
+  .messaging-grid.mobile-view-notes .messaging-column--center {
+    display: none;
+  }
+  
+  .messaging-grid.mobile-view-notes .messaging-column--right {
+    display: flex;
+  }
+
+  /* Legacy classes - keep for backwards compatibility */
+  .messaging-grid.conversation-selected:not(.mobile-view-list):not(.mobile-view-notes) {
+    grid-template-areas: "chat";
+  }
+
+  .messaging-grid.conversation-selected:not(.mobile-view-list):not(.mobile-view-notes) .messaging-column--left {
+    display: none;
+  }
+
+  .messaging-grid.conversation-selected:not(.mobile-view-list):not(.mobile-view-notes) .messaging-column--center {
+    display: flex;
+    grid-area: chat;
+  }
+
+  /* Show context when toggled */
+  .messaging-grid.show-context {
+    grid-template-areas: "context";
+  }
+
+  .messaging-grid.show-context .messaging-column--left,
+  .messaging-grid.show-context .messaging-column--center {
+    display: none;
+  }
+
+  .messaging-grid.show-context .messaging-column--right {
+    display: flex;
+    grid-area: context;
+  }
+
+  .messaging-mobile-nav {
+    display: none; /* Hidden - using inline buttons now */
+  }
+  
+  .messaging-mobile-nav--hidden {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   MOBILE NAVIGATION BUTTONS
+   ============================================ */
+
+/* Mobile chat header - only visible on mobile */
+.mobile-chat-header,
+.mobile-notes-header {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  
+  /* Inner container for mobile chat header - flex layout */
+  .mobile-chat-header-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  /* Back button stays on the left */
+  .mobile-nav-btn--back {
+    flex-shrink: 0;
+  }
+  
+  /* Avatar in mobile header */
+  .mobile-header-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  
+  /* Info section (name + status) takes remaining space */
+  .mobile-header-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .mobile-header-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .mobile-header-status {
+    font-size: 12px;
+    color: #6B7280;
+  }
+  
+  /* Notes button pushed to the far right */
+  .mobile-nav-btn--notes {
+    flex-shrink: 0;
+    margin-left: auto;
+    background: #F3F4F6;
+    border-radius: 16px;
+    padding: 6px 12px;
+  }
+  
+  .mobile-notes-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  
+  .mobile-notes-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .mobile-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: background 150ms ease;
+    min-height: 36px; /* Reduced touch target */
+  }
+  
+  .mobile-nav-btn:hover {
+    background: #F3F4F6;
+  }
+  
+  .mobile-nav-btn:active {
+    background: #E5E7EB;
+  }
+  
+  .mobile-nav-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Adjust column layout for mobile headers */
+  .messaging-column--center {
+    flex-direction: column;
+  }
+  
+  .messaging-column--right {
+    flex-direction: column;
+  }
+}
+
+/* ============================================
+   Majordome (Assistant Drawer) — Desktop Optimization
+   When the assistant is open, keep the chat readable by removing the context
+   column (like Slack/Discord) instead of squeezing all 3 columns.
+   Scope: OnlyFans Messages page only.
+   ============================================ */
+
+@media (min-width: 1024px) {
+  body.onlyfans-messages-page .huntaze-layout[data-assistant-open="true"] .messaging-column--right {
+    display: none !important;
+  }
+
+  body.onlyfans-messages-page .huntaze-layout[data-assistant-open="true"] .messaging-grid {
+    grid-template-columns: 280px 1fr;
+    grid-template-areas: "fan-list chat";
+  }
+
+  body.onlyfans-messages-page .huntaze-layout[data-assistant-open="true"] .messaging-column--center {
+    border-right: 1px solid #CCCCCC;
+  }
+}
+
+/* Column Styling - Ensure proper height containment */
+.messaging-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* ✅ FIX SCROLL: 100% du parent (grid qui fait calc(100vh - 64px)) */
+  max-height: 100%; /* ✅ FIX SCROLL: Force la même hauteur pour toutes les colonnes */
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0; /* ✅ PHASE 28: Pas de marge entre colonnes */
+  padding: 0; /* ✅ PHASE 28: Pas de padding entre colonnes */
+  box-sizing: border-box;
+}
+
+/* Ensure cards respect column height */
+.messaging-column > .tailadmin-card {
+  height: 100%;
+  max-height: 100%; /* Fix #4: Force la même hauteur */
+  min-height: 0; /* Allow flex children to shrink */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Ensure card content respects height */
+.messaging-column > .tailadmin-card > * {
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Mobile Navigation */
+.messaging-mobile-nav__toggle {
+  padding: 8px 12px;
+  background: #000000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.messaging-mobile-nav__toggle:hover {
+  background: #333333;
+}
+
+.messaging-mobile-nav__toggle:active {
+  transform: scale(0.98);
+}
+
+/* Touch Target Optimization for Mobile */
+@media (max-width: 767px) {
+  .messaging-mobile-nav__toggle {
+    min-height: var(--msg-touch-target); /* 44px */
+    min-width: var(--msg-touch-target); /* 44px */
+  }
+}
+
+/* Focus Indicators for Accessibility */
+.messaging-mobile-nav__toggle:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px; /* Keep 2px for standard focus ring */
+}
+
+/* Focus indicators for all interactive elements */
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+}
+
+/* Ensure focus indicators are visible on all elements */
+*:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .messaging-mobile-nav__toggle,
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   PHASE 14 - Task 14.6: Uniform Card Styling
+   ============================================ */
+
+/* Ensure all three columns have identical height */
+@media (min-width: 1024px) {
+  .messaging-column {
+    height: 100%; /* ✅ FIX SCROLL: 100% du parent (grid qui fait calc(100vh - 64px)) */
+    min-height: 0;
+    max-height: 100%; /* ✅ FIX SCROLL: Maximum height */
+  }
+}
+
+.messaging-column .tailadmin-card__content {
+  flex: 1;
+  overflow: auto;
+  min-height: 0; /* Allow flex shrinking */
+}
+
+/* Dark mode support - DISABLED FOR NOW */
+/* .dark .messaging-mobile-nav {
+  background: var(--tailadmin-card-bg);
+  border-top-color: var(--tailadmin-border-color);
+} */
+
+
+/* Fan List Card - Remove padding */
+.messaging-interface__fan-list-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* ============================================
+   PHASE 10 - Avatar Size System
+   Task 39: Implement Avatar Size System
+   ============================================ */
+
+/**
+ * Avatar base styling
+ * All avatars are circular with proper object-fit
+ */
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0; /* Prevent shrinking in flex containers */
+  display: inline-block;
+}
+
+/**
+ * Avatar size variants
+ * - list: 36px for conversation list (density + recognition)
+ * - thread: 32px for message thread (compact, focus on messages)
+ * - profile: 80px for context panel (clear identification)
+ */
+.avatar--list {
+  width: 36px;
+  height: 36px;
+  margin-right: 8px; /* 8px spacing from adjacent text */
+}
+
+.avatar--thread {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px; /* 8px spacing from adjacent text */
+}
+
+.avatar--profile {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 12px; /* Centered with 12px bottom margin */
+  display: block; /* Block for centering */
+}
+
+/**
+ * Avatar loading state
+ * Gray placeholder with same dimensions
+ */
+.avatar--loading {
+  background: #E5E7EB;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/**
+ * Avatar fallback (when image fails to load)
+ * Shows initials or icon
+ */
+.avatar--fallback {
+  background: #F3F4F6;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.avatar--fallback.avatar--list {
+  font-size: 14px;
+}
+
+.avatar--fallback.avatar--thread {
+  font-size: 12px;
+}
+
+.avatar--fallback.avatar--profile {
+  font-size: 32px;
+}
+
+/* ============================================
+   PHASE 10 - Icon Button Standardization
+   Task 40: Standardize Icon Button Sizing
+   ============================================ */
+
+/**
+ * Icon button base styling
+ * - 40px × 40px clickable area (WCAG 2.1 Level AAA)
+ * - 20px × 20px icon size
+ * - 10px padding (centers 20px icon in 40px area)
+ * - Consistent hover states
+ */
+.icon-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px; /* Prevent shrinking */
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--tailadmin-radius-md);
+  color: #6B7280; /* Gray-500 for icons */
+  flex-shrink: 0; /* Prevent shrinking in flex containers */
+}
+
+/**
+ * Icon size standardization
+ * All SVG icons must be 20px × 20px
+ */
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/**
+ * Hover state
+ * Subtle background change
+ */
+.icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #374151; /* Gray-700 on hover */
+}
+
+/**
+ * Active state
+ * Slightly darker background
+ */
+.icon-button:active {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: scale(0.98);
+}
+
+/**
+ * Disabled state
+ * Reduced opacity, no pointer events
+ */
+.icon-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/**
+ * Focus state for accessibility
+ * Clear focus ring
+ */
+.icon-button:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/**
+ * Primary variant (for send button, etc.)
+ * Colored background when active
+ */
+.icon-button--primary {
+  color: #000000;
+}
+
+.icon-button--primary:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000000;
+}
+
+.icon-button--primary.icon-button--active {
+  background-color: #000000;
+  color: #FFFFFF;
+}
+
+.icon-button--primary.icon-button--active:hover {
+  background-color: #333333;
+}
+
+/**
+ * Reduced motion support
+ */
+@media (prefers-reduced-motion: reduce) {
+  .icon-button {
+    transition: none;
+  }
+  
+  .icon-button:active {
+    transform: none;
+  }
+}

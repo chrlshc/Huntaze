@@ -63,11 +63,6 @@
   /* NO gradients - pure professional */
 }
 
-.quick-action-button:hover {
-  border-color: var(--border-emphasis);
-  box-shadow: var(--shadow-soft);
-  background: var(--bg-surface);
-}
 
 /* Focus state with brand-colored ring */
 .quick-action-button:focus-visible {
@@ -98,10 +93,6 @@
   transition: border-color 200ms ease-out, background-color 200ms ease-out;
 }
 
-.quick-action-button:hover .quick-action-icon {
-  border-color: var(--border-emphasis);
-  background: var(--bg-hover);
-}
 
 .quick-action-icon .icon {
   width: 24px;
@@ -111,9 +102,6 @@
   transition: color 200ms ease-out, opacity 200ms ease-out;
 }
 
-.quick-action-button:hover .quick-action-icon .icon {
-  color: var(--text-primary);
-}
 
 /* ========================================
    CONTENT
@@ -144,9 +132,6 @@
   transition: color 200ms ease-out, opacity 200ms ease-out;
 }
 
-.quick-action-button:hover .quick-action-description {
-  color: var(--text-secondary);
-}
 
 /* ========================================
    SKELETON LOADING STYLES
@@ -209,9 +194,6 @@
     transition: none;
   }
   
-  .quick-action-button:hover {
-    transform: none;
-  }
   
   .skeleton-text {
     animation: none;

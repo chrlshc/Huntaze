@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { ButlerTip } from '@/components/ui/ButlerTip';
 import { 
   SettingsSection, 
   SettingsList, 
@@ -49,6 +50,9 @@ export default function SettingsPage() {
           Manage your account and application preferences
         </p>
       </div>
+
+      {/* Butler Tip */}
+      <ButlerTip page="Settings" className="mb-6" />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
         {/* Account Settings */}

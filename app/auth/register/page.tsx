@@ -272,6 +272,15 @@ export default function RegisterPage() {
           font-size: var(--text-sm);
         }
 
+        .success-message {
+          padding: var(--space-3);
+          background: rgba(34, 197, 94, 0.1);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: var(--radius-md);
+          color: var(--accent-success);
+          font-size: var(--text-sm);
+        }
+
         .form-group {
           display: flex;
           flex-direction: column;

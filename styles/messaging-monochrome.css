@@ -1,0 +1,531 @@
+/**
+ * Messaging Interface - Monochrome Palette
+ * 
+ * Pure black & white design system for messaging interface.
+ * Hierarchy through grayscale values and typography only.
+ */
+
+:root {
+  /* ============================================
+     BASE COLORS - Page & Navigation
+     ============================================ */
+  
+  /* Page background - pure white */
+  --msg-page-bg: #FFFFFF;
+  
+  /* Navigation (sidebar + topbar) - pure black */
+  --msg-nav-bg: #000000;
+  --msg-nav-bg-alt: #000000;
+  --msg-nav-text: #FFFFFF;
+  --msg-nav-text-secondary: #FFFFFF;
+  
+  /* ============================================
+     PANELS - Main content areas (liste, chat, profil)
+     ============================================ */
+  
+  --msg-panel-bg: #FFFFFF;
+  --msg-panel-border: #E2E2E2;
+  
+  /* ============================================
+     TEXT HIERARCHY
+     ============================================ */
+  
+  --msg-text-primary: #111111;      /* Titles, names, main content */
+  --msg-text-secondary: #666666;    /* Descriptions, labels */
+  --msg-text-tertiary: #999999;     /* Timestamps, metadata */
+  --msg-text-meta: #AAAAAA;         /* Very subtle info */
+  
+  /* ============================================
+     INTERACTIVE STATES
+     ============================================ */
+  
+  --msg-hover-bg: #FAFAFA;
+  --msg-selected-bg: #F2F2F2;
+  --msg-selected-accent: #111111;
+  --msg-focus-ring: #111111;
+  
+  /* ============================================
+     CHAT BUBBLES
+     ============================================ */
+  
+  /* Fan messages (left) */
+  --msg-bubble-fan-bg: #FFFFFF;
+  --msg-bubble-fan-border: #E3E3E3;
+  --msg-bubble-fan-text: #111111;
+  
+  /* Creator messages (right) - light gray */
+  --msg-bubble-creator-bg: #F5F5F5;
+  --msg-bubble-creator-border: transparent;
+  --msg-bubble-creator-text: #000000;
+  
+  /* ============================================
+     SEPARATORS & BORDERS
+     ============================================ */
+  
+  --msg-separator-light: #F0F0F0;
+  --msg-separator-medium: #DDDDDD;
+  --msg-separator-dark: #CCCCCC;
+  
+  /* ============================================
+     BUTTONS
+     ============================================ */
+  
+  /* Primary button */
+  --msg-btn-primary-bg: #111111;
+  --msg-btn-primary-text: #FFFFFF;
+  --msg-btn-primary-border: transparent;
+  
+  /* Secondary button (outline) */
+  --msg-btn-secondary-bg: #FFFFFF;
+  --msg-btn-secondary-text: #111111;
+  --msg-btn-secondary-border: #111111;
+  
+  /* Tertiary button (ghost) */
+  --msg-btn-tertiary-bg: transparent;
+  --msg-btn-tertiary-text: #666666;
+  --msg-btn-tertiary-border: #DDDDDD;
+  
+  /* ============================================
+     TAGS & BADGES
+     ============================================ */
+  
+  /* All tags are outline style */
+  --msg-tag-bg: transparent;
+  --msg-tag-border: #CCCCCC;
+  --msg-tag-text: #666666;
+  
+  /* VIP badge (stronger) */
+  --msg-badge-vip-bg: transparent;
+  --msg-badge-vip-border: #111111;
+  --msg-badge-vip-text: #111111;
+  
+  /* ============================================
+     UNREAD INDICATORS
+     ============================================ */
+  
+  --msg-unread-bg: #111111;
+  --msg-unread-text: #FFFFFF;
+  
+  /* ============================================
+     INPUT FIELDS
+     ============================================ */
+  
+  --msg-input-bg: #FFFFFF;
+  --msg-input-border: #DDDDDD;
+  --msg-input-text: #111111;
+  --msg-input-placeholder: #999999;
+  --msg-input-focus-border: #111111;
+  
+  /* ============================================
+     SHADOWS
+     ============================================ */
+  
+  --msg-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --msg-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --msg-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+  
+  /* ============================================
+     TRANSITIONS
+     ============================================ */
+  
+  --msg-transition-fast: 150ms ease;
+  --msg-transition-normal: 200ms ease;
+  --msg-transition-slow: 300ms ease;
+  
+  /* ============================================
+     SPACING
+     ============================================ */
+  
+  --msg-space-xs: 4px;
+  --msg-space-sm: 8px;
+  --msg-space-md: 12px;
+  --msg-space-lg: 16px;
+  --msg-space-xl: 24px;
+  --msg-space-2xl: 32px;
+  
+  /* ============================================
+     BORDER RADIUS
+     ============================================ */
+  
+  --msg-radius-sm: 4px;
+  --msg-radius-md: 8px;
+  --msg-radius-lg: 12px;
+  --msg-radius-xl: 16px;
+  --msg-radius-pill: 999px;
+  
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+  
+  /* Font weights */
+  --msg-font-regular: 400;
+  --msg-font-medium: 500;
+  --msg-font-semibold: 600;
+  --msg-font-bold: 700;
+  
+  /* Font sizes */
+  --msg-text-xs: 11px;
+  --msg-text-sm: 12px;
+  --msg-text-base: 13px;
+  --msg-text-md: 14px;
+  --msg-text-lg: 15px;
+  --msg-text-xl: 16px;
+  --msg-text-2xl: 18px;
+  
+  /* Line heights */
+  --msg-leading-tight: 1.25;
+  --msg-leading-normal: 1.5;
+  --msg-leading-relaxed: 1.75;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Text colors */
+.msg-text-primary { color: var(--msg-text-primary); }
+.msg-text-secondary { color: var(--msg-text-secondary); }
+.msg-text-tertiary { color: var(--msg-text-tertiary); }
+.msg-text-meta { color: var(--msg-text-meta); }
+
+/* Backgrounds */
+.msg-bg-page { background-color: var(--msg-page-bg); }
+.msg-bg-panel { background-color: var(--msg-panel-bg); }
+.msg-bg-nav { background-color: var(--msg-nav-bg); }
+.msg-bg-hover { background-color: var(--msg-hover-bg); }
+.msg-bg-selected { background-color: var(--msg-selected-bg); }
+
+/* Borders */
+.msg-border-light { border-color: var(--msg-separator-light); }
+.msg-border-medium { border-color: var(--msg-separator-medium); }
+.msg-border-dark { border-color: var(--msg-separator-dark); }
+
+/* Shadows */
+.msg-shadow-sm { box-shadow: var(--msg-shadow-sm); }
+.msg-shadow-md { box-shadow: var(--msg-shadow-md); }
+.msg-shadow-lg { box-shadow: var(--msg-shadow-lg); }
+
+/* Transitions */
+.msg-transition { transition: all var(--msg-transition-normal); }
+.msg-transition-fast { transition: all var(--msg-transition-fast); }
+.msg-transition-slow { transition: all var(--msg-transition-slow); }
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+
+/* Conversation Card */
+.msg-conversation-card {
+  background: var(--msg-panel-bg);
+  border-bottom: 1px solid var(--msg-separator-light);
+  padding: var(--msg-space-md) var(--msg-space-lg);
+  transition: background-color var(--msg-transition-fast);
+  cursor: pointer;
+}
+
+.msg-conversation-card:hover {
+  background: var(--msg-hover-bg);
+}
+
+.msg-conversation-card.selected {
+  background: var(--msg-selected-bg);
+  border-left: 3px solid var(--msg-selected-accent);
+  padding-left: calc(var(--msg-space-lg) - 3px);
+}
+
+.msg-conversation-card.selected .msg-conversation-name {
+  font-weight: var(--msg-font-bold);
+}
+
+/* Conversation Name */
+.msg-conversation-name {
+  color: var(--msg-text-primary);
+  font-size: var(--msg-text-lg);
+  font-weight: var(--msg-font-semibold);
+  line-height: var(--msg-leading-tight);
+}
+
+/* Message Preview */
+.msg-message-preview {
+  color: var(--msg-text-secondary);
+  font-size: var(--msg-text-md);
+  font-weight: var(--msg-font-regular);
+  line-height: var(--msg-leading-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Timestamp */
+.msg-timestamp {
+  color: var(--msg-text-tertiary);
+  font-size: var(--msg-text-sm);
+  font-weight: var(--msg-font-regular);
+}
+
+/* Tag (outline style) */
+.msg-tag {
+  background: var(--msg-tag-bg);
+  border: 1px solid var(--msg-tag-border);
+  color: var(--msg-tag-text);
+  font-size: var(--msg-text-xs);
+  font-weight: var(--msg-font-medium);
+  padding: 2px 8px;
+  border-radius: var(--msg-radius-pill);
+  display: inline-block;
+}
+
+/* VIP Badge */
+.msg-badge-vip {
+  background: var(--msg-badge-vip-bg);
+  border: 1px solid var(--msg-badge-vip-border);
+  color: var(--msg-badge-vip-text);
+  font-size: var(--msg-text-xs);
+  font-weight: var(--msg-font-semibold);
+  padding: 4px 10px;
+  border-radius: var(--msg-radius-sm);
+  display: inline-block;
+}
+
+/* Unread Indicator */
+.msg-unread-indicator {
+  background: var(--msg-unread-bg);
+  color: var(--msg-unread-text);
+  font-size: var(--msg-text-xs);
+  font-weight: var(--msg-font-semibold);
+  padding: 2px 6px;
+  border-radius: var(--msg-radius-pill);
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.msg-unread-dot {
+  background: var(--msg-unread-bg);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Chat Bubble - Fan */
+.msg-bubble-fan {
+  background: var(--msg-bubble-fan-bg);
+  border: 1px solid var(--msg-bubble-fan-border);
+  color: var(--msg-bubble-fan-text);
+  padding: var(--msg-space-md) var(--msg-space-lg);
+  border-radius: var(--msg-radius-xl) var(--msg-radius-xl) var(--msg-radius-xl) var(--msg-radius-sm);
+  max-width: 70%;
+  font-size: var(--msg-text-lg);
+  line-height: var(--msg-leading-normal);
+}
+
+/* Chat Bubble - Creator */
+.msg-bubble-creator {
+  background: var(--msg-bubble-creator-bg);
+  border: none;
+  color: var(--msg-bubble-creator-text);
+  padding: var(--msg-space-md) var(--msg-space-lg);
+  border-radius: var(--msg-radius-xl) var(--msg-radius-xl) var(--msg-radius-sm) var(--msg-radius-xl);
+  max-width: 70%;
+  font-size: var(--msg-text-lg);
+  line-height: var(--msg-leading-normal);
+}
+
+/* Date Separator */
+.msg-date-separator {
+  background: var(--msg-panel-bg);
+  border: 1px solid var(--msg-separator-medium);
+  color: var(--msg-text-secondary);
+  font-size: var(--msg-text-sm);
+  font-weight: var(--msg-font-medium);
+  padding: 4px 12px;
+  border-radius: var(--msg-radius-lg);
+  display: inline-block;
+}
+
+/* Button - Primary */
+.msg-btn-primary {
+  background: var(--msg-btn-primary-bg);
+  color: var(--msg-btn-primary-text);
+  border: none;
+  padding: var(--msg-space-sm) var(--msg-space-lg);
+  border-radius: var(--msg-radius-md);
+  font-size: var(--msg-text-md);
+  font-weight: var(--msg-font-medium);
+  cursor: pointer;
+  transition: opacity var(--msg-transition-fast);
+}
+
+.msg-btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Button - Secondary */
+.msg-btn-secondary {
+  background: var(--msg-btn-secondary-bg);
+  color: var(--msg-btn-secondary-text);
+  border: 1px solid var(--msg-btn-secondary-border);
+  padding: var(--msg-space-sm) var(--msg-space-lg);
+  border-radius: var(--msg-radius-md);
+  font-size: var(--msg-text-md);
+  font-weight: var(--msg-font-medium);
+  cursor: pointer;
+  transition: background-color var(--msg-transition-fast);
+}
+
+.msg-btn-secondary:hover {
+  background: var(--msg-hover-bg);
+}
+
+/* Button - Tertiary */
+.msg-btn-tertiary {
+  background: var(--msg-btn-tertiary-bg);
+  color: var(--msg-btn-tertiary-text);
+  border: 1px solid var(--msg-btn-tertiary-border);
+  padding: var(--msg-space-sm) var(--msg-space-lg);
+  border-radius: var(--msg-radius-md);
+  font-size: var(--msg-text-md);
+  font-weight: var(--msg-font-regular);
+  cursor: pointer;
+  transition: border-color var(--msg-transition-fast);
+}
+
+.msg-btn-tertiary:hover {
+  border-color: var(--msg-separator-dark);
+}
+
+/* Input Field */
+.msg-input {
+  background: var(--msg-input-bg);
+  border: 1px solid var(--msg-input-border);
+  color: var(--msg-input-text);
+  padding: var(--msg-space-sm) var(--msg-space-md);
+  border-radius: var(--msg-radius-md);
+  font-size: var(--msg-text-md);
+  transition: border-color var(--msg-transition-fast);
+  width: 100%;
+}
+
+.msg-input::placeholder {
+  color: var(--msg-input-placeholder);
+}
+
+.msg-input:focus {
+  outline: none;
+  border-color: var(--msg-input-focus-border);
+}
+
+/* Search Input */
+.msg-search-input {
+  background: var(--msg-input-bg);
+  border: 1px solid var(--msg-input-border);
+  color: var(--msg-input-text);
+  padding: var(--msg-space-sm) var(--msg-space-md) var(--msg-space-sm) var(--msg-space-2xl);
+  border-radius: var(--msg-radius-md);
+  font-size: var(--msg-text-md);
+  width: 100%;
+}
+
+/* Filter Button */
+.msg-filter-btn {
+  background: var(--msg-panel-bg);
+  border: 1px solid var(--msg-separator-medium);
+  color: var(--msg-text-secondary);
+  padding: var(--msg-space-xs) var(--msg-space-md);
+  border-radius: var(--msg-radius-sm);
+  font-size: var(--msg-text-sm);
+  font-weight: var(--msg-font-medium);
+  cursor: pointer;
+  transition: all var(--msg-transition-fast);
+}
+
+.msg-filter-btn:hover {
+  border-color: var(--msg-separator-dark);
+}
+
+.msg-filter-btn.active {
+  background: #EFEFEF;
+  border-color: var(--msg-separator-dark);
+  color: var(--msg-text-primary);
+}
+
+/* Section Header */
+.msg-section-header {
+  color: var(--msg-text-secondary);
+  font-size: var(--msg-text-xs);
+  font-weight: var(--msg-font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--msg-space-sm);
+}
+
+/* Info Row (label + value) */
+.msg-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--msg-space-xs) 0;
+}
+
+.msg-info-label {
+  color: var(--msg-text-secondary);
+  font-size: var(--msg-text-base);
+  font-weight: var(--msg-font-regular);
+}
+
+.msg-info-value {
+  color: var(--msg-text-primary);
+  font-size: var(--msg-text-base);
+  font-weight: var(--msg-font-regular);
+}
+
+/* Note Card */
+.msg-note-card {
+  background: var(--msg-panel-bg);
+  border: 1px solid var(--msg-separator-medium);
+  border-radius: var(--msg-radius-md);
+  padding: var(--msg-space-md);
+  margin-bottom: var(--msg-space-sm);
+}
+
+.msg-note-title {
+  color: var(--msg-text-primary);
+  font-size: var(--msg-text-md);
+  font-weight: var(--msg-font-semibold);
+  margin-bottom: var(--msg-space-xs);
+}
+
+.msg-note-date {
+  color: var(--msg-text-tertiary);
+  font-size: var(--msg-text-sm);
+  font-weight: var(--msg-font-regular);
+}
+
+/* Focus Ring */
+*:focus-visible {
+  outline: 2px solid var(--msg-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Ensure sufficient contrast ratios */
+@media (prefers-contrast: high) {
+  :root {
+    --msg-text-secondary: #555555;
+    --msg-text-tertiary: #777777;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

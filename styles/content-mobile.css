@@ -1,0 +1,307 @@
+/**
+ * Content Page - Mobile Responsive Styles
+ * Clean, modern mobile layout with proper card spacing
+ */
+
+/* ============================================
+   CONTENT PAGE - DESKTOP BASE
+   ============================================ */
+
+.polaris-analytics .content-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.polaris-analytics .content-trends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.polaris-analytics .content-ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+}
+
+.polaris-analytics .content-platform-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.polaris-analytics .content-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ============================================
+   TABLET (< 1024px)
+   ============================================ */
+
+@media (max-width: 1023px) {
+  .polaris-analytics .content-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .polaris-analytics .content-trends-grid,
+  .polaris-analytics .content-ideas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   MOBILE (< 768px) - EDGE-TO-EDGE LAYOUT
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Remove ALL page padding - edge to edge */
+  .polaris-analytics {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* BlockStack - minimal side padding */
+  .polaris-analytics .Polaris-BlockStack {
+    padding: 0 8px !important;
+    gap: 12px !important;
+  }
+  
+  /* Page header - compact, edge to edge */
+  .polaris-analytics .page-header {
+    padding: 10px 8px !important;
+    margin: 0 !important;
+  }
+  
+  /* Stats grid - 2x2 tight */
+  .polaris-analytics .content-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* All Polaris Cards - edge to edge, minimal radius */
+  .polaris-analytics .Polaris-Card {
+    border-radius: 8px !important;
+    margin: 0 !important;
+  }
+  
+  /* Stats cards - compact */
+  .polaris-analytics .content-stats-grid .Polaris-Card,
+  .polaris-analytics .content-stats-grid > div > .Polaris-Card {
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Trends grid - single column, tight */
+  .polaris-analytics .content-trends-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Ideas grid - single column */
+  .polaris-analytics .content-ideas-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Platform filter card - less padding */
+  .polaris-analytics .content-platform-filter {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 6px;
+  }
+  
+  .polaris-analytics .content-platform-filter button {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 6px 10px !important;
+    font-size: 12px;
+  }
+  
+  /* Quick actions - 2 columns compact */
+  .polaris-analytics .content-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  
+  .polaris-analytics .content-quick-actions button,
+  .polaris-analytics .content-quick-actions a {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+  
+  /* Tabs - compact, scrollable */
+  .polaris-analytics .Polaris-Tabs__Wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -8px;
+    padding: 0 8px;
+  }
+  
+  .polaris-analytics .Polaris-Tabs {
+    flex-wrap: nowrap;
+  }
+  
+  .polaris-analytics .Polaris-Tabs__Tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 8px 10px !important;
+    font-size: 13px;
+  }
+  
+  /* Section titles - smaller */
+  .polaris-analytics h2 {
+    font-size: 14px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  /* Butler advice box - compact */
+  .polaris-analytics div[style*="linear-gradient(135deg, #1a1a2e"] {
+    padding: 10px !important;
+    border-radius: 6px !important;
+    gap: 8px !important;
+  }
+  
+  .polaris-analytics div[style*="linear-gradient(135deg, #1a1a2e"] img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .polaris-analytics div[style*="linear-gradient(135deg, #1a1a2e"] span {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+  
+  /* Hashtags - smaller */
+  .polaris-analytics span[style*="padding: '2px 8px'"],
+  .polaris-analytics span[style*="padding: \"2px 8px\""] {
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+  }
+  
+  /* Badges - compact */
+  .polaris-analytics .Polaris-Badge {
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+  }
+  
+  /* Create button - compact */
+  .polaris-analytics button[style*="background: '#1a1a2e'"],
+  .polaris-analytics button[style*="background: #1a1a2e"] {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+  
+  /* Card internal padding - reduce */
+  .polaris-analytics .Polaris-Card__Section {
+    padding: 10px !important;
+  }
+}
+
+/* ============================================
+   SMALL MOBILE (< 480px) - ULTRA COMPACT
+   ============================================ */
+
+@media (max-width: 479px) {
+  .polaris-analytics .Polaris-BlockStack {
+    padding: 0 6px !important;
+  }
+  
+  /* Stats grid - even tighter */
+  .polaris-analytics .content-stats-grid {
+    gap: 4px;
+  }
+  
+  .polaris-analytics .content-stats-grid .Polaris-Card,
+  .polaris-analytics .content-stats-grid > div > .Polaris-Card {
+    padding: 6px 8px !important;
+  }
+  
+  /* Quick actions - single column */
+  .polaris-analytics .content-quick-actions {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  /* Trend/Ideas cards - tighter padding */
+  .polaris-analytics .content-trends-grid .Polaris-Card,
+  .polaris-analytics .content-ideas-grid .Polaris-Card {
+    padding: 8px !important;
+  }
+  
+  /* Section titles */
+  .polaris-analytics h2 {
+    font-size: 13px !important;
+  }
+  
+  /* Grids - tighter */
+  .polaris-analytics .content-trends-grid,
+  .polaris-analytics .content-ideas-grid {
+    gap: 6px;
+  }
+}
+
+
+/* ============================================
+   POLARIS COMPONENT OVERRIDES FOR MOBILE
+   Force override inline styles from Polaris
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Override Polaris Card padding="400" inline style */
+  .polaris-analytics [class*="Polaris-Card"] {
+    --pc-card-padding: 10px !important;
+  }
+  
+  /* Override BlockStack gap="600" */
+  .polaris-analytics [class*="Polaris-BlockStack"] {
+    --pc-block-stack-gap: 10px !important;
+  }
+  
+  /* Override InlineStack gaps */
+  .polaris-analytics [class*="Polaris-InlineStack"] {
+    --pc-inline-stack-gap: 6px !important;
+  }
+  
+  /* Force card content to use less padding */
+  .polaris-analytics .Polaris-Card > div {
+    padding: 10px !important;
+  }
+  
+  /* Platform filter card specifically */
+  .polaris-analytics .Polaris-Card:has(.content-platform-filter) > div {
+    padding: 8px 10px !important;
+  }
+  
+  /* Quick actions card */
+  .polaris-analytics .Polaris-Card:has(.content-quick-actions) > div {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 479px) {
+  .polaris-analytics [class*="Polaris-Card"] {
+    --pc-card-padding: 8px !important;
+  }
+  
+  .polaris-analytics [class*="Polaris-BlockStack"] {
+    --pc-block-stack-gap: 8px !important;
+  }
+  
+  .polaris-analytics .Polaris-Card > div {
+    padding: 8px !important;
+  }
+}

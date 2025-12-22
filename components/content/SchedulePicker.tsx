@@ -189,7 +189,7 @@ export function SchedulePicker({
                 value={formatDateInput(selectedDate)}
                 onChange={(e) => setSelectedDate(new Date(e.target.value))}
                 min={formatDateInput(minDate)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
                 disabled={disabled}
               />
             </div>
@@ -201,7 +201,7 @@ export function SchedulePicker({
                 type="time"
                 value={selectedTime}
                 onChange={(e) => setSelectedTime(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
                 disabled={disabled}
               />
             </div>
@@ -292,7 +292,7 @@ export function SchedulePicker({
               type="time"
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
               disabled={disabled}
             />
           </div>

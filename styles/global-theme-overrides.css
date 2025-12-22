@@ -1,0 +1,230 @@
+/**
+ * Global Theme Overrides
+ * 
+ * Applies OnlyFans design system styling consistently across all components.
+ * These rules ensure Shopify-like visual polish throughout the application.
+ */
+
+/* Apply OnlyFans theme to all components */
+.onlyfans-theme,
+.onlyfans-theme * {
+  /* Font settings */
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-main);
+}
+
+/* Border radius consistency */
+.onlyfans-theme .card,
+.onlyfans-theme .panel,
+.onlyfans-theme .box,
+.onlyfans-theme .dashboard-card,
+.onlyfans-theme .settings-panel,
+.onlyfans-theme [class*="card"],
+.onlyfans-theme [class*="Card"],
+.onlyfans-theme [class*="panel"],
+.onlyfans-theme [class*="Panel"] {
+  border-radius: var(--of-radius-card, 20px) !important;
+  overflow: hidden;
+}
+
+/* Input field radius consistency */
+.onlyfans-theme input,
+.onlyfans-theme select,
+.onlyfans-theme textarea,
+.onlyfans-theme .input,
+.onlyfans-theme [class*="input"],
+.onlyfans-theme [class*="Input"] {
+  border-radius: var(--of-radius-input, 16px) !important;
+}
+
+/* Button radius consistency */
+.onlyfans-theme button:not(.unstyled),
+.onlyfans-theme .button,
+.onlyfans-theme .btn,
+.onlyfans-theme [class*="button"],
+.onlyfans-theme [class*="Button"] {
+  border-radius: 12px !important;
+}
+
+/* Pill/badge radius consistency */
+.onlyfans-theme .badge,
+.onlyfans-theme .pill,
+.onlyfans-theme .chip,
+.onlyfans-theme .tag,
+.onlyfans-theme [class*="badge"],
+.onlyfans-theme [class*="Badge"],
+.onlyfans-theme [class*="pill"],
+.onlyfans-theme [class*="Pill"],
+.onlyfans-theme [class*="chip"],
+.onlyfans-theme [class*="Chip"],
+.onlyfans-theme [class*="tag"],
+.onlyfans-theme [class*="Tag"] {
+  border-radius: 999px !important;
+}
+
+/* Shadow elevation consistency */
+.onlyfans-theme .card,
+.onlyfans-theme .panel,
+.onlyfans-theme .box,
+.onlyfans-theme .dashboard-card,
+.onlyfans-theme .settings-panel,
+.onlyfans-theme [class*="card"],
+.onlyfans-theme [class*="Card"],
+.onlyfans-theme [class*="panel"],
+.onlyfans-theme [class*="Panel"] {
+  box-shadow: var(--of-shadow-card-saas, 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)) !important;
+  border: none !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+/* Hover state for cards */
+.onlyfans-theme .card:hover,
+.onlyfans-theme .panel:hover,
+.onlyfans-theme .box:hover,
+.onlyfans-theme .dashboard-card:hover,
+.onlyfans-theme [class*="card"]:hover,
+.onlyfans-theme [class*="Card"]:hover {
+  box-shadow: var(--of-shadow-card-hover-saas, 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.06)) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Spacing consistency */
+.onlyfans-theme .card,
+.onlyfans-theme .panel,
+.onlyfans-theme .box,
+.onlyfans-theme .dashboard-card,
+.onlyfans-theme [class*="card"],
+.onlyfans-theme [class*="Card"],
+.onlyfans-theme [class*="panel"],
+.onlyfans-theme [class*="Panel"] {
+  padding: var(--of-card-padding, 24px) !important;
+}
+
+/* Input padding consistency */
+.onlyfans-theme input:not([type="checkbox"]):not([type="radio"]),
+.onlyfans-theme select,
+.onlyfans-theme textarea {
+  padding: var(--of-input-padding, 12px 20px) !important;
+  background-color: var(--of-input-bg, #F3F4F6) !important;
+}
+
+/* Input focus state */
+.onlyfans-theme input:focus,
+.onlyfans-theme select:focus,
+.onlyfans-theme textarea:focus {
+  outline: none !important;
+  border-color: var(--of-input-focus-border, #2C6ECB) !important;
+  box-shadow: var(--of-input-focus-shadow, 0 0 0 1px rgba(44, 110, 203, 0.2)) !important;
+  background-color: #FFFFFF !important;
+}
+
+/* Typography consistency */
+.onlyfans-theme h1,
+.onlyfans-theme .h1,
+.onlyfans-theme [class*="h1"] {
+  font-size: var(--of-text-h1, 26px) !important;
+  font-weight: var(--of-font-semibold, 600) !important;
+}
+
+.onlyfans-theme h2,
+.onlyfans-theme .h2,
+.onlyfans-theme [class*="h2"],
+.onlyfans-theme .section-title {
+  font-size: var(--of-text-section, 18px) !important;
+  font-weight: var(--of-font-semibold, 600) !important;
+}
+
+.onlyfans-theme body,
+.onlyfans-theme p,
+.onlyfans-theme .body,
+.onlyfans-theme .text {
+  font-size: var(--of-text-body, 14px) !important;
+}
+
+/* Fix containers */
+.onlyfans-theme .container,
+.onlyfans-theme .max-w-container,
+.onlyfans-theme [class*="container"] {
+  max-width: var(--of-layout-max-width, 1100px) !important;
+  padding-left: var(--of-layout-padding, 32px) !important;
+  padding-right: var(--of-layout-padding, 32px) !important;
+}
+
+/* Gap consistency */
+.onlyfans-theme .gap-1,
+.onlyfans-theme [class*="gap-1"] {
+  gap: var(--of-space-1, 4px) !important;
+}
+
+.onlyfans-theme .gap-2,
+.onlyfans-theme [class*="gap-2"] {
+  gap: var(--of-space-2, 8px) !important;
+}
+
+.onlyfans-theme .gap-3,
+.onlyfans-theme [class*="gap-3"] {
+  gap: var(--of-space-3, 12px) !important;
+}
+
+.onlyfans-theme .gap-4,
+.onlyfans-theme [class*="gap-4"] {
+  gap: var(--of-space-4, 16px) !important;
+}
+
+.onlyfans-theme .gap-5,
+.onlyfans-theme [class*="gap-5"] {
+  gap: var(--of-space-5, 20px) !important;
+}
+
+.onlyfans-theme .gap-6,
+.onlyfans-theme [class*="gap-6"] {
+  gap: var(--of-space-6, 24px) !important;
+}
+
+/* Mobile responsiveness fixes */
+@media (max-width: 768px) {
+  .onlyfans-theme .card,
+  .onlyfans-theme .panel,
+  .onlyfans-theme .box,
+  .onlyfans-theme .dashboard-card,
+  .onlyfans-theme [class*="card"],
+  .onlyfans-theme [class*="Card"] {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+  
+  .onlyfans-theme .container,
+  .onlyfans-theme .max-w-container,
+  .onlyfans-theme [class*="container"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  .onlyfans-theme h1,
+  .onlyfans-theme .h1,
+  .onlyfans-theme [class*="h1"] {
+    font-size: 22px !important;
+  }
+  
+  .onlyfans-theme h2,
+  .onlyfans-theme .h2,
+  .onlyfans-theme [class*="h2"],
+  .onlyfans-theme .section-title {
+    font-size: 16px !important;
+  }
+}
+
+/* Scrollbar styling for a more modern look */
+.onlyfans-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.onlyfans-theme ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.onlyfans-theme ::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.05);
+}

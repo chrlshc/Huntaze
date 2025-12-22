@@ -40,7 +40,7 @@ export default function SavingsCalculator() {
                   type="number"
                   value={monthlyRevenue}
                   onChange={(e) => setMonthlyRevenue(Number(e.target.value))}
-                  className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-[#2c6ecb]"
                 />
               </div>
             </div>

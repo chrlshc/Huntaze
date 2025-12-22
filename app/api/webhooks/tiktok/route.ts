@@ -11,12 +11,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { webhookProcessor } from '@/lib/services/webhookProcessor';
+import { computeWebhookExternalId, webhookProcessor } from '@/lib/services/webhookProcessor';
 
 const TIKTOK_WEBHOOK_SECRET = process.env.TIKTOK_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
+    if (process.env.NODE_ENV === 'production' && !TIKTOK_WEBHOOK_SECRET) {
+      return NextResponse.json(
+        { error: 'TikTok webhook not configured' },
+        { status: 503 }
+      );
+    }
+
     // Get raw body for signature verification
     const rawBody = await request.text();
     const signature = request.headers.get('x-tiktok-signature');
@@ -50,7 +57,12 @@ export async function POST(request: NextRequest) {
 
     // Extract event information
     const eventType = payload.event_type || payload.type;
-    const externalId = payload.event_id || `${eventType}_${Date.now()}`;
+    const externalId = computeWebhookExternalId({
+      provider: 'tiktok',
+      eventType,
+      rawBody,
+      payload,
+    });
 
     if (!eventType) {
       console.error('TikTok webhook missing event_type');
@@ -77,7 +89,9 @@ export async function POST(request: NextRequest) {
           payload,
           signature: signature || undefined,
         });
-        console.log(`TikTok webhook processed: ${eventType} (${externalId})`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`TikTok webhook processed: ${eventType} (${externalId})`);
+        }
       } catch (error) {
         console.error('TikTok webhook processing error:', error);
         // Error is logged but doesn't affect response

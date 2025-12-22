@@ -29,7 +29,7 @@ export function TouchTarget({
   };
   
   const variantClasses = {
-    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600',
+    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-[#2c6ecb]/30 dark:bg-indigo-500 dark:hover:bg-indigo-600',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
     ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-300 dark:hover:bg-gray-800',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600',
@@ -84,7 +84,7 @@ export function IconButton({
   
   return (
     <motion.button
-      className={`inline-flex items-center justify-center rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2c6ecb]/30 ${sizeClasses[size]} ${className}`}
       aria-label={label}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}

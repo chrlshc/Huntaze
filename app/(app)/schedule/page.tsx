@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useContent, type ContentItem } from '@/hooks/useContent';
 
 type Channel = 'all' | 'onlyfans' | 'tiktok' | 'instagram';
 
@@ -33,102 +34,106 @@ type LibraryItem = {
   tags: string[];
 };
 
-// Mock data – to be replaced by real API calls (/api/schedule, /api/content, etc.)
-const MOCK_SCHEDULE: ScheduleItem[] = [
-  {
-    id: 'sch-1',
-    date: new Date().toISOString().slice(0, 10),
-    time: '18:00',
-    channel: 'OnlyFans',
-    title: 'Weekend promo DM – bundle offer',
-    status: 'scheduled',
-  },
-  {
-    id: 'sch-2',
-    date: new Date().toISOString().slice(0, 10),
-    time: '21:00',
-    channel: 'TikTok',
-    title: 'TikTok teaser – new series',
-    status: 'scheduled',
-  },
-  {
-    id: 'sch-3',
-    date: new Date(Date.now() + 24 * 3600_000).toISOString().slice(0, 10),
-    time: '19:30',
-    channel: 'OnlyFans',
-    title: 'Feed post – VIP photo set',
-    status: 'draft',
-  },
-  {
-    id: 'sch-4',
-    date: new Date(Date.now() + 2 * 24 * 3600_000).toISOString().slice(0, 10),
-    time: '20:00',
-    channel: 'Instagram',
-    title: 'Story IG - swipe up OnlyFans',
-    status: 'scheduled',
-  },
-];
+function formatIsoDateLocal(date: Date): string {
+  // YYYY-MM-DD in local timezone
+  return date.toLocaleDateString('en-CA');
+}
 
-const MOCK_QUEUE: QueueItem[] = [
-  {
-    id: 'q-1',
-    etaLabel: 'In 2h',
-    channel: 'OnlyFans',
-    title: 'Follow-up DM for inactive fans',
-  },
-  {
-    id: 'q-2',
-    etaLabel: 'Tonight 9pm',
-    channel: 'TikTok',
-    title: 'Teaser video - BTS shooting',
-  },
-  {
-    id: 'q-3',
-    etaLabel: 'Tomorrow 7pm',
-    channel: 'OnlyFans',
-    title: 'PPV post - photo pack',
-  },
-  {
-    id: 'q-4',
-    etaLabel: 'Sunday',
-    channel: 'Instagram',
-    title: 'Feed post - storytelling',
-  },
-];
+function formatTime24h(date: Date): string {
+  return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
 
-const MOCK_LIBRARY: LibraryItem[] = [
-  {
-    id: 'lib-1',
-    label: 'Lingerie photo pack',
-    channel: 'OnlyFans',
-    tags: ['NSFW', 'Premium', 'Evergreen'],
-  },
-  {
-    id: 'lib-2',
-    label: 'TikTok teaser video',
-    channel: 'TikTok',
-    tags: ['Teaser', 'Short', 'High CTR'],
-  },
-  {
-    id: 'lib-3',
-    label: 'IG story swipe up',
-    channel: 'Instagram',
-    tags: ['Story', 'Swipe up', 'Traffic'],
-  },
-  {
-    id: 'lib-4',
-    label: 'Welcome DM template',
-    channel: 'Multi',
-    tags: ['Onboarding', 'Automation'],
-  },
-];
+function platformToScheduleChannel(platform: ContentItem['platform']): ScheduleItem['channel'] {
+  switch (platform) {
+    case 'tiktok':
+      return 'TikTok';
+    case 'instagram':
+      return 'Instagram';
+    case 'onlyfans':
+    case 'fansly':
+    default:
+      return 'OnlyFans';
+  }
+}
+
+function platformToLibraryChannel(platform: ContentItem['platform']): LibraryItem['channel'] {
+  switch (platform) {
+    case 'tiktok':
+      return 'TikTok';
+    case 'instagram':
+      return 'Instagram';
+    case 'onlyfans':
+      return 'OnlyFans';
+    case 'fansly':
+    default:
+      return 'Multi';
+  }
+}
+
+function formatEtaLabel(date: Date): string {
+  const diffMs = date.getTime() - Date.now();
+  if (diffMs <= 0) return 'Now';
+
+  const diffMins = Math.round(diffMs / 60_000);
+  if (diffMins < 60) return `In ${diffMins}m`;
+
+  const diffHours = Math.round(diffMs / 3_600_000);
+  if (diffHours < 24) return `In ${diffHours}h`;
+
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
 
 export default function ContentSchedulerPage() {
   const [channel, setChannel] = useState<Channel>('all');
   const [status, setStatus] = useState<StatusFilter>('all');
 
+  const { data: contentResponse } = useContent({ status: 'all', limit: 200 });
+  const contentItems = contentResponse?.data?.items ?? [];
+
+  const maxScheduled = new Date(Date.now() + 7 * 24 * 60 * 60_000);
+
+  const scheduleData: ScheduleItem[] = contentItems
+    .filter((item) => item.status === 'scheduled' || item.status === 'draft')
+    .flatMap((item) => {
+      const when = new Date(item.scheduledAt || item.createdAt);
+      if (item.status === 'scheduled' && item.scheduledAt && when > maxScheduled) return [];
+
+      return [
+        {
+          id: item.id,
+          date: formatIsoDateLocal(when),
+          time: formatTime24h(when),
+          channel: platformToScheduleChannel(item.platform),
+          title: item.title,
+          status: item.status === 'scheduled' ? 'scheduled' : 'draft',
+        },
+      ];
+    });
+
+  const queueData: QueueItem[] = contentItems
+    .filter((item) => item.status === 'scheduled' && item.scheduledAt)
+    .map((item) => ({ item, when: new Date(item.scheduledAt as string) }))
+    .filter(({ when }) => !Number.isNaN(when.getTime()) && when <= maxScheduled)
+    .sort((a, b) => a.when.getTime() - b.when.getTime())
+    .slice(0, 5)
+    .map(({ item, when }) => ({
+      id: item.id,
+      etaLabel: formatEtaLabel(when),
+      channel: platformToScheduleChannel(item.platform),
+      title: item.title,
+    }));
+
+  const libraryData: LibraryItem[] = contentItems
+    .slice(0, 6)
+    .map((item) => ({
+      id: item.id,
+      label: item.title,
+      channel: platformToLibraryChannel(item.platform),
+      tags: item.tags || [],
+    }));
+
   const filteredSchedule = useMemo(() => {
-    return MOCK_SCHEDULE.filter((item) => {
+    return scheduleData.filter((item) => {
       const matchChannel =
         channel === 'all' ||
         (channel === 'onlyfans' && item.channel === 'OnlyFans') ||
@@ -142,7 +147,7 @@ export default function ContentSchedulerPage() {
 
       return matchChannel && matchStatus;
     });
-  }, [channel, status]);
+  }, [channel, status, scheduleData]);
 
   return (
     <ProtectedRoute requireOnboarding={false}>
@@ -159,12 +164,12 @@ export default function ContentSchedulerPage() {
         {/* Planning + queue */}
         <section className="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)]">
           <ScheduleCard schedule={filteredSchedule} />
-          <QueueCard queue={MOCK_QUEUE} />
+          <QueueCard queue={queueData} />
         </section>
 
         {/* Library + outils TikTok */}
         <section className="grid gap-4 xl:grid-cols-2">
-          <LibraryPreviewCard items={MOCK_LIBRARY} />
+          <LibraryPreviewCard items={libraryData} />
           <TikTokToolsCard />
         </section>
       </div>

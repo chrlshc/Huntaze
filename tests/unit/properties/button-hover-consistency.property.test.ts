@@ -67,7 +67,7 @@ function scanFileForTransitionViolations(filePath: string): TransitionViolation[
     }
 
     // Check for hardcoded Tailwind duration classes (duration-150, duration-200, etc.)
-    // But allow duration-[var(--transition-*)]
+    // But allow duration-[var(--transition-base)] and other token-based variants
     const tailwindDurationMatch = line.match(/duration-(\d+)/);
     if (tailwindDurationMatch && !line.includes('var(--transition-')) {
       violations.push({

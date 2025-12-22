@@ -50,7 +50,8 @@ export type AIRequest =
   | { type: 'fan_message'; creatorId: number; fanId: string; message: string; context?: any }
   | { type: 'generate_caption'; creatorId: number; platform: string; contentInfo: any }
   | { type: 'analyze_performance'; creatorId: number; metrics: any }
-  | { type: 'optimize_sales'; creatorId: number; fanId: string; context: any };
+  | { type: 'optimize_sales'; creatorId: number; fanId: string; context: any }
+  | { type: 'content_trends_analysis'; creatorId: number; contentUrl?: string; platform?: string; analysisType: string; context?: any };
 
 /**
  * Response format from agents

@@ -17,6 +17,8 @@ export function usePushNotifications() {
 
   const registerServiceWorker = async () => {
     if (!('serviceWorker' in navigator)) return null;
+    // Avoid service worker registration in dev (it can cause stale Next.js chunks / HMR issues).
+    if (process.env.NODE_ENV !== 'production') return null;
     
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');

@@ -1,4 +1,5 @@
 import { observeMs, incCounter } from '../../../lib/metrics'
+import { externalFetchJson } from '@/lib/services/external/http'
 
 type TweetPublicMetrics = {
   retweet_count: number
@@ -13,8 +14,20 @@ export async function fetchTweetPublicMetrics(ids: string[], bearerToken: string
   if (!ids.length) return {}
   const started = Date.now()
   const url = `https://api.twitter.com/2/tweets?ids=${encodeURIComponent(ids.join(','))}&tweet.fields=public_metrics,created_at`
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${bearerToken}` } })
-  const json = await res.json().catch(() => ({} as any))
+  let json: any = {}
+  try {
+    json = await externalFetchJson(url, {
+      service: 'twitter',
+      operation: 'fetchTweetPublicMetrics',
+      method: 'GET',
+      headers: { Authorization: `Bearer ${bearerToken}` },
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
+      cache: 'no-store',
+    })
+  } catch {
+    json = {}
+  }
   const elapsed = Date.now() - started
   observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'twitter', kind: 'tweet' })
   incCounter('social_twitter_insights_fetch_total', { kind: 'tweet' })
@@ -44,8 +57,20 @@ type UserPublicMetrics = {
 export async function fetchUserPublicMetrics(userId: string, bearerToken: string) {
   const started = Date.now()
   const url = `https://api.twitter.com/2/users/${encodeURIComponent(userId)}?user.fields=public_metrics,created_at`
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${bearerToken}` } })
-  const json = await res.json().catch(() => ({} as any))
+  let json: any = {}
+  try {
+    json = await externalFetchJson(url, {
+      service: 'twitter',
+      operation: 'fetchUserPublicMetrics',
+      method: 'GET',
+      headers: { Authorization: `Bearer ${bearerToken}` },
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
+      cache: 'no-store',
+    })
+  } catch {
+    json = {}
+  }
   const elapsed = Date.now() - started
   observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'twitter', kind: 'user' })
   incCounter('social_twitter_insights_fetch_total', { kind: 'user' })

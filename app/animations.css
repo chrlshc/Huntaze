@@ -42,6 +42,13 @@
   animation: gradientShift 10s ease infinite;
 }
 
+@media (max-width: 768px) {
+  .gradient-animate {
+    animation: none !important;
+    background-size: 100% 100%;
+  }
+}
+
 /**
  * Gradient Text Animation
  * Purpose: Animated gradient text for headings

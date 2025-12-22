@@ -24,6 +24,8 @@ import {
   CompletionNudge, 
   GuardRailModal 
 } from '@/components/onboarding/huntaze-onboarding';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function ShopifyStyleOnboardingPage() {
   const [showGuardRail, setShowGuardRail] = useState(false);
@@ -47,6 +49,29 @@ export default function ShopifyStyleOnboardingPage() {
   const [mockProgress, setMockProgress] = useState(35);
   const [mockRemainingSteps, setMockRemainingSteps] = useState(4);
   const [snoozeCount, setSnoozeCount] = useState(0);
+
+  if (!ENABLE_MOCK_DATA) {
+    return (
+      <div className="min-h-screen bg-background-primary">
+        <div className="border-b border-border-default bg-surface-raised">
+          <div className="container mx-auto px-4 py-4">
+            <h1 className="text-2xl font-bold text-content-primary">Huntaze Setup</h1>
+            <p className="text-sm text-content-secondary mt-1">
+              Flexible setup guide to get started quickly
+            </p>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <EmptyState
+            variant="no-data"
+            title="Onboarding demo is disabled"
+            description="This demo screen is not available in production."
+            action={{ label: 'Go to onboarding', onClick: () => (window.location.href = '/onboarding') }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   const handleSnooze = async (days: number) => {
     console.log(`[Demo] Snoozing for ${days} days`);

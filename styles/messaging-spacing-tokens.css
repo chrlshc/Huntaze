@@ -1,0 +1,256 @@
+/**
+ * Messaging Spacing Tokens - 8px Grid System
+ * 
+ * This file defines the spacing token system for the messaging interface,
+ * following an 8px grid system for consistent, professional spacing.
+ * 
+ * All spacing values are multiples of 4px or 8px to ensure:
+ * - Visual consistency across the interface
+ * - Predictable spacing relationships
+ * - Professional SaaS-level density
+ * - Easy maintenance and updates
+ * 
+ * Usage:
+ * - Use these tokens instead of hardcoded pixel values
+ * - Prefer 8px increments for major spacing (between sections, components)
+ * - Use 4px increments for fine-tuning (within components, tight spacing)
+ * 
+ * Example:
+ *   .message-block {
+ *     margin-bottom: var(--msg-space-block-gap);
+ *   }
+ */
+
+:root {
+  /* ============================================
+     BASE SPACING SCALE (8px Grid)
+     ============================================ */
+  
+  /* Extra tight spacing - 4px */
+  --msg-space-xs: 4px;
+  
+  /* Tight spacing - 8px */
+  --msg-space-sm: 8px;
+  
+  /* Comfortable spacing - 12px */
+  --msg-space-md: 12px;
+  
+  /* Standard spacing - 16px */
+  --msg-space-lg: 16px;
+  
+  /* Generous spacing - 20px */
+  --msg-space-xl: 20px;
+  
+  /* Section spacing - 24px */
+  --msg-space-2xl: 24px;
+  
+  /* Large section spacing - 32px */
+  --msg-space-3xl: 32px;
+
+
+  /* ============================================
+     MESSAGE THREAD SPACING
+     ============================================ */
+  
+  /* Spacing within a message block (same author, consecutive) */
+  --msg-space-within-block: 6px;  /* Spec: 4-8px, current value within range */
+  
+  /* Spacing between message blocks (different authors or time gap) */
+  --msg-space-between-blocks: 14px;  /* Spec: 12-16px, current value within range */
+  
+  /* Message bubble padding - vertical */
+  --msg-bubble-padding-y: 10px;  /* Spec: 8-10px, current value within range */
+  
+  /* Message bubble padding - horizontal */
+  --msg-bubble-padding-x: 14px;  /* Spec: 12-16px, current value within range */
+  
+  /* Timestamp spacing from message content */
+  --msg-timestamp-spacing: var(--msg-space-xs);  /* 4px */
+
+
+  /* ============================================
+     CONVERSATION LIST SPACING
+     ============================================ */
+  
+  /* Conversation item vertical padding */
+  --msg-conversation-item-padding-y: var(--msg-space-sm);  /* 8px, target: 8-10px */
+  
+  /* Conversation item horizontal padding */
+  --msg-conversation-item-padding-x: var(--msg-space-lg);  /* 16px */
+  
+  /* Spacing between conversation items */
+  --msg-conversation-item-gap: 0px;  /* No gap, items are separated by borders */
+  
+  /* Search bar padding */
+  --msg-search-padding: var(--msg-space-lg);  /* 16px */
+  
+  /* Filter tabs spacing */
+  --msg-filter-gap: var(--msg-space-sm);  /* 8px between filter pills */
+  
+  /* Filter container padding */
+  --msg-filter-padding-y: var(--msg-space-sm);  /* 8px */
+  --msg-filter-padding-x: var(--msg-space-lg);  /* 16px */
+
+
+  /* ============================================
+     COMPOSER SPACING
+     ============================================ */
+  
+  /* Distance from last message to composer */
+  --msg-composer-distance: var(--msg-space-md);  /* 12px, spec: 12-16px max */
+  
+  /* Composer internal padding - vertical */
+  --msg-composer-padding-y: var(--msg-space-sm);  /* 8px, spec: 8-10px when empty */
+  
+  /* Composer internal padding - horizontal */
+  --msg-composer-padding-x: var(--msg-space-lg);  /* 16px */
+  
+  /* Composer container padding */
+  --msg-composer-container-padding: var(--msg-space-lg) var(--msg-space-2xl);  /* 16px 24px */
+
+
+  /* ============================================
+     DATE SEPARATOR SPACING
+     ============================================ */
+  
+  /* Spacing above date separator */
+  --msg-date-separator-margin-top: var(--msg-space-lg);  /* 16px, spec: 16-20px */
+  
+  /* Spacing below date separator */
+  --msg-date-separator-margin-bottom: var(--msg-space-lg);  /* 16px, spec: 16-20px */
+  
+  /* Date separator chip padding - vertical */
+  --msg-date-separator-padding-y: var(--msg-space-xs);  /* 4px */
+  
+  /* Date separator chip padding - horizontal */
+  --msg-date-separator-padding-x: var(--msg-space-md);  /* 12px */
+
+
+  /* ============================================
+     CONTEXT PANEL SPACING
+     ============================================ */
+  
+  /* Spacing between context panel sections */
+  --msg-context-section-gap: var(--msg-space-lg);  /* 16px, spec: 16px (8px grid) */
+  
+  /* Spacing between fields within a section */
+  --msg-context-field-gap: var(--msg-space-sm);  /* 8px, spec: 8px */
+  
+  /* Context panel padding */
+  --msg-context-padding: var(--msg-space-2xl);  /* 24px */
+  
+  /* Context panel section title margin */
+  --msg-context-section-title-margin: var(--msg-space-sm);  /* 8px below title */
+
+
+  /* ============================================
+     LAYOUT SPACING
+     ============================================ */
+  
+  /* Column gap between main layout sections */
+  --msg-layout-column-gap: 0px;  /* No gap, columns are separated by borders */
+  
+  /* Main container padding */
+  --msg-layout-padding: 0px;  /* Full bleed layout */
+  
+  /* Header height (if applicable) */
+  --msg-header-height: 64px;  /* Standard header height */
+
+
+  /* ============================================
+     AVATAR & ICON SPACING
+     ============================================ */
+  
+  /* Avatar size in conversation list */
+  --msg-avatar-size-list: 36px;  /* ✅ PHASE 10: 36px for density + recognition balance */
+  
+  /* Avatar size in message thread */
+  --msg-avatar-size-thread: 32px;  /* ✅ PHASE 10: 32px compact, focus on messages */
+  
+  /* Spacing between avatar and content */
+  --msg-avatar-gap: var(--msg-space-md);  /* 12px */
+
+
+  /* ============================================
+     RESPONSIVE BREAKPOINTS
+     ============================================ */
+  
+  /* Mobile: Reduce spacing for smaller screens */
+  @media (max-width: 768px) {
+    --msg-space-2xl: 16px;  /* Reduce section spacing */
+    --msg-space-3xl: 24px;  /* Reduce large section spacing */
+    --msg-context-padding: var(--msg-space-lg);  /* Reduce context panel padding */
+    --msg-composer-container-padding: var(--msg-space-md) var(--msg-space-lg);  /* Reduce composer padding */
+  }
+  
+  /* Tablet: Slightly reduce spacing */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    --msg-space-2xl: 20px;  /* Slightly reduce section spacing */
+    --msg-context-padding: var(--msg-space-xl);  /* Slightly reduce context panel padding */
+  }
+}
+
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Apply standard message spacing */
+.msg-space-within-block {
+  margin-bottom: var(--msg-space-within-block);
+}
+
+.msg-space-between-blocks {
+  margin-bottom: var(--msg-space-between-blocks);
+}
+
+/* Apply standard padding */
+.msg-bubble-padding {
+  padding: var(--msg-bubble-padding-y) var(--msg-bubble-padding-x);
+}
+
+/* Apply conversation item padding */
+.msg-conversation-padding {
+  padding: var(--msg-conversation-item-padding-y) var(--msg-conversation-item-padding-x);
+}
+
+/* Apply composer padding */
+.msg-composer-padding {
+  padding: var(--msg-composer-padding-y) var(--msg-composer-padding-x);
+}
+
+/* Apply date separator spacing */
+.msg-date-separator-spacing {
+  margin-top: var(--msg-date-separator-margin-top);
+  margin-bottom: var(--msg-date-separator-margin-bottom);
+}
+
+/* Apply context section spacing */
+.msg-context-section-spacing {
+  margin-bottom: var(--msg-context-section-gap);
+}
+
+.msg-context-field-spacing {
+  margin-bottom: var(--msg-context-field-gap);
+}
+
+
+/* ============================================
+   DEVELOPMENT HELPERS
+   ============================================ */
+
+/* 
+ * Visual grid overlay for development
+ * Add class 'msg-debug-grid' to body to see 8px grid
+ */
+.msg-debug-grid {
+  background-image: 
+    linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* Highlight non-grid-aligned elements in development */
+[data-msg-debug="true"] * {
+  outline: 1px solid rgba(255, 0, 0, 0.2);
+}

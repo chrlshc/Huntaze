@@ -1,8 +1,8 @@
 /* Minimal design system */
 
 :root {
-  --color-primary: #7c3aed; /* Purple */
-  --color-secondary: var(--accent-primary); /* Pink */
+  --color-primary: #1f2937; /* Gray-800 */
+  --color-secondary: #374151; /* Gray-700 */
   --color-gray-50: var(--bg-glass);
   --color-gray-100: var(--bg-glass);
   --color-gray-200: var(--border-subtle);

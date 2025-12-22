@@ -3,6 +3,9 @@
  * Extracts content from URLs including text, images, and metadata
  */
 
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
+
 interface ExtractedContent {
   title: string;
   description: string;
@@ -42,16 +45,18 @@ export async function extractContentFromUrl(url: string): Promise<ExtractedConte
     }
 
     // Fetch the page
-    const response = await fetch(url, {
+    const response = await externalFetch(url, {
+      service: 'content-extractor',
+      operation: 'fetch',
+      method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; ContentBot/1.0)',
       },
       cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
+      throwOnHttpError: true,
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
-    }
 
     const html = await response.text();
     
@@ -61,6 +66,9 @@ export async function extractContentFromUrl(url: string): Promise<ExtractedConte
     return extracted;
   } catch (error) {
     console.error('Error extracting content from URL:', error);
+    if (isExternalServiceError(error)) {
+      throw new Error('Failed to extract content: external service unavailable');
+    }
     throw new Error(`Failed to extract content: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }

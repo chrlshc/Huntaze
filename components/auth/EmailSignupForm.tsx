@@ -162,7 +162,7 @@ export function EmailSignupForm({
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
                 : isValid 
                   ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
-                  : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
+                  : 'border-gray-300 focus:border-[#2c6ecb] focus:ring-[#2c6ecb]'
               }
             `}
             placeholder="you@example.com"
@@ -206,7 +206,7 @@ export function EmailSignupForm({
           min-h-[44px]
           font-semibold text-white
           transition-all duration-200
-          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2c6ecb]
           ${isValid && !isSubmitting && !isMobileSubmitting && !csrfLoading && !csrfError
             ? 'bg-purple-600 hover:bg-purple-700 active:bg-purple-800'
             : 'bg-gray-300 cursor-not-allowed'

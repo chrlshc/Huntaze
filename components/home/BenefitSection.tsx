@@ -36,7 +36,7 @@ export function BenefitSection({
         <div className={`flex flex-col ${isIconLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-center gap-12 md:gap-20`}>
           {/* Icon Side */}
           <div className="flex-shrink-0 flex items-center justify-center">
-            <div className="inline-flex h-24 w-24 md:h-36 md:w-36 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 transition-all duration-300 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:transform-none">
+            <div className="inline-flex h-24 w-24 md:h-36 md:w-36 items-center justify-center rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
               <Icon className="h-12 w-12 md:h-18 md:w-18" strokeWidth={1.5} />
             </div>
           </div>

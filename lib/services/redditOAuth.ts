@@ -58,6 +58,7 @@ export class RedditOAuthService {
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000; // 1 second
+  private readonly REQUEST_TIMEOUT_MS = 10000; // 10 seconds
 
   constructor() {
     this.clientId = process.env.REDDIT_CLIENT_ID || '';
@@ -181,6 +182,24 @@ export class RedditOAuthService {
   }
 
   /**
+   * Fetch helper with timeout to avoid hanging OAuth flows.
+   */
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    timeoutMs: number = this.REQUEST_TIMEOUT_MS
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  /**
    * Generate Reddit OAuth authorization URL
    * Validates credentials before generating URL
    * 
@@ -234,7 +253,7 @@ export class RedditOAuthService {
       // Reddit requires Basic Auth with client_id:client_secret
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await fetch(REDDIT_TOKEN_URL, {
+      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
@@ -286,7 +305,7 @@ export class RedditOAuthService {
     return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await fetch(REDDIT_TOKEN_URL, {
+      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
@@ -334,7 +353,7 @@ export class RedditOAuthService {
    */
   async getUserInfo(accessToken: string): Promise<RedditUserInfo> {
     return this.retryApiCall(async () => {
-      const response = await fetch(`${REDDIT_API_URL}/api/v1/me`, {
+      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/api/v1/me`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
@@ -375,7 +394,7 @@ export class RedditOAuthService {
     public_description: string;
   }>> {
     return this.retryApiCall(async () => {
-      const response = await fetch(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
+      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
@@ -416,7 +435,7 @@ export class RedditOAuthService {
         token_type_hint: tokenType,
       });
 
-      const response = await fetch(`${REDDIT_API_URL}/api/v1/revoke_token`, {
+      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/api/v1/revoke_token`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,

@@ -108,29 +108,35 @@
   --text-quaternary: #52525b;      /* zinc-600 - disabled/subtle */
   --text-inverse: #09090b;         /* For light backgrounds */
   
+  /* Alias for compatibility with different naming conventions */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-inverse: #ffffff;   /* White text for dark backgrounds (tooltips, badges) */
+  --color-bg-tooltip: #202223;     /* Dark background for tooltips */
+  
   /* ========================================
      ACCENT COLORS - Brand Identity
      ======================================== */
   
-  /* Primary accent (purple/indigo) */
-  --accent-primary: #8b5cf6;       /* violet-500 */
-  --accent-primary-hover: #7c3aed; /* violet-600 */
-  --accent-primary-active: #6d28d9; /* violet-700 */
+  /* Primary accent (neutral gray/black) - WCAG AA compliant */
+  --accent-primary: #1f2937;       /* gray-800 - WCAG AA compliant */
+  --accent-primary-hover: #111827; /* gray-900 */
+  --accent-primary-active: #030712; /* gray-950 */
   
-  /* Secondary accent (emerald for success) */
-  --accent-success: #10b981;       /* emerald-500 */
+  /* Secondary accent (emerald for success) - WCAG AA compliant (4.77:1) */
+  --accent-success: #047857;       /* emerald-700 - WCAG AA compliant */
   --accent-warning: #f59e0b;       /* amber-500 */
-  --accent-error: #ef4444;         /* red-500 */
+  --accent-error: #dc2626;         /* red-600 - WCAG AA compliant (4.77:1) */
   --accent-info: #3b82f6;          /* blue-500 */
   
-  /* Accent backgrounds */
-  --accent-bg-subtle: rgba(139, 92, 246, 0.08);
-  --accent-bg-muted: rgba(139, 92, 246, 0.12);
-  --accent-bg-emphasis: rgba(139, 92, 246, 0.18);
+  /* Accent backgrounds - Updated for neutral primary color */
+  --accent-bg-subtle: rgba(31, 41, 55, 0.08);
+  --accent-bg-muted: rgba(31, 41, 55, 0.12);
+  --accent-bg-emphasis: rgba(31, 41, 55, 0.18);
   
   /* Status-specific border colors (Task 39 - Req 9.3) */
   /* Use these for status indicators, alerts, and state-based borders */
-  --accent-primary-border: rgba(139, 92, 246, 0.3);    /* violet-500 at 30% */
+  --accent-primary-border: rgba(75, 85, 99, 0.3);      /* gray-600 at 30% */
   --accent-success-border: rgba(16, 185, 129, 0.3);    /* emerald-500 at 30% */
   --accent-warning-border: rgba(245, 158, 11, 0.3);    /* amber-500 at 30% */
   --accent-error-border: rgba(239, 68, 68, 0.3);       /* red-500 at 30% */
@@ -151,8 +157,8 @@
   --shadow-inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   
   /* Accent shadows */
-  --shadow-accent: 0 0 20px rgba(139, 92, 246, 0.3);
-  --shadow-accent-strong: 0 0 30px rgba(139, 92, 246, 0.5);
+  --shadow-accent: 0 0 20px rgba(75, 85, 99, 0.3);
+  --shadow-accent-strong: 0 0 30px rgba(75, 85, 99, 0.5);
   
   /* ========================================
      SPACING SYSTEM - 4px Grid
@@ -228,6 +234,7 @@
   --radius-2xl: 1rem;              /* 16px */
   --radius-3xl: 1.5rem;            /* 24px */
   --radius-full: 9999px;
+  --radius-base: var(--radius-xl); /* 12px - default rounding */
   
   /* ========================================
      TRANSITIONS - Smooth Animations
@@ -288,7 +295,7 @@
   
   /* Focus ring */
   --focus-ring-width: 3px;
-  --focus-ring-color: rgba(139, 92, 246, 0.3);
+  --focus-ring-color: rgba(44, 110, 203, 0.35);
   --focus-ring-offset: 2px;
   
   /* ========================================

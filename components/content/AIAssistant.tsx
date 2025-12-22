@@ -58,7 +58,7 @@ export default function AIAssistant({ onSuggestionSelect, context }: AIAssistant
       <div className="space-y-3 mb-4">
         <div>
           <label className="text-sm font-medium text-gray-700 mb-1 block">What do you need help with?</label>
-          <Select value={selectedType} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+          <Select value={selectedType} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent">
             <option value="ideas">Content Ideas</option>
             <option value="caption">Write Caption</option>
             <option value="hashtags">Generate Hashtags</option>
@@ -69,7 +69,7 @@ export default function AIAssistant({ onSuggestionSelect, context }: AIAssistant
         {selectedType === 'caption' && (
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">Tone</label>
-            <Select value={tone} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTone(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            <Select value={tone} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTone(e.target.value as any)} className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent">
               <option value="professional">Professional</option>
               <option value="casual">Casual</option>
               <option value="humorous">Humorous</option>

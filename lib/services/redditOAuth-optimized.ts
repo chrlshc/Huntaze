@@ -40,6 +40,7 @@ export class RedditOAuthServiceOptimized {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000;
   private readonly TOKEN_REFRESH_THRESHOLD = 30 * 60 * 1000; // 30 minutes
+  private readonly REQUEST_TIMEOUT_MS = 15_000;
 
   constructor() {
     this.clientId = process.env.REDDIT_CLIENT_ID || '';
@@ -193,6 +194,36 @@ export class RedditOAuthServiceOptimized {
     });
   }
 
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    correlationId: string
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT_MS);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } catch (error) {
+      const message =
+        error instanceof Error && error.name === 'AbortError'
+          ? 'Request timed out'
+          : error instanceof Error
+            ? error.message
+            : 'Network error';
+
+      throw this.createError(
+        RedditErrorType.NETWORK_ERROR,
+        message,
+        correlationId,
+        undefined,
+        error instanceof Error ? error : undefined
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
   private storeToken(userId: string, token: string, expiresIn: number, refreshToken?: string): void {
     const tokenData: TokenData = {
       token,
@@ -284,7 +315,7 @@ export class RedditOAuthServiceOptimized {
     return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await fetch(REDDIT_TOKEN_URL, {
+      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
@@ -297,9 +328,20 @@ export class RedditOAuthServiceOptimized {
           redirect_uri: this.redirectUri,
         }),
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          RedditErrorType.API_ERROR,
+          'Invalid JSON response from Reddit',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleRedditError(data, response.status, correlationId);
@@ -323,7 +365,7 @@ export class RedditOAuthServiceOptimized {
     return this.retryApiCall(async () => {
       const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
 
-      const response = await fetch(REDDIT_TOKEN_URL, {
+      const response = await this.fetchWithTimeout(REDDIT_TOKEN_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
@@ -335,9 +377,20 @@ export class RedditOAuthServiceOptimized {
           refresh_token: refreshToken,
         }),
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          RedditErrorType.API_ERROR,
+          'Invalid JSON response from Reddit',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleRedditError(data, response.status, correlationId);
@@ -359,15 +412,26 @@ export class RedditOAuthServiceOptimized {
     redditLogger.info('Getting user info', { correlationId });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${REDDIT_API_URL}/api/v1/me`, {
+      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/api/v1/me`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
         },
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          RedditErrorType.API_ERROR,
+          'Invalid JSON response from Reddit',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleRedditError(data, response.status, correlationId);
@@ -390,15 +454,26 @@ export class RedditOAuthServiceOptimized {
     redditLogger.info('Getting subscribed subreddits', { correlationId });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
+      const response = await this.fetchWithTimeout(`${REDDIT_API_URL}/subreddits/mine/subscriber?limit=100`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': this.userAgent,
         },
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          RedditErrorType.API_ERROR,
+          'Invalid JSON response from Reddit',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleRedditError(data, response.status, correlationId);

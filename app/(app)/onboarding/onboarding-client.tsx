@@ -12,30 +12,20 @@ function OnboardingContent() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    console.log('[Onboarding] Status check:', {
-      status,
-      hasSession: !!session,
-      userId: session?.user?.id,
-      onboardingCompleted: session?.user?.onboardingCompleted,
-    });
-
     // Redirect to auth if not authenticated (Requirement 3.3)
     if (status === 'unauthenticated') {
-      console.log('[Onboarding] Not authenticated, redirecting to /auth');
-      router.push('/auth');
+      router.replace('/auth/login?error=session_expired&callbackUrl=/onboarding');
       return;
     }
 
     // If already completed onboarding, redirect to dashboard (Requirement 3.4, 5.2)
     if (status === 'authenticated' && session?.user?.onboardingCompleted === true) {
-      console.log('[Onboarding] Already completed, redirecting to /dashboard');
-      router.push('/dashboard');
+      router.replace('/dashboard');
       return;
     }
 
     // Ready to show onboarding (Requirement 3.1)
     if (status === 'authenticated') {
-      console.log('[Onboarding] Ready to show onboarding');
       setIsReady(true);
     }
   }, [status, session, router]);
@@ -56,9 +46,8 @@ function OnboardingContent() {
       // Redirect to dashboard after successful completion (Requirements 4.3, 4.4)
       router.push('/dashboard');
     } catch (error) {
-      console.error('[Onboarding] Failed to complete onboarding:', error);
       // Still redirect to dashboard even if save fails
-      router.push('/dashboard');
+      router.replace('/dashboard');
     }
   };
 
@@ -78,9 +67,8 @@ function OnboardingContent() {
       // Redirect to dashboard after successful completion (Requirements 4.3, 4.4)
       router.push('/dashboard');
     } catch (error) {
-      console.error('[Onboarding] Failed to skip onboarding:', error);
       // Still redirect to dashboard even if save fails
-      router.push('/dashboard');
+      router.replace('/dashboard');
     }
   };
 

@@ -1,0 +1,92 @@
+/**
+ * Messages Alignment Fix - Force proper left/right alignment
+ * This file ensures messages are properly aligned regardless of library defaults
+ */
+
+/* Container must be full width */
+.cs-message {
+  width: 100% !important;
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Incoming messages (fan) - LEFT alignment - BULLES ALIGNÉES VERTICALEMENT */
+.cs-message--incoming {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.cs-message--incoming .cs-message__content-wrapper {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+  align-self: flex-start !important;
+  /* Force toutes les bulles à commencer au même endroit */
+  padding-left: 0 !important;
+}
+
+.cs-message--incoming .cs-message__content {
+  background-color: #CFDEF1 !important;
+  color: #000000 !important;
+  border: none !important;
+  margin-left: 0 !important;
+  /* Toutes les bulles commencent au même point */
+  align-self: flex-start !important;
+}
+
+/* Outgoing messages (creator) - RIGHT alignment - BULLES ALIGNÉES VERTICALEMENT */
+.cs-message--outgoing {
+  justify-content: flex-end !important;
+  text-align: right !important;
+}
+
+.cs-message--outgoing .cs-message__content-wrapper {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  align-self: flex-end !important;
+  /* Force toutes les bulles à finir au même endroit */
+  padding-right: 0 !important;
+}
+
+.cs-message--outgoing .cs-message__content {
+  background-color: #E5E5EA !important;
+  color: #000000 !important;
+  border: none !important;
+  margin-right: 0 !important;
+  /* Toutes les bulles finissent au même point */
+  align-self: flex-end !important;
+}
+
+/* Ensure content wrapper respects max-width but stays aligned */
+.cs-message__content-wrapper {
+  max-width: 70% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure content is inline-block for proper sizing */
+.cs-message__content {
+  display: inline-block !important;
+  padding: 10px 14px !important;
+  border-radius: 18px !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  word-wrap: break-word !important;
+  box-sizing: border-box !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+}
+
+/* Force les bulles incoming à toujours commencer au bord gauche */
+.cs-message--incoming .cs-message__content {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* Force les bulles outgoing à toujours finir au bord droit */
+.cs-message--outgoing .cs-message__content {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+}
+

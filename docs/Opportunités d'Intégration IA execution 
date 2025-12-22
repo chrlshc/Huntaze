@@ -1,0 +1,609 @@
+Je te le fais en mode :
+👉 Étape → Objectif → Fichiers → Ce que tu codes concrètement.
+
+Étape 0 – Fondations IA (une seule fois)
+0.1 – Router + client générique
+
+Fichiers :
+
+lib/ai/huntaze-router.ts
+
+lib/ai/aiService.ts (ou équivalent)
+
+À faire :
+
+Définir les types :
+
+export type AIType =
+  | 'analytics'
+  | 'content-creation'
+  | 'content-variations'
+  | 'content-analysis'
+  | 'fan-segmentation'
+  | 'automation-builder'
+  | 'chat'
+  | 'offers'
+  | 'marketing'
+  | 'schedule';
+
+
+Router modèles (comme dans la doc) :
+
+export const MODEL_ROUTING: Record<AIType, string> = {
+  analytics: 'mistral-large',
+  'content-creation': 'mistral-large',
+  'content-variations': 'mistral-large',
+  'content-analysis': 'mistral-large',
+  'fan-segmentation': 'deepseek-r1',
+  'automation-builder': 'deepseek-r1',
+  chat: 'llama-3.3-70b',
+  offers: 'llama-3.3-70b',
+  marketing: 'mistral-large',
+  schedule: 'mistral-large',
+};
+
+
+Client générique :
+
+export async function aiRequest<T = unknown>(params: {
+  type: AIType;
+  prompt: string;
+  modelOverride?: string;
+  temperature?: number;
+}): Promise<T> {
+  const model = params.modelOverride ?? MODEL_ROUTING[params.type];
+
+  // appel HTTP à ton backend / provider ici
+  // return parsed JSON / texte
+}
+
+
+Important : dès que tu peux, demande du JSON dans tes prompts, comme ça tu tapes direct dans des types TypeScript.
+
+Étape 1 – Analytics IA (Insights + Rapports)
+1.1 – Service d’insights
+
+Fichiers :
+
+lib/api/services/analytics.service.ts
+
+lib/ai/analytics-insights.service.ts (nouveau)
+
+À faire :
+
+Créer un type :
+
+export interface AnalyticsInsights {
+  keyInsights: string[];         // 3 éléments
+  recommendations: string[];     // 2 éléments
+}
+
+
+Implémenter le service IA :
+
+import { aiRequest } from '../aiService';
+
+export async function generateAnalyticsInsights(
+  metrics: AnalyticsMetrics
+): Promise<AnalyticsInsights> {
+  const prompt = `
+    Analyse ces métriques OnlyFans et retourne du JSON strict:
+    Metrics:
+    - ARPU: ${metrics.arpu}
+    - LTV: ${metrics.ltv}
+    - Churn: ${metrics.churnRate}%
+    - MoM Growth: ${metrics.momGrowth}%
+
+    Format JSON:
+    {
+      "keyInsights": ["...", "...", "..."],
+      "recommendations": ["...", "..."]
+    }
+  `;
+
+  return aiRequest<AnalyticsInsights>({
+    type: 'analytics',
+    prompt,
+  });
+}
+
+
+Dans analytics.service.ts, ajouter une méthode :
+
+async getDashboardWithInsights(userId: string) {
+  const metrics = await this.getMetrics(userId);
+  const insights = await generateAnalyticsInsights(metrics);
+  return { metrics, insights };
+}
+
+1.2 – UI Analytics
+
+Fichiers :
+
+app/(app)/analytics/*
+
+components/analytics/TopContentGrid.tsx (juste pour réutiliser plus tard)
+
+À faire :
+
+Sur la page Analytics principale :
+
+Récupérer metrics + insights.
+
+Bloc “💡 Insights IA” avec :
+
+Liste des keyInsights
+
+Liste des recommendations
+
+Étape 2 – Content Creation (Variations + Captions + Ton)
+2.1 – Variations A/B auto
+
+Fichiers :
+
+components/content/AIAssistant.tsx
+
+components/content/VariationManager.tsx
+
+À faire :
+
+Service IA :
+
+interface Variation {
+  label: string;   // "Plus émotionnel", etc.
+  text: string;
+}
+
+export async function generateVariations(
+  content: string,
+  count = 5
+): Promise<Variation[]> {
+  const prompt = `
+    Génère ${count} variations de ce contenu OnlyFans:
+
+    "${content}"
+
+    Tu dois répondre en JSON:
+    [
+      { "label": "plus émotionnel", "text": "..." },
+      { "label": "plus direct/urgent", "text": "..." },
+      { "label": "avec emojis", "text": "..." },
+      { "label": "plus mystérieux", "text": "..." },
+      { "label": "call-to-action fort", "text": "..." }
+    ]
+  `;
+
+  return aiRequest<Variation[]>({
+    type: 'content-variations',
+    prompt,
+  });
+}
+
+
+UI VariationManager :
+
+Bouton “Générer des variations IA”.
+
+State variations.
+
+Pour chaque variation : carte + bouton “Utiliser”.
+
+2.2 – Captions optimisées par plateforme + ton
+
+Fichiers :
+
+components/content/ContentCreator.tsx
+
+components/content/AIAssistant.tsx (si tu regroupe la logique)
+
+À faire :
+
+Types :
+
+type Platform = 'twitter' | 'instagram' | 'onlyfans' | 'tiktok';
+type Tone = 'casual' | 'sexy' | 'pro' | 'mysterious';
+
+
+Service IA :
+
+interface CaptionResult {
+  platform: Platform;
+  tone: Tone;
+  caption: string;
+  maxLength: number;
+  length: number;
+}
+
+export async function generateCaption(params: {
+  baseContent: string;
+  platform: Platform;
+  tone: Tone;
+}): Promise<CaptionResult> {
+  const limit = params.platform === 'twitter' ? 280 :
+                params.platform === 'instagram' ? 2200 : 2000;
+
+  const prompt = `
+    Tu es expert social media pour créateur OnlyFans.
+
+    Contenu de base:
+    "${params.baseContent}"
+
+    Plateforme: ${params.platform}
+    Ton: ${params.tone}
+    Longueur max: ${limit} caractères.
+
+    Donne une seule caption optimisée, en JSON:
+    {
+      "platform": "${params.platform}",
+      "tone": "${params.tone}",
+      "caption": "...",
+      "maxLength": ${limit},
+      "length": <longueur réelle>
+    }
+  `;
+
+  return aiRequest<CaptionResult>({
+    type: 'content-creation',
+    prompt,
+  });
+}
+
+
+UI :
+
+Sélecteur plateforme + ton.
+
+Bouton “Générer caption IA”.
+
+Afficher le compteur length / maxLength.
+
+Étape 3 – Top Content Analysis (Patterns + reco)
+
+Fichiers :
+
+components/analytics/TopContentGrid.tsx
+
+lib/ai/top-content-analysis.service.ts
+
+À faire :
+
+Service IA :
+
+interface TopContentInsights {
+  successPatterns: string[];
+  recommendations: string[];
+  bestTimes: string[]; // ex: ["Lundi 19-21h", "Samedi 10-12h"]
+}
+
+export async function analyzeTopContent(
+  items: ContentItem[]
+): Promise<TopContentInsights> {
+  const minimal = items.map(c => ({
+    title: c.title,
+    engagement: c.engagementRate,
+    likes: c.likes,
+    comments: c.comments,
+    shares: c.shares,
+    publishedAt: c.publishedAt,
+    platform: c.platform,
+  }));
+
+  const prompt = `
+    Analyse ces top posts (OnlyFans + socials) et réponds en JSON:
+
+    ${JSON.stringify(minimal)}
+
+    Format:
+    {
+      "successPatterns": ["...", "...", "..."],
+      "recommendations": ["...", "..."],
+      "bestTimes": ["...", "..."]
+    }
+  `;
+
+  return aiRequest<TopContentInsights>({
+    type: 'content-analysis',
+    prompt,
+  });
+}
+
+
+UI :
+
+Dans TopContentGrid, après avoir chargé les posts :
+
+Appel à analyzeTopContent.
+
+Bloc sous le grid :
+
+“Patterns de succès”
+
+“Recommandations”
+
+“Meilleurs créneaux”.
+
+Étape 4 – Fans CRM (Segmentation + Churn + Upsell)
+
+Fichiers :
+
+app/api/crm/fans/route.ts
+
+app/(app)/fans/page.tsx
+
+lib/ai/fans-crm.service.ts
+
+4.1 – Segmentation + churn
+
+Types :
+
+interface FanSegment {
+  id: string;
+  segment: 'whale' | 'regular' | 'at-risk';
+  churnScore: number; // 0-100
+  reason?: string;
+}
+
+interface FansSegmentationResult {
+  segments: FanSegment[];
+}
+
+
+Service IA :
+
+export async function segmentFans(
+  fans: RawFan[]
+): Promise<FansSegmentationResult> {
+  const minimal = fans.map(f => ({
+    id: f.id,
+    lifetimeValue: f.ltv,
+    monthlyValue: f.mrr,
+    lastActiveAt: f.lastActiveAt,
+    messagesCount: f.messagesCount,
+    tipsCount: f.tipsCount,
+    subscriptionAgeDays: f.subscriptionAgeDays,
+  }));
+
+  const prompt = `
+    Segmente ces fans OnlyFans en whales/regulars/at-risk et prédis le churn.
+
+    Donne un JSON:
+    {
+      "segments": [
+        {
+          "id": "<id>",
+          "segment": "whale" | "regular" | "at-risk",
+          "churnScore": 0-100,
+          "reason": "..."
+        }
+      ]
+    }
+
+    Data:
+    ${JSON.stringify(minimal)}
+  `;
+
+  return aiRequest<FansSegmentationResult>({
+    type: 'fan-segmentation',
+    prompt,
+  });
+}
+
+
+API route :
+
+Endpoint /api/crm/fans/segments qui :
+
+Récupère les fans bruts.
+
+Appelle segmentFans.
+
+Retourne la structure.
+
+UI fans/page.tsx :
+
+Afficher des badges Whale, À risque.
+
+Filtres par segment.
+
+Afficher le churnScore (%) + tooltip reason.
+
+4.2 – Upsell suggestions / outreach (optionnel mais rapide)
+
+Même principe :
+→ Passer quelques fans whale à l’IA et demander un champ upsellIdea + messageTemplate.
+
+Étape 5 – Marketing Campaigns (Generator + Subject Lines)
+
+Fichiers :
+
+app/(app)/marketing/campaigns/new/page.tsx
+
+hooks/marketing/useMarketingCampaigns.ts
+
+lib/ai/marketing.service.ts
+
+5.1 – Campaign Generator
+
+Types :
+
+interface GeneratedCampaign {
+  subject: string;
+  previewText: string;
+  bodyHtml: string;
+  cta: string;
+  angle: string;
+}
+
+
+Service IA :
+
+export async function generateCampaign(params: {
+  goal: string;
+  audience: string;
+  tone: Tone;
+}): Promise<GeneratedCampaign> {
+  const prompt = `
+    Crée une campagne marketing pour créatrice OnlyFans.
+
+    Objectif: ${params.goal}
+    Audience: ${params.audience}
+    Ton: ${params.tone}
+
+    Retourne du JSON:
+    {
+      "subject": "...",
+      "previewText": "...",
+      "bodyHtml": "<p>...</p>",
+      "cta": "...",
+      "angle": "..."
+    }
+  `;
+
+  return aiRequest<GeneratedCampaign>({
+    type: 'marketing',
+    prompt,
+  });
+}
+
+
+UI :
+
+Formulaire avec goal, audience, tone.
+
+Bouton “Générer avec l’IA”.
+
+Pré-remplir les champs du formulaire campagne avec le résultat.
+
+5.2 – Subject line optimizer
+
+Petite fonction optimizeSubjectLines(baseSubject, audience) → retourne un tableau de 5 sujets, affichés sous forme de liste cliquable.
+
+Étape 6 – Automations (Flow Builder + Templates)
+
+Fichiers :
+
+app/(app)/automations/page.tsx
+
+app/(app)/flows/page.tsx
+
+lib/ai/automation-builder.service.ts
+
+6.1 – Flow Builder IA
+
+Types :
+
+interface AutomationStep {
+  id: string;
+  type: 'trigger' | 'condition' | 'action';
+  name: string;
+  config: Record<string, any>;
+}
+
+interface AutomationFlow {
+  name: string;
+  description: string;
+  steps: AutomationStep[];
+}
+
+
+Service IA :
+
+export async function buildAutomationFlow(
+  description: string
+): Promise<AutomationFlow> {
+  const prompt = `
+    L'utilisateur décrit un flow d'automatisation OnlyFans:
+
+    "${description}"
+
+    Tu dois répondre en JSON:
+    {
+      "name": "...",
+      "description": "...",
+      "steps": [
+        {
+          "id": "step-1",
+          "type": "trigger",
+          "name": "New subscriber",
+          "config": {...}
+        },
+        {
+          "id": "step-2",
+          "type": "action",
+          "name": "Send welcome message",
+          "config": {...}
+        }
+      ]
+    }
+  `;
+
+  return aiRequest<AutomationFlow>({
+    type: 'automation-builder',
+    prompt,
+  });
+}
+
+
+UI :
+
+Textarea “Décris ton automation”.
+
+Bouton “Générer le flow”.
+
+Affichage des steps en liste (tu feras un vrai editor visuel plus tard si tu veux).
+
+Étape 7 – Offers & Discounts (Pricing / Bundles)
+
+Fichiers :
+
+app/(app)/offers/page.tsx
+
+lib/ai/offers.service.ts
+
+Même pattern : tu passes les produits, prix actuels, historique, et tu demandes au modèle (Llama 3.3) un JSON avec :
+
+recommendedPrice
+
+bundleIdeas[]
+
+discountStrategy[]
+
+Étape 8 – Schedule (Smart Scheduling + Gaps)
+
+Fichiers :
+
+app/(app)/schedule/page.tsx
+
+components/content/ContentCalendar.tsx
+
+lib/ai/schedule.service.ts
+
+Tu passes :
+
+historique des posts (date/heure, plateforme, engagement).
+
+planning actuel.
+
+Tu demandes :
+
+bestSlots[] (créneaux recommandés).
+
+gaps[] (jours/heures sans contenu).
+
+éventuellement perPlatform.
+
+UI :
+
+Mettre en avant les créneaux conseillés (halo, bordure spéciale).
+
+Bouton “Placer automatiquement dans les meilleurs créneaux”.
+
+Étape 9 – Finitions globales
+
+Quand tout est branché :
+
+Ajoute un petit badge “IA” sur chaque bloc IA.
+
+Ajoute de la gestion d’erreurs : si l’IA fail → message fallback propre.
+
+Ajoute de la limitation / cache pour ne pas spam les modèles sur chaque re-render.

@@ -12,18 +12,20 @@
    ============================================ */
 
 /* Ensure all buttons meet minimum touch target */
-button,
-a[role="button"],
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-.btn,
-.btn-primary,
-.btn-secondary,
-.btn-ghost {
-  min-height: 44px;
-  min-width: 44px;
-  position: relative;
+@media (pointer: coarse) {
+  button:not([role="switch"]),
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    min-height: 44px;
+    min-width: 44px;
+    position: relative;
+  }
 }
 
 /* Extend touch area for small visual elements */
@@ -38,32 +40,34 @@ input[type="reset"],
   z-index: -1;
 }
 
-/* Ensure form inputs are touch-friendly */
-input,
-select,
-textarea {
-  min-height: 44px;
-  font-size: var(--text-base); /* Prevents zoom on iOS */
-}
+@media (pointer: coarse) {
+  /* Ensure form inputs are touch-friendly */
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: var(--text-base); /* Prevents zoom on iOS */
+  }
 
-/* Checkbox and radio buttons need larger touch targets */
-input[type="checkbox"],
-input[type="radio"] {
-  min-width: 20px;
-  min-height: 20px;
-  cursor: pointer;
-}
+  /* Checkbox and radio buttons need larger touch targets */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 20px;
+    min-height: 20px;
+    cursor: pointer;
+  }
 
-/* Extend touch area for checkbox/radio labels */
-input[type="checkbox"] + label,
-input[type="radio"] + label,
-label:has(input[type="checkbox"]),
-label:has(input[type="radio"]) {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 8px 0;
+  /* Extend touch area for checkbox/radio labels */
+  input[type="checkbox"] + label,
+  input[type="radio"] + label,
+  label:has(input[type="checkbox"]),
+  label:has(input[type="radio"]) {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 0;
+  }
 }
 
 /* ============================================
@@ -107,8 +111,8 @@ label:has(input[type="radio"]) {
     padding: 16px;
   }
 
-  /* Ensure sidebar is hidden on mobile by default */
-  aside:not(.mobile-open) {
+  /* Ensure nav sidebar is hidden on mobile by default */
+  .huntaze-sidebar:not([data-open="true"]) {
     transform: translateX(-100%);
   }
 
@@ -360,7 +364,7 @@ label:has(input[type="radio"]) {
 /* Ensure focus indicators are visible on mobile */
 @media (max-width: 767px) {
   *:focus-visible {
-    outline: 3px solid var(--brand-primary, var(--accent-primary));
+    outline: 3px solid var(--a11y-focus-outline-color, rgba(44, 110, 203, 0.55));
     outline-offset: 2px;
   }
 
@@ -370,7 +374,7 @@ label:has(input[type="radio"]) {
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 0 4px var(--a11y-focus-ring-color, rgba(44, 110, 203, 0.25));
   }
 }
 
@@ -379,14 +383,22 @@ label:has(input[type="radio"]) {
    ============================================ */
 
 @media (max-width: 767px) {
-  /* Reduce animation complexity on mobile - keep within 200-300ms range */
-  * {
-    animation-duration: 200ms !important;
+  /* Reduce expensive visual effects on mobile */
+  :root {
+    --brand-glow-strong: 0 0 12px rgba(139, 92, 246, 0.25);
+    --shadow-accent: 0 0 12px rgba(139, 92, 246, 0.25);
+    --shadow-accent-strong: 0 0 16px rgba(139, 92, 246, 0.35);
   }
 
-  /* Disable expensive animations */
+  /* Disable expensive backdrop blur effects */
   .blur-effect,
-  .backdrop-blur {
+  .backdrop-blur,
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }

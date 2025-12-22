@@ -29,7 +29,9 @@ yarn-error.log*
 .env
 .env*.local
 .env.production
+.env.production.ai
 .env.test
+.env.huntaze
 
 # vercel
 .vercel

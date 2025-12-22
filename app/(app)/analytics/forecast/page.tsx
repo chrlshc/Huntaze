@@ -1,116 +1,71 @@
 'use client';
 
-import { useState, lazy, Suspense } from 'react';
-import Link from 'next/link';
-import { useRevenueForecast } from '@/hooks/revenue/useRevenueForecast';
-import { MonthProgress } from '@/components/revenue/forecast/MonthProgress';
-import { GoalAchievement } from '@/components/revenue/forecast/GoalAchievement';
-import { LoadingState } from '@/components/revenue/shared/LoadingState';
-import { ErrorBoundary } from '@/components/revenue/shared/ErrorBoundary';
-import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
-import { SubNavigation } from '@/components/dashboard/SubNavigation';
-import { Breadcrumbs } from '@/components/dashboard/Breadcrumbs';
-import { useNavigationContext } from '@/hooks/useNavigationContext';
-import { getAnalyticsSubNav } from '../analytics-nav';
-import { Button } from "@/components/ui/button";
+/**
+ * Analytics - Forecast Page
+ * Revenue and growth forecasting
+ */
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
-// Lazy load heavy chart component (uses Recharts library) to reduce initial bundle size
-const RevenueForecastChart = lazy(() => import('@/components/revenue/forecast/RevenueForecastChart').then(mod => ({ default: mod.RevenueForecastChart })));
+import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
+import { 
+  ShopifyMetricCard,
+  ShopifyMetricGrid,
+  ShopifySectionHeader,
+  ShopifyCard,
+} from '@/components/ui/shopify';
+import { TrendingDown, DollarSign, Users, Target } from 'lucide-react';
 
-export default function ForecastPage() {
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const creatorId = 'creator_123';
-  
-  // Navigation context
-  const { breadcrumbs, subNavItems } = useNavigationContext();
-
-  const { forecast, isLoading, error } = useRevenueForecast({ creatorId });
-
-  const handleSetGoal = async (amount: number) => {
-    try {
-      // await setGoal(amount, new Date().toISOString().slice(0, 7)); // Needs targetMonth parameter
-      setToastMessage('Goal updated successfully!');
-      setShowToast(true);
-    } catch (err) {
-      setToastMessage('Failed to update goal.');
-      setShowToast(true);
-    }
-  };
-
-  if (isLoading) return <div className="py-12"><LoadingState variant="card" count={3} /></div>;
-  if (error) return <div className="p-6"><div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"><h3 className="text-red-800 dark:text-red-200 font-semibold mb-2">Error Loading Forecast</h3><p className="text-red-600 dark:text-red-300 text-sm">{error.message || 'Failed to load forecast data.'}</p></div></div>;
-
+export default function ForecastAnalyticsPage() {
   return (
-    <ErrorBoundary>
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[var(--color-text-main)] mb-2">Revenue Forecast</h1>
-          <p className="text-[var(--color-text-sub)]">Predict and plan your future revenue</p>
-        </div>
+    <ShopifyPageLayout>
+      <div className="space-y-6">
+        <ShopifySectionHeader 
+          title="Revenue Forecast" 
+          description="AI-powered predictions for future growth"
+          icon={TrendingDown}
+        />
 
-        {/* Breadcrumbs */}
-        <Breadcrumbs items={breadcrumbs} />
+        <ShopifyMetricGrid>
+          <ShopifyMetricCard
+            title="Next Month Forecast"
+            value="$12,450"
+            change="+15%"
+            changeType="positive"
+            icon={DollarSign}
+          />
+          <ShopifyMetricCard
+            title="Quarterly Projection"
+            value="$45,230"
+            change="+22%"
+            changeType="positive"
+            icon={Target}
+          />
+          <ShopifyMetricCard
+            title="Expected New Fans"
+            value="1,234"
+            change="+8%"
+            changeType="positive"
+            icon={Users}
+          />
+          <ShopifyMetricCard
+            title="Confidence Score"
+            value="94%"
+            change="+3%"
+            changeType="positive"
+            icon={TrendingDown}
+          />
+        </ShopifyMetricGrid>
 
-        {/* Sub-Navigation */}
-        {subNavItems && <SubNavigation items={subNavItems} />}
-
-        {forecast && (
-          <>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <MonthProgress 
-                forecast={forecast.currentMonth} 
-                title="Current Month Progress"
-                subtitle="Track your progress towards this month's goal"
-              />
-              <GoalAchievement 
-                currentRevenue={forecast.currentMonth.actual}
-                goalRevenue={forecast.currentMonth.projected}
-                recommendations={forecast.recommendations}
-              />
-            </div>
-
-            <div className="mb-8">
-              <LazyLoadErrorBoundary>
-                <Suspense fallback={
-                  <div className="bg-white border border-gray-200 rounded-lg p-6">
-                    <div className="animate-pulse space-y-4">
-                      <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-[400px] bg-gray-200 rounded"></div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="h-32 bg-gray-200 rounded"></div>
-                        <div className="h-32 bg-gray-200 rounded"></div>
-                      </div>
-                    </div>
-                  </div>
-                }>
-                  <RevenueForecastChart 
-                    historicalData={forecast.historical}
-                    forecastData={forecast.forecast}
-                    currentMonth={forecast.currentMonth}
-                    nextMonth={forecast.nextMonth}
-                    onGoalSet={handleSetGoal}
-                  />
-                </Suspense>
-              </LazyLoadErrorBoundary>
-            </div>
-          </>
-        )}
-
-        {showToast && (
-          <div className="fixed bottom-4 right-4 z-50">
-            <div className="rounded-lg p-4 shadow-lg bg-green-600 text-white">
-              <div className="flex items-center gap-3">
-                <span>{toastMessage}</span>
-                <Button variant="primary" onClick={() => setShowToast(false)}>×</Button>
-              </div>
+        <ShopifyCard>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Revenue Forecast Chart</h3>
+            <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+              <p className="text-gray-500">Revenue forecast visualization</p>
             </div>
           </div>
-        )}
+        </ShopifyCard>
       </div>
-    </ErrorBoundary>
+    </ShopifyPageLayout>
   );
 }

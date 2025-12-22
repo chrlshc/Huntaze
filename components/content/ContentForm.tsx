@@ -107,7 +107,7 @@ export function ContentForm({
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white ${
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white ${
             errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
           }`}
           placeholder="Enter content title"
@@ -129,7 +129,7 @@ export function ContentForm({
             name="type"
             value={formData.type}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
             disabled={isLoading}
           >
             <option value="image">Image</option>
@@ -147,7 +147,7 @@ export function ContentForm({
             name="platform"
             value={formData.platform}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
             disabled={isLoading}
           >
             <option value="onlyfans">OnlyFans</option>
@@ -169,7 +169,7 @@ export function ContentForm({
           value={formData.text}
           onChange={handleChange}
           rows={6}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white ${
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white ${
             errors.text ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
           }`}
           placeholder="Write your content here..."
@@ -205,7 +205,7 @@ export function ContentForm({
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
           placeholder="e.g., Lifestyle, Fitness, Behind the Scenes"
           disabled={isLoading}
         />
@@ -227,7 +227,7 @@ export function ContentForm({
                 handleAddTag();
               }
             }}
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
             placeholder="Add a tag and press Enter"
             disabled={isLoading}
           />
@@ -267,7 +267,7 @@ export function ContentForm({
           name="status"
           value={formData.status}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent dark:bg-gray-800 dark:text-white"
           disabled={isLoading}
         >
           <option value="draft">Draft</option>

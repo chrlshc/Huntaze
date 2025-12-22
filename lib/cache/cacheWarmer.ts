@@ -150,7 +150,7 @@ class CacheWarmer {
 export const cacheWarmer = new CacheWarmer();
 
 // Auto-start cache warming on module load (for production)
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE !== 'phase-production-build') {
   // Warm up critical caches immediately
   cacheWarmer.warmUpCritical().catch(console.error);
   

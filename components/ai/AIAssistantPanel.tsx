@@ -2,42 +2,22 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { 
-  MessageSquare, 
-  Bot, 
-  Users, 
-  Target, 
-  Lightbulb, 
-  DollarSign,
+  ChevronDown,
+  ExternalLink,
+  Maximize2,
   X,
-  Send,
-  Sparkles,
-  ChevronRight
+  Plus,
+  Mic,
+  Sparkles
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import './ai-assistant-panel.css';
 
 // Types
-export interface AITool {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  href?: string;
-}
-
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
-  suggestions?: AISuggestion[];
-}
-
-export interface AISuggestion {
-  id: string;
-  type: 'message' | 'content' | 'action';
-  text: string;
-  confidence: number;
 }
 
 export interface PageContext {
@@ -48,73 +28,14 @@ export interface PageContext {
 
 export interface AIAssistantPanelProps {
   context?: PageContext;
-  onToolSelect?: (toolId: string) => void;
   className?: string;
 }
 
-// AI Tools configuration
-export const AI_TOOLS: AITool[] = [
-  { 
-    id: 'chat', 
-    name: 'AI Chat', 
-    description: 'Ask anything about your business',
-    icon: <MessageSquare className="ai-tool-icon" />,
-    href: '/ai/chat'
-  },
-  { 
-    id: 'auto-reply', 
-    name: 'Auto-Reply', 
-    description: 'Automated fan responses',
-    icon: <Bot className="ai-tool-icon" />,
-    href: '/onlyfans/settings?tab=auto-reply'
-  },
-  { 
-    id: 'segmentation', 
-    name: 'Fan Segments', 
-    description: 'AI-powered fan grouping',
-    icon: <Users className="ai-tool-icon" />,
-    href: '/analytics/fans?view=segments'
-  },
-  { 
-    id: 'campaigns', 
-    name: 'Campaign Gen', 
-    description: 'Create AI campaigns',
-    icon: <Target className="ai-tool-icon" />,
-    href: '/marketing/campaigns/new'
-  },
-  { 
-    id: 'insights', 
-    name: 'Insights', 
-    description: 'AI-powered analytics',
-    icon: <Lightbulb className="ai-tool-icon" />,
-    href: '/analytics?tab=insights'
-  },
-  { 
-    id: 'pricing', 
-    name: 'Pricing', 
-    description: 'Optimize your prices',
-    icon: <DollarSign className="ai-tool-icon" />,
-    href: '/analytics/pricing'
-  }
-];
-
-// Suggested prompts for chat
-const SUGGESTED_PROMPTS = [
-  "What's my best performing content this week?",
-  "Which fans are at risk of churning?",
-  "Suggest a PPV price for my new content",
-  "Help me write a message to my top fans"
-];
-
-export type AIAssistantTab = 'chat' | 'tools' | 'insights';
-
 export function AIAssistantPanel({ 
   context,
-  onToolSelect,
   className = ''
 }: AIAssistantPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<AIAssistantTab>('chat');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -141,10 +62,6 @@ export function AIAssistantPanel({
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
-  }, []);
-
-  const handleTabChange = useCallback((tab: AIAssistantTab) => {
-    setActiveTab(tab);
   }, []);
 
   const handleSendMessage = useCallback(async () => {
@@ -179,8 +96,7 @@ export function AIAssistantPanel({
         id: `msg-${Date.now()}-assistant`,
         role: 'assistant',
         content: data.data?.response || data.response || 'I apologize, I could not process your request.',
-        timestamp: new Date(),
-        suggestions: data.data?.suggestions
+        timestamp: new Date()
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -197,19 +113,6 @@ export function AIAssistantPanel({
     }
   }, [inputValue, isLoading, context]);
 
-  const handlePromptClick = useCallback((prompt: string) => {
-    setInputValue(prompt);
-  }, []);
-
-  const handleToolClick = useCallback((tool: AITool) => {
-    if (onToolSelect) {
-      onToolSelect(tool.id);
-    }
-    if (tool.href) {
-      window.location.href = tool.href;
-    }
-  }, [onToolSelect]);
-
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -221,229 +124,129 @@ export function AIAssistantPanel({
     <>
       {/* Persistent AI Button */}
       <button
-        className="ai-assistant-button"
+        className="ai-fab-button"
         onClick={handleToggle}
         aria-label="Open AI Assistant"
         aria-expanded={isOpen}
         data-testid="ai-assistant-button"
       >
-        <Sparkles className="ai-button-icon" />
-        <span className="ai-button-label">AI</span>
+        <Sparkles className="ai-fab-icon" />
       </button>
 
       {/* Backdrop */}
       {isOpen && (
         <div 
-          className="ai-panel-backdrop"
+          className="ai-backdrop"
           onClick={handleClose}
           aria-hidden="true"
         />
       )}
 
-      {/* Slide-out Panel */}
+      {/* Chat Panel */}
       <div 
-        className={`ai-assistant-panel ${isOpen ? 'ai-panel-open' : ''} ${className}`}
+        className={`ai-chat-panel ${isOpen ? 'ai-chat-panel--open' : ''} ${className}`}
         role="dialog"
         aria-label="AI Assistant"
         aria-hidden={!isOpen}
       >
-        {/* Panel Header */}
-        <div className="ai-panel-header">
-          <div className="ai-panel-title">
-            <Sparkles className="ai-panel-title-icon" />
-            <span>AI Assistant</span>
+        {/* Header */}
+        <header className="ai-chat-header">
+          <button className="ai-chat-header__left">
+            <span>New conversation</span>
+            <ChevronDown size={16} />
+          </button>
+          <div className="ai-chat-header__right">
+            <button className="ai-chat-header__icon" aria-label="Open in new window">
+              <ExternalLink size={18} />
+            </button>
+            <button className="ai-chat-header__icon" aria-label="Expand">
+              <Maximize2 size={18} />
+            </button>
+            <button className="ai-chat-header__icon" onClick={handleClose} aria-label="Close">
+              <X size={18} />
+            </button>
           </div>
-          <button 
-            className="ai-panel-close"
-            onClick={handleClose}
-            aria-label="Close AI Assistant"
-          >
-            <X size={20} />
-          </button>
-        </div>
+        </header>
 
-        {/* Tabs */}
-        <div className="ai-panel-tabs" role="tablist">
-          <button
-            role="tab"
-            aria-selected={activeTab === 'chat'}
-            className={`ai-panel-tab ${activeTab === 'chat' ? 'ai-tab-active' : ''}`}
-            onClick={() => handleTabChange('chat')}
-          >
-            <MessageSquare size={16} />
-            Chat
-          </button>
-          <button
-            role="tab"
-            aria-selected={activeTab === 'tools'}
-            className={`ai-panel-tab ${activeTab === 'tools' ? 'ai-tab-active' : ''}`}
-            onClick={() => handleTabChange('tools')}
-          >
-            <Sparkles size={16} />
-            Tools
-          </button>
-          <button
-            role="tab"
-            aria-selected={activeTab === 'insights'}
-            className={`ai-panel-tab ${activeTab === 'insights' ? 'ai-tab-active' : ''}`}
-            onClick={() => handleTabChange('insights')}
-          >
-            <Lightbulb size={16} />
-            Insights
-          </button>
-        </div>
-
-        {/* Tab Content */}
-        <div className="ai-panel-content">
-          {/* Chat Tab */}
-          {activeTab === 'chat' && (
-            <div className="ai-chat-container">
-              {/* Messages */}
-              <div className="ai-chat-messages">
-                {messages.length === 0 ? (
-                  <div className="ai-chat-empty">
-                    <Sparkles className="ai-chat-empty-icon" />
-                    <p className="ai-chat-empty-title">How can I help you today?</p>
-                    <p className="ai-chat-empty-subtitle">
-                      Ask me anything about your fans, content, or business.
-                    </p>
-                    <div className="ai-suggested-prompts">
-                      {SUGGESTED_PROMPTS.map((prompt, index) => (
-                        <button
-                          key={index}
-                          className="ai-suggested-prompt"
-                          onClick={() => handlePromptClick(prompt)}
-                        >
-                          {prompt}
-                          <ChevronRight size={14} />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  messages.map((message) => (
-                    <div 
-                      key={message.id}
-                      className={`ai-chat-message ai-message-${message.role}`}
-                    >
-                      <div className="ai-message-content">
-                        {message.content}
-                      </div>
-                      <div className="ai-message-time">
-                        {message.timestamp.toLocaleTimeString([], { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
-                {isLoading && (
-                  <div className="ai-chat-message ai-message-assistant ai-message-loading">
-                    <div className="ai-typing-indicator">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  </div>
-                )}
+        {/* Main Content */}
+        <main className="ai-chat-main">
+          {messages.length === 0 ? (
+            <div className="ai-chat-welcome">
+              <div className="ai-chat-welcome__avatar">
+                <svg width="56" height="56" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="256" cy="256" r="240" fill="#1e1b4b"/>
+                  <path fill="#fff" d="M124 432 V378 L170 332 L198 312 Q208 304 220 304 H292 Q304 304 314 312 L342 332 L388 378 V432 H124 Z"/>
+                  <path fill="#fff" d="M232 270 H280 Q294 270 294 284 V318 Q294 336 276 338 H236 Q218 336 218 318 V284 Q218 270 232 270 Z"/>
+                  <path fill="#fff" d="M256 108 C214 108 184 140 176 176 C170 206 178 236 198 258 L222 278 Q256 302 290 278 L314 258 C334 236 342 206 336 176 C328 140 298 108 256 108 Z"/>
+                  <path fill="#1e1b4b" d="M184 172 C194 132 226 112 256 112 C294 112 324 136 332 172 C316 160 302 156 286 156 C268 156 252 170 230 176 C210 182 196 180 184 172 Z"/>
+                  <g fill="#1e1b4b">
+                    <circle cx="232" cy="198" r="18"/>
+                    <circle cx="280" cy="198" r="18"/>
+                    <rect x="246" y="194" width="20" height="8" rx="4"/>
+                    <rect x="252" y="202" width="8" height="18" rx="4"/>
+                    <circle cx="232" cy="198" r="11" fill="#fff"/>
+                    <circle cx="280" cy="198" r="11" fill="#fff"/>
+                  </g>
+                  <g fill="#1e1b4b">
+                    <path d="M198 312 L256 362 L228 396 L186 350 Z"/>
+                    <path d="M314 312 L256 362 L284 396 L326 350 Z"/>
+                  </g>
+                  <g fill="#1e1b4b">
+                    <path d="M256 330 L242 348 L256 366 L270 348 Z"/>
+                    <path d="M256 366 L232 446 L256 472 L280 446 Z"/>
+                  </g>
+                </svg>
               </div>
-
-              {/* Input */}
-              <div className="ai-chat-input-container">
-                <textarea
-                  className="ai-chat-input"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask AI anything..."
-                  rows={1}
-                  disabled={isLoading}
-                />
-                <button
-                  className="ai-chat-send"
-                  onClick={handleSendMessage}
-                  disabled={!inputValue.trim() || isLoading}
-                  aria-label="Send message"
+              <p className="ai-chat-welcome__greeting">Hey there</p>
+              <h2 className="ai-chat-welcome__title">How can I help?</h2>
+            </div>
+          ) : (
+            <div className="ai-chat-messages">
+              {messages.map((message) => (
+                <div 
+                  key={message.id}
+                  className={`ai-chat-bubble ai-chat-bubble--${message.role}`}
                 >
-                  <Send size={18} />
-                </button>
-              </div>
+                  {message.content}
+                </div>
+              ))}
+              {isLoading && (
+                <div className="ai-chat-bubble ai-chat-bubble--assistant ai-chat-bubble--loading">
+                  <span className="ai-typing-dot"></span>
+                  <span className="ai-typing-dot"></span>
+                  <span className="ai-typing-dot"></span>
+                </div>
+              )}
             </div>
           )}
+        </main>
 
-          {/* Tools Tab */}
-          {activeTab === 'tools' && (
-            <div className="ai-tools-container">
-              <p className="ai-tools-description">
-                Access all AI-powered features to grow your business.
-              </p>
-              <div className="ai-tools-grid" data-testid="ai-tools-grid">
-                {AI_TOOLS.map((tool) => (
-                  <button
-                    key={tool.id}
-                    className="ai-tool-card"
-                    onClick={() => handleToolClick(tool)}
-                    data-tool-id={tool.id}
-                  >
-                    <div className="ai-tool-icon-wrapper">
-                      {tool.icon}
-                    </div>
-                    <div className="ai-tool-info">
-                      <span className="ai-tool-name">{tool.name}</span>
-                      <span className="ai-tool-description">{tool.description}</span>
-                    </div>
-                    <ChevronRight className="ai-tool-arrow" size={16} />
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Insights Tab */}
-          {activeTab === 'insights' && (
-            <div className="ai-insights-container">
-              <div className="ai-insight-card ai-insight-revenue">
-                <div className="ai-insight-header">
-                  <DollarSign className="ai-insight-icon" />
-                  <span className="ai-insight-title">Revenue Insight</span>
-                </div>
-                <p className="ai-insight-text">
-                  Your PPV sales increased 23% this week. Consider creating more exclusive content.
-                </p>
-                <Button variant="outline" size="sm" className="ai-insight-action">
-                  View Details
-                </Button>
-              </div>
-
-              <div className="ai-insight-card ai-insight-fans">
-                <div className="ai-insight-header">
-                  <Users className="ai-insight-icon" />
-                  <span className="ai-insight-title">Fan Insight</span>
-                </div>
-                <p className="ai-insight-text">
-                  5 fans haven't engaged in 7 days. Send them a personalized message to re-engage.
-                </p>
-                <Button variant="outline" size="sm" className="ai-insight-action">
-                  View At-Risk Fans
-                </Button>
-              </div>
-
-              <div className="ai-insight-card ai-insight-content">
-                <div className="ai-insight-header">
-                  <Target className="ai-insight-icon" />
-                  <span className="ai-insight-title">Content Insight</span>
-                </div>
-                <p className="ai-insight-text">
-                  Your best posting time is 8 PM EST. Schedule your next post for maximum engagement.
-                </p>
-                <Button variant="outline" size="sm" className="ai-insight-action">
-                  Schedule Post
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Footer - Input Pilule */}
+        <footer className="ai-chat-footer">
+          <div className="ai-chat-input-pill">
+            <input
+              type="text"
+              className="ai-chat-input-pill__input"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask anything..."
+              disabled={isLoading}
+            />
+            <button 
+              className="ai-chat-input-pill__btn"
+              aria-label="Add attachment"
+            >
+              <Plus size={20} />
+            </button>
+            <button 
+              className="ai-chat-input-pill__btn"
+              aria-label="Voice input"
+            >
+              <Mic size={20} />
+            </button>
+          </div>
+        </footer>
       </div>
     </>
   );

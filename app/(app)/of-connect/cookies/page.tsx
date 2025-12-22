@@ -8,8 +8,21 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function PutCookiesPage() {
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <div className="p-6">
+        <EmptyState
+          variant="no-data"
+          title="Not available"
+          description="This developer utility is disabled in production."
+        />
+      </div>
+    );
+  }
+
   const [text, setText] = useState('[]');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);

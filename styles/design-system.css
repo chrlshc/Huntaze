@@ -22,13 +22,13 @@
   --bg-surface: var(--bg-primary);       /* Elevated surfaces - very subtle lift */
   --bg-card: var(--bg-primary);          /* Card components - minimal contrast */
   --bg-hover: var(--bg-secondary);         /* Hover states - subtle feedback */
-  --bg-input: var(--bg-input);         /* Form inputs - slightly elevated */
+  /* Keep --bg-input from design tokens (avoid self-referential var()) */
   
   /* ========================================
      TEXT - High Contrast for Readability
      ======================================== */
   --text-primary: #FFFFFF;     /* Primary content - pure white */
-  --text-secondary: var(--text-secondary);   /* Secondary content - medium gray */
+  /* Keep --text-secondary from design tokens (avoid self-referential var()) */
   --text-muted: var(--text-tertiary);       /* Disabled/subtle - darker gray */
   --text-inverse: #000000;     /* On colored backgrounds */
   
@@ -39,12 +39,12 @@
   --brand-secondary: var(--accent-primary);  /* Secondary pink */
   
   /* Rainbow gradient - ONLY for primary CTAs and focus states */
-  --brand-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary) 25%, var(--accent-primary) 50%, var(--accent-primary) 75%, var(--accent-primary) 100%);
-  --brand-gradient-hover: linear-gradient(135deg, var(--accent-primary-hover) 0%, var(--accent-primary) 25%, #DB2777 50%, var(--accent-primary) 75%, var(--accent-primary-hover) 100%);
+  --brand-gradient: linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #111827 0%, #1f2937 50%, #111827 100%);
   
   /* Subtle rainbow glow - for focus states only */
-  --brand-glow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-  --brand-glow-strong: 0 0 20px rgba(139, 92, 246, 0.3);
+  --brand-glow: 0 0 0 3px rgba(31, 41, 55, 0.15);
+  --brand-glow-strong: 0 0 20px rgba(31, 41, 55, 0.3);
   
   /* ========================================
      BORDERS - Minimal Contrast
@@ -104,8 +104,8 @@
   /* ========================================
      BETA ACCENTS - Very Subtle
      ======================================== */
-  --beta-bg: rgba(139, 92, 246, 0.08);      /* Reduced opacity */
-  --beta-border: rgba(139, 92, 246, 0.2);   /* Reduced opacity */
+  --beta-bg: rgba(31, 41, 55, 0.08);      /* Reduced opacity */
+  --beta-border: rgba(31, 41, 55, 0.2);   /* Reduced opacity */
   --beta-text: var(--text-secondary);                      /* More muted gray */
   
   /* ========================================
@@ -447,15 +447,7 @@
    GLOBAL STYLES
    ======================================== */
 
-body {
-  background-color: var(--bg-app);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* Body styles moved to globals.css to avoid conflicts */
 
 * {
   box-sizing: border-box;

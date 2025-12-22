@@ -1,10 +1,10 @@
 /**
  * Health Check API
  * 
- * Comprehensive endpoint to verify server and services status
+ * Lightweight endpoint to verify server liveness and minimal config
  * 
- * Protected with:
- * - withRateLimit (public endpoint)
+ * Notes:
+ * - Keep this endpoint lightweight and dependency-free (LB liveness).
  * 
  * Requirements: 5.1
  * 
@@ -14,21 +14,20 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { withRateLimit } from '@/lib/middleware/rate-limit';
+import { getOrGenerateCorrelationId } from '@/lib/middleware/correlation-id';
+import { createLogger } from '@/lib/utils/logger';
 import type { RouteHandler } from '@/lib/middleware/types';
 
+const logger = createLogger('health-api');
+
 const handler: RouteHandler = async (req: NextRequest) => {
-  const correlationId = `health-${Date.now()}`;
+  const correlationId = getOrGenerateCorrelationId(req);
 
   try {
-    console.log('[Health] Check started', { correlationId });
-
-    // Check environment configuration
+    // Minimal config-only checks for LB liveness (no external dependencies).
     const services = {
       database: checkService('DATABASE_URL'),
-      auth: checkService('JWT_SECRET') || checkService('NEXTAUTH_SECRET'),
-      redis: checkService('REDIS_URL'),
-      email: checkService('SMTP_HOST') || checkService('RESEND_API_KEY'),
+      auth: checkAnyService(['NEXTAUTH_SECRET', 'JWT_SECRET']),
     };
 
     // Determine overall status
@@ -53,18 +52,27 @@ const handler: RouteHandler = async (req: NextRequest) => {
       correlationId,
     };
 
-    console.log('[Health] Check completed', {
-      status,
-      services,
-      correlationId,
-    });
+    if (status !== 'healthy') {
+      logger.warn('Health check degraded', {
+        correlationId,
+        services,
+        environment: process.env.NODE_ENV || 'development',
+      });
+    }
 
-    return NextResponse.json(health, { status: statusCode });
-  } catch (error) {
-    console.error('[Health] Check failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      correlationId,
+    return NextResponse.json(health, {
+      status: statusCode,
+      headers: {
+        'Cache-Control': 'no-store',
+        'X-Correlation-Id': correlationId,
+      },
     });
+  } catch (error) {
+    logger.error(
+      'Health check failed',
+      error instanceof Error ? error : new Error('Unknown error'),
+      { correlationId }
+    );
 
     return NextResponse.json(
       {
@@ -73,16 +81,26 @@ const handler: RouteHandler = async (req: NextRequest) => {
         timestamp: new Date().toISOString(),
         correlationId,
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store',
+          'X-Correlation-Id': correlationId,
+        },
+      }
     );
   }
-}
+};
 
 /**
  * Check if service is configured
  */
 function checkService(envVar: string): 'configured' | 'not-configured' {
   return process.env[envVar] ? 'configured' : 'not-configured';
+}
+
+function checkAnyService(envVars: string[]): 'configured' | 'not-configured' {
+  return envVars.some((envVar) => !!process.env[envVar]) ? 'configured' : 'not-configured';
 }
 
 /**
@@ -96,8 +114,5 @@ function getDeploymentPlatform(): string {
   return 'local';
 }
 
-// Apply rate limiting middleware (public endpoint)
-export const GET = withRateLimit(handler, {
-  maxRequests: 100,
-  windowMs: 60000, // 100 requests per minute
-});
+// Public liveness endpoint (no rate limiting).
+export const GET = handler;

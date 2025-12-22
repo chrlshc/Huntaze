@@ -88,9 +88,9 @@ export function ShopifyMetricCard({
     return (
       <ShopifyCard className={className} data-testid={testId}>
         <div className="animate-pulse">
-          <div className="h-3 bg-[#e1e3e5] rounded w-24 mb-3" />
-          <div className="h-7 bg-[#e1e3e5] rounded w-32 mb-2" />
-          <div className="h-4 bg-[#e1e3e5] rounded w-20" />
+          <div className="h-3 bg-[var(--color-border-light)] rounded w-24 mb-3" />
+          <div className="h-7 bg-[var(--color-border-light)] rounded w-32 mb-2" />
+          <div className="h-4 bg-[var(--color-border-light)] rounded w-20" />
         </div>
       </ShopifyCard>
     );
@@ -98,50 +98,48 @@ export function ShopifyMetricCard({
 
   return (
     <ShopifyCard className={className} data-testid={testId}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          {/* Label - 13px, secondary color */}
-          <p className="text-[13px] font-medium text-[#6b7177] mb-1 truncate">
-            {label}
-          </p>
-          
-          {/* Value - 28px, bold, primary color */}
-          <p className="text-[28px] font-bold text-[#1a1a1a] leading-tight mb-1">
-            {value}
-          </p>
-          
-          {/* Trend indicator */}
-          {trendConfig && trend !== undefined && (
-            <div className="flex items-center gap-1.5 mt-2">
-              <span className={cn(
-                'inline-flex items-center gap-1 text-[13px] font-medium px-1.5 py-0.5 rounded',
-                trendConfig.color,
-                trendConfig.bgColor
-              )}>
-                <trendConfig.icon className="w-3.5 h-3.5" />
-                {trendConfig.prefix}{Math.abs(trend)}%
-              </span>
-              {trendLabel && (
-                <span className="text-[12px] text-[#6b7177]">
-                  {trendLabel}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
+      <div className={cn('relative', Icon && 'pr-14')}>
         {/* Icon */}
         {Icon && (
-          <div 
+          <div
             className={cn(
-              'flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ml-3',
+              'absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl',
               iconBgColor || 'bg-[#f6f6f7]'
             )}
           >
-            <Icon 
-              className="w-5 h-5" 
-              style={{ color: iconColor }}
-            />
+            <Icon className="w-5 h-5" style={{ color: iconColor }} />
+          </div>
+        )}
+
+        {/* Label - using CSS variable for consistency */}
+        <p className="text-[var(--font-size-small)] font-medium text-[var(--color-text-sub)] mb-1 truncate">
+          {label}
+        </p>
+
+        {/* Value - using CSS variable for consistency */}
+        <p className="text-[var(--font-size-h1)] font-bold text-[var(--color-text-heading)] leading-tight mb-1 tabular-nums" style={{ fontSize: '28px' }}>
+          {value}
+        </p>
+
+        {/* Trend indicator */}
+        {trendConfig && trend !== undefined && (
+          <div className="flex items-center gap-2 mt-2">
+            <span
+              className={cn(
+                'inline-flex items-center gap-1 text-[var(--font-size-small)] font-medium px-1.5 py-0.5 rounded tabular-nums',
+                trendConfig.color,
+                trendConfig.bgColor
+              )}
+            >
+              <trendConfig.icon className="w-3.5 h-3.5" />
+              {trendConfig.prefix}
+              {Math.abs(trend)}%
+            </span>
+            {trendLabel && (
+              <span className="text-[var(--font-size-label)] text-[var(--color-text-sub)] ml-1">
+                {trendLabel}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -173,7 +171,7 @@ export function ShopifyMetricGrid({
 
   return (
     <div className={cn(
-      'grid gap-4',
+      'grid gap-6',
       gridCols[columns],
       className
     )}>

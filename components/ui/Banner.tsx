@@ -61,10 +61,10 @@ const statusStyles: Record<BannerStatus, {
   text: string;
 }> = {
   info: {
-    background: 'bg-[#EBF5FF]', // Light blue
-    border: 'border-[var(--color-status-info)]',
-    icon: 'text-[var(--color-status-info)]',
-    text: 'text-[#1E3A5F]', // Dark blue for contrast
+    background: 'bg-purple-50', // Brand-aligned light violet
+    border: 'border-purple-200',
+    icon: 'text-[#5E43FC]',
+    text: 'text-[#202223]',
   },
   warning: {
     background: 'bg-[#FFF8E6]', // Light yellow

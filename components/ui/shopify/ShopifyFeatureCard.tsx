@@ -29,7 +29,7 @@ export function ShopifyFeatureCard({
         bg-white
         border
         border-[#e1e3e5]
-        rounded-lg
+        rounded-2xl
         p-5
         shadow-[0_1px_3px_rgba(0,0,0,0.08)]
         hover:shadow-[0_2px_6px_rgba(0,0,0,0.12)]
@@ -44,7 +44,7 @@ export function ShopifyFeatureCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div 
-            className="flex-shrink-0 w-12 h-12 rounded-lg bg-[#f6f6f7] flex items-center justify-center"
+            className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#f6f6f7] flex items-center justify-center"
             style={{ color: iconColor }}
             data-testid="feature-card-icon"
           >
@@ -56,7 +56,7 @@ export function ShopifyFeatureCard({
           
           <div>
             <h3 
-              className="text-base font-semibold text-[#1a1a1a] group-hover:text-[#2c6ecb] transition-colors"
+              className="text-base font-semibold text-[#1a1a1a] group-hover:text-[#7c3aed] transition-colors"
               data-testid="feature-card-title"
             >
               {title}
@@ -71,7 +71,7 @@ export function ShopifyFeatureCard({
         </div>
         
         <ChevronRight 
-          className="w-5 h-5 text-[#8c9196] flex-shrink-0 group-hover:text-[#2c6ecb] group-hover:translate-x-0.5 transition-all"
+          className="w-5 h-5 text-[#8c9196] flex-shrink-0 group-hover:text-[#7c3aed] group-hover:translate-x-0.5 transition-all"
           data-testid="feature-card-chevron"
           aria-hidden="true"
         />

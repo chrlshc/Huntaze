@@ -129,7 +129,7 @@ export default function SimpleOnboarding({ onComplete, onSkip }: SimpleOnboardin
                   }}
                   className={[
                     'w-full text-left rounded-xl border p-4 md:p-5 transition-all',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb]',
                     isActive
                       ? 'border-violet-500/60 bg-violet-500/10 shadow-lg shadow-violet-500/20'
                       : 'border-neutral-700 hover:border-violet-500/40 bg-neutral-800/50',

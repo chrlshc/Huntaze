@@ -57,6 +57,33 @@ function main() {
   }
 
   ['server', 'headers', 'navigation'].forEach(ensureStub);
+
+  // Next.js 16 bundles a compiled Browserslist build that can emit a noisy warning
+  // about baseline-browser-mapping data freshness during every build.
+  // Patch it out to keep CI/local builds clean.
+  try {
+    const browserslistPath = path.join(nextDir, 'dist', 'compiled', 'browserslist', 'index.js');
+    if (fs.existsSync(browserslistPath)) {
+      const contents = fs.readFileSync(browserslistPath, 'utf8');
+      const warningNeedle = '[baseline-browser-mapping] The data in this module is over two months old.';
+
+      if (contents.includes(warningNeedle)) {
+        const patched = contents.replace(
+          /\d+<\(new Date\)\.setMonth\(\(new Date\)\.getMonth\(\)-2\)&&console\.warn\("\[baseline-browser-mapping\][^"]*"\);/g,
+          '0;'
+        );
+
+        if (patched !== contents) {
+          fs.writeFileSync(browserslistPath, patched, 'utf8');
+          // eslint-disable-next-line no-console
+          console.log('[patch-next-exports] Suppressed baseline-browser-mapping warning in Next.js compiled browserslist');
+        }
+      }
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('[patch-next-exports] Failed to patch baseline warning:', err?.message || err);
+  }
 }
 
 main();

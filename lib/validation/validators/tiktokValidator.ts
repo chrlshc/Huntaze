@@ -21,6 +21,8 @@ import {
 
 import { TikTokApiTester } from './tiktokApiTester';
 import { TikTokFormatValidator } from './tiktokFormatValidator';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 /**
  * TikTok-specific credential validator
@@ -316,7 +318,9 @@ export class TikTokCredentialValidator extends CredentialValidator {
     try {
       // Make a test request to TikTok's token endpoint with invalid grant type
       // This will return an error, but validates that the client_key format is accepted
-      const response = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
+      const response = await externalFetch('https://open.tiktokapis.com/v2/oauth/token/', {
+        service: 'tiktok',
+        operation: 'oauth.token.validate',
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -326,9 +330,13 @@ export class TikTokCredentialValidator extends CredentialValidator {
           client_secret: credentials.clientSecret,
           grant_type: 'test_validation', // Invalid grant type for testing
         }).toString(),
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 0, retryMethods: ['POST'] },
+        throwOnHttpError: false,
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       
       // We expect an error, but specific error codes indicate valid credential format
       if (data.error) {
@@ -360,6 +368,10 @@ export class TikTokCredentialValidator extends CredentialValidator {
       if (error instanceof ApiConnectivityError) {
         throw error;
       }
+      if (isExternalServiceError(error)) {
+        console.error('TikTok OAuth endpoint test failed:', error.code, error.message);
+        return false;
+      }
       
       // Network or other errors
       console.error('TikTok OAuth endpoint test failed:', error);
@@ -372,16 +384,14 @@ export class TikTokCredentialValidator extends CredentialValidator {
    */
   private async validateRedirectUri(redirectUri: string): Promise<void> {
     try {
-      // Test that redirect URI is accessible (HEAD request with timeout)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      const response = await fetch(redirectUri, {
+      const response = await externalFetch(redirectUri, {
+        service: 'redirect-uri',
+        operation: 'tiktok.validate',
         method: 'HEAD',
-        signal: controller.signal,
+        timeoutMs: 5_000,
+        retry: { maxRetries: 0, retryMethods: ['HEAD'] },
+        throwOnHttpError: false,
       });
-
-      clearTimeout(timeoutId);
 
       // We expect 404 or 405 (Method Not Allowed) for callback endpoints
       // 200, 404, 405 are all acceptable responses
@@ -389,7 +399,7 @@ export class TikTokCredentialValidator extends CredentialValidator {
         throw new Error(`Redirect URI returned ${response.status}`);
       }
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (isExternalServiceError(error) && error.code === 'TIMEOUT') {
         throw new Error('Redirect URI request timeout');
       }
       throw error;

@@ -7,6 +7,9 @@
  * @see https://www.reddit.com/dev/api#section_links_and_comments
  */
 
+import { externalFetch } from '@/lib/services/external/http';
+import { ExternalServiceError, mapHttpStatusToExternalCode } from '@/lib/services/external/errors';
+
 const REDDIT_API_URL = 'https://oauth.reddit.com';
 
 export interface RedditSubmitParams {
@@ -89,71 +92,98 @@ export class RedditPublishService {
       throw new Error('Text is required for self posts');
     }
 
-    try {
-      // Build form data
-      const formData = new URLSearchParams({
-        sr: subreddit,
-        title,
-        kind,
-        nsfw: nsfw.toString(),
-        spoiler: spoiler.toString(),
-        sendreplies: sendReplies.toString(),
-        api_type: 'json',
-      });
+    // Build form data
+    const formData = new URLSearchParams({
+      sr: subreddit,
+      title,
+      kind,
+      nsfw: nsfw.toString(),
+      spoiler: spoiler.toString(),
+      sendreplies: sendReplies.toString(),
+      api_type: 'json',
+    });
 
-      // Add content based on kind
-      if (kind === 'link' && url) {
-        formData.append('url', url);
-      } else if (kind === 'self' && text) {
-        formData.append('text', text);
-      }
-
-      // Add optional flair
-      if (flairId) {
-        formData.append('flair_id', flairId);
-      }
-      if (flairText) {
-        formData.append('flair_text', flairText);
-      }
-
-      const response = await fetch(`${REDDIT_API_URL}/api/submit`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': this.userAgent,
-        },
-        body: formData.toString(),
-        cache: 'no-store',
-      });
-
-      const data = await response.json();
-
-      // Check for errors
-      if (!response.ok || data.json?.errors?.length > 0) {
-        const errors = data.json?.errors || [];
-        const errorMessage = errors.map((e: any[]) => e.join(': ')).join(', ') || 'Submission failed';
-        throw new Error(errorMessage);
-      }
-
-      // Extract submission data
-      const submissionData = data.json?.data;
-      if (!submissionData) {
-        throw new Error('Invalid response from Reddit API');
-      }
-
-      return {
-        id: submissionData.id,
-        name: submissionData.name,
-        url: submissionData.url,
-        permalink: submissionData.permalink || `/r/${subreddit}/comments/${submissionData.id}`,
-      };
-    } catch (error) {
-      console.error('Reddit submit error:', error);
-      throw new Error(
-        `Failed to submit post: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    // Add content based on kind
+    if (kind === 'link' && url) {
+      formData.append('url', url);
+    } else if (kind === 'self' && text) {
+      formData.append('text', text);
     }
+
+    // Add optional flair
+    if (flairId) {
+      formData.append('flair_id', flairId);
+    }
+    if (flairText) {
+      formData.append('flair_text', flairText);
+    }
+
+    const response = await externalFetch(`${REDDIT_API_URL}/api/submit`, {
+      service: 'reddit',
+      operation: 'submit',
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': this.userAgent,
+      },
+      body: formData.toString(),
+      cache: 'no-store',
+      timeoutMs: 15_000,
+      retry: { maxRetries: 0, retryMethods: [] },
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    // Check for errors (Reddit uses 200 + json.errors sometimes)
+    if (!response.ok || data.json?.errors?.length > 0) {
+      const errors = data.json?.errors || [];
+      const errorMessage =
+        errors.map((e: any[]) => e.join(': ')).join(', ') ||
+        data.message ||
+        response.statusText ||
+        'Submission failed';
+
+      const flattened = errors.map((e: any[]) => String(e[0] ?? '')).filter(Boolean);
+      const primary = flattened[0] || '';
+
+      const mapped =
+        primary === 'RATELIMIT'
+          ? { code: 'RATE_LIMIT' as const, retryable: true }
+          : primary === 'SUBREDDIT_NOEXIST'
+            ? { code: 'NOT_FOUND' as const, retryable: false }
+            : primary === 'NO_LINKS' || primary === 'NO_SELFS'
+              ? { code: 'FORBIDDEN' as const, retryable: false }
+              : mapHttpStatusToExternalCode(response.status);
+
+      throw new ExternalServiceError({
+        service: 'reddit',
+        code: mapped.code,
+        retryable: mapped.retryable,
+        status: response.status,
+        message: errorMessage,
+        details: { errors },
+      });
+    }
+
+    // Extract submission data
+    const submissionData = data.json?.data;
+    if (!submissionData) {
+      throw new ExternalServiceError({
+        service: 'reddit',
+        code: 'INVALID_RESPONSE',
+        retryable: false,
+        status: response.status,
+        message: 'Invalid response from Reddit API',
+      });
+    }
+
+    return {
+      id: submissionData.id,
+      name: submissionData.name,
+      url: submissionData.url,
+      permalink: submissionData.permalink || `/r/${subreddit}/comments/${submissionData.id}`,
+    };
   }
 
   /**

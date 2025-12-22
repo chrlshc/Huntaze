@@ -6,6 +6,8 @@
  */
 
 import type { OAuthResult, TokenResponse, AccountInfo } from '../types';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 export class OnlyFansAdapter {
   /**
@@ -50,32 +52,47 @@ export class OnlyFansAdapter {
    * Get account information
    */
   async getUserProfile(accessToken: string): Promise<AccountInfo> {
-    // Call OnlyFans API to get user info
-    const response = await fetch('https://onlyfans.com/api2/v2/users/me', {
-      headers: {
-        'Cookie': `sess=${accessToken}`,
-        'User-Agent': 'Mozilla/5.0',
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch OnlyFans user profile');
-    }
-    
-    const data = await response.json();
-    
-    return {
-      providerAccountId: data.id.toString(),
-      username: data.username,
-      displayName: data.name,
-      profilePictureUrl: data.avatar,
-      metadata: {
-        account_id: data.id,
+    try {
+      const response = await externalFetch('https://onlyfans.com/api2/v2/users/me', {
+        service: 'onlyfans',
+        operation: 'getUserProfile',
+        method: 'GET',
+        headers: {
+          Cookie: `sess=${accessToken}`,
+          'User-Agent': 'Mozilla/5.0',
+        },
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch OnlyFans user profile');
+      }
+
+      const data = await response.json().catch(() => null as any);
+      if (!data) {
+        throw new Error('Invalid response from OnlyFans user profile');
+      }
+
+      return {
+        providerAccountId: data.id.toString(),
         username: data.username,
-        display_name: data.name,
-        avatar_url: data.avatar,
-      },
-    };
+        displayName: data.name,
+        profilePictureUrl: data.avatar,
+        metadata: {
+          account_id: data.id,
+          username: data.username,
+          display_name: data.name,
+          avatar_url: data.avatar,
+        },
+      };
+    } catch (error) {
+      if (isExternalServiceError(error)) {
+        throw new Error('Failed to fetch OnlyFans user profile');
+      }
+      throw error;
+    }
   }
 
   /**

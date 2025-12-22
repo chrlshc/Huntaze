@@ -7,6 +7,9 @@ import { Select } from "@/components/ui/export-all";
 import { Card } from '@/components/ui/card';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { AppPageHeader } from '@/components/layout/AppPageHeader';
+import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { RefreshCw } from 'lucide-react';
 
 type Suggestion = {
   asset: { id: string; url: string; thumbUrl?: string; type: string; tags?: string[] };
@@ -98,11 +101,16 @@ export default function RepostPage() {
 
         <Card>
           {loading ? (
-            <div>Loading…</div>
+            <DashboardLoadingState message="Loading suggestions..." />
           ) : error ? (
-            <div className="text-red-600">{error}</div>
+            <DashboardErrorState message={error} onRetry={load} />
           ) : sugs.length === 0 ? (
-            <div className="text-sm text-[var(--color-text-sub)]">No suggestions yet.</div>
+            <EmptyState
+              variant="no-data"
+              title="No suggestions yet"
+              description="Once you have some content performance history, Huntaze will recommend the best posts to repost."
+              action={{ label: 'Retry', onClick: load, icon: RefreshCw }}
+            />
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               {sugs.map((s) => (

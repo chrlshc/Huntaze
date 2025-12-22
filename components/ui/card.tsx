@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 export type CardProps = HTMLAttributes<HTMLDivElement> & {
   variant?: 'default' | 'glass' | 'elevated';
   nested?: boolean;
+  disableHover?: boolean;
   /**
    * Nesting level for progressive background lightening
    * - 1: Main cards (--bg-card-elevated)
@@ -31,9 +32,9 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 
 const paddingClasses = {
   none: 'p-0',
-  sm: 'p-[var(--space-2)]',
-  base: 'p-[var(--space-4)]',
-  lg: 'p-[var(--space-6)]',
+  sm: 'p-[var(--space-2)] md:p-[var(--space-2)]',
+  base: 'p-0 md:p-[var(--space-4)]',
+  lg: 'p-0 md:p-[var(--space-6)]',
 };
 
 const shadowClasses = {
@@ -46,6 +47,7 @@ export function Card({
   className, 
   variant = 'default', 
   nested = false, 
+  disableHover = false,
   nestingLevel,
   padding = 'base',
   shadow = 'card',
@@ -59,8 +61,9 @@ export function Card({
   return (
     <div
       className={cn(
-        // Base styles using design tokens
-        "rounded-[var(--radius-base)] border border-[var(--border-default)]",
+        // Base styles using design tokens - no border-radius on mobile, full border-radius on md+
+        "border border-y md:border border-[var(--border-default)]",
+        "rounded-none md:rounded-[var(--radius-base)]",
         // Background based on variant
         variant === 'glass' 
           ? "glass-card"
@@ -70,10 +73,11 @@ export function Card({
         // Shadow
         shadowClasses[shadow],
         // Hover state
-        "transition-shadow duration-[var(--transition-base)]",
-        effectiveNestingLevel >= 2
-          ? "hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-soft)]"
-          : "hover:border-[var(--border-emphasis)] hover:shadow-[var(--shadow-soft)]",
+        !disableHover && "transition-shadow duration-[var(--transition-base)]",
+        !disableHover &&
+          (effectiveNestingLevel >= 2
+            ? "hover:border-[var(--border-strong)] hover:shadow-[var(--shadow-soft)]"
+            : "hover:border-[var(--border-emphasis)] hover:shadow-[var(--shadow-soft)]"),
         // No padding on wrapper if footer exists
         footer ? '' : paddingClasses[padding],
         className,
@@ -105,3 +109,5 @@ export function Card({
     </div>
   );
 }
+
+Card.displayName = "Card";

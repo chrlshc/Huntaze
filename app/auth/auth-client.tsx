@@ -363,7 +363,7 @@ function AuthContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-sm text-gray-900 placeholder-gray-500 transition-colors duration-200"
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-[#2c6ecb] focus:outline-none focus:ring-1 focus:ring-[#2c6ecb] text-sm text-gray-900 placeholder-gray-500 transition-colors duration-200"
                 required
               />
             </div>
@@ -380,7 +380,7 @@ function AuthContent() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2.5 pr-10 rounded-lg border border-gray-300 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 text-sm text-gray-900 placeholder-gray-500 transition-colors duration-200"
+                  className="w-full px-3 py-2.5 pr-10 rounded-lg border border-gray-300 focus:border-[#2c6ecb] focus:outline-none focus:ring-1 focus:ring-[#2c6ecb] text-sm text-gray-900 placeholder-gray-500 transition-colors duration-200"
                   required
                 />
                 <button

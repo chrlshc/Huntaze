@@ -11,7 +11,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PlatformStatusSkeleton } from './PlatformStatusSkeleton';
 import './platform-status.css';
@@ -72,37 +72,46 @@ export function PlatformStatus() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchIntegrations() {
-      try {
-        setIsLoading(true);
-        setError(null);
+  const fetchIntegrations = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
 
-        const response = await fetch('/api/integrations/status', {
-          cache: 'no-store'
-        });
+      const response = await fetch('/api/integrations/status', {
+        cache: 'no-store',
+        credentials: 'include',
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch integrations');
-        }
-
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-          setData(result.data);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (err) {
-        console.error('Error fetching integrations:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load integrations');
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        const friendlyMessage =
+          response.status === 401
+            ? 'Please sign in to view platform connections.'
+            : 'Unable to fetch integrations right now.';
+        setError(friendlyMessage);
+        setData({ integrations: [] });
+        return;
       }
-    }
 
-    fetchIntegrations();
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setData(result.data);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (err) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Error fetching integrations:', err);
+      }
+      setError(err instanceof Error ? err.message : 'Failed to load integrations');
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void fetchIntegrations();
+  }, [fetchIntegrations]);
 
   if (isLoading) {
     return <PlatformStatusSkeleton />;
@@ -116,6 +125,9 @@ export function PlatformStatus() {
         </div>
         <div className="platform-status-error">
           <p>{error}</p>
+          <button type="button" className="btn-secondary mt-3" onClick={fetchIntegrations}>
+            Retry
+          </button>
         </div>
       </div>
     );

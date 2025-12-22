@@ -6,6 +6,16 @@
  */
 
 import { RedditCredentials } from '../index';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
+
+async function safeReadJson(response: Response): Promise<any> {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
+}
 
 export interface RedditApiTestResult {
   isConnected: boolean;
@@ -80,7 +90,9 @@ export class RedditApiTester {
       // Prepare basic auth header
       const auth = Buffer.from(`${credentials.clientId}:${credentials.clientSecret}`).toString('base64');
 
-      const response = await fetch(`${this.baseUrl}/access_token`, {
+      const response = await externalFetch(`${this.baseUrl}/access_token`, {
+        service: 'reddit',
+        operation: 'oauth.access_token',
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
@@ -90,9 +102,13 @@ export class RedditApiTester {
         body: new URLSearchParams({
           grant_type: 'client_credentials',
         }).toString(),
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 0, retryMethods: ['POST'] },
+        throwOnHttpError: false,
       });
 
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (!response.ok) {
         return {
@@ -116,6 +132,12 @@ export class RedditApiTester {
       }
 
     } catch (error) {
+      if (isExternalServiceError(error)) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error',
@@ -131,18 +153,24 @@ export class RedditApiTester {
   }> {
     try {
       // Make a simple API call to test the token
-      const response = await fetch(`${this.oauthUrl}/api/v1/me`, {
+      const response = await externalFetch(`${this.oauthUrl}/api/v1/me`, {
+        service: 'reddit',
+        operation: 'oauth.me',
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'User-Agent': userAgent,
         },
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+        throwOnHttpError: false,
       });
 
       if (response.ok) {
         return { success: true };
       } else {
-        const data = await response.json().catch(() => ({}));
+        const data = await safeReadJson(response);
         return {
           success: false,
           error: data.message || `API test failed with status ${response.status}`,
@@ -150,6 +178,12 @@ export class RedditApiTester {
       }
 
     } catch (error) {
+      if (isExternalServiceError(error)) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
       return {
         success: false,
         error: error instanceof Error ? error.message : 'API test network error',
@@ -325,12 +359,18 @@ export class RedditApiTester {
       }
 
       // Make a test API call to check rate limit headers
-      const response = await fetch(`${this.oauthUrl}/api/v1/me`, {
+      const response = await externalFetch(`${this.oauthUrl}/api/v1/me`, {
+        service: 'reddit',
+        operation: 'oauth.me.rateLimit',
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${tokenResult.accessToken}`,
           'User-Agent': credentials.userAgent,
         },
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+        throwOnHttpError: false,
       });
 
       // Reddit uses X-Ratelimit headers
@@ -346,6 +386,12 @@ export class RedditApiTester {
       };
 
     } catch (error) {
+      if (isExternalServiceError(error)) {
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Rate limit test error',

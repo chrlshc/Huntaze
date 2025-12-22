@@ -11,9 +11,11 @@
  */
 
 import crypto from 'crypto';
+import { createLogger } from '@/lib/api/logger';
 import { db } from '@/lib/db';
+import { processWebhook, type WebhookPayload, type WebhookProcessResult } from '@/lib/automations/webhook-integration';
 
-export type WebhookProvider = 'tiktok' | 'instagram';
+export type WebhookProvider = 'tiktok' | 'instagram' | 'onlyfans' | 'crm';
 
 export interface WebhookEvent {
   provider: WebhookProvider;
@@ -27,6 +29,72 @@ export interface ProcessEventResult {
   processed: boolean;
   duplicate: boolean;
   eventId?: number;
+  providerResult?: unknown;
+}
+
+function getLogger(correlationId?: string) {
+  return createLogger('webhook-processor', correlationId);
+}
+
+function timingSafeEqualStrings(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+
+  if (bufA.length !== bufB.length) {
+    // Still do a comparison to maintain roughly constant time.
+    crypto.timingSafeEqual(bufA, Buffer.alloc(bufA.length));
+    return false;
+  }
+
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+export function computeWebhookExternalId(params: {
+  provider: WebhookProvider;
+  eventType: string;
+  rawBody: string;
+  payload: any;
+}): string {
+  const { provider, eventType, rawBody, payload } = params;
+  const hash = crypto.createHash('sha256').update(rawBody).digest('hex');
+
+  if (provider === 'tiktok') {
+    const id = payload?.event_id || payload?.eventId || payload?.publish_id || payload?.post_id;
+    if (id) return `tiktok:${eventType}:${id}`;
+  }
+
+  if (provider === 'instagram') {
+    const entryId = payload?.entry?.id || payload?.entry?.[0]?.id || payload?.id;
+    const change = payload?.change || payload?.entry?.[0]?.changes?.[0];
+    const value = change?.value;
+    const valueId = value?.id || value?.comment_id || value?.media_id;
+    if (entryId && valueId) return `instagram:${eventType}:${entryId}:${valueId}`;
+    if (entryId) {
+      const changeHash = crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+      return `instagram:${eventType}:${entryId}:${changeHash}`;
+    }
+  }
+
+  if (provider === 'onlyfans') {
+    const id =
+      payload?.data?.messageId ||
+      payload?.data?.purchaseId ||
+      payload?.data?.tipId ||
+      payload?.data?.subscriptionId;
+    if (id) return `onlyfans:${eventType}:${payload?.data?.creatorId ?? 'unknown'}:${id}`;
+  }
+
+  if (provider === 'crm') {
+    const id =
+      payload?.eventId ||
+      payload?.event_id ||
+      payload?.id ||
+      payload?.data?.id ||
+      payload?.data?.eventId;
+    if (id) return `crm:${eventType}:${id}`;
+  }
+
+  return `${provider}:${eventType}:${hash}`;
 }
 
 /**
@@ -49,12 +117,8 @@ export class WebhookProcessor {
       const expectedSignature = hmac.digest('hex');
 
       // Constant-time comparison to prevent timing attacks
-      return crypto.timingSafeEqual(
-        Buffer.from(signature),
-        Buffer.from(expectedSignature)
-      );
-    } catch (error) {
-      console.error('TikTok signature verification error:', error);
+      return timingSafeEqualStrings(signature, expectedSignature);
+    } catch {
       return false;
     }
   }
@@ -82,12 +146,42 @@ export class WebhookProcessor {
       const expectedSignature = hmac.digest('hex');
 
       // Constant-time comparison
-      return crypto.timingSafeEqual(
-        Buffer.from(signatureHash),
-        Buffer.from(expectedSignature)
-      );
-    } catch (error) {
-      console.error('Instagram signature verification error:', error);
+      return timingSafeEqualStrings(signatureHash, expectedSignature);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Verify OnlyFans webhook signature
+   *
+   * Format is expected to be a hex digest (optionally prefixed with "sha256=").
+   */
+  verifyOnlyFansSignature(payload: string, signature: string, secret: string): boolean {
+    try {
+      const normalized = signature.startsWith('sha256=') ? signature.substring(7) : signature;
+
+      const hmac = crypto.createHmac('sha256', secret);
+      hmac.update(payload);
+      const expectedSignature = hmac.digest('hex');
+
+      return timingSafeEqualStrings(normalized, expectedSignature);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Verify CRM webhook signature (HMAC-SHA256)
+   */
+  verifyCrmSignature(payload: string, signature: string, secret: string): boolean {
+    try {
+      const normalized = signature.startsWith('sha256=') ? signature.substring(7) : signature;
+      const hmac = crypto.createHmac('sha256', secret);
+      hmac.update(payload);
+      const expectedSignature = hmac.digest('hex');
+      return timingSafeEqualStrings(normalized, expectedSignature);
+    } catch {
       return false;
     }
   }
@@ -112,8 +206,11 @@ export class WebhookProcessor {
         return this.verifyTikTokSignature(payload, signature, secret);
       case 'instagram':
         return this.verifyInstagramSignature(payload, signature, secret);
+      case 'onlyfans':
+        return this.verifyOnlyFansSignature(payload, signature, secret);
+      case 'crm':
+        return this.verifyCrmSignature(payload, signature, secret);
       default:
-        console.error(`Unknown provider: ${provider}`);
         return false;
     }
   }
@@ -127,6 +224,7 @@ export class WebhookProcessor {
    */
   async queueEvent(event: WebhookEvent): Promise<ProcessEventResult> {
     const { provider, eventType, externalId, payload } = event;
+    const logger = getLogger(externalId);
 
     try {
       // Check if event already exists (idempotence)
@@ -163,7 +261,7 @@ export class WebhookProcessor {
         eventId: result.rows[0].id,
       };
     } catch (error) {
-      console.error('Queue event error:', error);
+      logger.error('Queue event error', error instanceof Error ? error : undefined);
       throw new Error(`Failed to queue event: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -177,6 +275,7 @@ export class WebhookProcessor {
    */
   async processEvent(event: WebhookEvent): Promise<ProcessEventResult> {
     const { provider, eventType, externalId, payload } = event;
+    const logger = getLogger(externalId);
 
     try {
       // Queue event first (idempotence check)
@@ -184,17 +283,24 @@ export class WebhookProcessor {
 
       // If duplicate and already processed, skip
       if (queueResult.duplicate && queueResult.processed) {
-        console.log(`Event ${externalId} already processed, skipping`);
+        logger.debug('Event already processed, skipping', { provider, eventType });
         return queueResult;
       }
 
       // Process based on provider
+      let providerResult: unknown;
       switch (provider) {
         case 'tiktok':
           await this.processTikTokEvent(eventType, payload, queueResult.eventId!);
           break;
         case 'instagram':
           await this.processInstagramEvent(eventType, payload, queueResult.eventId!);
+          break;
+        case 'onlyfans':
+          providerResult = await this.processOnlyFansEvent(eventType, payload, queueResult.eventId!);
+          break;
+        case 'crm':
+          await this.processCrmEvent(eventType, payload, queueResult.eventId!);
           break;
         default:
           throw new Error(`Unknown provider: ${provider}`);
@@ -212,9 +318,10 @@ export class WebhookProcessor {
         processed: true,
         duplicate: queueResult.duplicate,
         eventId: queueResult.eventId,
+        providerResult,
       };
     } catch (error) {
-      console.error('Process event error:', error);
+      logger.error('Process event error', error instanceof Error ? error : undefined);
 
       // Update error in database
       if (event.externalId) {
@@ -240,7 +347,8 @@ export class WebhookProcessor {
     payload: any,
     eventId: number
   ): Promise<void> {
-    console.log(`Processing TikTok event: ${eventType}`, { eventId });
+    const logger = getLogger(String(eventId));
+    logger.debug('Processing TikTok event', { eventType });
 
     // TikTok webhook event types:
     // - video.publish.complete
@@ -261,7 +369,7 @@ export class WebhookProcessor {
         break;
 
       default:
-        console.log(`Unknown TikTok event type: ${eventType}`);
+        logger.warn('Unknown TikTok event type', { eventType });
     }
   }
 
@@ -271,6 +379,7 @@ export class WebhookProcessor {
   private async handleTikTokPublishComplete(payload: any): Promise<void> {
     const publishId = payload.publish_id;
     const postId = payload.post_id;
+    const logger = getLogger(publishId);
 
     if (!publishId) {
       throw new Error('Missing publish_id in payload');
@@ -291,7 +400,7 @@ export class WebhookProcessor {
       ]
     );
 
-    console.log(`TikTok post ${publishId} marked as PUBLISH_COMPLETE`);
+    logger.debug('TikTok post marked as PUBLISH_COMPLETE', { publishId, postId });
   }
 
   /**
@@ -300,6 +409,7 @@ export class WebhookProcessor {
   private async handleTikTokPublishFailed(payload: any): Promise<void> {
     const publishId = payload.publish_id;
     const failReason = payload.fail_reason || 'Unknown error';
+    const logger = getLogger(publishId);
 
     if (!publishId) {
       throw new Error('Missing publish_id in payload');
@@ -314,7 +424,7 @@ export class WebhookProcessor {
       [failReason, publishId]
     );
 
-    console.log(`TikTok post ${publishId} marked as FAILED: ${failReason}`);
+    logger.warn('TikTok post marked as FAILED', { publishId, failReason });
   }
 
   /**
@@ -322,6 +432,7 @@ export class WebhookProcessor {
    */
   private async handleTikTokInboxReceived(payload: any): Promise<void> {
     const publishId = payload.publish_id;
+    const logger = getLogger(publishId);
 
     if (!publishId) {
       throw new Error('Missing publish_id in payload');
@@ -335,7 +446,7 @@ export class WebhookProcessor {
       [publishId]
     );
 
-    console.log(`TikTok post ${publishId} marked as SEND_TO_USER_INBOX`);
+    logger.debug('TikTok post marked as SEND_TO_USER_INBOX', { publishId });
   }
 
   /**
@@ -347,7 +458,8 @@ export class WebhookProcessor {
     payload: any,
     eventId: number
   ): Promise<void> {
-    console.log(`Processing Instagram event: ${eventType}`, { eventId });
+    const logger = getLogger(String(eventId));
+    logger.debug('Processing Instagram event', { eventType });
 
     // Instagram webhook event types:
     // - media
@@ -364,8 +476,46 @@ export class WebhookProcessor {
         break;
 
       default:
-        console.log(`Unknown Instagram event type: ${eventType}`);
+        logger.warn('Unknown Instagram event type', { eventType });
     }
+  }
+
+  /**
+   * Process OnlyFans webhook event
+   * Delegates to automations webhook integration
+   */
+  private async processOnlyFansEvent(
+    _eventType: string,
+    payload: WebhookPayload,
+    eventId: number
+  ): Promise<WebhookProcessResult> {
+    const logger = getLogger(String(eventId));
+    logger.debug('Processing OnlyFans event', { eventId });
+
+    const userId = Number((payload as any)?.data?.creatorId || 0);
+    if (!userId) {
+      throw new Error('Missing creatorId in OnlyFans webhook payload');
+    }
+
+    const result = await processWebhook(userId, payload);
+    if (!result.processed) {
+      throw new Error(result.error || 'Failed to process OnlyFans webhook');
+    }
+
+    return result;
+  }
+
+  /**
+   * Process CRM webhook event
+   * Placeholder for provider-specific handling
+   */
+  private async processCrmEvent(
+    eventType: string,
+    _payload: any,
+    eventId: number
+  ): Promise<void> {
+    const logger = getLogger(String(eventId));
+    logger.debug('Processing CRM event', { eventType });
   }
 
   /**
@@ -374,7 +524,10 @@ export class WebhookProcessor {
   private async handleInstagramMediaEvent(payload: any): Promise<void> {
     // Instagram media events contain updates to media objects
     // This would sync with ig_media table
-    console.log('Instagram media event received', payload);
+    const logger = getLogger();
+    logger.debug('Instagram media event received', {
+      entryId: payload?.entry?.id ?? payload?.entry?.[0]?.id,
+    });
     // TODO: Implement media sync logic
   }
 
@@ -384,7 +537,10 @@ export class WebhookProcessor {
   private async handleInstagramCommentEvent(payload: any): Promise<void> {
     // Instagram comment events contain new/updated comments
     // This would sync with ig_comments table
-    console.log('Instagram comment event received', payload);
+    const logger = getLogger();
+    logger.debug('Instagram comment event received', {
+      entryId: payload?.entry?.id ?? payload?.entry?.[0]?.id,
+    });
     // TODO: Implement comment sync logic
   }
 
@@ -423,7 +579,10 @@ export class WebhookProcessor {
         });
         retried++;
       } catch (error) {
-        console.error(`Failed to retry event ${event.id}:`, error);
+        const logger = getLogger(String(event.id));
+        logger.error('Failed to retry event', error instanceof Error ? error : undefined, {
+          eventId: event.id,
+        });
       }
     }
 

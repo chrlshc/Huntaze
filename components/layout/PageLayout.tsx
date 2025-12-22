@@ -11,6 +11,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
+import './page-layout.css';
 
 export interface BreadcrumbItem {
   label: string;
@@ -19,7 +20,7 @@ export interface BreadcrumbItem {
 
 export interface PageLayoutProps {
   /** Page title displayed in the header */
-  title: string;
+  title: string | React.ReactNode;
   /** Optional subtitle/description */
   subtitle?: string;
   /** Action buttons or controls to display in header */
@@ -114,6 +115,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   return (
     <div 
       className={`page-layout ${className}`}
+      style={{ width: '100%', maxWidth: '100%' }}
       data-testid="page-layout"
     >
       {/* Breadcrumbs */}
@@ -133,14 +135,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           >
             {title}
           </h1>
-          {subtitle && (
-            <p 
-              className="page-subtitle"
-              data-testid="page-subtitle"
-            >
-              {subtitle}
-            </p>
-          )}
         </div>
         {actions && (
           <div 

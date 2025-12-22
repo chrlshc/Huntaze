@@ -5,6 +5,7 @@
 
 import { metrics } from '@/lib/utils/metrics';
 import { logger } from '@/lib/utils/logger';
+import { externalFetch } from '@/lib/services/external/http';
 
 interface AlertConfig {
   name: string;
@@ -225,7 +226,9 @@ class AlertService {
         critical: '#8B0000',
       }[alert.severity];
 
-      await fetch(webhookUrl, {
+      await externalFetch(webhookUrl, {
+        service: 'slack',
+        operation: 'webhook.post',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -238,6 +241,8 @@ class AlertService {
           }],
         }),
         cache: 'no-store',
+        timeoutMs: 5_000,
+        retry: { maxRetries: 0, retryMethods: [] },
       });
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));

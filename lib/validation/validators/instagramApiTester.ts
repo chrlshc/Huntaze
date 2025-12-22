@@ -9,6 +9,16 @@ import {
   InstagramCredentials,
   ApiConnectivityError,
 } from '../index';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
+
+async function safeReadJson(response: Response): Promise<any> {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
+}
 
 /**
  * Instagram API test result
@@ -95,7 +105,9 @@ export class InstagramApiTester {
    */
   async generateAppAccessToken(credentials: InstagramCredentials): Promise<string | null> {
     try {
-      const response = await fetch('https://graph.facebook.com/oauth/access_token', {
+      const response = await externalFetch('https://graph.facebook.com/oauth/access_token', {
+        service: 'facebook',
+        operation: 'oauth.access_token',
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -105,13 +117,13 @@ export class InstagramApiTester {
           client_secret: credentials.appSecret,
           grant_type: 'client_credentials',
         }).toString(),
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 0, retryMethods: ['POST'] },
+        throwOnHttpError: false,
       });
 
-      if (!response.ok) {
-        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
-      }
-
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (data.error) {
         const errorCode = data.error.code;
@@ -129,10 +141,17 @@ export class InstagramApiTester {
         throw new ApiConnectivityError(this.platform, new Error(`Facebook API Error ${errorCode}: ${errorMessage}`));
       }
 
+      if (!response.ok) {
+        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
+      }
+
       return data.access_token || null;
     } catch (error) {
       if (error instanceof ApiConnectivityError) {
         throw error;
+      }
+      if (isExternalServiceError(error)) {
+        throw new ApiConnectivityError(this.platform, error);
       }
       throw new ApiConnectivityError(this.platform, error as Error);
     }
@@ -144,22 +163,32 @@ export class InstagramApiTester {
   async getAppInfo(appId: string, accessToken: string): Promise<any> {
     try {
       const fields = 'id,name,category,company,description,privacy_policy_url,terms_of_service_url';
-      const response = await fetch(`https://graph.facebook.com/${appId}?access_token=${accessToken}&fields=${fields}`);
+      const response = await externalFetch(`https://graph.facebook.com/${appId}?access_token=${accessToken}&fields=${fields}`, {
+        service: 'facebook',
+        operation: 'app.info',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+        throwOnHttpError: false,
+      });
 
-      if (!response.ok) {
-        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
-      }
-
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (data.error) {
         throw new ApiConnectivityError(this.platform, new Error(data.error.message));
+      }
+      if (!response.ok) {
+        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
       }
 
       return data;
     } catch (error) {
       if (error instanceof ApiConnectivityError) {
         throw error;
+      }
+      if (isExternalServiceError(error)) {
+        throw new ApiConnectivityError(this.platform, error);
       }
       throw new ApiConnectivityError(this.platform, error as Error);
     }
@@ -170,16 +199,23 @@ export class InstagramApiTester {
    */
   async getAppPermissions(appId: string, accessToken: string): Promise<string[]> {
     try {
-      const response = await fetch(`https://graph.facebook.com/${appId}/permissions?access_token=${accessToken}`);
+      const response = await externalFetch(`https://graph.facebook.com/${appId}/permissions?access_token=${accessToken}`, {
+        service: 'facebook',
+        operation: 'app.permissions',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
+        throwOnHttpError: false,
+      });
 
-      if (!response.ok) {
-        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
-      }
-
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (data.error) {
         throw new ApiConnectivityError(this.platform, new Error(data.error.message));
+      }
+      if (!response.ok) {
+        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
       }
 
       // Extract permission names
@@ -187,6 +223,9 @@ export class InstagramApiTester {
     } catch (error) {
       if (error instanceof ApiConnectivityError) {
         throw error;
+      }
+      if (isExternalServiceError(error)) {
+        throw new ApiConnectivityError(this.platform, error);
       }
       throw new ApiConnectivityError(this.platform, error as Error);
     }
@@ -198,9 +237,20 @@ export class InstagramApiTester {
   async testInstagramBasicApi(accessToken: string): Promise<void> {
     try {
       // Test the Instagram Basic Display API me endpoint
-      const response = await fetch(`https://graph.instagram.com/me?fields=id,username&access_token=${accessToken}`);
+      const response = await externalFetch(
+        `https://graph.instagram.com/me?fields=id,username&access_token=${accessToken}`,
+        {
+          service: 'instagram',
+          operation: 'basic.me',
+          method: 'GET',
+          cache: 'no-store',
+          timeoutMs: 10_000,
+          retry: { maxRetries: 1, retryMethods: ['GET'] },
+          throwOnHttpError: false,
+        }
+      );
 
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (data.error) {
         // This is expected for app access tokens, but we're testing the endpoint availability
@@ -210,9 +260,15 @@ export class InstagramApiTester {
         }
         throw new ApiConnectivityError(this.platform, new Error(data.error.message));
       }
+      if (!response.ok) {
+        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
+      }
     } catch (error) {
       if (error instanceof ApiConnectivityError) {
         throw error;
+      }
+      if (isExternalServiceError(error)) {
+        throw new ApiConnectivityError(this.platform, error);
       }
       throw new ApiConnectivityError(this.platform, error as Error);
     }
@@ -254,7 +310,18 @@ export class InstagramApiTester {
    */
   async testWebhookConfiguration(appId: string, accessToken: string): Promise<{ configured: boolean; errors: string[] }> {
     try {
-      const response = await fetch(`https://graph.facebook.com/${appId}/subscriptions?access_token=${accessToken}`);
+      const response = await externalFetch(
+        `https://graph.facebook.com/${appId}/subscriptions?access_token=${accessToken}`,
+        {
+          service: 'facebook',
+          operation: 'webhooks.subscriptions',
+          method: 'GET',
+          cache: 'no-store',
+          timeoutMs: 10_000,
+          retry: { maxRetries: 1, retryMethods: ['GET'] },
+          throwOnHttpError: false,
+        }
+      );
 
       if (!response.ok) {
         return {
@@ -263,7 +330,7 @@ export class InstagramApiTester {
         };
       }
 
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (data.error) {
         return {
@@ -292,22 +359,35 @@ export class InstagramApiTester {
    */
   async getInstagramBusinessAccount(pageId: string, accessToken: string): Promise<any> {
     try {
-      const response = await fetch(`https://graph.facebook.com/${pageId}?fields=instagram_business_account&access_token=${accessToken}`);
+      const response = await externalFetch(
+        `https://graph.facebook.com/${pageId}?fields=instagram_business_account&access_token=${accessToken}`,
+        {
+          service: 'facebook',
+          operation: 'business.account',
+          method: 'GET',
+          cache: 'no-store',
+          timeoutMs: 10_000,
+          retry: { maxRetries: 1, retryMethods: ['GET'] },
+          throwOnHttpError: false,
+        }
+      );
 
-      if (!response.ok) {
-        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
-      }
-
-      const data = await response.json();
+      const data = await safeReadJson(response);
 
       if (data.error) {
         throw new ApiConnectivityError(this.platform, new Error(data.error.message));
+      }
+      if (!response.ok) {
+        throw new ApiConnectivityError(this.platform, new Error(`HTTP ${response.status}: ${response.statusText}`));
       }
 
       return data.instagram_business_account || null;
     } catch (error) {
       if (error instanceof ApiConnectivityError) {
         throw error;
+      }
+      if (isExternalServiceError(error)) {
+        throw new ApiConnectivityError(this.platform, error);
       }
       throw new ApiConnectivityError(this.platform, error as Error);
     }

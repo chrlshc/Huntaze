@@ -1,4 +1,6 @@
 // Note: requires @anthropic-ai/sdk dependency
+import { externalFetchJson } from '@/lib/services/external/http';
+
 export type ChatMsg = { role: 'system' | 'user' | 'assistant'; content: string }
 
 export async function callAnthropic(opts: {
@@ -17,7 +19,9 @@ export async function callAnthropic(opts: {
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) throw new Error('Anthropic not configured. Set ANTHROPIC_API_KEY to enable provider.')
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+  const json: any = await externalFetchJson('https://api.anthropic.com/v1/messages', {
+    service: 'anthropic',
+    operation: 'messages.create',
     method: 'POST',
     headers: {
       'x-api-key': apiKey,
@@ -33,12 +37,12 @@ export async function callAnthropic(opts: {
     }),
     signal: opts.abortSignal as any,
     cache: 'no-store',
+    timeoutMs: 20_000,
+    retry: {
+      maxRetries: 1,
+      retryMethods: ['POST'],
+    },
   })
-  if (!resp.ok) {
-    const text = await resp.text()
-    throw new Error(`Anthropic request failed: ${resp.status} ${text}`)
-  }
-  const json: any = await resp.json()
   const content = json?.content?.[0]?.text ?? ''
   const usage = json?.usage ?? { input_tokens: 0, output_tokens: 0 }
   return {

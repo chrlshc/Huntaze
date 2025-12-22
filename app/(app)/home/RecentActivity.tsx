@@ -15,10 +15,14 @@ import {
   FileText, 
   DollarSign, 
   Sparkles,
-  Clock
+  Clock,
+  RefreshCw,
 } from 'lucide-react';
 import './recent-activity.css';
 import { Button } from "@/components/ui/button";
+import { EmptyState } from '@/components/ui/EmptyState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+import type { ActivityItem as DashboardActivity, DashboardData } from '@/hooks/useDashboard';
 
 interface Activity {
   id: string;
@@ -93,66 +97,49 @@ function getActivityColor(type: Activity['type']): string {
   }
 }
 
-// Mock data for now - will be replaced with real API call
-const MOCK_ACTIVITIES: Activity[] = [
-  {
-    id: '1',
-    type: 'subscriber',
-    title: 'New subscriber',
-    description: '@sarah_jones subscribed to your content',
-    timestamp: new Date(Date.now() - 5 * 60000), // 5 minutes ago
-    icon: 'user-plus',
-    color: 'blue'
-  },
-  {
-    id: '2',
-    type: 'message',
-    title: 'New message',
-    description: 'You received 3 new messages',
-    timestamp: new Date(Date.now() - 15 * 60000), // 15 minutes ago
-    icon: 'message-square',
-    color: 'purple'
-  },
-  {
-    id: '3',
-    type: 'revenue',
-    title: 'Payment received',
-    description: '$45.00 from subscription renewal',
-    timestamp: new Date(Date.now() - 2 * 3600000), // 2 hours ago
-    icon: 'dollar-sign',
-    color: 'green'
-  },
-  {
-    id: '4',
-    type: 'content',
-    title: 'Content published',
-    description: 'Your post "Summer vibes" is now live',
-    timestamp: new Date(Date.now() - 4 * 3600000), // 4 hours ago
-    icon: 'file-text',
-    color: 'orange'
-  },
-  {
-    id: '5',
-    type: 'ai',
-    title: 'AI suggestion',
-    description: 'AI generated 5 message responses',
-    timestamp: new Date(Date.now() - 6 * 3600000), // 6 hours ago
-    icon: 'sparkles',
-    color: 'purple'
-  }
-];
-
 export function RecentActivity() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setActivities(MOCK_ACTIVITIES);
-      setIsLoading(false);
-    }, 500);
+    const load = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await internalApiFetch<{ success: boolean; data?: DashboardData }>(
+          '/api/dashboard?range=30d&include=content,marketing',
+        );
+        const dashboardActivities = response?.data?.recentActivity ?? [];
+        const mapped = dashboardActivities.map((activity) => {
+          const typeMap: Record<DashboardActivity['type'], Activity['type']> = {
+            content_published: 'content',
+            campaign_sent: 'revenue',
+            fan_subscribed: 'subscriber',
+            message_received: 'message',
+          };
+          return {
+            id: activity.id,
+            type: typeMap[activity.type] ?? 'content',
+            title: activity.title,
+            description: activity.meta?.description || activity.title,
+            timestamp: new Date(activity.createdAt),
+            icon: activity.source,
+            color: activity.source,
+          };
+        });
+
+        setActivities(mapped);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load activity');
+        setActivities([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void load();
   }, []);
 
   const displayedActivities = showAll ? activities : activities.slice(0, 5);
@@ -180,6 +167,25 @@ export function RecentActivity() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="recent-activity-section">
+        <div className="recent-activity-card">
+          <div className="recent-activity-header">
+            <h2 className="recent-activity-title">Recent Activity</h2>
+          </div>
+          <EmptyState
+            variant="error"
+            size="sm"
+            title="Failed to load activity"
+            description={error}
+            secondaryAction={{ label: 'Retry', onClick: () => window.location.reload(), icon: RefreshCw }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (activities.length === 0) {
     return (
       <div className="recent-activity-section">
@@ -187,9 +193,14 @@ export function RecentActivity() {
           <div className="recent-activity-header">
             <h2 className="recent-activity-title">Recent Activity</h2>
           </div>
-          <div className="recent-activity-empty">
-            <p>No recent activity</p>
-          </div>
+          <EmptyState
+            variant="no-data"
+            size="sm"
+            title="No recent activity"
+            description="Connect your platforms to start seeing messages, subscribers, and revenue events here."
+            action={{ label: 'Connect platforms', onClick: () => (window.location.href = '/integrations') }}
+            secondaryAction={{ label: 'Retry', onClick: () => window.location.reload(), icon: RefreshCw }}
+          />
         </div>
       </div>
     );

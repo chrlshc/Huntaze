@@ -4,15 +4,18 @@ on:
   pull_request:
     paths:
       - 'app/(marketing)/**'
+      - 'app/(app)/**'
       - 'components/**'
       - 'styles/**'
       - 'tests/e2e/**'
+      - 'tests/visual/**'
       - 'playwright.config.ts'
   push:
     branches:
       - main
     paths:
       - 'app/(marketing)/**'
+      - 'app/(app)/**'
       - 'components/**'
       - 'styles/**'
 

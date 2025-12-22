@@ -58,7 +58,7 @@ export function LoginForm() {
           required
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb]/30 focus:border-transparent transition-all"
           placeholder="you@example.com"
         />
       </div>
@@ -68,7 +68,7 @@ export function LoginForm() {
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
-          <Link href="/auth/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-700">
+          <Link href="/auth/forgot-password" className="text-sm text-[#2c6ecb] hover:text-[#245fae]">
             Forgot?
           </Link>
         </div>
@@ -78,7 +78,7 @@ export function LoginForm() {
           required
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb]/30 focus:border-transparent transition-all"
           placeholder="••••••••"
         />
       </div>

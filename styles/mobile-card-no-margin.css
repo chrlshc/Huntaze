@@ -1,0 +1,268 @@
+/* ===========================================
+   MOBILE CARD FULL-WIDTH
+   Cards full-width (edge-to-edge) avec espacement vertical
+   Style natif mobile comme iOS/Android
+   =========================================== */
+
+/* Mobile card gap - espace entre les cards */
+:root {
+  --mobile-card-gap: 8px;
+  --mobile-section-gap: 16px;
+}
+
+/* Mobile breakpoint: < 768px */
+@media (max-width: 767px) {
+  
+  /* ========================================
+     MAIN CONTAINER - REMOVE HORIZONTAL PADDING
+     ======================================== */
+  
+  .huntaze-main {
+    padding: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  }
+  
+  /* ========================================
+     POLARIS ANALYTICS - FULL WIDTH MOBILE
+     ======================================== */
+  
+  /* Content wrapper - keep horizontal padding for cards */
+  .polaris-analytics .content-wrapper {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-bottom: 16px !important;
+    gap: var(--mobile-section-gap) !important;
+  }
+  
+  /* Page header - keep horizontal padding */
+  .polaris-analytics .page-header {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+  }
+  
+  /* KPI Cards - full border radius with complete border */
+  .polaris-analytics .kpi-card {
+    border-radius: 12px !important;
+    border: 1px solid var(--p-border, #E3E3E3) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* KPI Grid - vertical gap between cards */
+  .polaris-analytics .kpi-grid {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* P-Card - full width with complete border */
+  .polaris-analytics .p-card {
+    border-radius: 12px !important;
+    border: 1px solid var(--p-border, #E3E3E3) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Three column grid - vertical gap */
+  .polaris-analytics .three-col-grid {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Chart section - vertical gap */
+  .polaris-analytics .chart-section {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Banner - full width */
+  .polaris-analytics .mobile-full-width-banner,
+  .polaris-analytics > .content-wrapper > div[style*="border"] {
+    border-radius: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  
+  /* ========================================
+     GLOBAL CARD FULL-WIDTH + SPACING
+     ======================================== */
+  
+  /* Design system cards */
+  .glass-card,
+  .card-elevated,
+  [data-testid="card"] {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* ========================================
+     CSS VARIABLE OVERRIDES FOR MOBILE
+     ======================================== */
+  
+  :root {
+    --card-padding: 12px;
+    --spacing-card-padding: 12px;
+    --polish-card-padding: 12px;
+    --of-card-padding: 12px;
+    --of-settings-card-padding: 12px;
+    --premium-card-padding: 12px;
+    --dashboard-card-padding: 12px;
+    --p-space-600: 0px;
+    --p-space-400: 8px;
+  }
+  
+  /* ========================================
+     SPECIFIC COMPONENT OVERRIDES
+     ======================================== */
+  
+  /* Shopify-style cards */
+  .huntaze-card,
+  .padding-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Stat cards */
+  .stat-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Info cards */
+  .info-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Segment cards */
+  .segment-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Dashboard empty state */
+  .dashboard-empty-state {
+    border-radius: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Settings cards */
+  .of-settings-card,
+  [class*="settings-card"],
+  [class*="SettingsCard"] {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Premium cards */
+  .premium-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Shopify UI cards */
+  .Polaris-Card,
+  .Polaris-LegacyCard {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* ========================================
+     PAGE CONTAINER ADJUSTMENTS
+     ======================================== */
+  
+  .container-default {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .page-content,
+  .main-content,
+  [class*="page-content"],
+  [class*="PageContent"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  /* ========================================
+     GRID AND LAYOUT - VERTICAL SPACING
+     ======================================== */
+  
+  .grid-responsive {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  [class*="card-grid"],
+  [class*="CardGrid"] {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Content blocks spacing */
+  .huntaze-content-blocks,
+  .huntaze-content-grid,
+  .huntaze-card-grid {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Page stack spacing */
+  .page-stack {
+    gap: var(--mobile-section-gap) !important;
+  }
+  
+  .section-stack {
+    gap: var(--mobile-card-gap) !important;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE (< 480px)
+   ======================================== */
+
+@media (max-width: 479px) {
+  :root {
+    --mobile-card-gap: 6px;
+    --mobile-section-gap: 12px;
+  }
+  
+  .stat-card > *,
+  .info-card > *,
+  .segment-card > *,
+  .huntaze-card > *,
+  [data-testid="card"] > * {
+    padding: 8px 12px;
+  }
+  
+  [data-testid="card-content"] {
+    padding: 8px 12px !important;
+  }
+}

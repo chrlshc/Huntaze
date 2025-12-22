@@ -268,7 +268,7 @@ export const components = {
       bg-purple-600 text-white font-medium
       hover:bg-purple-700 hover:shadow-md
       active:shadow-sm
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2
       transition-all duration-200 ease-in-out
       disabled:opacity-50 disabled:cursor-not-allowed
     `,
@@ -277,7 +277,7 @@ export const components = {
       bg-purple-100 text-purple-900 font-medium
       hover:bg-purple-200
       active:bg-purple-300
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2
       transition-all duration-200 ease-in-out
       disabled:opacity-50 disabled:cursor-not-allowed
     `,
@@ -286,7 +286,7 @@ export const components = {
       border border-purple-600 text-purple-600 font-medium
       hover:bg-purple-50
       active:bg-purple-100
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2
       transition-all duration-200 ease-in-out
       disabled:opacity-50 disabled:cursor-not-allowed
     `,
@@ -295,7 +295,7 @@ export const components = {
       text-purple-600 font-medium
       hover:bg-purple-50
       active:bg-purple-100
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-2
       transition-all duration-200 ease-in-out
       disabled:opacity-50 disabled:cursor-not-allowed
     `,
@@ -329,7 +329,7 @@ export const components = {
       w-full px-4 pt-5 pb-2
       bg-gray-100 dark:bg-gray-800
       rounded-t-lg border-b-2 border-gray-300 dark:border-gray-600
-      focus:border-purple-600 focus:outline-none
+      focus:border-[#2c6ecb] focus:outline-none
       transition-colors duration-200
       placeholder-transparent
     `,
@@ -337,7 +337,7 @@ export const components = {
       w-full px-4 py-3
       bg-transparent
       rounded-lg border border-gray-300 dark:border-gray-600
-      focus:border-purple-600 focus:outline-none
+      focus:border-[#2c6ecb] focus:outline-none
       transition-colors duration-200
     `,
   },

@@ -209,6 +209,7 @@ model users {
   ai_insights                AIInsight[]
   accounts                   Account[]
   sessions                   Session[]
+  knowledgeBaseItems         KnowledgeBaseItem[]
 
   @@index([onboarding_completed], map: "idx_users_onboarding_completed")
   @@index([role], map: "idx_users_role")
@@ -432,4 +433,181 @@ model OfferRedemption {
   @@index([offerId, redeemedAt(sort: Desc)], map: "idx_redemption_offer")
   @@index([fanId], map: "idx_redemption_fan")
   @@map("offer_redemptions")
+}
+
+// ============================================
+// Content Posting System - TikTok/Instagram
+// ============================================
+
+enum ContentPlatform {
+  TIKTOK
+  INSTAGRAM
+}
+
+enum ContentTaskStatus {
+  PENDING
+  PROCESSING
+  POSTED
+  FAILED
+}
+
+enum ContentSourceType {
+  UPLOAD // S3 upload
+  URL // Public URL
+}
+
+/// Tasks de publication de contenu sur TikTok/Instagram
+model ContentTask {
+  id             String            @id @default(cuid())
+  userId         Int               @map("user_id")
+  platform       ContentPlatform
+  status         ContentTaskStatus @default(PENDING)
+
+  sourceType ContentSourceType @map("source_type")
+  sourceUrl  String?           @map("source_url") // URL publique
+  assetKey   String?           @map("asset_key") // Clé S3
+
+  caption    String?
+  hook       String?
+  body       String?
+  cta        String?
+  trendLabel String? @map("trend_label")
+
+  scheduledAt    DateTime? @map("scheduled_at") @db.Timestamptz(6)
+  startedAt      DateTime? @map("started_at") @db.Timestamptz(6)
+  postedAt       DateTime? @map("posted_at") @db.Timestamptz(6)
+  externalPostId String?   @map("external_post_id") @db.VarChar(255)
+  errorMessage   String?   @map("error_message") @db.Text
+
+  attemptCount Int @default(0) @map("attempt_count")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([userId, status, createdAt(sort: Desc)], map: "idx_content_task_user_status")
+  @@index([platform, status, createdAt(sort: Desc)], map: "idx_content_task_platform_status")
+  @@map("content_tasks")
+}
+
+/// Comptes sociaux connectés (TikTok/Instagram)
+model SocialAccount {
+  id       String          @id @default(cuid())
+  userId   Int             @map("user_id")
+  platform ContentPlatform
+
+  // Identifiants plateforme
+  platformUserId  String  @map("platform_user_id") @db.VarChar(255) // TikTok open_id OU Instagram ig_user_id
+  pageId          String? @map("page_id") @db.VarChar(255) // Instagram Page ID
+  pageAccessToken String? @map("page_access_token") @db.Text // Instagram token (chiffré)
+
+  // TikTok tokens (chiffrés)
+  accessToken  String?   @map("access_token") @db.Text
+  refreshToken String?   @map("refresh_token") @db.Text
+  expiresAt    DateTime? @map("expires_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([userId, platform], map: "idx_social_account_unique")
+  @@map("social_accounts")
+}
+
+// ============================================
+// Knowledge Base - Data-Driven Context
+// ============================================
+
+enum KnowledgeKind {
+  CHAT_CLOSER_PLAY        // best responses that led to $ / conversion
+  VIRAL_STRUCTURE         // transcripts + hook/body/cta pattern + metrics
+  EDITING_RULESET         // editing rules based on retention data
+  ANALYTICS_PLAYBOOK      // "do this today" rules from historical outcomes
+  TREND_TEMPLATE          // reusable trend/meme templates (curated/imported)
+}
+
+enum KnowledgeSource {
+  USER_HISTORY            // mined from your own data
+  CURATED                 // manually curated / agency curated
+  IMPORTED                // user uploaded pack (csv/json)
+  PARTNER_DATA            // opted-in creator/partner dataset
+  SCRAPED_HISTORY         // scraped from chat history with tips
+}
+
+enum KnowledgeStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+// ============================================
+// AI Assistant Conversations
+// ============================================
+
+model AssistantConversation {
+  id        String   @id @default(cuid())
+  userId    Int      @map("user_id")
+  title     String   @default("New conversation") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  messages AssistantMessage[]
+
+  @@index([userId, updatedAt(sort: Desc)], map: "idx_assistant_conv_user")
+  @@map("assistant_conversations")
+}
+
+model AssistantMessage {
+  id             String   @id @default(cuid())
+  conversationId String   @map("conversation_id")
+  role           String   @db.VarChar(20) // user, assistant
+  content        String   @db.Text
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  conversation AssistantConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt], map: "idx_assistant_msg_conv")
+  @@map("assistant_messages")
+}
+
+model KnowledgeBaseItem {
+  id          String         @id @default(cuid())
+  status      KnowledgeStatus @default(ACTIVE)
+
+  // Optional: per-creator brain + global brain
+  creatorId   Int?
+  creator     users?         @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+
+  kind        KnowledgeKind
+  source      KnowledgeSource @default(USER_HISTORY)
+
+  // Targeting
+  niche       String?        // "fitness", "cosplay", "lifestyle"
+  platform    String?        // "tiktok", "instagram", "reddit", "x", "onlyfans"
+  language    String         @default("en")
+
+  // Retrieval payload
+  title       String?
+  inputText   String         // e.g., fan message OR viral hook OR scenario
+  outputText  String?        // e.g., best reply OR generated structure OR rule summary
+
+  // Structured details (safe to evolve without migrations)
+  // e.g., { hook, body, cta, shots:[], offer:{...}, editing:{...}, metrics:{...} }
+  payload     Json           @default("{}")
+
+  // Outcome signals (used to rank)
+  score       Float          @default(0)    // your normalized quality score
+  revenueUsd  Float?
+  conversions Int?
+  views       Int?
+  retention50 Float?         // optional (0..1) or %
+  lastUsedAt  DateTime?
+
+  // Vector embedding (pgvector)
+  // NOTE: Prisma ORM still treats this as Unsupported; you'll query via raw SQL/TypedSQL
+  embedding   Unsupported("vector(1536)")?
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([creatorId, kind, status])
+  @@index([kind, niche, platform, status])
+  @@index([score])
 }

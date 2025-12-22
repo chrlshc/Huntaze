@@ -1,0 +1,257 @@
+/**
+ * Custom Message Input - Pilule Unifiée Style ChatGPT
+ * Spec: SPEC-FINALE-SAAS-LEVEL.md Section 2.2
+ */
+
+/* Layout/scroll containment for Chatscope components is handled in
+   `components/messages/chat-container.css` (scoped to `.chat-container-wrapper`)
+   to avoid global side effects across the dashboard. */
+
+.custom-message-input {
+  flex-shrink: 0 !important;
+  background-color: transparent !important;
+  padding: 12px 24px 4px 24px !important;
+  border-top: 1px solid #E5E7EB !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 100 !important;
+  width: 100% !important;
+  min-height: 72px !important;
+}
+
+/* Pilule unifiée - ENGLOBE TOUT (trombone + texte + avion) */
+.custom-message-input__wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FFFFFF !important; /* Blanc uniforme - pas de dégradé */
+  border: 1px solid #E5E7EB !important;
+  border-radius: 24px;
+  padding: 10px 16px;
+  box-shadow: none;
+  min-height: 48px;
+}
+
+.custom-message-input__wrapper:focus-within {
+  background-color: #FFFFFF !important;
+  border-color: #9CA3AF !important;
+  box-shadow: none;
+}
+
+/* Bouton Trombone - À GAUCHE dans la pilule */
+/* Uses .icon-button base class with custom overrides for pill context */
+.custom-message-input__attach-btn.icon-button {
+  /* Override icon-button defaults for pill context */
+  border-radius: 0; /* No radius inside pill */
+  background: transparent !important; /* Always transparent inside pill */
+  margin: 0;
+}
+
+.custom-message-input__attach-btn.icon-button:hover {
+  background: transparent !important; /* Keep transparent on hover */
+  color: #374151; /* Darker on hover */
+}
+
+.custom-message-input__attach-btn.icon-button:active {
+  background: transparent !important;
+  transform: scale(0.95);
+}
+
+.custom-message-input__attach-btn.icon-button:focus-visible {
+  outline: none !important; /* No outline inside pill */
+  box-shadow: none !important;
+}
+
+/* Textarea - AU CENTRE dans la pilule */
+.custom-message-input__textarea {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none !important; /* Force suppression outline */
+  resize: none;
+  font-size: 15px;
+  font-family: var(--tailadmin-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  line-height: 1.4;
+  color: #1F2937 !important; /* Gris foncé - texte visible */
+  padding: 0 4px; /* Petit padding pour éviter la coupure */
+  margin: 0;
+  min-height: calc(1.4em * 1);
+  max-height: calc(1.4em * 3); /* 3 lignes max, ensuite scroll interne */
+  overflow-y: auto; /* Scroll interne quand > 3 lignes */
+  box-shadow: none !important; /* Supprime box-shadow Safari/Chrome */
+  caret-color: #1F2937; /* Curseur toujours visible */
+  text-align: left; /* Aligné à gauche */
+  -webkit-text-fill-color: #1F2937 !important; /* Fix Safari */
+}
+
+.custom-message-input__textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.custom-message-input__textarea::placeholder {
+  color: #B0B0B0; /* Gris clair */
+}
+
+.custom-message-input__textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Supprime le halo violet global sur la barre de message au focus */
+.custom-message-input,
+.custom-message-input * {
+  outline: none;
+}
+
+.custom-message-input:focus-visible,
+.custom-message-input *:focus-visible {
+  box-shadow: none !important;
+}
+
+/* Scrollbar pour textarea */
+.custom-message-input__textarea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-message-input__textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-message-input__textarea::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 2px;
+}
+
+/* Bouton Avion - À DROITE dans la pilule */
+/* Uses .icon-button and .icon-button--primary base classes with custom overrides */
+.custom-message-input__send-btn.icon-button {
+  /* Override icon-button defaults for pill context */
+  border-radius: 0; /* No radius inside pill */
+  background: transparent !important; /* Transparent by default */
+  color: #6B7280 !important; /* Gris moyen - toujours visible */
+  margin: 0;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Desktop: show icon, hide text */
+.custom-message-input__send-btn .send-btn-text {
+  display: none;
+}
+
+.custom-message-input__send-btn .send-btn-icon {
+  display: block;
+}
+
+/* État actif - quand il y a du texte */
+.custom-message-input__send-btn.icon-button--active,
+.custom-message-input__send-btn--active {
+  background: transparent !important;
+  color: #1A1D1F !important; /* Near-black when active */
+}
+
+.custom-message-input__send-btn.icon-button--active:hover,
+.custom-message-input__send-btn--active:hover {
+  background: transparent !important;
+  color: #1F2937 !important; /* Even darker on hover */
+  transform: scale(1.05);
+}
+
+.custom-message-input__send-btn.icon-button:active {
+  background: transparent !important;
+  transform: scale(0.95);
+}
+
+.custom-message-input__send-btn.icon-button:disabled {
+  color: #6B7280 !important; /* Gris moyen même disabled */
+  opacity: 1 !important; /* Override global disabled opacity */
+  cursor: default;
+  background: transparent !important;
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.custom-message-input__send-btn.icon-button:focus-visible {
+  outline: none !important; /* No outline inside pill */
+  box-shadow: none !important;
+}
+
+/* Dark Mode Support */
+.dark .custom-message-input {
+  background-color: var(--tailadmin-card-bg);
+  border-top-color: var(--tailadmin-border-color);
+}
+
+.dark .custom-message-input__wrapper {
+  background-color: var(--tailadmin-input-bg);
+  border-color: var(--tailadmin-border-color);
+}
+
+.dark .custom-message-input__wrapper:focus-within {
+  background-color: var(--tailadmin-card-bg);
+  border-color: var(--tailadmin-stroke);
+}
+
+.dark .custom-message-input__textarea {
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .custom-message-input__textarea::placeholder {
+  color: var(--tailadmin-text-tertiary);
+}
+
+.dark .custom-message-input__attach-btn {
+  color: var(--tailadmin-text-secondary);
+}
+
+.dark .custom-message-input__attach-btn:hover {
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .custom-message-input__send-btn {
+  color: var(--tailadmin-text-tertiary);
+}
+
+.dark .custom-message-input__send-btn--active {
+  color: var(--tailadmin-text-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .custom-message-input {
+    padding: 12px 16px 16px 16px;
+  }
+
+  .custom-message-input__wrapper {
+    padding: 8px 12px;
+  }
+
+  /* Mobile: show text, hide icon */
+  .custom-message-input__send-btn .send-btn-text {
+    display: block;
+  }
+
+  .custom-message-input__send-btn .send-btn-icon {
+    display: none;
+  }
+
+  .custom-message-input__send-btn.icon-button {
+    width: auto !important;
+    height: 40px !important;
+    padding: 0 16px !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+}

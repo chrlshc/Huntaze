@@ -1,0 +1,192 @@
+/**
+ * PageLayout Component Styles - Dashboard Global Polish
+ * 
+ * Provides consistent layout structure with polish tokens for:
+ * - Typography scale (H1, label style)
+ * - Spacing grid (32px header margin, 24px section gap)
+ * - Responsive behavior
+ * 
+ * Feature: dashboard-global-polish
+ * Validates: Requirements 1.1, 1.2, 1.4, 2.4, 12.5
+ */
+
+/* ========================================
+   PAGE LAYOUT CONTAINER
+   ======================================== */
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--polish-content-max-width, 1600px);
+  margin: 0 auto;
+  padding: var(--polish-content-padding, 24px);
+}
+
+/* ========================================
+   PAGE HEADER
+   Requirements: 1.1, 1.2, 1.4, 2.4
+   ======================================== */
+
+.page-layout-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--polish-space-lg, 24px);
+  margin-bottom: var(--polish-header-margin, 32px);
+}
+
+.page-layout-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polish-space-xs, 4px);
+  flex: 1;
+}
+
+/* Subtitle - Label Style (11px uppercase) */
+.page-layout-subtitle {
+  font-size: var(--polish-text-label, 11px);
+  font-weight: var(--polish-text-label-weight, 500);
+  letter-spacing: var(--polish-text-label-spacing, 0.05em);
+  text-transform: var(--polish-text-label-transform, uppercase);
+  color: var(--polish-text-label-color, var(--text-secondary));
+  margin-bottom: var(--polish-page-subtitle-margin-bottom, 4px);
+}
+
+/* Title - H1 Style (24px semi-bold) */
+.page-layout-title {
+  font-size: var(--polish-text-h1, 24px);
+  font-weight: var(--polish-text-h1-weight, 600);
+  line-height: var(--polish-text-h1-line, 1.2);
+  color: var(--polish-text-h1-color, var(--text-primary));
+  margin: 0;
+}
+
+/* Actions Container */
+.page-layout-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--polish-space-sm, 8px);
+  flex-shrink: 0;
+}
+
+/* ========================================
+   FILTERS SECTION
+   Requirements: 2.4
+   ======================================== */
+
+.page-layout-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--polish-space-md, 16px);
+  margin-bottom: var(--polish-section-gap, 24px);
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   CONTENT AREA
+   Requirements: 2.4
+   ======================================== */
+
+.page-layout-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--polish-section-gap, 24px);
+  width: 100%;
+}
+
+/* ========================================
+   RESPONSIVE BEHAVIOR
+   ======================================== */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .page-layout {
+    padding: var(--polish-space-md, 16px);
+  }
+
+  .page-layout-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--polish-space-md, 16px);
+    margin-bottom: var(--polish-space-lg, 24px);
+  }
+
+  .page-layout-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .page-layout-title {
+    font-size: 20px; /* Slightly smaller on mobile */
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .page-layout {
+    padding: var(--polish-space-sm, 8px);
+  }
+
+  .page-layout-header {
+    margin-bottom: var(--polish-space-md, 16px);
+  }
+
+  .page-layout-filters {
+    margin-bottom: var(--polish-space-md, 16px);
+  }
+
+  .page-layout-content {
+    gap: var(--polish-space-md, 16px);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Ensure focus indicators are visible */
+.page-layout-actions button:focus-visible,
+.page-layout-filters button:focus-visible {
+  outline: var(--polish-focus-visible-outline, 2px solid rgba(44, 110, 203, 0.8));
+  outline-offset: var(--polish-focus-visible-offset, 2px);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .page-layout * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
+/* Use containment for better rendering performance */
+.page-layout-header,
+.page-layout-filters,
+.page-layout-content {
+  contain: layout style;
+}
+
+/* Optimize font rendering */
+.page-layout-title,
+.page-layout-subtitle {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .page-layout-title {
+    font-weight: 700; /* Bolder in high contrast */
+  }
+
+  .page-layout-subtitle {
+    font-weight: 600;
+  }
+}

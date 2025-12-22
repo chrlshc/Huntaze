@@ -31,6 +31,8 @@ export default function ChatbotPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [pendingRequest, setPendingRequest] = useState<{ message: string; history: Message[] } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -59,6 +61,51 @@ export default function ChatbotPage() {
     ]);
   };
 
+  const sendToApi = async (request: { message: string; history: Message[] }) => {
+    setIsLoading(true);
+    setSendError(null);
+    setPendingRequest(request);
+
+    try {
+      const response = await fetch('/api/chatbot/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: request.message,
+          history: request.history,
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const errorMessage =
+          data && typeof data === 'object' && 'error' in data
+            ? String((data as any).error)
+            : 'Failed to send message';
+        throw new Error(errorMessage);
+      }
+
+      if (!data || typeof data !== 'object' || !('message' in data) || typeof (data as any).message !== 'string') {
+        throw new Error('Unexpected response from assistant');
+      }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: (data as any).message,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+      setPendingRequest(null);
+    } catch (error) {
+      setSendError(error instanceof Error ? error.message : 'Failed to send message');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -69,35 +116,17 @@ export default function ChatbotPage() {
       timestamp: new Date(),
     };
 
+    const request = { message: input, history: messages.slice(-5) };
+
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
-    setIsLoading(true);
 
-    try {
-      const response = await fetch('/api/chatbot/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: input,
-          history: messages.slice(-5),
-        }),
-      });
+    await sendToApi(request);
+  };
 
-      const data = await response.json();
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.message,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Chatbot error:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const retrySend = async () => {
+    if (!pendingRequest || isLoading) return;
+    await sendToApi(pendingRequest);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -231,6 +260,21 @@ export default function ChatbotPage() {
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
                     </div>
+                  </div>
+                </div>
+              )}
+              {sendError && (
+                <div className="flex justify-center">
+                  <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700 flex items-center gap-3">
+                    <span>{sendError}</span>
+                    <button
+                      type="button"
+                      onClick={retrySend}
+                      className="underline font-medium"
+                      disabled={isLoading}
+                    >
+                      Retry
+                    </button>
                   </div>
                 </div>
               )}

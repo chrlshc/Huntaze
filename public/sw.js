@@ -1,43 +1,91 @@
 // Service Worker for Huntaze PWA
-const CACHE_NAME = 'huntaze-v2';
+const CACHE_NAME = 'huntaze-v3';
+const IS_LOCALHOST = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
 const urlsToCache = [
   '/',
   '/dashboard',
   '/messages',
   '/fans',
   '/analytics',
-  '/globals.css',
-  '/mobile.css',
-  '/animations.css'
+  '/manifest.json'
 ];
 
 // Install event - cache resources
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
-  );
+  if (IS_LOCALHOST) {
+    self.skipWaiting();
+    return;
+  }
+
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // Cache what we can without failing the install if any single asset is missing.
+    await Promise.all(
+      urlsToCache.map(async (url) => {
+        try {
+          const response = await fetch(url, { cache: 'reload' });
+          if (response.ok) {
+            await cache.put(url, response);
+          }
+        } catch {
+          // Ignore individual cache failures
+        }
+      })
+    );
+
+    await self.skipWaiting();
+  })());
 });
 
 // Activate event - clean old caches
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
+  event.waitUntil((async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(
+      cacheNames.map((cacheName) => {
+        if (IS_LOCALHOST || cacheName !== CACHE_NAME) return caches.delete(cacheName);
+      })
+    );
+
+    // In development, service workers frequently cause stale/mismatched chunks.
+    // Unregister on localhost to avoid breaking HMR/navigation.
+    if (IS_LOCALHOST) {
+      try {
+        await self.registration.unregister();
+        const windowClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        for (const client of windowClients) {
+          try {
+            client.navigate(client.url);
+          } catch {
+            // ignore
           }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+        }
+      } catch {
+        // Ignore unregister failures
+      }
+      return;
+    }
+
+    await self.clients.claim();
+  })());
 });
 
 // Fetch event - network first, fallback to cache
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+
+  // Never cache Next.js internals or API responses.
+  // Caching dev chunks can cause "Cannot read properties of undefined (reading 'call')" from mismatched bundles.
+  if (
+    IS_LOCALHOST ||
+    url.pathname.startsWith('/_next/') ||
+    url.pathname.startsWith('/api/')
+  ) {
+    return;
+  }
   
   // Skip caching for navigation requests to prevent blank pages
   if (event.request.mode === 'navigate') {

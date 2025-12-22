@@ -31,7 +31,6 @@
 'use client';
 
 import useSWR from 'swr';
-import { Button } from "@/components/ui/button";
 
 // Types
 export interface ValidationHealthPlatform {
@@ -123,17 +122,6 @@ export function useValidationHealth(options?: {
           return false;
         }
         return true;
-      },
-      onSuccess: (data) => {
-        console.log('[useValidationHealth] Health check successful:', {
-          status: data.status,
-          healthy: data.summary.healthy,
-          total: data.summary.total,
-          cached: data.cached,
-        });
-      },
-      onError: (error) => {
-        console.error('[useValidationHealth] Health check failed:', error);
       },
     }
   );

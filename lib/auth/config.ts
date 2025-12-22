@@ -34,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // Default 30 days (can be overridden per-session)
   },
   pages: {
-    signIn: '/auth',
+    signIn: '/auth/login',
   },
   providers: [
     // Google OAuth Provider
@@ -62,6 +62,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const startTime = Date.now();
         
         try {
+          // E2E mode: allow a deterministic credentials login without DB access.
+          if (process.env.E2E_TESTING === '1') {
+            const email = typeof credentials?.email === 'string' ? credentials.email : '';
+            const password = typeof credentials?.password === 'string' ? credentials.password : '';
+            const rememberMe =
+              credentials?.rememberMe === 'true' || credentials?.rememberMe === true;
+
+            const expectedEmail = process.env.E2E_TEST_EMAIL ?? 'e2e@huntaze.test';
+            const expectedPassword = process.env.E2E_TEST_PASSWORD ?? 'password123';
+
+            if (
+              email &&
+              password &&
+              email.toLowerCase() === expectedEmail.toLowerCase() &&
+              password === expectedPassword
+            ) {
+              return {
+                id: 'e2e-user',
+                email,
+                name: 'E2E User',
+                onboardingCompleted: true,
+                rememberMe,
+              };
+            }
+
+            return null;
+          }
+
           // Validate credentials format
           if (!credentials?.email || !credentials?.password) {
             logger.warn('Authorization failed: Missing credentials', {
@@ -255,6 +283,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: user.email,
         provider: account?.provider,
       });
+
+      if (process.env.E2E_TESTING === '1') {
+        return;
+      }
       
       // Cache warming on login (Requirements: 12.2)
       // Pre-fetch and cache user data to improve initial page load performance

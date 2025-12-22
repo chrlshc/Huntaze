@@ -32,11 +32,17 @@ import {
   ComplianceRequest,
   ComplianceResponseData,
 } from '../agents/compliance.foundry';
+import {
+  FoundryContentTrendsAgent,
+  createFoundryContentTrendsAgent,
+  ContentTrendsRequest,
+  ContentTrendsResponseData,
+} from '../agents/content-trends.foundry';
 
 /**
  * Agent types supported by the registry
  */
-export type FoundryAgentType = 'messaging' | 'analytics' | 'sales' | 'compliance';
+export type FoundryAgentType = 'messaging' | 'analytics' | 'sales' | 'compliance' | 'content_trends';
 
 /**
  * Union type for all Foundry agents
@@ -45,7 +51,8 @@ export type FoundryAgent =
   | FoundryMessagingAgent 
   | FoundryAnalyticsAgent 
   | FoundrySalesAgent 
-  | FoundryComplianceAgent;
+  | FoundryComplianceAgent
+  | FoundryContentTrendsAgent;
 
 /**
  * Request type mapping for each agent
@@ -55,6 +62,7 @@ export type AgentRequestMap = {
   analytics: AnalyticsRequest;
   sales: SalesRequest;
   compliance: ComplianceRequest;
+  content_trends: ContentTrendsRequest;
 };
 
 /**
@@ -65,6 +73,7 @@ export type AgentResponseMap = {
   analytics: AnalyticsResponseData;
   sales: SalesResponseData;
   compliance: ComplianceResponseData;
+  content_trends: ContentTrendsResponseData;
 };
 
 /**
@@ -88,6 +97,7 @@ export class FoundryAgentRegistry {
   private analyticsAgent: FoundryAnalyticsAgent | null = null;
   private salesAgent: FoundrySalesAgent | null = null;
   private complianceAgent: FoundryComplianceAgent | null = null;
+  private contentTrendsAgent: FoundryContentTrendsAgent | null = null;
   
   private routerUrl: string;
   private apiKey?: string;
@@ -143,6 +153,9 @@ export class FoundryAgentRegistry {
     // Requirement 3.6: ComplianceFoundryAgent for compliance/moderation
     this.complianceAgent = createFoundryComplianceAgent(clientConfig);
 
+    // Content Trends Agent for viral analysis and trend detection
+    this.contentTrendsAgent = createFoundryContentTrendsAgent(clientConfig);
+
     this.initialized = true;
   }
 
@@ -184,6 +197,12 @@ export class FoundryAgentRegistry {
         }
         return this.complianceAgent;
         
+      case 'content_trends':
+        if (!this.contentTrendsAgent) {
+          throw new Error('ContentTrendsAgent not available');
+        }
+        return this.contentTrendsAgent;
+        
       default:
         throw new Error(`Unknown agent type: ${type}`);
     }
@@ -222,6 +241,13 @@ export class FoundryAgentRegistry {
   }
 
   /**
+   * Get content trends agent
+   */
+  getContentTrendsAgent(): FoundryContentTrendsAgent {
+    return this.getAgent('content_trends') as FoundryContentTrendsAgent;
+  }
+
+  /**
    * Check if registry is initialized
    */
   isInitialized(): boolean {
@@ -239,7 +265,7 @@ export class FoundryAgentRegistry {
    * Get all registered agent types
    */
   getRegisteredTypes(): FoundryAgentType[] {
-    return ['messaging', 'analytics', 'sales', 'compliance'];
+    return ['messaging', 'analytics', 'sales', 'compliance', 'content_trends'];
   }
 
   /**
@@ -264,6 +290,11 @@ export class FoundryAgentRegistry {
       'compliance_check': 'compliance',
       'compliance': 'compliance',
       'moderation': 'compliance',
+      'content_trends_analysis': 'content_trends',
+      'viral_analysis': 'content_trends',
+      'trend_detection': 'content_trends',
+      'content_recommendations': 'content_trends',
+      'trend_arbitrage': 'content_trends',
     };
 
     return mapping[requestType] || null;

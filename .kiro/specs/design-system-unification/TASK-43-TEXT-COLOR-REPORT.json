@@ -1,11 +1,166 @@
 {
-  "timestamp": "2025-12-04T05:18:10.867Z",
+  "timestamp": "2025-12-22T16:17:26.248Z",
   "summary": {
-    "errorCount": 0,
+    "errorCount": 22,
     "warningCount": 0,
-    "affectedFiles": 0
+    "affectedFiles": 8
   },
-  "violations": [],
+  "violations": [
+    {
+      "file": "components/ui/VirtualizedTable.tsx",
+      "line": 141,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/ui/VirtualizedTable.tsx",
+      "line": 162,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/ui/PageLayout.example.tsx",
+      "line": 152,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/ppv/ContentGrid.tsx",
+      "line": 128,
+      "color": "var(--color-text-secondary",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/ppv/ContentGrid.tsx",
+      "line": 128,
+      "color": "var(--color-text-secondary",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/messages/FanNotesPanel.tsx",
+      "line": 172,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/messages/FanNotesPanel.tsx",
+      "line": 291,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/messages/FanNotesPanel.tsx",
+      "line": 349,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 30,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 30,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 130,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 130,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 147,
+      "color": "var(--text-secondary)",
+      "context": "h4",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 154,
+      "color": "var(--text-secondary)",
+      "context": "h4",
+      "severity": "error"
+    },
+    {
+      "file": "components/fans/FilterPill.example.tsx",
+      "line": 166,
+      "color": "var(--text-secondary)",
+      "context": "h4",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/test-tailadmin/page.tsx",
+      "line": 68,
+      "color": "var(--tailadmin-text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/settings/page.tsx",
+      "line": 49,
+      "color": "var(--text-secondary)",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/onlyfans/settings/page.tsx",
+      "line": 431,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/onlyfans/settings/page.tsx",
+      "line": 474,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/onlyfans/settings/page.tsx",
+      "line": 480,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/onlyfans/settings/page.tsx",
+      "line": 486,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    },
+    {
+      "file": "app/(app)/onlyfans/settings/page.tsx",
+      "line": 520,
+      "color": "unknown",
+      "context": "p",
+      "severity": "error"
+    }
+  ],
   "recommendations": [
     "Use var(--text-primary) for all primary content",
     "Reserve var(--text-secondary) for labels and metadata only",

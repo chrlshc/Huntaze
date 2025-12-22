@@ -1,24 +1,69 @@
 'use client';
 
+import type { CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { DuotoneIcon } from './dashboard/DuotoneIcon';
+import { BarChart3, FileText, Home, Megaphone, Settings, Video, Zap, Plug } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useNavigationContext } from '@/hooks/useNavigationContext';
+import { useMobileSidebar } from '@/components/layout/MobileSidebarContext';
+
+// Mobile backdrop component - uses Portal to render at body level (outside CSS grid)
+function MobileBackdrop({ onClose }: { onClose: () => void }) {
+  return createPortal(
+    <div
+      id="sidebar-backdrop"
+      onClick={onClose}
+      aria-hidden="true"
+      style={{
+        position: 'fixed',
+        top: 60,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 39,
+        transition: 'opacity 0.2s ease-out',
+      }}
+      className="lg:hidden"
+    />,
+    document.body
+  );
+}
 
 interface SubNavItem {
   name: string;
   href: string;
 }
 
+type SidebarIconName = 'home' | 'onlyfans' | 'analytics' | 'marketing' | 'content' | 'automations' | 'integrations' | 'settings';
+
 interface NavItem {
   name: string;
   href: string;
-  icon: string;
+  icon: SidebarIconName;
   subItems?: SubNavItem[];
 }
 
-// 5-section navigation structure
-const navigation = [
+const SIDEBAR_ICONS: Record<SidebarIconName, LucideIcon> = {
+  home: Home,
+  onlyfans: Video,
+  analytics: BarChart3,
+  marketing: Megaphone,
+  content: FileText,
+  automations: Zap,
+  integrations: Plug,
+  settings: Settings,
+};
+
+const sidebarStyle: CSSProperties = {
+  fontSize: '13px',
+};
+
+// Navigation structure - cleaned up
+const navigation: NavItem[] = [
   {
     name: 'Home',
     href: '/home',
@@ -29,24 +74,22 @@ const navigation = [
     href: '/onlyfans',
     icon: 'onlyfans',
     subItems: [
-      { name: 'Overview', href: '/onlyfans' },
       { name: 'Messages', href: '/onlyfans/messages' },
       { name: 'Fans', href: '/onlyfans/fans' },
       { name: 'PPV', href: '/onlyfans/ppv' },
-      { name: 'Settings', href: '/onlyfans/settings' },
     ],
   },
   {
     name: 'Analytics',
     href: '/analytics',
     icon: 'analytics',
+  },
+  {
+    name: 'Content',
+    href: '/content',
+    icon: 'content',
     subItems: [
-      { name: 'Overview', href: '/analytics' },
-      { name: 'Pricing', href: '/analytics/pricing' },
-      { name: 'Churn', href: '/analytics/churn' },
-      { name: 'Upsells', href: '/analytics/upsells' },
-      { name: 'Forecast', href: '/analytics/forecast' },
-      { name: 'Payouts', href: '/analytics/payouts' },
+      { name: 'Studio', href: '/content/factory' },
     ],
   },
   {
@@ -54,171 +97,128 @@ const navigation = [
     href: '/marketing',
     icon: 'marketing',
     subItems: [
-      { name: 'Campaigns', href: '/marketing/campaigns' },
-      { name: 'Social', href: '/marketing/social' },
       { name: 'Calendar', href: '/marketing/calendar' },
+      { name: 'Campaigns', href: '/marketing/campaigns' },
     ],
   },
   {
-    name: 'Content',
-    href: '/content',
-    icon: 'content',
+    name: 'Automations',
+    href: '/automations',
+    icon: 'automations',
+  },
+  {
+    name: 'Integrations',
+    href: '/integrations',
+    icon: 'integrations',
   },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { currentSection } = useNavigationContext();
+  const { isOpen, close, sidebarRef } = useMobileSidebar();
+  const isOnlyFansSettingsActive = pathname?.startsWith('/onlyfans/settings');
+  const [mounted, setMounted] = useState(false);
+
+  // SSR safety - only render portal after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close sidebar on navigation (mobile)
+  const handleNavClick = () => {
+    close();
+  };
 
   return (
-    <aside className="huntaze-sidebar hidden md:flex md:flex-col">
-      <nav 
-        className="flex-1"
-        style={{ padding: '16px 0 16px 16px' }}
+    <>
+      {/* Mobile backdrop - rendered via Portal to avoid CSS grid guardrail */}
+      {mounted && isOpen && (
+        <MobileBackdrop onClose={close} />
+      )}
+
+      <aside
+        ref={sidebarRef as React.RefObject<HTMLElement>}
+        className="huntaze-sidebar flex flex-col safe-area-top"
+        style={sidebarStyle}
+        role={isOpen ? 'dialog' : undefined}
+        aria-modal={isOpen ? 'true' : undefined}
+        aria-label="Navigation menu"
+        data-open={isOpen}
       >
-        <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {navigation.map((item) => {
-            // Extract section name from href (e.g., '/analytics' -> 'analytics')
-            const sectionName = item.href.split('/')[1] || 'home';
-            const isActive = currentSection === sectionName;
-            const hasSubItems = item.subItems && item.subItems.length > 0;
-            const showSubNav = hasSubItems && isActive;
+        <nav className="huntaze-sidebar-nav px-2 py-1.5 flex-1 overflow-y-auto" role="navigation" aria-label="Main navigation">
+          <ul className="flex flex-col gap-px">
+            {navigation.map((item) => {
+              // Extract section name from href (e.g., '/analytics' -> 'analytics')
+              const sectionName = item.href.split('/')[1] || 'home';
+              const isActive = currentSection === sectionName;
+              const Icon = SIDEBAR_ICONS[item.icon];
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const showSubNav = hasSubItems && isActive;
 
-            return (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className="nav-item"
-                  data-active={isActive}
-                  style={{
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '12px 16px',
-                    gap: '12px',
-                    color: isActive ? 'var(--sidebar-text)' : 'var(--sidebar-text-muted)',
-                    backgroundColor: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
-                    textDecoration: 'none',
-                    transition: 'all 0.15s ease',
-                    borderRadius: '0 8px 8px 0',
-                    marginRight: '12px',
-                    fontSize: 'var(--text-sm)',
-                    fontWeight: isActive ? '500' : '400',
-                    ...(isActive && {
-                      borderLeft: '3px solid var(--nav-active-indicator)',
-                      paddingLeft: '13px',
-                    }),
-                  }}
-                >
-                  <DuotoneIcon
-                    name={item.icon}
-                    size={20}
-                    primaryColor={isActive ? 'var(--nav-text)' : 'var(--nav-text-subtle)'}
-                    secondaryColor={isActive ? 'var(--nav-text)' : 'var(--nav-text-subtle)'}
-                  />
-                  {item.name}
-                </Link>
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={handleNavClick}
+                    className="nav-item flex items-center gap-2.5 rounded-lg px-2 py-1.5 font-normal transition-colors min-h-[44px] lg:min-h-0"
+                    data-active={isActive}
+                    data-testid={`nav-${sectionName}`}
+                  >
+                    <Icon
+                      aria-hidden="true"
+                      className="shrink-0"
+                      size={14}
+                      strokeWidth={2}
+                    />
+                    <span className="truncate">{item.name}</span>
+                  </Link>
 
-                {/* Sub-navigation */}
-                {showSubNav && (
-                  <ul style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    gap: '2px',
-                    marginTop: '4px',
-                    marginLeft: '32px',
-                    marginRight: '12px',
-                  }}>
-                    {item.subItems.map((subItem) => {
-                      const isSubActive = pathname === subItem.href;
-                      return (
-                        <li key={subItem.href}>
-                          <Link
-                            href={subItem.href}
-                            className="nav-sub-item"
-                            data-active={isSubActive}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              padding: '8px 16px',
-                              color: isSubActive ? 'var(--sidebar-text)' : 'var(--sidebar-text-muted)',
-                              backgroundColor: isSubActive ? 'var(--sidebar-active-bg)' : 'transparent',
-                              textDecoration: 'none',
-                              transition: 'all 0.15s ease',
-                              borderRadius: '6px',
-                              fontSize: 'var(--text-sm)',
-                              fontWeight: isSubActive ? '500' : '400',
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isSubActive) {
-                                e.currentTarget.style.backgroundColor = 'var(--sidebar-hover)';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isSubActive) {
-                                e.currentTarget.style.backgroundColor = 'transparent';
-                              }
-                            }}
-                          >
-                            {subItem.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+                  {/* Sub-navigation */}
+                  {showSubNav && item.subItems && (
+                    <ul className="huntaze-sidebar-subnav">
+                      {item.subItems.map((subItem) => {
+                        const isSubActive = pathname === subItem.href;
+                        return (
+                          <li key={subItem.href}>
+                            <Link
+                              href={subItem.href}
+                              onClick={handleNavClick}
+                              data-active={isSubActive}
+                              data-testid={`nav-${sectionName}-${subItem.href.split('/').slice(2).join('-') || 'sub'}`}
+                              className="huntaze-sidebar-subnav-item min-h-[44px] lg:min-h-0 flex items-center"
+                            >
+                              {subItem.name}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-      <div 
-        className="border-t"
-        style={{
-          padding: 'var(--spacing-4)',
-          borderColor: 'var(--nav-border)'
-        }}
-      >
-        <Link
-          href="/"
-          className="flex items-center rounded-lg"
-          style={{
-            padding: 'var(--spacing-3)',
-            gap: 'var(--spacing-3)',
-            color: 'var(--nav-text-muted)',
-            fontSize: 'var(--text-sm)',
-            transition: 'all var(--transition-fast)',
-            textDecoration: 'none'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--nav-hover)';
-            e.currentTarget.style.color = 'var(--nav-text)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = 'var(--nav-text-muted)';
-          }}
-        >
-          <svg
-            style={{
-              width: 'var(--spacing-5)',
-              height: 'var(--spacing-5)'
-            }}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        <div className="huntaze-sidebar-footer">
+          <Link
+            href="/onlyfans/settings"
+            onClick={handleNavClick}
+            className="nav-item flex items-center gap-2.5 rounded-lg px-2 py-1.5 font-normal transition-colors min-h-[44px] lg:min-h-0"
+            data-active={isOnlyFansSettingsActive}
+            data-testid="nav-settings"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            <Settings
+              aria-hidden="true"
+              className="shrink-0"
+              size={14}
+              strokeWidth={2}
             />
-          </svg>
-          Back to Home
-        </Link>
-      </div>
-    </aside>
+            <span className="truncate">Settings</span>
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 }

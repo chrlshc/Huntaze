@@ -38,8 +38,11 @@ export function HeroSection({
       <div className="relative z-10 mx-auto max-w-5xl w-full">
         {/* Beta Badge */}
         <div className="flex justify-center mb-8">
-          <Card className="inline-flex items-center rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-xs font-medium text-violet-300 backdrop-blur-sm">
-            <span className="mr-2 h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse motion-reduce:animate-none" />
+          <Card
+            disableHover
+            className="inline-flex items-center rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-xs font-medium text-violet-300 backdrop-blur-sm"
+          >
+            <span className="mr-2 h-1.5 w-1.5 rounded-full bg-violet-400" />
             {badge}
           </Card>
         </div>
@@ -62,6 +65,7 @@ export function HeroSection({
             microcopy={ctaMicrocopy}
             size="lg"
             variant="primary"
+            disableHover
           />
         </div>
       </div>

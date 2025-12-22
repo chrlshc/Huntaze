@@ -10,6 +10,7 @@ export interface NavLinkProps {
   activeClassName?: string;
   className?: string;
   prefetch?: boolean;
+  disableHover?: boolean;
 }
 
 /**
@@ -23,8 +24,12 @@ export function NavLink({
   activeClassName = 'text-primary font-semibold',
   className = '',
   prefetch = true,
+  disableHover = false,
 }: NavLinkProps) {
   const pathname = usePathname();
+  const baseClassName = disableHover
+    ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm'
+    : 'transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm';
   
   // Check if current route matches this link
   // Special case for root path to avoid matching all routes
@@ -37,7 +42,7 @@ export function NavLink({
       href={href}
       prefetch={prefetch}
       className={cn(
-        'transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm',
+        baseClassName,
         isActive && activeClassName,
         className
       )}

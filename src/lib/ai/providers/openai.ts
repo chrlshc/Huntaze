@@ -1,5 +1,6 @@
+import { externalFetchJson } from '@/lib/services/external/http';
+
 export type ChatMsg = { role: 'system' | 'user' | 'assistant'; content: string }
- 
 
 export async function callOpenAI(opts: {
   model: string
@@ -10,10 +11,13 @@ export async function callOpenAI(opts: {
 }) {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) throw new Error('OpenAI not configured. Set OPENAI_API_KEY to enable provider.')
-  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+
+  const json: any = await externalFetchJson('https://api.openai.com/v1/chat/completions', {
+    service: 'openai',
+    operation: 'chat.completions',
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -25,12 +29,12 @@ export async function callOpenAI(opts: {
     }),
     signal: opts.abortSignal as any,
     cache: 'no-store',
+    timeoutMs: 20_000,
+    retry: {
+      maxRetries: 1,
+      retryMethods: ['POST'],
+    },
   })
-  if (!resp.ok) {
-    const text = await resp.text()
-    throw new Error(`OpenAI request failed: ${resp.status} ${text}`)
-  }
-  const json: any = await resp.json()
   const content = json?.choices?.[0]?.message?.content ?? ''
   const usage = json?.usage ?? { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 }
   return {

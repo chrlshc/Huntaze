@@ -65,7 +65,34 @@ export const TabsContent = ({ children, ...props }: any) => <div {...props}>{chi
 
 export const Dialog = ({ children, ...props }: any) => <div {...props}>{children}</div>
 export const DialogTrigger = ({ children, ...props }: any) => <div {...props}>{children}</div>
-export const DialogContent = ({ children, className = "" }: any) => <div className={`fixed inset-0 flex items-center justify-center p-4 ${className}`}><div className="bg-white rounded-lg p-6 max-w-md w-full">{children}</div></div>
+export const DialogContent = ({ children, className = "" }: any) => (
+  <div className="fixed inset-0" style={{ zIndex: 'var(--huntaze-z-index-modal, 50)' }}>
+    {/* overlay */}
+    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+    {/* centerer (gutter viewport) */}
+    <div className="relative flex min-h-full items-center justify-center p-4 sm:p-8">
+      {/* panel */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={[
+          // largeur + marges écran (jamais collé)
+          "w-[calc(100vw-2rem)] sm:w-[calc(100vw-4rem)] max-w-5xl",
+          // hauteur + scroll
+          "max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-hidden",
+          // style
+          "rounded-3xl bg-white shadow-2xl ring-1 ring-black/5",
+          // IMPORTANT: p-0 ici, tu gères le padding dans header/body/footer
+          "p-0",
+          className,
+        ].join(" ")}
+      >
+        {children}
+      </div>
+    </div>
+  </div>
+)
 export const DialogHeader = ({ children, className = "" }: any) => <div className={`mb-4 ${className}`}>{children}</div>
 export const DialogTitle = ({ children, className = "" }: any) => <h2 className={`text-xl font-semibold ${className}`}>{children}</h2>
 export const DialogDescription = ({ children, className = "" }: any) => <p className={`text-gray-600 ${className}`}>{children}</p>

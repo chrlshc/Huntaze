@@ -13,6 +13,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Redis } from 'ioredis';
 import type { RouteHandler } from './types';
 
+const FAIL_OPEN_LOG_THROTTLE_MS = 60_000;
+let lastFailOpenLogAtMs = 0;
+
 /**
  * Redis client instance
  * Lazy-initialized to avoid connection issues during module load
@@ -190,8 +193,11 @@ export function withRateLimit(
     } catch (error) {
       // Fail open - allow request if Redis is down
       // Requirement 5.6: Fail-open error handling
-      console.error('[Rate Limit] Error checking rate limit:', error);
-      console.warn('[Rate Limit] Failing open - allowing request due to Redis error');
+      const now = Date.now();
+      if (now - lastFailOpenLogAtMs >= FAIL_OPEN_LOG_THROTTLE_MS) {
+        lastFailOpenLogAtMs = now;
+        console.error('[Rate Limit] Error checking rate limit (failing open):', error);
+      }
       
       // Call handler without rate limiting
       return handler(req);

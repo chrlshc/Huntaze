@@ -259,7 +259,7 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
                       onClick={() => handleSelect('platform', platform.id)}
                       className={[
                         'w-full text-left rounded-xl border p-4 transition-all',
-                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb]',
                         isSelected
                           ? 'border-violet-500/60 bg-violet-500/10 shadow-lg shadow-violet-500/20'
                           : 'border-neutral-700 hover:border-violet-500/40 bg-neutral-800/50',
@@ -331,7 +331,7 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
                       onClick={() => handleSelect('primary_goal', goal.id)}
                       className={[
                         'w-full text-left rounded-xl border p-4 transition-all',
-                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb]',
                         isSelected
                           ? 'border-violet-500/60 bg-violet-500/10 shadow-lg shadow-violet-500/20'
                           : 'border-neutral-700 hover:border-violet-500/40 bg-neutral-800/50',
@@ -403,7 +403,7 @@ export default function SetupWizard({ onComplete, onSkip }: SetupWizardProps) {
                       onClick={() => handleSelect('ai_tone', tone.id)}
                       className={[
                         'w-full text-left rounded-xl border p-4 transition-all',
-                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400',
+                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb]',
                         isSelected
                           ? 'border-violet-500/60 bg-violet-500/10 shadow-lg shadow-violet-500/20'
                           : 'border-neutral-700 hover:border-violet-500/40 bg-neutral-800/50',

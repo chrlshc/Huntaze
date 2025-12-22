@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import styles from './GlobalSearch.module.css';
-import { Button } from "@/components/ui/button";
 
 interface SearchResult {
   id: string;
@@ -20,6 +20,7 @@ interface GlobalSearchProps {
 }
 
 export function GlobalSearch({ onSearch, results: propResults, isLoading: propIsLoading }: GlobalSearchProps) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -57,8 +58,34 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
   }, [query, onSearch]);
 
   useEffect(() => {
-    setShowResults(isFocused && query.length > 0 && results.length > 0);
-  }, [isFocused, query, results]);
+    setShowResults(isFocused && query.length > 0);
+  }, [isFocused, query]);
+
+  // Shopify-like shortcut (Cmd/Ctrl+K) to focus search
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const key = event.key.toLowerCase();
+      if (key !== 'k') return;
+      if (!event.metaKey && !event.ctrlKey) return;
+
+      const target = event.target as HTMLElement | null;
+      const tagName = target?.tagName?.toLowerCase();
+      const isEditable =
+        tagName === 'input' ||
+        tagName === 'textarea' ||
+        tagName === 'select' ||
+        (target as HTMLElement | null)?.isContentEditable === true;
+
+      if (isEditable) return;
+
+      event.preventDefault();
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   // Close results when clicking outside
   useEffect(() => {
@@ -70,6 +97,7 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
         !inputRef.current.contains(event.target as Node)
       ) {
         setShowResults(false);
+        setIsFocused(false);
       }
     }
 
@@ -93,7 +121,7 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
   const handleResultClick = (result: SearchResult) => {
     setQuery('');
     setShowResults(false);
-    window.location.href = result.href;
+    router.push(result.href);
   };
 
   const groupedResults = results.reduce((acc, result) => {
@@ -110,7 +138,7 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
         className={`${styles.search} ${isFocused ? styles.focused : ''}`}
         data-testid="global-search"
       >
-        <Search size={18} className={styles.icon} />
+        <Search size={16} strokeWidth={1.8} className={styles.icon} />
         <input
           ref={inputRef}
           type="text"
@@ -121,13 +149,19 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
           onBlur={handleBlur}
           className={styles.input}
           data-testid="search-input"
+          aria-keyshortcuts="Meta+K Ctrl+K"
         />
+        <kbd className={styles.kbd} aria-hidden="true">
+          ⌘K
+        </kbd>
       </div>
 
       {showResults && (
         <div ref={resultsRef} className={styles.results} data-testid="search-results">
           {isLoading ? (
             <div className={styles.loading}>Searching...</div>
+          ) : results.length === 0 ? (
+            <div className={styles.empty}>No results</div>
           ) : (
             <>
               {Object.entries(groupedResults).map(([type, items]) => (
@@ -136,9 +170,10 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </div>
                   {items.map((result) => (
-                    <Button 
+                    <button
                       key={result.id}
-                      variant="primary" 
+                      type="button"
+                      className={styles.resultItem}
                       onClick={() => handleResultClick(result)}
                       data-testid={`search-result-${result.id}`}
                     >
@@ -146,7 +181,7 @@ export function GlobalSearch({ onSearch, results: propResults, isLoading: propIs
                       {result.subtitle && (
                         <div className={styles.resultSubtitle}>{result.subtitle}</div>
                       )}
-                    </Button>
+                    </button>
                   ))}
                 </div>
               ))}

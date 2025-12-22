@@ -2,17 +2,30 @@
 Data models for AI Router.
 
 Defines the core data structures used throughout the routing system.
+Supports Azure AI Foundry models including Phi-4 Multimodal and Azure Speech.
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, Optional
+from typing import Any, Dict, Literal, Optional, List
 from pydantic import BaseModel, Field
 
 
 # Type aliases for classification values
-ClassificationType = Literal["math", "coding", "creative", "chat"]
-ComplexityLevel = Literal["high", "low"]
+ClassificationType = Literal["math", "coding", "creative", "chat", "visual", "audio", "multimodal"]
+ComplexityLevel = Literal["high", "low", "moderate"]
 LanguageCode = Literal["fr", "en", "other"]
+ModalityType = Literal["text", "visual", "audio", "multimodal"]
+
+# Model types available in the router
+ModelType = Literal[
+    "DeepSeek-R1",
+    "DeepSeek-V3", 
+    "Llama-3.3-70B",
+    "Mistral-Large-2411",
+    "Phi-4-mini",
+    "Phi-4-Multimodal",
+    "Azure-Speech-Batch"
+]
 
 
 @dataclass
@@ -123,17 +136,37 @@ class RouteRequest(BaseModel):
         client_tier: Client subscription tier ("standard" or "vip")
         type_hint: Optional hint to override classifier type detection
         language_hint: Optional hint to override classifier language detection
+        modality: Content modality (text, visual, audio, multimodal)
+        image_urls: Optional list of image URLs for visual/multimodal tasks
+        audio_url: Optional audio URL for audio/multimodal tasks
+        video_url: Optional video URL for multimodal tasks
     """
     
     prompt: str
     client_tier: str = Field(default="standard")
     type_hint: Optional[ClassificationType] = Field(
         default=None,
-        description="Override classifier type detection (math, coding, creative, chat)"
+        description="Override classifier type detection (math, coding, creative, chat, visual, audio, multimodal)"
     )
     language_hint: Optional[LanguageCode] = Field(
         default=None,
         description="Override classifier language detection (fr, en, other)"
+    )
+    modality: Optional[ModalityType] = Field(
+        default="text",
+        description="Content modality: text, visual, audio, or multimodal"
+    )
+    image_urls: Optional[List[str]] = Field(
+        default=None,
+        description="Image URLs for visual/multimodal analysis"
+    )
+    audio_url: Optional[str] = Field(
+        default=None,
+        description="Audio URL for transcription/multimodal analysis"
+    )
+    video_url: Optional[str] = Field(
+        default=None,
+        description="Video URL for multimodal analysis"
     )
 
 
@@ -146,3 +179,56 @@ class RouteResponse(BaseModel):
     routing: Dict[str, Any]
     output: str
     usage: Optional[Dict[str, Any]] = None
+    modality: Optional[str] = Field(default="text", description="Content modality used")
+    azure_service: Optional[str] = Field(default=None, description="Azure service used (e.g., 'phi-4-multimodal', 'speech-batch')")
+
+
+class MultimodalRequest(BaseModel):
+    """Request body for multimodal analysis via Phi-4 Multimodal.
+    
+    Attributes:
+        prompt: Analysis prompt/instructions
+        image_urls: List of image URLs to analyze
+        video_url: Optional video URL (will extract keyframes)
+        audio_transcript: Optional pre-transcribed audio text
+        analysis_type: Type of analysis (ocr, facial, editing, timeline, viral)
+    """
+    
+    prompt: str
+    image_urls: Optional[List[str]] = Field(default=None)
+    video_url: Optional[str] = Field(default=None)
+    audio_transcript: Optional[str] = Field(default=None)
+    analysis_type: str = Field(
+        default="general",
+        description="Analysis type: ocr, facial, editing, timeline, viral, general"
+    )
+    client_tier: str = Field(default="standard")
+
+
+class AudioTranscriptionRequest(BaseModel):
+    """Request body for Azure Speech Batch Transcription.
+    
+    Attributes:
+        audio_url: URL to audio file (WAV, MP3, etc.)
+        language: Audio language code (default: en-US)
+        enable_diarization: Enable speaker diarization
+        enable_word_timestamps: Include word-level timestamps
+    """
+    
+    audio_url: str
+    language: str = Field(default="en-US")
+    enable_diarization: bool = Field(default=True)
+    enable_word_timestamps: bool = Field(default=True)
+    client_tier: str = Field(default="standard")
+
+
+class AudioTranscriptionResponse(BaseModel):
+    """Response body for audio transcription."""
+    
+    job_id: str
+    status: str  # "pending", "processing", "completed", "failed"
+    transcript: Optional[str] = None
+    segments: Optional[List[Dict[str, Any]]] = None
+    speakers: Optional[List[Dict[str, Any]]] = None
+    duration_seconds: Optional[float] = None
+    cost_usd: Optional[float] = None

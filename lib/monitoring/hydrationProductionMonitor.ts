@@ -6,6 +6,8 @@
  */
 
 import { hydrationMonitoringService } from '@/lib/services/hydrationMonitoringService';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 export interface HydrationAlert {
   id: string;
@@ -266,11 +268,29 @@ export class HydrationProductionMonitor {
       }]
     };
 
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await externalFetch(webhookUrl, {
+        service: 'slack',
+        operation: 'hydration.alert',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        cache: 'no-store',
+        timeoutMs: 5_000,
+        retry: { maxRetries: 1, retryMethods: ['POST'] },
+        throwOnHttpError: false,
+      });
+
+      if (!response.ok) {
+        console.error('❌ Slack notification failed:', response.statusText);
+      }
+    } catch (error) {
+      if (isExternalServiceError(error)) {
+        console.error('❌ Slack notification error:', error.code, error.message);
+      } else {
+        console.error('❌ Slack notification error:', error);
+      }
+    }
   }
 
   /**
@@ -289,16 +309,34 @@ export class HydrationProductionMonitor {
     const webhookUrl = process.env.HYDRATION_WEBHOOK_URL;
     if (!webhookUrl) return;
 
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'hydration_alert',
-        alert,
-        metrics: this.metrics,
-        timestamp: Date.now()
-      })
-    });
+    try {
+      const response = await externalFetch(webhookUrl, {
+        service: 'webhook',
+        operation: 'hydration.alert',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'hydration_alert',
+          alert,
+          metrics: this.metrics,
+          timestamp: Date.now(),
+        }),
+        cache: 'no-store',
+        timeoutMs: 5_000,
+        retry: { maxRetries: 1, retryMethods: ['POST'] },
+        throwOnHttpError: false,
+      });
+
+      if (!response.ok) {
+        console.error('❌ Webhook notification failed:', response.statusText);
+      }
+    } catch (error) {
+      if (isExternalServiceError(error)) {
+        console.error('❌ Webhook notification error:', error.code, error.message);
+      } else {
+        console.error('❌ Webhook notification error:', error);
+      }
+    }
   }
 
   /**
@@ -311,20 +349,34 @@ export class HydrationProductionMonitor {
     if (!endpoint || !apiKey) return;
 
     try {
-      await fetch(endpoint, {
+      const response = await externalFetch(endpoint, {
+        service: 'hydration-monitor',
+        operation: 'metrics.send',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
           service: 'huntaze-hydration',
           timestamp: Date.now(),
-          metrics
-        })
+          metrics,
+        }),
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['POST'] },
+        throwOnHttpError: false,
       });
+
+      if (!response.ok) {
+        console.error('❌ Metrics delivery failed:', response.statusText);
+      }
     } catch (error) {
-      console.error('❌ Erreur lors de l\'envoi des métriques:', error);
+      if (isExternalServiceError(error)) {
+        console.error('❌ Erreur lors de l\'envoi des métriques:', error.code, error.message);
+      } else {
+        console.error('❌ Erreur lors de l\'envoi des métriques:', error);
+      }
     }
   }
 

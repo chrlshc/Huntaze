@@ -25,7 +25,7 @@ export function FocusIndicator({
     <Component
       className={`
         focus-visible:outline-2 
-        focus-visible:outline-purple-500 
+        focus-visible:outline-[#2c6ecb] 
         focus-visible:outline-offset-2 
         focus-visible:outline 
         rounded-sm
@@ -47,7 +47,7 @@ export function SkipToMain() {
       className="
         absolute left-[-9999px] z-[999]
         px-6 py-3
-        bg-purple-600 text-white
+        bg-[#2c6ecb] text-white
         font-semibold
         rounded-b-lg
         focus:left-1/2 focus:-translate-x-1/2 focus:top-0

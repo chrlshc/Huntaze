@@ -1,0 +1,72 @@
+/**
+ * SettingsCard Styles
+ * Feature: onlyfans-settings-saas-transformation
+ * Property 4: Card Surface Consistency
+ */
+
+.of-settings-card-v2 {
+  /* Surface */
+  background: #FFFFFF;
+  border: none; /* Suppression de la bordure pour un look plus épuré */
+  border-radius: var(--of-radius-card); /* 8px */
+  
+  /* Elevation */
+  box-shadow: var(--of-shadow-card-saas);
+  
+  /* Spacing */
+  padding: 24px;
+  margin-bottom: var(--of-card-gap); /* 24px */
+  
+  /* Smooth transitions */
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover state - subtle lift */
+.of-settings-card-v2:hover {
+  box-shadow: var(--of-shadow-card-hover-saas);
+  transform: translateY(-1px);
+}
+
+/* Accent variant - colored left border (réduit) */
+.of-settings-card-v2--accent {
+  border-left: 3px solid var(--of-pill-text); /* #4F46E5 - réduit de 4px à 3px */
+  padding-left: 20px;
+}
+
+/* Card Header */
+.of-settings-card-v2__header {
+  margin-bottom: 16px;
+}
+
+/* Card Title */
+.of-settings-card-v2__title {
+  font-size: var(--of-text-section); /* 18px */
+  font-weight: var(--of-font-semibold); /* 600 */
+  color: #1a1a1a;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+/* Card Subtitle */
+.of-settings-card-v2__subtitle {
+  font-size: var(--of-text-body); /* 14px */
+  color: #6B7280;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+/* Card Content */
+.of-settings-card-v2__content {
+  /* Content inherits spacing from children */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .of-settings-card-v2 {
+    padding: 16px;
+  }
+  
+  .of-settings-card-v2--accent {
+    padding-left: 12px;
+  }
+}

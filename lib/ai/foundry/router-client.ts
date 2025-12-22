@@ -3,6 +3,7 @@
  * 
  * Connects TypeScript agents to the Azure AI Foundry router service.
  * Supports AWS deployment endpoints (ECS, Lambda, API Gateway).
+ * Includes support for Azure services: Phi-4 Multimodal and Azure Speech Batch.
  * 
  * Requirements: 4.1, 4.2, 4.4, 4.5, 8.1, 8.2, 8.3, 8.4, 10.1, 10.2, 10.3
  */
@@ -18,15 +19,79 @@ export interface RouterClientConfig {
   timeout?: number;
 }
 
+export type TaskModality = 'text' | 'visual' | 'audio' | 'multimodal';
+export type TaskType = 'math' | 'coding' | 'creative' | 'chat' | 'visual' | 'audio' | 'multimodal';
+
 export interface RouterRequest {
   /** The prompt to send to the model */
   prompt: string;
   /** Client tier for model selection: 'standard' or 'vip' */
   client_tier: 'standard' | 'vip';
-  /** Optional type hint to override classifier: 'math', 'coding', 'creative', 'chat' */
-  type_hint?: 'math' | 'coding' | 'creative' | 'chat';
+  /** Optional type hint to override classifier */
+  type_hint?: TaskType;
   /** Optional language hint to override detection: 'fr', 'en', 'other' */
   language_hint?: 'fr' | 'en' | 'other';
+  /** Content modality: text, visual, audio, or multimodal */
+  modality?: TaskModality;
+  /** Image URLs for visual/multimodal analysis */
+  image_urls?: string[];
+  /** Audio URL for transcription/multimodal analysis */
+  audio_url?: string;
+  /** Video URL for multimodal analysis */
+  video_url?: string;
+}
+
+export interface MultimodalRequest {
+  /** Analysis prompt/instructions */
+  prompt: string;
+  /** List of image URLs to analyze */
+  image_urls?: string[];
+  /** Video URL (will extract keyframes) */
+  video_url?: string;
+  /** Pre-transcribed audio text */
+  audio_transcript?: string;
+  /** Analysis type: ocr, facial, editing, timeline, viral, general */
+  analysis_type: 'ocr' | 'facial' | 'editing' | 'timeline' | 'viral' | 'general';
+  /** Client tier */
+  client_tier: 'standard' | 'vip';
+}
+
+export interface AudioTranscriptionRequest {
+  /** URL to audio file */
+  audio_url: string;
+  /** Audio language code (default: en-US) */
+  language?: string;
+  /** Enable speaker diarization */
+  enable_diarization?: boolean;
+  /** Include word-level timestamps */
+  enable_word_timestamps?: boolean;
+  /** Client tier */
+  client_tier: 'standard' | 'vip';
+}
+
+export interface AudioTranscriptionResponse {
+  /** Job ID for tracking */
+  job_id: string;
+  /** Status: pending, processing, completed, failed */
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  /** Full transcript text */
+  transcript?: string;
+  /** Transcript segments with timestamps */
+  segments?: Array<{
+    text: string;
+    start_time: number;
+    end_time: number;
+    speaker?: string;
+  }>;
+  /** Identified speakers */
+  speakers?: Array<{
+    id: string;
+    name?: string;
+  }>;
+  /** Audio duration in seconds */
+  duration_seconds?: number;
+  /** Cost in USD */
+  cost_usd?: number;
 }
 
 export interface RouterRouting {
@@ -34,6 +99,7 @@ export interface RouterRouting {
   complexity: string;
   language: string;
   client_tier: string;
+  modality?: string;
 }
 
 export interface RouterUsage {
@@ -43,9 +109,9 @@ export interface RouterUsage {
 }
 
 export interface RouterResponse {
-  /** Model name used (e.g., "Llama-3.3-70B") */
+  /** Model name used (e.g., "Llama-3.3-70B", "Phi-4-Multimodal") */
   model: string;
-  /** Deployment name (e.g., "llama33-70b-us") */
+  /** Deployment name (e.g., "llama33-70b-us", "phi-4-multimodal-endpoint") */
   deployment: string;
   /** Azure region (e.g., "eastus2") */
   region: string;
@@ -55,11 +121,54 @@ export interface RouterResponse {
   output: string;
   /** Token usage statistics (optional) */
   usage?: RouterUsage;
+  /** Content modality used */
+  modality?: string;
+  /** Azure service used (e.g., 'phi-4-multimodal', 'speech-batch') */
+  azure_service?: string;
+}
+
+export interface MultimodalResponse {
+  /** Model used */
+  model: string;
+  /** Analysis results */
+  analysis: {
+    /** OCR extracted text */
+    ocr_text?: string;
+    /** Detected facial expressions */
+    facial_expressions?: Array<{
+      emotion: string;
+      confidence: number;
+      timestamp?: number;
+    }>;
+    /** Editing dynamics analysis */
+    editing_dynamics?: {
+      cuts_per_minute: number;
+      pacing: 'slow' | 'medium' | 'fast';
+      transitions: string[];
+    };
+    /** Timeline analysis for shorts */
+    timeline?: Array<{
+      timestamp: number;
+      description: string;
+      hook_score?: number;
+    }>;
+    /** Dense caption */
+    dense_caption?: string;
+    /** Viral potential score */
+    viral_score?: number;
+  };
+  /** Token usage */
+  usage?: RouterUsage;
 }
 
 export interface HealthCheckResponse {
   status: string;
   region: string;
+  services?: {
+    text_models: boolean;
+    phi4_multimodal: boolean;
+    azure_speech: boolean;
+  };
 }
 
 // ============================================================================
@@ -290,22 +399,28 @@ export class RouterClient {
       );
     }
 
-    if (
-      request.type_hint !== undefined &&
-      (request.type_hint === '' || !['math', 'coding', 'creative', 'chat'].includes(request.type_hint))
-    ) {
+    const validTypes = ['math', 'coding', 'creative', 'chat', 'visual', 'audio', 'multimodal'];
+    if (request.type_hint !== undefined && !validTypes.includes(request.type_hint)) {
       throw new RouterError(
-        'type_hint must be one of: math, coding, creative, chat',
+        'type_hint must be one of: math, coding, creative, chat, visual, audio, multimodal',
         RouterErrorCode.VALIDATION_ERROR
       );
     }
 
     if (
       request.language_hint !== undefined &&
-      (request.language_hint === '' || !['fr', 'en', 'other'].includes(request.language_hint))
+      !['fr', 'en', 'other'].includes(request.language_hint)
     ) {
       throw new RouterError(
         'language_hint must be one of: fr, en, other',
+        RouterErrorCode.VALIDATION_ERROR
+      );
+    }
+
+    const validModalities = ['text', 'visual', 'audio', 'multimodal'];
+    if (request.modality !== undefined && !validModalities.includes(request.modality)) {
+      throw new RouterError(
+        'modality must be one of: text, visual, audio, multimodal',
         RouterErrorCode.VALIDATION_ERROR
       );
     }
@@ -439,7 +554,207 @@ export class RouterClient {
       },
       output: response.output as string,
       usage: response.usage as RouterUsage | undefined,
+      modality: response.modality as string | undefined,
+      azure_service: response.azure_service as string | undefined,
     };
+  }
+
+  /**
+   * Send a multimodal analysis request to Phi-4 Multimodal
+   * @param request - The multimodal analysis request
+   * @returns Multimodal analysis response
+   * @throws RouterError on failure
+   */
+  async analyzeMultimodal(request: MultimodalRequest): Promise<MultimodalResponse> {
+    const endpoint = `${this.baseUrl}/multimodal/analyze`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        await this.handleHttpError(response, endpoint);
+      }
+
+      const data = await response.json();
+      return data as MultimodalResponse;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw this.handleFetchError(error, endpoint);
+    }
+  }
+
+  /**
+   * Submit an audio transcription job to Azure Speech Batch
+   * @param request - The audio transcription request
+   * @returns Transcription job response
+   * @throws RouterError on failure
+   */
+  async submitAudioTranscription(request: AudioTranscriptionRequest): Promise<AudioTranscriptionResponse> {
+    const endpoint = `${this.baseUrl}/audio/transcribe`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          audio_url: request.audio_url,
+          language: request.language || 'en-US',
+          enable_diarization: request.enable_diarization ?? true,
+          enable_word_timestamps: request.enable_word_timestamps ?? true,
+          client_tier: request.client_tier,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        await this.handleHttpError(response, endpoint);
+      }
+
+      const data = await response.json();
+      return data as AudioTranscriptionResponse;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw this.handleFetchError(error, endpoint);
+    }
+  }
+
+  /**
+   * Get the status of an audio transcription job
+   * @param jobId - The transcription job ID
+   * @returns Transcription job status and results
+   * @throws RouterError on failure
+   */
+  async getTranscriptionStatus(jobId: string): Promise<AudioTranscriptionResponse> {
+    const endpoint = `${this.baseUrl}/audio/transcribe/${jobId}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout for status check
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'GET',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        await this.handleHttpError(response, endpoint);
+      }
+
+      const data = await response.json();
+      return data as AudioTranscriptionResponse;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw this.handleFetchError(error, endpoint);
+    }
+  }
+
+  /**
+   * Route a content trends analysis request
+   * Automatically selects the appropriate model based on task type and modality
+   * @param request - Content trends analysis request
+   * @returns Router response with analysis results
+   */
+  async routeContentTrends(request: {
+    task_type: string;
+    modality: TaskModality;
+    prompt: string;
+    image_urls?: string[];
+    audio_url?: string;
+    video_url?: string;
+    client_tier: 'standard' | 'vip';
+  }): Promise<RouterResponse> {
+    // Determine the appropriate endpoint based on modality
+    if (request.modality === 'audio' || request.task_type === 'audio_transcription') {
+      // For audio, submit transcription job and return job info
+      const transcriptionResponse = await this.submitAudioTranscription({
+        audio_url: request.audio_url!,
+        client_tier: request.client_tier,
+      });
+      
+      return {
+        model: 'Azure-Speech-Batch',
+        deployment: 'huntaze-speech',
+        region: 'eastus2',
+        routing: {
+          type: 'audio',
+          complexity: 'simple',
+          language: 'en',
+          client_tier: request.client_tier,
+          modality: 'audio',
+        },
+        output: JSON.stringify(transcriptionResponse),
+        azure_service: 'speech-batch',
+      };
+    }
+
+    if (request.modality === 'visual' || request.modality === 'multimodal') {
+      // For visual/multimodal, use Phi-4 Multimodal
+      const multimodalResponse = await this.analyzeMultimodal({
+        prompt: request.prompt,
+        image_urls: request.image_urls,
+        video_url: request.video_url,
+        analysis_type: this.mapTaskTypeToAnalysisType(request.task_type),
+        client_tier: request.client_tier,
+      });
+
+      return {
+        model: multimodalResponse.model,
+        deployment: 'phi-4-multimodal-endpoint',
+        region: 'eastus2',
+        routing: {
+          type: request.task_type,
+          complexity: 'moderate',
+          language: 'en',
+          client_tier: request.client_tier,
+          modality: request.modality,
+        },
+        output: JSON.stringify(multimodalResponse.analysis),
+        usage: multimodalResponse.usage,
+        azure_service: 'phi-4-multimodal',
+      };
+    }
+
+    // For text tasks, use standard routing
+    return this.route({
+      prompt: request.prompt,
+      client_tier: request.client_tier,
+      type_hint: request.task_type as TaskType,
+      modality: request.modality,
+    });
+  }
+
+  /**
+   * Map content trends task type to multimodal analysis type
+   */
+  private mapTaskTypeToAnalysisType(taskType: string): 'ocr' | 'facial' | 'editing' | 'timeline' | 'viral' | 'general' {
+    const mapping: Record<string, 'ocr' | 'facial' | 'editing' | 'timeline' | 'viral' | 'general'> = {
+      'ocr': 'ocr',
+      'visual_analysis': 'general',
+      'facial_analysis': 'facial',
+      'editing_dynamics': 'editing',
+      'timeline_analysis': 'timeline',
+      'viral_analysis': 'viral',
+      'hook_analysis': 'timeline',
+    };
+    return mapping[taskType] || 'general';
   }
 }
 

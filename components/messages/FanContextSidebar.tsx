@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 
 /**
  * Fan context data model
@@ -9,7 +8,13 @@ import { Badge } from '@/components/ui/badge';
 export interface FanContext {
   id: string;
   name: string;
+  username?: string;
+  avatar?: string;
   ltv: number;
+  averageOrder?: number;
+  lastPurchase?: Date | null;
+  memberSince?: string;
+  isVIP?: boolean;
   status: 'vip' | 'active' | 'at-risk' | 'churned';
   notes: string[];
   purchaseHistory: {
@@ -26,26 +31,6 @@ export interface FanContextSidebarProps {
   fan: FanContext | null;
   loading?: boolean;
 }
-
-/**
- * Status to badge status mapping
- */
-const STATUS_BADGE_MAP: Record<FanContext['status'], 'success' | 'warning' | 'critical' | 'info' | 'neutral'> = {
-  vip: 'success',
-  active: 'info',
-  'at-risk': 'warning',
-  churned: 'critical',
-};
-
-/**
- * Status display labels
- */
-const STATUS_LABELS: Record<FanContext['status'], string> = {
-  vip: 'VIP',
-  active: 'Active',
-  'at-risk': 'At Risk',
-  churned: 'Churned',
-};
 
 /**
  * Format currency for display
@@ -76,33 +61,11 @@ function formatDate(date: Date): string {
  */
 function SidebarSkeleton() {
   return (
-    <div className="p-4 space-y-6 animate-pulse" data-testid="fan-context-loading">
-      {/* Header skeleton */}
-      <div className="space-y-2">
-        <div className="h-5 bg-gray-200 rounded w-1/2" />
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-      </div>
-      
-      {/* LTV skeleton */}
-      <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/4" />
-        <div className="h-8 bg-gray-200 rounded w-1/2" />
-      </div>
-      
-      {/* Notes skeleton */}
-      <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/4" />
-        <div className="h-16 bg-gray-200 rounded" />
-      </div>
-      
-      {/* Purchase history skeleton */}
-      <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-        <div className="space-y-2">
-          <div className="h-12 bg-gray-200 rounded" />
-          <div className="h-12 bg-gray-200 rounded" />
-        </div>
-      </div>
+    <div className="p-4 space-y-4 animate-pulse" data-testid="fan-context-loading">
+      <div className="h-32 bg-gray-100 rounded-xl" />
+      <div className="h-28 bg-gray-100 rounded-xl" />
+      <div className="h-32 bg-gray-100 rounded-xl" />
+      <div className="h-40 bg-gray-100 rounded-xl" />
     </div>
   );
 }
@@ -136,134 +99,116 @@ function EmptyState() {
   );
 }
 
-/**
- * Section component for consistent styling
- */
-function Section({ 
-  title, 
-  children,
-  testId,
-}: { 
-  title: string; 
-  children: React.ReactNode;
-  testId?: string;
-}) {
-  return (
-    <div className="space-y-2" data-testid={testId}>
-      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-        {title}
-      </h4>
-      {children}
-    </div>
-  );
-}
-
-/**
- * FanContextSidebar Component
- * 
- * Displays contextual fan information including LTV, notes, and purchase history.
- * Used alongside the chat interface to provide context for personalized responses.
- * 
- * @example
- * ```tsx
- * <FanContextSidebar
- *   fan={selectedFan}
- *   loading={isLoading}
- * />
- * ```
- */
-export function FanContextSidebar({
-  fan,
-  loading = false,
-}: FanContextSidebarProps) {
+export function FanContextSidebar({ fan, loading = false }: FanContextSidebarProps) {
   if (loading) {
-    return <SidebarSkeleton />;
+    return (
+      <aside className="flex h-full flex-col bg-white border-l border-slate-200">
+        <div className="flex-1 flex items-center justify-center text-xs text-slate-500">Loading…</div>
+      </aside>
+    );
   }
 
   if (!fan) {
-    return <EmptyState />;
+    return (
+      <aside className="flex h-full flex-col bg-white border-l border-slate-200">
+        <div className="flex-1 flex items-center justify-center text-xs text-slate-500 px-4 text-center">
+          Select a conversation to view fan details.
+        </div>
+      </aside>
+    );
   }
 
   return (
-    <div 
-      className="p-4 space-y-6 overflow-y-auto"
+    <aside
+      className="w-96 flex-shrink-0 border-l border-slate-200 bg-white h-full flex flex-col font-sans text-slate-900 overflow-hidden"
       data-testid="fan-context-sidebar"
     >
-      {/* Fan Header */}
-      <div className="space-y-1">
-        <h3 className="text-base font-semibold text-gray-900">{fan.name}</h3>
-        <Badge status={STATUS_BADGE_MAP[fan.status]}>
-          {STATUS_LABELS[fan.status]}
-        </Badge>
+      {/* Header */}
+      <div className="px-4 py-4 border-b border-slate-200 flex items-center gap-3">
+        <div className="h-11 w-11 rounded-full overflow-hidden bg-slate-100 shrink-0">
+          {fan.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={fan.avatar} alt={fan.name} className="h-full w-full object-cover" />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-slate-200 text-sm font-semibold text-slate-600">
+              {fan.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
+        <div className="min-w-0">
+          <div className="text-sm font-semibold text-slate-900 truncate">{fan.name}</div>
+          {fan.username ? <div className="text-xs text-slate-500 truncate">@{fan.username}</div> : null}
+        </div>
       </div>
 
-      {/* LTV Section - Requirements 8.1 */}
-      <Section title="Lifetime Value" testId="fan-ltv-section">
-        <div className="text-2xl font-bold text-gray-900">
-          {formatCurrency(fan.ltv)}
-        </div>
-      </Section>
-
-      {/* Notes Section - Requirements 8.1 */}
-      <Section title="Notes" testId="fan-notes-section">
-        {fan.notes.length > 0 ? (
-          <ul className="space-y-2">
-            {fan.notes.map((note, index) => (
-              <li 
-                key={index}
-                className="text-sm text-gray-600 bg-gray-50 rounded-md p-2"
-              >
-                {note}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-gray-400 italic">No notes yet</p>
-        )}
-        <button
-          type="button"
-          className="text-sm text-violet-600 hover:text-violet-700 font-medium"
-        >
-          + Add note
-        </button>
-      </Section>
-
-      {/* Purchase History Section - Requirements 8.1 */}
-      <Section title="Purchase History" testId="fan-purchase-history-section">
-        {fan.purchaseHistory.length > 0 ? (
-          <ul className="space-y-2">
-            {fan.purchaseHistory.slice(0, 5).map((purchase, index) => (
-              <li 
-                key={index}
-                className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {purchase.item}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {formatDate(purchase.date)}
-                  </p>
+      {/* Sections */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-4 space-y-6">
+          {/* Lifetime Value */}
+          <section>
+            <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500 mb-2">
+              Lifetime value
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="text-xs text-slate-500 mb-1">Total</div>
+                <div className="text-base font-semibold text-slate-900">{formatCurrency(fan.ltv)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">Avg. order</div>
+                <div className="text-base font-semibold text-slate-900">
+                  {fan.averageOrder ? formatCurrency(fan.averageOrder) : '—'}
                 </div>
-                <span className="text-sm font-semibold text-gray-900 ml-2">
-                  {formatCurrency(purchase.amount)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-gray-400 italic">No purchases yet</p>
-        )}
-        {fan.purchaseHistory.length > 5 && (
-          <button
-            type="button"
-            className="text-sm text-violet-600 hover:text-violet-700 font-medium"
-          >
-            View all ({fan.purchaseHistory.length})
-          </button>
-        )}
-      </Section>
-    </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="h-px bg-slate-200" />
+
+          {/* Notes */}
+          <section data-testid="fan-notes-section">
+            <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500 mb-2">Notes</div>
+            <div className="space-y-1 text-sm text-slate-900">
+              {fan.notes.length ? (
+                fan.notes.map((note, idx) => (
+                  <p key={idx} className="leading-snug">
+                    • {note}
+                  </p>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">No notes yet.</p>
+              )}
+            </div>
+          </section>
+
+          <div className="h-px bg-slate-200" />
+
+          {/* Recent History */}
+          <section data-testid="fan-purchase-history-section">
+            <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500 mb-2">Recent history</div>
+            <div className="space-y-2 text-sm">
+              {fan.purchaseHistory.length ? (
+                fan.purchaseHistory.map(purchase => (
+                  <div key={purchase.date.toISOString()} className="flex items-center justify-between">
+                    <div>
+                      <div className="text-slate-900">{purchase.item}</div>
+                      <div className="text-xs text-slate-500">{formatDate(purchase.date)}</div>
+                    </div>
+                    <div className="text-sm font-medium text-slate-900">{formatCurrency(purchase.amount)}</div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">No recent purchases.</p>
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 px-4 py-3 text-xs text-slate-500">
+        <p>Subscriber since {fan.memberSince || '—'}</p>
+      </div>
+    </aside>
   );
 }
 

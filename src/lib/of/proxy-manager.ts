@@ -1,6 +1,9 @@
 // Proxy Manager for OnlyFans Browser Automation
 // Handles proxy rotation and Bright Data integration
 
+import { externalFetchJson } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
+
 export interface ProxyConfig {
   server: string;
   username?: string;
@@ -83,25 +86,25 @@ class ProxyManager {
   // Test proxy connectivity
   async testProxy(proxy: ProxyConfig): Promise<boolean> {
     try {
-      // Simple test using fetch with proxy
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000);
-
-      const response = await fetch('https://api.ipify.org?format=json', {
-        signal: controller.signal,
-        // Note: fetch doesn't support proxy directly
-        // This would need to be implemented with a library like node-fetch-proxy
+      // Simple test using ipify (proxy support requires a dedicated HTTP agent)
+      const data = await externalFetchJson<{ ip?: string }>('https://api.ipify.org?format=json', {
+        service: 'ipify',
+        operation: 'ip.lookup',
+        method: 'GET',
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['GET'] },
       });
-
-      clearTimeout(timeout);
-      
-      if (response.ok) {
-        const data = await response.json();
+      if (data?.ip) {
         console.log(`Proxy test successful. IP: ${data.ip}`);
         return true;
       }
     } catch (error) {
-      console.error('Proxy test failed:', error);
+      if (isExternalServiceError(error)) {
+        console.error('Proxy test failed:', error.code, error.message);
+      } else {
+        console.error('Proxy test failed:', error);
+      }
     }
 
     return false;

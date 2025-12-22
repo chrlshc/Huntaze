@@ -1,0 +1,260 @@
+/**
+ * Fan Notes Panel - TailAdmin Styling
+ * 
+ * Styles pour le panneau de notes des fans avec design system TailAdmin
+ */
+
+/* ============================================
+   Card Stats
+   ============================================ */
+.tailadmin-card-stat {
+  border-radius: var(--tailadmin-radius-md);
+  background-color: var(--tailadmin-bg-gray-light);
+  padding: var(--tailadmin-spacing-3) var(--tailadmin-spacing-4);
+}
+
+.dark .tailadmin-card-stat {
+  background-color: var(--tailadmin-bg-dark-2);
+}
+
+/* ============================================
+   Form Groups
+   ============================================ */
+.tailadmin-form-group {
+  margin-bottom: var(--tailadmin-spacing-3);
+}
+
+.tailadmin-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tailadmin-text-secondary);
+  margin-bottom: var(--tailadmin-spacing-1);
+}
+
+.tailadmin-select {
+  width: 100%;
+  border-radius: var(--tailadmin-radius-md);
+  border: 1px solid var(--tailadmin-border-color);
+  background-color: var(--tailadmin-bg-gray-light);
+  padding: var(--tailadmin-spacing-2) var(--tailadmin-spacing-4);
+  font-size: 12px;
+  color: var(--tailadmin-text-primary);
+  transition: all 0.2s ease;
+}
+
+.tailadmin-select:focus {
+  outline: none;
+  border-color: var(--tailadmin-color-primary);
+  box-shadow: 0 0 0 3px var(--tailadmin-color-primary-alpha);
+}
+
+.dark .tailadmin-select {
+  background-color: var(--tailadmin-bg-dark-2);
+  border-color: var(--tailadmin-border-color-dark);
+}
+
+.tailadmin-textarea {
+  width: 100%;
+  resize: none;
+  border-radius: var(--tailadmin-radius-md);
+  border: 1px solid var(--tailadmin-border-color);
+  background-color: var(--tailadmin-bg-gray-light);
+  padding: var(--tailadmin-spacing-2) var(--tailadmin-spacing-4);
+  font-size: 12px;
+  color: var(--tailadmin-text-primary);
+  transition: all 0.2s ease;
+}
+
+.tailadmin-textarea::placeholder {
+  color: var(--tailadmin-text-muted);
+}
+
+.tailadmin-textarea:focus {
+  outline: none;
+  border-color: var(--tailadmin-color-primary);
+  box-shadow: 0 0 0 3px var(--tailadmin-color-primary-alpha);
+}
+
+.dark .tailadmin-textarea {
+  background-color: var(--tailadmin-bg-dark-2);
+  border-color: var(--tailadmin-border-color-dark);
+}
+
+/* ============================================
+   Card Inner (for form container)
+   ============================================ */
+.tailadmin-card-inner {
+  border-radius: var(--tailadmin-radius-md);
+  background-color: var(--tailadmin-bg-gray-light);
+  padding: var(--tailadmin-spacing-4);
+}
+
+.dark .tailadmin-card-inner {
+  background-color: var(--tailadmin-bg-dark-2);
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+.tailadmin-empty-state {
+  text-align: center;
+  padding: var(--tailadmin-spacing-10) var(--tailadmin-spacing-4);
+}
+
+/* ============================================
+   List Groups
+   ============================================ */
+.tailadmin-list-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tailadmin-spacing-4);
+}
+
+.tailadmin-list-header {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--tailadmin-spacing-2);
+}
+
+.tailadmin-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tailadmin-spacing-2);
+}
+
+.tailadmin-list-item {
+  position: relative;
+  background-color: var(--tailadmin-bg-gray-light);
+  border-radius: var(--tailadmin-radius-md);
+  padding: var(--tailadmin-spacing-2-5);
+  transition: all 0.2s ease;
+}
+
+.tailadmin-list-item:hover {
+  background-color: var(--tailadmin-bg-gray);
+}
+
+.dark .tailadmin-list-item {
+  background-color: var(--tailadmin-bg-dark-2);
+}
+
+.dark .tailadmin-list-item:hover {
+  background-color: var(--tailadmin-bg-dark-3);
+}
+
+/* ============================================
+   Section Title
+   ============================================ */
+.tailadmin-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--tailadmin-text-secondary);
+}
+
+/* ============================================
+   Badges
+   ============================================ */
+.tailadmin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--tailadmin-spacing-1) var(--tailadmin-spacing-2);
+  border-radius: var(--tailadmin-radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tailadmin-badge-success {
+  background-color: var(--tailadmin-color-success-light);
+  color: var(--tailadmin-color-success-dark);
+}
+
+.tailadmin-badge-warning {
+  background-color: var(--tailadmin-color-warning-light);
+  color: var(--tailadmin-color-warning-dark);
+}
+
+.tailadmin-badge-danger {
+  background-color: var(--tailadmin-color-danger-light);
+  color: var(--tailadmin-color-danger-dark);
+}
+
+.tailadmin-badge-default {
+  background-color: var(--tailadmin-bg-gray);
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .tailadmin-badge-success {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: rgb(134, 239, 172);
+}
+
+.dark .tailadmin-badge-warning {
+  background-color: rgba(251, 191, 36, 0.2);
+  color: rgb(253, 224, 71);
+}
+
+.dark .tailadmin-badge-danger {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: rgb(252, 165, 165);
+}
+
+.dark .tailadmin-badge-default {
+  background-color: var(--tailadmin-bg-dark-2);
+  color: var(--tailadmin-text-secondary);
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+.tailadmin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tailadmin-border-color) transparent;
+}
+
+.tailadmin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tailadmin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tailadmin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--tailadmin-border-color);
+  border-radius: var(--tailadmin-radius-full);
+}
+
+.tailadmin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--tailadmin-text-muted);
+}
+
+.dark .tailadmin-scrollbar {
+  scrollbar-color: var(--tailadmin-border-color-dark) transparent;
+}
+
+.dark .tailadmin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--tailadmin-border-color-dark);
+}
+
+.dark .tailadmin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--tailadmin-text-secondary);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .tailadmin-card-stat {
+    padding: var(--tailadmin-spacing-2) var(--tailadmin-spacing-3);
+  }
+  
+  .tailadmin-empty-state {
+    padding: var(--tailadmin-spacing-8) var(--tailadmin-spacing-3);
+  }
+}

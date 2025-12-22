@@ -38,6 +38,7 @@ export class TikTokOAuthServiceOptimized {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000;
   private readonly TOKEN_REFRESH_THRESHOLD = 24 * 60 * 60 * 1000; // 1 day
+  private readonly REQUEST_TIMEOUT_MS = 15_000;
 
   constructor() {
     this.clientKey = process.env.TIKTOK_CLIENT_KEY || '';
@@ -210,6 +211,39 @@ export class TikTokOAuthServiceOptimized {
     });
   }
 
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    correlationId: string
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.REQUEST_TIMEOUT_MS);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw this.createError(
+          TikTokErrorType.TIMEOUT_ERROR,
+          'Request timed out',
+          correlationId,
+          undefined,
+          error
+        );
+      }
+
+      throw this.createError(
+        TikTokErrorType.NETWORK_ERROR,
+        error instanceof Error ? error.message : 'Network error',
+        correlationId,
+        undefined,
+        error instanceof Error ? error : undefined
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
   private storeToken(userId: string, token: string, expiresIn: number, refreshToken?: string, refreshExpiresIn?: number): void {
     const tokenData: TokenData = {
       token,
@@ -298,7 +332,7 @@ export class TikTokOAuthServiceOptimized {
     tiktokLogger.info('Exchanging code for tokens', { correlationId });
     
     return this.retryApiCall(async () => {
-      const response = await fetch(TIKTOK_TOKEN_URL, {
+      const response = await this.fetchWithTimeout(TIKTOK_TOKEN_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -311,9 +345,20 @@ export class TikTokOAuthServiceOptimized {
           redirect_uri: this.redirectUri,
         }),
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          TikTokErrorType.API_ERROR,
+          'Invalid JSON response from TikTok',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleTikTokError(data, response.status, correlationId);
@@ -329,7 +374,7 @@ export class TikTokOAuthServiceOptimized {
     tiktokLogger.info('Refreshing access token', { correlationId });
     
     return this.retryApiCall(async () => {
-      const response = await fetch(TIKTOK_TOKEN_URL, {
+      const response = await this.fetchWithTimeout(TIKTOK_TOKEN_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -341,9 +386,20 @@ export class TikTokOAuthServiceOptimized {
           refresh_token: refreshToken,
         }),
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          TikTokErrorType.API_ERROR,
+          'Invalid JSON response from TikTok',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleTikTokError(data, response.status, correlationId);
@@ -359,7 +415,7 @@ export class TikTokOAuthServiceOptimized {
     tiktokLogger.info('Getting user info', { correlationId });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(TIKTOK_USER_INFO_URL, {
+      const response = await this.fetchWithTimeout(TIKTOK_USER_INFO_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -369,9 +425,20 @@ export class TikTokOAuthServiceOptimized {
           fields: ['open_id', 'union_id', 'avatar_url', 'display_name'],
         }),
         cache: 'no-store',
-      });
+      }, correlationId);
 
-      const data = await response.json();
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw this.createError(
+          TikTokErrorType.API_ERROR,
+          'Invalid JSON response from TikTok',
+          correlationId,
+          response.status,
+          error instanceof Error ? error : undefined
+        );
+      }
 
       if (!response.ok || data.error) {
         throw this.handleTikTokError(data, response.status, correlationId);

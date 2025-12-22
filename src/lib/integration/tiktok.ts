@@ -1,5 +1,7 @@
 import { getMode } from "../config/pipeline";
 import { enqueueTikTokStatusPoll } from "../tiktok/queue";
+import { externalFetch, externalFetchJson } from "@/lib/services/external/http";
+import { ExternalServiceError } from "@/lib/services/external/errors";
 
 export async function publishTikTok(opts: {
   userAccessToken: string; // OAuth2 TikTok – scope video.publish if Direct Post
@@ -33,19 +35,43 @@ export async function publishTikTok(opts: {
         },
   };
 
-  const init = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
+  const init: any = await externalFetchJson("https://open.tiktokapis.com/v2/post/publish/video/init/", {
+    service: "tiktok",
+    operation: "post.publish.video.init",
     method: "POST",
     headers: {
       Authorization: `Bearer ${opts.userAccessToken}`,
       "Content-Type": "application/json; charset=UTF-8",
     },
     body: JSON.stringify(initBody),
-  }).then((r) => r.json());
+    cache: "no-store",
+    timeoutMs: 20_000,
+    retry: { maxRetries: 0, retryMethods: [] },
+  });
+
+  if (init?.error?.code) {
+    throw new ExternalServiceError({
+      service: "tiktok",
+      code: init.error.code === "rate_limit_exceeded" ? "RATE_LIMIT" : "BAD_REQUEST",
+      retryable: init.error.code === "rate_limit_exceeded",
+      message: `TikTok API error (${init.error.code}): ${init.error.message || "Unknown error"}`,
+      details: { error: init.error },
+    });
+  }
 
   const { publish_id, upload_url } = init.data || {};
 
   if (!opts.videoUrl && upload_url && opts.file) {
-    await fetch(upload_url, { method: "PUT", body: opts.file as any });
+    await externalFetch(upload_url, {
+      service: "tiktok",
+      operation: "upload.put",
+      method: "PUT",
+      body: opts.file as any,
+      cache: "no-store",
+      timeoutMs: 30_000,
+      retry: { maxRetries: 1, retryMethods: ["PUT"] },
+      throwOnHttpError: true,
+    });
   }
 
   // For shadow/dry_run, we keep draft/init; for live, you may switch to Direct Post endpoint when audited.

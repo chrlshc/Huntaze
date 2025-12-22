@@ -207,7 +207,7 @@ export function OptimizedImage({
 // Mobile-specific styles
 export const mobileStyles = `
   /* Touch-optimized styles */
-  .is-touch button,
+  .is-touch button:not([role="switch"]),
   .is-touch a,
   .is-touch [role="button"] {
     min-height: 44px;

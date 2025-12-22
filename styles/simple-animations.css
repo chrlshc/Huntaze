@@ -149,16 +149,16 @@
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 20px rgba(31, 41, 55, 0.3);
 }
 
 /* Gradient Text Animation */
 .gradient-text-animated {
   background: linear-gradient(
     to right,
-    #7c3aed 0%,
+    #1f2937 0%,
     var(--accent-primary) 50%,
-    #7c3aed 100%
+    #1f2937 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, type ComponentProps } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
 
@@ -24,6 +25,7 @@ const MENU_ITEMS: MenuItem[] = [
 export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -54,9 +56,8 @@ export function UserMenu() {
   }, [isOpen]);
 
   const handleSignOut = () => {
-    // Placeholder - will integrate with auth later
-    console.log('Sign out clicked');
     setIsOpen(false);
+    router.push('/auth/logout');
   };
 
   const handleMenuItemClick = (item: MenuItem) => {

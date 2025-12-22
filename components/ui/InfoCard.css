@@ -1,0 +1,149 @@
+/**
+ * InfoCard Component Styles
+ * 
+ * Implements the design specification for info cards used in
+ * Smart Messages and other dashboard views.
+ */
+
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: var(--dashboard-gap-md);
+  padding: 12px 14px;
+  background: var(--dashboard-card-bg);
+  border: 1px solid var(--dashboard-card-border);
+  border-radius: var(--dashboard-card-radius);
+  transition: var(--dashboard-transition);
+  text-align: left;
+  width: 100%;
+  cursor: default;
+}
+
+.info-card:hover {
+  border-color: var(--dashboard-card-hover-border);
+  background: #F9FAFF;
+}
+
+/* Make clickable cards look interactive */
+button.info-card {
+  cursor: pointer;
+}
+
+button.info-card:active {
+  transform: scale(0.98);
+}
+
+/* Keyboard focus indicator */
+.info-card:focus {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+  border-color: var(--dashboard-brand-primary);
+}
+
+.info-card:focus:not(:focus-visible) {
+  outline: none;
+  border-color: var(--dashboard-card-border);
+}
+
+.info-card:focus-visible {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+  border-color: var(--dashboard-brand-primary);
+}
+
+/* Keyboard focus indicator */
+.info-card:focus-visible {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+}
+
+/* Icon container */
+.info-card__icon {
+  width: var(--dashboard-icon-container-size);
+  height: var(--dashboard-icon-container-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dashboard-icon-container-bg);
+  color: var(--dashboard-icon-container-color);
+  flex-shrink: 0;
+}
+
+.info-card__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Content container */
+.info-card__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Title styling */
+.info-card__title {
+  font-size: var(--dashboard-title-size);
+  font-weight: var(--dashboard-title-weight);
+  color: var(--dashboard-title-color);
+  line-height: 1.3;
+}
+
+/* Description styling with 2-line clamp */
+.info-card__description {
+  font-size: var(--dashboard-description-size);
+  color: var(--dashboard-description-color);
+  line-height: var(--dashboard-description-line-height);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Full width, reduced padding */
+@media (max-width: 767px) {
+  .info-card {
+    width: 100%;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .info-card__icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .info-card__icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .info-card__title {
+    font-size: 13px;
+  }
+  
+  .info-card__description {
+    font-size: 12px;
+  }
+}
+
+/* Tablet (768px-1024px) - 2-column grid handled by parent */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .info-card {
+    /* Inherits from parent grid */
+  }
+}
+
+/* Desktop (>1024px) - Flexible row layout handled by parent */
+@media (min-width: 1024px) {
+  .info-card {
+    /* Inherits from parent grid */
+  }
+}

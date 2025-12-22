@@ -241,11 +241,9 @@ export default function AppSidebar() {
       {/* Desktop sidebar */}
       <aside className="app-sidebar hidden lg:flex" data-testid="app-sidebar">
         <div className="app-sidebar-header">
-          <Link href="/dashboard" className="app-sidebar-logo" aria-label="Huntaze dashboard">
-            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">H</span>
-            </div>
-            <span className="text-xl font-bold text-content-primary">Huntaze</span>
+          <Link href="/dashboard" className="app-sidebar-logo" aria-label="Beta dashboard">
+            <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-10 h-10" />
+            <span className="text-xl font-bold text-content-primary">Beta</span>
           </Link>
         </div>
         <div className="app-sidebar-content">{NavList}</div>
@@ -306,10 +304,8 @@ export default function AppSidebar() {
             >
               <div className="mobile-drawer-header">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-xl">H</span>
-                  </div>
-                  <span className="text-xl font-bold text-content-primary">Huntaze</span>
+                  <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-10 h-10" />
+                  <span className="text-xl font-bold text-content-primary">Beta</span>
                 </div>
                 <Button 
                   variant="ghost" 

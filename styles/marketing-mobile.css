@@ -1,0 +1,183 @@
+/**
+ * Marketing Page - Mobile Responsive Styles
+ * Clean, modern mobile layout
+ */
+
+/* ============================================
+   MARKETING PAGE - MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Quick navigation grid - 1 column on mobile */
+  .polaris-analytics .quick-actions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  
+  /* Quick nav cards - compact */
+  .polaris-analytics .quick-actions-grid .p-card {
+    padding: 12px !important;
+  }
+  
+  /* This Week stats card - 2x2 grid */
+  .polaris-analytics .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  /* KPI values - smaller on mobile */
+  .polaris-analytics .kpi-grid > div {
+    text-align: center;
+  }
+  
+  .polaris-analytics .kpi-grid > div > div:first-child {
+    font-size: 20px !important;
+  }
+  
+  /* Platform filter - horizontal scroll */
+  .polaris-analytics .filter-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 6px !important;
+  }
+  
+  .polaris-analytics .filter-pills .filter-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  
+  /* Content queue header - stack */
+  .polaris-analytics .p-card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  .polaris-analytics .p-card-header > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* Queue filter bar - stack */
+  .polaris-analytics .p-card-body > div[style*="justify-content: space-between"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  /* Selected count and actions */
+  .polaris-analytics .p-card-body > div[style*="justify-content: space-between"] > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* Queue items - stack content */
+  .polaris-analytics .breakdown-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+  
+  .polaris-analytics .breakdown-item > div:first-child {
+    width: 100%;
+  }
+  
+  .polaris-analytics .breakdown-item > div:last-child {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  
+  /* Platform tags - wrap */
+  .polaris-analytics .breakdown-item .scope-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  /* Status badge */
+  .polaris-analytics .breakdown-item span[style*="border-radius: 6px"] {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+  }
+  
+  /* Time display */
+  .polaris-analytics .breakdown-item span[style*="min-width: 80px"] {
+    min-width: auto !important;
+    font-size: 11px !important;
+  }
+  
+  /* Empty state - compact */
+  .polaris-analytics .empty-state {
+    padding: 24px 16px !important;
+  }
+  
+  /* Account health items - stack */
+  .polaris-analytics .breakdown-list .breakdown-item {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+  }
+  
+  /* Automation toggles - keep inline */
+  .polaris-analytics .breakdown-item button[role="switch"] {
+    flex-shrink: 0;
+  }
+  
+  /* CTA button - full width */
+  .polaris-analytics .cta-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   SMALL MOBILE (< 480px)
+   ============================================ */
+
+@media (max-width: 479px) {
+  /* KPI grid - still 2 columns but tighter */
+  .polaris-analytics .kpi-grid {
+    gap: 8px !important;
+  }
+  
+  .polaris-analytics .kpi-grid > div > div:first-child {
+    font-size: 18px !important;
+  }
+  
+  .polaris-analytics .kpi-grid > div > div:last-child {
+    font-size: 10px !important;
+  }
+  
+  /* Queue items - even more compact */
+  .polaris-analytics .breakdown-item {
+    padding: 10px !important;
+  }
+  
+  /* Title truncation */
+  .polaris-analytics .breakdown-item div[style*="overflow: hidden"] {
+    max-width: 200px;
+  }
+}
+
+/* ============================================
+   GRADIENT CARD MOBILE FIX
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* This Week gradient card */
+  .polaris-analytics .p-card[style*="linear-gradient"] {
+    border-radius: 12px !important;
+  }
+  
+  .polaris-analytics .p-card[style*="linear-gradient"] .p-card-body {
+    padding: 16px !important;
+  }
+  
+  /* Header inside gradient card */
+  .polaris-analytics .p-card[style*="linear-gradient"] > .p-card-body > div:first-child {
+    margin-bottom: 12px !important;
+  }
+}

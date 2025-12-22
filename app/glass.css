@@ -66,11 +66,14 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  /* Reduce blur on mobile for better performance */
+  /* Disable expensive real-time blurs on mobile */
+  .glass,
+  .glass-card,
   .glass-saturate,
   .glass-navbar {
-    backdrop-filter: blur(var(--blur-md)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(150%);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--bg-surface) !important;
   }
   
   /* Disable hover effects on mobile */

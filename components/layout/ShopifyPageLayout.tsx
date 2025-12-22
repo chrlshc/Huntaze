@@ -4,7 +4,7 @@ import React from 'react';
 
 export interface ShopifyPageLayoutProps {
   /** Page title displayed in the header */
-  title: string;
+  title: string | React.ReactNode;
   /** Optional subtitle/description */
   subtitle?: string;
   /** Optional action buttons for the header */
@@ -32,7 +32,7 @@ export function ShopifyPageLayout({
   actions,
   children,
   className = '',
-  maxWidth = 1200,
+  maxWidth = 'var(--of-layout-max-width, 1200px)',
 }: ShopifyPageLayoutProps) {
   const maxWidthValue = typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
 
@@ -40,9 +40,8 @@ export function ShopifyPageLayout({
     <div
       className={`shopify-page-layout ${className}`}
       style={{
-        backgroundColor: 'var(--shopify-bg-page, #f6f6f7)',
-        minHeight: '100vh',
-        padding: '24px',
+        backgroundColor: 'var(--bg-app, #f6f6f7)',
+        padding: 0,
       }}
     >
       <div
@@ -59,15 +58,15 @@ export function ShopifyPageLayout({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            marginBottom: '24px',
+            marginBottom: 'var(--of-space-6, 24px)',
           }}
         >
           <div className="shopify-page-layout__header-content">
             <h1
               className="shopify-page-layout__title"
               style={{
-                fontSize: '20px',
-                fontWeight: 600,
+                fontSize: 'var(--of-text-h1, 26px)',
+                fontWeight: 'var(--of-font-semibold, 600)',
                 color: 'var(--shopify-text-primary, #1a1a1a)',
                 margin: 0,
                 lineHeight: 1.4,
@@ -75,19 +74,6 @@ export function ShopifyPageLayout({
             >
               {title}
             </h1>
-            {subtitle && (
-              <p
-                className="shopify-page-layout__subtitle"
-                style={{
-                  fontSize: '14px',
-                  color: 'var(--shopify-text-secondary, #6b7177)',
-                  margin: '4px 0 0 0',
-                  lineHeight: 1.5,
-                }}
-              >
-                {subtitle}
-              </p>
-            )}
           </div>
           {actions && (
             <div
@@ -109,7 +95,7 @@ export function ShopifyPageLayout({
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '24px',
+            gap: 'var(--of-section-gap, 24px)',
           }}
         >
           {children}

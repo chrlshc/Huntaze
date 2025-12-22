@@ -35,15 +35,15 @@ const paddingMap = {
  * 
  * Features:
  * - White background (#ffffff)
- * - 1px border (#e1e3e5)
- * - Subtle shadow (0 1px 3px rgba(0,0,0,0.08))
- * - 8px border-radius
- * - Configurable padding (default 20px)
+ * - 1px border (tokenized)
+ * - Subtle shadow (tokenized)
+ * - Rounded corners (tokenized)
+ * - Configurable padding (default 24px)
  */
 export function ShopifyCard({
   children,
   className,
-  padding = 'lg',
+  padding = 'xl',
   bordered = true,
   shadow = true,
   header,
@@ -56,17 +56,20 @@ export function ShopifyCard({
   return (
     <div
       className={cn(
-        // Base styles - Shopify card design
-        'bg-white rounded-lg',
+        // Base styles - Shopify card design + FORCE WIDTH
+        'w-full min-w-0 bg-white rounded-[var(--radius-card)] overflow-hidden transition-shadow duration-200',
         // Border
-        bordered && 'border border-[#e1e3e5]',
+        bordered && 'border border-[var(--border-default)] hover:border-[var(--border-emphasis)]',
         // Shadow - Shopify subtle shadow
-        shadow && 'shadow-[0_1px_3px_rgba(0,0,0,0.08)]',
+        shadow && 'shadow-[var(--of-shadow-card-saas)] hover:shadow-[var(--of-shadow-card-hover-saas)]',
         // Interactive states
         isInteractive && [
           'cursor-pointer',
-          'transition-shadow duration-200',
-          'hover:shadow-[0_2px_6px_rgba(0,0,0,0.12)]',
+          // Focus indicator for accessibility
+          'focus-visible:outline-none',
+          'focus-visible:ring-2',
+          'focus-visible:ring-offset-2',
+          'focus-visible:ring-[var(--shopify-border-focus)]',
         ],
         className
       )}
@@ -84,7 +87,7 @@ export function ShopifyCard({
       {/* Header */}
       {header && (
         <div className={cn(
-          'border-b border-[#e1e3e5]',
+          'border-b border-[var(--border-default)]',
           paddingMap[padding]
         )}>
           {header}
@@ -99,7 +102,7 @@ export function ShopifyCard({
       {/* Footer */}
       {footer && (
         <div className={cn(
-          'border-t border-[#e1e3e5]',
+          'border-t border-[var(--border-default)]',
           paddingMap[padding]
         )}>
           {footer}
@@ -131,7 +134,7 @@ export function ShopifyCardSection({
   return (
     <div
       className={cn(
-        divided && 'border-t border-[#e1e3e5] pt-4 mt-4',
+        divided && 'border-t border-[var(--border-default)] pt-4 mt-4',
         className
       )}
     >

@@ -1,95 +1,64 @@
 /**
- * Shopify Polaris-Inspired Design Tokens
+ * Shopify Design System Tokens
  * 
- * Light theme tokens for a clean, professional dashboard aesthetic.
- * Based on Shopify Polaris design system principles.
+ * This file defines all design tokens for the OnlyFans Shopify design unification.
+ * All OnlyFans pages should reference these CSS custom properties for consistency.
  */
 
 :root {
-  /* ============================================
-   * BACKGROUND COLORS
-   * ============================================ */
+  /* ========================================
+     COLORS
+     ======================================== */
   
-  /* Page background - light gray for content area */
-  --shopify-bg-page: #f6f6f7;
+  /* Surface colors */
+  --shopify-bg-surface: #FFFFFF;
+  --shopify-bg-app: #F6F6F7;
+  --shopify-bg-surface-secondary: #FAFBFB;
+  --shopify-bg-surface-hover: rgba(15, 23, 42, 0.04);
+  --shopify-bg-surface-active: rgba(15, 23, 42, 0.06);
   
-  /* Card/surface background - pure white */
-  --shopify-bg-card: #ffffff;
-  --shopify-bg-surface: #ffffff;
+  /* Text colors */
+  --shopify-text-primary: #0F172A; /* slate-900 */
+  --shopify-text-secondary: #475569; /* slate-600 */
+  --shopify-text-disabled: #8C9196;
+  --shopify-text-link: #2C6ECB;
+  --shopify-text-success: #008060;
+  --shopify-text-warning: #916A00;
+  --shopify-text-critical: #D72C0D;
   
-  /* Sidebar background - dark for contrast */
-  --shopify-bg-sidebar: #1a1a1a;
+  /* Border colors */
+  --shopify-border-default: #C9CCCF;
+  --shopify-border-subdued: rgba(15, 23, 42, 0.14);
+  --shopify-border-hover: rgba(15, 23, 42, 0.22);
+  --shopify-border-focus: #2C6ECB;
   
-  /* Hover states */
-  --shopify-bg-hover: #f1f2f3;
-  --shopify-bg-active: #edeeef;
+  /* Interactive colors */
+  --shopify-interactive-default: #2C6ECB;
+  --shopify-interactive-hover: #1F5199;
+  --shopify-interactive-active: #103D7C;
+  --shopify-interactive-disabled: #BFC4C9;
   
-  /* ============================================
-   * TEXT COLORS
-   * ============================================ */
+  /* Status colors */
+  --shopify-success: #008060;
+  --shopify-success-bg: #AEE9D1;
+  --shopify-success-border: #00A47C;
   
-  /* Primary text - maximum contrast on light backgrounds */
-  --shopify-text-primary: #1a1a1a;
+  --shopify-info: #2C6ECB;
+  --shopify-info-bg: #B4D4F7;
+  --shopify-info-border: #1F5199;
   
-  /* Secondary text - labels, metadata */
-  --shopify-text-secondary: #6b7177;
+  --shopify-warning: #916A00;
+  --shopify-warning-bg: #FFD79D;
+  --shopify-warning-border: #B98900;
   
-  /* Muted text - less important info */
-  --shopify-text-muted: #8c9196;
+  --shopify-critical: #D72C0D;
+  --shopify-critical-bg: #FED3D1;
+  --shopify-critical-border: #E01E00;
   
-  /* Disabled text */
-  --shopify-text-disabled: #b5b5b5;
+  /* ========================================
+     SPACING
+     ======================================== */
   
-  /* Inverse text - for dark backgrounds */
-  --shopify-text-inverse: #ffffff;
-  
-  /* ============================================
-   * BORDER COLORS
-   * ============================================ */
-  
-  /* Default border - cards, inputs */
-  --shopify-border: #e1e3e5;
-  
-  /* Darker border - for emphasis */
-  --shopify-border-dark: #d1d5db;
-  
-  /* Subtle border - dividers */
-  --shopify-border-subtle: #ebebeb;
-  
-  /* ============================================
-   * SHADOWS
-   * ============================================ */
-  
-  /* Card shadow - subtle elevation */
-  --shopify-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
-  
-  /* Hover shadow - increased elevation */
-  --shopify-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.12);
-  
-  /* Modal/dropdown shadow */
-  --shopify-shadow-modal: 0 4px 16px rgba(0, 0, 0, 0.16);
-  
-  /* ============================================
-   * BORDER RADIUS
-   * ============================================ */
-  
-  /* Small radius - buttons, inputs */
-  --shopify-radius-sm: 4px;
-  
-  /* Default radius - cards, banners */
-  --shopify-radius: 8px;
-  
-  /* Large radius - modals */
-  --shopify-radius-lg: 12px;
-  
-  /* Full radius - pills, avatars */
-  --shopify-radius-full: 9999px;
-  
-  /* ============================================
-   * SPACING
-   * ============================================ */
-  
-  /* Base spacing unit */
   --shopify-space-1: 4px;
   --shopify-space-2: 8px;
   --shopify-space-3: 12px;
@@ -99,133 +68,99 @@
   --shopify-space-8: 32px;
   --shopify-space-10: 40px;
   --shopify-space-12: 48px;
+  --shopify-space-16: 64px;
+  --shopify-space-20: 80px;
   
-  /* Card padding */
-  --shopify-card-padding: 20px;
-  
-  /* Section spacing */
-  --shopify-section-gap: 24px;
-  
-  /* Grid gap */
-  --shopify-grid-gap: 16px;
-  
-  /* ============================================
-   * TYPOGRAPHY
-   * ============================================ */
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
   
   /* Font family */
   --shopify-font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   
   /* Font sizes */
-  --shopify-font-size-xs: 12px;
-  --shopify-font-size-sm: 13px;
-  --shopify-font-size-base: 14px;
-  --shopify-font-size-md: 16px;
-  --shopify-font-size-lg: 18px;
-  --shopify-font-size-xl: 20px;
-  --shopify-font-size-2xl: 24px;
-  --shopify-font-size-3xl: 28px;
+  --shopify-font-size-75: 12px;
+  --shopify-font-size-100: 14px;
+  --shopify-font-size-200: 16px;
+  --shopify-font-size-300: 20px;
+  --shopify-font-size-400: 24px;
+  --shopify-font-size-500: 28px;
+  --shopify-font-size-600: 32px;
   
   /* Font weights */
-  --shopify-font-weight-normal: 400;
+  --shopify-font-weight-regular: 400;
   --shopify-font-weight-medium: 500;
   --shopify-font-weight-semibold: 600;
   --shopify-font-weight-bold: 700;
   
   /* Line heights */
-  --shopify-line-height-tight: 1.25;
-  --shopify-line-height-normal: 1.5;
-  --shopify-line-height-relaxed: 1.75;
+  --shopify-line-height-1: 16px;
+  --shopify-line-height-2: 20px;
+  --shopify-line-height-3: 24px;
+  --shopify-line-height-4: 28px;
+  --shopify-line-height-5: 32px;
+  --shopify-line-height-6: 40px;
   
-  /* ============================================
-   * ACCENT COLORS (Semantic)
-   * ============================================ */
+  /* ========================================
+     SHADOWS
+     ======================================== */
   
-  /* Success - green */
-  --shopify-accent-success: #008060;
-  --shopify-accent-success-light: #f0fdf4;
-  --shopify-accent-success-border: #bbf7d0;
+  --shopify-shadow-card: 0 1px 0 rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shopify-shadow-button: 0 1px 0 rgba(0, 0, 0, 0.05);
+  --shopify-shadow-popover: 0 3px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shopify-shadow-modal: 0 26px 80px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.2);
+  --shopify-shadow-focus: 0 0 0 3px rgba(44, 110, 203, 0.5);
   
-  /* Warning - amber */
-  --shopify-accent-warning: #b98900;
-  --shopify-accent-warning-light: #fffbeb;
-  --shopify-accent-warning-border: #fde68a;
+  /* ========================================
+     BORDER RADIUS
+     ======================================== */
   
-  /* Error/Critical - red */
-  --shopify-accent-error: #d72c0d;
-  --shopify-accent-error-light: #fef2f2;
-  --shopify-accent-error-border: #fecaca;
+  --shopify-border-radius-base: 8px;
+  --shopify-border-radius-button: 6px;
+  --shopify-border-radius-input: 4px;
+  --shopify-border-radius-large: 12px;
+  --shopify-border-radius-full: 9999px;
   
-  /* Info - blue */
-  --shopify-accent-info: #2c6ecb;
-  --shopify-accent-info-light: #eff6ff;
-  --shopify-accent-info-border: #bfdbfe;
+  /* ========================================
+     TRANSITIONS
+     ======================================== */
   
-  /* ============================================
-   * BUTTON COLORS
-   * ============================================ */
+  --shopify-transition-fast: 100ms ease-in-out;
+  --shopify-transition-base: 200ms ease-in-out;
+  --shopify-transition-slow: 300ms ease-in-out;
   
-  /* Primary button */
-  --shopify-btn-primary-bg: #1a1a1a;
-  --shopify-btn-primary-text: #ffffff;
-  --shopify-btn-primary-hover: #333333;
+  /* ========================================
+     Z-INDEX
+     ======================================== */
   
-  /* Secondary button */
-  --shopify-btn-secondary-bg: transparent;
-  --shopify-btn-secondary-text: #1a1a1a;
-  --shopify-btn-secondary-border: #1a1a1a;
-  --shopify-btn-secondary-hover: #f6f6f7;
+  --shopify-z-index-dropdown: 100;
+  --shopify-z-index-sticky: 200;
+  --shopify-z-index-modal-backdrop: 500;
+  --shopify-z-index-modal: 600;
+  --shopify-z-index-toast: 700;
   
-  /* ============================================
-   * LAYOUT
-   * ============================================ */
+  /* ========================================
+     BREAKPOINTS (for reference in JS)
+     ======================================== */
   
-  /* Content max widths */
-  --shopify-max-width-sm: 640px;
-  --shopify-max-width-md: 768px;
-  --shopify-max-width-lg: 1024px;
-  --shopify-max-width-xl: 1200px;
-  
-  /* Sidebar width */
-  --shopify-sidebar-width: 240px;
-  
-  /* ============================================
-   * TRANSITIONS
-   * ============================================ */
-  
-  --shopify-transition-fast: 150ms ease;
-  --shopify-transition-normal: 200ms ease;
-  --shopify-transition-slow: 300ms ease;
-}
+  --shopify-breakpoint-mobile: 768px;
+  --shopify-breakpoint-tablet: 1024px;
+  --shopify-breakpoint-desktop: 1280px;
 
-/* ============================================
- * UTILITY CLASSES
- * ============================================ */
+  /* ========================================
+     BUTTON SYSTEM (Premium + Accent)
+     ======================================== */
 
-.shopify-bg-page {
-  background-color: var(--shopify-bg-page);
-}
+  /* Slightly less pill-like than input radius */
+  --button-border-radius: 12px;
 
-.shopify-bg-card {
-  background-color: var(--shopify-bg-card);
-}
+  /* Primary = neutral premium (not full violet) */
+  --btn-primary-bg: #0F172A;
+  --btn-primary-bg-hover: #111827;
+  --btn-primary-bg-active: #0B1220;
 
-.shopify-text-primary {
-  color: var(--shopify-text-primary);
-}
-
-.shopify-text-secondary {
-  color: var(--shopify-text-secondary);
-}
-
-.shopify-card {
-  background-color: var(--shopify-bg-card);
-  border: 1px solid var(--shopify-border);
-  border-radius: var(--shopify-radius);
-  box-shadow: var(--shopify-shadow-card);
-  padding: var(--shopify-card-padding);
-}
-
-.shopify-section-spacing {
-  margin-top: var(--shopify-section-gap);
+  /* Accent (gray) used sparingly for AI/assist actions */
+  --accent-primary-soft: rgba(31, 41, 55, 0.12);
+  --accent-primary-soft-hover: rgba(31, 41, 55, 0.18);
+  --accent-primary-ring: rgba(31, 41, 55, 0.28);
 }

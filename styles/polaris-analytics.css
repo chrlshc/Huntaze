@@ -1,0 +1,1782 @@
+/**
+ * Polaris Analytics Design Tokens
+ * 
+ * Exact Shopify/Polaris values for the Analytics dashboard.
+ * Based on Polaris Design System specifications.
+ */
+
+/* Polaris Analytics Scope */
+.polaris-analytics {
+  /* ============================================
+     POLARIS COLOR SYSTEM (Exact Values)
+     ============================================ */
+  
+  /* Background / Surfaces */
+  --p-bg-app: #F1F1F1;                    /* Page background - Polaris canvas */
+  --p-bg-surface: #FFFFFF;                /* Card/surface background */
+  --p-bg-surface-hover: #F7F7F7;          /* Hover state for interactive surfaces */
+  --p-bg-surface-pressed: #F1F1F1;        /* Pressed state */
+  --p-bg-surface-selected: #F1F1F1;       /* Selected state */
+  
+  /* Text Colors */
+  --p-text: #303030;                      /* Primary text */
+  --p-text-secondary: #616161;            /* Secondary/subdued text */
+  --p-text-disabled: #8C9196;             /* Disabled text */
+  
+  /* Interactive / Links */
+  --p-interactive: #005BD3;               /* Links, active filters, focus */
+  --p-interactive-hover: #004299;         /* Interactive hover */
+  --p-interactive-pressed: #003D8F;       /* Interactive pressed */
+  
+  /* Borders */
+  --p-border: #E3E3E3;                    /* Standard border */
+  --p-border-hover: #CCCCCC;              /* Border on hover */
+  --p-divider: #E3E3E3;                   /* Dividers/separators */
+  
+  /* Top Bar (Inverse/Dark) */
+  --p-bg-inverse: #1A1A1A;                /* Dark header background */
+  --p-text-inverse: #E3E3E3;              /* Text on dark background */
+  
+  /* Status Colors */
+  --p-success: #008060;
+  --p-success-subdued: #AEE9D1;
+  --p-warning: #916A00;
+  --p-warning-subdued: #FFD79D;
+  --p-critical: #D72C0D;
+  --p-critical-subdued: #FED3D1;
+  --p-info: #005BD3;
+  --p-info-subdued: #B4D4F7;
+  
+  /* ============================================
+     POLARIS TYPOGRAPHY
+     ============================================ */
+  
+  /* Font Family - Inter with system fallbacks */
+  --p-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  
+  /* Font Sizes */
+  --p-font-size-75: 12px;                 /* Labels, captions */
+  --p-font-size-100: 13px;                /* Small text */
+  --p-font-size-200: 14px;                /* Body text */
+  --p-font-size-300: 16px;                /* Subheadings */
+  --p-font-size-400: 20px;                /* KPI values */
+  --p-font-size-500: 24px;                /* Page titles */
+  
+  /* Font Weights (Polaris specific) */
+  --p-font-weight-regular: 450;
+  --p-font-weight-medium: 550;
+  --p-font-weight-semibold: 650;
+  --p-font-weight-bold: 700;
+  
+  /* Line Heights (4px grid aligned) */
+  --p-line-height-1: 16px;
+  --p-line-height-2: 20px;
+  --p-line-height-3: 24px;
+  --p-line-height-4: 28px;
+  --p-line-height-5: 32px;
+  
+  /* ============================================
+     POLARIS SPACING (4px base)
+     ============================================ */
+  
+  --p-space-100: 4px;
+  --p-space-200: 8px;
+  --p-space-300: 12px;
+  --p-space-400: 16px;                    /* Card padding, gaps */
+  --p-space-500: 20px;
+  --p-space-600: 24px;                    /* Section margins */
+  --p-space-800: 32px;                    /* Large section margins */
+  
+  /* ============================================
+     POLARIS SHADOWS
+     ============================================ */
+  
+  --p-shadow-100: 0 1px 0 rgba(0, 0, 0, 0.05);
+  --p-shadow-200: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --p-shadow-300: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --p-shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.1);
+  
+  /* ============================================
+     POLARIS BORDER RADIUS
+     ============================================ */
+  
+  --p-border-radius-100: 4px;
+  --p-border-radius-200: 8px;             /* Standard card radius */
+  --p-border-radius-300: 12px;
+  --p-border-radius-full: 9999px;
+  
+  /* ============================================
+     POLARIS TRANSITIONS
+     ============================================ */
+  
+  --p-duration-100: 100ms;
+  --p-duration-200: 200ms;
+  --p-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ============================================
+   POLARIS ANALYTICS BASE STYLES
+   ============================================ */
+
+.polaris-analytics {
+  background-color: var(--p-bg-app);
+  color: var(--p-text);
+  font-family: var(--p-font-family);
+  font-size: var(--p-font-size-200);
+  line-height: var(--p-line-height-2);
+  font-weight: var(--p-font-weight-regular);
+  /* Fit the dashboard main scroll container (avoid extra blank area from 100vh) */
+  min-height: 100%;
+}
+
+/* Page Header */
+.polaris-analytics .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.polaris-analytics .page-header .filter-pills {
+  margin-left: auto;
+}
+
+.polaris-analytics .page-title {
+  font-size: 18px;
+  font-weight: var(--p-font-weight-semibold);
+  color: var(--p-text);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.polaris-analytics .page-meta {
+  font-size: 12px;
+  color: var(--p-text-secondary);
+  line-height: 1.2;
+}
+
+/* Filter Pills */
+.polaris-analytics .filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.polaris-analytics .filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: var(--p-bg-surface);
+  border: 1px solid var(--p-border);
+  border-radius: var(--p-border-radius-200);
+  font-size: 12px;
+  font-weight: var(--p-font-weight-medium);
+  color: var(--p-text);
+  cursor: pointer;
+  transition: all var(--p-duration-100) var(--p-ease);
+}
+
+.polaris-analytics .filter-pill:hover {
+  background: var(--p-bg-surface-hover);
+  border-color: var(--p-border-hover);
+}
+
+.polaris-analytics .filter-pill.active {
+  background: var(--p-bg-surface-selected);
+  border-color: var(--p-interactive);
+  color: var(--p-interactive);
+}
+
+/* ============================================
+   POLARIS CARD
+   ============================================ */
+
+.polaris-analytics .p-card {
+  background: var(--p-bg-surface);
+  border: 1px solid var(--p-border);
+  border-radius: var(--p-border-radius-200);
+  box-shadow: var(--p-shadow-100);
+  overflow: hidden;
+}
+
+.polaris-analytics .p-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--p-space-400);
+  border-bottom: 1px solid var(--p-divider);
+  background: #fff;
+}
+
+.polaris-analytics .p-card-title {
+  font-size: var(--p-font-size-200);
+  font-weight: var(--p-font-weight-semibold);
+  color: #303030;
+  line-height: var(--p-line-height-2);
+  margin: 0;
+}
+
+.polaris-analytics .p-card-subtitle {
+  font-size: var(--p-font-size-75);
+  color: var(--p-text-secondary);
+  line-height: var(--p-line-height-1);
+  margin-top: 2px;
+}
+
+.polaris-analytics .p-card-body {
+  padding: var(--p-space-400);
+}
+
+.polaris-analytics .p-card-body.no-padding {
+  padding: 0;
+}
+
+/* ============================================
+   KPI CARDS (Top Row)
+   ============================================ */
+
+.polaris-analytics .kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .polaris-analytics .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .polaris-analytics .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.polaris-analytics .kpi-card {
+  background: var(--p-bg-surface);
+  border: 1px solid var(--p-border);
+  border-radius: var(--p-border-radius-200);
+  padding: 8px 12px;
+  box-shadow: var(--p-shadow-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.polaris-analytics .kpi-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.polaris-analytics .kpi-label {
+  font-size: 13px;
+  font-weight: var(--p-font-weight-semibold);
+  color: #303030;
+  line-height: 1.2;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.polaris-analytics .kpi-value {
+  font-size: 18px;
+  font-weight: var(--p-font-weight-regular);
+  color: #8C9196;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.polaris-analytics .kpi-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: var(--p-font-weight-medium);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.polaris-analytics .kpi-change.positive {
+  color: var(--p-success);
+}
+
+.polaris-analytics .kpi-change.negative {
+  color: var(--p-critical);
+}
+
+/* ============================================
+   CHART + BREAKDOWN LAYOUT
+   ============================================ */
+
+.polaris-analytics .chart-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--p-space-400);
+}
+
+.polaris-analytics .chart-section--single {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 1024px) {
+  .polaris-analytics .chart-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Breakdown List */
+.polaris-analytics .breakdown-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.polaris-analytics .breakdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--p-space-300) var(--p-space-400);
+  border-bottom: 1px solid var(--p-divider);
+  transition: background var(--p-duration-100) var(--p-ease);
+}
+
+.polaris-analytics .breakdown-item:last-child {
+  border-bottom: none;
+}
+
+.polaris-analytics .breakdown-item:hover {
+  background: var(--p-bg-surface-hover);
+}
+
+.polaris-analytics .breakdown-label {
+  font-size: 13px;
+  color: var(--p-text-secondary);
+  line-height: var(--p-line-height-2);
+}
+
+.polaris-analytics .breakdown-value {
+  font-size: 13px;
+  font-weight: var(--p-font-weight-medium);
+  color: var(--p-text);
+  line-height: var(--p-line-height-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   3-COLUMN GRID (Bottom Section)
+   ============================================ */
+
+.polaris-analytics .three-col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--p-space-400);
+}
+
+@media (max-width: 1024px) {
+  .polaris-analytics .three-col-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .polaris-analytics .three-col-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   FORM INPUTS - White background
+   ============================================ */
+
+.polaris-analytics input[type="text"],
+.polaris-analytics input[type="email"],
+.polaris-analytics input[type="password"],
+.polaris-analytics input[type="number"],
+.polaris-analytics textarea,
+.polaris-analytics select {
+  background: #fff !important;
+  color: #303030 !important;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.polaris-analytics .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--p-space-800);
+  text-align: center;
+}
+
+.polaris-analytics .empty-state-text {
+  font-size: var(--p-font-size-100);
+  color: var(--p-text-secondary);
+  line-height: var(--p-line-height-2);
+}
+
+/* ============================================
+   CHART STYLING (Minimal Polaris)
+   ============================================ */
+
+.polaris-analytics .chart-container {
+  height: 280px;
+  width: 100%;
+}
+
+/* Chart axis labels */
+.polaris-analytics .recharts-cartesian-axis-tick-value {
+  font-size: 12px !important;
+  fill: var(--p-text-secondary) !important;
+}
+
+/* Chart grid */
+.polaris-analytics .recharts-cartesian-grid-horizontal line,
+.polaris-analytics .recharts-cartesian-grid-vertical line {
+  stroke: var(--p-divider) !important;
+  stroke-opacity: 0.5 !important;
+}
+
+/* Legend */
+.polaris-analytics .chart-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--p-space-400);
+  padding: var(--p-space-300) var(--p-space-400);
+  border-top: 1px solid var(--p-divider);
+}
+
+.polaris-analytics .legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--p-space-200);
+  font-size: var(--p-font-size-75);
+  color: var(--p-text-secondary);
+}
+
+.polaris-analytics .legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--p-border-radius-full);
+}
+
+/* ============================================
+   CONTENT SPACING
+   ============================================ */
+
+.polaris-analytics .content-wrapper {
+  padding: 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.polaris-analytics .section-gap {
+  margin-top: 16px;
+}
+
+
+/* ============================================
+   MOBILE FULL-WIDTH CARDS (< 768px)
+   Edge-to-edge cards on mobile like native apps
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Mobile spacing variables */
+  .polaris-analytics {
+    --mobile-card-gap: 12px;
+    --mobile-section-gap: 16px;
+  }
+  
+  /* Page header - stack on mobile */
+  .polaris-analytics .page-header {
+    padding: 12px 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  /* Filter pills - full width on mobile */
+  .polaris-analytics .page-header .filter-pills {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  /* Content wrapper - proper padding */
+  .polaris-analytics .content-wrapper {
+    padding: 16px 12px 16px !important;
+    gap: var(--mobile-section-gap) !important;
+  }
+  
+  /* KPI Cards - proper styling */
+  .polaris-analytics .kpi-card {
+    border-radius: 10px !important;
+    border: 1px solid var(--p-border) !important;
+    padding: 12px !important;
+  }
+  
+  /* KPI Grid - 2 columns on mobile */
+  .polaris-analytics .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  /* P-Card - proper mobile styling */
+  .polaris-analytics .p-card {
+    border-radius: 10px !important;
+    border: 1px solid var(--p-border) !important;
+    overflow: hidden;
+  }
+  
+  /* P-Card header - stack on mobile when needed */
+  .polaris-analytics .p-card-header {
+    padding: 12px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  
+  /* P-Card body - less padding on mobile */
+  .polaris-analytics .p-card-body {
+    padding: 12px !important;
+  }
+  
+  .polaris-analytics .p-card-body.no-padding {
+    padding: 0 !important;
+  }
+  
+  /* Analytics KPI Stack - complete border */
+  .polaris-analytics .analytics-kpi-stack {
+    border-radius: 10px !important;
+    border: 1px solid var(--p-border) !important;
+  }
+  
+  /* Three column grid - single column on mobile */
+  .polaris-analytics .three-col-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Chart section - vertical gap */
+  .polaris-analytics .chart-section {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Banner - full width */
+  .polaris-analytics .mobile-full-width-banner {
+    border-radius: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+}
+
+/* Small mobile (< 480px) - tighter spacing */
+@media (max-width: 479px) {
+  .polaris-analytics {
+    --mobile-card-gap: 6px;
+    --mobile-section-gap: 12px;
+  }
+}
+
+/* ============================================
+   MOBILE INTERNAL CONTENT FIXES (< 768px)
+   Fix content overflow inside cards
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Quick Actions grid - 2 columns on mobile */
+  .polaris-analytics .content-wrapper > div[style*="grid-template-columns: repeat(4"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  /* Breakdown items - stack vertically, prevent overflow */
+  .polaris-analytics .breakdown-item {
+    padding: 12px !important;
+  }
+  
+  .polaris-analytics .breakdown-item > div:first-child {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  
+  /* Stats row in automation items - wrap on mobile */
+  .polaris-analytics .breakdown-item > div:last-child {
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    margin-left: 0 !important;
+  }
+  
+  /* Analytics KPI cards - more compact */
+  .polaris-analytics .analytics-kpi-card {
+    padding: 12px 14px !important;
+  }
+  
+  /* Sparkline - hide on very small screens */
+  .polaris-analytics .analytics-kpi-sparkline {
+    display: none;
+  }
+  
+  /* Template cards in scroll container */
+  .polaris-analytics .template-card {
+    min-width: 240px !important;
+    flex: 0 0 240px !important;
+  }
+  
+  /* Pro tip and CTA cards - stack content */
+  .polaris-analytics .p-card-body[style*="justify-content: space-between"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  /* Buttons in CTA cards - full width */
+  .polaris-analytics .p-card-body[style*="justify-content: space-between"] > a {
+    width: 100%;
+  }
+  
+  .polaris-analytics .p-card-body[style*="justify-content: space-between"] > a > button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   MOBILE ENHANCED SPACING (< 768px)
+   More space between cards, titles, and special cards
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* More space between cards */
+  .polaris-analytics .content-wrapper {
+    gap: 20px !important;
+  }
+  
+  /* More space between title and card with dark header */
+  .polaris-analytics .p-card-header {
+    margin-top: 8px;
+  }
+  
+  /* Larger gap before cards with dark headers */
+  .polaris-analytics .p-card:has(.p-card-header) {
+    margin-top: 12px;
+  }
+  
+  /* Quick actions grid - 2 columns on mobile */
+  .polaris-analytics .content-wrapper > div[style*="grid-template-columns: repeat(4"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
+/* ============================================
+   POPULAR TEMPLATES - HORIZONTAL SCROLL (Mobile)
+   ============================================ */
+
+/* Desktop: Grid layout */
+.polaris-analytics .templates-scroll-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.polaris-analytics .template-card {
+  padding: 16px;
+  border: 1px solid var(--p-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.polaris-analytics .template-card:hover {
+  background: var(--p-bg-surface-hover);
+}
+
+@media (max-width: 767px) {
+  /* Templates grid becomes horizontal scroll */
+  .polaris-analytics .templates-scroll-container {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 12px !important;
+    padding-bottom: 8px !important;
+    margin: 0 -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Template cards - fixed width for scroll */
+  .polaris-analytics .template-card {
+    flex: 0 0 280px !important;
+    min-width: 280px !important;
+    scroll-snap-align: start !important;
+  }
+  
+  /* Subtle scrollbar */
+  .polaris-analytics .templates-scroll-container::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .polaris-analytics .templates-scroll-container::-webkit-scrollbar-track {
+    background: var(--p-bg-app);
+    border-radius: 2px;
+  }
+  
+  .polaris-analytics .templates-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--p-border);
+    border-radius: 2px;
+  }
+}
+
+/* ============================================
+   QUICK ACTIONS GRID
+   ============================================ */
+
+.polaris-analytics .quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .polaris-analytics .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 479px) {
+  .polaris-analytics .quick-actions-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* ============================================
+   AUTOMATION ITEMS
+   ============================================ */
+
+.polaris-analytics .automation-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid var(--p-divider);
+}
+
+.polaris-analytics .automation-item:last-child {
+  border-bottom: none;
+}
+
+.polaris-analytics .automation-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.polaris-analytics .automation-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.polaris-analytics .automation-item-name {
+  font-size: 14px;
+  font-weight: 550;
+  color: #303030;
+  word-break: break-word;
+}
+
+.polaris-analytics .automation-item-status {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.polaris-analytics .automation-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.polaris-analytics .automation-item-desc {
+  font-size: 13px;
+  color: #616161;
+  margin: 0;
+  padding-left: 16px;
+}
+
+.polaris-analytics .automation-item-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding-left: 16px;
+  font-size: 12px;
+  color: #616161;
+}
+
+.polaris-analytics .automation-item-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .polaris-analytics .automation-item {
+    padding: 12px;
+  }
+  
+  .polaris-analytics .automation-item-header {
+    flex-wrap: wrap;
+  }
+  
+  .polaris-analytics .automation-item-desc,
+  .polaris-analytics .automation-item-stats {
+    padding-left: 0;
+  }
+}
+
+/* ============================================
+   CTA CARD STYLES
+   ============================================ */
+
+.polaris-analytics .cta-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.polaris-analytics .cta-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.polaris-analytics .cta-card-icon {
+  width: 48px;
+  height: 48px;
+  background: #F1F1F1;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.polaris-analytics .cta-button {
+  background: #303030;
+  color: #fff;
+  border: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .polaris-analytics .cta-card-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .polaris-analytics .cta-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   INTEGRATION CARDS (New Design)
+   ============================================ */
+
+.polaris-analytics .integration-card {
+  padding: 16px;
+  border-bottom: 1px solid var(--p-divider);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.polaris-analytics .integration-card:last-child {
+  border-bottom: none;
+}
+
+.polaris-analytics .integration-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.polaris-analytics .integration-card-icon {
+  width: 40px;
+  height: 40px;
+  background: #F3F4F6;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.polaris-analytics .integration-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.polaris-analytics .integration-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.polaris-analytics .integration-card-status {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.polaris-analytics .integration-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 52px;
+}
+
+.polaris-analytics .integration-card-account {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.polaris-analytics .integration-card-sync-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.polaris-analytics .integration-card-sync-info span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.polaris-analytics .integration-card-scope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.polaris-analytics .scope-label {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.polaris-analytics .scope-tag {
+  font-size: 11px;
+  color: #374151;
+  background: #F3F4F6;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.polaris-analytics .scope-tag--muted {
+  color: #9CA3AF;
+  background: #F9FAFB;
+  border: 1px dashed #E5E7EB;
+}
+
+.polaris-analytics .scope-tag--warning {
+  color: #92400E;
+  background: #FEF3C7;
+}
+
+.polaris-analytics .integration-card-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #92400E;
+  font-weight: 500;
+}
+
+.polaris-analytics .integration-card-value-prop {
+  font-size: 13px;
+  color: #374151;
+}
+
+.polaris-analytics .integration-card-meta {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+.polaris-analytics .integration-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 52px;
+  margin-top: 4px;
+}
+
+@media (max-width: 767px) {
+  .polaris-analytics .integration-card {
+    padding: 12px;
+  }
+  
+  .polaris-analytics .integration-card-content,
+  .polaris-analytics .integration-card-actions {
+    padding-left: 0;
+  }
+  
+  .polaris-analytics .integration-card-actions {
+    width: 100%;
+  }
+  
+  .polaris-analytics .integration-card-actions .filter-pill {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+}
+
+/* ============================================
+   ACTIVITY ITEMS
+   ============================================ */
+
+.polaris-analytics .activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--p-divider);
+}
+
+.polaris-analytics .activity-item:last-child {
+  border-bottom: none;
+}
+
+.polaris-analytics .activity-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.polaris-analytics .activity-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.polaris-analytics .activity-item-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.polaris-analytics .activity-item-detail {
+  font-weight: 400;
+  color: #6B7280;
+}
+
+.polaris-analytics .activity-item-time {
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+@media (max-width: 767px) {
+  .polaris-analytics .activity-item {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .polaris-analytics .activity-item .filter-pill {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   SECURITY GRID
+   ============================================ */
+
+.polaris-analytics .security-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.polaris-analytics .security-item {
+  padding: 12px;
+  border: 1px solid #E3E3E3;
+  border-radius: 8px;
+}
+
+.polaris-analytics .security-item-title {
+  font-size: 14px;
+  font-weight: 550;
+  color: #303030;
+  margin-bottom: 4px;
+}
+
+.polaris-analytics .security-item-desc {
+  font-size: 13px;
+  color: #616161;
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .polaris-analytics .security-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* ============================================
+   SHOPIFY ANALYTICS HEADER STYLE
+   ============================================ */
+
+.polaris-analytics .analytics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--p-bg-app);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.polaris-analytics .analytics-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--p-text);
+  margin: 0;
+}
+
+.polaris-analytics .analytics-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.polaris-analytics .analytics-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--p-bg-surface);
+  border: 1px solid var(--p-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--p-text);
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+
+.polaris-analytics .analytics-filter-btn:hover {
+  background: var(--p-bg-surface-hover);
+  border-color: var(--p-border-hover);
+}
+
+/* ============================================
+   SHOPIFY ANALYTICS KPI CARDS (Full-width stacked)
+   ============================================ */
+
+.polaris-analytics .analytics-kpi-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--p-bg-surface);
+  border: 1px solid var(--p-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.polaris-analytics .analytics-kpi-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--p-divider);
+}
+
+.polaris-analytics .analytics-kpi-card:last-child {
+  border-bottom: none;
+}
+
+.polaris-analytics .analytics-kpi-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.polaris-analytics .analytics-kpi-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--p-text);
+}
+
+.polaris-analytics .analytics-kpi-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.polaris-analytics .analytics-kpi-value {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--p-text-secondary);
+}
+
+.polaris-analytics .analytics-kpi-change {
+  font-size: 14px;
+  color: var(--p-text-disabled);
+}
+
+.polaris-analytics .analytics-kpi-sparkline {
+  flex-shrink: 0;
+}
+
+.polaris-analytics .analytics-kpi-sparkline svg {
+  display: block;
+}
+
+/* Mobile adjustments for analytics header */
+@media (max-width: 767px) {
+  .polaris-analytics .analytics-header {
+    padding: 12px 16px;
+  }
+  
+  .polaris-analytics .analytics-title {
+    font-size: 16px;
+  }
+  
+  .polaris-analytics .analytics-filter-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .polaris-analytics .analytics-kpi-card {
+    padding: 14px 16px;
+  }
+  
+  .polaris-analytics .analytics-kpi-label {
+    font-size: 14px;
+  }
+  
+  .polaris-analytics .analytics-kpi-value {
+    font-size: 16px;
+  }
+}
+
+
+/* ============================================
+   CALENDAR COMPONENT - RESPONSIVE
+   ============================================ */
+
+.polaris-analytics .calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #E3E3E3;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.polaris-analytics .calendar-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.polaris-analytics .calendar-nav-btn {
+  padding: 8px 10px !important;
+}
+
+.polaris-analytics .calendar-nav-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303030;
+  min-width: 160px;
+  text-align: center;
+}
+
+.polaris-analytics .calendar-grid-container {
+  padding: 12px;
+}
+
+.polaris-analytics .calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.polaris-analytics .calendar-weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #9CA3AF;
+  padding: 8px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.polaris-analytics .calendar-weekday-short {
+  display: none;
+}
+
+.polaris-analytics .calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.polaris-analytics .calendar-day {
+  min-height: 80px;
+  padding: 6px;
+  border: 1px solid #E3E3E3;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.1s;
+  position: relative;
+}
+
+.polaris-analytics .calendar-day:hover {
+  border-color: #CCCCCC;
+  background: #FAFAFA;
+}
+
+.polaris-analytics .calendar-day--today {
+  border: 2px solid #303030;
+}
+
+.polaris-analytics .calendar-day--other-month {
+  background: #F9FAFB;
+}
+
+.polaris-analytics .calendar-day--other-month .calendar-day-number {
+  color: #D1D5DB;
+}
+
+.polaris-analytics .calendar-day-number {
+  font-size: 13px;
+  font-weight: 500;
+  color: #303030;
+  margin-bottom: 4px;
+}
+
+.polaris-analytics .calendar-day-number--today {
+  background: #111;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.polaris-analytics .calendar-day-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.polaris-analytics .calendar-event {
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  background: #E5E7EB;
+  color: #303030;
+}
+
+.polaris-analytics .calendar-event--draft {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.polaris-analytics .calendar-event-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.polaris-analytics .calendar-event-more {
+  font-size: 10px;
+  color: #9CA3AF;
+  padding-left: 6px;
+}
+
+.polaris-analytics .calendar-day-dot {
+  display: none;
+}
+
+/* Mobile Calendar Styles */
+@media (max-width: 767px) {
+  .polaris-analytics .calendar-nav {
+    padding: 12px;
+  }
+  
+  .polaris-analytics .calendar-nav-controls {
+    gap: 8px;
+  }
+  
+  .polaris-analytics .calendar-nav-title {
+    font-size: 16px;
+    min-width: 120px;
+  }
+  
+  .polaris-analytics .calendar-grid-container {
+    padding: 8px;
+  }
+  
+  /* Show short weekday names on mobile */
+  .polaris-analytics .calendar-weekday-full {
+    display: none;
+  }
+  
+  .polaris-analytics .calendar-weekday-short {
+    display: block;
+  }
+  
+  .polaris-analytics .calendar-weekday {
+    padding: 4px 2px;
+    font-size: 11px;
+  }
+  
+  .polaris-analytics .calendar-days {
+    gap: 2px;
+  }
+  
+  .polaris-analytics .calendar-day {
+    min-height: 44px;
+    padding: 4px;
+    border-radius: 4px;
+  }
+  
+  .polaris-analytics .calendar-day-number {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  
+  .polaris-analytics .calendar-day-number--today {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+  
+  /* Hide event details on mobile, show dot indicator */
+  .polaris-analytics .calendar-event {
+    display: none;
+  }
+  
+  .polaris-analytics .calendar-event-more {
+    display: none;
+  }
+  
+  .polaris-analytics .calendar-day-dot {
+    display: block;
+    width: 6px;
+    height: 6px;
+    background: #303030;
+    border-radius: 50%;
+    margin: 2px auto 0;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+  .polaris-analytics .calendar-day {
+    min-height: 36px;
+    padding: 3px;
+  }
+  
+  .polaris-analytics .calendar-day-number {
+    font-size: 11px;
+  }
+  
+  .polaris-analytics .calendar-day-number--today {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  
+  .polaris-analytics .calendar-day-dot {
+    width: 5px;
+    height: 5px;
+  }
+}
+
+/* ============================================
+   MARKETING PAGES - MOBILE RESPONSIVE
+   ============================================ */
+
+/* Marketing page main grid - stack on mobile */
+@media (max-width: 1024px) {
+  .polaris-analytics [style*="grid-template-columns: 1fr 340px"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Marketing quick nav cards - 2 columns on tablet, 1 on mobile */
+@media (max-width: 767px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fit, minmax(200px, 1fr))"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 479px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fit, minmax(200px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Marketing KPI cards - responsive grid */
+@media (max-width: 767px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Marketing AI banner - stack on mobile */
+@media (max-width: 640px) {
+  .polaris-analytics [style*="linear-gradient(135deg, #7C3AED"] {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 16px !important;
+  }
+  
+  .polaris-analytics [style*="linear-gradient(135deg, #7C3AED"] > div:first-child {
+    flex-direction: column !important;
+    text-align: center;
+  }
+}
+
+/* Platform cards grid - responsive */
+@media (max-width: 767px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fill, minmax(220px, 1fr))"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 479px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fill, minmax(220px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Upcoming content cards - responsive */
+@media (max-width: 767px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(auto-fill, minmax(280px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* Calendar grid - smaller cells on mobile */
+@media (max-width: 767px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(7, 1fr)"] {
+    gap: 2px !important;
+  }
+  
+  .polaris-analytics [style*="minHeight: 90"] {
+    min-height: 60px !important;
+    padding: 4px !important;
+  }
+}
+
+@media (max-width: 479px) {
+  .polaris-analytics [style*="minHeight: 90"] {
+    min-height: 44px !important;
+    padding: 2px !important;
+  }
+}
+
+/* Page header - stack on mobile */
+@media (max-width: 640px) {
+  .polaris-analytics .page-header {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+  }
+  
+  .polaris-analytics .page-header .filter-pills {
+    margin-left: auto;
+  }
+  
+  .polaris-analytics .page-header .filter-pills button {
+    white-space: nowrap;
+  }
+}
+
+/* Content queue table - horizontal scroll on mobile */
+@media (max-width: 767px) {
+  .polaris-analytics [style*="maxHeight: 400"] {
+    max-height: 300px !important;
+  }
+  
+  .polaris-analytics [style*="padding: '12px 20px'"][style*="borderBottom"] {
+    padding: 10px 12px !important;
+  }
+}
+
+/* Tone selection grid - single column on mobile */
+@media (max-width: 479px) {
+  .polaris-analytics [style*="gridTemplateColumns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Modal - full width on mobile */
+@media (max-width: 520px) {
+  .polaris-analytics [style*="maxWidth: 480"] {
+    max-width: 100% !important;
+    margin: 0 8px;
+    border-radius: 12px !important;
+  }
+}
+
+/* ============================================
+   MARKETING PAGES - HOVER EFFECTS
+   ============================================ */
+
+/* Card hover effects */
+.polaris-analytics [style*="cursor: pointer"][style*="transition"] {
+  transition: all 0.15s ease !important;
+}
+
+.polaris-analytics [style*="cursor: pointer"][style*="transition"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Button hover effects */
+.polaris-analytics button[style*="background: '#111'"] {
+  transition: all 0.15s ease !important;
+}
+
+.polaris-analytics button[style*="background: '#111'"]:hover {
+  background: #333 !important;
+  transform: translateY(-1px);
+}
+
+/* Platform filter buttons */
+.polaris-analytics [style*="borderRadius: 6"][style*="cursor: pointer"] {
+  transition: all 0.15s ease !important;
+}
+
+/* Quick nav cards hover */
+.polaris-analytics a[style*="textDecoration: 'none'"] > div[style*="cursor: pointer"] {
+  transition: all 0.15s ease !important;
+}
+
+.polaris-analytics a[style*="textDecoration: 'none'"] > div[style*="cursor: pointer"]:hover {
+  border-color: #D1D5DB !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Toggle switch animation */
+.polaris-analytics button[style*="width: 44"][style*="height: 24"] {
+  transition: background 0.2s ease !important;
+}
+
+.polaris-analytics button[style*="width: 44"][style*="height: 24"] > div {
+  transition: left 0.2s ease !important;
+}
+
+/* Status badge hover */
+.polaris-analytics [style*="borderRadius: 6"][style*="fontWeight: 500"][style*="fontSize: 11"] {
+  transition: all 0.15s ease !important;
+}
+
+/* Input focus states */
+.polaris-analytics textarea:focus,
+.polaris-analytics select:focus,
+.polaris-analytics input:focus {
+  outline: none !important;
+  border-color: #6366F1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Checkbox styling */
+.polaris-analytics input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #111;
+}
+
+/* Scrollbar styling for content queue */
+.polaris-analytics [style*="overflowY: 'auto'"] {
+  scrollbar-width: thin;
+  scrollbar-color: #E5E7EB transparent;
+}
+
+.polaris-analytics [style*="overflowY: 'auto'"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.polaris-analytics [style*="overflowY: 'auto'"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.polaris-analytics [style*="overflowY: 'auto'"]::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+  border-radius: 3px;
+}
+
+.polaris-analytics [style*="overflowY: 'auto'"]::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}

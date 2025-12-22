@@ -16,25 +16,24 @@
  * Requirement 9.3: Focus indicator visibility
  */
 
-/* Default focus-visible styles for all interactive elements */
-button:focus-visible,
-a:focus-visible,
+/* Default focus-visible styles (no violet by default) */
+:focus-visible {
+  outline: 2px solid var(--a11y-focus-outline-color, rgba(44, 110, 203, 0.55));
+  outline-offset: 2px;
+}
+
+/* Form controls: use a ring instead of an outline for a cleaner "product" look */
 input:focus-visible,
 textarea:focus-visible,
-select:focus-visible,
-[role="button"]:focus-visible,
-[role="link"]:focus-visible,
-[role="tab"]:focus-visible,
-[role="menuitem"]:focus-visible,
-[tabindex]:focus-visible {
-  outline: 3px solid rgba(125, 87, 193, 0.5);
-  outline-offset: 2px;
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--a11y-focus-ring-color, rgba(44, 110, 203, 0.35));
 }
 
 /* Alternative ring-based focus indicator */
 .focus-ring:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(125, 87, 193, 0.3);
+  box-shadow: 0 0 0 3px var(--a11y-focus-ring-color, rgba(44, 110, 203, 0.35));
 }
 
 /* High contrast focus indicator for better visibility */
@@ -100,13 +99,15 @@ select:focus-visible,
 }
 
 /* Ensure all interactive elements meet minimum size */
-button,
-a[role="button"],
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-[role="button"] {
-  min-height: 44px;
+@media (pointer: coarse) {
+  button:not([role="switch"]),
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"] {
+    min-height: 44px;
+  }
 }
 
 /* Input fields should be at least 40px (close to 44px with padding) */
@@ -246,11 +247,7 @@ select {
   outline: none;
 }
 
-/* Ensure focus is always visible for keyboard users */
-:focus-visible {
-  outline: 3px solid rgba(125, 87, 193, 0.5);
-  outline-offset: 2px;
-}
+/* Ensure focus is always visible for keyboard users (defined above) */
 
 /* ========================================
    ARIA LIVE REGIONS

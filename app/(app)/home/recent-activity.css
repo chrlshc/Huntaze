@@ -57,9 +57,6 @@
   transition: background-color var(--transition-base);
 }
 
-.activity-item:hover {
-  background-color: var(--bg-app);
-}
 
 .activity-item:last-child {
   border-bottom: none;
@@ -258,9 +255,6 @@
     transition: none;
   }
   
-  .activity-item:hover {
-    transform: none;
-  }
   
   .load-more-button {
     transition: none;

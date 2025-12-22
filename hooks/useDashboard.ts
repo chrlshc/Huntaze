@@ -2,6 +2,7 @@
 
 import useSWR from 'swr';
 import { getConfigForEndpoint } from '@/lib/swr/config';
+import { standardFetcher } from '@/lib/swr';
 
 export interface DashboardSummary {
   totalRevenue: {
@@ -72,8 +73,6 @@ export interface DashboardOptions {
   refetchInterval?: number;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 /**
  * Hook to fetch dashboard data
  */
@@ -100,7 +99,7 @@ export function useDashboard(options: DashboardOptions = {}) {
     refreshInterval: refetchInterval, // Allow user override
   };
 
-  return useSWR<{ success: boolean; data: DashboardData }>(url, fetcher, swrConfig);
+  return useSWR<{ success: boolean; data: DashboardData }>(url, standardFetcher, swrConfig);
 }
 
 /**

@@ -112,7 +112,7 @@ export default function ContactSalesModal({ isOpen, onClose }: ContactSalesModal
                           required
                           value={formData.firstName}
                           onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -124,7 +124,7 @@ export default function ContactSalesModal({ isOpen, onClose }: ContactSalesModal
                           required
                           value={formData.lastName}
                           onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -139,7 +139,7 @@ export default function ContactSalesModal({ isOpen, onClose }: ContactSalesModal
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent"
                       />
                     </div>
                     
@@ -151,7 +151,7 @@ export default function ContactSalesModal({ isOpen, onClose }: ContactSalesModal
                         type="text"
                         value={formData.company}
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent"
                         placeholder="Your creator name or brand"
                       />
                     </div>
@@ -242,7 +242,7 @@ export default function ContactSalesModal({ isOpen, onClose }: ContactSalesModal
                       <select
                         value={formData.teamSize}
                         onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent"
                       >
                         <option value="">Select your setup</option>
                         <option value="solo">Just me, no help</option>
@@ -260,7 +260,7 @@ export default function ContactSalesModal({ isOpen, onClose }: ContactSalesModal
                       <select
                         value={formData.timeline}
                         onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] focus:border-transparent"
                       >
                         <option value="">Select timeline</option>
                         <option value="asap">ASAP</option>

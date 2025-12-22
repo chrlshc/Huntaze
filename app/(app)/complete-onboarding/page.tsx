@@ -11,8 +11,21 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function CompleteOnboarding() {
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <div className="p-6">
+        <EmptyState
+          variant="no-data"
+          title="Not available"
+          description="This developer utility is disabled in production."
+        />
+      </div>
+    );
+  }
+
   const [status, setStatus] = useState('');
   const router = useRouter();
   
@@ -32,8 +45,8 @@ export default function CompleteOnboarding() {
       } else {
         setStatus('Failed to complete onboarding');
       }
-    } catch (error) {
-      setStatus('Error: ' + error);
+    } catch {
+      setStatus('Failed to complete onboarding');
     }
   };
 

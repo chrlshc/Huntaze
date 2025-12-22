@@ -48,7 +48,7 @@ Create a video showing the complete flow:
 ## Environment Variables Needed
 Add these to your .env.local and AWS Amplify:
 ```
-TIKTOK_CLIENT_KEY=Acdg4lRaNSTnQvXFreYzaHEnH8QYHi1K
+TIKTOK_CLIENT_KEY=your-tiktok-client-key
 TIKTOK_CLIENT_SECRET=[Get from TikTok Developer Portal]
 NEXT_PUBLIC_TIKTOK_REDIRECT_URI=https://huntaze.com/auth/tiktok/callback
 ```

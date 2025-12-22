@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { navigationConfig } from '@/config/navigation';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +22,8 @@ export interface MarketingFooterProps {
  */
 export function MarketingFooter({ className }: MarketingFooterProps) {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+  const disableHover = pathname === '/';
 
   return (
     <footer
@@ -46,14 +49,20 @@ export function MarketingFooter({ className }: MarketingFooterProps) {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        className={cn(
+                          'text-sm text-muted-foreground',
+                          !disableHover && 'transition-colors hover:text-foreground'
+                        )}
                       >
                         {link.label}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        className={cn(
+                          'text-sm text-muted-foreground',
+                          !disableHover && 'transition-colors hover:text-foreground'
+                        )}
                       >
                         {link.label}
                       </Link>
@@ -86,7 +95,10 @@ export function MarketingFooter({ className }: MarketingFooterProps) {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
+                    className={cn(
+                      'text-muted-foreground',
+                      !disableHover && 'transition-colors hover:text-foreground'
+                    )}
                     aria-label={`Visit our ${social.platform} page`}
                   >
                     <Icon className="h-5 w-5" aria-hidden="true" />

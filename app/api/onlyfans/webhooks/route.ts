@@ -6,11 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  processWebhook,
-  verifyWebhookSignature,
-  WebhookPayload
-} from '@/lib/automations/webhook-integration';
+import { type WebhookPayload } from '@/lib/automations/webhook-integration';
+import { computeWebhookExternalId, webhookProcessor } from '@/lib/services/webhookProcessor';
 
 // ============================================
 // Types
@@ -29,18 +26,41 @@ interface WebhookResponse {
 
 export async function POST(request: NextRequest): Promise<NextResponse<WebhookResponse>> {
   try {
+    const webhookSecret = process.env.ONLYFANS_WEBHOOK_SECRET;
+    if (process.env.NODE_ENV === 'production' && !webhookSecret) {
+      return NextResponse.json(
+        { success: false, message: 'OnlyFans webhook not configured' },
+        { status: 503 }
+      );
+    }
+
     // Get raw body for signature verification
     const rawBody = await request.text();
     
     // Verify webhook signature
-    const signature = request.headers.get('x-onlyfans-signature') || '';
-    const webhookSecret = process.env.ONLYFANS_WEBHOOK_SECRET || '';
-    
-    if (webhookSecret && !verifyWebhookSignature(rawBody, signature, webhookSecret)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid webhook signature' },
-        { status: 401 }
+    const signatureHeader = request.headers.get('x-onlyfans-signature') || undefined;
+
+    if (webhookSecret) {
+      if (!signatureHeader) {
+        return NextResponse.json(
+          { success: false, message: 'Missing webhook signature' },
+          { status: 401 }
+        );
+      }
+
+      const isValid = webhookProcessor.verifySignature(
+        'onlyfans',
+        rawBody,
+        signatureHeader,
+        webhookSecret
       );
+
+      if (!isValid) {
+        return NextResponse.json(
+          { success: false, message: 'Invalid webhook signature' },
+          { status: 401 }
+        );
+      }
     }
 
     // Parse the payload
@@ -62,34 +82,51 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
       );
     }
 
-    // Extract userId from payload or headers
-    const userId = Number(payload.data.creatorId || request.headers.get('x-creator-id') || 0);
-    
-    if (!userId) {
+    // Allow legacy header-based creator attribution.
+    if (!payload.data.creatorId) {
+      const headerCreatorId = request.headers.get('x-creator-id');
+      if (headerCreatorId) {
+        payload.data.creatorId = headerCreatorId;
+      }
+    }
+
+    const userId = Number(payload.data.creatorId || 0);
+    if (!userId || Number.isNaN(userId)) {
       return NextResponse.json(
         { success: false, message: 'Missing creator ID' },
         { status: 400 }
       );
     }
 
-    // Process the webhook
-    const result = await processWebhook(userId, payload);
-
-    if (!result.processed) {
-      return NextResponse.json(
-        { success: false, message: result.error || 'Failed to process webhook' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: result.triggerEmitted 
-        ? `Trigger ${result.triggerType} emitted successfully`
-        : 'Webhook processed, no trigger emitted',
-      triggerEmitted: result.triggerEmitted,
-      triggerType: result.triggerType
+    const eventType = payload.event;
+    const externalId = computeWebhookExternalId({
+      provider: 'onlyfans',
+      eventType,
+      rawBody,
+      payload,
     });
+
+    // Respond immediately and process asynchronously (idempotent via webhook_events table).
+    const response = NextResponse.json({
+      success: true,
+      message: 'Webhook received',
+    });
+
+    setImmediate(async () => {
+      try {
+        await webhookProcessor.processEvent({
+          provider: 'onlyfans',
+          eventType,
+          externalId,
+          payload,
+          signature: signatureHeader,
+        });
+      } catch (error) {
+        console.error('OnlyFans webhook processing error:', error);
+      }
+    });
+
+    return response;
 
   } catch (error) {
     console.error('Webhook processing error:', error);

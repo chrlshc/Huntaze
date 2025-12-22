@@ -7,6 +7,9 @@
  * Requirements: 5.3 - Alerting on anomalies
  */
 
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
+
 export type AlertChannel = 'slack' | 'email' | 'console';
 export type AlertSeverity = 'info' | 'warning' | 'critical';
 
@@ -246,17 +249,27 @@ export class AlertingService {
     };
 
     try {
-      const response = await fetch(this.config.slackWebhookUrl, {
+      const response = await externalFetch(this.config.slackWebhookUrl, {
+        service: 'slack',
+        operation: 'canary.alert',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        cache: 'no-store',
+        timeoutMs: 5_000,
+        retry: { maxRetries: 1, retryMethods: ['POST'] },
+        throwOnHttpError: false,
       });
 
       if (!response.ok) {
         console.error('[AlertingService] Slack alert failed:', response.statusText);
       }
     } catch (error) {
-      console.error('[AlertingService] Slack alert error:', error);
+      if (isExternalServiceError(error)) {
+        console.error('[AlertingService] Slack alert error:', error.code, error.message);
+      } else {
+        console.error('[AlertingService] Slack alert error:', error);
+      }
     }
   }
 

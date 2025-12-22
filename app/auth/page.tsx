@@ -18,7 +18,7 @@ export default async function AuthPage({ searchParams }: { searchParams: Promise
   }
 
   const qs = params.toString();
-  const target = `/auth/register${qs ? `?${qs}` : ''}`;
+  const target = `/auth/login${qs ? `?${qs}` : ''}`;
 
   redirect(target);
 }

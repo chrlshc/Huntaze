@@ -28,7 +28,7 @@ export default function CreatorMessagesPage() {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               placeholder="Type your message..."
-              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2c6ecb]"
               rows={4}
             />
             <Button variant="primary">

@@ -3,6 +3,7 @@
  * 
  * Routes requests to appropriate agents and combines their intelligence.
  * Supports both Legacy and Foundry providers with feature flag routing.
+ * Integrates Azure AI services: Phi-4 Multimodal and Azure Speech Batch.
  * 
  * Requirements: 3.1, 3.2, 3.7, 3.8, 6.1, 6.2, 6.3, 6.4, 6.5
  */
@@ -15,17 +16,21 @@ import { AnalyticsAgent } from './agents/analytics';
 import { SalesAgent } from './agents/sales';
 import { 
   AIProviderConfig, 
-  getAIProviderConfig, 
-  AIProvider 
+  getAIProviderConfig,
 } from './config/provider-config';
 import { 
   FoundryAgentRegistry, 
   getFoundryAgentRegistry,
   FoundryAgentType 
 } from './foundry/agent-registry';
-import { withRetry, RetryConfig } from './foundry/retry';
-import { getCircuitBreaker, CircuitOpenError } from './foundry/circuit-breaker';
-import { v4 as uuidv4 } from 'uuid';
+import { withRetry } from './foundry/retry';
+import { getCircuitBreaker } from './foundry/circuit-breaker';
+import { getRouterClient, TaskModality } from './foundry/router-client';
+
+// Simple correlation ID generator (no external dependency)
+function generateCorrelationId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+}
 
 /**
  * Response metadata for tracking and observability
@@ -241,7 +246,7 @@ export class AITeamCoordinator {
     metadata: Partial<ResponseMetadata>
   ): CoordinatorResponse {
     const enrichedMetadata: ResponseMetadata = {
-      correlationId: metadata.correlationId || uuidv4(),
+      correlationId: metadata.correlationId || generateCorrelationId(),
       provider: metadata.provider || 'legacy',
       model: metadata.model || response.usage?.model,
       deployment: metadata.deployment || response.usage?.deployment,
@@ -267,7 +272,7 @@ export class AITeamCoordinator {
    */
   async route(request: AIRequest): Promise<CoordinatorResponse> {
     const startTime = Date.now();
-    const correlationId = uuidv4();
+    const correlationId = generateCorrelationId();
     
     try {
       // Log routing decision
@@ -398,38 +403,49 @@ export class AITeamCoordinator {
     const agent = this.foundryRegistry!.getAgent(agentType);
     const agentsInvolved: string[] = [`${agentType}-foundry`];
     
-    // Build request based on type
+    // Build request based on type - use type assertion for discriminated union
     let response: AIResponse;
+    const req = request as any; // Type assertion for accessing properties
     
     switch (agentType) {
       case 'messaging':
         response = await (agent as any).processRequest({
-          creatorId: request.creatorId,
-          fanId: request.fanId,
-          message: request.message,
-          context: request.context,
+          creatorId: req.creatorId,
+          fanId: req.fanId,
+          message: req.message,
+          context: req.context,
         });
         break;
         
       case 'analytics':
         response = await (agent as any).processRequest({
-          creatorId: request.creatorId,
-          metrics: request.metrics,
+          creatorId: req.creatorId,
+          metrics: req.metrics,
         });
         break;
         
       case 'sales':
         response = await (agent as any).processRequest({
-          creatorId: request.creatorId,
-          fanId: request.fanId,
-          context: request.context,
+          creatorId: req.creatorId,
+          fanId: req.fanId,
+          context: req.context,
         });
         break;
         
       case 'compliance':
         response = await (agent as any).processRequest({
-          creatorId: request.creatorId,
-          content: request.message || request.context?.content,
+          creatorId: req.creatorId,
+          content: req.message || req.context?.content,
+        });
+        break;
+        
+      case 'content_trends':
+        response = await (agent as any).processRequest({
+          creatorId: req.creatorId,
+          contentUrl: req.contentUrl,
+          platform: req.platform,
+          analysisType: req.analysisType,
+          context: req.context,
         });
         break;
         
@@ -507,6 +523,16 @@ export class AITeamCoordinator {
         result = await this.handleSalesOptimization(
           request.creatorId,
           request.fanId,
+          request.context
+        );
+        break;
+        
+      case 'content_trends_analysis':
+        result = await this.handleContentTrendsAnalysis(
+          request.creatorId,
+          (request as any).contentUrl,
+          (request as any).platform,
+          (request as any).analysisType,
           request.context
         );
         break;
@@ -819,6 +845,195 @@ export class AITeamCoordinator {
         agentsInvolved,
       };
     }
+  }
+
+  /**
+   * Handle content trends analysis
+   * Routes to appropriate Azure AI service based on task type and modality
+   */
+  async handleContentTrendsAnalysis(
+    creatorId: number,
+    contentUrl?: string,
+    platform?: string,
+    analysisType: string = 'viral_analysis',
+    context?: any
+  ): Promise<CoordinatorResponse> {
+    const agentsInvolved: string[] = [];
+    let totalInputTokens = 0;
+    let totalOutputTokens = 0;
+    let totalCostUsd = 0;
+
+    try {
+      // Determine modality based on analysis type and content
+      const modality = this.determineModality(analysisType, context);
+      
+      // Try using the router client for content trends
+      const routerClient = getRouterClient();
+      
+      if (routerClient) {
+        try {
+          const routerResponse = await routerClient.routeContentTrends({
+            task_type: analysisType,
+            modality,
+            prompt: context?.prompt || `Analyze content for ${analysisType}`,
+            image_urls: context?.imageUrls,
+            audio_url: context?.audioUrl,
+            video_url: contentUrl,
+            client_tier: context?.clientTier || 'standard',
+          });
+
+          agentsInvolved.push(`content-trends-${routerResponse.azure_service || routerResponse.model}`);
+
+          if (routerResponse.usage) {
+            totalInputTokens += routerResponse.usage.prompt_tokens || 0;
+            totalOutputTokens += routerResponse.usage.completion_tokens || 0;
+            // Estimate cost based on model
+            totalCostUsd += this.estimateCost(routerResponse.model, routerResponse.usage);
+          }
+
+          return {
+            success: true,
+            data: {
+              analysisType,
+              model: routerResponse.model,
+              azureService: routerResponse.azure_service,
+              modality: routerResponse.modality,
+              result: JSON.parse(routerResponse.output),
+            },
+            agentsInvolved,
+            usage: {
+              totalInputTokens,
+              totalOutputTokens,
+              totalCostUsd,
+            },
+          };
+        } catch (routerError) {
+          console.warn('[Coordinator] Router client failed, falling back to Content Trends Engine:', routerError);
+        }
+      }
+
+      // Fallback: Use existing Content Trends AI Engine if available
+      try {
+        const contentTrendsModule = await import('./content-trends');
+        const { ContentTrendsAIRouter, getContentTrendsRouter } = contentTrendsModule;
+        
+        if (getContentTrendsRouter) {
+          const contentTrendsRouter = getContentTrendsRouter();
+          
+          // Route the task
+          const routingDecision = contentTrendsRouter.routeTask({
+            id: generateCorrelationId(),
+            type: analysisType as any,
+            modality: modality as any,
+            content: {
+              text: context?.prompt,
+              imageUrls: context?.imageUrls,
+              videoUrl: contentUrl,
+              audioUrl: context?.audioUrl,
+            },
+            priority: context?.priority || 'medium',
+          });
+
+          agentsInvolved.push(`content-trends-${routingDecision.model}`);
+
+          return {
+            success: true,
+            data: {
+              analysisType,
+              model: routingDecision.model,
+              routingReason: routingDecision.reason,
+              estimatedCost: routingDecision.estimatedCost,
+              viralPotential: 50, // Placeholder
+              insights: [`Routed to ${routingDecision.model} for ${analysisType}`],
+              recommendations: [{
+                type: 'general',
+                content: `Analysis will be performed using ${routingDecision.model}`,
+                confidence: routingDecision.estimatedCost.totalCost > 0 ? 0.8 : 0.5,
+              }],
+            },
+            agentsInvolved,
+            usage: {
+              totalInputTokens: routingDecision.estimatedCost.inputTokens,
+              totalOutputTokens: routingDecision.estimatedCost.outputTokens,
+              totalCostUsd: routingDecision.estimatedCost.totalCost,
+            },
+          };
+        }
+      } catch (importError) {
+        console.warn('[Coordinator] Content Trends Engine not available:', importError);
+      }
+      
+      // Final fallback: return basic analysis
+      return {
+        success: true,
+        data: {
+          analysisType,
+          viralPotential: 50,
+          insights: ['Content analysis engine not available'],
+          recommendations: [{
+            type: 'general',
+            content: 'Content Trends AI Engine is being deployed',
+            confidence: 0.5,
+          }],
+        },
+        agentsInvolved: ['content-trends-fallback'],
+        usage: {
+          totalInputTokens: 0,
+          totalOutputTokens: 0,
+          totalCostUsd: 0,
+        },
+      };
+    } catch (error) {
+      console.error('[Coordinator] Error in handleContentTrendsAnalysis:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        agentsInvolved,
+      };
+    }
+  }
+
+  /**
+   * Determine content modality based on analysis type and context
+   */
+  private determineModality(analysisType: string, context?: any): TaskModality {
+    // Audio tasks
+    if (analysisType === 'audio_transcription' || context?.audioUrl) {
+      return 'audio';
+    }
+    
+    // Visual tasks
+    const visualTasks = ['ocr', 'visual_analysis', 'facial_analysis', 'editing_dynamics'];
+    if (visualTasks.includes(analysisType) || context?.imageUrls?.length > 0) {
+      return 'visual';
+    }
+    
+    // Multimodal tasks (video with audio)
+    if (context?.videoUrl || (context?.imageUrls && context?.audioUrl)) {
+      return 'multimodal';
+    }
+    
+    // Default to text
+    return 'text';
+  }
+
+  /**
+   * Estimate cost based on model and usage
+   */
+  private estimateCost(model: string, usage: { prompt_tokens?: number; completion_tokens?: number }): number {
+    const pricing: Record<string, { input: number; output: number }> = {
+      'DeepSeek-R1': { input: 0.00135, output: 0.0054 },
+      'Llama-3.3-70B': { input: 0.00099, output: 0.00099 },
+      'Mistral-Large-2411': { input: 0.002, output: 0.006 },
+      'Phi-4-Multimodal': { input: 0.00014, output: 0.00056 },
+      'Azure-Speech-Batch': { input: 0, output: 0 }, // Per-hour pricing
+    };
+    
+    const modelPricing = pricing[model] || { input: 0.001, output: 0.002 };
+    const inputCost = ((usage.prompt_tokens || 0) / 1000) * modelPricing.input;
+    const outputCost = ((usage.completion_tokens || 0) / 1000) * modelPricing.output;
+    
+    return inputCost + outputCost;
   }
 
   /**

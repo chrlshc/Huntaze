@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isMockApiMode } from '@/config/api-mode';
 
 /**
  * AI Quota API Route
@@ -11,8 +12,15 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    if (!isMockApiMode()) {
+      return NextResponse.json({
+        success: true,
+        quota: null,
+      });
+    }
+
     // TODO: Replace with actual quota tracking from database
-    // For now, return mock data to prevent errors
+    // For now, return mock data in demo mode
     const quota = {
       limit: 10.00, // $10 monthly limit
       spent: 3.45,

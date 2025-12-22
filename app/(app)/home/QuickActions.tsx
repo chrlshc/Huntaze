@@ -23,7 +23,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     id: 'connect-platforms',
     label: 'Connect your platforms',
     icon: Zap,
-    href: '/marketing/social',
+    href: '/integrations',
     description: 'Link OnlyFans, Instagram, TikTok and more.'
   },
   {

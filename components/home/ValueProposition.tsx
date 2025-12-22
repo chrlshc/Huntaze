@@ -33,9 +33,9 @@ export function ValueProposition({ benefits }: ValuePropositionProps) {
             return (
               <div 
                 key={i} 
-                className="group p-8 bg-[#18181B] border border-[#27272A] rounded-2xl transition-all duration-300 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(125,87,193,0.3)] md:hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none"
+                className="group p-8 bg-[#18181B] border border-[#27272A] rounded-2xl"
               >
-                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 border border-[var(--border-default)] text-purple-400 transition-all duration-300 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:transform-none">
+                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 border border-[var(--border-default)] text-purple-400">
                   {IconComponent && <IconComponent className="h-6 w-6" />}
                 </div>
                 <div className="mb-1 text-sm font-medium uppercase tracking-wide text-gray-500">

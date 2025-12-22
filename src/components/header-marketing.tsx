@@ -83,8 +83,9 @@ export default function HeaderMarketing() {
           {/* Left side - Navigation */}
           <div className="hidden lg:flex items-center gap-8">
             {/* Logo */}
-            <Link href="/" className="flex items-center mr-12">
-              <span className="text-lg font-semibold text-white">Huntaze</span>
+            <Link href="/" className="flex items-center gap-3 mr-12">
+              <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-8 h-8" />
+              <span className="text-lg font-semibold text-white">Beta</span>
             </Link>
             
             {/* Nav Items */}
@@ -160,8 +161,9 @@ export default function HeaderMarketing() {
 
           {/* Mobile: Logo and menu button */}
           <div className="lg:hidden flex items-center justify-between w-full">
-            <Link href="/" className="flex items-center">
-              <span className="text-lg font-semibold text-white">Huntaze</span>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-7 h-7" />
+              <span className="text-lg font-semibold text-white">Beta</span>
             </Link>
             <Button 
               variant="primary" 

@@ -1,0 +1,9 @@
+.ppvLayout.ppvLayout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1280px) {
+  .ppvLayout.ppvLayout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+}

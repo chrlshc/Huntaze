@@ -13,12 +13,26 @@
  */
 export function createCancellableFetcher() {
   const abortController = new AbortController();
+
+  const redirectToLoginForExpiredSession = () => {
+    if (typeof window === 'undefined') return;
+    if (window.location.pathname.startsWith('/auth/login')) return;
+    const callbackUrl = encodeURIComponent(`${window.location.pathname}${window.location.search}`);
+    window.location.href = `/auth/login?error=session_expired&callbackUrl=${callbackUrl}`;
+  };
   
   const fetcher = async (url: string) => {
     try {
       const response = await fetch(url, {
         signal: abortController.signal,
       });
+
+      if (response.status === 401) {
+        redirectToLoginForExpiredSession();
+        const error: any = new Error('Unauthorized');
+        error.status = 401;
+        throw error;
+      }
       
       if (!response.ok) {
         const error: any = new Error('An error occurred while fetching the data.');
@@ -30,7 +44,6 @@ export function createCancellableFetcher() {
     } catch (error: any) {
       // Don't throw on abort - this is expected behavior
       if (error.name === 'AbortError') {
-        console.log(`[SWR] Request cancelled: ${url}`);
         return null;
       }
       throw error;
@@ -49,6 +62,16 @@ export function createCancellableFetcher() {
  */
 export const standardFetcher = async (url: string) => {
   const response = await fetch(url);
+
+  if (response.status === 401 && typeof window !== 'undefined') {
+    if (!window.location.pathname.startsWith('/auth/login')) {
+      const callbackUrl = encodeURIComponent(`${window.location.pathname}${window.location.search}`);
+      window.location.href = `/auth/login?error=session_expired&callbackUrl=${callbackUrl}`;
+    }
+    const error: any = new Error('Unauthorized');
+    error.status = 401;
+    throw error;
+  }
   
   if (!response.ok) {
     const error: any = new Error('An error occurred while fetching the data.');

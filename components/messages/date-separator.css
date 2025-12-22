@@ -1,0 +1,64 @@
+/**
+ * Date Separator Styles
+ * 
+ * Visual styling for date separators in message list
+ * Based on PHASE-16-CRITICAL-REFINEMENTS.md - Refinement #2
+ * 
+ * Spacing: Increased for better visual breathing room
+ */
+
+.date-separator {
+  /* Layout - Centered chip (au-dessus des messages) */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centré au-dessus des messages */
+  
+  /* Spacing - Increased for better readability */
+  margin: 20px 0 16px 0; /* 20px top, 16px bottom for better separation */
+  padding: 0;
+  
+  /* Full width */
+  width: 100%;
+}
+
+.date-separator__chip {
+  /* Typography - iMessage style */
+  font-size: 11px; /* iMessage-style small text */
+  font-weight: 500;
+  color: #666666; /* Gray text */
+  text-transform: capitalize;
+  
+  /* Layout */
+  flex-shrink: 0;
+  white-space: nowrap;
+  
+  /* Chip styling - iMessage pill style */
+  background: #F5F5F5; /* Light gray background */
+  border: none;
+  border-radius: 999px; /* Pill shape - fully rounded */
+  padding: 4px 10px; /* iMessage-style compact padding */
+}
+
+/* Variant: First separator (reduced top margin) */
+.date-separator--first {
+  margin-top: 12px; /* Reduced for first separator */
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .date-separator__chip {
+    background: #2A2A2A;
+    color: #AAAAAA;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .date-separator {
+    margin: var(--msg-space-sm) 0;
+  }
+  
+  .date-separator__chip {
+    font-size: 12px;
+  }
+}

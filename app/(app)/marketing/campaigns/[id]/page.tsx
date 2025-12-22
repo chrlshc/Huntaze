@@ -7,58 +7,108 @@
 export const dynamic = 'force-dynamic';
 
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Play, Copy, Trash2, TrendingUp, Send, Eye, MousePointer } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { useSession } from 'next-auth/react';
+import useSWR from 'swr';
+import { standardFetcher } from '@/lib/swr';
 
 export default function CampaignDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const campaignId = params.id as string;
-  const creatorId = 'creator_123';
+  const { data: session } = useSession();
 
-  const [campaign, setCampaign] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isLaunching, setIsLaunching] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    fetchCampaign();
-  }, [campaignId]);
+  type ApiCampaign = Record<string, any>;
+  type ApiResponse = { success: boolean; data?: ApiCampaign };
 
-  const fetchCampaign = async () => {
-    try {
-      const response = await fetch(`/api/marketing/campaigns/${campaignId}?creatorId=${creatorId}`);
-      if (!response.ok) throw new Error('Failed to fetch campaign');
-      const data = await response.json();
-      setCampaign(data.campaign);
-    } catch (err) {
-      setError('Failed to load campaign');
-    } finally {
-      setIsLoading(false);
-    }
+  const normalizeCampaign = (raw: ApiCampaign) => {
+    const message =
+      raw?.message && typeof raw.message === 'object' && raw.message !== null
+        ? (raw.message as Record<string, unknown>)
+        : {};
+
+    const stats =
+      raw?.stats && typeof raw.stats === 'object' && raw.stats !== null
+        ? (raw.stats as Record<string, unknown>)
+        : null;
+
+    const toNumber = (value: unknown, fallback = 0) =>
+      typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+
+    const audienceSegment =
+      typeof raw?.audienceSegment === 'string'
+        ? raw.audienceSegment
+        : typeof raw?.audience_segment === 'string'
+          ? raw.audience_segment
+          : 'All Fans';
+
+    const audienceSize = toNumber(raw?.audienceSize ?? raw?.audience_size, 0);
+
+    return {
+      id: String(raw?.id ?? ''),
+      name: typeof raw?.name === 'string' ? raw.name : 'Untitled campaign',
+      status: typeof raw?.status === 'string' ? raw.status : 'draft',
+      channel: typeof raw?.channel === 'string' ? raw.channel : 'dm',
+      goal: typeof raw?.goal === 'string' ? raw.goal : 'engagement',
+      audience: { segment: audienceSegment, size: audienceSize },
+      createdAt: (raw?.createdAt ?? raw?.created_at ?? new Date().toISOString()) as string,
+      launchedAt: (raw?.launchedAt ?? raw?.launched_at ?? null) as string | null,
+      message: {
+        subject: typeof message.subject === 'string' ? message.subject : undefined,
+        body: typeof message.body === 'string' && message.body.trim() ? message.body : '—',
+      },
+      stats: stats
+        ? {
+            sent: toNumber(stats.sent, 0),
+            opened: toNumber(stats.opened, 0),
+            openRate: toNumber(stats.openRate, 0),
+            clicked: toNumber(stats.clicked, 0),
+            clickRate: toNumber(stats.clickRate, 0),
+            converted: toNumber(stats.converted, 0),
+            conversionRate: toNumber(stats.conversionRate, 0),
+          }
+        : null,
+      recipients: Array.isArray(raw?.recipients) ? raw.recipients : [],
+    };
   };
+
+  const { data, error, isLoading, mutate } = useSWR<ApiResponse>(
+    campaignId ? `/api/marketing/campaigns/${campaignId}` : null,
+    standardFetcher
+  );
+
+  const campaign = data?.data ? normalizeCampaign(data.data) : null;
 
   const handleLaunch = async () => {
     setIsLaunching(true);
     try {
+      if (!session?.user?.id) {
+        setToastMessage('You must be logged in to launch campaigns');
+        setShowToast(true);
+        return;
+      }
+
       const response = await fetch(`/api/marketing/campaigns/${campaignId}/launch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creatorId }),
+        body: JSON.stringify({ creatorId: session.user.id }),
       });
 
       if (!response.ok) throw new Error('Failed to launch campaign');
 
       setToastMessage('Campaign launched successfully!');
       setShowToast(true);
-      await fetchCampaign();
+      void mutate();
     } catch (err) {
       setToastMessage('Failed to launch campaign');
       setShowToast(true);
@@ -77,7 +127,7 @@ export default function CampaignDetailsPage() {
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/marketing/campaigns/${campaignId}?creatorId=${creatorId}`, {
+      const response = await fetch(`/api/marketing/campaigns/${campaignId}`, {
         method: 'DELETE',
       });
 
@@ -85,7 +135,7 @@ export default function CampaignDetailsPage() {
 
       setToastMessage('Campaign deleted successfully!');
       setShowToast(true);
-      setTimeout(() => router.push('/marketing'), 1500);
+      setTimeout(() => router.push('/marketing/campaigns'), 1500);
     } catch (err) {
       setToastMessage('Failed to delete campaign');
       setShowToast(true);
@@ -109,12 +159,40 @@ export default function CampaignDetailsPage() {
     );
   }
 
-  if (error || !campaign) {
+  if (error) {
     return (
       <div className="max-w-7xl mx-auto">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <h3 className="text-red-800 dark:text-red-200 font-semibold mb-2">Error</h3>
-          <p className="text-red-600 dark:text-red-300 text-sm">{error || 'Campaign not found'}</p>
+          <p className="text-red-600 dark:text-red-300 text-sm">
+            {error instanceof Error ? error.message : 'Failed to load campaign'}
+          </p>
+          <div className="mt-3">
+            <Button variant="primary" onClick={() => void mutate()} disabled={isLoading}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!campaign) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+          <h3 className="text-gray-900 dark:text-white font-semibold mb-2">Campaign not found</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            This campaign may have been deleted, or you might not have access.
+          </p>
+          <div className="mt-4 flex items-center gap-2">
+            <Link href="/marketing/campaigns">
+              <Button variant="primary">Back to campaigns</Button>
+            </Link>
+            <Button variant="ghost" onClick={() => void mutate()} disabled={isLoading}>
+              Retry
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -190,7 +268,7 @@ export default function CampaignDetailsPage() {
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{campaign.stats.opened}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {(campaign.stats.openRate * 100).toFixed(1)}% rate
+              {campaign.stats.openRate.toFixed(1)}% rate
             </p>
           </Card>
 
@@ -203,7 +281,7 @@ export default function CampaignDetailsPage() {
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{campaign.stats.clicked}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {(campaign.stats.clickRate * 100).toFixed(1)}% rate
+              {campaign.stats.clickRate.toFixed(1)}% rate
             </p>
           </Card>
 
@@ -216,7 +294,7 @@ export default function CampaignDetailsPage() {
             </div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{campaign.stats.converted}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {(campaign.stats.conversionRate * 100).toFixed(1)}% rate
+              {campaign.stats.conversionRate.toFixed(1)}% rate
             </p>
           </Card>
         </div>

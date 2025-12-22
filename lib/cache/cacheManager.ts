@@ -24,9 +24,13 @@ class CacheManager {
   private memoryCache = new Map<string, CacheEntry>();
   private readonly maxMemoryEntries = 1000;
   private readonly defaultTTL = 300; // 5 minutes
+  private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
-    this.initializeRedis();
+    // Avoid side-effects during `next build` (page data collection runs server code).
+    if (process.env.NEXT_PHASE === 'phase-production-build') return;
+
+    void this.initializeRedis();
     this.startMemoryCleanup();
   }
 
@@ -34,12 +38,20 @@ class CacheManager {
     try {
       if (process.env.REDIS_URL) {
         this.redis = new Redis(process.env.REDIS_URL, {
-          maxRetriesPerRequest: 3,
+          // Fail fast: if Redis is unavailable we fallback to memory without noisy retries.
+          maxRetriesPerRequest: 0,
           lazyConnect: true,
+          enableOfflineQueue: false,
+          retryStrategy: () => null,
         });
 
         this.redis.on('error', (error) => {
           console.warn('Redis connection error, falling back to memory cache:', error.message);
+          try {
+            this.redis?.disconnect();
+          } catch {
+            // ignore
+          }
           this.redis = null;
         });
 
@@ -48,13 +60,18 @@ class CacheManager {
       }
     } catch (error) {
       console.warn('Redis initialization failed, using memory cache only:', error);
+      try {
+        this.redis?.disconnect();
+      } catch {
+        // ignore
+      }
       this.redis = null;
     }
   }
 
   private startMemoryCleanup() {
     // Clean expired entries every 5 minutes
-    setInterval(() => {
+    this.cleanupInterval = setInterval(() => {
       this.cleanupMemoryCache();
     }, 5 * 60 * 1000);
   }

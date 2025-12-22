@@ -18,7 +18,7 @@ export default function PremiumButton({
   variant = 'primary',
   size = 'md'
 }: PremiumButtonProps) {
-  const baseClasses = 'relative font-medium transition-all duration-200 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500'
+  const baseClasses = 'relative font-medium transition-all duration-200 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb]'
   
   const variants = {
     primary: 'bg-purple-600 text-white hover:bg-purple-700 shadow-sm hover:shadow-md',

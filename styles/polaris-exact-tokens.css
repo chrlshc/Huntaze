@@ -1,0 +1,138 @@
+/**
+ * Polaris-Exact Design Tokens
+ * 
+ * Exact values from Shopify Polaris design system.
+ * These tokens reproduce the Shopify Admin look without importing @shopify/polaris.
+ * 
+ * Source: Polaris design tokens documentation
+ */
+
+:root {
+  /* ========================================
+     COLORS - Exact Polaris Values
+     ======================================== */
+  
+  /* Page background (admin bg) */
+  --polaris-bg-app: rgba(241, 241, 241, 1);
+  
+  /* Card/Surface background */
+  --polaris-bg-surface: rgba(255, 255, 255, 1);
+  --polaris-bg-surface-secondary: rgba(246, 246, 247, 1);
+  --polaris-bg-surface-hover: rgba(241, 242, 243, 1);
+  
+  /* Text colors */
+  --polaris-text: rgba(48, 48, 48, 1);
+  --polaris-text-subdued: rgba(97, 97, 97, 1);
+  --polaris-text-disabled: rgba(140, 145, 150, 1);
+  
+  /* Border colors */
+  --polaris-border: rgba(227, 227, 227, 1);
+  --polaris-border-hover: rgba(204, 204, 204, 1);
+  --polaris-border-subdued: rgba(235, 235, 235, 1);
+  
+  /* Focus/Interactive */
+  --polaris-focus: rgba(0, 91, 211, 1);
+  --polaris-focus-ring: rgba(0, 91, 211, 0.25);
+  
+  /* Action colors */
+  --polaris-action-primary: rgba(0, 128, 96, 1);
+  --polaris-action-primary-hover: rgba(0, 110, 82, 1);
+  --polaris-action-primary-pressed: rgba(0, 94, 70, 1);
+  --polaris-action-primary-disabled: rgba(241, 241, 241, 1);
+  
+  /* Secondary button */
+  --polaris-action-secondary: rgba(255, 255, 255, 1);
+  --polaris-action-secondary-hover: rgba(246, 246, 247, 1);
+  --polaris-action-secondary-pressed: rgba(241, 242, 243, 1);
+  
+  /* Critical/Destructive */
+  --polaris-critical: rgba(215, 44, 13, 1);
+  --polaris-critical-subdued: rgba(254, 211, 209, 1);
+  
+  /* Success */
+  --polaris-success: rgba(0, 128, 96, 1);
+  --polaris-success-subdued: rgba(174, 233, 209, 1);
+  
+  /* ========================================
+     SPACING - 4px Base Grid
+     ======================================== */
+  
+  --polaris-space-0: 0;
+  --polaris-space-025: 1px;
+  --polaris-space-050: 2px;
+  --polaris-space-100: 4px;
+  --polaris-space-150: 6px;
+  --polaris-space-200: 8px;
+  --polaris-space-300: 12px;
+  --polaris-space-400: 16px;
+  --polaris-space-500: 20px;
+  --polaris-space-600: 24px;
+  --polaris-space-800: 32px;
+  --polaris-space-1000: 40px;
+  --polaris-space-1200: 48px;
+  --polaris-space-1600: 64px;
+  
+  /* ========================================
+     TYPOGRAPHY - Inter Font
+     ======================================== */
+  
+  --polaris-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  
+  /* Font sizes */
+  --polaris-font-size-75: 12px;
+  --polaris-font-size-100: 13px;
+  --polaris-font-size-200: 14px;
+  --polaris-font-size-300: 16px;
+  --polaris-font-size-400: 18px;
+  --polaris-font-size-500: 20px;
+  --polaris-font-size-600: 24px;
+  --polaris-font-size-700: 28px;
+  
+  /* Font weights */
+  --polaris-font-weight-regular: 400;
+  --polaris-font-weight-medium: 500;
+  --polaris-font-weight-semibold: 600;
+  --polaris-font-weight-bold: 700;
+  
+  /* Line heights */
+  --polaris-line-height-100: 16px;
+  --polaris-line-height-200: 20px;
+  --polaris-line-height-300: 24px;
+  --polaris-line-height-400: 28px;
+  --polaris-line-height-500: 32px;
+  
+  /* ========================================
+     BORDER RADIUS
+     ======================================== */
+  
+  --polaris-border-radius-050: 2px;
+  --polaris-border-radius-100: 4px;
+  --polaris-border-radius-150: 6px;
+  --polaris-border-radius-200: 8px;
+  --polaris-border-radius-300: 12px;
+  --polaris-border-radius-400: 16px;
+  --polaris-border-radius-full: 9999px;
+  
+  /* ========================================
+     SHADOWS - Polaris shadow-300 exact
+     ======================================== */
+  
+  --polaris-shadow-100: 0px 1px 0px 0px rgba(26, 26, 26, 0.07);
+  --polaris-shadow-200: 0px 3px 1px -1px rgba(26, 26, 26, 0.07);
+  --polaris-shadow-300: 0px 4px 6px -2px rgba(26, 26, 26, 0.20);
+  --polaris-shadow-400: 0px 8px 16px -4px rgba(26, 26, 26, 0.22);
+  --polaris-shadow-500: 0px 12px 20px -8px rgba(26, 26, 26, 0.24);
+  
+  /* Focus shadow */
+  --polaris-shadow-focus: 0 0 0 2px rgba(0, 91, 211, 1);
+  --polaris-shadow-focus-inset: inset 0 0 0 2px rgba(0, 91, 211, 1);
+  
+  /* ========================================
+     TRANSITIONS
+     ======================================== */
+  
+  --polaris-duration-100: 100ms;
+  --polaris-duration-150: 150ms;
+  --polaris-duration-200: 200ms;
+  --polaris-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}

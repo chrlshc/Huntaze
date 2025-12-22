@@ -1,0 +1,176 @@
+/**
+ * SegmentCard Component Styles
+ * 
+ * Implements the design specification for segment cards used on the Fans page.
+ * Provides visual feedback for segment selection and filtering.
+ * 
+ * Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 7.1
+ */
+
+.segment-card {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  gap: var(--polish-space-sm);
+  padding: var(--polish-card-padding);
+  
+  /* Visual styling */
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: var(--polish-hover-transition);
+  text-align: left;
+  
+  /* Reset button styles */
+  font-family: inherit;
+  width: 100%;
+  
+  /* Performance: Optimize hover animations with will-change */
+  will-change: transform, box-shadow;
+}
+
+/* Remove will-change when not hovering to free GPU resources */
+.segment-card:not(:hover):not(:focus-visible) {
+  will-change: auto;
+}
+
+/* Hover state - subtle elevation and shadow */
+.segment-card:hover {
+  transform: translateY(var(--polish-hover-translate));
+  box-shadow: var(--polish-hover-shadow);
+  border-color: var(--border-emphasis);
+}
+
+/* Focus state - keyboard navigation accessibility */
+.segment-card:focus {
+  outline: var(--polish-focus-ring);
+  outline-offset: var(--polish-focus-offset);
+  border-color: rgba(31, 41, 55, 0.8);
+}
+
+.segment-card:focus:not(:focus-visible) {
+  outline: none;
+  border-color: var(--border-default);
+}
+
+.segment-card:focus-visible {
+  outline: var(--polish-focus-ring);
+  outline-offset: var(--polish-focus-offset);
+  border-color: rgba(31, 41, 55, 0.8);
+}
+
+/* Active state - selected segment with violet border and subtle background */
+.segment-card--active {
+  border: var(--polish-segment-active-border);
+  background: var(--polish-segment-active-bg);
+  border-color: var(--accent-primary);
+}
+
+/* Active state maintains hover effects */
+.segment-card--active:hover {
+  transform: translateY(var(--polish-hover-translate));
+  box-shadow: var(--polish-hover-shadow);
+}
+
+/* Click state - tactile feedback */
+.segment-card:active {
+  transform: scale(var(--polish-click-scale));
+  transition: var(--polish-click-transition);
+}
+
+/* Label styling - uppercase, letter-spaced */
+.segment-card__label {
+  font-size: var(--polish-text-label);
+  font-weight: var(--polish-text-label-weight);
+  letter-spacing: var(--polish-text-label-spacing);
+  text-transform: var(--polish-text-label-transform);
+  color: var(--polish-text-label-color);
+  line-height: 1.2;
+}
+
+/* Stats container - count and percentage */
+.segment-card__stats {
+  display: flex;
+  align-items: baseline;
+  gap: var(--polish-space-xs);
+}
+
+/* Count display - prominent number */
+.segment-card__count {
+  font-size: var(--polish-segment-count-size);
+  font-weight: var(--polish-segment-count-weight);
+  color: var(--polish-segment-count-color);
+  line-height: 1.2;
+}
+
+/* Percentage display - subtle, secondary */
+.segment-card__percentage {
+  font-size: var(--polish-segment-percentage-size);
+  color: var(--polish-segment-percentage-color);
+  line-height: 1.2;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Full width, reduced padding */
+@media (max-width: 767px) {
+  .segment-card {
+    padding: 12px;
+  }
+  
+  .segment-card__count {
+    font-size: 20px;
+  }
+}
+
+/* Tablet (768px-1024px) - Grid layout handled by parent */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .segment-card {
+    /* Inherits from parent grid */
+  }
+}
+
+/* Desktop (>1024px) - Flexible layout handled by parent */
+@media (min-width: 1024px) {
+  .segment-card {
+    /* Inherits from parent grid */
+  }
+}
+
+/* ========================================
+   Accessibility - Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .segment-card {
+    transition: none;
+  }
+  
+  .segment-card:hover,
+  .segment-card:active {
+    transform: none;
+  }
+}
+
+/* ========================================
+   Accessibility - High Contrast
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  .segment-card {
+    border-width: 2px;
+  }
+  
+  .segment-card--active {
+    border-width: 3px;
+  }
+  
+  .segment-card:focus-visible {
+    outline-width: 3px;
+  }
+}

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { templatesRepository } from '@/lib/db/repositories/templatesRepository';
+import { getServerSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const session = await getServerSession();
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json(
         { error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } },
@@ -35,7 +37,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const session = await getServerSession();
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json(
         { error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } },

@@ -24,11 +24,11 @@ const MD3Button = forwardRef<HTMLButtonElement, MD3ButtonProps>(
     const baseStyles = 'relative overflow-hidden inline-flex items-center justify-center font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
     
     const variants = {
-      filled: 'bg-purple-600 text-white hover:bg-purple-700 focus-visible:ring-purple-600 shadow-sm hover:shadow-md active:shadow-sm',
-      outlined: 'border border-purple-600 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/10 focus-visible:ring-purple-600',
-      text: 'text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/10 focus-visible:ring-purple-600',
-      elevated: 'bg-purple-50 text-purple-900 dark:bg-purple-900/30 dark:text-purple-200 shadow-sm hover:shadow-md active:shadow-sm focus-visible:ring-purple-600',
-      tonal: 'bg-purple-100 text-purple-900 dark:bg-purple-800/30 dark:text-purple-100 hover:bg-purple-200 dark:hover:bg-purple-700/30 focus-visible:ring-purple-600',
+      filled: 'bg-purple-600 text-white hover:bg-purple-700 focus-visible:ring-[#2c6ecb] shadow-sm hover:shadow-md active:shadow-sm',
+      outlined: 'border border-purple-600 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/10 focus-visible:ring-[#2c6ecb]',
+      text: 'text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/10 focus-visible:ring-[#2c6ecb]',
+      elevated: 'bg-purple-50 text-purple-900 dark:bg-purple-900/30 dark:text-purple-200 shadow-sm hover:shadow-md active:shadow-sm focus-visible:ring-[#2c6ecb]',
+      tonal: 'bg-purple-100 text-purple-900 dark:bg-purple-800/30 dark:text-purple-100 hover:bg-purple-200 dark:hover:bg-purple-700/30 focus-visible:ring-[#2c6ecb]',
     };
 
     const sizes = {

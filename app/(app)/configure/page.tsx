@@ -7,7 +7,7 @@
 export const dynamic = 'force-dynamic';
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -18,6 +18,8 @@ export default function ConfigurePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [config, setConfig] = useState({
     personality: '',
     responseStyle: 'friendly',
@@ -28,29 +30,32 @@ export default function ConfigurePage() {
     customResponses: [],
   });
 
-  useEffect(() => {
-    // Load existing config
-    const loadConfig = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('/api/ai/config');
-        if (response.ok) {
-          const data = await response.json();
-          setConfig(data);
-        }
-      } catch (error) {
-        console.error('Failed to load config:', error);
-      } finally {
-        setLoading(false);
+  const loadConfig = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const response = await fetch('/api/ai/config');
+      if (!response.ok) {
+        setLoadError('Failed to load configuration');
+        return;
       }
-    };
-
-    loadConfig();
+      const data = await response.json();
+      setConfig(data);
+    } catch {
+      setLoadError('Failed to load configuration');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadConfig();
+  }, [loadConfig]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setSaveError(null);
     
     try {
       const response = await fetch('/api/ai/config', {
@@ -64,11 +69,10 @@ export default function ConfigurePage() {
       if (response.ok) {
         router.push('/dashboard');
       } else {
-        alert('Failed to save configuration');
+        setSaveError('Failed to save configuration');
       }
-    } catch (error) {
-      console.error('Error saving config:', error);
-      alert('Failed to save configuration');
+    } catch {
+      setSaveError('Failed to save configuration');
     } finally {
       setSaving(false);
     }
@@ -95,6 +99,31 @@ export default function ConfigurePage() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {loading && (
+          <div className="mb-6 text-sm text-gray-600 dark:text-gray-300">
+            Loading configuration…
+          </div>
+        )}
+
+        {loadError && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 flex items-center justify-between gap-4">
+            <span>{loadError}</span>
+            <button
+              type="button"
+              onClick={loadConfig}
+              className="text-sm font-medium text-red-900 underline"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {saveError && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {saveError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Personality Section */}
           <Card className="rounded-lg p-6">
@@ -110,7 +139,7 @@ export default function ConfigurePage() {
                   value={config.personality}
                   onChange={(e) => setConfig({ ...config, personality: e.target.value })}
                   placeholder="Example: Be flirty and playful, use emojis, create a girlfriend experience..."
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] dark:bg-gray-900 dark:text-white"
                 />
               </div>
               
@@ -122,7 +151,7 @@ export default function ConfigurePage() {
                   id="responseStyle"
                   value={config.responseStyle}
                   onChange={(e) => setConfig({ ...config, responseStyle: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] dark:bg-gray-900 dark:text-white"
                 >
                   <option value="friendly">Friendly & Casual</option>
                   <option value="flirty">Flirty & Playful</option>
@@ -152,7 +181,7 @@ export default function ConfigurePage() {
                     pricing: { ...config.pricing, monthlyPrice: e.target.value }
                   })}
                   placeholder="9.99"
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] dark:bg-gray-900 dark:text-white"
                 />
               </div>
               
@@ -169,7 +198,7 @@ export default function ConfigurePage() {
                     pricing: { ...config.pricing, welcomeMessage: e.target.value }
                   })}
                   placeholder="Hey babe! 💕 Welcome to my exclusive content..."
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[#2c6ecb] dark:bg-gray-900 dark:text-white"
                 />
               </div>
             </div>
@@ -183,9 +212,9 @@ export default function ConfigurePage() {
             >
               Cancel
             </Link>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" disabled={saving || loading}>
               <Save className="w-5 h-5" />
-              Save Configuration
+              {saving ? 'Saving…' : 'Save Configuration'}
             </Button>
           </div>
         </form>

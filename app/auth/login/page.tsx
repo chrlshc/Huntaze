@@ -35,6 +35,7 @@ export default function LoginPage() {
 
   // Check for error messages in URL params
   const urlError = searchParams.get('error');
+  const loggedOut = searchParams.get('loggedOut');
   const callbackUrl = searchParams.get('callbackUrl') || '/home';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,9 +90,18 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {loggedOut && !error && !urlError && (
+            <div className="success-message" role="status">
+              You have been signed out.
+            </div>
+          )}
+
           {(error || urlError) && (
             <div className="error-message" role="alert">
-              {error || (urlError === 'SessionExpired' ? 'Your session has expired. Please log in again.' : 'Authentication error. Please try again.')}
+              {error ||
+                (urlError === 'session_expired' || urlError === 'SessionExpired'
+                  ? 'Your session has expired. Please log in again.'
+                  : 'Authentication error. Please try again.')}
             </div>
           )}
 
@@ -222,6 +232,15 @@ export default function LoginPage() {
           border: 1px solid rgba(239, 68, 68, 0.3);
           border-radius: var(--radius-md);
           color: var(--accent-error);
+          font-size: var(--text-sm);
+        }
+
+        .success-message {
+          padding: var(--space-3);
+          background: rgba(34, 197, 94, 0.1);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: var(--radius-md);
+          color: var(--accent-success);
           font-size: var(--text-sm);
         }
 

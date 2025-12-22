@@ -58,3 +58,24 @@ export {
   type ShopifyButtonVariant,
   type ShopifyButtonSize,
 } from './ShopifyButton';
+
+// Badge Components
+export {
+  ShopifyBadge,
+  type ShopifyBadgeProps,
+  type ShopifyBadgeTone,
+  type ShopifyBadgeSize,
+} from './ShopifyBadge';
+
+// Table Components
+export {
+  ShopifyIndexTable,
+  type ShopifyIndexTableProps,
+  type ShopifyIndexTableColumn,
+} from './ShopifyIndexTable';
+
+// Empty State Components
+export {
+  ShopifyEmptyState,
+  type ShopifyEmptyStateProps,
+} from './ShopifyEmptyState';

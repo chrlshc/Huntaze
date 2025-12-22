@@ -12,11 +12,11 @@
 }
 
 .progress-bar-fill {
-  @apply h-full transition-all duration-500 ease-out bg-gradient-to-r from-purple-600 to-pink-600;
+  @apply h-full transition-all duration-500 ease-out bg-gradient-to-r from-gray-700 to-gray-900;
 }
 
 .progress-fill {
-  @apply h-full transition-all duration-500 ease-out bg-gradient-to-r from-purple-600 to-pink-600;
+  @apply h-full transition-all duration-500 ease-out bg-gradient-to-r from-gray-700 to-gray-900;
 }
 
 /* Progress Steps */
@@ -36,7 +36,7 @@
 }
 
 .progress-step.active .progress-step-indicator {
-  @apply border-purple-600 bg-gradient-to-r from-purple-600 to-pink-600 shadow-md;
+  @apply border-gray-800 bg-gradient-to-r from-gray-700 to-gray-900 shadow-md;
   transform: scale(1.1);
 }
 
@@ -58,7 +58,7 @@
 }
 
 .progress-step.active .progress-step-label {
-  @apply text-purple-600;
+  @apply text-gray-900;
 }
 
 .progress-step.completed .progress-step-label {
@@ -96,11 +96,11 @@
   @apply border border-gray-200 dark:border-gray-700;
   @apply text-gray-900 dark:text-white placeholder-gray-400;
   @apply transition-all duration-200;
-  @apply focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600;
 }
 
 .form-input:hover {
-  @apply border-purple-600/30;
+  @apply border-blue-600/30;
 }
 
 .form-textarea {
@@ -134,13 +134,13 @@
 
 .btn-continue {
   @apply px-6 py-3 rounded-lg font-medium transition-all;
-  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white;
+  @apply bg-gradient-to-r from-gray-700 to-gray-900 text-white;
   @apply flex items-center gap-2 shadow-sm;
 }
 
 .btn-primary {
   @apply px-6 py-3 rounded-lg font-medium transition-all;
-  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white;
+  @apply bg-gradient-to-r from-gray-700 to-gray-900 text-white;
   @apply inline-flex items-center justify-center gap-2 shadow-sm;
 }
 
@@ -164,11 +164,11 @@
   @apply p-4 rounded-xl cursor-pointer transition-all;
   @apply bg-white dark:bg-gray-900;
   @apply border-2 border-gray-200 dark:border-gray-700;
-  @apply hover:border-purple-600/30;
+  @apply hover:border-gray-400;
 }
 
 .niche-card.selected {
-  @apply border-purple-600 bg-purple-50 dark:bg-purple-900/20 shadow-sm;
+  @apply border-gray-800 bg-gray-100 dark:bg-gray-800/50 shadow-sm;
 }
 
 .niche-icon-container {
@@ -192,11 +192,11 @@
   @apply p-6 rounded-xl cursor-pointer transition-all;
   @apply bg-white dark:bg-gray-900;
   @apply border-2 border-gray-200 dark:border-gray-700;
-  @apply hover:border-purple-600/30;
+  @apply hover:border-gray-400;
 }
 
 .platform-card.selected {
-  @apply border-purple-600 bg-purple-50 dark:bg-purple-900/20 shadow-sm;
+  @apply border-gray-800 bg-gray-100 dark:bg-gray-800/50 shadow-sm;
 }
 
 .platform-header {
@@ -228,18 +228,18 @@
   @apply relative rounded-2xl p-6 transition-all;
   @apply bg-white dark:bg-gray-900;
   @apply border-2 border-gray-200 dark:border-gray-700;
-  @apply hover:border-purple-600/30;
+  @apply hover:border-gray-400;
 }
 
 .pricing-card.recommended {
-  @apply border-purple-600 shadow-lg;
+  @apply border-gray-800 shadow-lg;
   transform: scale(1.05);
 }
 
 .pricing-badge {
   @apply absolute -top-3 left-1/2 transform -translate-x-1/2;
   @apply px-4 py-1 rounded-full text-xs font-bold;
-  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm;
+  @apply bg-gradient-to-r from-gray-700 to-gray-900 text-white shadow-sm;
 }
 
 .pricing-header {
@@ -285,7 +285,7 @@
 
 .complete-icon-container {
   @apply w-24 h-24 mx-auto mb-6;
-  @apply bg-gradient-to-r from-purple-600 to-pink-600 rounded-full;
+  @apply bg-gradient-to-r from-gray-700 to-gray-900 rounded-full;
   @apply flex items-center justify-center shadow-lg;
   animation: bounce-in 0.5s ease-out;
 }

@@ -32,9 +32,9 @@ const MD3FAB = forwardRef<HTMLButtonElement, MD3FABProps>(
     };
 
     const variants = {
-      surface: 'bg-purple-100 text-purple-900 dark:bg-purple-800/30 dark:text-purple-100 hover:bg-purple-200 dark:hover:bg-purple-700/30 focus-visible:ring-purple-600',
-      primary: 'bg-purple-600 text-white hover:bg-purple-700 focus-visible:ring-purple-600',
-      secondary: 'bg-purple-50 text-purple-900 dark:bg-purple-900/30 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-800/30 focus-visible:ring-purple-600',
+      surface: 'bg-purple-100 text-purple-900 dark:bg-purple-800/30 dark:text-purple-100 hover:bg-purple-200 dark:hover:bg-purple-700/30 focus-visible:ring-[#2c6ecb]',
+      primary: 'bg-purple-600 text-white hover:bg-purple-700 focus-visible:ring-[#2c6ecb]',
+      secondary: 'bg-purple-50 text-purple-900 dark:bg-purple-900/30 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-800/30 focus-visible:ring-[#2c6ecb]',
       tertiary: 'bg-pink-100 text-pink-900 dark:bg-pink-900/30 dark:text-pink-200 hover:bg-pink-200 dark:hover:bg-pink-800/30 focus-visible:ring-pink-600',
     };
 

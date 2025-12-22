@@ -10,6 +10,8 @@ function getOpenAI(): OpenAI {
     }
     openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
+      timeout: 20_000,
+      maxRetries: 1,
     });
   }
   return openai;

@@ -8,12 +8,24 @@ export const dynamic = 'force-dynamic';
 
 
 import { useRouter } from 'next/navigation';
-import { useAsyncOperation, AsyncErrorDisplay, AsyncLoadingSpinner } from '@/components/dashboard/AsyncOperationWrapper';
+import { useAsyncOperation, AsyncErrorDisplay } from '@/components/dashboard/AsyncOperationWrapper';
 import { Loader2 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function SkipOnboarding() {
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <div className="p-6">
+        <EmptyState
+          variant="no-data"
+          title="Not available"
+          description="This developer utility is disabled in production."
+        />
+      </div>
+    );
+  }
+
   const router = useRouter();
   const { isLoading, error, execute } = useAsyncOperation({
     timeout: 10000,

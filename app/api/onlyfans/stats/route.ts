@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/config';
 
 /**
  * OnlyFans Stats API Route
@@ -11,43 +12,31 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    // TODO: Replace with actual data fetching from database/OnlyFans API
-    // For now, return mock data to prevent errors
-    const stats = {
-      messages: {
-        total: 1247,
-        unread: 23,
-        responseRate: 94.5,
-        avgResponseTime: 12, // minutes
-      },
-      fans: {
-        total: 856,
-        active: 412,
-        new: 47,
-      },
-      ppv: {
-        totalRevenue: 4523.50,
-        totalSales: 89,
-        conversionRate: 12.3,
-      },
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 },
+      );
+    }
+
+    // Before upstream data is connected, return an explicit "no data yet" payload.
+    // The UI must handle this with empty/loading/error states (no mock numbers in prod).
+    return NextResponse.json({
+      success: true,
+      stats: null,
       connection: {
         isConnected: false,
         lastSync: null,
         status: 'disconnected' as const,
       },
-    };
-
-    return NextResponse.json({ 
-      success: true,
-      stats 
     });
   } catch (error) {
-    console.error('[OnlyFans Stats API] Error:', error);
     return NextResponse.json(
       { 
         success: false, 
         error: 'Failed to fetch OnlyFans stats',
-        stats: null 
+        stats: null,
       },
       { status: 500 }
     );

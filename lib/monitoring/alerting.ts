@@ -43,7 +43,10 @@ class AlertManager {
   constructor() {
     this.initializeDefaultRules();
     this.initializeDefaultSLOs();
-    this.startAlertEvaluation();
+    // Avoid long-running intervals during `next build` (page data collection runs server code).
+    if (process.env.NEXT_PHASE !== 'phase-production-build') {
+      this.startAlertEvaluation();
+    }
   }
 
   static getInstance(): AlertManager {

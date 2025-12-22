@@ -1,0 +1,107 @@
+/**
+ * TagChip Component Styles
+ * 
+ * Implements the design specification for tag chips used across
+ * dashboard views for status and category indicators.
+ * 
+ * Uses polish tokens for consistent color mapping:
+ * - Tier variants: VIP (violet), Active (blue), At-Risk (orange), Churned (gray)
+ * - Churn risk variants: Low (green), Medium (orange), High (red)
+ * 
+ * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6
+ */
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: var(--polish-chip-radius);
+  line-height: 1.2;
+  white-space: nowrap;
+  font-weight: var(--dashboard-chip-weight);
+}
+
+/* Size variants */
+.tag-chip--sm {
+  padding: var(--polish-chip-padding-sm);
+  font-size: var(--polish-chip-font-size-sm);
+}
+
+.tag-chip--md {
+  padding: var(--polish-chip-padding-md);
+  font-size: var(--polish-chip-font-size-md);
+}
+
+.tag-chip__icon {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+}
+
+/* ========================================
+   Tier Variants (Requirements 8.1, 8.2, 8.3)
+   ======================================== */
+
+/* Variant: VIP - Violet */
+.tag-chip--vip {
+  background: var(--polish-chip-vip-bg);
+  color: var(--polish-chip-vip-color);
+}
+
+/* Variant: Active - Blue */
+.tag-chip--active {
+  background: var(--polish-chip-active-bg);
+  color: var(--polish-chip-active-color);
+}
+
+/* Variant: At-Risk - Orange */
+.tag-chip--at-risk {
+  background: var(--polish-chip-at-risk-bg);
+  color: var(--polish-chip-at-risk-color);
+}
+
+/* Variant: Churned - Gray */
+.tag-chip--churned {
+  background: var(--polish-chip-churned-bg);
+  color: var(--polish-chip-churned-color);
+}
+
+/* ========================================
+   Churn Risk Variants (Requirements 8.4, 8.5, 8.6)
+   ======================================== */
+
+/* Variant: Churn Risk Low - Green */
+.tag-chip--low {
+  background: var(--polish-chip-low-bg);
+  color: var(--polish-chip-low-color);
+}
+
+/* Variant: Churn Risk Medium - Orange */
+.tag-chip--medium {
+  background: var(--polish-chip-medium-bg);
+  color: var(--polish-chip-medium-color);
+}
+
+/* Variant: Churn Risk High - Red */
+.tag-chip--high {
+  background: var(--polish-chip-high-bg);
+  color: var(--polish-chip-high-color);
+}
+
+/* Variant: Nouveau - Green (same as low) */
+.tag-chip--nouveau {
+  background: var(--polish-chip-low-bg);
+  color: var(--polish-chip-low-color);
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Slightly smaller for space efficiency */
+@media (max-width: 767px) {
+  .tag-chip {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+}

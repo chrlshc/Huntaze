@@ -1,309 +1,309 @@
 'use client';
 
 /**
- * OnlyFans Main Dashboard Page - Shopify Design
- * Requirements: 1.1-10.4 - OnlyFans Overview with Shopify aesthetic
- * Feature: onlyfans-shopify-design
- * 
- * Main entry point for OnlyFans features with:
- * - ShopifyPageLayout with light gray background
- * - ShopifyMetricCard grid (4 columns)
- * - ShopifyBanner for connection status
- * - ShopifyQuickAction grid (3 columns)
- * - ShopifyFeatureCard grid (2 columns)
+ * OnlyFans Main Dashboard Page - Polaris Monochrome Design
+ * Main entry point for OnlyFans features
  */
 
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
+import { ButlerTip } from '@/components/ui/ButlerTip';
 import Link from 'next/link';
-import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
+import '@/styles/polaris-analytics.css';
+import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
+import { DashboardErrorState } from '@/components/ui/DashboardLoadingState';
+import { EmptyState } from '@/components/ui/EmptyState';
 import {
-  ShopifyMetricCard,
-  ShopifyMetricGrid,
-  ShopifyBanner,
-  ShopifyQuickAction,
-  ShopifyFeatureCard,
-  ShopifySectionHeader,
-  ShopifyButton,
-  ShopifyCard,
-} from '@/components/ui/shopify';
-import { 
-  MessageSquare, 
-  Users, 
-  DollarSign, 
+  MessageSquare,
+  Users,
+  DollarSign,
   Zap,
   Send,
   Eye,
   Settings,
-  RefreshCw
+  RefreshCw,
+  ArrowUpRight,
+  ArrowDownRight,
+  Plug,
+  Video,
 } from 'lucide-react';
-import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
-import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
 
 interface OnlyFansStats {
-  messages: {
-    total: number;
-    unread: number;
-    responseRate: number;
-    avgResponseTime: number;
-  };
-  fans: {
-    total: number;
-    active: number;
-    new: number;
-  };
-  ppv: {
-    totalRevenue: number;
-    totalSales: number;
-    conversionRate: number;
-  };
-  connection: {
-    isConnected: boolean;
-    lastSync: Date | null;
-    status: 'connected' | 'disconnected' | 'error';
-  };
+  messages: { total: number; unread: number; responseRate: number; avgResponseTime: number };
+  fans: { total: number; active: number; new: number };
+  ppv: { totalRevenue: number; totalSales: number; conversionRate: number };
+  connection: { isConnected: boolean; lastSync: Date | null; status: 'connected' | 'disconnected' | 'error' };
 }
 
-interface AIQuotaInfo {
-  limit: number;
-  spent: number;
-  remaining: number;
-  percentUsed: number;
-}
+// Polaris Card Component
+const PCard = ({ children, title, noPadding }: { children: React.ReactNode; title?: string; noPadding?: boolean }) => (
+  <div className="p-card">
+    {title && (
+      <div className="p-card-header">
+        <h3 className="p-card-title">{title}</h3>
+      </div>
+    )}
+    <div className={noPadding ? "p-card-body no-padding" : "p-card-body"}>
+      {children}
+    </div>
+  </div>
+);
 
+// KPI Card Component
+const KPICard = ({ label, value, change, trend }: { 
+  label: string; value: string; change?: number; trend?: 'up' | 'down';
+}) => (
+  <div className="kpi-card">
+    <div className="kpi-label">{label}</div>
+    <div className="kpi-value">{value}</div>
+    {change !== undefined && trend && (
+      <div className={`kpi-change ${trend === 'up' ? 'positive' : 'negative'}`}>
+        {trend === 'up' ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+        {Math.abs(change)}%
+      </div>
+    )}
+  </div>
+);
 
 export default function OnlyFansPage() {
   const [stats, setStats] = useState<OnlyFansStats | null>(null);
-  const [quotaInfo, setQuotaInfo] = useState<AIQuotaInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showBanner, setShowBanner] = useState(true);
-
-  // Performance monitoring
-  const { trackAPIRequest } = usePerformanceMonitoring({
-    pageName: 'OnlyFans Dashboard',
-    trackScrollPerformance: true,
-    trackInteractions: true,
-  });
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadDashboardData();
+    void loadDashboardData();
   }, []);
 
   const loadDashboardData = async () => {
     try {
-      // Fetch OnlyFans stats
-      await trackAPIRequest('/api/onlyfans/stats', 'GET', async () => {
-        const response = await fetch('/api/onlyfans/stats');
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data.stats || getDefaultStats());
-        } else {
-          setStats(getDefaultStats());
-        }
-      });
+      const response = await fetch('/api/onlyfans/stats');
+      const data = await response.json().catch(() => null);
 
-      // Fetch AI quota info
-      await trackAPIRequest('/api/ai/quota', 'GET', async () => {
-        const quotaResponse = await fetch('/api/ai/quota');
-        if (quotaResponse.ok) {
-          const quotaData = await quotaResponse.json();
-          setQuotaInfo(quotaData.quota || getDefaultQuota());
-        } else {
-          setQuotaInfo(getDefaultQuota());
-        }
-      });
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-      setStats(getDefaultStats());
-      setQuotaInfo(getDefaultQuota());
+      if (!response.ok) {
+        setStats(null);
+        setError((data && typeof data === 'object' && 'error' in data && data.error) ? String((data as any).error) : 'Failed to load OnlyFans stats');
+        return;
+      }
+
+      setError(null);
+      setStats(data?.stats ?? null);
+    } catch (e) {
+      setStats(null);
+      setError(e instanceof Error ? e.message : 'Failed to load OnlyFans stats');
     } finally {
       setLoading(false);
     }
   };
 
-  const getDefaultStats = (): OnlyFansStats => ({
-    messages: { total: 0, unread: 0, responseRate: 0, avgResponseTime: 0 },
-    fans: { total: 0, active: 0, new: 0 },
-    ppv: { totalRevenue: 0, totalSales: 0, conversionRate: 0 },
-    connection: { isConnected: false, lastSync: null, status: 'disconnected' },
-  });
-
-  const getDefaultQuota = (): AIQuotaInfo => ({
-    limit: 10, spent: 0, remaining: 10, percentUsed: 0,
-  });
-
   const handleRefresh = () => {
     setLoading(true);
-    loadDashboardData();
+    void loadDashboardData();
   };
 
-  // Loading state with Shopify skeleton
+  // Loading state
   if (loading) {
     return (
       <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
-        <ShopifyPageLayout
-          title="OnlyFans Dashboard"
-          subtitle="Track your messages, fans, PPV revenue, and AI usage at a glance."
-        >
-          <ShopifyMetricGrid columns={4}>
-            {[1, 2, 3, 4].map((i) => (
-              <ShopifyCard key={i} className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
-                <div className="h-8 bg-gray-200 rounded w-1/2" />
-              </ShopifyCard>
-            ))}
-          </ShopifyMetricGrid>
-        </ShopifyPageLayout>
+        <div className="polaris-analytics">
+          <div className="page-header">
+            <div style={{ height: 28, width: 200, background: '#E3E3E3', borderRadius: 8 }} />
+          </div>
+          <div className="content-wrapper">
+            <div className="kpi-grid">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="kpi-card" style={{ height: 88 }}>
+                  <div style={{ height: 12, width: 80, background: '#E3E3E3', borderRadius: 4, marginBottom: 8 }} />
+                  <div style={{ height: 24, width: 100, background: '#E3E3E3', borderRadius: 4 }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </ContentPageErrorBoundary>
+    );
+  }
+
+  if (error) {
+    return (
+      <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
+        <div className="polaris-analytics" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <DashboardErrorState message={error} onRetry={handleRefresh} />
+        </div>
       </ContentPageErrorBoundary>
     );
   }
 
   return (
     <ContentPageErrorBoundary pageName="OnlyFans Dashboard">
-      <ShopifyPageLayout
-        title="OnlyFans Dashboard"
-        subtitle="Track your messages, fans, PPV revenue, and AI usage at a glance."
-        actions={
-          <div className="flex items-center gap-2">
-            <ShopifyButton variant="secondary" size="sm" onClick={handleRefresh}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+      <div className="polaris-analytics">
+        {/* Page Header */}
+        <div className="page-header">
+          <div>
+            <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Video size={24} />
+              OnlyFans
+            </h1>
+            <p className="page-meta">
+              {stats?.connection?.status === 'connected'
+                ? `Last synced: ${stats.connection.lastSync ? new Date(stats.connection.lastSync).toLocaleTimeString() : 'Just now'}`
+                : 'Not connected'}
+            </p>
+          </div>
+          <div className="filter-pills">
+            <button className="filter-pill" onClick={handleRefresh}>
+              <RefreshCw size={14} />
               Refresh
-            </ShopifyButton>
+            </button>
             <Link href="/onlyfans/settings">
-              <ShopifyButton variant="secondary" size="sm">
-                <Settings className="w-4 h-4 mr-2" />
+              <button className="filter-pill">
+                <Settings size={14} />
                 Settings
-              </ShopifyButton>
+              </button>
             </Link>
           </div>
-        }
-      >
-        {/* Connection Status Banner */}
-        {stats && showBanner && (
-          <ShopifyBanner
-            status={stats.connection.status === 'connected' ? 'success' : 'warning'}
-            title={stats.connection.status === 'connected' 
-              ? 'OnlyFans Connected' 
-              : 'OnlyFans Not Connected'}
-            description={stats.connection.lastSync 
-              ? `Last synced: ${new Date(stats.connection.lastSync).toLocaleString()}`
-              : 'Connect your OnlyFans account to get started'}
-            action={!stats.connection.isConnected ? {
-              label: 'Connect Account',
-              onClick: () => window.location.href = '/onlyfans/settings',
-            } : undefined}
-            onDismiss={() => setShowBanner(false)}
-          />
-        )}
+        </div>
 
-        {/* Metrics Grid - 4 columns */}
-        {stats && (
-          <ShopifyMetricGrid columns={4} data-testid="onlyfans-metrics-grid">
-            <ShopifyMetricCard
-              label="Messages"
-              value={stats.messages.total.toLocaleString()}
-              icon={MessageSquare}
-              iconColor="#2c6ecb"
-              trend={stats.messages.unread > 0 ? stats.messages.unread : undefined}
-              trendLabel={stats.messages.unread > 0 ? 'unread' : undefined}
-              data-testid="metric-card-messages"
+        <div className="content-wrapper">
+          {/* Empty state (before upstream data is connected) */}
+          {!stats || stats.connection.status !== 'connected' ? (
+            <EmptyState
+              variant="no-data"
+              title="Connect OnlyFans to see your dashboard"
+              description="Once connected, Huntaze will sync your messages, fans, and PPV performance."
+              action={{
+                label: 'Connect OnlyFans',
+                onClick: () => (window.location.href = '/integrations'),
+              }}
+              secondaryAction={{ label: 'Retry', onClick: handleRefresh, icon: RefreshCw }}
             />
-            <ShopifyMetricCard
-              label="Fans"
-              value={stats.fans.total.toLocaleString()}
-              icon={Users}
-              iconColor="#7c3aed"
-              trend={stats.fans.new > 0 ? stats.fans.new : undefined}
-              trendLabel={stats.fans.new > 0 ? 'new this month' : undefined}
-              data-testid="metric-card-fans"
-            />
-            <ShopifyMetricCard
-              label="PPV Revenue"
-              value={`$${stats.ppv.totalRevenue.toLocaleString()}`}
-              icon={DollarSign}
-              iconColor="#008060"
-              trend={stats.ppv.conversionRate > 0 ? stats.ppv.conversionRate : undefined}
-              trendLabel={stats.ppv.conversionRate > 0 ? 'conversion' : undefined}
-              data-testid="metric-card-revenue"
-            />
-            {quotaInfo && (
-              <ShopifyMetricCard
-                label="AI Quota"
-                value={`${quotaInfo.percentUsed.toFixed(0)}%`}
-                icon={Zap}
-                iconColor="#b98900"
-                trend={quotaInfo.percentUsed < 80 ? (100 - quotaInfo.percentUsed) : -(quotaInfo.percentUsed - 80)}
-                trendLabel={`$${quotaInfo.remaining.toFixed(2)} left`}
-                data-testid="metric-card-ai-quota"
-              />
-            )}
-          </ShopifyMetricGrid>
-        )}
+          ) : (
+            <>
+              {/* KPI Grid */}
+              <div className="kpi-grid">
+                <KPICard
+                  label="Monthly Revenue"
+                  value={`$${stats.ppv.totalRevenue.toLocaleString()}`}
+                  change={15}
+                  trend="up"
+                />
+                <KPICard
+                  label="Total Fans"
+                  value={stats.fans.total.toLocaleString()}
+                  change={8}
+                  trend="up"
+                />
+                <KPICard
+                  label="Response Rate"
+                  value={`${stats.messages.responseRate}%`}
+                  change={2}
+                  trend="up"
+                />
+                <KPICard label="Unread Messages" value={stats.messages.unread.toString()} />
+              </div>
 
-        {/* Quick Actions Section */}
-        <section>
-          <ShopifySectionHeader title="Quick Actions" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <ShopifyQuickAction
-              icon={<Send />}
-              iconColor="#2c6ecb"
-              title="Send Message"
-              description="AI-powered messaging"
-              href="/onlyfans/messages"
-            />
-            <ShopifyQuickAction
-              icon={<Eye />}
-              iconColor="#7c3aed"
-              title="View Fans"
-              description="Manage subscribers"
-              href="/onlyfans/fans"
-            />
-            <ShopifyQuickAction
-              icon={<DollarSign />}
-              iconColor="#008060"
-              title="Create PPV"
-              description="New pay-per-view"
-              href="/onlyfans/ppv"
-            />
-          </div>
-        </section>
+              {/* Quick Actions - Text Links */}
+              <div className="p-card">
+                <div className="p-card-header">
+                  <h3 className="p-card-title">Quick Actions</h3>
+                </div>
+                <div className="p-card-body" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px 32px' }}>
+                  <Link href="/onlyfans/messages" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500, color: '#303030', textDecoration: 'none' }}>
+                    <Send size={16} style={{ color: '#616161' }} />
+                    Messages
+                  </Link>
+                  <Link href="/automations" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500, color: '#303030', textDecoration: 'none' }}>
+                    <Zap size={16} style={{ color: '#616161' }} />
+                    Automations
+                  </Link>
+                  <Link href="/onlyfans/fans" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500, color: '#303030', textDecoration: 'none' }}>
+                    <Eye size={16} style={{ color: '#616161' }} />
+                    Fans
+                  </Link>
+                  <Link href="/integrations" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500, color: '#303030', textDecoration: 'none' }}>
+                    <Plug size={16} style={{ color: '#616161' }} />
+                    Integrations
+                  </Link>
+                </div>
+              </div>
 
-        {/* Features Section */}
-        <section>
-          <ShopifySectionHeader title="OnlyFans Features" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ShopifyFeatureCard
-              icon={<MessageSquare />}
-              iconColor="#2c6ecb"
-              title="Messages"
-              description="AI-powered messaging"
-              href="/onlyfans/messages"
-            />
-            <ShopifyFeatureCard
-              icon={<Users />}
-              iconColor="#7c3aed"
-              title="Fans"
-              description="Subscriber management"
-              href="/onlyfans/fans"
-            />
-            <ShopifyFeatureCard
-              icon={<DollarSign />}
-              iconColor="#008060"
-              title="PPV Content"
-              description="Pay-per-view management"
-              href="/onlyfans/ppv"
-            />
-            <ShopifyFeatureCard
-              icon={<Settings />}
-              iconColor="#6b7177"
-              title="Settings"
-              description="Account & preferences"
-              href="/onlyfans/settings"
-            />
-          </div>
-        </section>
-      </ShopifyPageLayout>
+              {/* Activity */}
+              <div className="chart-section">
+                {/* Recent Activity */}
+                <PCard title="Recent Activity" noPadding>
+              <div className="breakdown-list">
+                {stats && stats.messages.unread > 0 && (
+                  <div className="breakdown-item" style={{ padding: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 32, height: 32, background: '#F1F1F1', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <MessageSquare size={16} style={{ color: '#616161' }} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: '#303030' }}>
+                          {stats.messages.unread} new messages
+                        </div>
+                        <div style={{ fontSize: 12, color: '#616161' }}>
+                          Response time: {stats.messages.avgResponseTime}min avg
+                        </div>
+                      </div>
+                    </div>
+                    <Link href="/onlyfans/messages">
+                      <button className="filter-pill" style={{ background: '#303030', color: '#fff', border: 'none' }}>
+                        Reply
+                      </button>
+                    </Link>
+                  </div>
+                )}
+                {stats && stats.fans.new > 0 && (
+                  <div className="breakdown-item" style={{ padding: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 32, height: 32, background: '#F1F1F1', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Users size={16} style={{ color: '#616161' }} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: '#303030' }}>
+                          {stats.fans.new} new subscribers
+                        </div>
+                        <div style={{ fontSize: 12, color: '#616161' }}>
+                          +{Math.round((stats.fans.new / stats.fans.total) * 100)}% growth
+                        </div>
+                      </div>
+                    </div>
+                    <Link href="/onlyfans/fans">
+                      <button className="filter-pill">View</button>
+                    </Link>
+                  </div>
+                )}
+                {stats && stats.ppv.totalSales > 0 && (
+                  <div className="breakdown-item" style={{ padding: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 32, height: 32, background: '#F1F1F1', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <DollarSign size={16} style={{ color: '#616161' }} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: '#303030' }}>
+                          {stats.ppv.totalSales} PPV sales
+                        </div>
+                        <div style={{ fontSize: 12, color: '#616161' }}>
+                          ${stats.ppv.totalRevenue.toLocaleString()} • {stats.ppv.conversionRate}% conv.
+                        </div>
+                      </div>
+                    </div>
+                    <Link href="/onlyfans/ppv">
+                      <button className="filter-pill">Create</button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+                </PCard>
+              </div>
+
+          {/* Butler Tip */}
+          <ButlerTip page="OnlyFans" className="mb-6" />
+            </>
+          )}
+        </div>
+      </div>
     </ContentPageErrorBoundary>
   );
 }

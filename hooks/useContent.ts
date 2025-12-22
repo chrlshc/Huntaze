@@ -2,6 +2,9 @@
 
 import useSWR, { mutate } from 'swr';
 import { getConfigForEndpoint } from '@/lib/swr/config';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+
+const fetcher = <T,>(url: string) => internalApiFetch<T>(url);
 
 export interface ContentItem {
   id: string;
@@ -13,6 +16,7 @@ export interface ContentItem {
   category?: string;
   tags?: string[];
   mediaIds?: string[];
+  media_ids?: string[];
   scheduledAt?: string;
   publishedAt?: string;
   createdAt: string;
@@ -41,8 +45,6 @@ export interface ContentResponse {
   };
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 /**
  * Hook to fetch content items with filters
  */
@@ -70,7 +72,7 @@ export function useContent(filters: ContentFilters = {}) {
   // Use optimized SWR config based on endpoint volatility
   const swrConfig = getConfigForEndpoint('/api/content');
   
-  return useSWR<ContentResponse>(url, fetcher, swrConfig);
+  return useSWR<ContentResponse>(url, fetcher<ContentResponse>, swrConfig);
 }
 
 /**
@@ -82,7 +84,7 @@ export function useDrafts(limit = 20, offset = 0) {
   // Use optimized SWR config
   const swrConfig = getConfigForEndpoint('/api/content/drafts');
   
-  return useSWR<ContentResponse>(url, fetcher, swrConfig);
+  return useSWR<ContentResponse>(url, fetcher<ContentResponse>, swrConfig);
 }
 
 /**
@@ -200,5 +202,5 @@ export function useContentMetrics(contentId: string) {
   // Use optimized SWR config
   const swrConfig = getConfigForEndpoint('/api/content/metrics');
   
-  return useSWR(url, fetcher, swrConfig);
+  return useSWR(url, fetcher<any>, swrConfig);
 }

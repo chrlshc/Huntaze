@@ -17,6 +17,13 @@
    NOT to marketing/landing pages
    ============================================ */
 
+/* Next.js App Router uses scroll-focus boundaries that may default to `min-height: 100vh`.
+   Ensure they don't introduce extra space in dashboard layouts. */
+.huntaze-layout [data-nextjs-scroll-focus-boundary] {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
 /* Apply dashboard tokens to the app layout and expose them on :root
    (tests read from :root; runtime uses the scoped classes) */
 :root,
@@ -28,15 +35,15 @@
      ============================================ */
   
   /* Layout dimensions */
-  --universal-sidebar-width: 280px; /* Slightly narrower sidebar for more canvas space */
+  --universal-sidebar-width: 244px; /* Slightly narrower sidebar for more canvas space */
   --huntaze-sidebar-width: var(--universal-sidebar-width);
-  --huntaze-header-height: 64px;
+  --huntaze-header-height: 60px;
   
   /* Z-index layers */
-  --huntaze-z-index-header: 500;
-  --huntaze-z-index-nav: 400;
-  --huntaze-z-index-modal: 600;
-  --huntaze-z-index-overlay: 550;
+  --huntaze-z-index-header: 40;
+  --huntaze-z-index-nav: 30;
+  --huntaze-z-index-modal: 50;
+  --huntaze-z-index-overlay: 45;
   
   /* ============================================
      COLOR SYSTEM - Light Mode
@@ -44,6 +51,7 @@
   
   /* Canvas & Surface Colors (Shopify-like) */
   --bg-app: #F1F2F4;           /* Shopify admin canvas background */
+  --bg-canvas: #F1F2F3;        /* Slightly softer canvas (Shopify-like) */
   --bg-surface: #FFFFFF;       /* Pure white - cards, containers, surfaces */
   
   /* Brand Colors - Electric Indigo */
@@ -65,29 +73,39 @@
   --nav-border: rgba(15, 23, 42, 0.12);        /* Sidebar/header borders */
   --nav-border-strong: rgba(15, 23, 42, 0.18); /* Stronger divider for focus */
   --nav-text: #111827;                         /* Primary nav text (sidebar) */
-  --nav-text-muted: #4B5563;                   /* Secondary nav text (sidebar) */
-  --nav-text-subtle: #9CA3AF;                  /* Tertiary text/icons */
-  --nav-hover: #E5E7EB;                        /* Hover fill (light gray) */
-  --nav-active-bg: rgba(99, 102, 241, 0.08);   /* Active item background */
-  --nav-active-indicator: #6366f1;             /* Accent line for active state */
-  --nav-search-bg: #F3F4F6;                    /* Search field background */
-  --nav-search-border: rgba(15, 23, 42, 0.12); /* Search border */
+  --nav-text-muted: #6D7175;                   /* Secondary nav text (Shopify) */
+  --nav-text-subtle: #8C9196;                  /* Tertiary text/icons (Shopify) */
+  --nav-hover: #EDF0F2;                        /* Hover fill (Shopify) */
+	  --nav-active-bg: rgba(99, 102, 241, 0.08);   /* Active item background */
+	  --nav-active-indicator: #6366f1;             /* Accent line for active state */
+	  --nav-search-bg: var(--sidebar-surface);     /* Search field background (match sidebar) */
+	  --nav-search-border: rgba(15, 23, 42, 0.12); /* Search border */
 
   /* Sidebar (light Shopify-style, darker than canvas) */
-  --sidebar-surface: #E5E7EB;                  /* Light gray, darker than canvas */
-  --sidebar-border: var(--nav-border);         /* Divider between sidebar and canvas */
-  --sidebar-text: #111827;                     /* Primary sidebar text */
-  --sidebar-text-muted: #4B5563;               /* Secondary sidebar text */
-  --sidebar-hover: #D1D5DB;                    /* Slightly darker hover inside sidebar */
-  --sidebar-active-bg: var(--nav-active-bg);   /* Active item background on light sidebar */
+  --sidebar-surface: #F6F6F7;                  /* Shopify sidebar surface */
+  --sidebar-border: #E1E3E5;                   /* Shopify divider */
+  --sidebar-text: var(--nav-text);             /* Shopify primary text (near-black) */
+  --sidebar-text-muted: var(--nav-text-muted); /* Shopify secondary text */
+  --sidebar-hover: #EDF0F2;                    /* Shopify hover fill */
+  --sidebar-active-bg: #FFFFFF;                /* Active item fill */
+  --sidebar-active-shadow: 0 1px 0 rgba(0, 0, 0, 0.06); /* Soft active elevation */
 
-  /* Header-specific colors (dark shell with white text) */
-  --header-bg: #111827;                        /* Header background (dark slate) */
-  --header-border: rgba(15, 23, 42, 0.9);      /* Stronger bottom border for separation */
-  --header-text: #F9FAFB;                      /* Primary header text (white) */
-  --header-text-muted: #E5E7EB;                /* Secondary header text/icons */
-  --header-icon-hover-bg: rgba(15, 23, 42, 0.85); /* Subtle lighter hover inside dark header */
-  --header-focus-ring: rgba(129, 140, 248, 0.6); /* Indigo focus ring on dark background */
+	  /* Header-specific colors (dark shell with white text) */
+	  --header-bg: #181818;                        /* Header background (darker charcoal) */
+	  --header-bg-top: #242424;                    /* Subtle top gradient */
+	  --header-bg-bottom: var(--header-bg);        /* Gradient bottom */
+	  --header-border: rgba(15, 23, 42, 0.9);      /* Stronger bottom border for separation */
+	  --header-text: #F9FAFB;                      /* Primary header text (white) */
+	  --header-text-muted: #E5E7EB;                /* Secondary header text/icons */
+	  --header-icon-hover-bg: rgba(15, 23, 42, 0.85); /* Subtle lighter hover inside dark header */
+	  --header-focus-ring: rgba(129, 140, 248, 0.6); /* Indigo focus ring on dark background */
+
+	  /* Header search (Shopify-like, compact + pill) */
+	  --header-search-bg: #303030;
+	  --header-search-border: #3a3a3a;
+	  --header-search-text: #f1f1f1;
+	  --header-search-placeholder: #a0a0a0;
+	  --header-search-focus-ring: #525252;
   
   /* Border Colors */
   --color-border-light: var(--text-tertiary);  /* Medium-dark gray for 3:1 contrast (WCAG compliant) */
@@ -120,7 +138,7 @@
   --spacing-content-block-gap: 24px;
   --spacing-card-padding: 24px;
   --spacing-card-gap: 24px;
-  --spacing-content-padding: 32px;
+  --spacing-content-padding: 24px;
   --spacing-nav-item: 12px;
   
   /* Spacing scale for consistent application */
@@ -171,23 +189,86 @@
   
   --transition-fast: 0.15s ease;
   --transition-medium: 0.2s ease;
-  --transition-drawer: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-drawer: 0.25s ease-out;
 }
 
 /* ============================================
    CSS GRID LAYOUT STRUCTURE
    ============================================ */
 
-.huntaze-layout {
-  display: grid;
-  height: 100vh;
-  width: 100vw;
+/* Dashboard shell: prevent global/window scrolling (scroll happens inside `.huntaze-main`). */
+html.huntaze-dashboard-shell,
+body.huntaze-dashboard-shell {
+  height: 100%;
   overflow: hidden;
-  grid-template-columns: var(--huntaze-sidebar-width) 1fr;
-  grid-template-rows: var(--huntaze-header-height) 1fr;
+}
+
+body.huntaze-dashboard-shell {
+  overscroll-behavior-y: none;
+}
+
+body.huntaze-dashboard-shell .app-wrapper {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.huntaze-layout {
+		  display: grid;
+		  height: 100vh;
+		  height: 100dvh;
+		  width: 100%;
+		  overflow: hidden;
+		  background-color: var(--bg-canvas, var(--bg-app, #F1F2F4));
+		  /* Make top corner radii visible like Shopify (header color behind corners) */
+		  background-image: linear-gradient(
+	    to bottom,
+	    var(--header-bg-top, var(--header-bg, #1F1F1F)) 0,
+	    var(--header-bg-bottom, var(--header-bg, #1F1F1F)) var(--huntaze-header-height),
+	    var(--header-bg-bottom, var(--header-bg, #1F1F1F)) calc(var(--huntaze-header-height) + var(--radius-card, 16px)),
+	    var(--bg-canvas, var(--bg-app, #F1F2F4)) calc(var(--huntaze-header-height) + var(--radius-card, 16px)),
+	    var(--bg-canvas, var(--bg-app, #F1F2F4)) 100%
+	  );
+  /* Defensive: prevent any accidentally-rendered extra grid items (e.g. dev widgets)
+     from creating an implicit bottom row ("white bar"). */
+  grid-auto-rows: 0;
+  /* `minmax(0, 1fr)` is required so the scroll containers can shrink and scroll
+     instead of overflowing/clipping inside a fixed-height dashboard shell. */
+  /* Assistant drawer column (auto) will push main content when open */
+  grid-template-columns: var(--huntaze-sidebar-width) minmax(0, 1fr) auto;
+  /* Reserve space for fixed header so the page can scroll normally. */
+  grid-template-rows: var(--huntaze-header-height) minmax(0, 1fr);
   grid-template-areas:
-    "header header"
-    "sidebar main";
+    "header header header"
+    "sidebar main assistant";
+}
+
+/* Guardrail: only the shell children should participate in the grid.
+   Any unexpected direct child creates implicit tracks (often a ~48px bottom row). */
+.huntaze-layout > :not(.huntaze-header):not(.huntaze-sidebar):not(.huntaze-main):not(#majordome-drawer) {
+  display: none !important;
+}
+
+/* Assistant drawer - integrated in grid, pushes main content */
+#majordome-drawer {
+  display: block !important;
+  grid-area: assistant;
+  height: 100%;
+  overflow: hidden;
+  background: white;
+  border-left: 4px solid #1a1a1a;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  transition: width 0.2s ease-in-out, min-width 0.2s ease-in-out;
+}
+
+/* Main content area */
+.huntaze-main {
+  border-top-left-radius: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: transparent;
+  min-height: 0;
 }
 
 /* Shopify-style light card system for dashboard scope */
@@ -205,61 +286,144 @@
 
 /* Grid area assignments */
 .huntaze-header {
-  grid-area: header;
-  background: var(--header-bg, var(--nav-surface));
-  color: var(--header-text, var(--nav-text));
-  border-bottom: 1px solid var(--header-border, var(--nav-border));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  position: sticky;
+	  grid-area: header;
+	  background: linear-gradient(
+	    to bottom,
+	    var(--header-bg-top, var(--header-bg, var(--nav-surface))),
+	    var(--header-bg-bottom, var(--header-bg, var(--nav-surface)))
+	  );
+	  color: var(--header-text, var(--nav-text));
+	  border-bottom: 1px solid var(--header-border, var(--nav-border));
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+  /* Align Huntaze logo with sidebar content left padding */
+  padding: 0 16px;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  height: var(--huntaze-header-height);
   z-index: var(--huntaze-z-index-header);
-  will-change: transform; /* GPU acceleration for sticky positioning */
 }
 
 .huntaze-sidebar {
   grid-area: sidebar;
   background-color: var(--sidebar-surface);
-  color: var(--sidebar-text-muted);
+  color: var(--sidebar-text);
   border-right: 1px solid var(--sidebar-border);
+  border-top-left-radius: 16px;
   display: flex;
   flex-direction: column;
   z-index: var(--huntaze-z-index-nav);
+  /* Sidebar text hierarchy (main vs sub-nav) */
+  --sidebar-text: #202223; /* Shopify primary text */
+  --sidebar-text-muted: #8c9196; /* Shopify subtle text */
+  /* Keep submenu alignment deterministic */
+  --huntaze-sidebar-item-padding-x: 8px;
+  --huntaze-sidebar-item-gap: 8px;
+  --huntaze-sidebar-item-icon-size: 14px;
+  --huntaze-sidebar-subnav-item-padding-x: 8px;
+  --huntaze-sidebar-subnav-text-indent: calc(
+    var(--huntaze-sidebar-item-padding-x) +
+    var(--huntaze-sidebar-item-icon-size) +
+    var(--huntaze-sidebar-item-gap)
+  );
+}
+
+/* Desktop sidebar: fixed positioning */
+@media (min-width: 1024px) {
+  .huntaze-sidebar {
+    position: fixed;
+    /* Slight overlap to avoid subpixel seams between fixed header + sidebar */
+    top: calc(var(--huntaze-header-height) - 1px);
+    left: 0;
+    width: var(--huntaze-sidebar-width);
+    height: calc(100vh - var(--huntaze-header-height) + 1px);
+    height: calc(100dvh - var(--huntaze-header-height) + 1px);
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.huntaze-sidebar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  scroll-behavior: smooth; /* Smooth scrolling for better UX */
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-light) transparent;
+  padding: 16px 8px 8px 12px;
+}
+
+.huntaze-sidebar-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.huntaze-sidebar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--huntaze-sidebar-item-gap);
+  padding: 6px var(--huntaze-sidebar-item-padding-x);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600; /* Make main nav stand out from sub-nav */
+  line-height: 20px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.huntaze-sidebar-footer {
+  margin-top: auto;
+  padding: var(--spacing-4);
+  border-top: none;
 }
 
 /* Webkit scrollbar styling for sidebar */
-.huntaze-sidebar::-webkit-scrollbar {
+.huntaze-sidebar-nav::-webkit-scrollbar {
   width: 6px;
 }
 
-.huntaze-sidebar::-webkit-scrollbar-track {
+.huntaze-sidebar-nav::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.huntaze-sidebar::-webkit-scrollbar-thumb {
+.huntaze-sidebar-nav::-webkit-scrollbar-thumb {
   background: var(--color-border-light);
   border-radius: 3px;
 }
 
-.huntaze-sidebar::-webkit-scrollbar-thumb:hover {
+.huntaze-sidebar-nav::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-inactive);
 }
 
-/* Sidebar-specific nav item styling overrides (dark shell) */
+/* Sidebar-specific nav item styling overrides (Shopify style) */
 .huntaze-sidebar .nav-item {
-  color: var(--sidebar-text-muted);
+  color: var(--sidebar-text);
+  border: none;
+  background: transparent;
+}
+
+.huntaze-sidebar .nav-item svg {
+  color: var(--sidebar-text);
+  stroke: currentColor;
+  /* Keep the Shopify-like outline look (don't fill the whole icon) */
+  fill: none;
 }
 
 .huntaze-sidebar .nav-item[data-active="true"] {
   color: var(--sidebar-text);
   background-color: var(--sidebar-active-bg);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  border: none;
+}
+
+.huntaze-sidebar .nav-item[data-active="true"] svg {
+  color: var(--sidebar-text);
 }
 
 .huntaze-sidebar .nav-item:hover:not([data-active="true"]) {
@@ -267,22 +431,219 @@
   color: var(--sidebar-text);
 }
 
+.huntaze-sidebar .nav-item:hover:not([data-active="true"]) svg {
+  color: var(--sidebar-text);
+}
+
 .huntaze-sidebar .nav-sub-item {
-  color: var(--sidebar-text-muted);
+  color: var(--sidebar-text);
+  border: 1px solid transparent;
 }
 
 .huntaze-sidebar .nav-sub-item[data-active="true"] {
   color: var(--sidebar-text);
   background-color: var(--sidebar-active-bg);
+  border-color: var(--sidebar-border);
+}
+
+.huntaze-sidebar .nav-sub-item:hover:not([data-active="true"]) {
+  background-color: var(--sidebar-hover);
+  color: var(--sidebar-text);
+}
+
+/* Sidebar submenu (OnlyFans, Marketing, etc.) */
+.huntaze-sidebar-subnav {
+  margin-top: 4px;
+  /* Align sub-menu text with the parent label's first letter */
+  margin-left: calc(var(--huntaze-sidebar-subnav-text-indent) - var(--huntaze-sidebar-subnav-item-padding-x));
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.huntaze-sidebar-subnav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px var(--huntaze-sidebar-subnav-item-padding-x);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--sidebar-text-muted);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.huntaze-sidebar-subnav-item[data-active="true"] {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+.huntaze-sidebar-subnav-item:hover:not([data-active="true"]) {
+  background-color: var(--sidebar-hover);
+  color: var(--sidebar-text);
 }
 
 .huntaze-main {
-  grid-area: main;
-  background-color: var(--bg-app);
-  color: var(--color-text-main);
-  padding: var(--spacing-content-padding);
-  overflow-y: auto;
-  scroll-behavior: smooth;
+	  grid-area: main;
+	  background-color: var(--bg-canvas, var(--bg-app));
+	  color: var(--color-text-main);
+	  padding: var(--spacing-content-padding);
+  /* Prevent the last card shadow from being clipped at end of scroll */
+  padding-bottom: calc(var(--spacing-content-padding) + env(safe-area-inset-bottom, 0px));
+	  min-height: 0;
+	  overflow-y: auto;
+	  overflow-x: hidden;
+	  overscroll-behavior-y: contain;
+	  outline: none;
+	}
+
+/* Full-bleed pages (e.g. OnlyFans Messages): remove shell padding and prevent
+   outer scroll so the internal panels can manage their own scrolling. */
+.huntaze-main:has(.messaging-interface) {
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overflow: hidden;
+}
+
+/* OnlyFans Messages (page-scoped): same behavior without relying on `:has()`,
+   plus a fixed height/scroll chain for Next.js scroll-focus boundaries so the
+   3-column layout can truly fill the content area without extra page scroll. */
+html.onlyfans-messages-page,
+body.onlyfans-messages-page {
+  height: 100% !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
+.onlyfans-messages-page .huntaze-main {
+  padding: 0 !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Prevent any scroll on the messages page layout */
+.onlyfans-messages-page .huntaze-layout {
+  overflow: hidden !important;
+}
+
+.onlyfans-messages-page html,
+.onlyfans-messages-page body {
+  overflow: hidden !important;
+}
+
+.onlyfans-messages-page .huntaze-main > :where(*) {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+.onlyfans-messages-page .huntaze-main [data-nextjs-scroll-focus-boundary] {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+}
+
+.onlyfans-messages-page .messaging-interface {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure messaging grid is visible on messages page */
+.onlyfans-messages-page .messaging-grid {
+  display: grid !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+/* Desktop: Force 3-column layout on messages page */
+@media (min-width: 1024px) {
+  .onlyfans-messages-page .messaging-grid {
+    grid-template-columns: 280px 1fr 280px !important;
+    grid-template-areas: "fan-list chat context" !important;
+  }
+  
+  .onlyfans-messages-page .messaging-column--left,
+  .onlyfans-messages-page .messaging-column--center,
+  .onlyfans-messages-page .messaging-column--right {
+    display: flex !important;
+  }
+}
+
+/* Mobile/tablet: relax full-screen locks to avoid blank rendering */
+@media (max-width: 1023px) {
+  html.onlyfans-messages-page,
+  body.onlyfans-messages-page {
+    position: static !important;
+    height: auto !important;
+    width: auto !important;
+    overflow: auto !important;
+  }
+
+  .onlyfans-messages-page .huntaze-layout {
+    overflow: visible !important;
+  }
+
+  .onlyfans-messages-page .huntaze-main {
+    height: auto !important;
+    max-height: none !important;
+    min-height: calc(100dvh - var(--huntaze-header-height)) !important;
+    overflow-y: auto !important;
+  }
+
+  .onlyfans-messages-page .huntaze-main [data-nextjs-scroll-focus-boundary] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .onlyfans-messages-page .messaging-interface {
+    height: auto !important;
+    max-height: none !important;
+    min-height: calc(100dvh - var(--huntaze-header-height)) !important;
+  }
+
+  .onlyfans-messages-page .messaging-grid {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
+.huntaze-main:focus,
+.huntaze-main:focus-visible {
+  outline: none;
+}
+
+/* Prevent full-viewport helpers inside the main scroll container
+   (e.g. Tailwind `min-h-screen`/`h-screen`) from creating an extra empty scroll area. */
+.huntaze-main .min-h-screen {
+  min-height: 100% !important;
+}
+
+.huntaze-main .h-screen {
+  height: 100% !important;
+}
+
+/* Hide Polaris SkipToContentTarget blue bar */
+.Polaris-SkipToContentTarget {
+  display: none !important;
 }
 
 /* ============================================
@@ -472,10 +833,110 @@
       "header"
       "main";
   }
+
+  /* Mobile sidebar backdrop - dark overlay - MUST be visible */
+  .mobile-sidebar-backdrop {
+    display: block !important;
+    position: fixed !important;
+    top: var(--huntaze-header-height, 60px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: calc(100dvh - var(--huntaze-header-height, 60px)) !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+    z-index: 39 !important;
+  }
   
-  /* Hide desktop sidebar on mobile */
+  .mobile-sidebar-backdrop[data-open="true"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* Mobile sidebar: drawer pattern - starts BELOW header like Shopify */
   .huntaze-sidebar {
-    display: none;
+    position: fixed !important;
+    /* Start below the header */
+    top: var(--huntaze-header-height) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    /* Width: 220px as requested */
+    width: 220px !important;
+    max-width: 75vw !important;
+    /* Height = viewport minus header */
+    height: calc(100dvh - var(--huntaze-header-height)) !important;
+    background-color: var(--sidebar-surface);
+    /* Remove from grid flow on mobile */
+    grid-area: unset;
+    border-radius: 0;
+    /* Add shadow for drawer effect */
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    /* z-index below header (header is 50, drawer is 40) */
+    z-index: 40 !important;
+    /* Smooth transition for open/close */
+    transition: transform 0.2s ease-out;
+    /* Default: hidden off-screen */
+    transform: translateX(-100%);
+    pointer-events: none;
+  }
+  
+  /* Mobile sidebar open state - visible */
+  .huntaze-sidebar[data-open="true"] {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* Assistant drawer - slides from RIGHT, starts BELOW header, NO animation to avoid glitches */
+  #majordome-drawer {
+    position: fixed !important;
+    /* Start below the header */
+    top: var(--huntaze-header-height) !important;
+    right: 0 !important;
+    left: auto !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    /* Height = viewport minus header */
+    height: calc(100dvh - var(--huntaze-header-height)) !important;
+    z-index: 40;
+    border-radius: 0;
+    border-left: none;
+    background: white;
+    /* NO transition - instant show/hide to avoid animation glitches */
+    transition: none !important;
+  }
+  
+  /* Mobile assistant drawer - hidden by default */
+  #majordome-drawer:not([data-open="true"]) {
+    transform: translateX(100%);
+    visibility: hidden;
+    pointer-events: none;
+  }
+  
+  /* Mobile assistant drawer open state */
+  #majordome-drawer[data-open="true"] {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+  
+  /* Prevent header animation when drawer opens/closes */
+  .huntaze-header {
+    transition: none !important;
+    transform: none !important;
+  }
+  
+  /* Mobile assistant drawer inner container */
+  #majordome-drawer > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
   }
   
   /* Adjust typography for mobile - SCOPED TO DASHBOARD */
@@ -553,6 +1014,83 @@
 }
 
 /* ============================================
+   POLARIS FOCUS OUTLINE REMOVAL
+   Remove blue focus outlines from Polaris components
+   ============================================ */
+
+/* Remove all focus outlines globally in dashboard */
+.huntaze-dashboard-scope *:focus,
+.huntaze-dashboard-scope *:focus-visible,
+.huntaze-layout *:focus,
+.huntaze-layout *:focus-visible,
+.Polaris-Page *:focus,
+.Polaris-Page *:focus-visible,
+[class*="Polaris-"]:focus,
+[class*="Polaris-"]:focus-visible,
+.Polaris-Page__Header:focus,
+.Polaris-Page__Header *:focus,
+.Polaris-LegacyCard:focus,
+.Polaris-Box:focus,
+div:focus,
+main:focus,
+section:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* Remove blue ring on any element - maximum specificity */
+html *:focus,
+body *:focus,
+#__next *:focus,
+.huntaze-main *:focus,
+*:focus {
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+html *:focus-visible,
+body *:focus-visible,
+#__next *:focus-visible,
+.huntaze-main *:focus-visible,
+*:focus-visible {
+  outline: none !important;
+  outline-width: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Target Polaris Page header specifically */
+.Polaris-Page__Header,
+.Polaris-Page__Header *,
+.Polaris-Page__TitleAndActions,
+.Polaris-Page__Title,
+.Polaris-LegacyStack,
+.Polaris-LegacyStack *,
+[class*="Polaris-Page"],
+[class*="Polaris-Page"] * {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep focus visible for keyboard users on interactive elements only */
+.Polaris-Button:focus-visible,
+.Polaris-TextField__Input:focus-visible,
+.Polaris-Select__Input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-indigo) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+/* ============================================
    ACCESSIBILITY - REDUCED MOTION
    ============================================ */
 
@@ -567,5 +1105,266 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ============================================
+   MARKETING PAGE - MOBILE RESPONSIVE
+   Mobile-first: full-bleed edge-to-edge on mobile
+   Pattern: rounded-none, border-x-0, shadow-none on mobile
+   ============================================ */
+
+/* Mobile-first: full width, no padding, no max-width */
+.marketing-page-container {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* Desktop (lg: 1024px+): add max-width and padding */
+@media (min-width: 1024px) {
+  .marketing-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+}
+
+/* Grid: 1 column, no gap on mobile */
+.marketing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+/* Desktop: 2-column layout with spacing */
+@media (min-width: 1024px) {
+  .marketing-grid {
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+  }
+}
+
+/* Remove gap between cards inside BlockStack on mobile */
+.marketing-page-container .Polaris-BlockStack {
+  gap: 0 !important;
+}
+
+@media (min-width: 1024px) {
+  .marketing-page-container .Polaris-BlockStack {
+    gap: var(--p-space-400, 16px) !important;
+  }
+}
+
+/* ============================================
+   CARDS: Edge-to-edge on mobile
+   - rounded-none (no border-radius)
+   - border-x-0 (no left/right borders)
+   - shadow-none (no box-shadow)
+   - border-b only (separator between cards)
+   ============================================ */
+.marketing-page-container .Polaris-Card,
+.marketing-page-container .Polaris-LegacyCard,
+.marketing-page-container .Polaris-ShadowBevel {
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid #e1e3e5 !important;
+  box-shadow: none !important;
+  /* Ensure full width */
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Desktop: restore card styling */
+@media (min-width: 1024px) {
+  .marketing-page-container .Polaris-Card,
+  .marketing-page-container .Polaris-LegacyCard,
+  .marketing-page-container .Polaris-ShadowBevel {
+    border-radius: var(--p-border-radius-300, 12px) !important;
+    border: 1px solid var(--p-color-border-secondary, #e1e3e5) !important;
+    box-shadow: var(--p-shadow-100, 0 1px 0 rgba(0, 0, 0, 0.05)) !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+/* Sidebar: show first on mobile (execution panel) */
+.marketing-sidebar {
+  position: static;
+  order: -1;
+  width: 100%;
+}
+
+/* Desktop: sticky sidebar */
+@media (min-width: 1024px) {
+  .marketing-sidebar {
+    position: sticky;
+    top: 24px;
+    order: 0;
+    width: auto;
+  }
+}
+
+/* Table wrapper: horizontal scroll on mobile */
+.marketing-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* Desktop: no scroll needed */
+@media (min-width: 1024px) {
+  .marketing-table-wrapper {
+    overflow-x: visible;
+  }
+}
+
+/* Platform buttons: horizontal scroll on mobile */
+.marketing-platform-buttons {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.marketing-platform-buttons .Polaris-ButtonGroup {
+  flex-wrap: nowrap;
+  min-width: max-content;
+}
+
+/* Desktop: no scroll needed */
+@media (min-width: 1024px) {
+  .marketing-platform-buttons {
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+  
+  .marketing-platform-buttons .Polaris-ButtonGroup {
+    flex-wrap: wrap;
+    min-width: auto;
+  }
+}
+
+/* Page header: add horizontal padding on mobile */
+.marketing-page-container > .Polaris-Box:first-child {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 1024px) {
+  .marketing-page-container > .Polaris-Box:first-child {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+
+/* ============================================
+   MOBILE CARD FULL-WIDTH OVERRIDES
+   Cards edge-to-edge on mobile (< 768px)
+   MUST be at the end for highest specificity
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Mobile spacing variables */
+  :root {
+    --mobile-card-gap: 8px;
+    --mobile-section-gap: 16px;
+  }
+  
+  /* Main container - remove horizontal padding */
+  .huntaze-main {
+    padding: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  }
+  
+  /* Polaris Analytics - full width cards with spacing */
+  .polaris-analytics .content-wrapper {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-bottom: 16px !important;
+    gap: var(--mobile-section-gap, 16px) !important;
+  }
+  
+  .polaris-analytics .kpi-card,
+  .polaris-analytics .p-card {
+    border-radius: 12px !important;
+    border: 1px solid var(--p-border, #E3E3E3) !important;
+    margin: 0 !important;
+  }
+  
+  .polaris-analytics .analytics-kpi-stack {
+    border-radius: 12px !important;
+    border: 1px solid var(--p-border, #E3E3E3) !important;
+  }
+  
+  .polaris-analytics .kpi-grid,
+  .polaris-analytics .three-col-grid,
+  .polaris-analytics .chart-section {
+    gap: var(--mobile-card-gap, 8px) !important;
+  }
+  
+  /* Banner - full width on mobile */
+  .mobile-full-width-banner {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin: 0 !important;
+  }
+  
+  /* All cards - full width with vertical spacing */
+  .huntaze-card,
+  .padding-card,
+  .stat-card,
+  .info-card,
+  .segment-card,
+  .glass-card,
+  .card-elevated,
+  [data-testid="card"],
+  .Polaris-Card,
+  .Polaris-LegacyCard {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Container resets */
+  .container-default,
+  .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  /* Grid spacing */
+  .huntaze-content-blocks,
+  .huntaze-content-grid,
+  .huntaze-card-grid,
+  .grid-responsive {
+    gap: var(--mobile-card-gap, 8px) !important;
+  }
+  
+  /* Section spacing */
+  .page-stack {
+    gap: var(--mobile-section-gap, 16px) !important;
+  }
+  
+  .section-stack {
+    gap: var(--mobile-card-gap, 8px) !important;
+  }
+}
+
+/* Desktop: restore border-radius on banner */
+@media (min-width: 768px) {
+  .mobile-full-width-banner {
+    border-radius: 8px;
   }
 }

@@ -41,8 +41,9 @@ export default function HeaderShopify() {
           {/* Left side: Logo + Nav (grouped like Shopify) */}
           <div className="flex items-center gap-8">
             {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <span className="text-[22px] font-bold text-white">Huntaze</span>
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/huntaze-logo-icon.svg" alt="Beta" className="w-9 h-9" />
+              <span className="text-[22px] font-bold text-white">Beta</span>
             </Link>
             
             {/* Navigation - right next to logo */}

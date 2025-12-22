@@ -13,16 +13,14 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Filter, Star, TrendingUp, AlertTriangle, Users, Sparkles, DollarSign } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import useSWR from 'swr';
+import { Users, Sparkles, MessageCircle, RefreshCw } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { IndexTable, Column } from '@/components/ui/IndexTable';
-import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/EmptyState';
-
-// Badge status type (matches Badge component)
-type BadgeStatus = 'success' | 'warning' | 'critical' | 'info' | 'neutral';
+import { SegmentedChips } from '@/components/ui/SegmentedChips';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
 type FanSegment = 'all' | 'vip' | 'active' | 'at_risk' | 'churned';
 
@@ -41,30 +39,154 @@ interface Fan {
   aiInsight?: string;
 }
 
+interface FansApiItem {
+  id: string;
+  name: string;
+  username: string;
+  avatar?: string;
+  subscriptionTier?: string;
+  subscriptionAmount: number;
+  subscriptionStatus: 'active' | 'cancelled' | 'expired';
+  subscribedAt: string;
+  expiresAt?: string;
+  totalSpent: number;
+  messageCount: number;
+  lastMessageAt?: string;
+}
+
+interface FansApiResponse {
+  success: boolean;
+  data?: {
+    items: FansApiItem[];
+    pagination?: {
+      total: number;
+      limit: number;
+      offset: number;
+      hasMore: boolean;
+    };
+  };
+}
+
 // Type for IndexTable row data
 type FanRow = Fan & Record<string, unknown>;
+
+function formatRelativeTime(value?: string): string {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  const diff = Date.now() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function computeChurnRisk(status: FansApiItem['subscriptionStatus'], lastMessageAt?: string): number {
+  if (status !== 'active') return 80;
+  if (!lastMessageAt) return 40;
+  const diff = Date.now() - new Date(lastMessageAt).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days >= 21) return 70;
+  if (days >= 10) return 50;
+  return 20;
+}
+
+function resolveTier(item: FansApiItem): string {
+  if (item.subscriptionTier) return item.subscriptionTier;
+  if (item.subscriptionAmount >= 50) return 'VIP';
+  return 'Active';
+}
 
 export default function FansPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSegment, setSelectedSegment] = useState<FanSegment>('all');
-  const [isLoading] = useState(false);
 
-  // Mock fans data with AI insights
-  const fans: Fan[] = [
-    { id: '1', name: 'Sarah M.', username: '@sarah_m', tier: 'VIP', ltv: 2450, arpu: 49, lastActive: '2 hours ago', messages: 156, avatar: 'https://i.pravatar.cc/150?img=1', churnRisk: 5, aiInsight: 'High engagement, consider exclusive content' },
-    { id: '2', name: 'Mike R.', username: '@mike_r', tier: 'Active', ltv: 890, arpu: 29, lastActive: '1 day ago', messages: 45, avatar: 'https://i.pravatar.cc/150?img=2', churnRisk: 25, aiInsight: 'Moderate activity, send personalized message' },
-    { id: '3', name: 'Emma L.', username: '@emma_l', tier: 'VIP', ltv: 3200, arpu: 64, lastActive: '5 hours ago', messages: 234, avatar: 'https://i.pravatar.cc/150?img=3', churnRisk: 3, aiInsight: 'Top spender, offer VIP perks' },
-    { id: '4', name: 'John D.', username: '@john_d', tier: 'At-Risk', ltv: 450, arpu: 15, lastActive: '7 days ago', messages: 12, avatar: 'https://i.pravatar.cc/150?img=4', churnRisk: 78, aiInsight: 'High churn risk, send re-engagement offer' },
-    { id: '5', name: 'Lisa K.', username: '@lisa_k', tier: 'Active', ltv: 1200, arpu: 40, lastActive: '3 hours ago', messages: 78, avatar: 'https://i.pravatar.cc/150?img=5', churnRisk: 15, aiInsight: 'Growing engagement, upsell opportunity' },
-  ];
+  const {
+    data: fansResponse,
+    error: fansError,
+    isLoading,
+    mutate,
+  } = useSWR<FansApiResponse>(
+    '/api/onlyfans/fans?limit=100&offset=0',
+    (url) => internalApiFetch<FansApiResponse>(url),
+  );
 
-  const segments = [
-    { value: 'all', label: 'All Fans', count: fans.length, icon: Users },
-    { value: 'vip', label: 'VIP', count: fans.filter(f => f.tier === 'VIP').length, icon: Star },
-    { value: 'active', label: 'Active', count: fans.filter(f => f.tier === 'Active').length, icon: TrendingUp },
-    { value: 'at_risk', label: 'At-Risk', count: fans.filter(f => f.tier === 'At-Risk').length, icon: AlertTriangle },
-    { value: 'churned', label: 'Churned', count: 0, icon: AlertTriangle },
-  ];
+  const fans: Fan[] = useMemo(() => {
+    const items = fansResponse?.data?.items ?? [];
+    return items.map((item) => ({
+      id: item.id,
+      name: item.name || 'Subscriber',
+      username: item.username || '@unknown',
+      tier: resolveTier(item),
+      ltv: item.totalSpent ?? 0,
+      arpu: item.subscriptionAmount ?? 0,
+      lastActive: formatRelativeTime(item.lastMessageAt || item.subscribedAt),
+      messages: item.messageCount ?? 0,
+      avatar: item.avatar || '',
+      churnRisk: computeChurnRisk(item.subscriptionStatus, item.lastMessageAt),
+    }));
+  }, [fansResponse]);
+
+  if (isLoading) {
+    return (
+      <PageLayout
+        title={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Users size={24} />Fans</div>}
+        subtitle="Segment and manage your OnlyFans subscribers with AI insights."
+        showHomeInBreadcrumbs={false}
+      >
+        <EmptyState
+          variant="custom"
+          title="Loading fans..."
+          description="Fetching your latest subscriber list."
+        />
+      </PageLayout>
+    );
+  }
+
+  if (fansError) {
+    return (
+      <PageLayout
+        title={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Users size={24} />Fans</div>}
+        subtitle="Segment and manage your OnlyFans subscribers with AI insights."
+        showHomeInBreadcrumbs={false}
+      >
+        <EmptyState
+          variant="error"
+          title="Failed to load fans"
+          description="Please try again."
+          secondaryAction={{ label: 'Retry', onClick: () => void mutate(), icon: RefreshCw }}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!isLoading && fans.length === 0) {
+    return (
+      <PageLayout
+        title={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Users size={24} />Fans</div>}
+        subtitle="Segment and manage your OnlyFans subscribers with AI insights."
+        showHomeInBreadcrumbs={false}
+      >
+        <EmptyState
+          variant="no-data"
+          title="Connect OnlyFans to view your fans"
+          description="Once connected, Huntaze will sync your fan list and help you segment VIPs, at-risk fans, and more."
+          action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
+        />
+      </PageLayout>
+    );
+  }
+
+  const segmentItems = [
+    { value: 'all', label: 'All Fans', count: fans.length },
+    { value: 'vip', label: 'VIP', count: fans.filter((f) => f.tier === 'VIP').length },
+    { value: 'active', label: 'Active', count: fans.filter((f) => f.tier === 'Active').length },
+    { value: 'at_risk', label: 'At-Risk', count: fans.filter((f) => f.tier === 'At-Risk').length },
+    { value: 'churned', label: 'Churned', count: 0 },
+  ] as const;
 
   const filteredFans = useMemo(() => {
     return fans.filter(fan => {
@@ -74,24 +196,6 @@ export default function FansPage() {
       return matchesSearch && matchesSegment;
     });
   }, [fans, searchQuery, selectedSegment]);
-
-  // Map tier to Badge status
-  const getTierBadgeStatus = (tier: string): BadgeStatus => {
-    switch (tier) {
-      case 'VIP': return 'warning'; // Gold/yellow for VIP
-      case 'Active': return 'success';
-      case 'At-Risk': return 'critical';
-      case 'Churned': return 'neutral';
-      default: return 'neutral';
-    }
-  };
-
-  // Map churn risk to Badge status
-  const getChurnRiskStatus = (risk: number): BadgeStatus => {
-    if (risk >= 70) return 'critical';
-    if (risk >= 40) return 'warning';
-    return 'success';
-  };
 
   const getChurnRiskLabel = (risk: number): string => {
     if (risk >= 70) return 'High';
@@ -106,15 +210,18 @@ export default function FansPage() {
       header: 'Fan',
       width: '200px',
       render: (_, row) => (
-        <Link href={`/onlyfans/fans/${row.id}`} className="flex items-center gap-[var(--space-3)]">
+        <Link href={`/onlyfans/fans/${row.id}`} className="flex min-w-0 items-center gap-3">
           <img 
-            src={row.avatar as string} 
+            src={
+              (row.avatar as string) ||
+              `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(String(row.id))}`
+            }
             alt={row.name as string} 
             className="w-10 h-10 rounded-full object-cover"
           />
-          <div>
-            <p className="font-medium text-[var(--color-text-primary)]">{row.name as string}</p>
-            <p className="text-xs text-[var(--color-text-secondary)]">{row.username as string}</p>
+          <div className="min-w-0">
+            <p className="truncate font-medium text-slate-900">{row.name as string}</p>
+            <p className="truncate text-xs text-slate-500">{row.username as string}</p>
           </div>
         </Link>
       ),
@@ -123,20 +230,25 @@ export default function FansPage() {
       key: 'tier',
       header: 'Tier',
       width: '100px',
-      render: (value) => (
-        <Badge status={getTierBadgeStatus(value as string)}>
-          {value as string}
-        </Badge>
-      ),
+      truncate: false,
+      render: (value) => {
+        const tier = String(value ?? '');
+        return (
+          <span className="text-slate-900 font-medium">
+            {tier}
+          </span>
+        );
+      },
     },
     {
       key: 'ltv',
       header: 'LTV',
       width: '100px',
       numeric: true,
+      truncate: false,
       render: (value, row) => (
         <span 
-          className="font-semibold text-[var(--color-status-success)]"
+          className="font-semibold tabular-nums text-slate-900"
           data-testid={`fan-ltv-${row.id}`}
         >
           ${(value as number).toLocaleString()}
@@ -146,22 +258,28 @@ export default function FansPage() {
     {
       key: 'churnRisk',
       header: 'Churn Risk',
-      width: '120px',
-      render: (value, row) => (
-        <Badge 
-          status={getChurnRiskStatus(value as number)}
-          data-testid={`fan-churn-${row.id}`}
-        >
-          {getChurnRiskLabel(value as number)} ({value as number}%)
-        </Badge>
-      ),
+      width: '140px',
+      truncate: false,
+      render: (value, row) => {
+        const risk = value as number;
+        const label = getChurnRiskLabel(risk);
+        return (
+          <span
+            className="text-slate-900 tabular-nums"
+            data-testid={`fan-churn-${row.id}`}
+          >
+            {label} ({risk}%)
+          </span>
+        );
+      },
     },
     {
       key: 'lastActive',
       header: 'Last Active',
       width: '120px',
+      truncate: false,
       render: (value) => (
-        <span className="text-[var(--color-text-secondary)]">
+        <span className="text-slate-600">
           {value as string}
         </span>
       ),
@@ -173,120 +291,94 @@ export default function FansPage() {
       truncate: true,
       render: (value, row) => value ? (
         <div 
-          className="flex items-center gap-[var(--space-1)] text-[var(--color-text-secondary)]"
+          className="flex items-center gap-1 text-slate-600"
           data-testid={`fan-insight-${row.id}`}
         >
-          <Sparkles className="w-3 h-3 text-purple-500 flex-shrink-0" />
+          <Sparkles className="w-3 h-3 text-violet-500 flex-shrink-0" />
           <span className="truncate">{value as string}</span>
         </div>
       ) : null,
     },
     {
       key: 'id',
-      header: 'Actions',
-      width: '100px',
-      render: () => (
-        <Button variant="outline" size="sm">
-          Message
-        </Button>
+      header: 'Message',
+      width: 'clamp(56px, 10vw, 110px)',
+      align: 'right',
+      truncate: false,
+      render: (_, row) => (
+        <Link
+          href={`/onlyfans/messages?conversation=${encodeURIComponent(String(row.id))}`}
+          aria-label={`Message ${(row.name as string) ?? 'fan'}`}
+          title="Message"
+          className={[
+            "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors",
+            "h-9 w-9 lg:w-auto lg:px-3",
+            "hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#2c6ecb]/30",
+          ].join(" ")}
+        >
+          <MessageCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+          <span className="hidden lg:inline">Message</span>
+        </Link>
       ),
     },
   ];
 
   return (
     <PageLayout
-      title="Fans"
+      title={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Users size={24} />Fans</div>}
       subtitle="Segment and manage your OnlyFans subscribers with AI insights."
-      breadcrumbs={[
-        { label: 'OnlyFans', href: '/onlyfans' },
-        { label: 'Fans' }
-      ]}
-      actions={
-        <div className="flex items-center gap-[var(--space-2)]">
-          <Link href="/fans/import">
-            <Button variant="outline" size="sm">
-              Import fans
-            </Button>
-          </Link>
-          <Button variant="primary" size="sm">
-            <Sparkles className="w-4 h-4 mr-2" />
-            AI Segment
-          </Button>
-        </div>
-      }
+      showHomeInBreadcrumbs={false}
     >
       {/* Segments */}
-      <Card className="p-[var(--space-4)]">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-[var(--space-3)]">
-          {segments.map((segment) => {
-            const Icon = segment.icon;
-            const isActive = selectedSegment === segment.value;
-            return (
-              <button
-                key={segment.value}
-                onClick={() => setSelectedSegment(segment.value as FanSegment)}
-                className={`p-[var(--space-3)] rounded-[var(--radius-base)] border text-left transition-colors ${
-                  isActive
-                    ? 'border-[var(--color-action-primary)] bg-[var(--color-surface-subdued)]'
-                    : 'border-[var(--color-border-subdued)] hover:bg-[var(--color-surface-subdued)]'
-                }`}
-              >
-                <div className="flex items-center gap-[var(--space-2)] mb-[var(--space-1)]">
-                  <Icon className="w-4 h-4 text-[var(--color-text-secondary)]" />
-                  <span className="font-semibold text-[var(--color-text-primary)]">
-                    {segment.count}
-                  </span>
-                </div>
-                <p className="text-xs text-[var(--color-text-secondary)]">{segment.label}</p>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
+      <div className="mb-4">
+        <SegmentedChips
+          variant="tabs"
+          size="sm"
+          items={segmentItems}
+          value={selectedSegment}
+          onChange={setSelectedSegment}
+          className="px-4"
+        />
+      </div>
 
       {/* Search & Filters */}
-      <Card className="p-[var(--space-4)]">
-        <div className="flex flex-col gap-[var(--space-3)] md:flex-row md:items-center md:justify-between mb-[var(--space-4)]">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search fans by name or username..."
-              className="w-full pl-9 pr-4 py-2 border border-[var(--color-border-default)] rounded-[var(--radius-base)] bg-[var(--color-surface-card)] text-[var(--color-text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-action-primary)] focus:border-transparent"
-            />
-          </div>
-          <Button variant="outline" size="sm" className="inline-flex items-center gap-2">
-            <Filter className="w-4 h-4" />
-            Filters
-          </Button>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search fans by name or username…"
+            ariaLabel="Search fans by name or username"
+            className="max-w-md"
+          />
         </div>
 
         {/* Fans Table using IndexTable */}
-        <IndexTable<FanRow>
-          data={filteredFans as FanRow[]}
-          columns={columns}
-          keyField="id"
-          loading={isLoading}
-          rowHeight="default"
-          emptyState={
-            <EmptyState
-              icon={<Users className="w-12 h-12" />}
-              title="No fans found"
-              description={searchQuery 
-                ? `No fans match "${searchQuery}". Try a different search term.`
-                : "You don't have any fans in this segment yet."
-              }
-              action={{
-                label: "Run AI Segmentation",
-                onClick: () => console.log('AI Segmentation'),
-                icon: Sparkles,
-              }}
-            />
-          }
-        />
-      </Card>
+        <div className="border-t border-slate-200/60">
+          <IndexTable<FanRow>
+            data={filteredFans as FanRow[]}
+            columns={columns}
+            keyField="id"
+            loading={isLoading}
+            rowHeight="default"
+            emptyState={
+              <EmptyState
+                icon={<Users className="w-12 h-12" />}
+                title="No fans found"
+                description={searchQuery 
+                  ? `No fans match "${searchQuery}". Try a different search term.`
+                  : "You don't have any fans in this segment yet."
+                }
+                action={{
+                  label: "Go to integrations",
+                  onClick: () => (window.location.href = '/integrations'),
+                  icon: Sparkles,
+                }}
+              />
+            }
+          />
+        </div>
+      </div>
     </PageLayout>
   );
 }

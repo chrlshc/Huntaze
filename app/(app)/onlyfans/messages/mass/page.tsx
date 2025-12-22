@@ -1,19 +1,51 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
-import { Send, Users, MessageSquare, Clock, CheckCircle, AlertCircle, Plus, Eye, Calendar } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Card } from '@/components/ui/card';
-import { AppPageHeader } from '@/components/layout/AppPageHeader';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  MessageSquare,
+  Plus,
+  Send,
+  Users,
+} from 'lucide-react';
+import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
+import { ShopifyButton, ShopifyCard, ShopifyMetricCard, ShopifyMetricGrid } from '@/components/ui/shopify';
+import { ShopifyInput } from '@/components/ui/shopify/ShopifyInput';
+import { ShopifyTextarea } from '@/components/ui/shopify/ShopifyTextarea';
+import { ShopifyToggle } from '@/components/ui/shopify/ShopifyToggle';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
+
+type MassMessagingTab = 'compose' | 'scheduled' | 'sent';
+type RecurringFrequency = 'daily' | 'weekly' | 'monthly';
 
 export default function OnlyFansMassMessagingPage() {
-  const [activeTab, setActiveTab] = useState<'compose' | 'scheduled' | 'sent'>('compose');
+  const [activeTab, setActiveTab] = useState<MassMessagingTab>('compose');
   const [selectedAudience, setSelectedAudience] = useState<string>('all');
   const [messageText, setMessageText] = useState('');
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleTime, setScheduleTime] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
-  const [recurringFrequency, setRecurringFrequency] = useState('daily');
+  const [recurringFrequency, setRecurringFrequency] = useState<RecurringFrequency>('daily');
+
+  if (!ENABLE_MOCK_DATA) {
+    return (
+      <ShopifyPageLayout
+        title="Mass messaging"
+        subtitle="Send OnlyFans messages to segments of your fanbase."
+      >
+        <ShopifyEmptyState
+          title="Mass messaging is not available yet"
+          description="Connect OnlyFans and enable messaging to start creating mass messaging campaigns."
+          action={{ label: 'Go to integrations', onClick: () => (window.location.href = '/integrations') }}
+        />
+      </ShopifyPageLayout>
+    );
+  }
 
   // Mock data
   const audiences = [
@@ -21,9 +53,9 @@ export default function OnlyFansMassMessagingPage() {
     { id: 'vip', name: 'VIP Fans', count: 156, description: 'Your highest spending fans', color: 'purple' },
     { id: 'active', name: 'Active Fans', count: 567, description: 'Fans active in last 7 days', color: 'green' },
     { id: 'new', name: 'New Subscribers', count: 89, description: 'Subscribed in last 30 days', color: 'yellow' },
-    { id: 'at-risk', name: 'At-Risk Fans', count: 45, description: 'Haven\'t engaged recently', color: 'red' },
+    { id: 'at-risk', name: 'At-Risk Fans', count: 45, description: "Haven't engaged recently", color: 'red' },
     { id: 'high-spenders', name: 'High Spenders', count: 78, description: 'Top 10% by spending', color: 'orange' },
-  ];
+  ] as const;
 
   const scheduledMessages = [
     {
@@ -53,7 +85,7 @@ export default function OnlyFansMassMessagingPage() {
       recurring: 'weekly',
       status: 'scheduled',
     },
-  ];
+  ] as const;
 
   const sentMessages = [
     {
@@ -80,7 +112,7 @@ export default function OnlyFansMassMessagingPage() {
     },
     {
       id: 6,
-      message: 'We miss you! Come back and see what\'s new 💕',
+      message: "We miss you! Come back and see what's new 💕",
       audience: 'At-Risk Fans',
       audienceCount: 45,
       sentAt: '2025-11-08T10:00:00',
@@ -89,402 +121,363 @@ export default function OnlyFansMassMessagingPage() {
       replied: 8,
       status: 'sent',
     },
-  ];
+  ] as const;
 
   const templates = [
-    { 
-      id: 1, 
-      name: 'Good Morning', 
+    {
+      id: 1,
+      name: 'Good Morning',
       text: 'Good morning {{name}}! Hope you have an amazing day 💕',
-      category: 'greeting'
+      category: 'greeting',
     },
-    { 
-      id: 2, 
-      name: 'New Content Alert', 
-      text: 'Hey {{name}}! New exclusive content just dropped! Don\'t miss out 🔥',
-      category: 'promotion'
+    {
+      id: 2,
+      name: 'New Content Alert',
+      text: "Hey {{name}}! New exclusive content just dropped! Don't miss out 🔥",
+      category: 'promotion',
     },
-    { 
-      id: 3, 
-      name: 'Thank You', 
+    {
+      id: 3,
+      name: 'Thank You',
       text: 'Thank you {{name}} for being such an amazing {{tier}} fan! You mean the world to me ❤️',
-      category: 'appreciation'
+      category: 'appreciation',
     },
-    { 
-      id: 4, 
-      name: 'Weekend Special', 
+    {
+      id: 4,
+      name: 'Weekend Special',
       text: 'Weekend vibes {{name}}! Something special coming your way 🎉',
-      category: 'promotion'
+      category: 'promotion',
     },
-    { 
-      id: 5, 
-      name: 'Re-engagement', 
-      text: 'Hey {{name}}, we miss you! Come back and see what\'s new 💕',
-      category: 'reengagement'
+    {
+      id: 5,
+      name: 'Re-engagement',
+      text: "Hey {{name}}, we miss you! Come back and see what's new 💕",
+      category: 'reengagement',
     },
-    { 
-      id: 6, 
-      name: 'VIP Exclusive', 
-      text: 'Exclusive content just for you {{name}}! You\'re one of my VIP fans 💎',
-      category: 'vip'
+    {
+      id: 6,
+      name: 'VIP Exclusive',
+      text: "Exclusive content just for you {{name}}! You're one of my VIP fans 💎",
+      category: 'vip',
     },
-  ];
+  ] as const;
 
-  const selectedAudienceData = audiences.find(a => a.id === selectedAudience);
+  const selectedAudienceData = audiences.find((audience) => audience.id === selectedAudience);
 
-  const getAudienceColor = (color: string) => {
+  const getAudienceChipClassName = (color: string) => {
     const colors: Record<string, string> = {
-      blue: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-      purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-      green: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-      yellow: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-      red: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-      orange: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+      blue: 'bg-[#eff6ff] text-[#1f5199] border-[#bfdbfe]',
+      purple: 'bg-[#f3e8ff] text-[#6b21a8] border-[#e9d5ff]',
+      green: 'bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]',
+      yellow: 'bg-[#fffbeb] text-[#92400e] border-[#fde68a]',
+      red: 'bg-[#fef2f2] text-[#991b1b] border-[#fecaca]',
+      orange: 'bg-[#fff7ed] text-[#9a3412] border-[#fed7aa]',
     };
     return colors[color] || colors.blue;
   };
 
-  const handleSendMessage = () => {
-    if (!messageText.trim()) return;
-    
-    if (scheduleDate && scheduleTime) {
-      console.log('Scheduling message:', { messageText, selectedAudience, scheduleDate, scheduleTime, isRecurring, recurringFrequency });
-    } else {
-      console.log('Sending message immediately:', { messageText, selectedAudience });
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return <Clock className="w-4 h-4 text-[#b98900]" />;
+      case 'sent':
+        return <CheckCircle className="w-4 h-4 text-[#008060]" />;
+      case 'failed':
+        return <AlertCircle className="w-4 h-4 text-[#d72c0d]" />;
+      default:
+        return <MessageSquare className="w-4 h-4 text-[#6b7177]" />;
     }
-    
+  };
+
+  const previewMessage = messageText.replace(/\{\{name\}\}/g, 'Sarah').replace(/\{\{tier\}\}/g, 'VIP');
+
+  const clearComposer = () => {
     setMessageText('');
     setScheduleDate('');
     setScheduleTime('');
     setIsRecurring(false);
+    setRecurringFrequency('daily');
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'scheduled': return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'sent': return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'failed': return <AlertCircle className="w-4 h-4 text-red-600" />;
-      default: return <MessageSquare className="w-4 h-4 text-gray-600" />;
-    }
+  const handleSendMessage = () => {
+    if (!messageText.trim()) return;
+    clearComposer();
   };
-
-  const previewMessage = messageText
-    .replace(/\{\{name\}\}/g, 'Sarah')
-    .replace(/\{\{tier\}\}/g, 'VIP');
 
   return (
-    <main className="flex flex-col gap-6 pb-8">
-      <AppPageHeader
-        title="Mass messaging"
-        description="Send OnlyFans messages to segments of your fanbase."
-        actions={
-          <Button variant="primary" size="sm" onClick={() => setActiveTab('compose')}>
-            <Plus className="w-4 h-4 mr-2" />
-            New campaign
-          </Button>
-        }
-      />
+    <ShopifyPageLayout
+      title="Mass messaging"
+      subtitle="Send OnlyFans messages to segments of your fanbase."
+      actions={
+        <ShopifyButton
+          variant="primary"
+          size="sm"
+          icon={<Plus className="w-4 h-4" />}
+          onClick={() => setActiveTab('compose')}
+        >
+          New campaign
+        </ShopifyButton>
+      }
+    >
+      <ShopifyMetricGrid columns={4}>
+        <ShopifyMetricCard label="Total Fans" value="1,234" icon={Users} />
+        <ShopifyMetricCard label="Messages Sent" value="2,468" icon={Send} trend={15} trendLabel="this week" />
+        <ShopifyMetricCard label="Open Rate" value="72%" icon={Eye} />
+        <ShopifyMetricCard label="Scheduled" value={scheduledMessages.length} icon={Clock} />
+      </ShopifyMetricGrid>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Fans</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">1,234</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Available to message</p>
-        </Card>
+      <ShopifyCard padding="none" className="overflow-hidden">
+        <nav className="flex gap-8 px-6 border-b border-[var(--border-default)]">
+          {(['compose', 'scheduled', 'sent'] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shopify-border-focus)] ${
+                activeTab === tab
+                  ? 'border-[var(--shopify-border-focus)] text-[#1a1a1a]'
+                  : 'border-transparent text-[#6b7177] hover:text-[#1a1a1a] hover:border-[var(--border-default)]'
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab === 'scheduled' && scheduledMessages.length > 0 && (
+                <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fffbeb] text-[#92400e] border border-[#fde68a]">
+                  {scheduledMessages.length}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
 
-        <Card>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-              <Send className="w-5 h-5 text-green-600 dark:text-green-400" />
-            </div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Messages Sent</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">2,468</p>
-          <p className="text-sm text-green-600 dark:text-green-400 mt-1">+15% this week</p>
-        </Card>
-
-        <Card>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-              <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Open Rate</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">72%</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Last 30 days</p>
-        </Card>
-
-        <Card>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-              <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-            </div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Scheduled</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{scheduledMessages.length}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Upcoming messages</p>
-        </Card>
-      </div>
-
-      {/* Tabs */}
-      <Card>
-        <div className="border-b border-[var(--border-subtle)]">
-          <nav className="flex space-x-8 px-6">
-            {(['compose', 'scheduled', 'sent'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab
-                    ? 'border-[var(--accent-primary)] text-[var(--color-text-heading)]'
-                    : 'border-transparent text-[var(--color-text-sub)] hover:text-[var(--color-text-main)] hover:border-[var(--border-subtle)]'
-                }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                {tab === 'scheduled' && scheduledMessages.length > 0 && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                    {scheduledMessages.length}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        <div className="p-6">
+        <div style={{ padding: 'var(--of-space-6, 24px)' }}>
           {activeTab === 'compose' && (
-            <div className="space-y-6">
-              {/* Audience Selection */}
-              <div>
-                <h3 className="text-lg font-semibold text-[var(--color-text-heading)] mb-4">
-                  Select audience
-                </h3>
+            <div className="space-y-8">
+              <section>
+                <h3 className="text-[16px] font-semibold text-[#1a1a1a] mb-4">Select audience</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {audiences.map((audience) => (
-                    <button
-                      key={audience.id}
-                      onClick={() => setSelectedAudience(audience.id)}
-                      className={`p-4 border rounded-lg text-left transition-all ${
-                        selectedAudience === audience.id
-                          ? 'border-gray-900 bg-gray-50 dark:border-white dark:bg-gray-700 shadow-md'
-                          : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900 dark:text-white">{audience.name}</h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAudienceColor(audience.color)}`}>
-                          {audience.count}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{audience.description}</p>
-                    </button>
-                  ))}
+                  {audiences.map((audience) => {
+                    const isActive = selectedAudience === audience.id;
+                    return (
+                      <button
+                        key={audience.id}
+                        type="button"
+                        onClick={() => setSelectedAudience(audience.id)}
+                        className={`p-4 border rounded-2xl text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shopify-border-focus)] ${
+                          isActive
+                            ? 'border-[var(--shopify-border-focus)] bg-[var(--shopify-bg-surface-hover)]'
+                            : 'border-[var(--border-default)] hover:bg-[var(--shopify-bg-surface-hover)] hover:border-[var(--border-emphasis)]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-[#1a1a1a]">{audience.name}</h4>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-semibold border ${getAudienceChipClassName(
+                              audience.color
+                            )}`}
+                          >
+                            {audience.count}
+                          </span>
+                        </div>
+                        <p className="text-sm text-[#6b7177]">{audience.description}</p>
+                      </button>
+                    );
+                  })}
                 </div>
-              </div>
+              </section>
 
-              {/* Message Templates */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Templates</h3>
+              <section>
+                <h3 className="text-[16px] font-semibold text-[#1a1a1a] mb-4">Quick templates</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {templates.map((template) => (
                     <button
                       key={template.id}
+                      type="button"
                       onClick={() => setMessageText(template.text)}
-                      className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
+                      className="p-4 border border-[var(--border-default)] rounded-2xl text-left hover:bg-[var(--shopify-bg-surface-hover)] hover:border-[var(--border-emphasis)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--shopify-border-focus)]"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium text-gray-900 dark:text-white">{template.name}</h4>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">{template.category}</span>
+                        <h4 className="font-medium text-[#1a1a1a]">{template.name}</h4>
+                        <span className="text-xs text-[#6b7177] capitalize">{template.category}</span>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{template.text}</p>
+                      <p className="text-sm text-[#6b7177] line-clamp-2">{template.text}</p>
                     </button>
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  💡 Use variables: <code className="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">{'{{name}}'}</code>, <code className="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">{'{{tier}}'}</code>
+                <p className="text-sm text-[#6b7177] mt-3">
+                  Use variables:{' '}
+                  <code className="px-2 py-1 bg-[#f6f6f7] rounded-xl border border-[var(--border-default)]">
+                    {'{{name}}'}
+                  </code>
+                  ,{' '}
+                  <code className="px-2 py-1 bg-[#f6f6f7] rounded-xl border border-[var(--border-default)]">
+                    {'{{tier}}'}
+                  </code>
                 </p>
-              </div>
+              </section>
 
-              {/* Message Composer */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Compose Message</h3>
+              <section>
+                <h3 className="text-[16px] font-semibold text-[#1a1a1a] mb-4">Compose message</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Message
-                    </label>
-                    <textarea
+                    <ShopifyTextarea
+                      label="Message"
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
                       rows={4}
                       placeholder="Write your message here... Use {{name}} and {{tier}} for personalization"
                     />
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {messageText.length}/1000 characters
-                      </p>
-                      {messageText.includes('{{') && (
-                        <p className="text-sm text-blue-600 dark:text-blue-400">
-                          ✓ Variables detected
-                        </p>
-                      )}
+                    <div className="flex items-center justify-between mt-2 text-sm">
+                      <p className="text-[#6b7177]">{messageText.length}/1000 characters</p>
+                      {messageText.includes('{{') && <p className="text-[#2c6ecb]">Variables detected</p>}
                     </div>
                   </div>
 
-                  {/* Schedule Options */}
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-3">Schedule Options</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Date (Optional)
-                        </label>
-                        <input
-                          type="date"
-                          value={scheduleDate}
-                          onChange={(e) => setScheduleDate(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Time (Optional)
-                        </label>
-                        <input
-                          type="time"
-                          value={scheduleTime}
-                          onChange={(e) => setScheduleTime(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
-                        />
-                      </div>
+                  <div className="rounded-2xl border border-[var(--border-default)] bg-[#fafbfb] p-5">
+                    <h4 className="font-medium text-[#1a1a1a] mb-4">Schedule options</h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <ShopifyInput
+                        type="date"
+                        label="Date (optional)"
+                        value={scheduleDate}
+                        onChange={(e) => setScheduleDate(e.target.value)}
+                      />
+                      <ShopifyInput
+                        type="time"
+                        label="Time (optional)"
+                        value={scheduleTime}
+                        onChange={(e) => setScheduleTime(e.target.value)}
+                      />
                     </div>
 
                     {scheduleDate && scheduleTime && (
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            id="recurring"
-                            checked={isRecurring}
-                            onChange={(e) => setIsRecurring(e.target.checked)}
-                            className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
-                          />
-                          <label htmlFor="recurring" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Make this recurring
-                          </label>
-                        </div>
+                      <div className="mt-5 space-y-4">
+                        <ShopifyToggle
+                          id="mass-messaging-recurring"
+                          checked={isRecurring}
+                          onChange={setIsRecurring}
+                          label="Make this recurring"
+                          description="Automatically resend on a schedule"
+                        />
 
                         {isRecurring && (
-                          <select
-                            value={recurringFrequency}
-                            onChange={(e) => setRecurringFrequency(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
-                          >
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                          </select>
+                          <div>
+                            <label className="block text-sm font-medium text-[#1a1a1a] mb-2">Frequency</label>
+                            <select
+                              value={recurringFrequency}
+                              onChange={(e) => setRecurringFrequency(e.target.value as RecurringFrequency)}
+                              className={[
+                                'w-full h-10 px-4 rounded-xl',
+                                'text-sm text-[#1a1a1a]',
+                                'bg-white border border-[var(--border-default)] transition-colors duration-200',
+                                'hover:border-[var(--border-emphasis)]',
+                                'focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[#2c6ecb] focus:border-[#2c6ecb]',
+                              ].join(' ')}
+                            >
+                              <option value="daily">Daily</option>
+                              <option value="weekly">Weekly</option>
+                              <option value="monthly">Monthly</option>
+                            </select>
+                          </div>
                         )}
                       </div>
                     )}
                   </div>
 
-                  {/* Preview */}
                   {selectedAudienceData && messageText && (
-                    <Card className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <div className="rounded-2xl border border-[var(--border-default)] bg-[#fafbfb] p-5">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                        <h4 className="font-medium text-[#1a1a1a] flex items-center gap-2">
                           <Eye className="w-4 h-4" />
                           Preview
                         </h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAudienceColor(selectedAudienceData.color)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold border ${getAudienceChipClassName(
+                            selectedAudienceData.color
+                          )}`}
+                        >
                           {selectedAudienceData.count} recipients
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        Sending to: <span className="font-medium">{selectedAudienceData.name}</span>
+                      <p className="text-sm text-[#6b7177] mb-2">
+                        Sending to: <span className="font-medium text-[#1a1a1a]">{selectedAudienceData.name}</span>
                       </p>
                       {scheduleDate && scheduleTime && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <p className="text-sm text-[#6b7177] mb-3">
                           <Calendar className="w-4 h-4 inline mr-1" />
                           Scheduled for: {new Date(`${scheduleDate}T${scheduleTime}`).toLocaleString()}
-                          {isRecurring && <span className="ml-2 text-yellow-600 dark:text-yellow-400">({recurringFrequency})</span>}
+                          {isRecurring && (
+                            <span className="ml-2 text-[#92400e]">({recurringFrequency})</span>
+                          )}
                         </p>
                       )}
-                      <div className="bg-white dark:bg-gray-800 rounded p-3 border border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-900 dark:text-white whitespace-pre-wrap">{previewMessage}</p>
+                      <div className="bg-white rounded-xl p-4 border border-[var(--border-default)]">
+                        <p className="text-[#1a1a1a] whitespace-pre-wrap">{previewMessage}</p>
                       </div>
-                    </Card>
+                    </div>
                   )}
 
-                  {/* Send Button */}
-                  <div className="flex justify-end gap-3">
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => {
-                        setMessageText('');
-                        setScheduleDate('');
-                        setScheduleTime('');
-                        setIsRecurring(false);
-                      }}
-                      className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
+                  <div className="flex justify-end gap-2 pt-2">
+                    <ShopifyButton variant="ghost" onClick={clearComposer}>
                       Clear
-                    </Button>
-                    <Button variant="secondary" onClick={handleSendMessage} disabled={!messageText.trim() || !selectedAudience}>
-                      <Send className="w-5 h-5" />
-                      {scheduleDate && scheduleTime ? 'Schedule Message' : 'Send Now'}
-                    </Button>
+                    </ShopifyButton>
+                    <ShopifyButton
+                      variant="primary"
+                      onClick={handleSendMessage}
+                      disabled={!messageText.trim() || !selectedAudience}
+                      icon={<Send className="w-4 h-4" />}
+                    >
+                      {scheduleDate && scheduleTime ? 'Schedule message' : 'Send now'}
+                    </ShopifyButton>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
           )}
 
           {activeTab === 'scheduled' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Scheduled Messages</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{scheduledMessages.length} messages</p>
+              <div className="flex items-center justify-between">
+                <h3 className="text-[16px] font-semibold text-[#1a1a1a]">Scheduled messages</h3>
+                <p className="text-sm text-[#6b7177]">{scheduledMessages.length} messages</p>
               </div>
+
               {scheduledMessages.map((message) => (
                 <div
                   key={message.id}
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  className="p-5 border border-[var(--border-default)] rounded-2xl hover:bg-[var(--shopify-bg-surface-hover)] transition-colors"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         {getStatusIcon(message.status)}
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        <span className="text-sm font-medium text-[#6b7177]">
                           <Calendar className="w-4 h-4 inline mr-1" />
                           {new Date(message.scheduledFor).toLocaleString()}
                         </span>
                         {message.recurring && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#fffbeb] text-[#92400e] border border-[#fde68a]">
                             {message.recurring}
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-900 dark:text-white mb-2">{message.message}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        To: <span className="font-medium">{message.audience}</span> ({message.audienceCount} fans)
+                      <p className="text-[#1a1a1a] mb-2">{message.message}</p>
+                      <p className="text-sm text-[#6b7177]">
+                        To: <span className="font-medium text-[#1a1a1a]">{message.audience}</span> (
+                        {message.audienceCount} fans)
                       </p>
                     </div>
-                    <div className="flex gap-2 ml-4">
-                      <Button variant="ghost">
+                    <div className="flex gap-2 flex-shrink-0">
+                      <ShopifyButton variant="ghost" size="sm" onClick={() => console.log('Edit scheduled', message.id)}>
                         Edit
-                      </Button>
-                      <Button variant="danger">
+                      </ShopifyButton>
+                      <ShopifyButton
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => console.log('Cancel scheduled', message.id)}
+                      >
                         Cancel
-                      </Button>
+                      </ShopifyButton>
                     </div>
                   </div>
                 </div>
@@ -494,58 +487,59 @@ export default function OnlyFansMassMessagingPage() {
 
           {activeTab === 'sent' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sent Messages</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{sentMessages.length} messages</p>
+              <div className="flex items-center justify-between">
+                <h3 className="text-[16px] font-semibold text-[#1a1a1a]">Sent messages</h3>
+                <p className="text-sm text-[#6b7177]">{sentMessages.length} messages</p>
               </div>
+
               {sentMessages.map((message) => (
                 <div
                   key={message.id}
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  className="p-5 border border-[var(--border-default)] rounded-2xl hover:bg-[var(--shopify-bg-surface-hover)] transition-colors"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         {getStatusIcon(message.status)}
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        <span className="text-sm font-medium text-[#6b7177]">
                           Sent {new Date(message.sentAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-gray-900 dark:text-white mb-2">{message.message}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        To: <span className="font-medium">{message.audience}</span> ({message.audienceCount} fans)
+                      <p className="text-[#1a1a1a] mb-2">{message.message}</p>
+                      <p className="text-sm text-[#6b7177] mb-3">
+                        To: <span className="font-medium text-[#1a1a1a]">{message.audience}</span> (
+                        {message.audienceCount} fans)
                       </p>
-                      <div className="flex items-center gap-6 text-sm">
+
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-[#6b7177]">
                         <div>
-                          <span className="font-medium text-gray-900 dark:text-white">{message.delivered}</span>
-                          <span className="text-gray-500 dark:text-gray-400 ml-1">delivered</span>
+                          <span className="font-semibold text-[#1a1a1a]">{message.delivered}</span> delivered
                         </div>
                         <div>
-                          <span className="font-medium text-gray-900 dark:text-white">{message.opened}</span>
-                          <span className="text-gray-500 dark:text-gray-400 ml-1">opened</span>
+                          <span className="font-semibold text-[#1a1a1a]">{message.opened}</span> opened
                         </div>
                         <div>
-                          <span className="font-medium text-gray-900 dark:text-white">{message.replied}</span>
-                          <span className="text-gray-500 dark:text-gray-400 ml-1">replied</span>
+                          <span className="font-semibold text-[#1a1a1a]">{message.replied}</span> replied
                         </div>
                         <div>
-                          <span className="font-medium text-green-600 dark:text-green-400">
+                          <span className="font-semibold text-[#008060]">
                             {((message.opened / message.delivered) * 100).toFixed(1)}%
-                          </span>
-                          <span className="text-gray-500 dark:text-gray-400 ml-1">open rate</span>
+                          </span>{' '}
+                          open rate
                         </div>
                       </div>
                     </div>
-                    <Button variant="ghost">
-                      View Details
-                    </Button>
+
+                    <ShopifyButton variant="ghost" size="sm" onClick={() => console.log('View sent', message.id)}>
+                      View details
+                    </ShopifyButton>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-      </Card>
-    </main>
+      </ShopifyCard>
+    </ShopifyPageLayout>
   );
 }

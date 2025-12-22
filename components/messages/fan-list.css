@@ -1,0 +1,380 @@
+/* FanList Component Styles - Monochrome */
+
+/* ============================================
+   PHASE 14 - Task 14.1: White Uniform Background
+   ============================================ */
+
+/* Force white background everywhere */
+.fan-list,
+.fan-list__conversations,
+.fan-list__search,
+.fan-list__filters {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+.fan-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  border: none !important; /* Border handled by the parent card */
+  border-radius: 0 !important;
+  margin-top: 0;
+  font-family: var(--tailadmin-font-family);
+  /* Remove text selection highlight */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ============================================
+   SEARCH BAR - Compact Height
+   ============================================ */
+
+/* Search Section - Reduced height */
+.fan-list__search {
+  padding: 12px 8px 4px 8px; /* Compact: 12px top, 4px bottom */
+  flex-shrink: 0;
+}
+
+/* Search Input Container */
+.fan-list__search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fan-list__search-input {
+  width: 100%;
+  padding: 6px 12px 6px 36px; /* Compact padding */
+  background: #F7F7F7;
+  border: 1px solid #E5E7F0;
+  border-radius: var(--tailadmin-radius-md);
+  font-size: 13px;
+  font-family: var(--tailadmin-font-family);
+  color: #1a1d1f;
+  outline: none;
+  height: 32px; /* Reduced height */
+}
+
+.fan-list__search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.fan-list__search-input:focus {
+  background: #FFFFFF;
+  border-color: #D0D0D0;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.02);
+}
+
+.fan-list__search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  pointer-events: none;
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================
+   FILTERS - Tab Style (Minimal Spacing)
+   ============================================ */
+
+.fan-list__filters {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 12px;
+  margin: 4px 8px 6px 8px; /* Minimal spacing: 4px top, 6px bottom */
+  border-bottom: 1px solid #E5E7F0; /* Bottom border for tab effect */
+  gap: 32px; /* Spacing between tabs */
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+
+.fan-list__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 8px; /* Compact padding */
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent; /* Invisible bottom border by default */
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280; /* Gray text */
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.2;
+  position: relative;
+  margin-bottom: -1px; /* Overlap the bottom border */
+  flex-shrink: 0;
+}
+
+.fan-list__filter-btn:hover {
+  color: #374151; /* Darker on hover */
+}
+
+.fan-list__filter-btn:focus-visible {
+  outline: 2px solid var(--msg-focus-ring);
+  outline-offset: 2px;
+}
+
+.fan-list__filter-btn--active {
+  color: #111111; /* Black text for active */
+  border-bottom-color: #111111; /* Black border */
+  font-weight: 600; /* Semi-bold */
+}
+
+.fan-list__filter-btn--active:hover {
+  color: #111827;
+}
+
+/* Count - inline style */
+.fan-list__filter-count {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  opacity: 0.7;
+  margin-left: 8px;
+}
+
+/* Conversations List - Clean Background */
+.fan-list__conversations {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  background: #FBFCFF; /* Very subtle tint */
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+}
+
+/* Conversation rows styling handled in fan-card.css */
+
+/* Custom Scrollbar */
+.fan-list__conversations::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fan-list__conversations::-webkit-scrollbar-track {
+  background: #FFFFFF; /* Force white background on scrollbar track */
+}
+
+.fan-list__conversations::-webkit-scrollbar-thumb {
+  background: transparent; /* Transparent scrollbar */
+  border-radius: 3px;
+}
+
+.fan-list__conversations::-webkit-scrollbar-thumb:hover {
+  background: transparent; /* Transparent on hover */
+}
+
+/* Loading State */
+.fan-list__loading {
+  padding: var(--tailadmin-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--tailadmin-spacing-sm);
+}
+
+.fan-list__skeleton {
+  height: 72px;
+  background: linear-gradient(
+    90deg,
+    var(--tailadmin-gray-2) 25%,
+    var(--tailadmin-stroke) 50%,
+    var(--tailadmin-gray-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--tailadmin-radius-lg);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Empty State */
+.fan-list__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--tailadmin-spacing-2xl) var(--tailadmin-spacing-lg);
+  text-align: center;
+  min-height: 300px;
+}
+
+.fan-list__empty-icon {
+  color: var(--tailadmin-text-secondary);
+  margin-bottom: var(--tailadmin-spacing-md);
+  opacity: 0.5;
+}
+
+.fan-list__empty-text {
+  font-size: var(--tailadmin-font-size-sm);
+  color: var(--tailadmin-text-secondary);
+  margin: 0 0 var(--tailadmin-spacing-md) 0;
+}
+
+.fan-list__empty-action {
+  padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--tailadmin-radius-md);
+  font-size: var(--tailadmin-font-size-sm);
+  font-weight: var(--tailadmin-font-weight-medium);
+  cursor: pointer;
+  transition: var(--tailadmin-transition-base);
+}
+
+.fan-list__empty-action:hover {
+  background: #333333;
+}
+
+.fan-list__empty-action:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Keyboard Navigation Support */
+.fan-list__filter-btn:focus-visible,
+.fan-list__empty-action:focus-visible {
+  z-index: 1;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .fan-list__filter-btn {
+    border-width: 2px;
+  }
+  
+  .fan-list__filter-btn--active {
+    border-width: 3px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .fan-list__skeleton {
+    animation: none;
+    background: var(--tailadmin-gray-2);
+  }
+  
+  .fan-list__filter-btn,
+  .fan-list__empty-action {
+    transition: none;
+  }
+}
+
+/* Dark Mode Support - DISABLED FOR NOW */
+/* .dark .fan-list {
+  background: var(--tailadmin-card-bg);
+}
+
+.dark .fan-list__filters {
+  background: var(--tailadmin-gray);
+}
+
+.dark .fan-list__filter-btn {
+  background: var(--tailadmin-card-bg);
+  border-color: var(--tailadmin-border-color);
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .fan-list__filter-btn:hover {
+  background: var(--tailadmin-gray);
+}
+
+.dark .fan-list__filter-count {
+  background: var(--tailadmin-gray);
+  color: var(--tailadmin-text-secondary);
+}
+
+.dark .fan-list__conversations::-webkit-scrollbar-track {
+  background: var(--tailadmin-gray);
+}
+
+.dark .fan-list__conversations::-webkit-scrollbar-thumb {
+  background: var(--tailadmin-stroke);
+}
+
+.dark .fan-list__skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--tailadmin-gray) 25%,
+    var(--tailadmin-stroke) 50%,
+    var(--tailadmin-gray) 75%
+  );
+}
+
+.dark .fan-list__empty-icon,
+.dark .fan-list__empty-text {
+  color: var(--tailadmin-text-secondary);
+} */
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .fan-list__search {
+    padding: var(--tailadmin-spacing-sm);
+  }
+
+  .fan-list__filters {
+    padding: var(--tailadmin-spacing-sm);
+    column-gap: 24px;
+    row-gap: 8px;
+  }
+
+  .fan-list__filter-btn {
+    padding: var(--tailadmin-spacing-sm);
+    font-size: var(--tailadmin-font-size-sm);
+  }
+
+  .fan-list__filter-count {
+    min-width: 22px;
+    height: 22px;
+    font-size: var(--tailadmin-font-size-xs);
+  }
+}
+
+/* ============================================
+   Footer Spacer for Column Alignment
+   ============================================ */
+
+.fan-list__footer-spacer {
+  flex-shrink: 0;
+  height: var(--msg-space-xl); /* 20px - using spacing token */
+  background: #FFFFFF; /* Fond blanc */
+}
+
+/* Optional: Mini footer discret */
+.fan-list__footer {
+  flex-shrink: 0;
+  padding: var(--msg-space-lg) var(--msg-space-2xl); /* 16px 24px - using spacing tokens */
+  text-align: center;
+  background: #FFFFFF; /* Fond blanc */
+}
+
+.fan-list__footer-text {
+  font-size: 12px; /* Aligned to grid (was 11px) */
+  color: var(--msg-text-tertiary);
+  margin: 0;
+}
+
+/* .dark .fan-list__footer {
+  background: var(--tailadmin-card-bg);
+} */

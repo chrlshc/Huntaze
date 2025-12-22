@@ -1,0 +1,444 @@
+/**
+ * Dashboard Polish Tokens
+ * 
+ * Enhancement layer for dashboard views (Messages, Smart Messages, Fans, PPV Content)
+ * Provides typography scale, spacing grid, and micro-interaction tokens
+ * for a professional, cohesive design system.
+ * 
+ * Design Philosophy:
+ * - Consistent typography hierarchy across all dashboard pages
+ * - 4px/8px spacing grid for visual rhythm
+ * - Subtle micro-interactions for tactile feedback
+ * - Accessibility-first with WCAG AA compliance
+ * 
+ * Usage:
+ * - Import after design-tokens.css
+ * - Use these tokens for dashboard-specific polish
+ * - Extends base tokens without overriding them
+ * 
+ * Requirements: 1.1, 2.1, 3.1, 3.2, 3.4, 3.5
+ */
+
+:root {
+  /* ========================================
+     TYPOGRAPHY SCALE - Inspired by Stripe/Linear
+     Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
+     ======================================== */
+  
+  /* H1 - Page Titles */
+  --polish-text-h1: 24px;
+  --polish-text-h1-weight: 600;           /* Semi-bold */
+  --polish-text-h1-line: 1.2;
+  --polish-text-h1-color: var(--text-primary);
+  
+  /* H2 - Section Headers */
+  --polish-text-h2: 18px;
+  --polish-text-h2-weight: 600;
+  --polish-text-h2-line: 1.3;
+  --polish-text-h2-color: var(--text-primary);
+  
+  /* Labels - Status Labels, Uppercase Headers */
+  --polish-text-label: 11px;
+  --polish-text-label-weight: 500;
+  --polish-text-label-spacing: 0.05em;
+  --polish-text-label-transform: uppercase;
+  --polish-text-label-color: var(--text-secondary);
+  
+  /* Body - Normal Text */
+  --polish-text-body: 14px;
+  --polish-text-body-weight: 400;
+  --polish-text-body-line: 1.5;
+  --polish-text-body-color: var(--text-primary);
+  
+  /* Secondary - Metadata, Timestamps */
+  --polish-text-secondary: 12px;
+  --polish-text-secondary-weight: 400;
+  --polish-text-secondary-color: var(--text-secondary);
+  --polish-text-secondary-line: 1.4;
+  
+  /* Tertiary - Very Subtle Text */
+  --polish-text-tertiary: 13px;
+  --polish-text-tertiary-weight: 400;
+  --polish-text-tertiary-color: var(--text-tertiary);
+  
+  /* ========================================
+     SPACING GRID - 4px/8px Increments
+     Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
+     ======================================== */
+  
+  /* Base spacing units */
+  --polish-space-xs: 4px;           /* Small gaps */
+  --polish-space-sm: 8px;           /* Small gaps */
+  --polish-space-md: 16px;          /* Section spacing */
+  --polish-space-lg: 24px;          /* Section spacing */
+  --polish-space-xl: 32px;          /* Major block spacing */
+  
+  /* Component-specific spacing */
+  --polish-card-padding: 16px;
+  --polish-card-gap: 12px;
+  --polish-section-gap: 24px;
+  --polish-header-margin: 32px;
+  --polish-content-gap: 20px;
+  
+  /* ========================================
+     MICRO-INTERACTIONS - Hover, Focus, Click
+     Requirements: 3.1, 3.2, 3.4, 3.5
+     ======================================== */
+  
+  /* Hover States - Optimized with will-change */
+  --polish-hover-translate: -1px;
+  --polish-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --polish-hover-transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1), border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --polish-hover-bg-lighten: rgba(255, 255, 255, 0.03);
+  
+  /* Focus States - Keyboard Navigation - Updated for WCAG AA compliance */
+  --polish-focus-ring: 2px solid rgba(31, 41, 55, 0.5);
+  --polish-focus-ring-saturated: 2px solid rgba(31, 41, 55, 0.8);
+  --polish-focus-offset: 2px;
+  --polish-focus-transition: outline 150ms ease;
+  
+  /* Click/Active States */
+  --polish-click-scale: 0.99;
+  --polish-click-transition: transform 100ms ease;
+  
+  /* Table Row Hover */
+  --polish-table-hover-bg: rgba(255, 255, 255, 0.03);
+  --polish-table-hover-border: rgba(255, 255, 255, 0.15);
+  
+  /* Button Hover */
+  --polish-button-hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --polish-button-hover-brightness: 1.05;
+  
+  /* ========================================
+     CARD ENHANCEMENTS
+     ======================================== */
+  
+  /* Card hover effects */
+  --polish-card-hover-translate: translateY(-1px);
+  --polish-card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --polish-card-hover-border: rgba(255, 255, 255, 0.18);
+  
+  /* Card focus effects - Updated for WCAG AA compliance */
+  --polish-card-focus-border: rgba(31, 41, 55, 0.8);
+  --polish-card-focus-shadow: 0 0 0 3px rgba(31, 41, 55, 0.2);
+  
+  /* ========================================
+     TREND/DELTA INDICATORS
+     ======================================== */
+  
+  /* Positive trends - Updated for WCAG AA compliance (4.77:1) */
+  --polish-trend-positive-bg: rgba(4, 120, 87, 0.1);
+  --polish-trend-positive-color: #047857;
+  
+  /* Negative trends - Updated for WCAG AA compliance (4.77:1) */
+  --polish-trend-negative-bg: rgba(220, 38, 38, 0.1);
+  --polish-trend-negative-color: #dc2626;
+  
+  /* Trend pill styling */
+  --polish-trend-pill-padding: 4px 8px;
+  --polish-trend-pill-radius: 9999px;
+  --polish-trend-pill-font-size: 12px;
+  --polish-trend-pill-font-weight: 500;
+  
+  /* ========================================
+     TAG CHIP VARIANTS - Updated for WCAG AA compliance
+     ======================================== */
+  
+  /* VIP - Neutral (no violet block, still high contrast) */
+  --polish-chip-vip-bg: rgba(15, 23, 42, 0.04); /* subtle gray on light dashboard */
+  --polish-chip-vip-color: #111827;             /* neutral heading color */
+  
+  /* Active - Blue (5.14:1 contrast ratio) */
+  --polish-chip-active-bg: rgba(37, 99, 235, 0.1);
+  --polish-chip-active-color: #2563eb;
+  
+  /* At-Risk - Orange (4.52:1 contrast ratio) */
+  --polish-chip-at-risk-bg: rgba(180, 83, 9, 0.1);
+  --polish-chip-at-risk-color: #b45309;
+  
+  /* Churned - Gray (4.54:1 contrast ratio - already passes) */
+  --polish-chip-churned-bg: rgba(107, 114, 128, 0.1);
+  --polish-chip-churned-color: #6b7280;
+  
+  /* Churn Risk - Low (Green) (4.77:1 contrast ratio) */
+  --polish-chip-low-bg: rgba(4, 120, 87, 0.1);
+  --polish-chip-low-color: #047857;
+  
+  /* Churn Risk - Medium (Orange) (4.52:1 contrast ratio) */
+  --polish-chip-medium-bg: rgba(180, 83, 9, 0.1);
+  --polish-chip-medium-color: #b45309;
+  
+  /* Churn Risk - High (Red) (4.77:1 contrast ratio) */
+  --polish-chip-high-bg: rgba(220, 38, 38, 0.1);
+  --polish-chip-high-color: #dc2626;
+  
+  /* Chip sizing */
+  --polish-chip-padding-sm: 2px 6px;
+  --polish-chip-padding-md: 4px 8px;
+  --polish-chip-font-size-sm: 10px;
+  --polish-chip-font-size-md: 11px;
+  --polish-chip-radius: 9999px;
+  
+  /* ========================================
+     FILTER INDICATORS
+     ======================================== */
+  
+  /* Active filter dot */
+  --polish-filter-dot-size: 6px;
+  --polish-filter-dot-color: var(--accent-primary);
+  --polish-filter-dot-border: 1px solid var(--bg-primary);
+  
+  /* Filter pill - Updated for WCAG AA compliance */
+  --polish-filter-pill-bg: rgba(31, 41, 55, 0.1);
+  --polish-filter-pill-border: rgba(31, 41, 55, 0.3);
+  --polish-filter-pill-padding: 6px 12px;
+  --polish-filter-pill-radius: 8px;
+  
+  /* ========================================
+     CAMPAIGN CARD ENHANCEMENTS
+     ======================================== */
+  
+  /* Image hover scale */
+  --polish-campaign-image-scale: 1.01;
+  --polish-campaign-image-transition: transform 300ms ease;
+  
+  /* Status badge */
+  --polish-status-badge-padding: 4px 8px;
+  --polish-status-badge-radius: 6px;
+  --polish-status-badge-font-size: 11px;
+  --polish-status-badge-font-weight: 500;
+  
+  /* Quick action overlay */
+  --polish-overlay-bg: rgba(0, 0, 0, 0.6);
+  --polish-overlay-backdrop-blur: 8px;
+  --polish-overlay-transition: opacity 200ms ease;
+  
+  /* ========================================
+     PAGE LAYOUT
+     ======================================== */
+  
+  /* Header spacing */
+  --polish-page-header-margin-bottom: 32px;
+  --polish-page-title-margin-bottom: 8px;
+  --polish-page-subtitle-margin-bottom: 4px;
+  
+  /* Section spacing */
+  --polish-section-margin-bottom: 24px;
+  --polish-section-gap: 16px;
+  
+  /* Content area */
+  --polish-content-padding: 24px;
+  --polish-content-max-width: 1400px;
+  
+  /* ========================================
+     EMPTY STATE
+     ======================================== */
+  
+  /* Icon */
+  --polish-empty-icon-size: 48px;
+  --polish-empty-icon-color: var(--text-tertiary);
+  
+  /* Title */
+  --polish-empty-title-size: 18px;
+  --polish-empty-title-weight: 600;
+  --polish-empty-title-color: var(--text-primary);
+  
+  /* Description */
+  --polish-empty-description-size: 14px;
+  --polish-empty-description-color: var(--text-secondary);
+  --polish-empty-description-line: 1.5;
+  
+  /* Bullet points */
+  --polish-empty-bullet-size: 13px;
+  --polish-empty-bullet-color: var(--text-secondary);
+  --polish-empty-bullet-gap: 8px;
+  
+  /* CTA button */
+  --polish-empty-cta-margin-top: 24px;
+  
+  /* ========================================
+     SEGMENT CARDS (Fans Page)
+     ======================================== */
+  
+  /* Active state - keep accent border but remove violet fill */
+  --polish-segment-active-border: 2px solid var(--accent-primary);
+  --polish-segment-active-bg: var(--dashboard-card-bg);
+  
+  /* Count display */
+  --polish-segment-count-size: 24px;
+  --polish-segment-count-weight: 600;
+  --polish-segment-count-color: var(--text-primary);
+  
+  /* Percentage display */
+  --polish-segment-percentage-size: 12px;
+  --polish-segment-percentage-color: var(--text-secondary);
+  
+  /* ========================================
+     TABLE ENHANCEMENTS
+     ======================================== */
+  
+  /* Sticky header */
+  --polish-table-header-bg: var(--bg-primary);
+  --polish-table-header-border: var(--border-default);
+  --polish-table-header-z-index: 10;
+  
+  /* Row hover */
+  --polish-table-row-hover-bg: rgba(255, 255, 255, 0.03);
+  --polish-table-row-transition: background-color 150ms ease;
+  
+  /* Info icon tooltip */
+  --polish-tooltip-bg: var(--bg-tertiary);
+  --polish-tooltip-border: var(--border-default);
+  --polish-tooltip-padding: 8px 12px;
+  --polish-tooltip-radius: 8px;
+  --polish-tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+  /* ========================================
+     ACCESSIBILITY
+     ======================================== */
+  
+  /* Minimum contrast ratios */
+  --polish-min-contrast-text: 4.5;      /* WCAG AA for normal text */
+  --polish-min-contrast-large: 3;       /* WCAG AA for large text */
+  
+  /* Touch targets */
+  --polish-min-touch-target: 44px;      /* WCAG minimum */
+  
+  /* Focus indicators - Updated for WCAG AA compliance */
+  --polish-focus-visible-outline: 2px solid rgba(31, 41, 55, 0.8);
+  --polish-focus-visible-offset: 2px;
+}
+
+/* ========================================
+   UTILITY CLASSES - Typography
+   ======================================== */
+
+.polish-h1 {
+  font-size: var(--polish-text-h1);
+  font-weight: var(--polish-text-h1-weight);
+  line-height: var(--polish-text-h1-line);
+  color: var(--polish-text-h1-color);
+}
+
+.polish-h2 {
+  font-size: var(--polish-text-h2);
+  font-weight: var(--polish-text-h2-weight);
+  line-height: var(--polish-text-h2-line);
+  color: var(--polish-text-h2-color);
+}
+
+.polish-label {
+  font-size: var(--polish-text-label);
+  font-weight: var(--polish-text-label-weight);
+  letter-spacing: var(--polish-text-label-spacing);
+  text-transform: var(--polish-text-label-transform);
+  color: var(--polish-text-label-color);
+}
+
+.polish-body {
+  font-size: var(--polish-text-body);
+  font-weight: var(--polish-text-body-weight);
+  line-height: var(--polish-text-body-line);
+  color: var(--polish-text-body-color);
+}
+
+.polish-secondary {
+  font-size: var(--polish-text-secondary);
+  font-weight: var(--polish-text-secondary-weight);
+  color: var(--polish-text-secondary-color);
+  line-height: var(--polish-text-secondary-line);
+}
+
+/* ========================================
+   UTILITY CLASSES - Micro-interactions
+   ======================================== */
+
+.polish-hover-card {
+  transition: var(--polish-hover-transition);
+  /* Performance: Use will-change for hover animations */
+  will-change: transform, box-shadow;
+}
+
+.polish-hover-card:hover {
+  transform: var(--polish-card-hover-translate);
+  box-shadow: var(--polish-card-hover-shadow);
+  border-color: var(--polish-card-hover-border);
+}
+
+/* Remove will-change after animation completes to free resources */
+.polish-hover-card:not(:hover) {
+  will-change: auto;
+}
+
+.polish-hover-card:focus-visible {
+  outline: var(--polish-focus-ring-saturated);
+  outline-offset: var(--polish-focus-offset);
+  border-color: var(--polish-card-focus-border);
+}
+
+.polish-hover-card:active {
+  transform: scale(var(--polish-click-scale));
+}
+
+.polish-hover-button {
+  transition: var(--polish-hover-transition);
+}
+
+.polish-hover-button:hover {
+  box-shadow: var(--polish-button-hover-shadow);
+  filter: brightness(var(--polish-button-hover-brightness));
+}
+
+.polish-hover-button:active {
+  transform: scale(var(--polish-click-scale));
+}
+
+.polish-hover-row {
+  transition: var(--polish-table-row-transition);
+}
+
+.polish-hover-row:hover {
+  background-color: var(--polish-table-hover-bg);
+}
+
+/* ========================================
+   UTILITY CLASSES - Focus Indicators
+   ======================================== */
+
+.polish-focus-visible:focus-visible {
+  outline: var(--polish-focus-visible-outline);
+  outline-offset: var(--polish-focus-visible-offset);
+}
+
+/* ========================================
+   ACCESSIBILITY - Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .polish-hover-card,
+  .polish-hover-button,
+  .polish-hover-row {
+    transition: none;
+  }
+  
+  .polish-hover-card:hover,
+  .polish-hover-card:active {
+    transform: none;
+  }
+  
+  .polish-hover-button:active {
+    transform: none;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY - High Contrast
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --polish-focus-ring: 3px solid rgba(31, 41, 55, 1);
+    --polish-focus-ring-saturated: 3px solid rgba(31, 41, 55, 1);
+    --polish-card-hover-border: rgba(255, 255, 255, 0.5);
+  }
+}

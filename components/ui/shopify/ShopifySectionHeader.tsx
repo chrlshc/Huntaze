@@ -47,9 +47,9 @@ export function ShopifySectionHeader({
       <h2
         className="shopify-section-header__title"
         style={{
-          fontSize: '16px',
-          fontWeight: 600,
-          color: 'var(--shopify-text-primary, #1a1a1a)',
+          fontSize: 'var(--font-size-h3)',
+          fontWeight: 'var(--font-weight-heading)',
+          color: 'var(--color-text-heading)',
           margin: 0,
           lineHeight: 1.4,
         }}

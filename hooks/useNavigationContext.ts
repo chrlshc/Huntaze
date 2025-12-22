@@ -33,6 +33,15 @@ const SECTION_CONFIG: Record<string, {
     label: 'Home',
     hasSubNav: false,
   },
+  dashboard: {
+    label: 'Dashboard',
+    hasSubNav: true,
+    subPages: [
+      { path: 'overview', label: 'Overview', icon: 'chart-bar' },
+      { path: 'finance', label: 'Finance', icon: 'currency-dollar' },
+      { path: 'acquisition', label: 'Acquisition', icon: 'users' },
+    ],
+  },
   analytics: {
     label: 'Analytics',
     hasSubNav: true,
@@ -51,6 +60,7 @@ const SECTION_CONFIG: Record<string, {
     subPages: [
       { path: '', label: 'Overview', icon: 'home' },
       { path: 'messages', label: 'Messages', icon: 'chat' },
+      { path: 'smart-messages', label: 'Smart Messages', icon: 'sparkles' },
       { path: 'fans', label: 'Fans', icon: 'users' },
       { path: 'ppv', label: 'PPV', icon: 'photo' },
       { path: 'settings', label: 'Settings', icon: 'cog' },

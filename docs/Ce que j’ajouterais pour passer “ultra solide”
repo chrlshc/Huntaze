@@ -1,0 +1,149 @@
+Ce que j’ajouterais pour passer “ultra solide”
+1. Routing : le formaliser un peu plus
+
+Dans la doc tu as :
+
+1. Math/Coding (high complexity) → DeepSeek R1
+2. Creative / VIP tier → Llama 3.3 70B
+3. Chat → Llama 3.3 70B
+4. French language → Mistral Large 2411
+5. Fallback → Llama 3.3 70B
+
+
+Je proposerais d’expliciter dans la doc :
+
+Comment tu définis “high complexity” :
+
+Par ex : classifier Phi-4 renvoie complexity: "low" | "medium" | "high" ou un score numérique ?
+
+À partir de quel seuil tu switches sur DeepSeek ?
+
+Priorité des règles :
+Par exemple, si language = fr et type = math, qui gagne ?
+
+Règle possible :
+
+language_hint “fr” → Mistral sauf si type_hint in ["math","coding"] ET complexity = high → DeepSeek.
+
+Documenter l’usage de client_tier: "vip" :
+
+Est-ce que “vip” force Llama 3.3 70B même pour des choses simples ?
+
+Est-ce que ça modifie les temps de timeout / max tokens ?
+
+Un petit pseudo-code dans la doc (en plus de l’explication texte) aiderait :
+
+# routing.py (pseudo)
+if language == "fr" and type not in ("math", "coding"):
+    return MISTRAL
+
+if type in ("math", "coding") and complexity == "high":
+    return DEEPSEEK
+
+if client_tier == "vip" or type == "creative":
+    return LLAMA
+
+return LLAMA  # fallback
+
+2. Streaming & conversation
+
+Dans les exemples, tu es en mode request → response classique.
+
+Tu pourrais noter dans la doc :
+
+Si le router supporte :
+
+stream: true
+
+historique de conversation (messages: [...] au lieu d’un simple prompt).
+
+Comment le front peut gérer ça (SSE / fetch stream / web socket, etc).
+
+Même si ce n’est pas encore implémenté, mettre une section “Streaming (planned / optional)” aide à cadrer la roadmap.
+
+3. Limites, garde-fous et erreurs
+
+Tu as déjà une bonne section “Troubleshooting”. J’ajouterais :
+
+Limites :
+
+Max tokens par modèle (pour éviter des 413/400 en prod).
+
+Timeout par modèle (ex : DeepSeek peut parfois être plus lent sur gros reasoning).
+
+Retry & backoff :
+
+Le router fait-il un retry auto si Azure retourne un 5xx ?
+
+Fallback automatique : ex. si DeepSeek fail → on repasse sur Llama avec un message “approximate answer”.
+
+Codes d’erreur côté /route :
+Exposer quelque chose comme :
+
+{
+  "error": {
+    "code": "MODEL_TIMEOUT",
+    "message": "Upstream model timeout after 30s",
+    "upstream_model": "DeepSeek-R1"
+  }
+}
+
+
+Ça aide beaucoup pour les dashboards et le debug.
+
+4. Sécurité & multi-tenant
+
+Tu as déjà l’API key côté router → 👍
+
+Possible next steps :
+
+Rate limiting par API key (important si tu ouvres à des clients externes).
+
+Tagging usage par “client_id” dans le body :
+
+{
+  "prompt": "…",
+  "client_tier": "standard",
+  "client_id": "acme-123",
+  "type_hint": "chat"
+}
+
+
+→ Ça permet dans /api/admin/ai-metrics de faire des stats par client.
+
+Rotation des clés : mentionner dans la doc où et comment on les rotate (Secrets Manager, etc.).
+
+5. Observabilité / métriques
+
+Tu mentionnes :
+
+latence par modèle
+
+tokens consommés
+
+coûts
+
+taux d’erreur
+
+distribution des types de requêtes
+
+Ce serait cool de préciser :
+
+Si tu logges le routing (modèle choisi + classifier output) dans les métriques → super utile pour tuner.
+
+Un exemple de payload retourné par /api/admin/ai-metrics (même simplifié) pour qu’on sache à quoi s’attendre.
+
+6. Petit polish DX côté front
+
+Ton hook useAI est déjà clean. Quelques idées bonus :
+
+Ajouter le type dans la requête depuis l’UI (chat / math / creative).
+
+Exposer aussi le model et la cost dans messages côté front pour pouvoir les afficher dans un petit badge (ce que tu fais déjà partiellement dans AIChat).
+
+Prévoir une version de hook spécialisée :
+
+useAIChat()
+
+useAIMath()
+avec les type par défaut déjà fixés.

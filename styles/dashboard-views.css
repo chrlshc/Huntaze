@@ -1,0 +1,284 @@
+/**
+ * Dashboard Views - Shared CSS Custom Properties
+ * 
+ * This file contains design tokens for dashboard view components
+ * (StatCard, InfoCard, TagChip, EmptyState) to ensure visual consistency
+ * across Smart Messages, Fans, and PPV Content views.
+ */
+
+:root {
+  /* ========================================
+     Card Styling
+     ======================================== */
+  --dashboard-card-bg: #FFFFFF;
+  --dashboard-card-border: #E3E3E3;
+  --dashboard-card-radius: 12px;
+  --dashboard-card-padding: 10px 12px;
+  --dashboard-card-hover-bg: #F3F4FF;
+  --dashboard-card-hover-border: #D0D0D0;
+  --dashboard-card-hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  
+  /* ========================================
+     Typography
+     ======================================== */
+  --dashboard-label-size: 11px;
+  --dashboard-label-color: #9CA3AF;
+  --dashboard-label-spacing: 0.05em;
+  --dashboard-label-weight: 500;
+  
+  --dashboard-value-size: 20px;
+  --dashboard-value-weight: 600;
+  --dashboard-value-color: #111111;
+  
+  --dashboard-title-size: 14px;
+  --dashboard-title-weight: 600;
+  --dashboard-title-color: #111111;
+  
+  --dashboard-description-size: 13px;
+  --dashboard-description-color: #6B7280;
+  --dashboard-description-line-height: 1.4;
+  
+  --dashboard-empty-title-size: 18px;
+  --dashboard-empty-title-weight: 600;
+  --dashboard-empty-title-color: #111111;
+  
+  /* ========================================
+     Spacing
+     ======================================== */
+  --dashboard-gap-sm: 8px;
+  --dashboard-gap-md: 12px;
+  --dashboard-gap-lg: 16px;
+  --dashboard-gap-xl: 24px;
+  
+  /* ========================================
+     Brand Colors
+     ======================================== */
+  --dashboard-brand-primary: #6B7280;
+  --dashboard-brand-hover: #374151;
+  --dashboard-brand-light: #F3F4F6;
+  
+  /* ========================================
+     Status Colors - Success
+     ======================================== */
+  --dashboard-success-bg: #ECFDF3;
+  --dashboard-success-text: #166534;
+  
+  /* ========================================
+     Status Colors - Error/Critical
+     ======================================== */
+  --dashboard-error-bg: #FEF2F2;
+  --dashboard-error-text: #B91C1C;
+  
+  /* ========================================
+     Status Colors - Warning
+     ======================================== */
+  --dashboard-warning-bg: #FFF4E5;
+  --dashboard-warning-text: #9A3412;
+  
+  /* ========================================
+     Status Colors - Neutral
+     ======================================== */
+  --dashboard-neutral-bg: #F3F4F6;
+  --dashboard-neutral-text: #4B5563;
+  
+  /* ========================================
+     Status Colors - Info/Active
+     ======================================== */
+  --dashboard-info-bg: #E5F0FF;
+  --dashboard-info-text: #1D4ED8;
+  
+  /* ========================================
+     Delta/Trend Colors
+     ======================================== */
+  --dashboard-delta-positive: #16A34A;
+  --dashboard-delta-negative: #DC2626;
+  --dashboard-delta-size: 12px;
+  
+  /* ========================================
+     Icon Styling
+     ======================================== */
+  --dashboard-icon-container-size: 32px;
+  --dashboard-icon-container-bg: #F3F4F6;
+  --dashboard-icon-container-color: #6B7280;
+  --dashboard-icon-size: 48px;
+  --dashboard-icon-color: #9CA3AF;
+  
+  /* ========================================
+     Tag Chip Styling
+     ======================================== */
+  --dashboard-chip-font-size: 10px;
+  --dashboard-chip-padding-y: 2px;
+  --dashboard-chip-padding-x: 6px;
+  --dashboard-chip-radius: 999px;
+  --dashboard-chip-weight: 500;
+  
+  /* ========================================
+     Empty State Styling
+     ======================================== */
+  --dashboard-empty-max-width: 600px;
+  --dashboard-empty-padding: 32px 24px;
+  --dashboard-empty-border-radius: 16px;
+  --dashboard-empty-benefits-size: 13px;
+  
+  /* ========================================
+     CTA Button Styling
+     ======================================== */
+  --dashboard-cta-bg: #6B7280;
+  --dashboard-cta-color: #FFFFFF;
+  --dashboard-cta-radius: 8px;
+  --dashboard-cta-padding: 10px 20px;
+  --dashboard-cta-hover-bg: #374151;
+  --dashboard-cta-hover-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+  
+  /* ========================================
+     Transitions
+     ======================================== */
+  --dashboard-transition: all 150ms ease;
+  
+  /* ========================================
+     Accessibility - Focus Indicators
+     ======================================== */
+  --dashboard-focus-outline-color: #2C6ECB;
+  --dashboard-focus-outline-width: 2px;
+  --dashboard-focus-outline-offset: 2px;
+  
+  /* ========================================
+     Responsive Breakpoints
+     ======================================== */
+  --dashboard-breakpoint-mobile: 768px;
+  --dashboard-breakpoint-tablet: 1024px;
+}
+
+/* ========================================
+   Responsive Utilities
+   ======================================== */
+
+/* Mobile-first responsive grid for cards */
+.dashboard-card-grid {
+  display: grid;
+  gap: var(--dashboard-gap-md);
+  grid-template-columns: 1fr;
+}
+
+/* Tablet: 2-column grid (768px-1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    /* Tablet-optimized spacing */
+    --dashboard-gap-md: 10px;
+    --dashboard-gap-lg: 14px;
+  }
+  
+  .dashboard-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Maintain horizontal layout for search and filters */
+  .search-filter-container {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  /* Tables remain scrollable if needed */
+  .dashboard-table-container {
+    overflow-x: auto;
+  }
+}
+
+/* Desktop: flexible row layout (>1024px) */
+@media (min-width: 1024px) {
+  :root {
+    /* Desktop-optimized spacing */
+    --dashboard-gap-md: 12px;
+    --dashboard-gap-lg: 16px;
+    --dashboard-gap-xl: 24px;
+  }
+  
+  .dashboard-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  
+  /* Ensure tables display all columns without scroll */
+  .dashboard-table-container {
+    overflow-x: visible;
+  }
+  
+  /* Optimal spacing for desktop */
+  .dashboard-content-section {
+    margin-bottom: var(--dashboard-gap-xl);
+  }
+}
+
+/* ========================================
+   Accessibility - Keyboard Navigation
+   ======================================== */
+
+/* Focus indicators for all interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: var(--dashboard-focus-outline-width) solid var(--dashboard-focus-outline-color);
+  outline-offset: var(--dashboard-focus-outline-offset);
+}
+
+/* Remove default focus outline (only when :focus-visible is supported) */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Search input focus state */
+input[type="search"]:focus-visible,
+input[type="text"]:focus-visible {
+  border-color: var(--dashboard-brand-primary);
+  outline: var(--dashboard-focus-outline-width) solid var(--dashboard-focus-outline-color);
+  outline-offset: 0;
+}
+
+/* Button focus state */
+button:focus-visible {
+  outline: var(--dashboard-focus-outline-width) solid var(--dashboard-focus-outline-color);
+  outline-offset: var(--dashboard-focus-outline-offset);
+}
+
+/* Table row keyboard navigation */
+.dashboard-table tbody tr:focus-within {
+  background-color: var(--dashboard-card-hover-bg);
+  outline: var(--dashboard-focus-outline-width) solid var(--dashboard-focus-outline-color);
+  outline-offset: -2px;
+}
+
+/* Mobile adjustments (<768px) */
+@media (max-width: 767px) {
+  :root {
+    /* Reduce spacing for mobile */
+    --dashboard-gap-sm: 6px;
+    --dashboard-gap-md: 8px;
+    --dashboard-gap-lg: 12px;
+    --dashboard-gap-xl: 16px;
+    
+    /* Adjust padding for mobile */
+    --dashboard-card-padding: 8px 10px;
+    --dashboard-empty-padding: 24px 16px;
+    
+    /* Reduce icon sizes slightly */
+    --dashboard-icon-size: 40px;
+    --dashboard-icon-container-size: 28px;
+    
+    /* Adjust typography for mobile */
+    --dashboard-value-size: 18px;
+    --dashboard-empty-title-size: 16px;
+  }
+  
+  /* Stack all cards vertically */
+  .dashboard-card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--dashboard-gap-md);
+  }
+}

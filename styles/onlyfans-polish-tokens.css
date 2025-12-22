@@ -1,0 +1,414 @@
+/**
+ * OnlyFans Pixel-Perfect Polish Tokens
+ * Design system tokens for achieving production-ready SaaS premium polish
+ */
+
+:root {
+  /* ========================================
+     SPACING GRID (8px base for SaaS Transformation)
+     ======================================== */
+  --of-space-1: 4px;   /* Label → helper text */
+  --of-space-2: 8px;   /* Gaps entre éléments */
+  --of-space-3: 12px;  /* Padding interne card */
+  --of-space-4: 16px;  /* Padding standard card */
+  --of-space-5: 20px;  /* Padding large card */
+  --of-space-6: 24px;  /* Espacement sections */
+  --of-space-8: 32px;  /* Espacement sections majeures */
+
+  /* ========================================
+     LAYOUT GRID (8px increments)
+     ======================================== */
+  --of-layout-max-width: 1100px;  /* Container max width */
+  --of-layout-padding: 32px;      /* Container padding */
+  --of-section-gap: 32px;         /* Gap between sections */
+  --of-card-gap: 24px;            /* Gap between cards */
+
+  /* ========================================
+     BORDER RADIUS (Plus arrondis, look premium)
+     ======================================== */
+  --of-radius-card: 20px;    /* Cards, blocs larges */
+  --of-radius-input: 16px;   /* Inputs, buttons */
+  --of-radius-chip: 999px;   /* Pills, badges */
+
+  /* ========================================
+     BORDERS
+     ======================================== */
+  --of-border-width: 1px;
+  --of-border-color: #E5E7EB;
+  --of-border-subtle: 1px solid #E5E7EB;
+  --of-border-error: 1.5px solid #EF4444;
+
+  /* ========================================
+     SHADOWS
+     ======================================== */
+  --of-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --of-shadow-card-hover: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  /* SaaS-Level Card Elevation */
+  --of-shadow-card-saas: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --of-shadow-card-hover-saas: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+  /* Tailles */
+  --of-text-xs: 11px;    /* Labels uppercase */
+  --of-text-sm: 12px;    /* Texte secondaire */
+  --of-text-base: 14px;  /* Corps de texte */
+  --of-text-lg: 16px;    /* Titres de section */
+  --of-text-xl: 18px;    /* Titres de section alt */
+  --of-text-2xl: 24px;   /* Titres de page */
+
+  /* 3-Level Typography Hierarchy (SaaS Transformation) */
+  --of-text-h1: 26px;      /* Page titles */
+  --of-text-section: 18px; /* Section headers */
+  --of-text-body: 14px;    /* Body text */
+
+  /* Poids */
+  --of-font-normal: 400;
+  --of-font-medium: 500;
+  --of-font-semibold: 600;
+  --of-font-bold: 700;
+
+  /* ========================================
+     CHIP COLORS
+     ======================================== */
+  /* VIP */
+  --of-chip-vip-bg: #DEF7EC;
+  --of-chip-vip-text: #03543F;
+
+  /* Low Risk */
+  --of-chip-low-risk-bg: #DEF7EC;
+  --of-chip-low-risk-text: #03543F;
+
+  /* Medium Risk */
+  --of-chip-medium-risk-bg: #FEF3C7;
+  --of-chip-medium-risk-text: #92400E;
+
+  /* High Risk */
+  --of-chip-high-risk-bg: #FEE2E2;
+  --of-chip-high-risk-text: #991B1B;
+
+  /* Sent */
+  --of-chip-sent-bg: #DBEAFE;
+  --of-chip-sent-text: #1E40AF;
+
+  /* Draft */
+  --of-chip-draft-bg: #F3F4F6;
+  --of-chip-draft-text: #374151;
+
+  /* Active */
+  --of-chip-active-bg: #DEF7EC;
+  --of-chip-active-text: #03543F;
+
+  /* ========================================
+     HOVER STATES
+     ======================================== */
+  --of-hover-card-bg: #F9FAFB;
+  --of-hover-table-row-bg: #F9FAFB;
+
+  /* ========================================
+     GAPS FOR FLEX
+     ======================================== */
+  --of-gap-xs: 4px;
+  --of-gap-sm: 8px;
+  --of-gap-md: 12px;
+  --of-gap-lg: 16px;
+
+  /* ========================================
+     INPUT PADDING STANDARD
+     ======================================== */
+  --of-input-padding: 12px 20px;
+  --of-card-padding: 24px;
+
+  /* ========================================
+     SETTINGS CARD RELIEF (SaaS Premium)
+     ======================================== */
+  --of-settings-card-bg: #F9FAFB;
+  --of-settings-card-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
+  --of-settings-card-padding: 24px;
+  
+  /* ========================================
+     CATEGORY PILLS
+     ======================================== */
+  --of-pill-bg: rgba(129, 140, 248, 0.1);
+  --of-pill-text: #4F46E5;
+  
+  /* ========================================
+     INPUT BACKGROUNDS (moins plat)
+     ======================================== */
+  --of-input-bg: #F3F4F6;
+  --of-input-focus-border: var(--shopify-border-focus, #2C6ECB);
+  --of-input-focus-shadow: 0 0 0 1px rgba(44, 110, 203, 0.2);
+}
+
+/* OnlyFans theme bridge: apply shared design-system variables on a global scope
+   so portals (Radix/Headless UI) rendered at the end of <body> stay styled. */
+.onlyfans-theme {
+  /* Ensure dashboard text tokens use dark-on-light colors */
+  --text-primary: var(--color-text-main);
+  --text-secondary: var(--color-text-sub);
+  --color-text-primary: var(--color-text-main);
+  --color-text-secondary: var(--color-text-sub);
+
+  /* Softer separators for OnlyFans pages (avoid "tableur" look) */
+  --border-default: rgba(15, 23, 42, 0.08);
+  --border-emphasis: rgba(15, 23, 42, 0.12);
+
+  /* Keep Shopify-specific border tokens aligned with the same softness */
+  --shopify-border-subdued: rgba(15, 23, 42, 0.08);
+  --shopify-border-hover: rgba(15, 23, 42, 0.12);
+
+  /* Consistent rounding across Shopify, TailAdmin, and shared UI primitives */
+  --radius-base: var(--of-radius-card, 20px);
+  --radius-card: var(--of-radius-card, 20px);
+  --button-radius: 12px;
+  --button-border-radius: 12px;
+  --radius-button: 12px;
+  --input-radius: var(--of-radius-input, 16px);
+  --radius-input: var(--of-radius-input, 16px);
+  --tailadmin-radius-lg: var(--of-radius-card, 20px);
+  --tailadmin-radius-md: var(--of-radius-input, 16px);
+
+  /* Remove the global violet focus treatments for OnlyFans pages (use a clean product blue) */
+  --a11y-focus-outline-color: rgba(44, 110, 203, 0.55);
+  --a11y-focus-ring-color: rgba(44, 110, 203, 0.35);
+  --dashboard-focus-outline-color: rgba(44, 110, 203, 0.55);
+  --brand-glow: 0 0 0 3px rgba(44, 110, 203, 0.18);
+  --focus-ring-color: rgba(44, 110, 203, 0.35);
+  --shopify-border-focus: #2C6ECB;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Spacing utilities */
+.of-space-1 { margin: var(--of-space-1); }
+.of-space-2 { margin: var(--of-space-2); }
+.of-space-3 { margin: var(--of-space-3); }
+.of-space-4 { margin: var(--of-space-4); }
+.of-space-5 { margin: var(--of-space-5); }
+.of-space-6 { margin: var(--of-space-6); }
+.of-space-8 { margin: var(--of-space-8); }
+
+/* Gap utilities */
+.of-gap-1 { gap: var(--of-space-1); }
+.of-gap-2 { gap: var(--of-space-2); }
+.of-gap-3 { gap: var(--of-space-3); }
+.of-gap-4 { gap: var(--of-space-4); }
+.of-gap-6 { gap: var(--of-space-6); }
+.of-gap-8 { gap: var(--of-space-8); }
+
+/* Padding utilities */
+.of-p-3 { padding: var(--of-space-3); }
+.of-p-4 { padding: var(--of-space-4); }
+.of-p-5 { padding: var(--of-space-5); }
+.of-p-6 { padding: var(--of-space-6); }
+
+/* Border radius utilities */
+.of-rounded-card { border-radius: var(--of-radius-card); }
+.of-rounded-input { border-radius: var(--of-radius-input); }
+.of-rounded-chip { border-radius: var(--of-radius-chip); }
+
+/* Shadow utilities */
+.of-shadow-card { box-shadow: var(--of-shadow-card); }
+.of-shadow-card-hover:hover { box-shadow: var(--of-shadow-card-hover); }
+
+/* Typography utilities */
+.of-text-xs { font-size: var(--of-text-xs); }
+.of-text-sm { font-size: var(--of-text-sm); }
+.of-text-base { font-size: var(--of-text-base); }
+.of-text-lg { font-size: var(--of-text-lg); }
+.of-text-xl { font-size: var(--of-text-xl); }
+.of-text-2xl { font-size: var(--of-text-2xl); }
+
+/* Text colors */
+.of-text-primary { color: #1a1a1a; }
+.of-text-secondary { color: #6b7177; }
+
+/* Chip styles */
+.of-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--of-radius-chip);
+  font-size: var(--of-text-sm);
+  font-weight: var(--of-font-semibold);
+  line-height: 1.5;
+}
+
+.of-chip-vip {
+  background-color: var(--of-chip-vip-bg);
+  color: var(--of-chip-vip-text);
+}
+
+.of-chip-low-risk {
+  background-color: var(--of-chip-low-risk-bg);
+  color: var(--of-chip-low-risk-text);
+}
+
+.of-chip-medium-risk {
+  background-color: var(--of-chip-medium-risk-bg);
+  color: var(--of-chip-medium-risk-text);
+}
+
+.of-chip-high-risk {
+  background-color: var(--of-chip-high-risk-bg);
+  color: var(--of-chip-high-risk-text);
+}
+
+.of-chip-sent {
+  background-color: var(--of-chip-sent-bg);
+  color: var(--of-chip-sent-text);
+}
+
+.of-chip-draft {
+  background-color: var(--of-chip-draft-bg);
+  color: var(--of-chip-draft-text);
+}
+
+.of-chip-active {
+  background-color: var(--of-chip-active-bg);
+  color: var(--of-chip-active-text);
+}
+
+/* Hover states */
+.of-hover-card:hover {
+  background-color: var(--of-hover-card-bg);
+  box-shadow: var(--of-shadow-card-hover);
+  transition: all 0.2s ease;
+}
+
+.of-hover-table-row:hover {
+  background-color: var(--of-hover-table-row-bg);
+  transition: background-color 0.15s ease;
+}
+
+/* Alignment utilities */
+.of-align-right {
+  text-align: right;
+}
+
+.of-monospace {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================
+   SAAS REFINEMENTS UTILITIES
+   ======================================== */
+
+/* Settings Card avec relief (SaaS Premium) */
+.of-settings-card {
+  background: var(--of-settings-card-bg);
+  border-radius: var(--of-radius-card);
+  border: 1px solid var(--of-border-color);
+  box-shadow: var(--of-settings-card-shadow);
+  padding: var(--of-settings-card-padding);
+  margin-bottom: 24px;
+}
+
+/* Settings Card avec accent bar (pour cards importantes) */
+.of-settings-card--accent {
+  border-left: 4px solid var(--of-pill-text);
+  padding-left: 20px;
+}
+
+/* Category Pill */
+.of-category-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(15, 23, 42, 0.03);
+  color: #475569;
+  border: 1px solid var(--border-default);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.of-category-pill[data-tone="ai"],
+.of-category-pill--ai {
+  background: var(--accent-primary-soft, rgba(31, 41, 55, 0.12));
+  color: var(--accent-primary, #1f2937);
+  border-color: rgba(31, 41, 55, 0.18);
+}
+
+/* Card Header Structure */
+.of-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.of-card-title {
+  font-size: var(--of-text-lg);
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: var(--of-space-1);
+}
+
+.of-card-subtitle {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+
+/* Settings Input (moins plat) */
+.of-settings-input {
+  width: 100%;
+  padding: var(--of-input-padding);
+  border-radius: var(--of-radius-input);
+  border: 1px solid var(--of-border-color);
+  background: var(--of-input-bg);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.of-settings-input:focus {
+  outline: none;
+  border-color: var(--of-input-focus-border);
+  box-shadow: var(--of-input-focus-shadow);
+  background: #FFFFFF;
+}
+
+/* Number + Chip separation */
+.of-number-chip {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--of-gap-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stats Grid */
+.of-stats-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--of-gap-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Filter Pills */
+.of-filter-pill {
+  border-radius: 999px;
+  border: var(--of-border-subtle);
+  padding: 6px 12px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.of-filter-pill:hover {
+  background: #F9FAFB;
+}
+
+.of-filter-pill.active {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+}

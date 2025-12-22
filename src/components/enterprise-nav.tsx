@@ -231,7 +231,7 @@ export default function EnterpriseNav() {
           {/* Start for free - Indépendant */}
           <Link
             href="/get-started"
-            className="ml-6 px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+            className="ml-6 px-6 py-2 bg-gray-900 dark:bg-zinc-800 text-white dark:text-zinc-50 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-zinc-700 transition-colors"
           >
             Start for free
           </Link>

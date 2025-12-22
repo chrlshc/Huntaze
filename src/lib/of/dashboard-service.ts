@@ -12,6 +12,7 @@ import {
   DailyAction,
 } from './dashboard-types';
 import { getDefaultSnapshot, calculateTotalPotential } from './dashboard-defaults';
+import { externalFetch } from '@/lib/services/external/http';
 
 type SnapshotSource = DashboardSnapshot['metadata']['source'];
 
@@ -90,9 +91,13 @@ async function fetchUpstreamSnapshot(accountId: string): Promise<DashboardSnapsh
   }
 
   try {
-    const response = await fetch(url.toString(), {
+    const response = await externalFetch(url.toString(), {
+      service: 'onlyfans-dashboard',
+      operation: 'fetchSnapshot',
       headers,
       cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
     });
 
     if (!response.ok) {

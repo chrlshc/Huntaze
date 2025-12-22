@@ -140,7 +140,6 @@ export function createCancellableFetcherHOC() {
     } catch (error: any) {
       // Don't throw on abort - this is expected
       if (error.name === 'AbortError') {
-        console.log(`[Request Cancelled] ${url}`);
         return null;
       }
       throw error;

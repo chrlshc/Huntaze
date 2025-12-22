@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
+    "dev:mock": "API_MODE=mock NEXT_PUBLIC_API_MODE=mock npm run dev",
     "build": "next build --webpack",
     "postinstall": "node scripts/patch-next-exports.js || true",
     "start": "next start",
+    "demo:mock": "API_MODE=mock NEXT_PUBLIC_API_MODE=mock npm run start",
     "lint": "next lint",
     "test": "vitest",
     "test:light": "tsx scripts/test-lightweight.ts",
@@ -154,12 +156,17 @@
     "@azure/monitor-opentelemetry": "^1.14.2",
     "@azure/openai": "^2.0.0",
     "@azure/search-documents": "^12.2.0",
+    "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@google/genai": "^1.30.0",
     "@google/generative-ai": "^0.21.0",
+    "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.19.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.0",
+    "@shopify/polaris": "^13.9.5",
+    "@shopify/polaris-icons": "^9.3.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
     "@types/react": "^18.3.26",
@@ -169,6 +176,7 @@
     "autoprefixer": "^10.4.22",
     "bcryptjs": "^3.0.3",
     "bull": "^4.16.5",
+    "bullmq": "^5.66.2",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
@@ -227,8 +235,9 @@
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/ui": "^4.0.8",
     "axe-core": "^4.11.0",
+    "baseline-browser-mapping": "^2.9.8",
     "dotenv": "^17.2.3",
-    "fast-check": "^4.3.0",
+    "fast-check": "^4.4.0",
     "glob": "^13.0.0",
     "husky": "^9.1.7",
     "jest-axe": "^10.0.0",
@@ -238,5 +247,10 @@
     "prisma": "^6.19.0",
     "tsx": "^4.20.6",
     "vitest": "^4.0.8"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

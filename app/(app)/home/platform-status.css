@@ -32,9 +32,6 @@
   transition: color 200ms ease, opacity 200ms ease;
 }
 
-.manage-link:hover {
-  color: var(--brand-secondary);
-}
 
 .manage-link:focus-visible {
   outline: none;
@@ -121,11 +118,6 @@
   transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
 }
 
-.btn-secondary:hover {
-  border-color: var(--border-emphasis);
-  color: var(--text-primary);
-  background: var(--bg-hover);
-}
 
 .btn-secondary:focus-visible {
   outline: none;
@@ -149,9 +141,6 @@
   transition: border-color 200ms ease;
 }
 
-.platform-status-card:hover {
-  border-color: var(--border-emphasis);
-}
 
 .platform-status-header {
   display: flex;

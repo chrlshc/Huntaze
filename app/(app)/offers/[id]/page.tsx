@@ -1,62 +1,52 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { OfferForm } from '@/components/offers/OfferForm';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import type { Offer, UpdateOfferInput } from '@/lib/offers/types';
+import useSWR from 'swr';
+import { standardFetcher } from '@/lib/swr';
+import { DashboardErrorState, DashboardLoadingState } from '@/components/ui/DashboardLoadingState';
 
-// Mock offer for development
-const mockOffer: Offer = {
-  id: '1',
-  userId: 1,
-  name: 'Summer Sale 20% Off',
-  description: 'Limited time summer discount on all content',
-  discountType: 'percentage',
-  discountValue: 20,
-  originalPrice: 50,
-  validFrom: new Date('2024-06-01'),
-  validUntil: new Date('2024-08-31'),
-  status: 'active',
-  targetAudience: 'All fans',
-  contentIds: ['c1', 'c2', 'c3'],
-  redemptionCount: 145,
-  createdAt: new Date('2024-05-15'),
-  updatedAt: new Date('2024-05-15'),
+type OfferDto = Omit<Offer, 'validFrom' | 'validUntil' | 'createdAt' | 'updatedAt'> & {
+  validFrom: string;
+  validUntil: string;
+  createdAt: string;
+  updatedAt: string;
 };
+
+function normalizeOffer(dto: OfferDto): Offer {
+  return {
+    ...dto,
+    validFrom: new Date(dto.validFrom),
+    validUntil: new Date(dto.validUntil),
+    createdAt: new Date(dto.createdAt),
+    updatedAt: new Date(dto.updatedAt),
+  };
+}
 
 export default function EditOfferPage() {
   const router = useRouter();
   const params = useParams();
   const offerId = params.id as string;
   
-  const [offer, setOffer] = useState<Offer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Simulate API fetch
-    const fetchOffer = async () => {
-      setIsLoading(true);
-      try {
-        // In production: const response = await fetch(`/api/offers/${offerId}`);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setOffer({ ...mockOffer, id: offerId });
-      } catch (error) {
-        console.error('Failed to fetch offer:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchOffer();
-  }, [offerId]);
+  const { data, error, isLoading, mutate } = useSWR<OfferDto>(
+    offerId ? `/api/offers/${offerId}` : null,
+    standardFetcher
+  );
+
+  const offer = data ? normalizeOffer(data) : null;
 
   const handleSubmit = async (data: UpdateOfferInput) => {
     setIsSaving(true);
+    setSaveError(null);
     try {
       const response = await fetch(`/api/offers/${offerId}`, {
         method: 'PUT',
@@ -65,10 +55,18 @@ export default function EditOfferPage() {
       });
       
       if (response.ok) {
+        void mutate();
         router.push('/offers');
+        return;
+      }
+      const message = await response.json().catch(() => null);
+      if (message && typeof message === 'object' && 'error' in message) {
+        setSaveError(String((message as any).error));
+      } else {
+        setSaveError('Failed to update offer');
       }
     } catch (error) {
-      console.error('Failed to update offer:', error);
+      setSaveError(error instanceof Error ? error.message : 'Failed to update offer');
     } finally {
       setIsSaving(false);
     }
@@ -79,7 +77,22 @@ export default function EditOfferPage() {
       <main className="hz-main" role="main">
         <div className="hz-page max-w-4xl mx-auto">
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <DashboardLoadingState message="Loading offer..." />
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="hz-main" role="main">
+        <div className="hz-page max-w-4xl mx-auto">
+          <div className="py-10 flex items-center justify-center">
+            <DashboardErrorState
+              message={error instanceof Error ? error.message : 'Failed to load offer'}
+              onRetry={() => void mutate()}
+            />
           </div>
         </div>
       </main>
@@ -95,9 +108,14 @@ export default function EditOfferPage() {
             <p className="text-muted-foreground mb-4">
               The offer you're looking for doesn't exist or has been deleted.
             </p>
-            <Link href="/offers">
-              <Button>Back to Offers</Button>
-            </Link>
+            <div className="flex items-center justify-center gap-2">
+              <Link href="/offers">
+                <Button>Back to Offers</Button>
+              </Link>
+              <Button variant="outline" onClick={() => void mutate()}>
+                Retry
+              </Button>
+            </div>
           </Card>
         </div>
       </main>
@@ -117,6 +135,12 @@ export default function EditOfferPage() {
             Update your offer settings
           </p>
         </div>
+
+        {saveError && (
+          <div className="mb-4">
+            <DashboardErrorState message={saveError} />
+          </div>
+        )}
 
         <OfferForm
           offer={offer}

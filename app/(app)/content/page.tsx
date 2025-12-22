@@ -1,520 +1,875 @@
 'use client';
 
-/**
- * Content Page - Real-time data
- * Requires dynamic rendering for content management
- * Requirements: 2.1, 2.2
- */
-export const dynamic = 'force-dynamic';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
+import { ButlerTip } from '@/components/ui/ButlerTip';
+import {
+  Card,
+  Text,
+  BlockStack,
+  InlineStack,
+  Button,
+  Badge,
+  Divider,
+  Tabs,
+} from '@shopify/polaris';
+import { 
+  TrendingUp, 
+  Zap, 
+  Target, 
+  Sparkles, 
+  Clock, 
+  Eye,
+  Play,
+  RefreshCw,
+  ChevronRight,
+  ChevronDown,
+  BarChart3,
+  Hash,
+  FileText,
+  ExternalLink,
+  Upload
+} from 'lucide-react';
+import '@/styles/polaris-analytics.css';
+import '@/styles/content-mobile.css';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 
-import { useState, lazy, Suspense, useMemo, useCallback, memo } from 'react';
-import Link from 'next/link';
-import { useContent, deleteContent, createContent, updateContent, type ContentItem } from '@/hooks/useContent';
-import { LoadingState } from '@/components/revenue/shared/LoadingState';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { LazyLoadErrorBoundary } from '@/components/dashboard/LazyLoadErrorBoundary';
-import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
-import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
-import { Button } from "@/components/ui/button";
-import { Card } from '@/components/ui/card';
+type PlatformFilter = 'all' | 'tiktok' | 'instagram' | 'reddit';
 
-// Lazy load heavy modal component to reduce initial bundle size
-const ContentModal = lazy(() => import('@/components/content/ContentModal').then(mod => ({ default: mod.ContentModal })));
+type TrendsApiResponse = {
+  success: boolean;
+  data?: unknown;
+  usage?: unknown;
+};
 
-// Memoized content item component for optimized rendering
-const ContentItemRow = memo(({ 
-  item, 
-  onEdit, 
-  onDelete, 
-  isDeleting 
-}: { 
-  item: ContentItem; 
-  onEdit: (item: ContentItem) => void; 
-  onDelete: (id: string) => void; 
-  isDeleting: boolean;
-}) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'published': return 'bg-green-100 text-green-700';
-      case 'scheduled': return 'bg-blue-100 text-blue-700';
-      case 'draft': return 'bg-gray-100 text-gray-700';
-      default: return 'bg-gray-100 text-gray-700';
-    }
+type RecommendationsApiResponse = {
+  success: boolean;
+  data?: {
+    recommendations?: unknown;
+    contentIdeas?: unknown;
   };
+};
 
-  const getPlatformColor = (platform: string) => {
-    switch (platform) {
-      case 'onlyfans': return 'bg-blue-100 text-blue-700';
-      case 'fansly': return 'bg-purple-100 text-purple-700';
-      case 'instagram': return 'bg-pink-100 text-pink-700';
-      case 'tiktok': return 'bg-black text-white';
-      default: return 'bg-gray-100 text-gray-700';
-    }
+type UiTrend = {
+  id: string;
+  title: string;
+  platform: string;
+  viralScore: number;
+  engagement: number;
+  velocity: number;
+  category: string;
+  hashtags: string[];
+  thumbnail?: string;
+  author?: string;
+  description?: string;
+  tips?: string[];
+  majordomeAdvice?: string;
+  videoUrl?: string;
+};
+
+type UiIdea = {
+  id: string;
+  title: string;
+  description: string;
+  platform: string;
+  successRate: number;
+  basedOn?: string;
+  hashtags: string[];
+  bestTime?: string;
+  reasoning?: string;
+};
+
+type UiRecommendation = {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  confidence: number;
+  platform: string;
+};
+
+const fetcher = <T,>(url: string) => internalApiFetch<T>(url);
+
+function safeString(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+function safeNumber(value: unknown, fallback = 0): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function safeStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((v): v is string => typeof v === 'string');
+}
+
+function titleCase(value: string): string {
+  return value
+    .split(/[_\s]+/g)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+function defaultThumbnailForPlatform(platform: string): string {
+  switch (platform) {
+    case 'tiktok':
+      return '🎵';
+    case 'instagram':
+      return '📸';
+    case 'reddit':
+      return '💬';
+    default:
+      return '🔥';
+  }
+}
+
+function extractTrends(response: TrendsApiResponse | undefined): any[] {
+  if (!response) return [];
+  const data: any = (response as any).data;
+  if (Array.isArray(data)) return data;
+  const trends = data?.trends;
+  return Array.isArray(trends) ? trends : [];
+}
+
+function mapTrend(raw: any): UiTrend {
+  const platform = safeString(raw?.platform, 'unknown');
+  const title = safeString(raw?.title, 'Untitled');
+  const hashtags = safeStringArray(raw?.hashtags ?? raw?.tags);
+  const tips = Array.isArray(raw?.tips) ? raw.tips.filter((v: any) => typeof v === 'string') : undefined;
+  const videoUrl = safeString(raw?.videoUrl ?? raw?.url ?? raw?.link, '');
+
+  return {
+    id: safeString(raw?.id, `${platform}:${title}`),
+    title,
+    platform,
+    viralScore: safeNumber(raw?.viralScore),
+    engagement: safeNumber(raw?.engagement),
+    velocity: safeNumber(raw?.velocity),
+    category: safeString(raw?.category, '—'),
+    hashtags,
+    thumbnail: safeString(raw?.thumbnail, defaultThumbnailForPlatform(platform)),
+    author: safeString(raw?.author),
+    description: safeString(raw?.description),
+    tips,
+    majordomeAdvice: safeString(raw?.majordomeAdvice),
+    videoUrl: videoUrl || undefined,
   };
+}
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'image':
-        return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        );
-      case 'video':
-        return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-        );
-      case 'text':
-        return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        );
-    }
-  };
+function extractRecommendations(response: RecommendationsApiResponse | undefined): {
+  recommendations: UiRecommendation[];
+  ideas: UiIdea[];
+} {
+  const data: any = response?.data;
+  const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
+  const ideas = Array.isArray(data?.contentIdeas) ? data.contentIdeas : [];
 
-  return (
-    <div className="p-6 bg-[var(--bg-surface)] hover:bg-gray-50 transition-colors">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 flex-1">
-          <div className="p-3 bg-gray-100 rounded-lg">
-            {getTypeIcon(item.type)}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-[var(--color-text-main)]">
-              {item.title}
-            </h3>
-            <div className="flex items-center gap-3 mt-1">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPlatformColor(item.platform)}`}>
-                {item.platform}
-              </span>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
-                {item.status}
-              </span>
-              <span className="text-sm text-[var(--color-text-sub)]">
-                {new Date(item.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="primary">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </Button>
-          <Button 
-            variant="primary" 
-            onClick={() => onEdit(item)}
-            title="Edit"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-          </Button>
-          <Button 
-            variant="danger" 
-            onClick={() => onDelete(item.id)} 
-            disabled={isDeleting}
-            title="Delete"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-});
+  const mappedRecs: UiRecommendation[] = recs.map((raw: any) => {
+    const confidence = safeNumber(raw?.confidence);
+    const normalizedConfidence = confidence > 0 && confidence <= 1 ? confidence * 100 : confidence;
 
-ContentItemRow.displayName = 'ContentItemRow';
+    return {
+      id: safeString(raw?.id, safeString(raw?.title, 'rec')),
+      type: safeString(raw?.type, 'timing'),
+      title: safeString(raw?.title, 'Recommendation'),
+      description: safeString(raw?.description),
+      confidence: normalizedConfidence,
+      platform: safeString(raw?.platform, 'all'),
+    };
+  });
+
+  const mappedIdeas: UiIdea[] = ideas.map((raw: any) => {
+    const successRate = safeNumber(raw?.successRate, safeNumber(raw?.estimatedViralScore));
+
+    return {
+      id: safeString(raw?.id, safeString(raw?.title, 'idea')),
+      title: safeString(raw?.title, 'Content idea'),
+      description: safeString(raw?.description),
+      platform: safeString(raw?.platform, 'all'),
+      successRate,
+      basedOn: safeString(raw?.basedOn, safeString(raw?.contentType)),
+      hashtags: safeStringArray(raw?.hashtags ?? raw?.suggestedHashtags),
+      bestTime: safeString(raw?.bestTime, safeString(raw?.bestPostingTime)),
+      reasoning: safeString(raw?.reasoning, safeString(raw?.suggestedAction)),
+    };
+  });
+
+  return { recommendations: mappedRecs, ideas: mappedIdeas };
+}
+
+function getRecommendationIcon(type: string) {
+  switch (type) {
+    case 'hashtag':
+      return <Hash size={20} />;
+    case 'format':
+      return <Play size={20} />;
+    case 'content_idea':
+      return <Sparkles size={20} />;
+    case 'timing':
+    default:
+      return <Clock size={20} />;
+  }
+}
 
 export default function ContentPage() {
-  const [activeTab, setActiveTab] = useState<'all' | 'draft' | 'scheduled' | 'published'>('all');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingContent, setEditingContent] = useState<ContentItem | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [displayCount, setDisplayCount] = useState(20); // Virtual scrolling: show 20 items initially
-  
-  // Performance monitoring
-  const { trackAPIRequest, trackFormSubmit } = usePerformanceMonitoring({
-    pageName: 'Content',
-    trackScrollPerformance: true,
-    trackInteractions: true,
-  });
-  
-  // Debounce search input (300ms delay)
-  useMemo(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-  
-  // Fetch content from API
-  const { data, isLoading, error, mutate } = useContent({
-    status: activeTab,
-    limit: 100, // Fetch more items for better UX
-  });
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformFilter>('all');
+  const [expandedTrend, setExpandedTrend] = useState<string | null>(null);
 
-  // Extract content items
-  const contentItems = data?.data?.items || [];
-  
-  // Memoized stats calculation
-  const stats = useMemo(() => ({
-    total: contentItems.length,
-    published: contentItems.filter((item: ContentItem) => item.status === 'published').length,
-    scheduled: contentItems.filter((item: ContentItem) => item.status === 'scheduled').length,
-    draft: contentItems.filter((item: ContentItem) => item.status === 'draft').length,
-  }), [contentItems]);
+  const trendsKey =
+    selectedPlatform === 'all'
+      ? '/api/ai/content-trends/trends'
+      : `/api/ai/content-trends/trends?platform=${encodeURIComponent(selectedPlatform)}`;
 
-  // Memoized filtered and searched content
-  const filteredContent = useMemo(() => {
-    let filtered = activeTab === 'all' 
-      ? contentItems 
-      : contentItems.filter((item: ContentItem) => item.status === activeTab);
-    
-    // Apply search filter
-    if (debouncedSearch) {
-      const query = debouncedSearch.toLowerCase();
-      filtered = filtered.filter((item: ContentItem) => 
-        item.title.toLowerCase().includes(query) ||
-        item.platform.toLowerCase().includes(query) ||
-        item.status.toLowerCase().includes(query)
-      );
-    }
-    
-    return filtered;
-  }, [contentItems, activeTab, debouncedSearch]);
+  const {
+    data: trendsResponse,
+    error: trendsError,
+    isLoading: trendsLoading,
+    isValidating: trendsValidating,
+    mutate: mutateTrends,
+  } = useSWR<TrendsApiResponse>(trendsKey, fetcher);
 
-  // Virtual scrolling: only render visible items
-  const visibleContent = useMemo(() => 
-    filteredContent.slice(0, displayCount),
-    [filteredContent, displayCount]
+  const {
+    data: recommendationsResponse,
+    error: recommendationsError,
+    isLoading: recommendationsLoading,
+    isValidating: recommendationsValidating,
+    mutate: mutateRecommendations,
+  } = useSWR<RecommendationsApiResponse>('/api/ai/content-trends/recommendations', fetcher);
+
+  const refreshing = trendsValidating || recommendationsValidating;
+
+  const trends = useMemo(() => extractTrends(trendsResponse).map(mapTrend), [trendsResponse]);
+
+  const { ideas, recommendations } = useMemo(
+    () => extractRecommendations(recommendationsResponse),
+    [recommendationsResponse]
   );
-  
-  // Memoized handlers for better performance
-  const handleDelete = useCallback(async (id: string) => {
-    if (confirm('Are you sure you want to delete this content?')) {
-      setIsDeleting(true);
-      try {
-        await deleteContent(id);
-        mutate(); // Refresh data
-      } catch (error) {
-        console.error('Delete failed:', error);
-        alert('Failed to delete content');
-      } finally {
-        setIsDeleting(false);
-      }
-    }
-  }, [mutate]);
 
-  const handleCreate = useCallback(() => {
-    setEditingContent(null);
-    setIsModalOpen(true);
-  }, []);
+  const filteredTrends =
+    selectedPlatform === 'all' ? trends : trends.filter((t) => t.platform === selectedPlatform);
 
-  const handleEdit = useCallback((content: ContentItem) => {
-    setEditingContent(content);
-    setIsModalOpen(true);
-  }, []);
+  const handleTabChange = (index: number) => setSelectedTab(index);
 
-  const handleSubmit = useCallback(async (data: Partial<ContentItem>) => {
-    setIsSubmitting(true);
-    try {
-      if (editingContent?.id) {
-        await updateContent(editingContent.id, data);
-      } else {
-        await createContent(data);
-      }
-      setIsModalOpen(false);
-      setEditingContent(null);
-      mutate(); // Refresh data
-    } catch (error) {
-      console.error('Submit failed:', error);
-      alert('Failed to save content');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [editingContent, mutate]);
+  const refreshTrends = async () => {
+    await Promise.all([mutateTrends(), mutateRecommendations()]);
+  };
 
-  const handleCloseModal = useCallback(() => {
-    if (!isSubmitting) {
-      setIsModalOpen(false);
-      setEditingContent(null);
-    }
-  }, [isSubmitting]);
+  const formatNumber = (num: number) => {
+    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+    return num.toString();
+  };
 
-  // Load more items for virtual scrolling
-  const handleLoadMore = useCallback(() => {
-    setDisplayCount(prev => Math.min(prev + 20, filteredContent.length));
-  }, [filteredContent.length]);
+  const isInitialLoading =
+    (trendsLoading && !trendsResponse) || (recommendationsLoading && !recommendationsResponse);
+  const hasAnyData =
+    filteredTrends.length > 0 || ideas.length > 0 || recommendations.length > 0;
 
-  // Handle search input change
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setDisplayCount(20); // Reset display count on search
-  }, []);
+  if (!hasAnyData && !isInitialLoading && !trendsError && !recommendationsError) {
+    return (
+      <div className="polaris-analytics">
+        <EmptyState
+          variant="no-data"
+          title="No content insights yet"
+          description="Connect TikTok, Instagram, or Reddit to start collecting trends and recommendations."
+          action={{ label: 'Connect platforms', onClick: () => (window.location.href = '/integrations') }}
+          secondaryAction={{ label: 'Retry', onClick: () => void refreshTrends(), icon: RefreshCw }}
+        />
+      </div>
+    );
+  }
+
+  if (!hasAnyData && !isInitialLoading && (trendsError || recommendationsError)) {
+    const message =
+      (trendsError instanceof Error ? trendsError.message : null) ||
+      (recommendationsError instanceof Error ? recommendationsError.message : null) ||
+      'Failed to load content insights';
+
+    return (
+      <div className="polaris-analytics">
+        <EmptyState
+          variant="error"
+          title="Failed to load content insights"
+          description={message}
+          action={{ label: 'Retry', onClick: () => void refreshTrends(), icon: RefreshCw }}
+        />
+      </div>
+    );
+  }
+
+  const activeTrends = filteredTrends.length;
+  const avgViralScore =
+    activeTrends > 0
+      ? filteredTrends.reduce((sum, t) => sum + t.viralScore, 0) / activeTrends
+      : 0;
+  const predictedEngagement = filteredTrends.reduce((sum, t) => sum + t.engagement, 0);
+
+  const tabs = [
+    { id: 'trends', content: '📊 Trends', panelID: 'trends-panel' },
+    { id: 'ideas', content: '💡 AI Ideas', panelID: 'ideas-panel' },
+    { id: 'recommendations', content: '🎯 Recommendations', panelID: 'recommendations-panel' },
+  ];
 
   return (
-    <ProtectedRoute requireOnboarding={false}>
-      <ContentPageErrorBoundary pageName="Content">
-        <div>
-        <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text-main)]">
-            Content Creation
+    <div className="polaris-analytics">
+      <BlockStack gap="600">
+        {/* Header */}
+        <div className="page-header" style={{ justifyContent: 'space-between' }}>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <FileText size={22} />
+            Content
           </h1>
-          <p className="mt-2 text-[var(--color-text-sub)]">
-            Write, schedule, and publish your OnlyFans, social, and promo content from a single workspace.
-          </p>
-        </div>
-        <Button variant="primary" onClick={handleCreate}>
-  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Create Content
-</Button>
-      </div>
-
-      {/* Content Modal */}
-      {isModalOpen && (
-        <LazyLoadErrorBoundary>
-          <Suspense fallback={null}>
-            <ContentModal
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              onSubmit={handleSubmit}
-              initialData={editingContent || undefined}
-              isLoading={isSubmitting}
-            />
-          </Suspense>
-        </LazyLoadErrorBoundary>
-      )}
-
-      {/* Loading State */}
-      {isLoading && (
-        <div className="mb-8">
-          <LoadingState variant="card" count={4} />
-        </div>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <div className="mb-8 bg-red-50 border border-red-200 rounded-[var(--radius-card)] p-4">
-          <p className="text-red-800">
-            Failed to load content. Please try again.
-          </p>
-        </div>
-      )}
-
-      {/* Stats Cards */}
-      {!isLoading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--color-text-sub)]">Total Content</p>
-                <p className="text-2xl font-bold text-[var(--color-text-main)] mt-1">
-                  {stats.total}
-                </p>
-              </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--color-text-sub)]">Published</p>
-                <p className="text-2xl font-bold text-[var(--color-text-main)] mt-1">
-                  {stats.published}
-                </p>
-              </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--color-text-sub)]">Scheduled</p>
-                <p className="text-2xl font-bold text-[var(--color-text-main)] mt-1">
-                  {stats.scheduled}
-                </p>
-              </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 p-6 shadow-[var(--shadow-soft)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-[var(--color-text-sub)]">Drafts</p>
-                <p className="text-2xl font-bold text-[var(--color-text-main)] mt-1">
-                  {stats.draft}
-                </p>
-              </div>
-              <div className="p-3 bg-gray-100 rounded-lg">
-                <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Search Bar */}
-      {!isLoading && !error && (
-        <div className="mb-6">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search content by title, platform, or status..."
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-[var(--color-indigo)] focus:border-[var(--color-indigo)] transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <Card className="bg-[var(--bg-surface)] rounded-[var(--radius-card)] border border-gray-200 shadow-[var(--shadow-soft)]">
-        <div className="border-b border-gray-200">
-          <nav className="flex gap-8 px-6" aria-label="Tabs">
-            {(['all', 'draft', 'scheduled', 'published'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setDisplayCount(20); // Reset display count on tab change
-                }}
-                className={[
-                  'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
-                  activeTab === tab
-                    ? 'border-[var(--color-indigo)] text-[var(--color-indigo)]'
-                    : 'border-transparent text-[var(--color-text-sub)] hover:text-[var(--color-text-main)] hover:border-gray-300',
-                ].join(' ')}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </nav>
+          <button onClick={refreshTrends} disabled={refreshing} className="filter-pill">
+            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+          </button>
         </div>
 
-        {/* Content List */}
-        <div className="divide-y divide-gray-200">
-          {isLoading ? (
-            <div className="p-12">
-              <LoadingState variant="card" count={3} />
-            </div>
-          ) : filteredContent.length === 0 ? (
-            <div className="p-12 text-center">
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-              <h3 className="mt-4 text-lg font-semibold text-[var(--color-text-main)]">
-                {searchQuery ? 'No results found' : 'No content yet'}
-              </h3>
-              <p className="mt-2 text-[var(--color-text-sub)]">
-                {searchQuery 
-                  ? 'Try adjusting your search terms or filters.'
-                  : 'Start creating content to see it here.'}
-              </p>
-              {!searchQuery && (
-                <div className="mt-6">
-                  <Button variant="primary" onClick={handleCreate}>
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Create First Content
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              {/* Virtual scrolling: render only visible items */}
-              {visibleContent.map((item: ContentItem) => (
-                <ContentItemRow
-                  key={item.id}
-                  item={item}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  isDeleting={isDeleting}
-                />
+        {/* Stats Overview */}
+        <div className="content-stats-grid">
+	          <Card padding="400">
+	            <BlockStack gap="200">
+	              <InlineStack gap="200" blockAlign="center">
+	                <TrendingUp size={20} className="text-muted-foreground" />
+	                <Text as="p" variant="bodySm" tone="subdued">Active trends</Text>
+	              </InlineStack>
+	              <Text as="p" variant="headingLg" fontWeight="bold">{activeTrends}</Text>
+	              <Badge tone="info">
+	                {selectedPlatform === 'all' ? 'All platforms' : titleCase(selectedPlatform)}
+	              </Badge>
+	            </BlockStack>
+	          </Card>
+	          <Card padding="400">
+	            <BlockStack gap="200">
+	              <InlineStack gap="200" blockAlign="center">
+	                <Zap size={20} className="text-muted-foreground" />
+	                <Text as="p" variant="bodySm" tone="subdued">Avg viral score</Text>
+	              </InlineStack>
+	              <Text as="p" variant="headingLg" fontWeight="bold">{avgViralScore.toFixed(0)}%</Text>
+	              <Badge tone="info">{activeTrends > 0 ? `Based on ${activeTrends}` : 'No data'}</Badge>
+	            </BlockStack>
+	          </Card>
+	          <Card padding="400">
+	            <BlockStack gap="200">
+	              <InlineStack gap="200" blockAlign="center">
+	                <Target size={20} className="text-muted-foreground" />
+	                <Text as="p" variant="bodySm" tone="subdued">Ideas generated</Text>
+	              </InlineStack>
+	              <Text as="p" variant="headingLg" fontWeight="bold">{ideas.length}</Text>
+	              <Badge tone="info">{ideas.length > 0 ? 'Available' : '—'}</Badge>
+	            </BlockStack>
+	          </Card>
+	          <Card padding="400">
+	            <BlockStack gap="200">
+	              <InlineStack gap="200" blockAlign="center">
+	                <BarChart3 size={20} className="text-muted-foreground" />
+	                <Text as="p" variant="bodySm" tone="subdued">Predicted engagement</Text>
+	              </InlineStack>
+	              <Text as="p" variant="headingLg" fontWeight="bold">{formatNumber(predictedEngagement)}</Text>
+	              <Badge>{activeTrends > 0 ? 'From trends' : '—'}</Badge>
+	            </BlockStack>
+	          </Card>
+	        </div>
+
+        {/* Platform Filter */}
+        <Card padding="400">
+          <InlineStack gap="300" blockAlign="center">
+            <Text as="p" variant="bodyMd" fontWeight="medium">Platform:</Text>
+            <div className="content-platform-filter">
+              {(
+                [
+                  { id: 'all', label: 'All' },
+                  { id: 'tiktok', label: 'TikTok' },
+                  { id: 'instagram', label: 'Instagram' },
+                  { id: 'reddit', label: 'Reddit' },
+                ] as const
+              ).map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => setSelectedPlatform(p.id)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    border: selectedPlatform === p.id ? '2px solid #374151' : '1px solid #e5e7eb',
+                    background: selectedPlatform === p.id ? '#f3f4f6' : 'white',
+                    cursor: 'pointer',
+                    fontWeight: selectedPlatform === p.id ? 600 : 400,
+                  }}
+                >
+                  {p.label}
+                </button>
               ))}
-              
-              {/* Load More Button */}
-              {displayCount < filteredContent.length && (
-                <div className="p-6 text-center bg-[var(--bg-surface)]">
-                  <Button variant="secondary" onClick={handleLoadMore}>
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                    Load More ({filteredContent.length - displayCount} remaining)
-                  </Button>
-                </div>
+            </div>
+          </InlineStack>
+        </Card>
+
+        {/* Tabs */}
+        <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange} />
+
+        {/* Tab Content */}
+        {selectedTab === 0 && (
+          <BlockStack gap="400">
+            <Text as="h2" variant="headingMd">🔥 Trending now</Text>
+            {filteredTrends.length === 0 ? (
+              <EmptyState
+                variant="no-data"
+                size="sm"
+                title="No trends yet"
+                description="Try another platform or refresh."
+                action={{ label: 'Retry', onClick: () => void refreshTrends(), icon: RefreshCw }}
+              />
+            ) : (
+              <div className="content-trends-grid">
+                {filteredTrends.map((trend) => {
+                  const hasDescription = Boolean(trend.description);
+                  const hasTips = Boolean(trend.tips && trend.tips.length > 0);
+                  const hasAdvice = Boolean(trend.majordomeAdvice);
+                  const hasGuidance = hasTips || hasAdvice;
+                  const shouldSeparateBeforeMetrics = hasDescription || hasGuidance;
+
+                  return (
+                    <Card key={trend.id} padding="400">
+                      <BlockStack gap="300">
+                        <InlineStack align="space-between" blockAlign="start">
+                          <InlineStack gap="200" blockAlign="center">
+                            <span style={{ fontSize: 32 }}>{trend.thumbnail}</span>
+                            <BlockStack gap="100">
+                              <Text as="p" variant="bodyMd" fontWeight="semibold">
+                                {trend.title}
+                              </Text>
+                              {trend.author ? (
+                                <Text as="p" variant="bodySm" tone="subdued">
+                                  {trend.author}
+                                </Text>
+                              ) : null}
+                            </BlockStack>
+                          </InlineStack>
+                        </InlineStack>
+
+                        <InlineStack gap="200">
+                          <Badge tone="info">{trend.platform}</Badge>
+                          <Badge>{trend.category}</Badge>
+                        </InlineStack>
+
+                        {trend.description ? (
+                          <Text as="p" variant="bodySm" tone="subdued">
+                            {trend.description}
+                          </Text>
+                        ) : null}
+
+                        {hasGuidance ? <Divider /> : null}
+
+                        {hasTips ? (
+                          <BlockStack gap="100">
+                            <Text as="p" variant="bodySm" fontWeight="medium">
+                              How to replicate:
+                            </Text>
+                            <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, color: '#6b7280' }}>
+                              {trend.tips?.map((tip, i) => (
+                                <li key={i}>{tip}</li>
+                              ))}
+                            </ul>
+                          </BlockStack>
+                        ) : null}
+
+                        {hasAdvice ? (
+                          <div
+                            style={{
+                              background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                              borderRadius: 8,
+                              padding: '14px 16px',
+                              display: 'flex',
+                              gap: 14,
+                              alignItems: 'flex-start',
+                            }}
+                          >
+                            <img
+                              src="/butler.svg"
+                              alt="Majordome"
+                              style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: 6,
+                                flexShrink: 0,
+                              }}
+                            />
+                            <Text as="p" variant="bodyMd">
+                              <span
+                                style={{
+                                  color: '#e5e7eb',
+                                  fontSize: '16px',
+                                  lineHeight: '1.65',
+                                  fontWeight: 500,
+                                }}
+                              >
+                                {trend.majordomeAdvice}
+                              </span>
+                            </Text>
+                          </div>
+                        ) : null}
+
+                        {shouldSeparateBeforeMetrics ? <Divider /> : null}
+
+                        <InlineStack gap="400">
+                          <InlineStack gap="100" blockAlign="center">
+                            <Eye size={14} className="text-muted-foreground" />
+                            <Text as="span" variant="bodySm">
+                              {formatNumber(trend.engagement)}
+                            </Text>
+                          </InlineStack>
+                          <InlineStack gap="100" blockAlign="center">
+                            <TrendingUp size={14} className="text-muted-foreground" />
+                            <Text as="span" variant="bodySm" tone="success">
+                              +{trend.velocity}%
+                            </Text>
+                          </InlineStack>
+                          <InlineStack gap="100" blockAlign="center">
+                            <Target size={14} className="text-muted-foreground" />
+                            <Text as="span" variant="bodySm">
+                              {trend.viralScore}%
+                            </Text>
+                          </InlineStack>
+                        </InlineStack>
+
+                        <InlineStack gap="100" wrap>
+                          {trend.hashtags.map((tag) => (
+                            <span
+                              key={tag}
+                              style={{
+                                fontSize: 12,
+                                padding: '2px 8px',
+                                background: '#f3f4f6',
+                                color: '#6b7280',
+                                borderRadius: 4,
+                              }}
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </InlineStack>
+
+                        {/* Create Content Section */}
+                        <button
+                          onClick={() => setExpandedTrend(expandedTrend === trend.id ? null : trend.id)}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            background: '#1a1a2e',
+                            border: 'none',
+                            borderRadius: 8,
+                            color: 'white',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
+                          }}
+                        >
+                          <Sparkles size={16} />
+                          Create similar content
+                          <ChevronDown
+                            size={16}
+                            style={{
+                              transform: expandedTrend === trend.id ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.2s ease',
+                            }}
+                          />
+                        </button>
+
+                        {/* Expanded Creation Panel */}
+                        {expandedTrend === trend.id && (
+                          <div
+                            style={{
+                              background: '#f8fafc',
+                              borderRadius: 8,
+                              padding: 16,
+                              border: '1px solid #e2e8f0',
+                            }}
+                          >
+                            <BlockStack gap="300">
+                              {trend.videoUrl ? (
+                                <div
+                                  style={{
+                                    background: 'white',
+                                    borderRadius: 6,
+                                    padding: 12,
+                                    border: '1px solid #e2e8f0',
+                                  }}
+                                >
+                                  <InlineStack gap="200" blockAlign="center">
+                                    <Play size={16} style={{ color: '#374151' }} />
+                                    <Text as="p" variant="bodySm" fontWeight="medium">
+                                      Original content
+                                    </Text>
+                                  </InlineStack>
+                                  <a
+                                    href={trend.videoUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 6,
+                                      marginTop: 8,
+                                      fontSize: 13,
+                                      color: '#374151',
+                                      textDecoration: 'none',
+                                      wordBreak: 'break-all',
+                                    }}
+                                  >
+                                    <ExternalLink size={14} />
+                                    {trend.videoUrl}
+                                  </a>
+                                </div>
+                              ) : null}
+
+                              {/* Upload Button */}
+                              <button
+                                onClick={() => (window.location.href = '/marketing')}
+                                style={{
+                                  width: '100%',
+                                  padding: '12px 16px',
+                                  background: 'white',
+                                  border: '1px solid #e2e8f0',
+                                  borderRadius: 8,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: 8,
+                                  fontSize: 14,
+                                  fontWeight: 500,
+                                  color: '#374151',
+                                  transition: 'all 0.2s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.borderColor = '#374151';
+                                  e.currentTarget.style.background = '#f9fafb';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.borderColor = '#e2e8f0';
+                                  e.currentTarget.style.background = 'white';
+                                }}
+                              >
+                                <Upload size={18} style={{ color: '#374151' }} />
+                                Upload your content
+                              </button>
+                            </BlockStack>
+                          </div>
+                        )}
+                      </BlockStack>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </BlockStack>
+        )}
+
+        {selectedTab === 1 && (
+          <BlockStack gap="400">
+            <InlineStack align="space-between" blockAlign="center" wrap>
+              <Text as="h2" variant="headingMd">💡 AI Ideas Based on Your Best Content</Text>
+              <Button icon={<Sparkles size={16} />}>Generate more ideas</Button>
+            </InlineStack>
+            {ideas.length === 0 ? (
+              <EmptyState
+                variant="no-data"
+                size="sm"
+                title="No ideas yet"
+                description="Generate ideas once trends and recommendations are available."
+              />
+            ) : (
+              <div className="content-ideas-grid">
+                {ideas.map((idea) => (
+                  <Card key={idea.id} padding="400">
+                    <BlockStack gap="300">
+                      <InlineStack align="space-between" blockAlign="start">
+                        <BlockStack gap="100">
+                          <Text as="p" variant="bodyLg" fontWeight="semibold">
+                            {idea.title}
+                          </Text>
+                          <Text as="p" variant="bodySm" tone="subdued">
+                            {idea.description}
+                          </Text>
+                        </BlockStack>
+                        <div
+                          style={{
+                            padding: '4px 12px',
+                            background: '#dcfce7',
+                            borderRadius: 20,
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: '#166534',
+                          }}
+                        >
+                          ✓ {idea.successRate.toFixed(0)}%
+                        </div>
+                      </InlineStack>
+
+                      {/* Based on indicator */}
+                      {idea.basedOn ? (
+                        <div
+                          style={{
+                            padding: '8px 12px',
+                            background: '#f0f9ff',
+                            borderRadius: 6,
+                            fontSize: 12,
+                            color: '#0369a1',
+                            fontWeight: 500,
+                          }}
+                        >
+                          📊 {idea.basedOn}
+                        </div>
+                      ) : null}
+
+                      <InlineStack gap="200">
+                        <Badge tone="info">{idea.platform}</Badge>
+                        {idea.bestTime ? <Badge>{`⏰ ${idea.bestTime}`}</Badge> : null}
+                      </InlineStack>
+
+                      {idea.hashtags.length > 0 ? (
+                        <InlineStack gap="100" wrap>
+                          {idea.hashtags.map((tag) => (
+                            <span
+                              key={tag}
+                              style={{
+                                fontSize: 12,
+                                padding: '2px 8px',
+                                background: '#f3f4f6',
+                                color: '#6b7280',
+                                borderRadius: 4,
+                              }}
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </InlineStack>
+                      ) : null}
+
+                      {/* Butler advice - Why this works */}
+                      {idea.reasoning ? (
+                        <div
+                          style={{
+                            padding: '14px 16px',
+                            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                            borderRadius: 6,
+                            display: 'flex',
+                            gap: 14,
+                            alignItems: 'flex-start',
+                          }}
+                        >
+                          <img
+                            src="/butler.svg"
+                            alt="Majordome"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: 4,
+                              flexShrink: 0,
+                            }}
+                          />
+                          <Text as="p" variant="bodyMd">
+                            <span
+                              style={{
+                                color: '#e5e7eb',
+                                fontSize: '16px',
+                                lineHeight: '1.65',
+                                fontWeight: 500,
+                              }}
+                            >
+                              {idea.reasoning}
+                            </span>
+                          </Text>
+                        </div>
+                      ) : null}
+
+                      <InlineStack gap="200">
+                        <Button fullWidth onClick={() => (window.location.href = '/marketing')}>
+                          Create this content
+                        </Button>
+                        <Button variant="plain">📋</Button>
+                      </InlineStack>
+                    </BlockStack>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </BlockStack>
+        )}
+
+        {selectedTab === 2 && (
+          <BlockStack gap="400">
+            <Text as="h2" variant="headingMd">🎯 Personalized recommendations</Text>
+            <BlockStack gap="300">
+              {recommendations.length === 0 ? (
+                <EmptyState
+                  variant="no-data"
+                  size="sm"
+                  title="No recommendations yet"
+                  description="Recommendations will appear once data is available."
+                  secondaryAction={{ label: 'Retry', onClick: () => void refreshTrends(), icon: RefreshCw }}
+                />
+              ) : (
+                recommendations.map((rec) => (
+                  <Card key={rec.id} padding="400">
+                    <InlineStack gap="400" blockAlign="center">
+                      <div
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 12,
+                          background: '#f3f4f6',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#6b7280',
+                        }}
+                      >
+                        {getRecommendationIcon(rec.type)}
+                      </div>
+                      <BlockStack gap="100" inlineAlign="start">
+                        <InlineStack gap="200" blockAlign="center">
+                          <Text as="p" variant="bodyMd" fontWeight="semibold">
+                            {rec.title}
+                          </Text>
+                          <Badge>{`${rec.confidence.toFixed(0)}% confidence`}</Badge>
+                          <Badge tone="info">{rec.platform}</Badge>
+                        </InlineStack>
+                        <Text as="p" variant="bodySm" tone="subdued">
+                          {rec.description}
+                        </Text>
+                      </BlockStack>
+                      <div style={{ marginLeft: 'auto' }}>
+                        <Button icon={<ChevronRight size={16} />}>Apply</Button>
+                      </div>
+                    </InlineStack>
+                  </Card>
+                ))
               )}
-              
-              {/* Results Summary */}
-              {searchQuery && (
-                <div className="p-4 text-center bg-gray-50 text-sm text-[var(--color-text-sub)]">
-                  Showing {visibleContent.length} of {filteredContent.length} results
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </Card>
-      </div>
-      </ContentPageErrorBoundary>
-    </ProtectedRoute>
+            </BlockStack>
+
+            {/* Butler Tip */}
+            <ButlerTip page="Content" />
+          </BlockStack>
+        )}
+
+        {/* Quick Actions */}
+        <Card padding="400">
+          <BlockStack gap="300">
+            <Text as="h3" variant="headingMd">⚡ Quick actions</Text>
+            <div className="content-quick-actions">
+              <Button url="/content-trends">View all trends</Button>
+              <Button variant="secondary">Analyze a URL</Button>
+              <Button variant="secondary">Schedule a post</Button>
+              <Button variant="secondary">Export data</Button>
+            </div>
+          </BlockStack>
+        </Card>
+      </BlockStack>
+    </div>
   );
 }

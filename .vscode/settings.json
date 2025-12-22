@@ -20,5 +20,6 @@
     "**/test-results": true
   },
   "testing.automaticallyOpenTestResults": "neverOpen",
-  "kiroAgent.configureMCP": "Disabled"
+  "kiroAgent.configureMCP": "Disabled",
+  "typescript.autoClosingTags": false
 }

@@ -1,0 +1,309 @@
+/* FanCard Component Styles - SaaS Density Level */
+
+/* ============================================
+   CONVERSATION ROW - Dense, Readable, Clear Hierarchy
+   ============================================ */
+
+.fan-card {
+  display: flex;
+  gap: 10px; /* Compact gap between avatar and content */
+  padding: 8px 12px; /* Dense padding: 8px vertical, 12px horizontal */
+  cursor: pointer;
+  border-bottom: none;
+  background: transparent; /* Transparent by default */
+  position: relative;
+  /* Remove text selection highlight */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.fan-card:hover {
+  background: #F7F7F7; /* Very subtle hover - almost invisible */
+}
+
+.fan-card:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+.fan-card--active {
+  background: #F3F4F6; /* Gray active state instead of purple */
+  position: relative; /* Pour le pseudo-élément */
+}
+
+/* Accent de sélection - Gray instead of purple */
+.fan-card--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #6B7280; /* Gray accent */
+  border-radius: 999px;
+}
+
+.fan-card--active:hover {
+  background: #F3F4F6; /* Maintain active state on hover */
+}
+
+/* Unread state - Slightly lighter background + bold name */
+.fan-card--unread {
+  background: transparent; /* Transparent, pas de fond spécial */
+}
+
+.fan-card--unread:hover {
+  background: #F7F7F7; /* Même hover que les autres */
+}
+
+.fan-card--unread .fan-card__name {
+  font-weight: 700; /* Bold pour les non lus */
+  color: #000000; /* Noir pur pour maximum contraste */
+}
+
+.fan-card--unread .fan-card__last-message {
+  color: #444444; /* Gris très foncé pour les messages non lus */
+  font-weight: 500; /* Medium weight */
+}
+
+/* Avatar Container - 36px standard */
+.fan-card__avatar-container {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+
+.fan-card__avatar-container img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.fan-card__online-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: var(--tailadmin-success, #047857);
+  border: 2px solid var(--tailadmin-white, #ffffff);
+  border-radius: 50%;
+}
+
+/* Content Area - Main text column */
+.fan-card__content {
+  flex: 1;
+  min-width: 0; /* Enable text truncation */
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Tight spacing for density */
+}
+
+/* Line 1: Name + Time */
+.fan-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px; /* Small gap before snippet */
+}
+
+.fan-card__name {
+  font-size: 14px; /* Compact but readable */
+  font-weight: 600; /* Semi-bold for hierarchy */
+  color: #101827; /* Dark text */
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.fan-card__timestamp {
+  display: none; /* Hide timestamp */
+}
+
+/* Line 2: Last Message Snippet */
+.fan-card__message-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.fan-card__last-message {
+  font-size: 13px; /* Smaller than name for hierarchy */
+  color: #4B5563; /* Medium gray */
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+/* Line 3: Tags + Unread Badge */
+.fan-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  gap: 8px;
+}
+
+.fan-card__unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8px; /* Petit rond */
+  width: 8px;
+  height: 8px;
+  padding: 0; /* Pas de padding - juste un rond */
+  background: #6B7280; /* Gray instead of purple */
+  color: transparent; /* Pas de texte */
+  font-size: 0; /* Pas de texte */
+  font-weight: 600;
+  border-radius: 999px; /* Rond parfait */
+  flex-shrink: 0;
+}
+
+/* Masquer le badge quand la conversation est active */
+.fan-card--active .fan-card__unread-badge {
+  display: none;
+}
+
+/* Tags - SaaS Style Pills */
+.fan-card__tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap; /* Keep on one line */
+  overflow: hidden; /* Hide overflow */
+}
+
+.fan-card__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 999px; /* Pill shape */
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+/* Tag VIP - Gold/Amber */
+.fan-card__tag[data-tag="VIP"],
+.fan-card__tag[data-tag="vip"] {
+  background: #FFF4E5;
+  color: #9A3412;
+}
+
+/* Tag Fidèle - Blue */
+.fan-card__tag[data-tag="Fidèle"],
+.fan-card__tag[data-tag="fidele"],
+.fan-card__tag[data-tag="Top Fan"],
+.fan-card__tag[data-tag="topfan"] {
+  background: #E5F0FF;
+  color: #1D4ED8;
+}
+
+/* Tag Nouveau - Green */
+.fan-card__tag[data-tag="Nouveau"],
+.fan-card__tag[data-tag="nouveau"] {
+  background: #ECFDF3;
+  color: #166534;
+}
+
+/* Default tag style */
+.fan-card__tag:not([data-tag]) {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.fan-card__tag--more {
+  background: #F3F4F6;
+  color: #6B7280;
+  font-size: 10px;
+}
+
+/* Dark Mode Support - DISABLED FOR NOW */
+/* @media (prefers-color-scheme: dark) {
+  .fan-card {
+    background: var(--tailadmin-dark-bg, #24303f);
+    border-bottom-color: var(--tailadmin-dark-stroke, #313d4a);
+  }
+
+  .fan-card:hover {
+    background: var(--tailadmin-dark-bg-2, #1a222c);
+  }
+
+  .fan-card--active {
+    background: #2A3542;
+    border-left-color: #FFFFFF;
+  }
+
+  .fan-card--unread {
+    background: #2A3542;
+  }
+
+  .fan-card--unread:hover {
+    background: #2F3A48;
+  }
+
+  .fan-card--unread .fan-card__name {
+    color: #FFFFFF;
+  }
+
+  .fan-card--unread .fan-card__unread-badge {
+    background: #FFFFFF;
+    color: #111111;
+  }
+
+  .fan-card__name {
+    color: var(--tailadmin-dark-text, #ffffff);
+  }
+
+  .fan-card__timestamp,
+  .fan-card__last-message {
+    color: var(--tailadmin-dark-text-secondary, #8a99af);
+  }
+
+  .fan-card__tag {
+    background: var(--tailadmin-dark-bg-2, #1a222c);
+    color: var(--tailadmin-dark-text-secondary, #8a99af);
+    border-color: var(--tailadmin-dark-stroke, #313d4a);
+  }
+
+  .fan-card__online-indicator {
+    border-color: var(--tailadmin-dark-bg, #24303f);
+  }
+} */
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .fan-card {
+    padding: 14px 16px;
+  }
+
+  .fan-card__name {
+    font-size: 15px;
+  }
+
+  .fan-card__last-message {
+    font-size: 14px;
+  }
+
+  /* Larger touch targets on mobile */
+  .fan-card__unread-badge {
+    min-width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+}

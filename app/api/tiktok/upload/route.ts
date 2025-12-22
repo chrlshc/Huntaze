@@ -11,6 +11,7 @@ import { tokenManager } from '@/lib/services/tokenManager';
 import { tiktokOAuth } from '@/lib/services/tiktokOAuth';
 import { tiktokUpload, type UploadSource, type PrivacyLevel } from '@/lib/services/tiktokUpload';
 import { db } from '@/lib/db';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 // Force dynamic rendering to avoid build-time evaluation
 export const dynamic = 'force-dynamic';
@@ -185,6 +186,37 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('TikTok upload error:', error);
+
+    if (isExternalServiceError(error)) {
+      const upstreamCode = (error.details as any)?.errorCode;
+      const responseCode =
+        typeof upstreamCode === 'string' && upstreamCode.length > 0
+          ? upstreamCode
+          : error.code === 'TIMEOUT'
+            ? 'timeout'
+            : error.code === 'NETWORK_ERROR' || error.code === 'UPSTREAM_5XX'
+              ? 'tiktok_unavailable'
+              : error.code;
+
+      const status =
+        error.code === 'RATE_LIMIT' ? 429 :
+        error.code === 'UNAUTHORIZED' ? 401 :
+        error.code === 'FORBIDDEN' ? 403 :
+        error.code === 'BAD_REQUEST' ? 400 :
+        error.code === 'TIMEOUT' ? 504 :
+        error.code === 'CONFIG_MISSING' ? 503 :
+        503;
+
+      return NextResponse.json(
+        {
+          error: 'Upload failed',
+          code: responseCode,
+          message: error.message,
+          retryable: error.retryable,
+        },
+        { status }
+      );
+    }
 
     // Handle specific errors
     if (error instanceof Error) {

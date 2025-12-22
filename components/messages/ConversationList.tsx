@@ -13,7 +13,9 @@ export interface Conversation {
   lastMessage: string;
   timestamp: Date;
   unread: boolean;
+  unreadCount?: number;
   ltv?: number;
+  isVIP?: boolean;
 }
 
 /**
@@ -25,6 +27,7 @@ export interface ConversationListProps {
   onSelect: (id: string) => void;
   density?: 'compact' | 'default';
   loading?: boolean;
+  className?: string;
 }
 
 /**
@@ -32,13 +35,13 @@ export interface ConversationListProps {
  */
 function ConversationSkeleton({ density }: { density: 'compact' | 'default' }) {
   const avatarSize = density === 'compact' ? 32 : 40;
-  
+
   return (
-    <div 
-      className="flex items-center gap-3 px-4 py-3 animate-pulse"
+    <div
+      className="flex items-center gap-3 px-4 py-3 animate-pulse bg-white rounded-xl border border-gray-100"
       style={{ minHeight: density === 'compact' ? '56px' : '64px' }}
     >
-      <div 
+      <div
         className="rounded-full bg-gray-200 flex-shrink-0"
         style={{ width: avatarSize, height: avatarSize }}
       />
@@ -86,17 +89,17 @@ function ConversationItem({
   onSelect: () => void;
 }) {
   const avatarSize = density === 'compact' ? 32 : 40;
-  
+
   return (
     <button
       type="button"
       onClick={onSelect}
       className={`
-        w-full flex items-center gap-3 px-4 py-3 text-left
-        transition-colors duration-150 ease-in-out
-        hover:bg-gray-50 focus:outline-none focus:bg-gray-50
-        ${isSelected ? 'bg-violet-50' : ''}
-        ${conversation.unread ? 'border-l-[3px] border-l-violet-600' : 'border-l-[3px] border-l-transparent'}
+        w-full flex items-start gap-3 px-4 py-3 text-left
+        transition-colors duration-150 ease-in-out rounded-xl border
+        hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2c6ecb] focus-visible:ring-offset-1
+        ${isSelected ? 'bg-gray-100 border-blue-200' : 'bg-white border-transparent hover:border-gray-200'}
+        ${conversation.unread || isSelected ? 'border-l-4 border-l-blue-600' : 'border-l-4 border-l-transparent'}
       `}
       style={{ minHeight: density === 'compact' ? '56px' : '64px' }}
       data-testid="conversation-item"
@@ -112,9 +115,9 @@ function ConversationItem({
           <Image
             src={conversation.avatar}
             alt={conversation.name}
-            fill
-            className="object-cover"
-            sizes={`${avatarSize}px`}
+            width={avatarSize}
+            height={avatarSize}
+            className="object-cover w-full h-full"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500 font-medium">
@@ -124,33 +127,46 @@ function ConversationItem({
       </div>
       
       {/* Content - Clear hierarchy as per Requirements 7.2 */}
-      <div className="flex-1 min-w-0">
-        {/* Name - 14px SemiBold */}
-        <div 
-          className="font-semibold text-gray-900 truncate"
-          style={{ fontSize: '14px' }}
-          data-testid="conversation-name"
-        >
-          {conversation.name}
+      <div className="flex-1 min-w-0 space-y-1">
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2 min-w-0">
+            <div
+              className="font-semibold text-gray-900 truncate text-sm"
+              data-testid="conversation-name"
+            >
+              {conversation.name}
+            </div>
+            {conversation.isVIP ? (
+              <span className="inline-flex items-center rounded-full bg-purple-50 text-purple-700 text-[11px] font-semibold px-2 py-[2px] border border-purple-100">
+                VIP
+              </span>
+            ) : conversation.ltv ? (
+              <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-700 text-[11px] font-medium px-2 py-[2px] border border-gray-200">
+                ${conversation.ltv}
+              </span>
+            ) : null}
+          </div>
+          <div
+            className="flex-shrink-0 text-[11px] text-gray-400"
+            data-testid="conversation-timestamp"
+          >
+            {formatTimestamp(conversation.timestamp)}
+          </div>
         </div>
-        
-        {/* Message excerpt - 13px Regular */}
-        <div 
-          className="text-gray-500 truncate"
-          style={{ fontSize: '13px' }}
-          data-testid="conversation-excerpt"
-        >
-          {conversation.lastMessage}
+
+        <div className="flex items-center justify-between gap-2">
+          <div
+            className="text-gray-500 truncate text-xs"
+            data-testid="conversation-excerpt"
+          >
+            {conversation.lastMessage}
+          </div>
+          {conversation.unreadCount ? (
+            <span className="inline-flex items-center justify-center text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-100 rounded-full px-2 py-[2px]">
+              {conversation.unreadCount}
+            </span>
+          ) : null}
         </div>
-      </div>
-      
-      {/* Timestamp - 12px */}
-      <div 
-        className="flex-shrink-0 text-gray-400"
-        style={{ fontSize: '12px' }}
-        data-testid="conversation-timestamp"
-      >
-        {formatTimestamp(conversation.timestamp)}
       </div>
     </button>
   );
@@ -178,10 +194,11 @@ export function ConversationList({
   onSelect,
   density = 'default',
   loading = false,
+  className,
 }: ConversationListProps) {
   if (loading) {
     return (
-      <div className="divide-y divide-gray-100" data-testid="conversation-list-loading">
+      <div className="space-y-2" data-testid="conversation-list-loading">
         {Array.from({ length: 8 }).map((_, i) => (
           <ConversationSkeleton key={i} density={density} />
         ))}
@@ -218,7 +235,7 @@ export function ConversationList({
 
   return (
     <div 
-      className="divide-y divide-gray-100 overflow-y-auto"
+      className={`overflow-y-auto space-y-2 ${className ?? ''}`}
       data-testid="conversation-list"
       role="listbox"
       aria-label="Conversations"

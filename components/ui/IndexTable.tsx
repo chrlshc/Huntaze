@@ -8,7 +8,7 @@ import { Skeleton } from './skeleton';
  */
 export interface Column<T> {
   key: keyof T;
-  header: string;
+  header: string | React.ReactNode;
   width?: string;
   align?: 'left' | 'center' | 'right';
   render?: (value: T[keyof T], row: T) => React.ReactNode;
@@ -95,11 +95,6 @@ export function IndexTable<T extends Record<string, unknown>>({
       return 'right';
     }
     return column.align || 'left';
-  };
-
-  const isNumericValue = (value: unknown): boolean => {
-    return typeof value === 'number' || 
-           (typeof value === 'string' && !isNaN(Number(value)) && value.trim() !== '');
   };
 
   // Loading state with skeleton rows
@@ -212,9 +207,7 @@ export function IndexTable<T extends Record<string, unknown>>({
               >
                 {columns.map((column, colIndex) => {
                   const value = row[column.key];
-                  const alignment = column.numeric || isNumericValue(value) 
-                    ? 'right' 
-                    : getColumnAlignment(column);
+                  const alignment = getColumnAlignment(column);
                   const shouldTruncate = column.truncate !== false;
 
                   return (
@@ -223,7 +216,7 @@ export function IndexTable<T extends Record<string, unknown>>({
                       className={`index-table__cell index-table__cell--${alignment} ${shouldTruncate ? 'index-table__cell--truncate' : ''}`}
                       style={{ textAlign: alignment }}
                       data-align={alignment}
-                      data-numeric={column.numeric || isNumericValue(value) || undefined}
+                      data-numeric={column.numeric || undefined}
                     >
                       <div className={`index-table__cell-content ${shouldTruncate ? 'index-table__cell-content--truncate' : ''}`}>
                         {column.render 
@@ -253,17 +246,21 @@ export function IndexTable<T extends Record<string, unknown>>({
         }
 
         .index-table__header {
-          background-color: var(--color-surface-subdued, #FAFBFB);
-          border-bottom: 1px solid var(--color-border-default, #E1E3E5);
+          background-color: #f8fafc;
+          border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+          position: sticky;
+          top: 0;
+          z-index: 10;
         }
 
         .index-table__header-cell {
           padding: var(--space-3, 12px) var(--space-4, 16px);
-          font-size: var(--font-size-sm, 14px);
-          font-weight: var(--font-weight-medium, 500);
-          color: var(--color-text-secondary, #6D7175);
+          font-size: 12px;
+          font-weight: 600;
+          color: #64748b;
           text-align: left;
           white-space: nowrap;
+          background-color: #f8fafc;
         }
 
         .index-table__header-cell--right {
@@ -279,12 +276,13 @@ export function IndexTable<T extends Record<string, unknown>>({
         }
 
         .index-table__row {
-          border-bottom: 1px solid var(--color-border-subdued, #EDEEEF);
-          transition: background-color 0.15s ease;
+          border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+          transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+            border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .index-table__row--hovered {
-          background-color: var(--color-surface-subdued, #FAFBFB);
+          background-color: #f8fafc;
         }
 
         .index-table__row--clickable {
@@ -306,6 +304,10 @@ export function IndexTable<T extends Record<string, unknown>>({
           text-align: center;
         }
 
+        .index-table__cell[data-numeric] {
+          font-variant-numeric: tabular-nums;
+        }
+
         .index-table__cell--truncate {
           max-width: 0;
           overflow: hidden;
@@ -325,7 +327,7 @@ export function IndexTable<T extends Record<string, unknown>>({
           padding: var(--space-8, 32px) var(--space-4, 16px);
           text-align: center;
           background-color: var(--color-surface-card, #FFFFFF);
-          border: 1px solid var(--color-border-subdued, #EDEEEF);
+          border: 1px solid rgba(226, 232, 240, 0.6);
           border-top: none;
           border-radius: 0 0 var(--radius-base, 8px) var(--radius-base, 8px);
         }

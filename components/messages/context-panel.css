@@ -1,0 +1,684 @@
+/* ============================================
+   Context Panel Styles - Monochrome Pure
+   ============================================ */
+
+.context-panel-container {
+  height: 100%; /* ✅ Correction 5: Même hauteur que les autres colonnes */
+  max-height: 100%; /* ✅ Correction 5: Force la hauteur max - pas plus haut que les autres */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* ✅ Correction 5: Scroll interne si contenu dépasse */
+  background: #F9FAFB; /* Fond léger pour toute la colonne */
+  font-family: var(--tailadmin-font-family);
+  padding: var(--msg-space-lg, 16px);
+  gap: var(--msg-space-md, 12px);
+  border: 1px solid #E5E7F0;
+  border-radius: var(--tailadmin-radius-lg, 12px);
+  box-sizing: border-box;
+}
+
+/* ============================================
+   Cartes - Structure premium
+   ============================================ */
+
+.right-card {
+  background: #FFFFFF;
+  border-radius: var(--tailadmin-radius-lg, 12px);
+  border: 1px solid #E5E7F0;
+  padding: 12px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Header Section - Carte 1 : Profil
+   ============================================ */
+
+.context-panel-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  gap: 6px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Logo en haut à gauche - NOIR comme demandé */
+.context-panel-header__logo {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000; /* NOIR - comme demandé */
+}
+
+.context-panel-header__logo svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Trombone supprimé - pas nécessaire dans le header profil */
+.context-panel-header__attach {
+  display: none;
+}
+
+/* Tags in header - Pills monochrome */
+.context-panel-header__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid #CCCCCC;
+  border-radius: var(--tailadmin-radius-lg, 12px);
+  font-size: 11px;
+  font-weight: 500;
+  color: #666666;
+  white-space: nowrap;
+  transition: all 150ms ease;
+}
+
+.tag-chip--more {
+  background: transparent;
+  color: #666666;
+  font-weight: 600;
+  border-color: #CCCCCC;
+}
+
+/* Avatar profil - 64px comme demandé */
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+/* Nom du profil */
+.fan-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Badge abonnement - pill style */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--tailadmin-radius-lg, 12px);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: #F3F4FF;
+  border: 1px solid #E5E7EB;
+  color: #374151;
+}
+
+.status-vip {
+  background-color: transparent;
+  border-color: #111111;
+  color: #111111;
+  font-weight: 600;
+}
+
+/* ============================================
+   Section Styles - Cartes séparées
+   ============================================ */
+
+.context-panel-section {
+  padding: 12px;
+  flex-shrink: 0;
+}
+
+.context-panel-section:last-child {
+  flex-shrink: 0;
+  overflow-y: visible;
+  min-height: auto;
+}
+
+/* Titres de section - uppercase gris */
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 6px 0;
+  text-align: left;
+}
+
+/* ============================================
+   Information Grid - 2 colonnes
+   ============================================ */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 6px;
+  column-gap: 8px;
+  font-size: 12px;
+}
+
+.info-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #6B7280;
+  text-align: left;
+}
+
+.info-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: #111827;
+  text-align: right;
+}
+
+/* Dépenses totales - highlight - Phase 12 Ultra Clean */
+.info-value--highlight {
+  font-size: 16px; /* Augmenté de 14px à 16px - KPI principal immédiatement visible */
+  font-weight: 700; /* Augmenté de 600 à 700 - hiérarchie visuelle renforcée */
+  color: #111111; /* Black for emphasis */
+}
+
+/* ============================================
+   Notes Section - CRM Style avec hiérarchie
+   ============================================ */
+
+.notes-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.note-category {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Sous-sections des notes */
+.category-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 6px 0;
+  text-align: left;
+}
+
+.category-empty {
+  font-size: 12px;
+  color: #999999;
+  font-style: italic;
+  font-weight: 400;
+  margin: 0;
+  padding: 4px 0 8px 0;
+  text-align: left;
+}
+
+.category-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Note chip - fond gris clair */
+.note-chip {
+  background: #F5F5F5;
+  border-radius: var(--tailadmin-radius-md, 8px);
+  padding: 6px 8px;
+  font-size: 12px;
+  color: #666666;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.note-chip:last-child {
+  margin-bottom: 0;
+}
+
+/* Badge vert pour "Aucun risque" */
+.risk-badge--none {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid #CCCCCC;
+  border-radius: var(--tailadmin-radius-lg, 12px);
+  font-size: 11px;
+  font-weight: 500;
+  color: #666666;
+}
+
+.notes-empty {
+  padding: 16px 0;
+  text-align: left;
+}
+
+.add-note-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  color: #374151;
+  border-radius: var(--tailadmin-radius-md, 8px);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.add-note-button:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+
+.button-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* ============================================
+   Tags Section
+   ============================================ */
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--msg-space-sm); /* 8px - using spacing token */
+  padding-top: var(--msg-space-xs); /* 4px - using spacing token */
+}
+
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--msg-space-xs); /* 4px - using spacing token (was 6px, aligned to grid) */
+  padding: var(--msg-space-xs) var(--msg-space-md); /* 4px 12px - using spacing tokens (was 5px 12px, aligned to grid) */
+  background-color: transparent;
+  color: #666666;
+  border: 1px solid #CCCCCC;
+  border-radius: var(--msg-radius-pill);
+  font-size: 12px;
+  font-weight: var(--msg-font-regular);
+  transition: var(--msg-transition-fast);
+}
+
+.tag-badge:hover {
+  background-color: #FAFAFA;
+  border-color: #999999;
+  color: #111111;
+}
+
+.tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: currentColor;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.tag-remove:hover {
+  opacity: 1;
+}
+
+.tag-remove:focus {
+  outline: 2px solid var(--tailadmin-primary);
+  outline-offset: 2px;
+  border-radius: var(--tailadmin-radius-sm);
+}
+
+.tags-empty {
+  padding: var(--msg-space-sm) 0; /* 8px - using spacing token */
+  text-align: left;
+}
+
+/* ============================================
+   Empty States
+   ============================================ */
+
+.context-panel-empty {
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.empty-state-text,
+.empty-text {
+  font-size: 13px;
+  color: var(--msg-text-tertiary);
+  font-style: italic;
+}
+
+/* ============================================
+   Dark Mode Support
+   ============================================ */
+
+.dark .context-panel-container {
+  background: var(--tailadmin-dark-bg-secondary);
+}
+
+/* Dark mode - no border needed */
+
+.dark .fan-name {
+  color: var(--tailadmin-dark-text-primary);
+}
+
+.dark .status-active {
+  background-color: transparent;
+  color: var(--msg-text-primary);
+  border-color: var(--msg-separator-dark);
+}
+
+.dark .status-vip {
+  background-color: transparent;
+  color: var(--msg-text-primary);
+  border-color: var(--msg-badge-vip-border);
+}
+
+.dark .status-inactive {
+  background-color: transparent;
+  color: var(--msg-text-tertiary);
+  border-color: var(--msg-separator-light);
+}
+
+/* Dark mode - no border needed */
+
+.dark .section-title {
+  color: var(--tailadmin-dark-text-secondary);
+}
+
+.dark .info-label {
+  color: var(--tailadmin-dark-text-secondary);
+}
+
+.dark .info-value {
+  color: var(--tailadmin-dark-text-primary);
+}
+
+.dark .note-item {
+  background: var(--tailadmin-dark-bg-primary);
+  border-color: var(--tailadmin-dark-border-color);
+}
+
+.dark .note-item:hover {
+  border-color: var(--tailadmin-dark-primary);
+}
+
+.dark .note-content {
+  color: var(--tailadmin-dark-text-primary);
+}
+
+.dark .note-meta {
+  color: var(--tailadmin-dark-text-tertiary);
+}
+
+.dark .tag-badge {
+  background-color: transparent;
+  color: var(--msg-text-secondary);
+  border-color: var(--msg-separator-dark);
+}
+
+.dark .tag-badge:hover {
+  background-color: var(--msg-hover-bg);
+  border-color: var(--msg-text-primary);
+  color: var(--msg-text-primary);
+}
+
+.dark .empty-state-text,
+.dark .empty-text {
+  color: var(--tailadmin-dark-text-tertiary);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+/* On mobile, when shown via mobile-view-notes, display normally */
+@media (max-width: 767px) {
+  .context-panel-container {
+    position: relative;
+    right: auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    z-index: auto;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    padding: 16px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .context-panel-container {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    z-index: 1000;
+    transition: right 0.3s ease;
+    box-shadow: var(--tailadmin-shadow-xl);
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .context-panel-container.open {
+    right: 0;
+  }
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+.context-panel-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.context-panel-container::-webkit-scrollbar-track {
+  background: var(--tailadmin-bg-secondary);
+}
+
+.context-panel-container::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: var(--tailadmin-radius-full);
+}
+
+.context-panel-container::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+.dark .context-panel-container::-webkit-scrollbar-track {
+  background: var(--tailadmin-dark-bg-secondary);
+}
+
+.dark .context-panel-container::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.dark .context-panel-container::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+
+/* ============================================
+   Tags Monochrome - Tous identiques
+   ============================================ */
+
+/* Tous les tags utilisent le même style monochrome */
+.tag-badge[data-color="success"],
+.tag-badge[data-color="warning"],
+.tag-badge[data-color="danger"],
+.tag-badge[data-color="info"],
+.tag-badge {
+  background-color: transparent;
+  color: #666666;
+  border: 1px solid #CCCCCC;
+}
+
+.tag-badge[data-color="success"]:hover,
+.tag-badge[data-color="warning"]:hover,
+.tag-badge[data-color="danger"]:hover,
+.tag-badge[data-color="info"]:hover {
+  background-color: #FAFAFA;
+  border-color: #999999;
+  color: #111111;
+}
+
+/* VIP tag - outline noir plus fort */
+.tag-badge[data-tag="VIP"],
+.tag-badge[data-tag="vip"] {
+  background-color: transparent;
+  color: #111111;
+  border-color: #111111;
+  font-weight: var(--msg-font-semibold);
+}
+
+/* Enhanced remove button */
+.tag-remove {
+  width: 16px;
+  height: 16px;
+  margin-left: var(--tailadmin-spacing-1);
+  border-radius: var(--tailadmin-radius-full);
+}
+
+.tag-remove:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.tag-remove:active {
+  transform: scale(0.95);
+}
+
+.tag-badge:hover .tag-remove {
+  opacity: 1;
+}
+
+/* Tag animations */
+@keyframes tagFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tag-badge {
+  animation: tagFadeIn 0.2s ease-out;
+}
+
+/* Tag remove animation */
+@keyframes tagFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.tag-badge.removing {
+  animation: tagFadeOut 0.2s ease-out forwards;
+}
+
+/* Tags container improvements */
+.tags-container {
+  padding: var(--tailadmin-spacing-3) 0;
+  min-height: 40px;
+}
+
+/* Empty state for tags */
+.tags-empty {
+  padding: var(--tailadmin-spacing-6) var(--tailadmin-spacing-4);
+  text-align: center;
+  background: var(--tailadmin-bg-gray-light);
+  border-radius: var(--tailadmin-radius-md);
+  margin: var(--tailadmin-spacing-2) 0;
+}
+
+.dark .tags-empty {
+  background: var(--tailadmin-bg-dark-2);
+}
+
+.tags-empty .empty-text {
+  font-size: 13px;
+  color: var(--tailadmin-text-secondary);
+}
+
+/* Add tag button (if needed in future) */
+.add-tag-button {
+  margin-top: var(--tailadmin-spacing-2);
+  width: 100%;
+}
+
+/* ============================================
+   Top Alignment avec la colonne centrale
+   ============================================ */
+
+/* Le header doit aligner exactement avec le header de chat */
+.context-panel-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0; /* Même padding vertical que chat header */
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+/* ============================================
+   Footer Spacer for Column Alignment
+   ============================================ */
+
+.context-panel__footer-spacer {
+  flex-shrink: 0;
+  height: var(--msg-space-xl); /* 20px - using spacing token */
+  margin-top: auto; /* Pousse vers le bas */
+}
+
+/* Optional: Mini footer discret */
+.context-panel__footer {
+  flex-shrink: 0;
+  padding: var(--msg-space-lg) 0 var(--msg-space-xl) 0; /* 16px 0 20px 0 - using spacing tokens */
+  text-align: center;
+  margin-top: auto;
+}
+
+.context-panel__footer-text {
+  font-size: 12px; /* Aligned to grid (was 11px) */
+  color: var(--msg-text-tertiary);
+  margin: 0;
+}
+
+.dark .context-panel__footer-text {
+  color: var(--tailadmin-dark-text-tertiary);
+}

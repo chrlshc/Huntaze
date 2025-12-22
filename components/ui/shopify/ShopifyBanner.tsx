@@ -63,8 +63,8 @@ export function ShopifyBanner({
         ${config.bg}
         ${config.border}
         border
-        rounded-lg
-        p-4
+        rounded-2xl
+        p-5
         ${className}
       `.trim()}
       role="alert"
@@ -108,7 +108,7 @@ export function ShopifyBanner({
         {onDismiss && (
           <button
             onClick={onDismiss}
-            className="flex-shrink-0 p-1 rounded hover:bg-black/5 transition-colors"
+            className="flex-shrink-0 p-1 rounded-xl hover:bg-black/5 transition-colors"
             aria-label="Dismiss"
             data-testid="banner-dismiss"
           >

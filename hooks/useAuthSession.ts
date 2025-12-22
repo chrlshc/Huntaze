@@ -11,7 +11,6 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import '@/lib/types/auth'; // Import type augmentation
-import { Button } from "@/components/ui/button";
 
 export interface UseAuthSessionReturn {
   user: {
@@ -58,8 +57,6 @@ export function useAuthSession(): UseAuthSessionReturn {
   // Logout function that clears session and redirects
   const logout = useCallback(async () => {
     try {
-      console.log('[useAuthSession] Logging out...');
-      
       // Clear any cached data
       if (typeof window !== 'undefined') {
         localStorage.removeItem('auth_token');
@@ -70,13 +67,10 @@ export function useAuthSession(): UseAuthSessionReturn {
       await signOut({
         redirect: false,
       });
-      
-      console.log('[useAuthSession] Logout successful, redirecting to /auth');
-      
+
       // Redirect to auth page
       router.push('/auth');
-    } catch (error) {
-      console.error('[useAuthSession] Logout error:', error);
+    } catch {
       // Still redirect even if there's an error
       router.push('/auth');
     }
@@ -85,11 +79,8 @@ export function useAuthSession(): UseAuthSessionReturn {
   // Refresh session function
   const refreshSession = useCallback(async () => {
     try {
-      console.log('[useAuthSession] Refreshing session...');
       await update();
-      console.log('[useAuthSession] Session refreshed successfully');
     } catch (error) {
-      console.error('[useAuthSession] Session refresh error:', error);
       throw error;
     }
   }, [update]);

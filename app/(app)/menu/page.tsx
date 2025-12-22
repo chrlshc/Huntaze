@@ -73,12 +73,7 @@ export default function MenuPage() {
   ];
 
   const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      router.push('/auth');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+    router.push('/auth/logout');
   };
 
   return (

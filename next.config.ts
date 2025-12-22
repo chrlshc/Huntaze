@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   // Core
   reactStrictMode: true,
   compress: true,
+
+  // Global mock switch (safe to expose to client bundles)
+  env: {
+    API_MODE: process.env.API_MODE || 'real',
+  },
   
   // Output for Amplify Compute (ECS Fargate) - Requirement 6.1
   // Temporarily disabled to debug ENOENT errors during build
@@ -90,18 +95,12 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Turbopack is enabled by default in Next.js 16 for development - Requirement 6.2, 6.3
-  // Webpack is used for production builds - Requirement 6.4
+  // Webpack is used for development (via --webpack) and production builds - Requirement 6.4
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
   },
-
-  // Explicitly mark next-auth as external package to prevent webpack bundling issues
-  // This ensures NextAuth v5 works correctly in serverless environments
-  // Note: In Next.js 16, this was moved from experimental.serverComponentsExternalPackages
-  serverExternalPackages: ['next-auth'],
 
   // Image optimization (migrated to remotePatterns for security)
   images: {
@@ -113,6 +112,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'ui-avatars.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
       },
       {
         protocol: 'https',
@@ -154,7 +157,7 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
 
   // Client bundle fallbacks
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Allow disabling webpack's persistent cache in low-disk environments
     const disableCache = process.env.NEXT_DISABLE_WEBPACK_PERSISTENT_CACHE === '1' || process.env.NEXT_DISABLE_WEBPACK_PERSISTENT_CACHE === 'true';
     if (disableCache) {
@@ -182,7 +185,8 @@ const nextConfig: NextConfig = {
     }
 
     // Bundle size optimization - Requirement 6.1: Enforce 200KB chunk limit
-    if (!isServer && config.optimization) {
+    // Apply aggressive chunk splitting only for production builds (dev HMR can break with too many split chunks).
+    if (!isServer && !dev && config.optimization) {
       config.optimization.splitChunks = {
         chunks: 'all',
         cacheGroups: {
@@ -217,12 +221,6 @@ const nextConfig: NextConfig = {
         // Enforce maximum chunk size of 200KB (Requirement 6.1)
         maxSize: 200 * 1024, // 200KB in bytes
       };
-    }
-
-    // Tree shaking optimization - Requirement 6.5
-    if (config.optimization) {
-      config.optimization.usedExports = true;
-      config.optimization.sideEffects = true;
     }
 
     return config;

@@ -11,6 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { runWebhookWorker } from '@/lib/workers/webhookWorker';
 
 // Optional: Add authentication for worker endpoint
@@ -18,20 +19,32 @@ const WORKER_SECRET = process.env.WORKER_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
+    if (process.env.NODE_ENV === 'production' && !WORKER_SECRET) {
+      return NextResponse.json(
+        { error: 'Worker endpoint not configured' },
+        { status: 503 }
+      );
+    }
+
     // Verify worker secret if configured
     if (WORKER_SECRET) {
       const authHeader = request.headers.get('authorization');
-      const providedSecret = authHeader?.replace('Bearer ', '');
+      const bearer = authHeader?.startsWith('Bearer ') ? authHeader.slice('Bearer '.length) : undefined;
+      const headerSecret = request.headers.get('x-worker-secret') || undefined;
+      const providedSecret = headerSecret ?? bearer;
 
-      if (providedSecret !== WORKER_SECRET) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
+      if (!providedSecret) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+
+      const a = Buffer.from(providedSecret);
+      const b = Buffer.from(WORKER_SECRET);
+      const isValid = a.length === b.length && crypto.timingSafeEqual(a, b);
+
+      if (!isValid) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
     }
-
-    console.log('Webhook worker triggered via API');
 
     // Run worker
     const processed = await runWebhookWorker();

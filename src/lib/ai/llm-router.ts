@@ -2,25 +2,32 @@ import { decideTier, type PolicyInput, type ModelTier } from './routing-policy'
 import { guardTierForPlan } from './routing-guard'
 import { callOpenAI } from './providers/openai'
 import { callAnthropic } from './providers/anthropic'
+import { callAzureAI } from './providers/azure-ai'
 import { logCost } from './cost-logger'
 
 export type ChatMsg = { role: 'system' | 'user' | 'assistant'; content: string }
-type Provider = 'openai' | 'anthropic'
+type Provider = 'openai' | 'anthropic' | 'azure'
 
 const FALLBACKS: Record<ModelTier, { provider: Provider; model: string }[]> = {
   premium: [
+    { provider: 'azure', model: 'deepseek' },
     { provider: 'openai', model: 'gpt-4o' },
     { provider: 'anthropic', model: 'claude-3-5-sonnet' },
+    { provider: 'azure', model: 'phi4' },
     { provider: 'openai', model: 'gpt-4o-mini' },
   ],
   standard: [
+    { provider: 'azure', model: 'phi4' },
     { provider: 'anthropic', model: 'claude-3-5-sonnet' },
+    { provider: 'azure', model: 'deepseek' },
     { provider: 'openai', model: 'gpt-4o-mini' },
     { provider: 'anthropic', model: 'claude-3-haiku' },
   ],
   economy: [
+    { provider: 'azure', model: 'phi4' },
     { provider: 'anthropic', model: 'claude-3-haiku' },
     { provider: 'openai', model: 'gpt-4o-mini' },
+    { provider: 'azure', model: 'deepseek' },
     { provider: 'anthropic', model: 'claude-3-5-sonnet' },
   ],
 }
@@ -42,14 +49,36 @@ export async function generateWithPolicy(opts: {
   let lastErr: any
   for (const step of chain) {
     try {
-      const call = step.provider === 'openai' ? callOpenAI : callAnthropic
-      const res = await call({
-        model: step.model,
-        messages: opts.messages,
-        temperature: opts.temperature,
-        maxTokens: opts.maxTokens,
-        abortSignal: controller.signal,
-      })
+      let res
+      if (step.provider === 'openai') {
+        res = await callOpenAI({
+          model: step.model,
+          messages: opts.messages,
+          temperature: opts.temperature,
+          maxTokens: opts.maxTokens,
+          abortSignal: controller.signal,
+        })
+      } else if (step.provider === 'anthropic') {
+        res = await callAnthropic({
+          model: step.model,
+          messages: opts.messages,
+          temperature: opts.temperature,
+          maxTokens: opts.maxTokens,
+          abortSignal: controller.signal,
+        })
+      } else if (step.provider === 'azure') {
+        res = await callAzureAI({
+          model: step.model as 'deepseek' | 'phi4' | 'llama',
+          messages: opts.messages,
+          temperature: opts.temperature,
+          maxTokens: opts.maxTokens,
+          abortSignal: controller.signal,
+        })
+      }
+
+      if (!res) {
+        throw new Error('No response from AI provider')
+      }
 
       clearTimeout(to)
 
@@ -67,7 +96,7 @@ export async function generateWithPolicy(opts: {
         accountId: opts.meta?.accountId,
       })
 
-      return { content: res.content, tier, provider: step.provider, model: step.model, usage: res.usage }
+      return { content: res.content, usage: res.usage, provider: step.provider, model: step.model }
     } catch (e) {
       lastErr = e
       continue

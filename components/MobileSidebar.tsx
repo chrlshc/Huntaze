@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { DuotoneIcon } from './dashboard/DuotoneIcon';
+import { BarChart3, FileText, Home, Megaphone, Settings, Video } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 interface SubNavItem {
@@ -14,9 +15,20 @@ interface SubNavItem {
 interface NavItem {
   name: string;
   href: string;
-  icon: string;
+  icon: SidebarIconName;
   subItems?: SubNavItem[];
 }
+
+type SidebarIconName = 'home' | 'onlyfans' | 'analytics' | 'marketing' | 'content' | 'settings';
+
+const SIDEBAR_ICONS: Record<SidebarIconName, LucideIcon> = {
+  home: Home,
+  onlyfans: Video,
+  analytics: BarChart3,
+  marketing: Megaphone,
+  content: FileText,
+  settings: Settings,
+};
 
 // 5-section navigation structure
 const navigation: NavItem[] = [
@@ -34,7 +46,6 @@ const navigation: NavItem[] = [
       { name: 'Messages', href: '/onlyfans/messages' },
       { name: 'Fans', href: '/onlyfans/fans' },
       { name: 'PPV', href: '/onlyfans/ppv' },
-      { name: 'Settings', href: '/onlyfans/settings' },
     ],
   },
   {
@@ -56,7 +67,6 @@ const navigation: NavItem[] = [
     icon: 'marketing',
     subItems: [
       { name: 'Campaigns', href: '/marketing/campaigns' },
-      { name: 'Social', href: '/marketing/social' },
       { name: 'Calendar', href: '/marketing/calendar' },
     ],
   },
@@ -64,19 +74,23 @@ const navigation: NavItem[] = [
     name: 'Content',
     href: '/content',
     icon: 'content',
+    subItems: [
+      { name: 'Studio', href: '/content/factory' },
+    ],
   },
 ];
 
 export function MobileSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const isOnlyFansSettingsActive = pathname?.startsWith('/onlyfans/settings');
 
   return (
     <>
       {/* Mobile menu button - Hamburger icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden"
+        className="md:hidden"
         style={{
           padding: '8px',
           color: 'var(--color-text-sub)',
@@ -119,7 +133,7 @@ export function MobileSidebar() {
       {/* Backdrop overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 lg:hidden"
+          className="fixed inset-0 md:hidden"
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             zIndex: 'var(--huntaze-z-index-overlay)',
@@ -132,7 +146,7 @@ export function MobileSidebar() {
 
       {/* Mobile sidebar drawer */}
       <aside
-        className="fixed inset-y-0 left-0 lg:hidden"
+        className="fixed inset-y-0 left-0 md:hidden"
         style={{
           width: isOpen ? 'min(80vw, 300px)' : '0',
           maxWidth: '300px',
@@ -214,6 +228,7 @@ export function MobileSidebar() {
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px', listStyle: 'none', padding: 0, margin: 0 }}>
             {navigation.map((item) => {
               const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+              const Icon = SIDEBAR_ICONS[item.icon];
               const hasSubItems = item.subItems && item.subItems.length > 0;
               const showSubNav = hasSubItems && isActive;
 
@@ -256,11 +271,11 @@ export function MobileSidebar() {
                         aria-hidden="true"
                       />
                     )}
-                    <DuotoneIcon 
-                      name={item.icon} 
+                    <Icon
+                      aria-hidden="true"
+                      className={`shrink-0 ${isActive ? 'text-[var(--color-indigo)]' : 'text-[var(--text-secondary)]'}`}
                       size={20}
-                      primaryColor={isActive ? 'var(--color-indigo)' : 'var(--text-secondary)'}
-                      secondaryColor={isActive ? 'var(--color-indigo)' : 'var(--text-secondary)'}
+                      strokeWidth={1.8}
                     />
                     {item.name}
                   </Link>
@@ -313,18 +328,18 @@ export function MobileSidebar() {
           </ul>
         </nav>
 
-        {/* Footer */}
-        <div
+      {/* Footer */}
+      <div
+        style={{
+          padding: '16px',
+          borderTop: '1px solid var(--color-border-light)'
+        }}
+      >
+        <Link
+          href="/"
+          onClick={() => setIsOpen(false)}
           style={{
-            padding: '16px',
-            borderTop: '1px solid var(--color-border-light)'
-          }}
-        >
-          <Link
-            href="/"
-            onClick={() => setIsOpen(false)}
-            style={{
-              display: 'flex',
+            display: 'flex',
               alignItems: 'center',
               padding: '12px 16px',
               gap: '12px',
@@ -354,6 +369,32 @@ export function MobileSidebar() {
             </svg>
             Back to Home
           </Link>
+        <Link
+          href="/onlyfans/settings"
+          onClick={() => setIsOpen(false)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 16px',
+            gap: '12px',
+            color: isOnlyFansSettingsActive ? 'var(--color-indigo)' : 'var(--color-text-sub)',
+            textDecoration: 'none',
+            borderRadius: 'var(--radius-button)',
+            transition: 'background var(--transition-fast)',
+            fontSize: 'var(--text-sm)',
+            fontFamily: 'var(--font-sans)',
+            marginTop: '8px',
+            backgroundColor: isOnlyFansSettingsActive ? 'var(--color-indigo-fade)' : 'transparent',
+          }}
+        >
+          <Settings
+            aria-hidden="true"
+            className={`shrink-0 ${isOnlyFansSettingsActive ? 'text-[var(--color-indigo)]' : 'text-[var(--text-secondary)]'}`}
+            size={20}
+            strokeWidth={1.8}
+          />
+          Settings
+        </Link>
         </div>
       </aside>
 

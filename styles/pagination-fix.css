@@ -1,0 +1,36 @@
+/* Pagination dots fix for centering white circle inside blue circle */
+.pagination-dots {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-dot {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #0e1a33; /* Dark blue background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-dot::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Ensures perfect centering */
+}
+
+/* For the light blue/active state */
+.pagination-dot.active {
+  background-color: rgba(228, 232, 250, 0.7);
+}

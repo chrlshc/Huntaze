@@ -1,0 +1,232 @@
+/**
+ * Messaging Header Styles
+ * 
+ * Customized TailAdmin header with Huntaze branding
+ * Fully responsive with mobile optimizations
+ */
+
+.messaging-header {
+  background: var(--tailadmin-card-bg);
+  border-bottom: 1px solid var(--tailadmin-border-color);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  font-family: var(--tailadmin-font-family);
+}
+
+.messaging-header__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--tailadmin-spacing-md) var(--tailadmin-spacing-lg);
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Brand Section */
+.messaging-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--tailadmin-spacing-md);
+}
+
+.messaging-header__logo-link {
+  display: flex;
+  align-items: center;
+  gap: var(--tailadmin-spacing-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: var(--tailadmin-transition-base);
+}
+
+.messaging-header__logo-link:hover {
+  opacity: 0.8;
+}
+
+.messaging-header__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.messaging-header__brand-text {
+  font-size: var(--tailadmin-font-size-lg);
+  font-weight: var(--tailadmin-font-weight-bold);
+  color: var(--tailadmin-text-primary);
+}
+
+.messaging-header__page-title {
+  font-size: var(--tailadmin-font-size-base);
+  font-weight: var(--tailadmin-font-weight-medium);
+  color: var(--tailadmin-text-secondary);
+  padding-left: var(--tailadmin-spacing-md);
+  border-left: 1px solid var(--tailadmin-border-color);
+}
+
+/* Actions Section */
+.messaging-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--tailadmin-spacing-sm);
+}
+
+/* New Message Button */
+.messaging-header__new-message {
+  display: flex;
+  align-items: center;
+  gap: var(--tailadmin-spacing-sm);
+}
+
+.messaging-header__icon {
+  flex-shrink: 0;
+}
+
+.messaging-header__button-text {
+  white-space: nowrap;
+}
+
+/* Notification Button */
+/* Uses .icon-button base class with custom badge positioning */
+.messaging-header__notification-btn.icon-button {
+  position: relative; /* For badge positioning */
+}
+
+.messaging-header__notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111111;
+  color: #FFFFFF;
+  font-size: var(--tailadmin-font-size-xs);
+  font-weight: var(--tailadmin-font-weight-bold);
+  border-radius: 9px;
+  border: 2px solid var(--tailadmin-card-bg);
+}
+
+/* Profile Button */
+.messaging-header__profile-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--tailadmin-spacing-sm);
+  padding: var(--tailadmin-spacing-xs) var(--tailadmin-spacing-sm);
+  border-radius: var(--tailadmin-radius-md);
+  background: transparent;
+  border: none;
+  color: var(--tailadmin-text-primary);
+  cursor: pointer;
+  transition: var(--tailadmin-transition-base);
+}
+
+.messaging-header__profile-btn:hover {
+  background: var(--tailadmin-gray-2);
+}
+
+.messaging-header__user-name {
+  font-size: var(--tailadmin-font-size-sm);
+  font-weight: var(--tailadmin-font-weight-medium);
+}
+
+.messaging-header__dropdown-icon {
+  color: var(--tailadmin-text-secondary);
+  transition: var(--tailadmin-transition-base);
+}
+
+.messaging-header__profile-btn:hover .messaging-header__dropdown-icon {
+  transform: translateY(2px);
+}
+
+/* Tablet Layout (768px - 1024px) */
+@media (max-width: 1023px) {
+  .messaging-header__page-title {
+    display: none;
+  }
+
+  .messaging-header__button-text {
+    display: none;
+  }
+
+  .messaging-header__new-message {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* Mobile Layout (<768px) */
+@media (max-width: 767px) {
+  .messaging-header__container {
+    padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  }
+
+  .messaging-header__brand-text {
+    display: none;
+  }
+
+  .messaging-header__user-name {
+    display: none;
+  }
+
+  .messaging-header__dropdown-icon {
+    display: none;
+  }
+
+  .messaging-header__actions {
+    gap: var(--tailadmin-spacing-sm);
+  }
+
+  /* Ensure touch targets are at least 44x44px */
+  .messaging-header__notification-btn,
+  .messaging-header__profile-btn,
+  .messaging-header__new-message {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Dark Mode */
+.dark .messaging-header {
+  background: var(--tailadmin-card-bg);
+  border-bottom-color: var(--tailadmin-border-color);
+}
+
+.dark .messaging-header__brand-text,
+.dark .messaging-header__user-name {
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .messaging-header__page-title {
+  color: var(--tailadmin-text-secondary);
+  border-left-color: var(--tailadmin-border-color);
+}
+
+.dark .messaging-header__notification-btn,
+.dark .messaging-header__profile-btn {
+  color: var(--tailadmin-text-secondary);
+}
+
+.dark .messaging-header__notification-btn:hover,
+.dark .messaging-header__profile-btn:hover {
+  background: var(--tailadmin-gray);
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .messaging-header__notification-badge {
+  border-color: var(--tailadmin-card-bg);
+}
+
+/* Focus States for Accessibility */
+.messaging-header__notification-btn:focus-visible,
+.messaging-header__profile-btn:focus-visible,
+.messaging-header__logo-link:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+}

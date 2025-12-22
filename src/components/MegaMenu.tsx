@@ -104,7 +104,7 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
                 >
                   {sectionTitle && !isPopularTopics && (
                     <div className="mb-4 pb-2 border-b border-[var(--border-default)] flex items-center gap-3">
-                      <div className="grid h-8 w-8 place-items-center rounded-full ring-2 ring-white/30 bg-white/5 text-white">
+                      <div className="grid h-8 w-8 place-items-center rounded-full ring-2 ring-violet-500/40 bg-violet-600/20 text-white backdrop-blur-sm">
                         <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3" /></svg>
                       </div>
                       <div className="text-[16px] font-semibold text-white">{sectionTitle}</div>
@@ -116,7 +116,7 @@ export function MegaMenu({ label, groups, columns = 3, align = 'left', footerLin
                       <li className="col-span-2 hidden md:block">
                         <div className="px-2 py-1 mb-2 pb-2 border-b border-[var(--border-default)]">
                           <div className="flex items-center gap-3">
-                            <div className="grid h-8 w-8 place-items-center rounded-full ring-2 ring-white/30 bg-white/5 text-white">
+                            <div className="grid h-8 w-8 place-items-center rounded-full ring-2 ring-violet-500/40 bg-violet-600/20 text-white backdrop-blur-sm">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3" /></svg>
                             </div>
                             <div className="text-[16px] font-semibold text-white">{sectionTitle}</div>

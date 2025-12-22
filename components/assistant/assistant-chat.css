@@ -1,0 +1,62 @@
+/* ===========================================
+   Assistant Chat - Design Pilule Sexy
+   =========================================== */
+
+/* Input Pilule Flottante */
+.assistant-input-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border-radius: 30px;
+  border: 1px solid transparent;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Focus state avec lueur violette subtile */
+.assistant-input-pill:focus-within {
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.15);
+}
+
+.assistant-input-pill input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #111827;
+}
+
+.assistant-input-pill input::placeholder {
+  color: #9ca3af;
+}
+
+.assistant-input-pill button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.assistant-input-pill button:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.assistant-input-pill button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

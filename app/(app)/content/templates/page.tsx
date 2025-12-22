@@ -10,13 +10,15 @@
  */
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
+import useSWR from 'swr';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
 import { 
   Plus, 
   Sparkles, 
@@ -50,6 +52,32 @@ interface ContentTemplate {
   aiGenerated?: boolean;
 }
 
+type TemplateStructure = {
+  text?: string;
+  placeholders?: Array<{ id: string; label: string; type: 'text' | 'image' | 'video' }>;
+  mediaSlots?: Array<{ id: string; type: 'image' | 'video'; required: boolean }>;
+  suggestedPlatforms?: string[];
+};
+
+type TemplateDto = {
+  id: string;
+  name: string;
+  description?: string | null;
+  category: string;
+  structure?: TemplateStructure;
+  isPublic?: boolean;
+  usageCount?: number;
+  createdAt?: string;
+};
+
+type TemplatesApiResponse = {
+  success: boolean;
+  data?: {
+    templates: TemplateDto[];
+    mostUsed: TemplateDto[];
+  };
+};
+
 // Category config
 const CATEGORIES: { value: TemplateCategory; label: string }[] = [
   { value: 'all', label: 'All Templates' },
@@ -59,90 +87,67 @@ const CATEGORIES: { value: TemplateCategory; label: string }[] = [
   { value: 'personal', label: 'Personal' },
 ];
 
+function inferMediaType(structure?: TemplateStructure): ContentTemplate['mediaType'] {
+  const slots = structure?.mediaSlots;
+  if (Array.isArray(slots)) {
+    if (slots.some((s) => s?.type === 'video')) return 'video';
+    if (slots.some((s) => s?.type === 'image')) return 'image';
+  }
+
+  const placeholders = structure?.placeholders;
+  if (Array.isArray(placeholders)) {
+    if (placeholders.some((p) => p?.type === 'video')) return 'video';
+    if (placeholders.some((p) => p?.type === 'image')) return 'image';
+  }
+
+  return 'text';
+}
+
+function extractHashtags(text: string): string[] {
+  const found = new Set<string>();
+  const re = /#([\p{L}\p{N}_]+)/gu;
+  let match = re.exec(text);
+  while (match) {
+    found.add(match[1]);
+    match = re.exec(text);
+  }
+  return Array.from(found);
+}
+
+function mapTemplate(dto: TemplateDto, isFavorite: boolean): ContentTemplate {
+  const structureText = dto.structure?.text || '';
+  const caption = structureText || dto.description || '';
+
+  return {
+    id: String(dto.id),
+    name: dto.name || 'Untitled template',
+    category: (dto.category as TemplateCategory) || 'promotional',
+    mediaType: inferMediaType(dto.structure),
+    caption,
+    hashtags: extractHashtags(caption),
+    platforms: dto.structure?.suggestedPlatforms || [],
+    usageCount: Number(dto.usageCount || 0),
+    isFavorite,
+    createdAt: dto.createdAt || new Date().toISOString(),
+    aiGenerated: false,
+  };
+}
+
 export default function ContentTemplatesPage() {
-  const [loading, setLoading] = useState(true);
-  const [templates, setTemplates] = useState<ContentTemplate[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<TemplateCategory>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [favoriteById, setFavoriteById] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    const loadTemplates = async () => {
-      try {
-        // Mock data
-        const mockTemplates: ContentTemplate[] = [
-          {
-            id: '1',
-            name: 'New Content Teaser',
-            category: 'promotional',
-            mediaType: 'image',
-            caption: '🔥 Something special is coming... Stay tuned! 👀\n\n#exclusive #comingsoon #content',
-            hashtags: ['exclusive', 'comingsoon', 'content'],
-            platforms: ['instagram', 'tiktok'],
-            usageCount: 24,
-            isFavorite: true,
-            createdAt: '2024-11-15',
-            aiGenerated: true,
-          },
-          {
-            id: '2',
-            name: 'Thank You Post',
-            category: 'engagement',
-            mediaType: 'text',
-            caption: '💕 Thank you so much for all the love and support! You guys are amazing!\n\nWhat would you like to see more of? Let me know in the comments! 👇',
-            hashtags: ['thankyou', 'community', 'love'],
-            platforms: ['instagram', 'twitter'],
-            usageCount: 18,
-            isFavorite: true,
-            createdAt: '2024-11-20',
-          },
-          {
-            id: '3',
-            name: 'PPV Announcement',
-            category: 'promotional',
-            mediaType: 'image',
-            caption: '🎁 Special PPV just dropped! Check your DMs for something exclusive...\n\nDon\'t miss out! 💋',
-            hashtags: ['exclusive', 'ppv', 'special'],
-            platforms: ['onlyfans'],
-            usageCount: 31,
-            isFavorite: false,
-            createdAt: '2024-11-25',
-            aiGenerated: true,
-          },
-          {
-            id: '4',
-            name: 'Q&A Session',
-            category: 'engagement',
-            mediaType: 'text',
-            caption: '❓ Q&A Time! Ask me anything in the comments and I\'ll answer the best ones!\n\nBe creative! 😊',
-            hashtags: ['qanda', 'askmeanything', 'interactive'],
-            platforms: ['instagram', 'tiktok', 'twitter'],
-            usageCount: 12,
-            isFavorite: false,
-            createdAt: '2024-12-01',
-          },
-          {
-            id: '5',
-            name: 'Behind The Scenes',
-            category: 'personal',
-            mediaType: 'video',
-            caption: '📸 Behind the scenes of today\'s shoot! What do you think?\n\n#bts #behindthescenes #dayinmylife',
-            hashtags: ['bts', 'behindthescenes', 'dayinmylife'],
-            platforms: ['instagram', 'tiktok'],
-            usageCount: 8,
-            isFavorite: false,
-            createdAt: '2024-12-02',
-          },
-        ];
-        setTemplates(mockTemplates);
-      } catch (error) {
-        console.error('Failed to load templates:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data, error, isLoading, mutate } = useSWR<TemplatesApiResponse>(
+    '/api/content/templates?limit=100&offset=0',
+    (url) => internalApiFetch<TemplatesApiResponse>(url),
+    { revalidateOnFocus: true }
+  );
 
-    loadTemplates();
-  }, []);
+  const templates: ContentTemplate[] = useMemo(() => {
+    const items = data?.data?.templates ?? [];
+    return items.map((t) => mapTemplate(t, Boolean(favoriteById[t.id])));
+  }, [data, favoriteById]);
 
   // Filter templates
   const filteredTemplates = templates.filter(template => 
@@ -157,9 +162,7 @@ export default function ContentTemplatesPage() {
 
   // Toggle favorite
   const toggleFavorite = (id: string) => {
-    setTemplates(prev => prev.map(t => 
-      t.id === id ? { ...t, isFavorite: !t.isFavorite } : t
-    ));
+    setFavoriteById((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   // Page actions
@@ -176,7 +179,7 @@ export default function ContentTemplatesPage() {
     </div>
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <ProtectedRoute requireOnboarding={false}>
         <PageLayout
@@ -197,6 +200,31 @@ export default function ContentTemplatesPage() {
             ))}
           </div>
         </PageLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error && templates.length === 0) {
+    return (
+      <ProtectedRoute requireOnboarding={false}>
+        <ContentPageErrorBoundary pageName="Content Templates">
+          <PageLayout
+            title="Content Templates"
+            subtitle="Reusable templates for faster content creation"
+            breadcrumbs={[
+              { label: 'Content', href: '/content' },
+              { label: 'Templates' },
+            ]}
+            actions={PageActions}
+          >
+            <EmptyState
+              variant="error"
+              title="Failed to load templates"
+              description={error instanceof Error ? error.message : 'Please try again.'}
+              action={{ label: 'Retry', onClick: () => void mutate() }}
+            />
+          </PageLayout>
+        </ContentPageErrorBoundary>
       </ProtectedRoute>
     );
   }
@@ -232,14 +260,13 @@ export default function ContentTemplatesPage() {
           {/* Templates Grid */}
           {sortedTemplates.length === 0 ? (
             <EmptyState
-              icon={LayoutTemplate}
+              icon={<LayoutTemplate className="h-10 w-10" />}
               title="No templates found"
               description={categoryFilter === 'all' 
                 ? "Create your first template to speed up content creation"
                 : "No templates in this category yet"
               }
-              actionLabel="Create Template"
-              onAction={() => setShowCreateModal(true)}
+              action={{ label: 'Create Template', onClick: () => setShowCreateModal(true), icon: Plus }}
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="templates-grid">

@@ -11,9 +11,12 @@
   flex-direction: column;
   gap: var(--spacing-md, 1rem);
   padding: var(--spacing-lg, 1.5rem);
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: none;
   width: 100%;
+  margin: 0;
+  /* Allow full-height layouts inside huntaze-main (which is 100vh grid row) */
+  flex: 1;
+  min-height: 0;
 }
 
 /* Breadcrumbs */
@@ -68,6 +71,43 @@
 /* Page Content */
 .page-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1rem);
+  min-height: 0; /* enable scrollable children layouts */
+}
+
+/* Full-width variant for pages that need edge-to-edge layouts
+   (e.g., messaging, analytics dashboards) */
+.page-layout.page-layout-full {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* OnlyFans Messages: Shopify-like canvas */
+.page-layout.messages-page {
+  padding: 0;
+}
+
+.page-layout.messages-page .page-header {
+  background-color: transparent;
+  border-bottom: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.page-layout.messages-page .page-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  letter-spacing: -0.02em; /* tracking-tight */
+  color: #020617; /* slate-900 */
+}
+
+.page-layout.messages-page .page-content {
+  padding: 0;
 }
 
 /* Responsive adjustments */
@@ -98,5 +138,72 @@
 
   .page-subtitle {
     color: var(--color-text-sub-dark, #9ca3af);
+  }
+}
+
+
+/* ============================================
+   MOBILE FULL-WIDTH CARDS (< 768px)
+   Edge-to-edge cards on mobile like native apps
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Mobile spacing variables */
+  .page-layout {
+    --mobile-card-gap: 8px;
+    --mobile-section-gap: 16px;
+  }
+  
+  /* Container - remove horizontal padding for edge-to-edge */
+  .page-layout {
+    padding: 0 !important;
+    gap: var(--mobile-section-gap) !important;
+  }
+  
+  /* Page header - keep horizontal padding */
+  .page-layout .page-header {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 12px !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Breadcrumbs - add horizontal padding */
+  .page-layout .page-breadcrumbs {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+  }
+  
+  /* Page content - remove horizontal padding */
+  .page-layout .page-content {
+    gap: var(--mobile-card-gap) !important;
+  }
+  
+  /* Cards inside page content - full width */
+  .page-layout .page-content > div,
+  .page-layout .page-content > section {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Rounded cards - full width on mobile */
+  .page-layout .rounded-2xl,
+  .page-layout .rounded-xl,
+  .page-layout .rounded-lg {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+}
+
+/* Small mobile (< 480px) - tighter spacing */
+@media (max-width: 479px) {
+  .page-layout {
+    --mobile-card-gap: 6px;
+    --mobile-section-gap: 12px;
   }
 }

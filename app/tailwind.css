@@ -4,7 +4,7 @@
 @theme {
   /* Font Family - Linear UI */
   --font-family-sans: var(--font-family-base);
-  --font-family-mono: var(--font-family-mono);
+  --font-family-mono: var(--font-mono);
   
   /* Colors - Midnight Violet Theme */
   --color-midnight-50: #F5F3FF;
@@ -19,19 +19,19 @@
   --color-midnight-900: #3E246D;
   
   /* Background Colors */
-  --color-bg-app: var(--color-bg-app);
-  --color-bg-surface: var(--color-bg-surface);
-  --color-bg-hover: var(--color-bg-hover);
-  --color-bg-input: var(--color-bg-input);
+  --color-bg-app: var(--bg-app);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-input: var(--bg-input);
   
   /* Border Colors */
   --color-border: var(--color-border-subtle);
-  --color-border-emphasis: var(--color-border-emphasis);
+  --color-border-emphasis: var(--border-emphasis);
   
   /* Text Colors */
   --color-text: var(--color-text-primary);
-  --color-text-secondary: var(--color-text-secondary);
-  --color-text-muted: var(--color-text-muted);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
   
   /* Border Radius - Linear UI */
   --radius-sm: var(--border-radius-sm);
@@ -41,17 +41,22 @@
   --radius-full: var(--border-radius-full);
   
   /* Spacing - 4px Grid System */
-  --spacing-0: var(--spacing-0);
-  --spacing-1: var(--spacing-1);
-  --spacing-2: var(--spacing-2);
-  --spacing-3: var(--spacing-3);
-  --spacing-4: var(--spacing-4);
-  --spacing-5: var(--spacing-5);
-  --spacing-6: var(--spacing-6);
-  --spacing-8: var(--spacing-8);
-  --spacing-10: var(--spacing-10);
-  --spacing-12: var(--spacing-12);
-  --spacing-16: var(--spacing-16);
+  /* Fix: avoid circular self-references that break all Tailwind spacing utilities */
+  --spacing-0: var(--space-0);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+  --spacing-24: var(--space-24);
+  --spacing-32: var(--space-32);
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);

@@ -1,0 +1,198 @@
+/**
+ * Fans View Styles
+ * Requirements: 2.7 - Table row hover states
+ */
+
+/* Table row hover state */
+.fans-table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.fans-table tbody tr:hover {
+  background-color: var(--shopify-bg-surface-hover, #F6F6F7);
+}
+
+/* Ensure hover state is accessible with keyboard navigation */
+.fans-table tbody tr:focus-within {
+  background-color: var(--shopify-bg-surface-hover, #F6F6F7);
+  outline: 2px solid var(--shopify-border-focus, #2C6ECB);
+  outline-offset: -2px;
+}
+
+/* Responsive grid for StatCards */
+@media (max-width: 768px) {
+  .fans-segments-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .fans-segments-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Maintain horizontal search/filter layout on tablet */
+  .flex.flex-col.gap-\[var\(--space-3\)\].md\:flex-row {
+    flex-direction: row !important;
+  }
+  
+  /* Tables can scroll horizontally if needed */
+  .fans-table {
+    overflow-x: auto;
+  }
+  
+  /* Adjust table padding for tablet */
+  .fans-table th,
+  .fans-table td {
+    padding: 10px 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fans-segments-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  /* Tables display all columns without horizontal scroll */
+  .fans-table {
+    overflow-x: visible;
+  }
+  
+  /* Optimal table spacing for desktop */
+  .fans-table th,
+  .fans-table td {
+    padding: 12px 16px;
+  }
+  
+  /* Remove sticky positioning on desktop */
+  .fans-table th:first-child,
+  .fans-table td:first-child {
+    position: static;
+  }
+}
+
+/* Search and filter responsive styles */
+@media (max-width: 767px) {
+  /* Stack search and filters vertically on mobile */
+  .flex.flex-col.gap-\[var\(--space-3\)\].md\:flex-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  /* Full width search input on mobile */
+  .flex-1.relative input {
+    width: 100%;
+  }
+  
+  /* Full width filter button on mobile */
+  button[class*="filter"] {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Table responsive styles */
+@media (max-width: 767px) {
+  /* Enable horizontal scrolling for tables on mobile */
+  .fans-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Reduce table font size on mobile */
+  .fans-table {
+    font-size: 13px;
+  }
+  
+  /* Ensure minimum column widths for readability */
+  .fans-table th,
+  .fans-table td {
+    min-width: 100px;
+    padding: 8px 10px;
+  }
+  
+  /* First column (name) should be sticky on mobile */
+  .fans-table th:first-child,
+  .fans-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 1;
+    min-width: 120px;
+  }
+}
+
+/* Info icon button in table headers */
+.info-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  background: transparent;
+  border: none;
+  cursor: help;
+  color: var(--color-text-secondary, #6D7175);
+  transition: color 150ms ease;
+  position: relative;
+}
+
+.info-icon-button:hover {
+  color: var(--color-text-primary, #202223);
+}
+
+.info-icon-button:focus-visible {
+  outline: 2px solid var(--shopify-border-focus, #2C6ECB);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.info-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Tooltip styling for info icon */
+.info-icon-button::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 6px 10px;
+  background: var(--color-bg-tooltip, #202223);
+  color: var(--color-text-inverse, #FFFFFF);
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+  z-index: 100;
+}
+
+.info-icon-button::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(2px);
+  border: 5px solid transparent;
+  border-top-color: var(--color-text-primary, #202223);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+  z-index: 100;
+}
+
+.info-icon-button:hover::after,
+.info-icon-button:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+.info-icon-button:hover::before,
+.info-icon-button:focus-visible::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}

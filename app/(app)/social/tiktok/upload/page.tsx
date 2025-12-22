@@ -154,7 +154,7 @@ export default function TikTokUploadPage() {
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               placeholder="Write a caption for your video..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2c6ecb] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               rows={3}
               maxLength={2200}
             />
@@ -172,7 +172,7 @@ export default function TikTokUploadPage() {
               value={hashtags}
               onChange={(e) => setHashtags(e.target.value)}
               placeholder="#fyp #viral #content"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2c6ecb] dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
 

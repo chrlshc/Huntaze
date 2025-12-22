@@ -253,6 +253,7 @@ export class ContentService {
       return {
         items: items.map(item => ({
           ...item,
+          mediaIds: (item as any).media_ids,
           userId: item.user_id,
           createdAt: item.created_at,
           updatedAt: item.updated_at,
@@ -363,6 +364,7 @@ export class ContentService {
 
       return {
         ...content,
+        mediaIds: (content as any).media_ids,
         userId: content.user_id,
         createdAt: content.created_at,
         updatedAt: content.updated_at,
@@ -445,6 +447,7 @@ export class ContentService {
 
       return {
         ...content,
+        mediaIds: (content as any).media_ids,
         userId: content.user_id,
         createdAt: content.created_at,
         updatedAt: content.updated_at,
@@ -576,6 +579,7 @@ export class ContentService {
 
       return {
         ...updatedContent,
+        mediaIds: (updatedContent as any).media_ids,
         userId: updatedContent.user_id,
         createdAt: updatedContent.created_at,
         updatedAt: updatedContent.updated_at,
@@ -667,6 +671,7 @@ export class ContentService {
 
       return {
         ...deletedContent,
+        mediaIds: (deletedContent as any).media_ids,
         userId: deletedContent.user_id,
         createdAt: deletedContent.created_at,
         updatedAt: deletedContent.updated_at,

@@ -1,4 +1,6 @@
 import { observeMs, incCounter, emitMetric } from '../../../lib/metrics'
+import { externalFetch } from '@/lib/services/external/http'
+import { isExternalServiceError } from '@/lib/services/external/errors'
 
 type TikTokVideo = {
   id: string
@@ -23,12 +25,29 @@ export async function tiktokVideoList(opts: { userAccessToken: string; cursor?: 
     max_count: Math.min(Math.max(opts.maxCount ?? 20, 1), 20),
   }
   if (opts.cursor) body.cursor = opts.cursor
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${opts.userAccessToken}`, 'content-type': 'application/json' },
-    body: JSON.stringify(body),
-  })
-  const json = (await res.json().catch(() => ({}))) as ListResponse
+  let res: Response | null = null
+  let json: ListResponse = {}
+  try {
+    res = await externalFetch(url, {
+      service: 'tiktok',
+      operation: 'video.list',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${opts.userAccessToken}`, 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+      timeoutMs: 12_000,
+      retry: { maxRetries: 1, retryMethods: ['POST'] },
+    })
+    json = (await res.json().catch(() => ({}))) as ListResponse
+  } catch (error) {
+    const elapsed = Date.now() - started
+    observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'tiktok', kind: 'media' })
+    incCounter('social_insights_fetch_total', { platform: 'tiktok', kind: 'media', status: 'exception' })
+    if (isExternalServiceError(error) && error.code === 'RATE_LIMIT') {
+      emitMetric('Hunt/Social', [{ name: 'social_insights_quota_hits_total', unit: 'Count', value: 1 }], { platform: 'tiktok' })
+    }
+    return { items: [] as TikTokVideo[], cursor: undefined, hasMore: false }
+  }
   const elapsed = Date.now() - started
   observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'tiktok', kind: 'media' })
   incCounter('social_insights_fetch_total', { platform: 'tiktok', kind: 'media', status: res.ok ? 'ok' : 'error' })
@@ -46,12 +65,29 @@ export async function tiktokVideoQuery(opts: { userAccessToken: string; ids: str
     fields: opts.fields ?? ['id', 'create_time', 'like_count', 'comment_count', 'share_count', 'view_count'],
     filters: { video_ids: opts.ids.slice(0, 20) },
   }
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${opts.userAccessToken}`, 'content-type': 'application/json' },
-    body: JSON.stringify(body),
-  })
-  const json = (await res.json().catch(() => ({}))) as QueryResponse
+  let res: Response | null = null
+  let json: QueryResponse = {}
+  try {
+    res = await externalFetch(url, {
+      service: 'tiktok',
+      operation: 'video.query',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${opts.userAccessToken}`, 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+      timeoutMs: 12_000,
+      retry: { maxRetries: 1, retryMethods: ['POST'] },
+    })
+    json = (await res.json().catch(() => ({}))) as QueryResponse
+  } catch (error) {
+    const elapsed = Date.now() - started
+    observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'tiktok', kind: 'media' })
+    incCounter('social_insights_fetch_total', { platform: 'tiktok', kind: 'media', status: 'exception' })
+    if (isExternalServiceError(error) && error.code === 'RATE_LIMIT') {
+      emitMetric('Hunt/Social', [{ name: 'social_insights_quota_hits_total', unit: 'Count', value: 1 }], { platform: 'tiktok' })
+    }
+    return { items: [] as TikTokVideo[] }
+  }
   const elapsed = Date.now() - started
   observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'tiktok', kind: 'media' })
   incCounter('social_insights_fetch_total', { platform: 'tiktok', kind: 'media', status: res.ok ? 'ok' : 'error' })
@@ -65,10 +101,28 @@ export async function tiktokUserInfo(opts: { userAccessToken: string; fields?: s
   const started = Date.now()
   const url = `${BASE}/v2/user/info/`
   const params = { fields: opts.fields ?? ['open_id', 'username', 'follower_count', 'likes_count', 'video_count'] }
-  const res = await fetch(url + '?' + new URLSearchParams(params as any).toString(), {
-    headers: { Authorization: `Bearer ${opts.userAccessToken}` },
-  })
-  const json = (await res.json().catch(() => ({}))) as UserInfoResponse
+  let res: Response | null = null
+  let json: UserInfoResponse = {}
+  try {
+    res = await externalFetch(url + '?' + new URLSearchParams(params as any).toString(), {
+      service: 'tiktok',
+      operation: 'user.info',
+      method: 'GET',
+      headers: { Authorization: `Bearer ${opts.userAccessToken}` },
+      cache: 'no-store',
+      timeoutMs: 10_000,
+      retry: { maxRetries: 1, retryMethods: ['GET'] },
+    })
+    json = (await res.json().catch(() => ({}))) as UserInfoResponse
+  } catch (error) {
+    const elapsed = Date.now() - started
+    observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'tiktok', kind: 'user' })
+    incCounter('social_insights_fetch_total', { platform: 'tiktok', kind: 'user', status: 'exception' })
+    if (isExternalServiceError(error) && error.code === 'RATE_LIMIT') {
+      emitMetric('Hunt/Social', [{ name: 'social_insights_quota_hits_total', unit: 'Count', value: 1 }], { platform: 'tiktok' })
+    }
+    return null
+  }
   const elapsed = Date.now() - started
   observeMs('social_insights_fetch_latency_ms', elapsed, { platform: 'tiktok', kind: 'user' })
   incCounter('social_insights_fetch_total', { platform: 'tiktok', kind: 'user', status: res.ok ? 'ok' : 'error' })
@@ -95,4 +149,3 @@ export function normalizeTikTokVideo(v: TikTokVideo): NormalizedVideoMetrics {
     sampled_at: Date.now(),
   }
 }
-

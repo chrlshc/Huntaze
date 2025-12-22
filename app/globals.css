@@ -12,7 +12,13 @@
 @import "../styles/linear-design-tokens.css";
 @import "../styles/dashboard-shopify-tokens.css";
 @import "../styles/shopify-tokens.css";
+@import "../styles/polaris-exact-tokens.css";
 @import "../styles/premium-design-tokens.css";
+@import "../styles/onlyfans-polish-tokens.css";
+@import "../styles/tailadmin-tokens.css";
+@import "../styles/messaging-calm-palette.css";
+@import "../styles/messaging-spacing-tokens.css";
+@import "../styles/chat-ui-kit-overrides.css";
 
 /* 3. Base Styles */
 @import "../styles/design-system.css";
@@ -33,12 +39,20 @@
     padding: 0;
     box-sizing: border-box;
   }
+
+  /* Default button alignment (fix icon/text centering in circular/square buttons) */
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   
   html {
     scroll-behavior: smooth;
     background-color: var(--bg-app);
     overflow-x: hidden;
     width: 100%;
+    min-height: 100vh;
   }
   
   body {
@@ -49,18 +63,37 @@
     color: var(--text-primary);
     overflow-x: hidden;
     width: 100%;
+    min-height: 100vh;
+  }
+
+  #__next {
+    min-height: 100vh;
+  }
+
+  /* Next.js App Router wraps layouts/pages in nested scroll-focus boundaries.
+     Forcing a viewport min-height here creates "ghost scroll" when a dashboard
+     uses a nested scroll container (e.g. scrolling inside `<main>`). */
+  [data-nextjs-scroll-focus-boundary] {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  .app-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
   
-  /* Clean text selection */
-  ::selection {
-    background-color: rgba(139, 92, 246, 0.15);
-    color: var(--text-primary);
-  }
-  
-  ::-moz-selection {
-    background-color: rgba(139, 92, 246, 0.15);
-    color: var(--text-primary);
-  }
+	  /* Clean text selection */
+	  ::selection {
+	    background-color: rgba(44, 110, 203, 0.18);
+	    color: var(--text-primary);
+	  }
+	  
+	  ::-moz-selection {
+	    background-color: rgba(44, 110, 203, 0.18);
+	    color: var(--text-primary);
+	  }
   
   /* Disable transitions for reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
@@ -98,12 +131,14 @@
   }
   
   /* Ensure all interactive elements meet touch target requirements */
-  button,
-  a[role="button"],
-  input[type="button"],
-  input[type="submit"],
-  input[type="reset"] {
-    min-height: 44px;
+  @media (pointer: coarse) {
+    button:not([role="switch"]),
+    a[role="button"],
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+      min-height: 44px;
+    }
   }
   
   /* Responsive Table Pattern - Mobile: Cards, Desktop: Table */
@@ -205,6 +240,30 @@
 }
 
 @layer utilities {
+  /* Custom scrollbar for dashboard scrollable areas */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #D0D4D9 transparent;
+    overscroll-behavior: contain;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #D0D4D9;
+    border-radius: 9999px;
+  }
+
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: #9CA3AF;
+  }
+  
   /* Blob animation for hero section */
   @keyframes blob {
     0%, 100% {

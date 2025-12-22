@@ -106,7 +106,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2c6ecb]"
                 >
                   <Home className="w-4 h-4 mr-2" />
                   Go to Dashboard

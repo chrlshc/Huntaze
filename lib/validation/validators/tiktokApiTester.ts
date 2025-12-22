@@ -12,6 +12,8 @@ import {
   RateLimitExceededError,
   ValidationErrorCode,
 } from '../index';
+import { externalFetch } from '@/lib/services/external/http';
+import { isExternalServiceError } from '@/lib/services/external/errors';
 
 /**
  * TikTok API endpoints for testing
@@ -355,30 +357,37 @@ export class TikTokApiTester {
    * Make HTTP request with timeout and error handling
    */
   private async makeRequest(url: string, options: RequestInit): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+    const method = (options.method ?? 'GET').toUpperCase();
+    const retry =
+      method === 'GET' || method === 'HEAD'
+        ? { maxRetries: 1, retryMethods: ['GET', 'HEAD'] }
+        : { maxRetries: 0, retryMethods: [] as string[] };
 
     try {
-      const response = await fetch(url, {
+      return await externalFetch(url, {
+        service: 'tiktok',
+        operation: 'apiTester.request',
         ...options,
-        signal: controller.signal,
+        method,
+        cache: 'no-store',
+        timeoutMs: this.timeout,
+        retry,
+        throwOnHttpError: false,
       });
 
-      clearTimeout(timeoutId);
-      return response;
-
     } catch (error) {
-      clearTimeout(timeoutId);
-
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
+      if (isExternalServiceError(error)) {
+        if (error.code === 'TIMEOUT') {
           throw new ValidationTimeoutError('tiktok', this.timeout);
         }
-        
-        // Check for rate limiting
-        if (error.message.includes('429') || error.message.includes('rate limit')) {
+        if (error.code === 'RATE_LIMIT') {
           throw new RateLimitExceededError('tiktok');
         }
+        throw new ApiConnectivityError('tiktok', error);
+      }
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new ValidationTimeoutError('tiktok', this.timeout);
       }
 
       throw new ApiConnectivityError('tiktok', error as Error);

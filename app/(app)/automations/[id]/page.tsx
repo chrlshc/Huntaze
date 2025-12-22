@@ -1,19 +1,220 @@
 'use client';
 
 /**
- * Edit Automation Page
+ * Edit Automation Page - Huntaze Monochrome Design
  * Edit an existing automation workflow
- * Requirements: 1.3, 1.5
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { FlowBuilder } from '@/components/automations/FlowBuilder';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import type { AutomationFlow, AutomationStep, AutomationStatus } from '@/lib/automations/types';
+
+// Huntaze Design Tokens
+const hzStyles = `
+  .hz-automation-edit {
+    --hz-radius-card: 14px;
+    --hz-radius-icon: 8px;
+    --hz-space-xs: 8px;
+    --hz-space-sm: 12px;
+    --hz-space-md: 16px;
+    --hz-space-lg: 24px;
+    --hz-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--hz-space-lg);
+  }
+  .hz-auto-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--hz-space-lg);
+    gap: var(--hz-space-md);
+  }
+  .hz-auto-header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hz-space-md);
+  }
+  .hz-auto-back {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--hz-radius-icon);
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #616161;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 140ms ease;
+    flex-shrink: 0;
+  }
+  .hz-auto-back:hover { background: #f3f4f6; color: #303030; border-color: #d1d5db; }
+  .hz-auto-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #303030;
+    margin: 0 0 4px;
+  }
+  .hz-auto-subtitle {
+    font-size: 13px;
+    color: #616161;
+    margin: 0;
+  }
+  .hz-auto-delete {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--hz-radius-icon);
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #dc2626;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 140ms ease;
+  }
+  .hz-auto-delete:hover { background: #fef2f2; border-color: #fecaca; }
+  .hz-auto-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hz-radius-card);
+    padding: var(--hz-space-md);
+    box-shadow: var(--hz-shadow-card);
+    margin-bottom: var(--hz-space-md);
+  }
+  .hz-auto-form-group {
+    margin-bottom: var(--hz-space-md);
+  }
+  .hz-auto-form-group:last-child { margin-bottom: 0; }
+  .hz-auto-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #303030;
+    margin-bottom: var(--hz-space-xs);
+  }
+  .hz-auto-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--hz-radius-icon);
+    background: #fff;
+    color: #303030;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+  .hz-auto-input:focus {
+    outline: none;
+    border-color: #303030;
+    box-shadow: 0 0 0 2px rgba(48, 48, 48, 0.1);
+  }
+  .hz-auto-input::placeholder { color: #9ca3af; }
+  .hz-auto-textarea {
+    resize: none;
+    min-height: 60px;
+  }
+  .hz-auto-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+  }
+  .hz-auto-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #303030;
+    margin: 0 0 var(--hz-space-md);
+  }
+  .hz-auto-error {
+    padding: var(--hz-space-sm) var(--hz-space-md);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--hz-radius-icon);
+    color: #dc2626;
+    font-size: 13px;
+    margin-bottom: var(--hz-space-md);
+  }
+  .hz-auto-actions {
+    display: flex;
+    gap: var(--hz-space-sm);
+    flex-wrap: wrap;
+  }
+  .hz-auto-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--hz-radius-icon);
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #616161;
+    cursor: pointer;
+    transition: all 140ms ease;
+    text-align: center;
+  }
+  .hz-auto-btn:hover:not(:disabled) { background: #f3f4f6; color: #303030; border-color: #d1d5db; }
+  .hz-auto-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .hz-auto-btn-primary {
+    background: linear-gradient(180deg, #1f1f1f, #111);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .hz-auto-btn-primary:hover:not(:disabled) { 
+    background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+  .hz-auto-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    text-align: center;
+  }
+  .hz-auto-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #303030;
+    border-radius: 50%;
+    animation: hz-spin 0.8s linear infinite;
+    margin-bottom: var(--hz-space-md);
+  }
+  @keyframes hz-spin { to { transform: rotate(360deg); } }
+  .hz-auto-loading-text {
+    font-size: 13px;
+    color: #616161;
+  }
+  .hz-auto-empty {
+    text-align: center;
+    padding: 48px var(--hz-space-lg);
+  }
+  .hz-auto-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--hz-space-md);
+    color: #9ca3af;
+  }
+  .hz-auto-empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #303030;
+    margin: 0 0 var(--hz-space-xs);
+  }
+  .hz-auto-empty-desc {
+    font-size: 13px;
+    color: #616161;
+    margin: 0 0 var(--hz-space-lg);
+  }
+`;
 
 export default function EditAutomationPage() {
   const router = useRouter();
@@ -31,32 +232,37 @@ export default function EditAutomationPage() {
   const [steps, setSteps] = useState<AutomationStep[]>([]);
   const [status, setStatus] = useState<AutomationStatus>('draft');
 
+  const fetchAutomation = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/automations/${automationId}`);
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
+        setAutomation(data.data);
+        setName(data.data.name);
+        setDescription(data.data.description || '');
+        setSteps(data.data.steps);
+        setStatus(data.data.status);
+        return;
+      }
+
+      setAutomation(null);
+      setError(data.error || 'Automation not found');
+    } catch {
+      setAutomation(null);
+      setError('Failed to load automation');
+    } finally {
+      setLoading(false);
+    }
+  }, [automationId]);
+
   // Fetch automation
   useEffect(() => {
-    const fetchAutomation = async () => {
-      try {
-        const response = await fetch(`/api/automations/${automationId}`);
-        const data = await response.json();
-
-        if (data.success) {
-          setAutomation(data.data);
-          setName(data.data.name);
-          setDescription(data.data.description || '');
-          setSteps(data.data.steps);
-          setStatus(data.data.status);
-        } else {
-          setError(data.error || 'Automation not found');
-        }
-      } catch (err) {
-        console.error('Error fetching automation:', err);
-        setError('Failed to load automation');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAutomation();
-  }, [automationId]);
+    void fetchAutomation();
+  }, [fetchAutomation]);
 
   // Save automation
   const saveAutomation = async () => {
@@ -92,8 +298,7 @@ export default function EditAutomationPage() {
       } else {
         setError(data.error || 'Failed to save automation');
       }
-    } catch (err) {
-      console.error('Error saving automation:', err);
+    } catch {
       setError('Failed to save automation');
     } finally {
       setSaving(false);
@@ -116,8 +321,7 @@ export default function EditAutomationPage() {
       } else {
         setError('Failed to delete automation');
       }
-    } catch (err) {
-      console.error('Error deleting automation:', err);
+    } catch {
       setError('Failed to delete automation');
     }
   };
@@ -125,10 +329,11 @@ export default function EditAutomationPage() {
   if (loading) {
     return (
       <ProtectedRoute requireOnboarding={false}>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-500 dark:text-gray-400">Loading automation...</p>
+        <div className="hz-automation-edit">
+          <style>{hzStyles}</style>
+          <div className="hz-auto-loading">
+            <div className="hz-auto-spinner" />
+            <p className="hz-auto-loading-text">Loading automation...</p>
           </div>
         </div>
       </ProtectedRoute>
@@ -136,23 +341,34 @@ export default function EditAutomationPage() {
   }
 
   if (!automation && !loading) {
+    const emptyTitle = error ? 'Unable to Load Automation' : 'Automation Not Found';
+    const emptyDescription = error
+      ? error
+      : `The automation you&apos;re looking for doesn&apos;t exist or has been deleted.`;
+
     return (
       <ProtectedRoute requireOnboarding={false}>
-        <div className="p-6 max-w-4xl mx-auto">
-          <Card className="p-8 text-center">
-            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Automation Not Found
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              The automation you&apos;re looking for doesn&apos;t exist or has been deleted.
-            </p>
-            <Button variant="primary" onClick={() => router.push('/automations')}>
-              Back to Automations
-            </Button>
-          </Card>
+        <div className="hz-automation-edit">
+          <style>{hzStyles}</style>
+          <div className="hz-auto-card">
+            <div className="hz-auto-empty">
+              <svg className="hz-auto-empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h2 className="hz-auto-empty-title">{emptyTitle}</h2>
+              <p className="hz-auto-empty-desc">{emptyDescription}</p>
+              <div className="hz-auto-actions" style={{ justifyContent: 'center' }}>
+                {error && (
+                  <button className="hz-auto-btn" onClick={fetchAutomation}>
+                    Retry
+                  </button>
+                )}
+                <button className="hz-auto-btn hz-auto-btn-primary" onClick={() => router.push('/automations')}>
+                  Back to Automations
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </ProtectedRoute>
     );
@@ -161,112 +377,88 @@ export default function EditAutomationPage() {
   return (
     <ProtectedRoute requireOnboarding={false}>
       <ContentPageErrorBoundary pageName="Edit Automation">
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="hz-automation-edit">
+          <style>{hzStyles}</style>
+          
           {/* Header */}
-          <div className="flex items-center gap-4 mb-6">
-            <button
-              onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <div className="flex-1">
-              <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                Edit Automation
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400">
-                Modify your automation workflow
-              </p>
+          <div className="hz-auto-header">
+            <div className="hz-auto-header-left">
+              <button className="hz-auto-back" onClick={() => router.back()}>
+                <ArrowLeft size={18} />
+              </button>
+              <div>
+                <h1 className="hz-auto-title">Edit Automation</h1>
+                <p className="hz-auto-subtitle">Modify your automation workflow</p>
+              </div>
             </div>
-            <button
-              onClick={deleteAutomation}
-              className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-              title="Delete automation"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+            <button className="hz-auto-delete" onClick={deleteAutomation} title="Delete automation">
+              <Trash2 size={18} />
             </button>
           </div>
 
           {/* Name & Description */}
-          <Card className="p-6 mb-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Automation Name *
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Welcome New Subscribers"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Description (optional)
-                </label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe what this automation does..."
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  rows={2}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Status
-                </label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as AutomationStatus)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="draft">Draft</option>
-                  <option value="active">Active</option>
-                  <option value="paused">Paused</option>
-                </select>
-              </div>
+          <div className="hz-auto-card">
+            <div className="hz-auto-form-group">
+              <label className="hz-auto-label">Automation Name *</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Welcome New Subscribers"
+                className="hz-auto-input"
+              />
             </div>
-          </Card>
+            <div className="hz-auto-form-group">
+              <label className="hz-auto-label">Description (optional)</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe what this automation does..."
+                className="hz-auto-input hz-auto-textarea"
+                rows={2}
+              />
+            </div>
+            <div className="hz-auto-form-group">
+              <label className="hz-auto-label">Status</label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as AutomationStatus)}
+                className="hz-auto-input hz-auto-select"
+              >
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="paused">Paused</option>
+              </select>
+            </div>
+          </div>
 
           {/* Flow Builder */}
-          <div className="mb-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Workflow Steps
-            </h2>
+          <div style={{ marginBottom: 'var(--hz-space-md)' }}>
+            <h2 className="hz-auto-section-title">Workflow Steps</h2>
             <FlowBuilder steps={steps} onChange={setSteps} />
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-              <p className="text-red-600 dark:text-red-400">{error}</p>
-            </div>
+            <div className="hz-auto-error">{error}</div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              variant="primary"
+          <div className="hz-auto-actions">
+            <button
+              className="hz-auto-btn hz-auto-btn-primary"
               onClick={saveAutomation}
               disabled={saving}
-              className="flex-1"
             >
               {saving ? 'Saving...' : 'Save Changes'}
-            </Button>
-            <Button
-              variant="secondary"
+            </button>
+            <button
+              className="hz-auto-btn"
               onClick={() => router.back()}
               disabled={saving}
             >
               Cancel
-            </Button>
+            </button>
           </div>
         </div>
       </ContentPageErrorBoundary>

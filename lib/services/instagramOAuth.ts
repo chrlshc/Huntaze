@@ -69,6 +69,7 @@ export class InstagramOAuthService {
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY = 1000; // 1 second
+  private readonly REQUEST_TIMEOUT_MS = 10000; // 10 seconds
 
   constructor() {
     this.appId = process.env.FACEBOOK_APP_ID || '';
@@ -188,6 +189,24 @@ export class InstagramOAuthService {
   }
 
   /**
+   * Fetch helper with timeout to avoid hanging OAuth flows.
+   */
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit,
+    timeoutMs: number = this.REQUEST_TIMEOUT_MS
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  /**
    * Generate Facebook OAuth authorization URL for Instagram permissions
    * Validates credentials before generating URL
    * 
@@ -234,7 +253,7 @@ export class InstagramOAuthService {
     });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
+      const response = await this.fetchWithTimeout(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
         cache: 'no-store',
         headers: {
@@ -279,7 +298,7 @@ export class InstagramOAuthService {
     });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
+      const response = await this.fetchWithTimeout(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
         cache: 'no-store',
         headers: {
@@ -327,7 +346,7 @@ export class InstagramOAuthService {
     });
 
     return this.retryApiCall(async () => {
-      const response = await fetch(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
+      const response = await this.fetchWithTimeout(`${FACEBOOK_TOKEN_URL}?${params.toString()}`, {
         method: 'GET',
         cache: 'no-store',
         headers: {
@@ -371,7 +390,7 @@ export class InstagramOAuthService {
   async getAccountInfo(accessToken: string): Promise<InstagramAccountInfo> {
     return this.retryApiCall(async () => {
       // Get user ID
-      const meResponse = await fetch(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`, {
+      const meResponse = await this.fetchWithTimeout(`${FACEBOOK_GRAPH_URL}/me?access_token=${accessToken}`, {
         cache: 'no-store',
         headers: {
           'User-Agent': 'Instagram-OAuth-Client/1.0',
@@ -387,7 +406,7 @@ export class InstagramOAuthService {
       }
 
       // Get user's pages with Instagram Business accounts
-      const pagesResponse = await fetch(
+      const pagesResponse = await this.fetchWithTimeout(
         `${FACEBOOK_GRAPH_URL}/me/accounts?fields=id,name,instagram_business_account{id,username}&access_token=${accessToken}`,
         { 
           cache: 'no-store',
@@ -443,7 +462,7 @@ export class InstagramOAuthService {
     media_count: number;
   }> {
     return this.retryApiCall(async () => {
-      const response = await fetch(
+      const response = await this.fetchWithTimeout(
         `${FACEBOOK_GRAPH_URL}/${igBusinessId}?fields=id,username,name,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`,
         { 
           cache: 'no-store',
@@ -473,7 +492,7 @@ export class InstagramOAuthService {
    */
   async revokeAccess(accessToken: string): Promise<void> {
     try {
-      const response = await fetch(
+      const response = await this.fetchWithTimeout(
         `${FACEBOOK_GRAPH_URL}/me/permissions?access_token=${accessToken}`,
         {
           method: 'DELETE',

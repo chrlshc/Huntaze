@@ -8,78 +8,177 @@
 
 import useSWR from 'swr';
 import { useState } from 'react';
-import type { Campaign, CreateCampaignInput, UpdateCampaignInput } from '@/lib/types/marketing';
+import { internalApiFetch } from '@/lib/api/client/internal-api-client';
+
+export type CampaignStatus = 'draft' | 'scheduled' | 'active' | 'paused' | 'completed';
+export type CampaignChannel = 'email' | 'dm' | 'sms' | 'push';
+export type CampaignGoal = 'engagement' | 'conversion' | 'retention';
+
+export interface MarketingCampaign {
+  id: string;
+  name: string;
+  status: CampaignStatus;
+  channel: CampaignChannel;
+  goal: CampaignGoal;
+  audience: {
+    segment: string;
+    size: number;
+  };
+  stats?: {
+    sent: number;
+    opened?: number;
+    clicked?: number;
+    converted: number;
+    openRate: number; // 0..1
+    clickRate?: number; // 0..1
+    conversionRate?: number; // 0..1
+  };
+  createdAt: string;
+  scheduledAt?: string;
+  aiGenerated?: boolean;
+}
+
+export interface CreateMarketingCampaignInput {
+  name: string;
+  status?: CampaignStatus;
+  channel: CampaignChannel;
+  goal: CampaignGoal;
+  audienceSegment: string;
+  audienceSize?: number;
+  message: Record<string, unknown>;
+  schedule?: Record<string, unknown>;
+}
+
+export interface UpdateMarketingCampaignInput {
+  name?: string;
+  status?: CampaignStatus;
+  channel?: CampaignChannel;
+  goal?: CampaignGoal;
+  audienceSegment?: string;
+  audienceSize?: number;
+  message?: Record<string, unknown>;
+  schedule?: Record<string, unknown>;
+}
 
 interface UseMarketingCampaignsOptions {
-  creatorId: string;
-  status?: string;
-  channel?: string;
+  status?: CampaignStatus | 'all';
+  channel?: CampaignChannel | 'all';
+  limit?: number;
+  offset?: number;
 }
 
-interface CampaignsResponse {
-  campaigns: Campaign[];
+type ApiEnvelope<T> = {
+  success: boolean;
+  data?: T;
+  error?: unknown;
+  meta?: unknown;
+};
+
+type CampaignListResponse = {
+  items: any[];
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+  };
+};
+
+const fetcher = <T,>(url: string) => internalApiFetch<T>(url);
+
+function normalizeRate(value: unknown): number {
+  const n = typeof value === 'number' ? value : 0;
+  // API routes return rates as percentages (0..100); legacy mocks use fractions (0..1).
+  return n > 1 ? n / 100 : n;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+function pickScheduleDate(raw: any): string | undefined {
+  const schedule = raw?.schedule;
+  if (!schedule || typeof schedule !== 'object') return undefined;
+
+  const candidate =
+    schedule.sendAt ??
+    schedule.scheduledAt ??
+    schedule.scheduled_for ??
+    schedule.scheduledFor ??
+    schedule.publishAt ??
+    schedule.date;
+
+  return typeof candidate === 'string' ? candidate : undefined;
+}
+
+function mapCampaign(raw: any): MarketingCampaign {
+  return {
+    id: String(raw?.id ?? ''),
+    name: String(raw?.name ?? ''),
+    status: (raw?.status ?? 'draft') as CampaignStatus,
+    channel: (raw?.channel ?? 'dm') as CampaignChannel,
+    goal: (raw?.goal ?? 'engagement') as CampaignGoal,
+    audience: {
+      segment: String(raw?.audienceSegment ?? raw?.audience_segment ?? raw?.audience?.segment ?? 'All'),
+      size: Number(raw?.audienceSize ?? raw?.audience_size ?? raw?.audience?.size ?? 0),
+    },
+    stats: raw?.stats
+      ? {
+          sent: Number(raw.stats.sent ?? 0),
+          opened: raw.stats.opened !== undefined ? Number(raw.stats.opened ?? 0) : undefined,
+          clicked: raw.stats.clicked !== undefined ? Number(raw.stats.clicked ?? 0) : undefined,
+          converted: Number(raw.stats.converted ?? 0),
+          openRate: normalizeRate(raw.stats.openRate),
+          clickRate: raw.stats.clickRate !== undefined ? normalizeRate(raw.stats.clickRate) : undefined,
+          conversionRate:
+            raw.stats.conversionRate !== undefined ? normalizeRate(raw.stats.conversionRate) : undefined,
+        }
+      : undefined,
+    createdAt: String(raw?.createdAt ?? raw?.created_at ?? new Date().toISOString()),
+    scheduledAt: pickScheduleDate(raw),
+    aiGenerated: Boolean(raw?.aiGenerated ?? false),
+  };
+}
 
 export function useMarketingCampaigns(options: UseMarketingCampaignsOptions) {
-  const { creatorId, status, channel } = options;
+  const { status, channel, limit = 50, offset = 0 } = options;
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
 
   // Build query params
-  const params = new URLSearchParams({ creatorId });
-  if (status) params.append('status', status);
-  if (channel) params.append('channel', channel);
+  const params = new URLSearchParams();
+  if (status && status !== 'all') params.append('status', status);
+  if (channel && channel !== 'all') params.append('channel', channel);
+  params.set('limit', String(limit));
+  params.set('offset', String(offset));
 
-  const { data, error, mutate } = useSWR<CampaignsResponse>(
+  const { data, error, mutate } = useSWR<ApiEnvelope<CampaignListResponse>>(
     `/api/marketing/campaigns?${params.toString()}`,
-    fetcher,
-    {
-      refreshInterval: 30000, // Refresh every 30s
-      revalidateOnFocus: true,
-    }
+    fetcher<ApiEnvelope<CampaignListResponse>>,
+    { refreshInterval: 30000, revalidateOnFocus: true }
   );
 
-  const createCampaign = async (input: CreateCampaignInput) => {
+  const createCampaign = async (input: CreateMarketingCampaignInput) => {
     setIsCreating(true);
     try {
-      const response = await fetch('/api/marketing/campaigns', {
+      const result = await internalApiFetch<ApiEnvelope<any>>('/api/marketing/campaigns', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
+        body: input,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create campaign');
-      }
-
-      const result = await response.json();
-      await mutate(); // Refresh the list
-      return result.campaign;
+      await mutate();
+      return result.data ? mapCampaign(result.data) : null;
     } finally {
       setIsCreating(false);
     }
   };
 
-  const updateCampaign = async (campaignId: string, updates: UpdateCampaignInput) => {
+  const updateCampaign = async (campaignId: string, updates: UpdateMarketingCampaignInput) => {
     setIsUpdating(true);
     try {
-      const response = await fetch(`/api/marketing/campaigns/${campaignId}`, {
+      const result = await internalApiFetch<ApiEnvelope<any>>(`/api/marketing/campaigns/${campaignId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creatorId, ...updates }),
+        body: updates,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update campaign');
-      }
-
-      const result = await response.json();
-      await mutate(); // Refresh the list
-      return result.campaign;
+      await mutate();
+      return result.data ? mapCampaign(result.data) : null;
     } finally {
       setIsUpdating(false);
     }
@@ -88,44 +187,30 @@ export function useMarketingCampaigns(options: UseMarketingCampaignsOptions) {
   const deleteCampaign = async (campaignId: string) => {
     setIsDeleting(true);
     try {
-      const response = await fetch(
-        `/api/marketing/campaigns/${campaignId}?creatorId=${creatorId}`,
-        { method: 'DELETE' }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to delete campaign');
-      }
-
-      await mutate(); // Refresh the list
+      await internalApiFetch(`/api/marketing/campaigns/${campaignId}`, { method: 'DELETE' });
+      await mutate();
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const launchCampaign = async (campaignId: string, scheduledFor?: string) => {
+  const launchCampaign = async (campaignId: string, creatorId: string, scheduledFor?: string) => {
     setIsLaunching(true);
     try {
-      const response = await fetch(`/api/marketing/campaigns/${campaignId}/launch`, {
+      const result = await internalApiFetch<any>(`/api/marketing/campaigns/${campaignId}/launch`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creatorId, scheduledFor }),
+        body: { creatorId, scheduledFor },
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to launch campaign');
-      }
-
-      const result = await response.json();
-      await mutate(); // Refresh the list
-      return result.campaign;
+      await mutate();
+      return result;
     } finally {
       setIsLaunching(false);
     }
   };
 
   return {
-    campaigns: data?.campaigns || [],
+    campaigns: (data?.data?.items || []).map(mapCampaign),
+    pagination: data?.data?.pagination,
     isLoading: !error && !data,
     error,
     createCampaign,

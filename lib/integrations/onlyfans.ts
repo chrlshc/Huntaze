@@ -1,4 +1,7 @@
 import crypto from 'crypto';
+import { externalFetchJson } from '@/lib/services/external/http';
+import { ExternalServiceError, isExternalServiceError } from '@/lib/services/external/errors';
+import { decryptToken, encryptToken } from '@/lib/services/integrations/encryption';
 
 interface OnlyFansConfig {
   userId: string;
@@ -16,13 +19,15 @@ export class OnlyFansAPI {
    * Get monthly earnings from OnlyFans
    */
   async getMonthlyEarnings(year: number, month: number): Promise<number> {
+    // OnlyFans API endpoint for earnings
+    const startDate = new Date(year, month - 1, 1).toISOString();
+    const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
+
     try {
-      // OnlyFans API endpoint for earnings
-      const startDate = new Date(year, month - 1, 1).toISOString();
-      const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
-      
-      const response = await fetch(`https://onlyfans.com/api2/v2/earnings/chart`, {
-        method: 'GET',
+      const data = await externalFetchJson<any>('https://onlyfans.com/api2/v2/earnings/chart', {
+        service: 'onlyfans',
+        operation: 'earnings.chart',
+        method: 'POST',
         headers: {
           'User-Id': this.config.userId,
           'X-BC': this.generateAuthHeader(),
@@ -33,22 +38,27 @@ export class OnlyFansAPI {
           endDate,
           by: 'total',
         }),
+        cache: 'no-store',
+        timeoutMs: 10_000,
+        retry: { maxRetries: 1, retryMethods: ['POST'] },
       });
 
-      if (!response.ok) {
-        throw new Error(`OnlyFans API error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
       // Sum all earnings for the month
-      const totalEarnings = data.chart?.reduce((sum: number, day: any) => {
-        return sum + (day.amount || 0);
-      }, 0) || 0;
+      const totalEarnings =
+        data.chart?.reduce((sum: number, day: any) => sum + (day.amount || 0), 0) || 0;
 
       return totalEarnings;
     } catch (error) {
-      console.error('Failed to fetch OnlyFans earnings:', error);
+      if (isExternalServiceError(error)) {
+        throw new ExternalServiceError({
+          service: 'onlyfans',
+          code: error.code,
+          retryable: error.retryable,
+          status: error.status,
+          correlationId: error.correlationId,
+          message: 'OnlyFans earnings request failed',
+        });
+      }
       throw error;
     }
   }
@@ -58,28 +68,39 @@ export class OnlyFansAPI {
    */
   async getTransactions(startDate: Date, endDate: Date) {
     try {
-      const response = await fetch(`https://onlyfans.com/api2/v2/earnings/transactions`, {
-        method: 'GET',
-        headers: {
-          'User-Id': this.config.userId,
-          'X-BC': this.generateAuthHeader(),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-          limit: 100,
-          offset: 0,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`OnlyFans API error: ${response.statusText}`);
-      }
-
-      return await response.json();
+      return await externalFetchJson<any>(
+        'https://onlyfans.com/api2/v2/earnings/transactions',
+        {
+          service: 'onlyfans',
+          operation: 'earnings.transactions',
+          method: 'POST',
+          headers: {
+            'User-Id': this.config.userId,
+            'X-BC': this.generateAuthHeader(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            limit: 100,
+            offset: 0,
+          }),
+          cache: 'no-store',
+          timeoutMs: 10_000,
+          retry: { maxRetries: 1, retryMethods: ['POST'] },
+        }
+      );
     } catch (error) {
-      console.error('Failed to fetch OnlyFans transactions:', error);
+      if (isExternalServiceError(error)) {
+        throw new ExternalServiceError({
+          service: 'onlyfans',
+          code: error.code,
+          retryable: error.retryable,
+          status: error.status,
+          correlationId: error.correlationId,
+          message: 'OnlyFans transactions request failed',
+        });
+      }
       throw error;
     }
   }
@@ -102,40 +123,12 @@ export class OnlyFansAPI {
  * Decrypt API key stored in database
  */
 export function decryptApiKey(encryptedKey: string): string {
-  const algorithm = 'aes-256-gcm';
-  const key = Buffer.from(process.env.DATA_ENCRYPTION_KEY!, 'base64');
-  
-  // Parse the encrypted data
-  const parts = encryptedKey.split(':');
-  const iv = Buffer.from(parts[0], 'hex');
-  const authTag = Buffer.from(parts[1], 'hex');
-  const encrypted = parts[2];
-  
-  // Decrypt
-  const decipher = crypto.createDecipheriv(algorithm, key, iv);
-  decipher.setAuthTag(authTag);
-  
-  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  
-  return decrypted;
+  return decryptToken(encryptedKey);
 }
 
 /**
  * Encrypt API key for storage
  */
 export function encryptApiKey(apiKey: string): string {
-  const algorithm = 'aes-256-gcm';
-  const key = Buffer.from(process.env.DATA_ENCRYPTION_KEY!, 'base64');
-  const iv = crypto.randomBytes(16);
-  
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
-  
-  let encrypted = cipher.update(apiKey, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  
-  const authTag = cipher.getAuthTag();
-  
-  // Format: iv:authTag:encrypted
-  return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
+  return encryptToken(apiKey);
 }

@@ -3,21 +3,33 @@ export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
 /**
- * App Layout
+ * App Layout (Server Component)
  * 
- * PERFORMANCE OPTIMIZATION (Task 3.2):
- * Removed force-dynamic from layout to enable selective dynamic rendering per page.
- * This allows static pages to be cached while dynamic pages can opt-in to dynamic rendering.
+ * Pattern: Layout = Server Component, Providers = Client Component
+ * This allows viewport/metadata exports to work correctly.
  * 
- * Pages that need dynamic rendering should add:
- * * 
  * Requirements: 2.3, 2.4
  */
 
+import type { Viewport } from 'next';
 import Header from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
-import { PerformanceMonitorDashboard } from '@/components/dashboard/PerformanceMonitor';
+import { DashboardScrollLock } from '@/components/layout/DashboardScrollLock';
+import { MainScrollReset } from '@/components/layout/MainScrollReset';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import Providers from './providers';
+import '@shopify/polaris/build/esm/styles.css';
 import '@/styles/dashboard-shopify-tokens.css';
+import AssistantDrawer from '@/components/assistant/AssistantDrawer';
+
+// Mobile viewport configuration (Requirement 1)
+// viewport-fit=cover enables safe-area-inset-* CSS env variables
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  // Note: Don't use userScalable: false or maximumScale: 1 for accessibility
+};
 
 export default function AppLayout({
   children,
@@ -25,14 +37,19 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="huntaze-layout huntaze-dashboard-scope" data-dashboard="true">
-      <Header />
-      <Sidebar />
-      <main className="huntaze-main">
-        {children}
-      </main>
-      {/* Performance Monitor - Development Only */}
-      <PerformanceMonitorDashboard />
-    </div>
+    <Providers>
+      <ProtectedRoute requireOnboarding={false} redirectTo="/auth/login">
+        <DashboardScrollLock />
+        <div className="huntaze-layout huntaze-dashboard-scope" data-dashboard="true">
+          <Header />
+          <Sidebar />
+          <main className="huntaze-main min-w-0" role="main" id="main-content" tabIndex={-1}>
+            <MainScrollReset />
+            {children}
+          </main>
+          <AssistantDrawer />
+        </div>
+      </ProtectedRoute>
+    </Providers>
   );
 }

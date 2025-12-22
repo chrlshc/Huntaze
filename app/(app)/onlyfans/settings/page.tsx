@@ -1,46 +1,38 @@
 'use client';
 
 /**
- * OnlyFans Settings Page - Design System Refactored
- * Requirements: 3.5, 11.1, 11.2, 11.3
+ * OnlyFans Settings Page - Shopify Design Unification
+ * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5
+ * Feature: onlyfans-shopify-unification
  * 
- * Features:
- * - Uses Toggle component from design system (Requirement 11.1)
- * - Uses SettingsLayout components with proper proximity rules
- * - Visual separators between items (Requirement 11.2)
- * - Compact callout cards for account connection (Requirement 11.3)
- * - Design tokens applied throughout
+ * Unified with Shopify design system:
+ * - ShopifyPageLayout for consistent structure (Requirement 7.1)
+ * - ShopifyCard for organized sections (Requirement 7.1)
+ * - ShopifyBanner for connection status (Requirement 7.3)
+ * - ShopifyToggle for preferences (Requirement 7.4)
+ * - ShopifyButton for actions (Requirement 7.5)
+ * - ShopifyTextarea for form fields (Requirement 7.2)
  */
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Banner } from '@/components/ui/Banner';
-import { StatCard } from '@/components/ui/StatCard';
-import { 
-  SettingsSection, 
-  SettingsList, 
-  SettingsToggleItem,
-  SettingsCalloutCard 
-} from '@/components/ui/SettingsLayout';
+import { useMemo, useState, useEffect } from 'react';
+import { ShopifyPageLayout } from '@/components/layout/ShopifyPageLayout';
+import { ShopifyBanner } from '@/components/ui/shopify/ShopifyBanner';
+import { ShopifyButton } from '@/components/ui/shopify/ShopifyButton';
+import { ShopifyCard } from '@/components/ui/shopify/ShopifyCard';
+import { ShopifyEmptyState } from '@/components/ui/shopify/ShopifyEmptyState';
+import { ShopifyToggle } from '@/components/ui/shopify/ShopifyToggle';
+import { ShopifyTextarea } from '@/components/ui/shopify/ShopifyTextarea';
+import { TemplateCard } from '@/components/onlyfans/TemplateCard';
+import { RecommendationCard } from '@/components/onlyfans/RecommendationCard';
 import {
-  Settings,
-  Link as LinkIcon,
-  Unlink,
-  Bell,
-  Zap,
-  MessageSquare,
-  CreditCard,
-  CheckCircle,
-  AlertCircle,
   Loader2,
-  Save
+  Save,
 } from 'lucide-react';
-import { ContentPageErrorBoundary } from '@/components/dashboard/ContentPageErrorBoundary';
 import { usePerformanceMonitoring } from '@/hooks/usePerformanceMonitoring';
-import { Button } from "@/components/ui/button";
+import { SearchInput } from '@/components/ui/SearchInput';
+import { ENABLE_MOCK_DATA } from '@/lib/config/mock-data';
 
 interface ConnectionStatus {
   isConnected: boolean;
@@ -58,7 +50,6 @@ interface AIQuotaSettings {
   resetDate: Date;
 }
 
-
 interface NotificationSettings {
   newMessages: boolean;
   newFans: boolean;
@@ -74,6 +65,61 @@ interface AutomationSettings {
   welcomeMessageText: string;
   aiAssistance: boolean;
 }
+
+const MOCK_TEMPLATES = [
+  {
+    id: '1',
+    category: 'Welcome',
+    title: 'New Subscriber Welcome',
+    preview:
+      'Hey babe! 💕 Thanks so much for subscribing! I post exclusive content daily and love chatting with my fans. What kind of content would you like to see?',
+  },
+  {
+    id: '2',
+    category: 'PPV',
+    title: 'PPV Content Tease',
+    preview:
+      'Just shot something special for you 🔥 Check your DMs for an exclusive preview. This one is 🌶️🌶️🌶️',
+  },
+  {
+    id: '3',
+    category: 'Re-engagement',
+    title: 'Inactive Fan Check-in',
+    preview:
+      "Hey! I noticed you haven't been around lately. Missing you! 💙 I have some new content I think you'd love...",
+  },
+  {
+    id: '4',
+    category: 'Upsell',
+    title: 'Premium Tier Promotion',
+    preview:
+      'Want even more exclusive access? My VIP tier gets daily custom content, priority messaging, and special surprises 🎁',
+  },
+];
+
+const MOCK_RECOMMENDATIONS = [
+  {
+    id: '1',
+    insight: 'Response time is slower than average',
+    impact: 'Fans who get replies within 2 hours are 3x more likely to purchase PPV',
+    metric: '+47% conversion',
+    metricColor: 'success' as const,
+  },
+  {
+    id: '2',
+    insight: 'Low engagement on recent posts',
+    impact: 'Posts with questions get 2.5x more comments and drive more DM conversations',
+    metric: '+156% engagement',
+    metricColor: 'info' as const,
+  },
+  {
+    id: '3',
+    insight: 'PPV pricing below optimal range',
+    impact: 'Similar creators charge $15-25 for this content type with higher conversion',
+    metric: '+$340/month',
+    metricColor: 'success' as const,
+  },
+];
 
 export default function OnlyFansSettingsPage() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus | null>(null);
@@ -96,48 +142,134 @@ export default function OnlyFansSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const quotaPlan = quotaSettings?.plan ?? 'starter';
+  const quotaPlanLabel =
+    typeof quotaPlan === 'string' && quotaPlan.length > 0
+      ? quotaPlan.charAt(0).toUpperCase() + quotaPlan.slice(1)
+      : 'Starter';
 
-  const { trackAPIRequest } = usePerformanceMonitoring({
-    pageName: 'OnlyFans Settings',
-    trackInteractions: true,
-  });
+  usePerformanceMonitoring({ componentName: 'onlyfans-settings' });
+
+  const templates = ENABLE_MOCK_DATA ? MOCK_TEMPLATES : [];
+  const recommendations = ENABLE_MOCK_DATA ? MOCK_RECOMMENDATIONS : [];
+
+  const filteredTemplates = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return templates;
+
+    return templates.filter((template) =>
+      [template.category, template.title, template.preview].some((field) =>
+        field.toLowerCase().includes(query),
+      ),
+    );
+  }, [templates, searchQuery]);
+
+  const filteredRecommendations = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return recommendations;
+
+    return recommendations.filter((recommendation) =>
+      [recommendation.insight, recommendation.impact, recommendation.metric].some((field) =>
+        field.toLowerCase().includes(query),
+      ),
+    );
+  }, [recommendations, searchQuery]);
+
+  // Template handlers
+  const handleEditTemplate = (id: string) => {
+    void id;
+    // TODO: Implement edit functionality
+  };
+
+  const handleDuplicateTemplate = (id: string) => {
+    void id;
+    // TODO: Implement duplicate functionality
+  };
+
+  const handleDeleteTemplate = (id: string) => {
+    void id;
+    // TODO: Implement delete functionality
+  };
+
+  // Recommendation handlers
+  const handleFixNow = (id: string) => {
+    void id;
+    // TODO: Implement fix functionality
+  };
+
+  const handleDismissRecommendation = (id: string) => {
+    void id;
+    // TODO: Implement dismiss functionality
+  };
 
   useEffect(() => {
     loadSettings();
   }, []);
 
+  const normalizeQuotaSettings = (raw: unknown): AIQuotaSettings => {
+    const defaults = getDefaultQuota();
+    if (!raw || typeof raw !== 'object') return defaults;
+
+    const maybe = raw as Partial<Record<keyof AIQuotaSettings, unknown>>;
+    const plan =
+      maybe.plan === 'starter' || maybe.plan === 'pro' || maybe.plan === 'business'
+        ? maybe.plan
+        : defaults.plan;
+
+    const toNumber = (value: unknown, fallback: number) =>
+      typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+
+    const resetDateValue = maybe.resetDate;
+    const resetDate =
+      resetDateValue instanceof Date
+        ? resetDateValue
+        : typeof resetDateValue === 'string' || typeof resetDateValue === 'number'
+          ? new Date(resetDateValue)
+          : defaults.resetDate;
+
+    return {
+      plan,
+      limit: toNumber(maybe.limit, defaults.limit),
+      spent: toNumber(maybe.spent, defaults.spent),
+      remaining: toNumber(maybe.remaining, defaults.remaining),
+      percentUsed: toNumber(maybe.percentUsed, defaults.percentUsed),
+      resetDate,
+    };
+  };
+
   const loadSettings = async () => {
     try {
-      await trackAPIRequest('/api/onlyfans/connection', 'GET', async () => {
-        const response = await fetch('/api/onlyfans/connection');
-        if (response.ok) {
-          const data = await response.json();
-          setConnectionStatus(data.connection || getDefaultConnection());
-        } else {
-          setConnectionStatus(getDefaultConnection());
-        }
-      });
+      setLoadError(null);
+      const response = await fetch('/api/onlyfans/connection');
+      if (response.ok) {
+        const data = await response.json();
+        setConnectionStatus(data.connection || getDefaultConnection());
+      } else {
+        setConnectionStatus(getDefaultConnection());
+      }
 
-      await trackAPIRequest('/api/ai/quota', 'GET', async () => {
-        const quotaResponse = await fetch('/api/ai/quota');
-        if (quotaResponse.ok) {
-          const quotaData = await quotaResponse.json();
-          setQuotaSettings(quotaData.quota || getDefaultQuota());
-        } else {
-          setQuotaSettings(getDefaultQuota());
-        }
-      });
+      const quotaResponse = await fetch('/api/ai/quota');
+      if (quotaResponse.ok) {
+        const quotaData = await quotaResponse.json();
+        setQuotaSettings(normalizeQuotaSettings(quotaData.quota));
+      } else {
+        setQuotaSettings(getDefaultQuota());
+      }
 
-      await trackAPIRequest('/api/user/preferences', 'GET', async () => {
-        const prefsResponse = await fetch('/api/user/preferences');
-        if (prefsResponse.ok) {
-          const prefsData = await prefsResponse.json();
-          if (prefsData.notifications) setNotifications(prefsData.notifications);
-          if (prefsData.automation) setAutomation(prefsData.automation);
+      const prefsResponse = await fetch('/api/user/preferences');
+      if (prefsResponse.ok) {
+        const prefsData = await prefsResponse.json();
+        if (prefsData.notifications && typeof prefsData.notifications === 'object') {
+          setNotifications((current) => ({ ...current, ...prefsData.notifications }));
         }
-      });
+        if (prefsData.automation && typeof prefsData.automation === 'object') {
+          setAutomation((current) => ({ ...current, ...prefsData.automation }));
+        }
+      }
     } catch (error) {
-      console.error('Failed to load settings:', error);
+      setLoadError(error instanceof Error ? error.message : 'Failed to load settings');
       setConnectionStatus(getDefaultConnection());
       setQuotaSettings(getDefaultQuota());
     } finally {
@@ -161,19 +293,16 @@ export default function OnlyFansSettingsPage() {
     resetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
 
-
   const connectOnlyFans = async () => {
     setConnecting(true);
     try {
-      await trackAPIRequest('/api/onlyfans/connect', 'POST', async () => {
-        const response = await fetch('/api/onlyfans/connect', { method: 'POST' });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.authUrl) {
-            window.location.href = data.authUrl;
-          }
+      const response = await fetch('/api/onlyfans/connect', { method: 'POST' });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.authUrl) {
+          window.location.href = data.authUrl;
         }
-      });
+      }
     } catch (error) {
       console.error('Failed to connect OnlyFans:', error);
     } finally {
@@ -184,12 +313,10 @@ export default function OnlyFansSettingsPage() {
   const disconnectOnlyFans = async () => {
     if (!confirm('Are you sure you want to disconnect your OnlyFans account?')) return;
     try {
-      await trackAPIRequest('/api/onlyfans/disconnect', 'POST', async () => {
-        const response = await fetch('/api/onlyfans/disconnect', { method: 'POST' });
-        if (response.ok) {
-          setConnectionStatus(getDefaultConnection());
-        }
-      });
+      const response = await fetch('/api/onlyfans/disconnect', { method: 'POST' });
+      if (response.ok) {
+        setConnectionStatus(getDefaultConnection());
+      }
     } catch (error) {
       console.error('Failed to disconnect OnlyFans:', error);
     }
@@ -199,17 +326,15 @@ export default function OnlyFansSettingsPage() {
     setSaving(true);
     setSaveSuccess(false);
     try {
-      await trackAPIRequest('/api/user/preferences', 'PUT', async () => {
-        const response = await fetch('/api/user/preferences', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ notifications, automation }),
-        });
-        if (response.ok) {
-          setSaveSuccess(true);
-          setTimeout(() => setSaveSuccess(false), 3000);
-        }
+      const response = await fetch('/api/user/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notifications, automation }),
       });
+      if (response.ok) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      }
     } catch (error) {
       console.error('Failed to save settings:', error);
     } finally {
@@ -217,296 +342,486 @@ export default function OnlyFansSettingsPage() {
     }
   };
 
-  const getQuotaStatus = (percentUsed: number): 'success' | 'warning' | 'critical' => {
-    if (percentUsed >= 95) return 'critical';
-    if (percentUsed >= 80) return 'warning';
-    return 'success';
-  };
-
   if (loading) {
     return (
-      <ContentPageErrorBoundary pageName="OnlyFans Settings">
+      <ShopifyPageLayout title="OnlyFans Settings" subtitle="Manage your OnlyFans connection and preferences">
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <div 
-              className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4"
-              style={{ borderColor: 'var(--accent-primary)' }}
-            />
-            <p style={{ color: 'var(--text-secondary)' }}>Loading settings...</p>
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-[#6b7177]" />
+            <p className="text-sm text-[#6b7177]">Loading settings...</p>
           </div>
         </div>
-      </ContentPageErrorBoundary>
+      </ShopifyPageLayout>
     );
   }
 
-
   return (
-    <ContentPageErrorBoundary pageName="OnlyFans Settings">
-      <div className="max-w-4xl mx-auto" style={{ padding: 'var(--space-6)' }}>
-        {/* Header */}
-        <div style={{ marginBottom: 'var(--space-8)' }}>
-          <h1 
-            className="text-3xl font-bold"
-            style={{ color: 'var(--text-primary)', marginBottom: 'var(--space-2)' }}
-          >
-            OnlyFans Settings
-          </h1>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Manage your OnlyFans connection and preferences
+    <ShopifyPageLayout 
+      title="OnlyFans Settings" 
+      subtitle="Manage your OnlyFans connection and preferences"
+    >
+      {/* Search Bar - positioned at top */}
+      <div style={{ marginBottom: 'var(--of-card-gap)' }}>
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search settings, templates, or recommendations..."
+          ariaLabel="Search settings, templates, or recommendations"
+          showClearButton
+          className="max-w-[400px]"
+        />
+        {searchQuery && (
+          <p style={{ 
+            fontSize: '12px', 
+            color: '#6B7280', 
+            marginTop: '4px',
+            marginLeft: '4px'
+          }}>
+            Searching for "{searchQuery}"...
           </p>
+        )}
+      </div>
+
+      {loadError && (
+        <div style={{ marginBottom: 'var(--of-card-gap)' }}>
+          <ShopifyBanner
+            status="critical"
+            title="Unable to load settings"
+            description={loadError}
+            action={{
+              label: 'Retry',
+              onClick: () => {
+                setLoading(true);
+                void loadSettings();
+              },
+            }}
+          />
+        </div>
+      )}
+      {/* Connection Settings - SaaS Premium: relief + shadow */}
+      <div className="of-settings-card">
+        <div className="of-card-header">
+          <div>
+            <span className="of-category-pill">Account</span>
+            <h2 style={{ fontSize: 'var(--of-text-section)', fontWeight: 'var(--of-font-semibold)' }}>
+              Account Connection
+            </h2>
+            <p style={{ fontSize: 'var(--of-text-body)', color: '#6B7280', marginTop: '4px' }}>
+              Connect your OnlyFans account to enable AI-powered features
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-          {/* Connection Settings - Using SettingsCalloutCard */}
-          <SettingsSection
-            title="Account Connection"
-            description="Connect your OnlyFans account to enable AI-powered features"
-          >
-            {connectionStatus?.isConnected ? (
-              <Card style={{ padding: 'var(--space-4)' }}>
-                <Banner
-                  status="success"
-                  title="Connected"
-                  description={connectionStatus.username ? `@${connectionStatus.username}` : 'Your account is connected'}
-                  icon={<CheckCircle className="w-5 h-5" />}
-                  action={{
-                    label: 'Disconnect',
-                    onClick: disconnectOnlyFans
-                  }}
-                />
-                {connectionStatus.lastSync && (
-                  <p 
-                    className="text-sm mt-3"
-                    style={{ color: 'var(--text-secondary)' }}
-                  >
-                    Last synced: {new Date(connectionStatus.lastSync).toLocaleString()}
-                  </p>
-                )}
-              </Card>
-            ) : (
-              <SettingsCalloutCard
-                title="Connect OnlyFans"
-                description="Connect your OnlyFans account to enable AI-powered features"
-                actionLabel={connecting ? 'Connecting...' : 'Connect Account'}
-                onAction={connectOnlyFans}
-                icon={<LinkIcon className="w-6 h-6" />}
-                variant="warning"
+          {connectionStatus?.isConnected ? (
+            <>
+              <ShopifyBanner
+                status="success"
+                title="Connected"
+                description={connectionStatus.username ? `@${connectionStatus.username}` : 'Your account is connected'}
               />
-            )}
-          </SettingsSection>
+              <div style={{ marginTop: 'var(--of-space-4)' }}>
+                <ShopifyButton 
+                  variant="secondary" 
+                  onClick={disconnectOnlyFans}
+                >
+                  Disconnect
+                </ShopifyButton>
+              </div>
+              {connectionStatus.lastSync && (
+                <p className="of-text-sm of-text-secondary" style={{ marginTop: 'var(--of-space-4)' }}>
+                  Last synced: {new Date(connectionStatus.lastSync).toLocaleString()}
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <ShopifyBanner
+                status="warning"
+                title="Not Connected"
+                description="Connect your OnlyFans account to enable AI-powered features"
+              />
+              <div style={{ marginTop: 'var(--of-space-4)' }}>
+                <ShopifyButton 
+                  variant="secondary" 
+                  onClick={connectOnlyFans}
+                  loading={connecting}
+                >
+                  {connecting ? 'Connecting...' : 'Connect Account'}
+                </ShopifyButton>
+              </div>
+            </>
+          )}
+      </div>
 
-          {/* AI Quota Settings - Using StatCard */}
-          {quotaSettings && (
-            <SettingsSection
-              title="AI Quota & Billing"
-              description="Monitor your AI usage and manage your plan"
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
-                <StatCard
-                  label="Current Plan"
-                  value={quotaSettings.plan ? quotaSettings.plan.charAt(0).toUpperCase() + quotaSettings.plan.slice(1) : 'Starter'}
-                />
-                <StatCard
-                  label="Usage"
-                  value={`${quotaSettings.percentUsed.toFixed(0)}%`}
-                  trend={{
-                    value: `${quotaSettings.percentUsed.toFixed(0)}%`,
-                    direction: quotaSettings.percentUsed > 80 ? 'up' : 'neutral'
+      {/* AI Quota Settings - SaaS Premium: relief + shadow */}
+      {quotaSettings && (
+        <div className="of-settings-card">
+          <div className="of-card-header">
+            <div>
+              <span className="of-category-pill">Billing</span>
+              <h2 style={{ fontSize: 'var(--of-text-section)', fontWeight: 'var(--of-font-semibold)' }}>
+                AI Quota & Billing
+              </h2>
+              <p style={{ fontSize: 'var(--of-text-body)', color: '#6B7280', marginTop: '4px' }}>
+                Monitor your AI usage and manage your plan
+              </p>
+            </div>
+          </div>
+
+            {/* Quota Stats */}
+	            <div className="grid grid-cols-3" style={{ gap: 'var(--of-space-4)', marginBottom: 'var(--of-space-4)' }}>
+              <div>
+                <p className="of-text-xs of-text-secondary" style={{ marginBottom: 'var(--of-space-1)' }}>Current Plan</p>
+                <p className="of-text-lg of-text-primary font-semibold">
+                  {quotaPlanLabel}
+                </p>
+              </div>
+              <div>
+                <p className="of-text-xs of-text-secondary" style={{ marginBottom: 'var(--of-space-1)' }}>Usage</p>
+                <p className="of-text-lg of-text-primary font-semibold">
+                  {quotaSettings.percentUsed.toFixed(0)}%
+                </p>
+              </div>
+              <div>
+                <p className="of-text-xs of-text-secondary" style={{ marginBottom: 'var(--of-space-1)' }}>Remaining</p>
+                <p className="of-text-lg of-text-primary font-semibold">
+                  ${quotaSettings.remaining.toFixed(2)}
+                </p>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="flex flex-col" style={{ padding: 'var(--of-space-2) 0', gap: 'var(--of-space-2)' }}>
+              <div className="flex justify-between items-center" style={{ marginBottom: 'var(--of-space-2)' }}>
+                <span className="of-text-sm of-text-secondary">
+                  ${quotaSettings.spent.toFixed(2)} used of ${quotaSettings.limit.toFixed(2)}
+                </span>
+                <span className={`of-text-sm font-medium ${
+                  quotaSettings.percentUsed >= 95 ? 'text-[#d72c0d]' :
+                  quotaSettings.percentUsed >= 80 ? 'text-[#b98900]' :
+                  'text-[#008060]'
+                }`}>
+                  {quotaSettings.percentUsed.toFixed(0)}%
+                </span>
+              </div>
+              <div className="w-full rounded-full h-2 bg-[#e1e3e5]">
+                <div
+                  className="h-2 rounded-full transition-all duration-300"
+                  style={{ 
+                    width: `${Math.min(quotaSettings.percentUsed, 100)}%`,
+                    backgroundColor: quotaSettings.percentUsed >= 95 
+                      ? '#d72c0d' 
+                      : quotaSettings.percentUsed >= 80 
+                      ? '#b98900' 
+                      : '#008060'
                   }}
-                />
-                <StatCard
-                  label="Remaining"
-                  value={`$${quotaSettings.remaining.toFixed(2)}`}
                 />
               </div>
-              
-              {/* Progress bar */}
-              <Card style={{ padding: 'var(--space-4)' }}>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    ${quotaSettings.spent.toFixed(2)} used of ${quotaSettings.limit.toFixed(2)}
-                  </span>
-                  <Badge status={getQuotaStatus(quotaSettings.percentUsed)}>
-                    {quotaSettings.percentUsed.toFixed(0)}%
-                  </Badge>
-                </div>
-                <div 
-                  className="w-full rounded-full h-3"
-                  style={{ backgroundColor: 'var(--bg-tertiary)' }}
-                >
-                  <div
-                    className="h-3 rounded-full transition-all"
-                    style={{ 
-                      width: `${Math.min(quotaSettings.percentUsed, 100)}%`,
-                      backgroundColor: quotaSettings.percentUsed >= 95 
-                        ? 'var(--status-critical)' 
-                        : quotaSettings.percentUsed >= 80 
-                        ? 'var(--status-warning)' 
-                        : 'var(--status-success)'
-                    }}
-                  />
-                </div>
-                <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
-                  Resets on {new Date(quotaSettings.resetDate).toLocaleDateString()}
-                </p>
-              </Card>
-            </SettingsSection>
-          )}
+              <p className="of-text-sm of-text-secondary">
+                Resets on {new Date(quotaSettings.resetDate).toLocaleDateString()}
+              </p>
+            </div>
+        </div>
+      )}
 
+      {/* Notification Settings - SaaS Premium: relief + shadow */}
+      <div className="of-settings-card">
+        <div className="of-card-header">
+          <div>
+            <span className="of-category-pill">Preferences</span>
+            <h2 style={{ fontSize: 'var(--of-text-section)', fontWeight: 'var(--of-font-semibold)' }}>
+              Notifications
+            </h2>
+            <p style={{ fontSize: 'var(--of-text-body)', color: '#6B7280', marginTop: '4px' }}>
+              Choose what notifications you want to receive
+            </p>
+          </div>
+        </div>
 
-          {/* Notification Settings - Using SettingsList with Toggle */}
-          <SettingsSection
-            title="Notifications"
-            description="Choose what notifications you want to receive"
-          >
-            <SettingsList separatorStyle="border" spacing="default">
-              <SettingsToggleItem
+          <div style={{ gap: 'var(--of-gap-md)' }} className="flex flex-col">
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="newMessages"
                 label="New Messages"
                 description="Get notified when you receive new messages"
                 checked={notifications.newMessages}
                 onChange={(checked) => setNotifications({ ...notifications, newMessages: checked })}
               />
-              <SettingsToggleItem
+            </div>
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="newFans"
                 label="New Fans"
                 description="Get notified when you get new subscribers"
                 checked={notifications.newFans}
                 onChange={(checked) => setNotifications({ ...notifications, newFans: checked })}
               />
-              <SettingsToggleItem
+            </div>
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="ppvPurchases"
                 label="PPV Purchases"
                 description="Get notified when someone purchases PPV content"
                 checked={notifications.ppvPurchases}
                 onChange={(checked) => setNotifications({ ...notifications, ppvPurchases: checked })}
               />
-              <SettingsToggleItem
+            </div>
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="quotaWarnings"
                 label="Quota Warnings"
                 description="Get notified when approaching AI quota limits"
                 checked={notifications.quotaWarnings}
                 onChange={(checked) => setNotifications({ ...notifications, quotaWarnings: checked })}
               />
-              <SettingsToggleItem
+            </div>
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="weeklyReports"
                 label="Weekly Reports"
                 description="Receive weekly performance reports"
                 checked={notifications.weeklyReports}
                 onChange={(checked) => setNotifications({ ...notifications, weeklyReports: checked })}
               />
-            </SettingsList>
-          </SettingsSection>
+            </div>
+          </div>
+      </div>
 
-          {/* Automation Settings - Using SettingsList with Toggle */}
-          <SettingsSection
-            title="Automation"
-            description="Configure automated responses and AI assistance"
-          >
-            <SettingsList separatorStyle="border" spacing="default">
-              <SettingsToggleItem
+      {/* ========================================
+          SECTION A: AUTOMATIONS
+          ======================================== */}
+      <div style={{ marginBottom: 'var(--of-section-gap)' }}>
+        <h2 style={{ 
+          fontSize: 'var(--of-text-section)', 
+          fontWeight: 'var(--of-font-semibold)',
+          marginBottom: 'var(--of-card-gap)'
+        }}>
+          Automations
+        </h2>
+
+        {/* Automation Settings - SaaS Premium: relief + shadow + accent */}
+        <div className="of-settings-card of-settings-card--accent">
+          <div className="of-card-header">
+            <div>
+              <span className="of-category-pill" data-tone="ai">AI</span>
+              <h3 style={{ fontSize: 'var(--of-text-body)', fontWeight: 'var(--of-font-semibold)' }}>
+                Auto-Reply Configuration
+              </h3>
+              <p style={{ fontSize: 'var(--of-text-body)', color: '#6B7280', marginTop: '4px' }}>
+                Configure automated responses and AI assistance
+              </p>
+            </div>
+          </div>
+
+          <div style={{ gap: 'var(--of-gap-md)' }} className="flex flex-col">
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="aiAssistance"
                 label="AI Assistance"
                 description="Enable AI-powered message suggestions"
                 checked={automation.aiAssistance}
                 onChange={(checked) => setAutomation({ ...automation, aiAssistance: checked })}
               />
-              <SettingsToggleItem
+            </div>
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="welcomeMessage"
                 label="Welcome Message"
                 description="Automatically send a welcome message to new subscribers"
                 checked={automation.welcomeMessage}
                 onChange={(checked) => setAutomation({ ...automation, welcomeMessage: checked })}
               />
-              <SettingsToggleItem
+            </div>
+            <div style={{ gap: 'var(--of-gap-md)' }} className="flex items-flex-start">
+              <ShopifyToggle
                 id="autoReply"
                 label="Auto Reply"
                 description="Automatically reply when you're away"
                 checked={automation.autoReply}
                 onChange={(checked) => setAutomation({ ...automation, autoReply: checked })}
               />
-            </SettingsList>
-
-            {/* Welcome Message Text Area */}
-            {automation.welcomeMessage && (
-              <Card style={{ marginTop: 'var(--space-4)', padding: 'var(--space-4)' }}>
-                <label 
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  Welcome Message Text
-                </label>
-                <textarea
-                  value={automation.welcomeMessageText}
-                  onChange={(e) => setAutomation({ ...automation, welcomeMessageText: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 rounded-lg"
-                  style={{
-                    backgroundColor: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-default)',
-                    color: 'var(--text-primary)',
-                    borderRadius: 'var(--radius-md)'
-                  }}
-                  placeholder="Enter your welcome message..."
-                />
-              </Card>
-            )}
-
-            {/* Auto Reply Text Area */}
-            {automation.autoReply && (
-              <Card style={{ marginTop: 'var(--space-4)', padding: 'var(--space-4)' }}>
-                <label 
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  Auto Reply Message
-                </label>
-                <textarea
-                  value={automation.autoReplyMessage}
-                  onChange={(e) => setAutomation({ ...automation, autoReplyMessage: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 rounded-lg"
-                  style={{
-                    backgroundColor: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-default)',
-                    color: 'var(--text-primary)',
-                    borderRadius: 'var(--radius-md)'
-                  }}
-                  placeholder="Enter your auto-reply message..."
-                />
-              </Card>
-            )}
-          </SettingsSection>
-
-
-          {/* Save Button */}
-          <div 
-            className="flex items-center justify-end"
-            style={{ gap: 'var(--space-4)', paddingTop: 'var(--space-4)' }}
-          >
-            {saveSuccess && (
-              <Banner
-                status="success"
-                title="Settings saved successfully!"
-                icon={<CheckCircle className="w-5 h-5" />}
-              />
-            )}
-            <Button 
-              variant="primary" 
-              onClick={saveSettings} 
-              disabled={saving}
-              style={{ minHeight: '44px' }}
-            >
-              {saving ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              ) : (
-                <Save className="w-5 h-5 mr-2" />
-              )}
-              Save Settings
-            </Button>
+            </div>
           </div>
+
+          {/* Welcome Message Text Area */}
+          {automation.welcomeMessage && (
+            <div
+              style={{
+                marginTop: 'var(--of-space-4)',
+                paddingTop: 'var(--of-space-4)',
+                borderTop: '1px solid var(--border-default)',
+              }}
+            >
+              <ShopifyTextarea
+                label="Welcome Message Text"
+                value={automation.welcomeMessageText}
+                onChange={(e) => setAutomation({ ...automation, welcomeMessageText: e.target.value })}
+                rows={3}
+                placeholder="Enter your welcome message..."
+              />
+            </div>
+          )}
+
+          {/* Auto Reply Text Area */}
+          {automation.autoReply && (
+            <div
+              style={{
+                marginTop: 'var(--of-space-4)',
+                paddingTop: 'var(--of-space-4)',
+                borderTop: '1px solid var(--border-default)',
+              }}
+            >
+              <ShopifyTextarea
+                label="Auto Reply Message"
+                value={automation.autoReplyMessage}
+                onChange={(e) => setAutomation({ ...automation, autoReplyMessage: e.target.value })}
+                rows={3}
+                placeholder="Enter your auto-reply message..."
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Automation Rules Table - Placeholder for now */}
+        <div className="of-settings-card" style={{ marginTop: 'var(--of-card-gap)' }}>
+          <div className="of-card-header">
+            <div>
+              <h3 style={{ fontSize: 'var(--of-text-body)', fontWeight: 'var(--of-font-semibold)' }}>
+                Automation Rules
+              </h3>
+              <p style={{ fontSize: 'var(--of-text-body)', color: '#6B7280', marginTop: '4px' }}>
+                Manage your automated messaging rules
+              </p>
+            </div>
+          </div>
+          <p style={{ fontSize: 'var(--of-text-body)', color: '#6B7280', padding: 'var(--of-space-4)' }}>
+            Automation rules table will be implemented in Phase 2
+          </p>
         </div>
       </div>
-    </ContentPageErrorBoundary>
+
+      {/* ========================================
+          SECTION B: TEMPLATES
+          ======================================== */}
+      <div style={{ marginBottom: 'var(--of-section-gap)' }}>
+        <h2 style={{ 
+          fontSize: 'var(--of-text-section)', 
+          fontWeight: 'var(--of-font-semibold)',
+          marginBottom: 'var(--of-card-gap)'
+        }}>
+          Templates
+        </h2>
+
+        {/* Template Cards Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: 'var(--of-card-gap)',
+          }}
+        >
+          {filteredTemplates.length > 0 ? (
+            filteredTemplates.map((template) => (
+              <TemplateCard
+                key={template.id}
+                id={template.id}
+                category={template.category}
+                title={template.title}
+                preview={template.preview}
+                onEdit={handleEditTemplate}
+                onDuplicate={handleDuplicateTemplate}
+                onDelete={handleDeleteTemplate}
+              />
+            ))
+          ) : (
+            <div style={{ gridColumn: '1 / -1' }}>
+              {searchQuery ? (
+                <div
+                  style={{
+                    padding: 'var(--of-space-4)',
+                    color: '#6B7280',
+                    fontSize: '14px',
+                  }}
+                >
+                  No templates match "{searchQuery}".
+                </div>
+              ) : (
+                <ShopifyEmptyState
+                  title="No templates yet"
+                  description="Templates will appear here once this feature is enabled for your account."
+                  variant="compact"
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ========================================
+          SECTION C: AI RECOMMENDATIONS
+          ======================================== */}
+      <div style={{ marginBottom: 'var(--of-section-gap)' }}>
+        <h2 style={{ 
+          fontSize: 'var(--of-text-section)', 
+          fontWeight: 'var(--of-font-semibold)',
+          marginBottom: 'var(--of-card-gap)'
+        }}>
+          AI Recommendations
+        </h2>
+
+        <ShopifyCard padding="none" className="overflow-hidden">
+          <div className="divide-y divide-[var(--border-default)]">
+            {filteredRecommendations.length > 0 ? (
+              filteredRecommendations.map((recommendation) => (
+                <RecommendationCard
+                  key={recommendation.id}
+                  id={recommendation.id}
+                  insight={recommendation.insight}
+                  impact={recommendation.impact}
+                  metric={recommendation.metric}
+                  metricColor={recommendation.metricColor}
+                  onFixNow={handleFixNow}
+                  onDismiss={handleDismissRecommendation}
+                />
+              ))
+            ) : (
+              <div>
+                {searchQuery ? (
+                  <div style={{ padding: 'var(--of-space-4)', color: '#6B7280', fontSize: '14px' }}>
+                    No recommendations match "{searchQuery}".
+                  </div>
+                ) : (
+                  <div style={{ padding: 'var(--of-space-4)' }}>
+                    <ShopifyEmptyState
+                      title="No recommendations yet"
+                      description="Recommendations will show up once Huntaze has enough data to analyze your performance."
+                      variant="compact"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </ShopifyCard>
+      </div>
+
+      {/* Save Button */}
+      <div className="flex items-center justify-end gap-4">
+        {saveSuccess && (
+          <ShopifyBanner
+            status="success"
+            title="Settings saved successfully!"
+          />
+        )}
+        <ShopifyButton 
+          variant="primary" 
+          onClick={saveSettings} 
+          loading={saving}
+          icon={<Save className="w-4 h-4" />}
+        >
+          Save Settings
+        </ShopifyButton>
+      </div>
+    </ShopifyPageLayout>
   );
 }

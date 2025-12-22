@@ -1,16 +1,27 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { MobileSidebarProvider } from './MobileSidebarContext';
 import { MainSidebar } from './MainSidebar';
 import { TopHeader } from './TopHeader';
+import { GlobalThemeProvider } from './GlobalThemeProvider';
 
 interface AppShellProps {
   children: ReactNode;
 }
 
 export function AppShell({ children }: AppShellProps) {
+  const pathname = usePathname();
+  const mainRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
   return (
+    <GlobalThemeProvider>
     <MobileSidebarProvider>
       {/* Skip to main content link for keyboard navigation */}
       <a
@@ -41,6 +52,7 @@ export function AppShell({ children }: AppShellProps) {
               padding: 'var(--spacing-8) var(--spacing-6)'
             }}
             tabIndex={-1}
+            ref={mainRef}
           >
             {children}
           </main>
@@ -68,5 +80,6 @@ export function AppShell({ children }: AppShellProps) {
         }
       `}</style>
     </MobileSidebarProvider>
+    </GlobalThemeProvider>
   );
 }

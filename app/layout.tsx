@@ -9,7 +9,7 @@ import "@/styles/skeleton-animations.css"; // Phase 7: Enhanced Loading States
 import "@/components/accessibility/skip-link.css"; // Phase 8: Accessibility
 import { NextAuthProvider } from "@/components/auth/NextAuthProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { SkipLink } from "@/components/accessibility/SkipLink";
+import { PolarisProvider } from "@/components/providers/PolarisProvider";
 import "@/lib/config/chartConfig"; // Register Chart.js components
 
 
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   icons: {
     icon: [
-      { url: "/huntaze-favicon.png", type: "image/png" },
+      { url: "/logos/huntaze-vertical.svg", type: "image/svg+xml" },
       { url: "/favicon.ico" }
     ],
     apple: "/apple-touch-icon.png",
@@ -59,19 +59,24 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="var(--accent-info)" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
-      <body className="antialiased" suppressHydrationWarning>
-        <SkipLink />
+      <body
+        className="min-h-screen antialiased"
+        style={{ backgroundColor: '#F1F2F4' }}
+        suppressHydrationWarning
+      >
         <ThemeProvider>
-          <NextAuthProvider>
-            <main id="main-content" className="min-h-screen" role="main">
-              {children}
-            </main>
-          </NextAuthProvider>
+          <PolarisProvider>
+            <NextAuthProvider>
+              <div className="app-wrapper flex min-h-screen flex-col">
+                {children}
+              </div>
+            </NextAuthProvider>
+          </PolarisProvider>
         </ThemeProvider>
       </body>
     </html>

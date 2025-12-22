@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { templatesRepository } from '@/lib/db/repositories/templatesRepository';
+import { getServerSession } from '@/lib/auth';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: templateId } = await params;
-    const userId = request.headers.get('x-user-id');
+    const session = await getServerSession();
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json(
         { error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } },

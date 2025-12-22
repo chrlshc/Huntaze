@@ -1,0 +1,245 @@
+/**
+ * DashboardEmptyState Component Styles
+ * 
+ * Implements the design specification for empty states used in
+ * Smart Messages, Fans, and PPV Content dashboard views.
+ */
+
+.dashboard-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: var(--dashboard-empty-max-width);
+  margin: 0 auto;
+  padding: var(--dashboard-empty-padding);
+  background: var(--dashboard-card-bg);
+  border: 1px solid var(--dashboard-card-border);
+  border-radius: var(--dashboard-empty-border-radius);
+}
+
+/* Icon styling */
+.dashboard-empty-state__icon {
+  width: var(--dashboard-icon-size);
+  height: var(--dashboard-icon-size);
+  margin-bottom: var(--dashboard-gap-lg);
+  color: var(--dashboard-icon-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-empty-state__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Title styling */
+.dashboard-empty-state__title {
+  font-size: var(--dashboard-empty-title-size);
+  font-weight: var(--dashboard-empty-title-weight);
+  color: var(--dashboard-empty-title-color);
+  margin-bottom: var(--dashboard-gap-sm);
+  line-height: 1.3;
+}
+
+/* Description styling */
+.dashboard-empty-state__description {
+  font-size: 14px;
+  color: var(--dashboard-description-color);
+  line-height: 1.5;
+  margin-bottom: var(--dashboard-gap-lg);
+}
+
+/* Benefits list */
+.dashboard-empty-state__benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--dashboard-gap-xl) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dashboard-gap-sm);
+  text-align: left;
+  width: 100%;
+  max-width: 400px;
+}
+
+.dashboard-empty-state__benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--dashboard-gap-sm);
+  font-size: var(--dashboard-empty-benefits-size);
+  color: var(--dashboard-description-color);
+  line-height: 1.5;
+}
+
+.dashboard-empty-state__benefit::before {
+  content: '•';
+  color: var(--dashboard-brand-primary);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Actions container */
+.dashboard-empty-state__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--dashboard-gap-md);
+  width: 100%;
+}
+
+/* CTA button */
+.dashboard-empty-state__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dashboard-gap-sm);
+  padding: var(--dashboard-cta-padding);
+  background: var(--dashboard-cta-bg);
+  color: var(--dashboard-cta-color);
+  border: none;
+  border-radius: var(--dashboard-cta-radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--dashboard-transition);
+}
+
+.dashboard-empty-state__cta:hover {
+  background: var(--dashboard-cta-hover-bg);
+  transform: translateY(-1px);
+  box-shadow: var(--dashboard-cta-hover-shadow);
+}
+
+.dashboard-empty-state__cta:active {
+  transform: scale(0.98);
+}
+
+/* Keyboard focus indicator */
+.dashboard-empty-state__cta:focus {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+}
+
+.dashboard-empty-state__cta:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.dashboard-empty-state__cta:focus-visible {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+}
+
+/* Keyboard focus indicator */
+.dashboard-empty-state__cta:focus-visible {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+}
+
+.dashboard-empty-state__cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-empty-state__cta-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Secondary link */
+.dashboard-empty-state__secondary-link {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--dashboard-brand-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: var(--dashboard-transition);
+  text-decoration: none;
+}
+
+.dashboard-empty-state__secondary-link:hover {
+  color: var(--dashboard-cta-hover-bg);
+  text-decoration: underline;
+}
+
+.dashboard-empty-state__secondary-link:focus-visible {
+  outline: 2px solid var(--dashboard-brand-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ========================================
+   Responsive Styles
+   ======================================== */
+
+/* Mobile (<768px) - Reduced sizes and padding */
+@media (max-width: 767px) {
+  .dashboard-empty-state {
+    padding: 24px 16px;
+    max-width: 100%;
+  }
+  
+  .dashboard-empty-state__icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+  }
+  
+  .dashboard-empty-state__title {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  
+  .dashboard-empty-state__description {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .dashboard-empty-state__benefits {
+    margin-bottom: 16px;
+    gap: 6px;
+    max-width: 100%;
+  }
+  
+  .dashboard-empty-state__benefit {
+    font-size: 12px;
+    gap: 6px;
+  }
+  
+  .dashboard-empty-state__cta {
+    padding: 8px 16px;
+    font-size: 13px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Tablet (768px-1024px) - Moderate adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dashboard-empty-state {
+    padding: 28px 20px;
+    max-width: 500px;
+  }
+  
+  .dashboard-empty-state__icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 14px;
+  }
+  
+  .dashboard-empty-state__title {
+    font-size: 17px;
+  }
+}
+
+/* Desktop (>1024px) - Full size */
+@media (min-width: 1024px) {
+  .dashboard-empty-state {
+    /* Uses default values from root */
+  }
+}

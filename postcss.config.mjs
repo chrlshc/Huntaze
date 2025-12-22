@@ -1,6 +1,6 @@
 export default {
   plugins: {
     '@tailwindcss/postcss': {},
-    autoprefixer: {},
+    './postcss.remove-invalid-transition-utility.cjs': {},
   },
 };

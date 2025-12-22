@@ -1,0 +1,508 @@
+/**
+ * PPV Page - Mobile Optimized Styles
+ * Clean, responsive design for mobile devices
+ */
+
+/* ============================================
+   BASE STYLES (Desktop)
+   ============================================ */
+
+.ppv-page .page-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ppv-page .kpi-icon {
+  color: #616161;
+}
+
+/* Header Actions */
+.ppv-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ppv-date-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ppv-create-btn {
+  background: #303030 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* Tabs */
+.ppv-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #E3E3E3;
+  padding: 0 16px;
+}
+
+.ppv-tab {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #616161;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ppv-tab.active {
+  color: #303030;
+  border-bottom-color: #303030;
+}
+
+/* Search Bar */
+.ppv-search-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 16px;
+  border-bottom: 1px solid #E3E3E3;
+}
+
+.ppv-search-wrapper {
+  position: relative;
+  flex: 1 1 200px;
+  max-width: 300px;
+}
+
+.ppv-search-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 36px;
+  border: 1px solid #C9CCCF;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.ppv-search-input:focus {
+  border-color: #005BD3;
+  box-shadow: 0 0 0 1px #005BD3;
+}
+
+.ppv-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8C9196;
+  pointer-events: none;
+}
+
+.ppv-status-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Status Badges */
+.ppv-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ppv-status--draft { background: #FFF4E5; color: #916A00; }
+.ppv-status--ready { background: #E3F1DF; color: #008060; }
+.ppv-status--archived { background: #F1F1F1; color: #616161; }
+.ppv-status--scheduled { background: #E3F0FF; color: #0055B3; }
+.ppv-status--sending { background: #FFF4E5; color: #916A00; }
+.ppv-status--sent { background: #E3F1DF; color: #008060; }
+.ppv-status--failed { background: #FFF4F4; color: #D72C0D; }
+
+/* PPV Item (Library) */
+.ppv-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #E3E3E3;
+}
+
+.ppv-item:last-child {
+  border-bottom: none;
+}
+
+.ppv-item-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ppv-item-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #F1F1F1;
+}
+
+.ppv-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ppv-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ppv-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #303030;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ppv-item-meta {
+  font-size: 13px;
+  color: #616161;
+}
+
+.ppv-item-details {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ppv-item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303030;
+  min-width: 50px;
+  text-align: right;
+}
+
+.ppv-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+.ppv-send-btn {
+  background: #303030 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.ppv-icon-btn {
+  padding: 6px 8px !important;
+}
+
+/* Dropdown Menu */
+.ppv-menu-wrapper {
+  position: relative;
+}
+
+.ppv-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  width: 160px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #E3E3E3;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.ppv-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #303030;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ppv-dropdown-item:hover {
+  background: #F7F7F7;
+}
+
+/* Campaign Item */
+.ppv-campaign-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #E3E3E3;
+}
+
+.ppv-campaign-item:last-child {
+  border-bottom: none;
+}
+
+.ppv-campaign-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 13px;
+}
+
+.ppv-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ppv-stat-label {
+  color: #616161;
+}
+
+.ppv-stat-value {
+  font-weight: 500;
+  color: #303030;
+}
+
+.ppv-stat-revenue {
+  color: #008060;
+}
+
+/* Empty State */
+.ppv-empty {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.ppv-empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  background: #F1F1F1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #616161;
+}
+
+.ppv-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303030;
+  margin: 0 0 8px;
+}
+
+.ppv-empty-text {
+  font-size: 14px;
+  color: #616161;
+  margin: 0 0 16px;
+}
+
+/* ============================================
+   MOBILE STYLES (< 768px)
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Header - Stack vertically */
+  .ppv-page .ppv-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .ppv-header-title {
+    text-align: left;
+  }
+
+  .ppv-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ppv-date-filters {
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  .ppv-create-btn {
+    flex-shrink: 0;
+  }
+
+  .ppv-create-text {
+    display: none;
+  }
+
+  /* Tabs - Full width */
+  .ppv-tabs {
+    padding: 0 12px;
+  }
+
+  .ppv-tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  /* Search Bar - Stack */
+  .ppv-search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .ppv-search-wrapper {
+    max-width: none;
+    flex: none;
+    width: 100%;
+  }
+
+  .ppv-status-filters {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .ppv-status-filters .filter-pill {
+    flex-shrink: 0;
+  }
+
+  /* PPV Item - Card Layout */
+  .ppv-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .ppv-item-main {
+    width: 100%;
+  }
+
+  .ppv-item-thumb {
+    width: 56px;
+    height: 56px;
+  }
+
+  .ppv-item-title {
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+  .ppv-item-details {
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 68px; /* Align with content after thumb */
+  }
+
+  .ppv-item-actions {
+    margin-left: 0;
+    padding-left: 68px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .ppv-send-btn {
+    flex: 1;
+    max-width: 120px;
+    justify-content: center;
+  }
+
+  /* Campaign Item - Card Layout */
+  .ppv-campaign-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .ppv-campaign-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 16px;
+    width: 100%;
+    padding-left: 68px;
+  }
+
+  .ppv-campaign-item > .ppv-status {
+    align-self: flex-start;
+    margin-left: 68px;
+  }
+
+  /* Empty State */
+  .ppv-empty {
+    padding: 32px 16px;
+  }
+}
+
+/* ============================================
+   SMALL MOBILE (< 480px)
+   ============================================ */
+
+@media (max-width: 479px) {
+  .ppv-page .content-wrapper {
+    padding: 0 8px 16px !important;
+  }
+
+  .ppv-item-details,
+  .ppv-item-actions,
+  .ppv-campaign-stats,
+  .ppv-campaign-item > .ppv-status {
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .ppv-item-thumb {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ppv-campaign-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px 12px;
+  }
+
+  .ppv-stat {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .ppv-send-btn {
+    max-width: none;
+    flex: 1;
+  }
+
+  .ppv-date-filters .filter-pill {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+}

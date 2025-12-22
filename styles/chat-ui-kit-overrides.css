@@ -1,0 +1,386 @@
+/**
+ * Chat UI Kit Style Overrides
+ * Customizes @chatscope/chat-ui-kit-react to match TailAdmin design system
+ * 
+ * Phase 4: Complete Chat Container Integration
+ * - MainContainer and ChatContainer structure
+ * - MessageList with virtualization
+ * - Message components with TailAdmin styling
+ * - MessageInput with attachments
+ * - Typing indicators
+ */
+
+/* Import base Chat UI Kit styles */
+@import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+
+/* Override CSS Variables to match TailAdmin */
+.cs-main-container {
+  /* Background Colors */
+  --cs-main-container-bg-color: var(--tailadmin-bg);
+  --cs-conversation-header-bg-color: var(--tailadmin-card-bg);
+  --cs-conversation-header-border-color: var(--tailadmin-border-color);
+  --cs-message-list-bg-color: var(--tailadmin-card-bg);
+  --cs-message-input-bg-color: var(--tailadmin-input-bg);
+  --cs-message-input-border-color: var(--tailadmin-border-color);
+  
+  /* Message Bubbles */
+  --cs-message-incoming-bg-color: var(--tailadmin-gray-2);
+  --cs-message-incoming-text-color: var(--tailadmin-text-primary);
+  --cs-message-outgoing-bg-color: var(--tailadmin-primary);
+  --cs-message-outgoing-text-color: #ffffff;
+  
+  /* Typography */
+  --cs-message-font-size: var(--tailadmin-font-size-base);
+  --cs-message-font-family: var(--tailadmin-font-family);
+  
+  /* Borders and Shadows */
+  --cs-border-radius: var(--tailadmin-radius-lg);
+  --cs-shadow: var(--tailadmin-shadow-card);
+  
+  /* Spacing */
+  --cs-message-padding: var(--tailadmin-spacing-md);
+  --cs-message-margin: var(--tailadmin-spacing-sm);
+}
+
+/* Main Container Styling */
+.cs-main-container {
+  height: 100%;
+  border-radius: var(--tailadmin-radius-lg);
+  overflow: hidden;
+}
+
+/* Chat Container */
+.cs-chat-container {
+  background-color: var(--tailadmin-card-bg);
+  border: 1px solid var(--tailadmin-border-color);
+  border-radius: var(--tailadmin-radius-lg);
+  box-shadow: var(--tailadmin-shadow-card);
+}
+
+/* Conversation Header */
+.cs-conversation-header {
+  padding: var(--tailadmin-spacing-md) var(--tailadmin-spacing-lg);
+  border-bottom: 1px solid var(--tailadmin-border-color);
+  background-color: var(--tailadmin-card-bg);
+}
+
+.cs-conversation-header__content {
+  color: var(--tailadmin-text-primary);
+}
+
+.cs-conversation-header__user-name {
+  font-size: var(--tailadmin-font-size-lg);
+  font-weight: var(--tailadmin-font-weight-semibold);
+  color: var(--tailadmin-text-primary);
+}
+
+.cs-conversation-header__info {
+  font-size: var(--tailadmin-font-size-sm);
+  color: var(--tailadmin-text-secondary);
+}
+
+/* Message List */
+.cs-message-list {
+  background-color: var(--tailadmin-card-bg);
+  padding: var(--tailadmin-spacing-lg);
+}
+
+.cs-message-list__scroll-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tailadmin-stroke) transparent;
+}
+
+.cs-message-list__scroll-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cs-message-list__scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cs-message-list__scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--tailadmin-stroke);
+  border-radius: 3px;
+}
+
+/* Messages */
+.cs-message {
+  margin-bottom: var(--tailadmin-spacing-md);
+}
+
+.cs-message__content {
+  border-radius: var(--tailadmin-radius-lg);
+  padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  font-size: var(--tailadmin-font-size-base);
+  line-height: var(--tailadmin-line-height-normal);
+  max-width: 70%;
+}
+
+.cs-message--incoming .cs-message__content {
+  background-color: var(--tailadmin-gray-2);
+  color: var(--tailadmin-text-primary);
+}
+
+.cs-message--outgoing .cs-message__content {
+  background-color: var(--tailadmin-primary);
+  color: #ffffff;
+}
+
+/* Timestamps completely hidden - clean iMessage style */
+.cs-message__sent-time {
+  display: none !important;
+}
+
+/* Message Input */
+.cs-message-input {
+  border-top: 1px solid var(--tailadmin-border-color);
+  background-color: var(--tailadmin-card-bg);
+  padding: var(--tailadmin-spacing-md) var(--tailadmin-spacing-lg);
+}
+
+.cs-message-input__content-editor {
+  background-color: var(--tailadmin-input-bg);
+  border: 1px solid var(--tailadmin-border-color);
+  border-radius: var(--tailadmin-radius-lg);
+  padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  color: var(--tailadmin-text-primary);
+  font-size: var(--tailadmin-font-size-base);
+  transition: var(--tailadmin-transition-base);
+}
+
+.cs-message-input__content-editor:focus {
+  outline: none;
+  border-color: var(--tailadmin-primary);
+  box-shadow: 0 0 0 3px rgba(60, 80, 224, 0.1);
+}
+
+.cs-message-input__content-editor::placeholder {
+  color: var(--tailadmin-text-tertiary);
+}
+
+/* Send Button */
+.cs-button--send {
+  background-color: var(--tailadmin-primary);
+  color: #ffffff;
+  border-radius: var(--tailadmin-radius-md);
+  padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  font-weight: var(--tailadmin-font-weight-medium);
+  transition: var(--tailadmin-transition-base);
+}
+
+.cs-button--send:hover {
+  background-color: var(--tailadmin-primary-dark);
+}
+
+.cs-button--send:active {
+  transform: scale(0.98);
+}
+
+/* Attach Button */
+.cs-button--attachment {
+  color: var(--tailadmin-text-secondary);
+  transition: var(--tailadmin-transition-base);
+}
+
+.cs-button--attachment:hover {
+  color: var(--tailadmin-primary);
+}
+
+/* Typing Indicator */
+.cs-typing-indicator {
+  padding: var(--tailadmin-spacing-sm) var(--tailadmin-spacing-md);
+  background-color: var(--tailadmin-gray-2);
+  border-radius: var(--tailadmin-radius-lg);
+  display: inline-block;
+}
+
+.cs-typing-indicator__dot {
+  background-color: var(--tailadmin-text-tertiary);
+}
+
+/* Avatar */
+.cs-avatar {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.cs-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dark Mode Support */
+.dark .cs-main-container {
+  --cs-main-container-bg-color: var(--tailadmin-bg);
+  --cs-conversation-header-bg-color: var(--tailadmin-card-bg);
+  --cs-message-list-bg-color: var(--tailadmin-card-bg);
+  --cs-message-input-bg-color: var(--tailadmin-input-bg);
+  --cs-message-incoming-bg-color: var(--tailadmin-gray);
+  --cs-message-incoming-text-color: var(--tailadmin-text-primary);
+}
+
+.dark .cs-message-input__content-editor {
+  background-color: var(--tailadmin-input-bg);
+  border-color: var(--tailadmin-border-color);
+  color: var(--tailadmin-text-primary);
+}
+
+.dark .cs-message-input__content-editor::placeholder {
+  color: var(--tailadmin-text-tertiary);
+}
+
+/* ============================================
+   PHASE 14 - Task 14.4: Unified Composer Pill
+   ============================================ */
+
+/* Remove purple/violet underline completely */
+.cs-message-input__content-editor {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* Unified pill wrapper */
+.cs-message-input__content-editor-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  border-radius: 24px; /* Large pill radius */
+  padding: 10px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.cs-message-input__content-editor-wrapper:focus-within {
+  border-color: #CCCCCC;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Attachment icon inside pill */
+.cs-button--attachment {
+  width: 32px;
+  height: 32px;
+  background: transparent !important;
+  border: none !important;
+  color: #888888;
+  order: -1; /* Place before input */
+  flex-shrink: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-button--attachment:hover {
+  color: #666666;
+  background: transparent !important;
+}
+
+/* Text input - transparent, no borders */
+.cs-message-input__content-editor {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 15px;
+  color: #1a1d1f;
+  min-height: 24px;
+}
+
+.cs-message-input__content-editor::placeholder {
+  color: #9CA3AF;
+}
+
+/* Send button inside pill */
+.cs-button--send {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.cs-button--send:disabled {
+  background: transparent !important;
+  color: #CCCCCC;
+  opacity: 0.5;
+}
+
+.cs-button--send:not(:disabled) {
+  background: #F3F3F3 !important;
+  color: #1a1d1f;
+  opacity: 1;
+}
+
+.cs-button--send:not(:disabled):hover {
+  background: #E8E8E8 !important;
+}
+
+/* Breathing room around composer */
+.cs-message-input {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: none; /* Remove top border */
+}
+
+
+/* ============================================
+   PHASE 14 - Task 14.5: Clear Ping-Pong Alignment
+   ============================================ */
+
+/* Force fan messages to left */
+.cs-message--incoming {
+  justify-content: flex-start !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+.cs-message--incoming .cs-message__content-wrapper {
+  max-width: 68%; /* 65-70% range */
+}
+
+/* Force creator messages to right */
+.cs-message--outgoing {
+  justify-content: flex-end !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.cs-message--outgoing .cs-message__content-wrapper {
+  max-width: 68%; /* 65-70% range */
+}
+
+/* Message grouping spacing */
+.message-group-item {
+  margin-bottom: 6px; /* Spacing within same group */
+}
+
+.message-group-item--first {
+  margin-top: 14px; /* Spacing between different groups */
+}
+
+.message-group-item--last {
+  margin-bottom: 14px; /* Spacing after group */
+}
+
+/* Timestamp styling - HIDDEN */
+.message-group-timestamp {
+  display: none !important;
+}
+
+.cs-message--incoming .message-group-timestamp {
+  display: none !important;
+}
+
+.cs-message--outgoing .message-group-timestamp {
+  display: none !important;
+}
