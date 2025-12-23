@@ -156,6 +156,7 @@
     "@azure/monitor-opentelemetry": "^1.14.2",
     "@azure/openai": "^2.0.0",
     "@azure/search-documents": "^12.2.0",
+    "@azure/service-bus": "^7.9.5",
     "@chatscope/chat-ui-kit-react": "^2.1.1",
     "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@google/genai": "^1.30.0",
