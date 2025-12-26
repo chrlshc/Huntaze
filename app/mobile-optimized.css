@@ -1,0 +1,401 @@
+/* Mobile-First Optimized Styles - Based on SaaS Leaders Best Practices */
+/* Minimum touch target: 44px (Apple HIG) / 48px (Material Design) */
+
+/* Touch Target Optimization */
+.touch-target,
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[role="link"],
+[role="checkbox"],
+[role="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+  position: relative;
+}
+
+/* Extend touch area without affecting layout */
+.touch-target::before,
+button::before,
+a::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+  pointer-events: none;
+}
+
+/* Mobile Navigation Patterns */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 64px;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 50;
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-nav.hidden {
+  transform: translateY(100%);
+}
+
+.mobile-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 8px 4px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-item.active {
+  color: var(--color-primary);
+}
+
+.mobile-nav-item svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+
+.mobile-nav-item span {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Swipe Gestures Support */
+.swipeable {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+.swipeable-vertical {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.swipe-to-action {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipe-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swipe-action.revealed {
+  transform: translateX(0);
+}
+
+/* Mobile Cards & Lists */
+.mobile-card {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Forms */
+.mobile-input {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px; /* Prevents zoom on iOS */
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.mobile-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* Mobile Select - Custom Dropdown */
+.mobile-select {
+  position: relative;
+  width: 100%;
+}
+
+.mobile-select select {
+  width: 100%;
+  padding: 16px 48px 16px 16px;
+  font-size: 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.mobile-select::after {
+  content: "▼";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-secondary);
+}
+
+/* Mobile Buttons */
+.mobile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  min-height: 48px;
+  min-width: 120px;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.mobile-button:active {
+  transform: scale(0.95);
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 40;
+}
+
+.fab:active {
+  transform: scale(0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.fab.extended {
+  width: auto;
+  padding: 0 24px;
+}
+
+/* Mobile Modals & Sheets */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bottom-sheet.open {
+  transform: translateY(0);
+}
+
+.bottom-sheet-handle {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+/* Pull to Refresh */
+.pull-to-refresh {
+  position: relative;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pull-to-refresh-indicator {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.pull-to-refresh.refreshing .pull-to-refresh-indicator {
+  top: 20px;
+}
+
+/* Mobile Typography Scale */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; line-height: 1.2; }
+  h2 { font-size: 1.5rem; line-height: 1.3; }
+  h3 { font-size: 1.25rem; line-height: 1.4; }
+  h4 { font-size: 1.125rem; line-height: 1.4; }
+  p { font-size: 1rem; line-height: 1.6; }
+  
+  /* Increase tap targets on mobile */
+  button, a, .touch-target {
+    min-height: 48px;
+  }
+}
+
+/* Gesture Hints */
+.gesture-hint {
+  position: relative;
+  overflow: hidden;
+}
+
+.gesture-hint::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.3) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  animation: gesture-hint 2s ease-out;
+}
+
+@keyframes gesture-hint {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+/* Loading States */
+.skeleton {
+  background: linear-gradient(90deg, 
+    var(--color-border) 25%, 
+    rgba(var(--color-border-rgb), 0.5) 50%, 
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Haptic Feedback Simulation */
+.haptic-light {
+  animation: haptic-light 0.1s ease-out;
+}
+
+.haptic-medium {
+  animation: haptic-medium 0.15s ease-out;
+}
+
+@keyframes haptic-light {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.98); }
+}
+
+@keyframes haptic-medium {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+}
+
+/* Safe Areas for Notched Devices */
+.safe-top {
+  padding-top: max(20px, env(safe-area-inset-top));
+}
+
+.safe-bottom {
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+.safe-left {
+  padding-left: max(16px, env(safe-area-inset-left));
+}
+
+.safe-right {
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+/* Performance Optimizations */
+.hardware-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

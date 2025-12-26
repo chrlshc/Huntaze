@@ -1,0 +1,345 @@
+/* Onboarding Styles - Simplified */
+
+/* Progress Container */
+.progress-container {
+  @apply relative w-full max-w-4xl mx-auto mb-8;
+}
+
+.progress-bar {
+  @apply absolute left-0 right-0 h-1 z-0 bg-gray-300;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.progress-bar-fill {
+  @apply h-full transition-all duration-500 ease-out bg-gradient-to-r from-purple-600 to-pink-600;
+}
+
+.progress-fill {
+  @apply h-full transition-all duration-500 ease-out bg-gradient-to-r from-purple-600 to-pink-600;
+}
+
+/* Progress Steps */
+.progress-steps {
+  @apply relative z-10 flex;
+}
+
+.progress-step {
+  @apply relative flex-1 flex flex-col items-center cursor-pointer transition-all;
+}
+
+.progress-step-indicator {
+  @apply relative z-10 w-12 h-12 rounded-full flex items-center justify-center;
+  @apply bg-white dark:bg-gray-800;
+  @apply border-2 border-gray-200 dark:border-gray-700;
+  @apply transition-all duration-300 shadow-sm;
+}
+
+.progress-step.active .progress-step-indicator {
+  @apply border-purple-600 bg-gradient-to-r from-purple-600 to-pink-600 shadow-md;
+  transform: scale(1.1);
+}
+
+.progress-step.completed .progress-step-indicator {
+  @apply bg-green-500 border-green-500;
+}
+
+.progress-step-icon {
+  @apply w-5 h-5 text-gray-500 transition-colors;
+}
+
+.progress-step.active .progress-step-icon,
+.progress-step.completed .progress-step-icon {
+  @apply text-white;
+}
+
+.progress-step-label {
+  @apply mt-2 text-xs text-gray-500 font-medium opacity-0 sm:opacity-100;
+}
+
+.progress-step.active .progress-step-label {
+  @apply text-purple-600;
+}
+
+.progress-step.completed .progress-step-label {
+  @apply text-green-500;
+}
+
+/* Step Content */
+.step-content {
+  @apply bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700;
+}
+
+.step-header {
+  @apply mb-8 text-center;
+}
+
+.step-title {
+  @apply text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2;
+}
+
+.step-description {
+  @apply text-gray-600 dark:text-gray-300 text-lg;
+}
+
+/* Form Elements */
+.form-group {
+  @apply mb-6;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-900 dark:text-white mb-2;
+}
+
+.form-input {
+  @apply w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply text-gray-900 dark:text-white placeholder-gray-400;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600;
+}
+
+.form-input:hover {
+  @apply border-purple-600/30;
+}
+
+.form-textarea {
+  @apply form-input resize-none;
+  min-height: 120px;
+}
+
+.form-select {
+  @apply form-input appearance-none cursor-pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 24px;
+  padding-right: 2.75rem;
+}
+
+.char-count {
+  @apply text-xs text-gray-500 mt-1 text-right;
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+  @apply flex items-center justify-between mt-8;
+}
+
+.btn-back {
+  @apply px-4 py-2 rounded-lg font-medium transition-all;
+  @apply text-gray-500 hover:text-gray-900 dark:hover:text-white;
+  @apply flex items-center gap-2;
+}
+
+.btn-continue {
+  @apply px-6 py-3 rounded-lg font-medium transition-all;
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white;
+  @apply flex items-center gap-2 shadow-sm;
+}
+
+.btn-primary {
+  @apply px-6 py-3 rounded-lg font-medium transition-all;
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white;
+  @apply inline-flex items-center justify-center gap-2 shadow-sm;
+}
+
+.btn-primary:hover,
+.btn-continue:hover {
+  transform: translateY(-1px);
+  @apply shadow-md;
+}
+
+.btn-continue:disabled {
+  @apply opacity-50 cursor-not-allowed;
+  transform: none;
+}
+
+/* Niche Grid */
+.niche-grid {
+  @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.niche-card {
+  @apply p-4 rounded-xl cursor-pointer transition-all;
+  @apply bg-white dark:bg-gray-900;
+  @apply border-2 border-gray-200 dark:border-gray-700;
+  @apply hover:border-purple-600/30;
+}
+
+.niche-card.selected {
+  @apply border-purple-600 bg-purple-50 dark:bg-purple-900/20 shadow-sm;
+}
+
+.niche-icon-container {
+  @apply w-12 h-12 rounded-lg mb-3 mx-auto flex items-center justify-center;
+}
+
+.niche-icon {
+  @apply w-6 h-6 text-white;
+}
+
+.niche-title {
+  @apply font-medium text-gray-900 dark:text-white text-center;
+}
+
+/* Platform Grid */
+.platform-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.platform-card {
+  @apply p-6 rounded-xl cursor-pointer transition-all;
+  @apply bg-white dark:bg-gray-900;
+  @apply border-2 border-gray-200 dark:border-gray-700;
+  @apply hover:border-purple-600/30;
+}
+
+.platform-card.selected {
+  @apply border-purple-600 bg-purple-50 dark:bg-purple-900/20 shadow-sm;
+}
+
+.platform-header {
+  @apply flex items-center gap-3 mb-3;
+}
+
+.platform-icon-container {
+  @apply w-12 h-12 rounded-lg flex items-center justify-center;
+}
+
+.platform-icon {
+  @apply w-6 h-6;
+}
+
+.platform-name {
+  @apply text-lg font-bold text-gray-900 dark:text-white;
+}
+
+.platform-description {
+  @apply text-sm text-gray-600 dark:text-gray-300;
+}
+
+/* Pricing Plans */
+.pricing-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+
+.pricing-card {
+  @apply relative rounded-2xl p-6 transition-all;
+  @apply bg-white dark:bg-gray-900;
+  @apply border-2 border-gray-200 dark:border-gray-700;
+  @apply hover:border-purple-600/30;
+}
+
+.pricing-card.recommended {
+  @apply border-purple-600 shadow-lg;
+  transform: scale(1.05);
+}
+
+.pricing-badge {
+  @apply absolute -top-3 left-1/2 transform -translate-x-1/2;
+  @apply px-4 py-1 rounded-full text-xs font-bold;
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm;
+}
+
+.pricing-header {
+  @apply text-center mb-6;
+}
+
+.pricing-title {
+  @apply text-2xl font-bold text-gray-900 dark:text-white mb-2;
+}
+
+.pricing-price {
+  @apply text-4xl font-bold text-gray-900 dark:text-white;
+}
+
+.pricing-price-unit {
+  @apply text-lg text-gray-500 font-normal;
+}
+
+.pricing-description {
+  @apply text-gray-600 dark:text-gray-300 mt-2;
+}
+
+.pricing-features {
+  @apply space-y-3 mb-6;
+}
+
+.pricing-feature {
+  @apply flex items-start gap-3;
+}
+
+.pricing-feature-icon {
+  @apply w-5 h-5 text-green-500 flex-shrink-0 mt-0.5;
+}
+
+.pricing-feature-text {
+  @apply text-sm text-gray-900 dark:text-white;
+}
+
+/* Complete Screen */
+.complete-container {
+  @apply text-center py-12;
+}
+
+.complete-icon-container {
+  @apply w-24 h-24 mx-auto mb-6;
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 rounded-full;
+  @apply flex items-center justify-center shadow-lg;
+  animation: bounce-in 0.5s ease-out;
+}
+
+.complete-icon {
+  @apply w-12 h-12 text-white;
+}
+
+.complete-title {
+  @apply text-3xl font-bold text-gray-900 dark:text-white mb-3;
+}
+
+.complete-message {
+  @apply text-lg text-gray-600 dark:text-gray-300 mb-8;
+}
+
+/* Animations */
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .progress-bar {
+    @apply h-2;
+  }
+  
+  .step-content {
+    @apply p-6;
+  }
+  
+  .progress-step-indicator {
+    @apply w-10 h-10;
+  }
+  
+  .progress-step-icon {
+    @apply w-4 h-4;
+  }
+  
+  .pricing-card.recommended {
+    transform: none;
+  }
+  
+  .niche-grid {
+    @apply grid-cols-2;
+  }
+}
